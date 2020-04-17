@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;

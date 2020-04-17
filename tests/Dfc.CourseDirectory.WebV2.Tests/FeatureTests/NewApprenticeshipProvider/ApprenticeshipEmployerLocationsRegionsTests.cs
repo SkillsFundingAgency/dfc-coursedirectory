@@ -3,8 +3,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Xunit;
+using Dfc.CourseDirectory.Testing;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {

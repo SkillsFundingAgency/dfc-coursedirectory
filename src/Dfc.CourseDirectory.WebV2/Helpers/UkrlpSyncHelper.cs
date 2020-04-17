@@ -1,6 +1,8 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.Services.Interfaces;
@@ -56,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
                         DateUpdated = _clock.UtcNow,
                         UpdatedBy = updatedBy,
                         UnitedKingdomProviderReferenceNumber = ukprn.ToString(),
-                        ProviderType = Models.ProviderType.FE, //Set to FE by default
+                        ProviderType = ProviderType.FE, // Set to FE by default
                         ProviderContact = upsertCommand.ProviderContact,
                         ProviderName = upsertCommand.ProviderName,
                         ProviderStatus = upsertCommand.ProviderStatus,

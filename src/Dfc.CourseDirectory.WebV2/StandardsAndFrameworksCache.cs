@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2
 {

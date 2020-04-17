@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
@@ -41,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var provider1Id = await TestData.CreateProvider(
                 ukprn: provider1Ukprn,
                 providerName: "Provider 1",
-                apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User", provider1Id);
             await TestData.CreateUserSignIn(provider1UserId, new DateTime(2018, 4, 1, 10, 4, 3));
             var provider1ApprenticeshipId = await TestData.CreateApprenticeship(provider1Id, standard, createdBy: User.ToUserInfo());
@@ -57,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var provider2Id = await TestData.CreateProvider(
                 ukprn: provider2Ukprn,
                 providerName: "Provider 2",
-                apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User", provider2Id);
             await TestData.CreateUserSignIn(provider2UserId, new DateTime(2019, 5, 3, 14, 55, 17));
             var provider2ApprenticeshipId = await TestData.CreateApprenticeship(provider2Id, standard, createdBy: User.ToUserInfo());
@@ -73,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var provider3Id = await TestData.CreateProvider(
                 ukprn: provider3Ukprn,
                 providerName: "Provider 3",
-                apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.NotStarted);
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
             await TestData.CreateUser(provider3UserId, "guy@provider3.com", "Provider 3", "User", provider3Id);
             await TestData.CreateUserSignIn(provider3UserId, new DateTime(2019, 2, 6, 7, 22, 9));
 

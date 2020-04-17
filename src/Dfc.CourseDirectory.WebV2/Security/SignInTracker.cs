@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {

@@ -20,8 +20,8 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
@@ -231,7 +231,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                         new GetProviderApprenticeshipQAStatus()
                         {
                             ProviderId = providerId
-                        }) ?? WebV2.Models.ApprenticeshipQAStatus.NotStarted;
+                        }) ?? Core.Models.ApprenticeshipQAStatus.NotStarted;
 
                 }
 

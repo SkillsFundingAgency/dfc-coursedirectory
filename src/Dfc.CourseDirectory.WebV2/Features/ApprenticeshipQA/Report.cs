@@ -1,8 +1,9 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;

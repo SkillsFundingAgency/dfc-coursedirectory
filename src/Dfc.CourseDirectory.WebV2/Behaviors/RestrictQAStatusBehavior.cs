@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA

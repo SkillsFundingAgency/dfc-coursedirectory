@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         {
             ApprenticeshipLocationType = apprenticeshipLocationType;
 
-            if (apprenticeshipLocationType == Models.ApprenticeshipLocationType.ClassroomBased)
+            if (apprenticeshipLocationType == Core.Models.ApprenticeshipLocationType.ClassroomBased)
             {
                 ApprenticeshipIsNational = null;
             }
