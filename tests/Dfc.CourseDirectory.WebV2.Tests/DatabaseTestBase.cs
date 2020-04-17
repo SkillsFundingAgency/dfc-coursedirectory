@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -57,11 +59,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     [Trait("SkipOnCI", "true")]  // Until we have SQL DB on CI
     public abstract class DatabaseTestBase : IAsyncLifetime
     {
-        protected DatabaseTestBase(DatabaseTestBaseFixture t)
+        protected DatabaseTestBase(DatabaseTestBaseFixture fixture)
         {
-            Fixture = t;
+            Fixture = fixture;
             Fixture.OnTestStarting();
         }
+
+        protected MutableClock Clock => Fixture.DatabaseFixture.Clock;
+
+        protected Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Fixture.DatabaseFixture.CosmosDbQueryDispatcher;
 
         public DatabaseTestBaseFixture Fixture { get; }
 
