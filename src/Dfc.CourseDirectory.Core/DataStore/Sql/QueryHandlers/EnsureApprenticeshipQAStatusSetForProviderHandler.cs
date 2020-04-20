@@ -12,10 +12,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<None> Execute(SqlTransaction transaction, EnsureApprenticeshipQAStatusSetForProvider query)
         {
             var sql = @"
+DECLARE @DefaultStatus INT = 1
+
 MERGE Pttcd.Providers AS target
 USING (SELECT @ProviderId ProviderId) AS source
 ON source.ProviderId = target.ProviderId
-WHEN NOT MATCHED THEN INSERT (ProviderId, ApprenticeshipQAStatus) VALUES (source.ProviderId, 1);";
+WHEN NOT MATCHED THEN INSERT (ProviderId, ApprenticeshipQAStatus) VALUES (source.ProviderId, @DefaultStatus)
+WHEN MATCHED AND target.ApprenticeshipQAStatus IS NULL THEN UPDATE SET ApprenticeshipQAStatus = @DefaultStatus;";
 
             var paramz = new { query.ProviderId };
 
