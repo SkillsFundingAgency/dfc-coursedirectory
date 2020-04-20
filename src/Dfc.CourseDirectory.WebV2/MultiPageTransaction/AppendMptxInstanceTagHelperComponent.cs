@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             void HandleAction()
             {
-                var method = output.Attributes["action"]?.Value.ToString() ?? "post";
+                var method = output.Attributes["method"]?.Value.ToString() ?? "post";
 
                 if (method.Equals("GET", StringComparison.OrdinalIgnoreCase))
                 {
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     input.Attributes.Add("type", "hidden");
                     input.Attributes.Add("name", Constants.InstanceIdQueryParameter);
                     input.Attributes.Add("value", mptxInstanceId);
-                    output.PreElement.AppendHtml(input);
+                    output.PreContent.AppendHtml(input);
                 }
                 else
                 {
