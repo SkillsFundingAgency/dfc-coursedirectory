@@ -67,6 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
 
             var infos = (from r in results
                          let provider = providers[r.ProviderId]
+                         where provider.ProviderType.HasFlag(ProviderType.Apprenticeships)
                          select new ViewModelResult()
                          {
                              ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
