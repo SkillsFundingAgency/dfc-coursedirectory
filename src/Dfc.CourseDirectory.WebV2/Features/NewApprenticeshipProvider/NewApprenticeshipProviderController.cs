@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
+using FindStandardOrFramework = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -52,9 +52,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("apprenticeship-details")]
-        public async Task<IActionResult> ApprenticeshipDetails(StandardOrFramework standardOrFramework)
+        public async Task<IActionResult> ApprenticeshipDetails()
         {
-            Flow.Update(s => s.SetApprenticeshipStandardOrFramework(standardOrFramework));
             var query = new ApprenticeshipDetails.Query() { ProviderId = ProviderContext.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
@@ -212,6 +211,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 .WithMptxInstanceId(childFlow.InstanceId);
         }
 
+        [MptxAction]
+        [HttpGet("find-standard")]
+        public IActionResult FindStandardOrFramework([FromServices] MptxManager mptxManager)
+        {
+            var childFlow = mptxManager.CreateInstance<FindStandardOrFramework.FlowModel, FindStandardOrFramework.IFlowModelCallback>(
+                Flow.InstanceId,
+                new FindStandardOrFramework.FlowModel()
+                {
+                    ProviderId = ProviderContext.ProviderId
+                },
+                contextItems: new Dictionary<string, object>()
+                {
+                    {
+                        "ReturnUrl",
+                        new Url(Url.Action(nameof(ApprenticeshipDetails)))
+                            .WithMptxInstanceId(Flow.InstanceId)
+                            .WithProviderContext(ProviderContext)
+                    }
+                });
+            return RedirectToAction("FindStandardOrFramework", "Apprenticeships")
+                .WithMptxInstanceId(childFlow.InstanceId);
+        }
+
         [StartsMptx]
         [HttpGet("provider-detail")]
         public async Task<IActionResult> ProviderDetail(
@@ -263,15 +285,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             command.ProviderId = providerInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
-                success => RedirectToAction(
-                    "FindStandardOrFramework",
-                    "Apprenticeships",
-                    new
-                    {
-                        returnUrl = new Url(Url.Action(nameof(ApprenticeshipDetails)))
-                            .WithProviderContext(providerInfo)
-                            .WithMptxInstanceId(Flow)
-                    }));
+                success => RedirectToAction(nameof(FindStandardOrFramework))
+                    .WithMptxInstanceId(Flow));
         }
 
         [HttpPost("hide-passed-notification")]
@@ -282,24 +297,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             command.ProviderId = ProviderContext.ProviderId;
             return await _mediator.SendAndMapResponse(command,
                 success => Redirect(returnUrl));
-        }
-
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            if (context.Result is ViewResult viewResult)
-            {
-                viewResult.ViewData.Add(
-                    "SelectStandardOrFrameworkUrl",
-                    Url.Action(
-                        "FindStandardOrFramework",
-                        "Apprenticeships",
-                        new
-                        {
-                            returnUrl = new Url(Url.Action(nameof(ApprenticeshipDetails)))
-                                .WithProviderContext(ProviderContext)
-                                .WithMptxInstanceId(Flow)
-                        }));
-            }
         }
     }
 }

@@ -20,17 +20,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance(new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -46,17 +46,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: qaStatus);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -70,17 +70,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerType: ProviderType.FE,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance(new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -92,17 +92,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -119,9 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsHelpdesk();
 
@@ -154,9 +152,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: qaStatus);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -187,9 +183,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerType: ProviderType.FE,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -219,9 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -256,9 +248,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -297,9 +287,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -335,9 +323,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -370,9 +356,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -407,9 +391,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            var standardCode = 123;
-            var standardVersion = 1;
-            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 

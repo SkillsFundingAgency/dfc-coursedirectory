@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -57,27 +58,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
                     }));
         }
 
+        [MptxAction]
         [HttpGet("find-standard")]
-        public async Task<IActionResult> FindStandardOrFramework(
-            [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl,
-            ProviderInfo providerInfo)
+        public async Task<IActionResult> FindStandardOrFramework()
         {
-            var query = new FindStandardOrFramework.Query() { ProviderId = providerInfo.ProviderId };
+            var query = new FindStandardOrFramework.Query();
             return await _mediator.SendAndMapResponse(query, response => View(response));
         }
 
+        [MptxAction]
         [HttpGet("find-standard/search")]
-        public async Task<IActionResult> FindStandardOrFrameworkSearch(
-            FindStandardOrFramework.SearchQuery query,
-            [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl,
-            ProviderInfo providerInfo)
+        public async Task<IActionResult> FindStandardOrFrameworkSearch(FindStandardOrFramework.SearchQuery query)
         {
-            query.ProviderId = providerInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 query,
                 response => response.Match(
                     errors => this.ViewFromErrors("FindStandardOrFramework", errors),
                     vm => View("FindStandardOrFramework", vm)));
+        }
+
+        [MptxAction]
+        [HttpGet("find-standard/select")]
+        public async Task<IActionResult> FindStandardOrFrameworkSelect(
+            StandardOrFramework standardOrFramework,
+            MptxInstanceContext<FindStandardOrFramework.FlowModel, FindStandardOrFramework.IFlowModelCallback> flow)
+        {
+            var command = new FindStandardOrFramework.SelectCommand()
+            {
+                StandardOrFramework = standardOrFramework
+            };
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => Redirect(flow.Items["ReturnUrl"].ToString()));
         }
 
         [MptxAction]

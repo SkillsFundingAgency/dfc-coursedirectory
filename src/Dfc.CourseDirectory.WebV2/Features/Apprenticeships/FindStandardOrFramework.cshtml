@@ -1,6 +1,8 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework.ViewModel
 @{
     ViewBag.Title = "Find apprenticeship";
+
+    var mptxInstanceId = Context.Features.Get<Dfc.CourseDirectory.WebV2.MultiPageTransaction.MptxInstanceFeature>().Instance.InstanceId;
 }
 
 @if (!ViewContext.ModelState.IsValid)
@@ -11,9 +13,7 @@
     </govuk-error-summary>
 }
 
-<form asp-action="FindStandardOrFrameworkSearch" method="get" append-provider-context>
-    <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
-
+<form asp-action="FindStandardOrFrameworkSearch" method="get" append-mptx-id>
     <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
 
     <pttcd-search-input asp-for="Search">
@@ -33,7 +33,8 @@
 
             @foreach (var result in Model.Results)
             {
-                var resultReturnUrl = new Flurl.Url(ViewBag.returnUrl);
+                var resultReturnUrl = new Flurl.Url(Url.Action("FindStandardOrFrameworkSelect"))
+                    .WithMptxInstanceId(mptxInstanceId);
 
                 if (result.IsFramework)
                 {
