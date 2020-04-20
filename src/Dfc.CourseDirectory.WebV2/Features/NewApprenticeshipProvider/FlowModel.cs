@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
+using FindStandardOrFramework = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
-    public class FlowModel : IMptxState, IFlowModelCallback
+    public class FlowModel : IMptxState, ClassroomLocation.IFlowModelCallback, FindStandardOrFramework.IFlowModelCallback
     {
         public string ProviderMarketingInformation { get; set; }
         public StandardOrFramework ApprenticeshipStandardOrFramework { get; set; }
@@ -18,12 +20,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public ApprenticeshipLocationType? ApprenticeshipLocationType { get; set; }
         public bool? ApprenticeshipIsNational { get; set; }
         public IReadOnlyCollection<string> ApprenticeshipLocationSubRegionIds { get; set; }
-        public Dictionary<Guid, ClassroomLocation> ApprenticeshipClassroomLocations { get; set; }
+        public Dictionary<Guid, ClassroomLocationEntry> ApprenticeshipClassroomLocations { get; set; }
 
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
 
-        IReadOnlyCollection<Guid> IFlowModelCallback.BlockedVenueIds => ApprenticeshipClassroomLocations?.Keys;
+        IReadOnlyCollection<Guid> ClassroomLocation.IFlowModelCallback.BlockedVenueIds =>
+            ApprenticeshipClassroomLocations?.Keys;
 
         public void RemoveLocation(Guid venueId) => ApprenticeshipClassroomLocations.Remove(venueId);
 
@@ -33,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             int radius,
             ApprenticeshipDeliveryModes deliveryModes)
         {
-            ApprenticeshipClassroomLocations ??= new Dictionary<Guid, ClassroomLocation>();
+            ApprenticeshipClassroomLocations ??= new Dictionary<Guid, ClassroomLocationEntry>();
 
             // This may be an amendment - ensure we remove original record since venue ID may have changed
             if (originalVenueId.HasValue)
@@ -41,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 ApprenticeshipClassroomLocations.Remove(originalVenueId.Value);
             }
 
-            ApprenticeshipClassroomLocations[venueId] = new ClassroomLocation()
+            ApprenticeshipClassroomLocations[venueId] = new ClassroomLocationEntry()
             {
                 VenueId = venueId,
                 Radius = radius,
@@ -94,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public void SetApprenticeshipStandardOrFramework(StandardOrFramework standardOrFramework) =>
             ApprenticeshipStandardOrFramework = standardOrFramework;
 
-        void IFlowModelCallback.ReceiveLocation(
+        void ClassroomLocation.IFlowModelCallback.ReceiveLocation(
             string instanceId,
             Guid venueId,
             Guid? originalVenueId,
@@ -102,7 +105,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             ApprenticeshipDeliveryModes deliveryModes) =>
             SetClassroomLocationForVenue(venueId, originalVenueId, radius, deliveryModes);
 
-        public class ClassroomLocation
+        void IFlowModelCallback.ReceiveStandardOrFramework(StandardOrFramework standardOrFramework) =>
+            SetApprenticeshipStandardOrFramework(standardOrFramework);
+
+        public class ClassroomLocationEntry
         {
             public Guid VenueId { get; set; }
             public int Radius { get; set; }

@@ -22,7 +22,9 @@
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Standard/framework</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.StandardOrFrameworkTitle</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action href="@ViewBag.SelectStandardOrFrameworkUrl">Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action>
+            <a asp-action="FindStandardOrFramework" append-mptx-id>Change</a>
+        </govuk-summary-list-row-action>
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Apprenticeship information for employers</govuk-summary-list-row-key>

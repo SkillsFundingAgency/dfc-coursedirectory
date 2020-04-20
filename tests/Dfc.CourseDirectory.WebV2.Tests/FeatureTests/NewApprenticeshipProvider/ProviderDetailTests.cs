@@ -504,9 +504,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 c.UpdatedOn == Clock.UtcNow)));
 
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.StartsWith(
-                "/apprenticeships/find-standard",
-                response.Headers.Location.OriginalString);
+            Assert.Equal(
+                "/new-apprenticeship-provider/find-standard",
+                UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
     }
 }
