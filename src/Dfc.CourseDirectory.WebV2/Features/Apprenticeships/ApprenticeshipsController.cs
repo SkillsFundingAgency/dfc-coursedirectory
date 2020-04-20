@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
                             // Create a sibling flow to this one
                             var addAnotherInstance = mptxManager.CreateInstance<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback>(
                                 flow.ParentInstanceId,
-                                Apprenticeships.ClassroomLocation.FlowModel.Add(flow.State.ProviderId),
+                                Apprenticeships.ClassroomLocation.FlowModel.Add(flow.State.ProviderId, cancelable: true),
                                 flow.Items);
                             return RedirectToAction(nameof(ClassroomLocation))
                                 .WithMptxInstanceId(addAnotherInstance);
