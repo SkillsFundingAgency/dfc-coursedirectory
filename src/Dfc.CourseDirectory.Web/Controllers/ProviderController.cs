@@ -154,36 +154,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (providerSearchResult.IsSuccess)
             {
-
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
 
                 var oldProviderType = provider.ProviderType;
                 if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeship))
                 {
-                    var providerId = await providerInfoCache.GetProviderIdForUkprn(UKPRN.Value);
                     await sqlQueryDispatcher.ExecuteQuery(
                         new EnsureApprenticeshipQAStatusSetForProvider()
                         {
-                            ProviderId = providerId.Value
+                            ProviderId = provider.id
                         });
                 }
 
                 provider.ProviderType = model.ProviderType;
 
-                try
+                var result = await _providerService.UpdateProviderDetails(provider);
+                if (!result.IsSuccess)
                 {
-                    var result = await _providerService.UpdateProviderDetails(provider);
-                    if (result.IsSuccess)
-                    {
-                        //log something
-                    }
-
-                }
-                catch (Exception)
-                {
-                    //Behaviour to be determined for failure
+                    throw new Exception(result.Error);
                 }
 
+                await providerInfoCache.Remove(provider.id);
+            }
+            else
+            {
+                throw new Exception(providerSearchResult.Error);
             }
 
             return RedirectToAction("Details", "Provider", new { });
