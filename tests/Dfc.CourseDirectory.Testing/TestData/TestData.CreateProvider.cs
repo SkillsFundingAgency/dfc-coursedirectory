@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Testing
             string providerName = "Test Provider",
             ProviderType providerType = ProviderType.Both,
             string providerStatus = "Active",
-            ApprenticeshipQAStatus apprenticeshipQAStatus = ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus? apprenticeshipQAStatus = ApprenticeshipQAStatus.Passed,
             string marketingInformation = "",
             string courseDirectoryName = "",
             string alias = "",
@@ -60,12 +60,15 @@ namespace Dfc.CourseDirectory.Testing
             });
             Assert.Equal(CreateProviderResult.Ok, result);
 
-            await WithSqlQueryDispatcher(
-                dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
-                {
-                    ProviderId = providerId,
-                    ApprenticeshipQAStatus = apprenticeshipQAStatus
-                }));
+            if (apprenticeshipQAStatus.HasValue)
+            {
+                await WithSqlQueryDispatcher(
+                    dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
+                    {
+                        ProviderId = providerId,
+                        ApprenticeshipQAStatus = apprenticeshipQAStatus.Value
+                    }));
+            }
 
             return providerId;
         }
