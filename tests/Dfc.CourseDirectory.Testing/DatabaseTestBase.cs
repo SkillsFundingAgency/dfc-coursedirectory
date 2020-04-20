@@ -10,11 +10,6 @@ using Xunit.Abstractions;
 
 namespace Dfc.CourseDirectory.Testing
 {
-    [CollectionDefinition("Database")]
-    public class DatabaseCollectionFixture : ICollectionFixture<DatabaseTestBaseFixture>
-    {
-    }
-
     public class DatabaseTestBaseFixture
     {
         public DatabaseTestBaseFixture(IMessageSink messageSink)
@@ -55,7 +50,6 @@ namespace Dfc.CourseDirectory.Testing
             .Build();
     }
 
-    [Collection("Database")]
     [Trait("SkipOnCI", "true")]  // Until we have SQL DB on CI
     public abstract class DatabaseTestBase : IAsyncLifetime
     {
