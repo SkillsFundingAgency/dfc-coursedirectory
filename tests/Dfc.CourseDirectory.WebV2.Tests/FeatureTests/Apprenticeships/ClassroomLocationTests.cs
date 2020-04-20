@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 });
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -215,7 +215,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -251,7 +251,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -293,7 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -352,7 +352,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId),
+                FlowModel.Add(providerId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }

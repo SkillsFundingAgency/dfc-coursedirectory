@@ -29,15 +29,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         private FlowModel() { }
 
         public Mode Mode { get; set; }
+        public bool Cancelable { get; set; }
         public Guid ProviderId { get; set; }
         public Guid? VenueId { get; set; }
         public Guid? OriginalVenueId { get; set; }
         public int? Radius { get; set; }
         public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
 
-        public static FlowModel Add(Guid providerId) => new FlowModel()
+        public static FlowModel Add(Guid providerId, bool cancelable) => new FlowModel()
         {
             Mode = Mode.Add,
+            Cancelable = cancelable,
             ProviderId = providerId
         };
 
@@ -49,6 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             new FlowModel()
             {
                 Mode = Mode.Edit,
+                Cancelable = true,
                 DeliveryModes = deliveryModes,
                 ProviderId = providerId,
                 Radius = radius,
@@ -85,6 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
     public class ViewModel : Command
     {
         public Mode Mode { get; set; }
+        public bool Cancelable { get; set; }
         public IReadOnlyCollection<(Guid venueId, string name, bool blocked)> Venues { get; set; }
     }
 
@@ -205,6 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             new ViewModel()
             {
                 Mode = _flow.State.Mode,
+                Cancelable = _flow.State.Cancelable,
                 Venues = providerVenues
                     .Select(v => (v.Id, v.VenueName, blocked: blockedVenueIds.Contains(v.Id)))
                     .OrderBy(v => v.VenueName)
