@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
 {
     using CommandResponse = OneOf<ModelWithErrors<CommandViewModel>, Success>;
 
-    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
     }
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
             _currentUserProvider = currentUserProvider;
         }
 
-        public ProviderType ProviderType => ProviderType.Apprenticeships;
+        ProviderType IRestrictProviderType<Command>.ProviderType => ProviderType.Apprenticeships;
 
         public async Task<CommandResponse> Handle(
             Command request,
@@ -86,6 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                 notfound => throw new ErrorException<InvalidQASubmission>(new InvalidQASubmission()),
                 success => success);
         }
-    }
 
+        Guid IRestrictProviderType<Command>.GetProviderId(Command request) => request.ProviderId;
+    }
 }

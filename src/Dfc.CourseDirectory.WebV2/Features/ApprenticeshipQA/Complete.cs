@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
     {
     }
 
-    public class Command : IRequest<ViewModel>, IProviderScopedRequest
+    public class Command : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
