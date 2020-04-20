@@ -82,6 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 }
 
                 context.Provider = provider;
+                context.UserInfo.CurrentProviderId = provider.Id;
             }
         }
 
