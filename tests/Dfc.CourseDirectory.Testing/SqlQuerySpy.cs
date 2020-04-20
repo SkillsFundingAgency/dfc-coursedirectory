@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -39,6 +40,8 @@ namespace Dfc.CourseDirectory.Testing
             _inner = inner;
             _spy = sqlQuerySpy;
         }
+
+        public SqlTransaction Transaction => _inner.Transaction;
 
         public Task<T> ExecuteQuery<T>(ISqlQuery<T> query)
         {

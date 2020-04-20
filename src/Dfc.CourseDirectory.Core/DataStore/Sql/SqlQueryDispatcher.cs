@@ -14,15 +14,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             _serviceProvider = serviceProvider;
         }
 
+        public SqlTransaction Transaction => _serviceProvider.GetRequiredService<SqlTransaction>();
+
         public virtual async Task<T> ExecuteQuery<T>(ISqlQuery<T> query)
         {
-            var transaction = _serviceProvider.GetRequiredService<SqlTransaction>();
-
             var handlerType = typeof(ISqlQueryHandler<,>).MakeGenericType(query.GetType(), typeof(T));
             var handler = _serviceProvider.GetRequiredService(handlerType);
 
             // TODO We could make this waaay more efficient
-            var result = await (Task<T>)handlerType.GetMethod("Execute").Invoke(handler, new object[] { transaction, query });
+            var result = await (Task<T>)handlerType.GetMethod("Execute").Invoke(
+                handler,
+                new object[] { Transaction, query });
 
             return result;
         }
