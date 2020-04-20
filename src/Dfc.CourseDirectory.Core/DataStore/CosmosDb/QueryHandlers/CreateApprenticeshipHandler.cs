@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             var apprenticeship = new Apprenticeship()
             {
                 Id = request.Id,
+                ProviderId = request.ProviderId,
                 ProviderUKPRN = request.ProviderUkprn,
                 ApprenticeshipTitle = request.ApprenticeshipTitle,
                 ApprenticeshipType = request.ApprenticeshipType,
