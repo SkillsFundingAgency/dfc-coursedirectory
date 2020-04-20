@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 MERGE Pttcd.Providers AS target
 USING (SELECT @ProviderId ProviderId) AS source
 ON source.ProviderId = target.ProviderId
-WHEN NOT MATCHED THEN INSERT (ProviderId, ApprenticeshipQAStatus) VALUES (source.ProviderId, 0);";
+WHEN NOT MATCHED THEN INSERT (ProviderId, ApprenticeshipQAStatus) VALUES (source.ProviderId, 1);";
 
             var paramz = new { query.ProviderId };
 
