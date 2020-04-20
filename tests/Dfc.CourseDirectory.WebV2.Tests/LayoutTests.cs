@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Your locations", subNavLinks[1].label);
             Assert.Equal("Your courses", subNavLinks[2].label);
             Assert.Equal("Bulk upload", subNavLinks[3].label);
-            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[3].href);
+            Assert.Equal("/BulkUpload", subNavLinks[3].href);
         }
 
         [Theory]
@@ -179,12 +179,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Migration reports", topLevelLinks[3].label);
             Assert.Equal("Sign out", topLevelLinks[4].label);
 
-            Assert.Equal(4, subNavLinks.Count);
+            Assert.Equal(5, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
             Assert.Equal("Your locations", subNavLinks[1].label);
             Assert.Equal("Your apprenticeships training", subNavLinks[2].label);
-            Assert.Equal("Bulk upload", subNavLinks[3].label);
-            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[3].href);
+            Assert.Equal("Your courses", subNavLinks[3].label);
+            Assert.Equal("Bulk upload", subNavLinks[4].label);
+            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[4].href);
         }
 
         [Theory]
@@ -274,13 +275,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-           Assert.Equal(5, topLevelLinks.Count);
+            Assert.Equal(6, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Your locations", topLevelLinks[1].label);
             Assert.Equal("Your apprenticeships training", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[3].href);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Your courses", topLevelLinks[3].label);
+            Assert.Equal("Bulk upload", topLevelLinks[4].label);
+            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[4].href);
+            Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
