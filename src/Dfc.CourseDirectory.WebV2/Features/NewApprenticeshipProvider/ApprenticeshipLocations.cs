@@ -12,12 +12,12 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipLocations
 {
-    public class Query : IRequest<Command>, IProviderScopedRequest
+    public class Query : IRequest<Command>
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>, IProviderScopedRequest
+    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
         public Guid ProviderId { get; set; }
         public ApprenticeshipLocationType? LocationType { get; set; }
@@ -62,6 +62,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
         }
+
+        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) => request.ProviderId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

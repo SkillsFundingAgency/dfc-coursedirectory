@@ -21,7 +21,7 @@ using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
 {
-    public class Query : IRequest<OneOf<ModelWithErrors<ViewModel>, ViewModel>>, IProviderScopedRequest
+    public class Query : IRequest<OneOf<ModelWithErrors<ViewModel>, ViewModel>>
     {
         public Guid ProviderId { get; set; }
     }
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
     }
 
-    public class CompleteCommand : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>, IProviderScopedRequest
+    public class CompleteCommand : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public Guid ProviderId { get; set; }
     }
@@ -275,6 +275,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     ?.ToList()
             };
         }
+
+        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRequireUserCanSubmitQASubmission<CompleteCommand>.GetProviderId(CompleteCommand request) => request.ProviderId;
 
         private void ValidateFlowState()
         {

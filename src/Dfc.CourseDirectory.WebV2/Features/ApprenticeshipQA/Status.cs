@@ -21,12 +21,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 {
     using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public class Query : IRequest<Command>, IProviderScopedRequest
+    public class Query : IRequest<Command>
     {
         public Guid ProviderId { get; set; }
     }
     
-    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
         public bool UnableToComplete { get; set; }

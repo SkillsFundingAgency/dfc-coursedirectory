@@ -22,12 +22,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 {
     using CommandResponse = OneOf<ModelWithErrors<ViewModel>, Success>;
 
-    public class Query : IRequest<ViewModel>, IProviderScopedRequest
+    public class Query : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
         public string MarketingInformation { get; set; }
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         public string CourseDirectoryName { get; set; }
     }
 
-    public class ConfirmationQuery : IRequest<ConfirmationViewModel>, IProviderScopedRequest
+    public class ConfirmationQuery : IRequest<ConfirmationViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         public string MarketingInformation { get; set; }
     }
 
-    public class ConfirmationCommand : IRequest<Success>, IProviderScopedRequest
+    public class ConfirmationCommand : IRequest<Success>
     {
         public Guid ProviderId { get; set; }
     }
@@ -172,6 +172,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 CourseDirectoryName = GetCourseDirectoryName(provider)
             };
         }
+
+        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) => request.ProviderId;
+
+        Guid IRequireUserCanSubmitQASubmission<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => request.ProviderId;
+
+        Guid IRequireUserCanSubmitQASubmission<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => request.ProviderId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

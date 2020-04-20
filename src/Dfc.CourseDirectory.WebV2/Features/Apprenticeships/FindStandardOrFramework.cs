@@ -15,12 +15,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
 {
     using QueryResponse = OneOf<ModelWithErrors<ViewModel>, ViewModel>;
 
-    public class Query : IRequest<ViewModel>, IProviderScopedRequest
+    public class Query : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class SearchQuery : IRequest<QueryResponse>, IProviderScopedRequest
+    public class SearchQuery : IRequest<QueryResponse>
     {
         public Guid ProviderId { get; set; }
         public string Search { get; set; }
@@ -105,6 +105,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
                     .ToList()
             };
         }
+
+        Guid IRestrictProviderType<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRestrictProviderType<SearchQuery>.GetProviderId(SearchQuery request) => request.ProviderId;
 
         private class QueryValidator : AbstractValidator<SearchQuery>
         {

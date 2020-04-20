@@ -11,17 +11,19 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
     public class RequireUserCanSubmitQASubmissionBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : IProviderScopedRequest
     {
+        private readonly IRequireUserCanSubmitQASubmission<TRequest> _descriptor;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderInfoCache _providerInfoCache;
 
         public RequireUserCanSubmitQASubmissionBehavior(
+            IRequireUserCanSubmitQASubmission<TRequest> descriptor,
             ICurrentUserProvider currentUserProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderInfoCache providerInfoCache)
         {
+            _descriptor = descriptor;
             _currentUserProvider = currentUserProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerInfoCache = providerInfoCache;
@@ -32,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var providerId = request.ProviderId;
+            var providerId = _descriptor.GetProviderId(request);
             var currentUser = _currentUserProvider.GetCurrentUser();
 
             if (!AuthorizationRules.CanSubmitQASubmission(currentUser, providerId))

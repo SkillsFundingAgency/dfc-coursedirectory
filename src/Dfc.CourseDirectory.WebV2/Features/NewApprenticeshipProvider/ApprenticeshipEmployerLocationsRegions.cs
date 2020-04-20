@@ -17,12 +17,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 {
     using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public class Query : IRequest<Command>, IProviderScopedRequest
+    public class Query : IRequest<Command>
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
         public IReadOnlyCollection<string> RegionIds { get; set; }
@@ -70,6 +70,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
         }
+
+        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) => request.ProviderId;
 
         private void ValidateFlowState()
         {
