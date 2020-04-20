@@ -4,11 +4,11 @@ using Query = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.EnsureProviderExist
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class EnsureProviderExists : ISignInAction
+    public class EnsureProviderExistsSignInAction : ISignInAction
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public EnsureProviderExists(ISqlQueryDispatcher sqlQueryDispatcher)
+        public EnsureProviderExistsSignInAction(ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }

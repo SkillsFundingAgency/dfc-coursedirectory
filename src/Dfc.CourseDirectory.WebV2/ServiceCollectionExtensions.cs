@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2
             
             // SignInActions - order here is the order they're executed in
             services.AddTransient<ISignInAction, DfeUserInfoHelper>();
-            services.AddTransient<ISignInAction, EnsureProviderExists>();
+            services.AddTransient<ISignInAction, EnsureProviderExistsSignInAction>();
             services.AddTransient<ISignInAction, SignInTracker>();
             services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
             services.AddTransient<ISignInAction, SyncUserProviderSignInAction>();
