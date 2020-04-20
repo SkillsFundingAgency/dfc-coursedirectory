@@ -62,6 +62,10 @@
     {
         <govuk-button asp-action="RemoveClassroomLocation" append-mptx-id class="govuk-button--secondary">Remove</govuk-button>
     }
+    else if (Model.Mode == Mode.Add)
+    {
+        <govuk-button type="submit" class="govuk-button--secondary" name="Action" value="AddAnother">Add another</govuk-button>
+    }
 
     <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary">Cancel</govuk-button>
 </form>

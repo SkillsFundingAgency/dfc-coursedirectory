@@ -30,13 +30,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
         [HttpPost("classroom-location")]
         public async Task<IActionResult> ClassroomLocation(
             ClassroomLocation.Command command,
-            [FromServices] MptxInstanceContext<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback> flow)
+            [FromForm(Name = "Action")] string action,
+            [FromServices] MptxInstanceContext<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback> flow,
+            [FromServices] MptxManager mptxManager)
         {
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors).WithViewData("CompletionUrl", flow.Items["ReturnUrl"]),
-                    success => Redirect(flow.Items["ReturnUrl"].ToString())));
+                    success =>
+                    {
+                        if (action == "AddAnother")
+                        {
+                            // Create a sibling flow to this one
+                            var addAnotherInstance = mptxManager.CreateInstance<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback>(
+                                flow.ParentInstanceId,
+                                Apprenticeships.ClassroomLocation.FlowModel.Add(flow.State.ProviderId),
+                                flow.Items);
+                            return RedirectToAction(nameof(ClassroomLocation))
+                                .WithMptxInstanceId(addAnotherInstance);
+                        }
+                        else
+                        {
+                            return Redirect(flow.Items["ReturnUrl"].ToString());
+                        }
+                    }));
         }
 
         [HttpGet("find-standard")]
