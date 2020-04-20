@@ -22,7 +22,8 @@ namespace Dfc.CourseDirectory.WebV2.Security
             _sqlQueryDispatcher.ExecuteQuery(new CreateUserSignIn()
             {
                 User = userInfo,
-                SignedInUtc = _clock.UtcNow
+                SignedInUtc = _clock.UtcNow,
+                CurrentProviderId = userInfo.CurrentProviderId
             });
 
         Task ISignInAction.OnUserSignedIn(SignInContext context) => RecordSignIn(context.UserInfo);
