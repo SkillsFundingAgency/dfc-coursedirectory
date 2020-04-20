@@ -36,7 +36,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         {
             var childFlow = mptxManager.CreateInstance<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback>(
                 Flow.InstanceId,
-                ClassroomLocation.FlowModel.Add(ProviderContext.ProviderId),
+                ClassroomLocation.FlowModel.Add(
+                    ProviderContext.ProviderId,
+                    cancelable: (Flow.State.ApprenticeshipClassroomLocations?.Count ?? 0) > 0),
                 contextItems: new Dictionary<string, object>()
                 {
                     {
