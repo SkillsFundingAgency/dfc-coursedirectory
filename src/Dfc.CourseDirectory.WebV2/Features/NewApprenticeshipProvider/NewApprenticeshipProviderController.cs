@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             command.ProviderId = providerInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
-                success => RedirectToAction(
+                success => Flow.State.ApprenticeshipId.HasValue ? RedirectToAction(nameof(ApprenticeshipSummary)).WithProviderContext(providerInfo).WithMptxInstanceId(Flow) : RedirectToAction(
                     "FindStandardOrFramework",
                     "Apprenticeships",
                     new
@@ -232,6 +232,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                             .WithProviderContext(providerInfo)
                             .WithMptxInstanceId(Flow)
                     }));
+
         }
 
         [HttpPost("hide-passed-notification")]

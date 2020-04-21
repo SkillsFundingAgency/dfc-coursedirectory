@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -513,7 +514,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            CosmosDbQueryDispatcher.
+                Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -579,6 +581,86 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
+                q.ApprenticeshipLocations.Any(l =>
+                    l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased &&
+                    l.DeliveryModes == (ApprenticeshipDeliveryModes.BlockRelease | ApprenticeshipDeliveryModes.EmployerAddress) &&
+                    l.National == false &&
+                    l.Radius == 5 &&
+                    l.VenueId == venueId) &&
+                q.ApprenticeshipLocations.Any(l =>
+                    l.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
+                    l.DeliveryModes == ApprenticeshipDeliveryModes.EmployerAddress &&
+                    l.National == false &&
+                    l.VenueId == null &&
+                    l.Regions.Contains("E06000001") &&
+                    l.Regions.Contains("E10000009")))));
+        }
+
+        [Fact]
+        public async Task PostConfirmation_ValidRequestWithRegionsAndVenue_UpdatesExistingApprenticeship()
+        {
+            // Arrange
+            var ukprn = 12347;
+            var adminUserId = $"admin-user";
+            var contactTelephone = "1111 111 1111";
+            var contactWebsite = "https://somerandomprovider.com";
+            var marketingInfo = "Providing Online training";
+            var regions = new List<string> { "123" };
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Failed);
+
+            var providerUserId = $"{ukprn}-user";
+            var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+                standard,
+                createdBy: user,
+                contactEmail: adminUser.Email,
+                contactTelephone: contactTelephone,
+                contactWebsite: contactWebsite,
+                marketingInformation: marketingInfo,
+                Locations: () => new List<CreateApprenticeshipLocation> {
+                    CreateApprenticeshipLocation.CreateRegions(regions)
+                });
+
+            var venueId = await TestData.CreateVenue(providerId);
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var flowModel = new FlowModel();
+            flowModel.ApprenticeshipId = apprenticeshipId;
+            flowModel.SetProviderDetails("Provider 1 rocks");
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipDetails(
+                marketingInformation: "My apprenticeship",
+                website: "http://provider.com/apprenticeship",
+                contactTelephone: "01234 5678902",
+                contactEmail: "guy@provider.com",
+                contactWebsite: "http://provider.com");
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased);
+            flowModel.SetApprenticeshipLocationRegionIds(new[]
+            {
+                "E06000001",  // County Durham
+                "E10000009" // Dorset
+            });
+            flowModel.AddClassroomLocation(venueId, national: false, radius: 5, deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+            var mptxInstance = CreateMptxInstance(flowModel);
+            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/apprenticeship-confirmation?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<UpdateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased &&
                     l.DeliveryModes == (ApprenticeshipDeliveryModes.BlockRelease | ApprenticeshipDeliveryModes.EmployerAddress) &&

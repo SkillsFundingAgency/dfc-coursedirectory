@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -44,7 +46,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             services.AddSqlDataStore(connectionString);
             DatabaseFixture.ConfigureServices(services);
-
             return services.BuildServiceProvider();
         }
 
@@ -77,5 +78,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected Task<TResult> WithSqlQueryDispatcher<TResult>(
             Func<ISqlQueryDispatcher, Task<TResult>> action) =>
             Fixture.DatabaseFixture.WithSqlQueryDispatcher(action);
+
+        protected TestData TestData => Services.GetRequiredService<TestData>();
+
     }
 }

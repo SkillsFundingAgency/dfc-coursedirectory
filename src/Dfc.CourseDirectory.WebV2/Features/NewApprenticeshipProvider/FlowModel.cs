@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
+        public Guid? ApprenticeshipId { get; set; }
 
         public bool IsValid => GotProviderDetails &&
             ApprenticeshipStandardOrFramework != null &&
