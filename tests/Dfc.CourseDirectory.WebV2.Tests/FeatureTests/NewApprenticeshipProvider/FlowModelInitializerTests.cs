@@ -1,10 +1,8 @@
 ﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
 using Dfc.CourseDirectory.WebV2.Models;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;

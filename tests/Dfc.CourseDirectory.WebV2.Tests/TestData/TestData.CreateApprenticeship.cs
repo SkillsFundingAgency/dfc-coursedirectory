@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
-using System.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {

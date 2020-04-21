@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
+﻿using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
