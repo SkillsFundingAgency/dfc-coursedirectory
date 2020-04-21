@@ -1,14 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Validation;
-using System.Linq;
-using static Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.FlowModel;
 using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.WebV2.Validation;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -96,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     if (model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased) || model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
                     {
                         var locations = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType.HasFlag(ApprenticeshipLocationType.ClassroomBased));
-                        model.ApprenticeshipClassroomLocations = locations.ToDictionary(x => x.Id, y => new ClassroomLocation()
+                        model.ApprenticeshipClassroomLocations = locations.ToDictionary(x => x.Id, y => new FlowModel.ClassroomLocation()
                         {
                             VenueId = y.VenueId ?? Guid.Empty,
                             National = y.National ?? false,
