@@ -43,8 +43,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class ViewModelEmployerBasedLocationRegion
     {
-        public string RegionId { get; set; }
         public string Name { get; set; }
+        public IReadOnlyCollection<string> SubRegionNames { get; set; }
     }
 
     public class ViewModelClassroomBasedLocation
@@ -254,15 +254,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
                 ApprenticeshipLocationType = _flow.State.ApprenticeshipLocationType.Value,
                 ApprenticeshipIsNational = _flow.State.ApprenticeshipIsNational,
-                EmployerBasedLocationRegions = _flow.State?.ApprenticeshipLocationSubRegionIds
-                    ?.Select(id => new ViewModelEmployerBasedLocationRegion()
-                    {
-                        RegionId = id,
-                        Name = Region.All.SelectMany(r => r.SubRegions).Single(sr => sr.Id == id).Name
-                    })
-                    ?.OrderBy(l => l.Name)
-                    ?.ToList(),
-                ClassroomBasedLocations = _flow.State?.ApprenticeshipClassroomLocations
+                EmployerBasedLocationRegions = _flow.State.ApprenticeshipLocationSubRegionIds != null ?
+                    GroupSubRegions() : null,
+                ClassroomBasedLocations = _flow.State.ApprenticeshipClassroomLocations
                     ?.Values
                     ?.Select(l => new ViewModelClassroomBasedLocation()
                     {
@@ -274,6 +268,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     ?.OrderBy(l => l.VenueName)
                     ?.ToList()
             };
+
+            IReadOnlyCollection<ViewModelEmployerBasedLocationRegion> GroupSubRegions() => Region.All
+                .SelectMany(r => r.SubRegions.Select(sr => new { SubRegion = sr, Region = r }))
+                .Where(r => _flow.State.ApprenticeshipLocationSubRegionIds.Contains(r.SubRegion.Id))
+                .GroupBy(x => x.Region)
+                .Select(g => new ViewModelEmployerBasedLocationRegion()
+                {
+                    Name = g.Key.Name,
+                    SubRegionNames = g.Select(sr => sr.SubRegion.Name).OrderBy(sr => sr).ToList()
+                })
+                .OrderBy(g => g.Name)
+                .ToList();
         }
 
         Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;

@@ -1,0 +1,8 @@
+﻿.pttcd-new-apprenticeship-provider__apprenticeship-summary__region {
+    margin: 0;
+}
+
+.pttcd-new-apprenticeship-provider__apprenticeship-summary__region li {
+    display: inline-block;
+    width: 33%;
+}
