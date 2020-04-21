@@ -137,27 +137,55 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var apprenticeshipId = Guid.NewGuid();
             var providerUkprn = provider.Ukprn;
 
-            // Create apprenticeship
-            await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new CreateApprenticeship()
-                {
-                    ApprenticeshipLocations = await CreateLocations(providerUkprn),
-                    ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
-                    ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
-                        ApprenticeshipType.StandardCode :
-                        ApprenticeshipType.FrameworkCode,
-                    ContactEmail = _flow.State.ApprenticeshipContactEmail,
-                    ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
-                    ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
-                    CreatedByUser = currentUser,
-                    CreatedDate = _clock.UtcNow,
-                    Id = apprenticeshipId,
-                    MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                    ProviderId = request.ProviderId,
-                    ProviderUkprn = providerUkprn,
-                    StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
-                    Url = _flow.State.ApprenticeshipWebsite
-                });
+
+            if (_flow.State.ApprenticeshipId.HasValue)
+            {
+                //update existing apprenticeship
+                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new UpdateApprenticeship()
+                    {
+                        ApprenticeshipLocations = await CreateLocations(providerUkprn),
+                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
+                        ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
+                            ApprenticeshipType.StandardCode :
+                            ApprenticeshipType.FrameworkCode,
+                        ContactEmail = _flow.State.ApprenticeshipContactEmail,
+                        ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
+                        ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
+                        CreatedByUser = currentUser,
+                        CreatedDate = _clock.UtcNow,
+                        Id = _flow.State.ApprenticeshipId.Value,
+                        MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
+                        ProviderId = request.ProviderId,
+                        ProviderUkprn = providerUkprn,
+                        StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
+                        Url = _flow.State.ApprenticeshipWebsite
+                    });
+            }
+            else
+            {
+                // Create apprenticeship
+                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new CreateApprenticeship()
+                    {
+                        ApprenticeshipLocations = await CreateLocations(providerUkprn),
+                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
+                        ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
+                            ApprenticeshipType.StandardCode :
+                            ApprenticeshipType.FrameworkCode,
+                        ContactEmail = _flow.State.ApprenticeshipContactEmail,
+                        ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
+                        ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
+                        CreatedByUser = currentUser,
+                        CreatedDate = _clock.UtcNow,
+                        Id = apprenticeshipId,
+                        MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
+                        ProviderId = request.ProviderId,
+                        ProviderUkprn = providerUkprn,
+                        StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
+                        Url = _flow.State.ApprenticeshipWebsite
+                    });
+            }
 
             // Create QA submission
             await _sqlQueryDispatcher.ExecuteQuery(
@@ -233,6 +261,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
                 return locations;
             }
+
         }
 
         private async Task<ViewModel> CreateViewModel(ProviderInfo provider)

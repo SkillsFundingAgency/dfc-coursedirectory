@@ -24,6 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
+        public Guid? ApprenticeshipId { get; set; }
 
         IReadOnlyCollection<Guid> ClassroomLocation.IFlowModelCallback.BlockedVenueIds =>
             ApprenticeshipClassroomLocations?.Keys;
