@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -18,7 +19,7 @@ namespace Dfc.CourseDirectory.Testing
             string contactEmail = "admin@provider.com",
             string contactWebsite = "http://provider.com",
             DateTime? createdUtc = null,
-            Func<IEnumerable<CreateApprenticeshipLocation>> Locations =null)
+            IEnumerable<CreateApprenticeshipLocation> locations =null)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
@@ -31,10 +32,6 @@ namespace Dfc.CourseDirectory.Testing
             }
 
             var apprenticeshipId = Guid.NewGuid();
-            var locations = Locations != null ? Locations.Invoke() : new CreateApprenticeshipLocation[]
-                {
-                    CreateApprenticeshipLocation.CreateNational()
-                };
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateApprenticeship()
             {
@@ -51,7 +48,7 @@ namespace Dfc.CourseDirectory.Testing
                 ContactTelephone = contactTelephone,
                 ContactEmail = contactEmail,
                 ContactWebsite = contactWebsite,
-                ApprenticeshipLocations = locations,
+                ApprenticeshipLocations = locations ?? new List<CreateApprenticeshipLocation> { CreateApprenticeshipLocation.CreateNational() },
                 CreatedDate = createdUtc ?? _clock.UtcNow,
                 CreatedByUser = createdBy
             });

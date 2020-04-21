@@ -287,15 +287,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             command.ProviderId = providerInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
-                success => Flow.State.ApprenticeshipId.HasValue ? RedirectToAction(nameof(ApprenticeshipSummary)).WithProviderContext(providerInfo).WithMptxInstanceId(Flow) : RedirectToAction(
-                    "FindStandardOrFramework",
-                    "Apprenticeships",
-                    new
-                    {
-                        returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
-                            .WithProviderContext(providerInfo)
-                            .WithMptxInstanceId(Flow)
-                    }));
+                success => Flow.State.ApprenticeshipId.HasValue ?
+                    RedirectToAction(nameof(ApprenticeshipSummary))
+                        .WithProviderContext(providerInfo)
+                        .WithMptxInstanceId(Flow) :
+                    RedirectToAction(
+                        "FindStandardOrFramework",
+                        "Apprenticeships",
+                        new
+                        {
+                            returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
+                                .WithProviderContext(providerInfo)
+                                .WithMptxInstanceId(Flow)
+                        }));
 
         }
 

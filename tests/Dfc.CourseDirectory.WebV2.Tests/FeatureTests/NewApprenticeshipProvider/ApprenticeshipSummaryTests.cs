@@ -702,7 +702,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
-                Locations: () => new List<CreateApprenticeshipLocation> {
+                locations: new List<CreateApprenticeshipLocation> {
                                 CreateApprenticeshipLocation.CreateRegions(regions)
                 });
             var venueId = await TestData.CreateVenue(providerId);
