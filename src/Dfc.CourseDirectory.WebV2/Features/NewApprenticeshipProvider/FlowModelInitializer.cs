@@ -8,6 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -92,18 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     model.ApprenticeshipIsNational = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(x => x.National == true);
                     model.ApprenticeshipLocationSubRegionIds = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations?.SelectMany(x => x.Regions ?? new List<string>())?.ToList();
 
-                    if (model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased) || model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
-                    {
-                        var locations = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType.HasFlag(ApprenticeshipLocationType.ClassroomBased));
-                        model.ApprenticeshipClassroomLocations = locations.ToDictionary(x => x.Id, y => new FlowModel.ClassroomLocationEntry()
-                        {
-                            VenueId = y.VenueId ?? Guid.Empty,
-                            Radius = y.Radius ?? 0,
-                            DeliveryModes = (ApprenticeshipDeliveryModes)y.DeliveryModes.Sum(x => x)
-                        });
-                    }
-                }
-            }
+            var model = new FlowModel();
 
             if (!string.IsNullOrEmpty(provider.MarketingInformation))
             {

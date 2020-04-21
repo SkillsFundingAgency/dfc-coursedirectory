@@ -595,8 +595,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.
-                Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
