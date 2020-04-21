@@ -90,7 +90,15 @@
                 @foreach (var region in Model.EmployerBasedLocationRegions)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@region.Name</td>
+                        <td class="govuk-table__cell">
+                            <h6 class="govuk-heading-s">@region.Name</h6>
+                            <ul class="govuk-list pttcd-new-apprenticeship-provider__apprenticeship-summary__region">
+                                @foreach (var sr in region.SubRegionNames)
+                                {
+                                    <li>@sr</li>
+                                }
+                            </ul>
+                        </td>
                     </tr>
                 }
             }
