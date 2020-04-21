@@ -1,4 +1,6 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
+﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents.Client;
 using OneOf.Types;

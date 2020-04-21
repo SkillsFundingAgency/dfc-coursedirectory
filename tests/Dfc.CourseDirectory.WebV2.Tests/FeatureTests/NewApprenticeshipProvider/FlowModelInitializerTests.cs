@@ -1,8 +1,8 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
-using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
     public class FlowModelInitializerTests : DatabaseTestBase
     {
-        public FlowModelInitializerTests(DatabaseTestBaseFixture factory) : base(factory)
+        public FlowModelInitializerTests(Testing.DatabaseTestBaseFixture factory) : base(factory)
         {
         }
 
@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             var mockCache = new Mock<IStandardsAndFrameworksCache>();
-            var stan = new Models.Standard() { CosmosId = Guid.NewGuid(), NotionalNVQLevelv2="Level 2", OtherBodyApprovalRequired=true, StandardCode=1, StandardName="test", Version=1 };
+            var stan = new Core.Models.Standard { CosmosId = Guid.NewGuid(), NotionalNVQLevelv2 = "Level 2", OtherBodyApprovalRequired=true, StandardCode=1, StandardName="test", Version=1 };
             mockCache.Setup(w => w.GetStandard(It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(stan));
 
             var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, sqlDispatcher, mockCache.Object);
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(ApprenticeshipLocationType.EmployerBased, model.ApprenticeshipLocationType);
             Assert.Equal(marketingInfo, model.ApprenticeshipMarketingInformation);
             Assert.Null(model.ApprenticeshipClassroomLocations);
-            Assert.Collection(model.ApprenticeshipLocationRegionIds,
+            Assert.Collection(model.ApprenticeshipLocationSubRegionIds,
                 item1 =>
                 {
                     Assert.Equal(item1, regions.First());
@@ -148,7 +148,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(ApprenticeshipLocationType.EmployerBased, model.ApprenticeshipLocationType);
             Assert.Equal(marketingInfo, model.ApprenticeshipMarketingInformation);
             Assert.Null(model.ApprenticeshipClassroomLocations);
-            Assert.Collection(model.ApprenticeshipLocationRegionIds,
+            Assert.Collection(model.ApprenticeshipLocationSubRegionIds,
                 item1 =>
             {
                 Assert.Equal(item1, regions.First());
@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Null(model.ApprenticeshipLocationType);
             Assert.Null(model.ApprenticeshipMarketingInformation);
             Assert.Null(model.ApprenticeshipClassroomLocations);
-            Assert.Null(model.ApprenticeshipLocationRegionIds);
+            Assert.Null(model.ApprenticeshipLocationSubRegionIds);
             Assert.Null(model.ApprenticeshipWebsite);
         }
 
@@ -269,8 +269,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var venueId = Guid.NewGuid();
             var radius = 10;
             var deliveryMode = ApprenticeshipDeliveryModes.BlockRelease;
-            var isNational = true;
-
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: "Provider 1",
@@ -290,7 +288,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 marketingInformation: marketingInfo,
                 Locations: () => new List<CreateApprenticeshipLocation> {
                     CreateApprenticeshipLocation.CreateNational(),
-                    CreateApprenticeshipLocation.CreateFromVenue(new Venue { Id=venueId, VenueName="test" }, isNational, radius, deliveryMode, ApprenticeshipLocationType.ClassroomBased)
+                    CreateApprenticeshipLocation.CreateFromVenue(new Venue { Id=venueId, VenueName="test" }, radius, deliveryMode, ApprenticeshipLocationType.ClassroomBased)
                 }); 
 
             // Create submission
@@ -317,14 +315,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.True(model.ApprenticeshipIsNational);
             Assert.Equal(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, model.ApprenticeshipLocationType);
             Assert.Equal(marketingInfo, model.ApprenticeshipMarketingInformation);
-            Assert.Collection<FlowModel.ClassroomLocation>(new List<FlowModel.ClassroomLocation>(model.ApprenticeshipClassroomLocations.Values),
-                location =>
-                {
-                    Assert.Equal(venueId, location.VenueId);
-                    Assert.Equal(isNational ,location.National);
-                    Assert.Equal(radius, location.Radius);
-                    Assert.Equal(deliveryMode, location.DeliveryModes);
-                });
+            Assert.Collection<FlowModel.ClassroomLocationEntry>(new List<FlowModel.ClassroomLocationEntry>(model.ApprenticeshipClassroomLocations.Values),
+            location =>
+            {
+                Assert.Equal(venueId, location.VenueId);
+                Assert.Equal(radius, location.Radius);
+                Assert.Equal(deliveryMode, location.DeliveryModes);
+            });
             Assert.Equal(contactWebsite, model.ApprenticeshipWebsite);
             Assert.True(model.ApprenticeshipStandardOrFramework.IsFramework);
             Assert.False(model.ApprenticeshipStandardOrFramework.IsStandard);

@@ -8,10 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -57,10 +53,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     Standard standard = default;
                     Framework framework = default;
 
-                    if(cosmosApprenticeship[apprenticeshipId].StandardCode.HasValue)
+                    if (cosmosApprenticeship[apprenticeshipId].StandardCode.HasValue)
                         standard = await _iStandardandFromworkCache.GetStandard(cosmosApprenticeship[apprenticeshipId].StandardCode.Value, cosmosApprenticeship[apprenticeshipId].Version.Value);
-                    
-                    if(cosmosApprenticeship[apprenticeshipId].FrameworkCode.HasValue)
+
+                    if (cosmosApprenticeship[apprenticeshipId].FrameworkCode.HasValue)
                         framework = await _iStandardandFromworkCache.GetFramework(cosmosApprenticeship[apprenticeshipId].FrameworkCode.Value, cosmosApprenticeship[apprenticeshipId].ProgType.Value, cosmosApprenticeship[apprenticeshipId].PathwayCode.Value);
 
                     model.ApprenticeshipWebsite = cosmosApprenticeship[apprenticeshipId].ContactWebsite;
@@ -90,14 +86,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     model.ApprenticeshipContactTelephone = cosmosApprenticeship[apprenticeshipId].ContactTelephone;
                     model.ApprenticeshipContactEmail = cosmosApprenticeship[apprenticeshipId].ContactEmail;
                     model.ApprenticeshipContactWebsite = cosmosApprenticeship[apprenticeshipId].ContactWebsite;
-                    model.ApprenticeshipLocationType = 
+                    model.ApprenticeshipLocationType =
                         ((cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(l => l.VenueId.HasValue) ? ApprenticeshipLocationType.ClassroomBased : 0) |
                         (cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(l => l.National == true || (l.Regions?.Count() ?? 0) > 0) ? ApprenticeshipLocationType.EmployerBased : 0));
                     model.ApprenticeshipIsNational = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(x => x.National == true);
                     model.ApprenticeshipLocationSubRegionIds = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations?.SelectMany(x => x.Regions ?? new List<string>())?.ToList();
-
-            var model = new FlowModel();
-
+                    
+                    if (model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased) || model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
+                    {
+                        var locations = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType.HasFlag(ApprenticeshipLocationType.ClassroomBased));
+                        model.ApprenticeshipClassroomLocations = locations.ToDictionary(x => x.Id, y => new FlowModel.ClassroomLocationEntry()
+                        {
+                            VenueId = y.VenueId ?? Guid.Empty,
+                            Radius = y.Radius ?? 0,
+                            DeliveryModes = (ApprenticeshipDeliveryModes)y.DeliveryModes.Sum(x => x)
+                        });
+                    }
+                }
+            }
             if (!string.IsNullOrEmpty(provider.MarketingInformation))
             {
                 model.SetProviderDetails(Html.SanitizeHtml(provider.MarketingInformation));
@@ -105,5 +111,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
             return model;
         }
+
     }
 }
