@@ -1,9 +1,9 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
-using Dfc.CourseDirectory.WebV2.Validation;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,16 +90,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                         ((cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(l => l.VenueId.HasValue) ? ApprenticeshipLocationType.ClassroomBased : 0) |
                         (cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(l => l.National == true || (l.Regions?.Count() ?? 0) > 0) ? ApprenticeshipLocationType.EmployerBased : 0));
                     model.ApprenticeshipIsNational = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Any(x => x.National == true);
-                    model.ApprenticeshipLocationRegionIds = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations?.SelectMany(x => x.Regions ?? new List<string>())?.ToList();
+                    model.ApprenticeshipLocationSubRegionIds = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations?.SelectMany(x => x.Regions ?? new List<string>())?.ToList();
 
                     if (model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased) || model.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
                     {
                         var locations = cosmosApprenticeship[apprenticeshipId].ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType.HasFlag(ApprenticeshipLocationType.ClassroomBased));
-                        model.ApprenticeshipClassroomLocations = locations.ToDictionary(x => x.Id, y => new FlowModel.ClassroomLocation()
+                        model.ApprenticeshipClassroomLocations = locations.ToDictionary(x => x.Id, y => new FlowModel.ClassroomLocationEntry()
                         {
                             VenueId = y.VenueId ?? Guid.Empty,
-                            National = y.National ?? false,
-                            Radius = y.Radius,
+                            Radius = y.Radius ?? 0,
                             DeliveryModes = (ApprenticeshipDeliveryModes)y.DeliveryModes.Sum(x => x)
                         });
                     }

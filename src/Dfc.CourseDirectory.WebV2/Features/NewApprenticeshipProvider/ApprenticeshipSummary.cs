@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+﻿using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
 {

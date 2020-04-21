@@ -1,26 +1,17 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Microsoft.Azure.Documents.Client;
+﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using OneOf.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
+namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
     public class UpdateApprenticeshipHandler : ICosmosDbQueryHandler<UpdateApprenticeship, Success>
     {
-        public async Task<Success> Execute(
-            DocumentClient client,
-            Configuration configuration,
-            UpdateApprenticeship request)
+        public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, UpdateApprenticeship request)
         {
-            var documentUri = UriFactory.CreateDocumentUri(
-                configuration.DatabaseId,
-                configuration.ApprenticeshipCollectionName,
-                request.Id.ToString());
-            
             var apprenticeship = new Apprenticeship()
             {
                 Id = request.Id,
@@ -78,8 +69,10 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
                     apprenticeship.PathwayCode = framework.PathwayCode;
                 });
 
-            await client.ReplaceDocumentAsync(documentUri, apprenticeship);
+
+            inMemoryDocumentStore.Apprenticeships.Save(apprenticeship);
             return new Success();
         }
+
     }
 }

@@ -1,5 +1,5 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

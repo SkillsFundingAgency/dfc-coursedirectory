@@ -1,11 +1,9 @@
-﻿
-
-using Dfc.CourseDirectory.WebV2.Models;
+﻿using Dfc.CourseDirectory.Core.Models;
 using OneOf.Types;
 using System;
 using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
+namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 {
     public class UpdateApprenticeship : ICosmosDbQuery<Success>
     {
