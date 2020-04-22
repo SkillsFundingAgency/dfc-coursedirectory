@@ -1,7 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -16,7 +18,8 @@ namespace Dfc.CourseDirectory.Testing
             string contactTelephone = "01234 567890",
             string contactEmail = "admin@provider.com",
             string contactWebsite = "http://provider.com",
-            DateTime? createdUtc = null)
+            DateTime? createdUtc = null,
+            IEnumerable<CreateApprenticeshipLocation> locations =null)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
@@ -45,10 +48,7 @@ namespace Dfc.CourseDirectory.Testing
                 ContactTelephone = contactTelephone,
                 ContactEmail = contactEmail,
                 ContactWebsite = contactWebsite,
-                ApprenticeshipLocations = new CreateApprenticeshipLocation[]
-                {
-                    CreateApprenticeshipLocation.CreateNational()
-                },
+                ApprenticeshipLocations = locations ?? new List<CreateApprenticeshipLocation> { CreateApprenticeshipLocation.CreateNational() },
                 CreatedDate = createdUtc ?? _clock.UtcNow,
                 CreatedByUser = createdBy
             });
