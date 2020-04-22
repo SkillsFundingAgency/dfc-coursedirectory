@@ -291,16 +291,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     RedirectToAction(nameof(ApprenticeshipSummary))
                         .WithProviderContext(providerInfo)
                         .WithMptxInstanceId(Flow) :
-                    RedirectToAction(
-                        "FindStandardOrFramework",
-                        "Apprenticeships",
-                        new
-                        {
-                            returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
-                                .WithProviderContext(providerInfo)
-                                .WithMptxInstanceId(Flow)
-                        }));
-
+                    RedirectToAction(nameof(FindStandardOrFramework))
+                        .WithProviderContext(providerInfo)
+                        .WithMptxInstanceId(Flow));
         }
 
         [HttpPost("hide-passed-notification")]
