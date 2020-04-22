@@ -505,7 +505,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.Equal(
-                "/apprenticeships/find-standard",
+                "/new-apprenticeship-provider/find-standard",
                 UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
     }
