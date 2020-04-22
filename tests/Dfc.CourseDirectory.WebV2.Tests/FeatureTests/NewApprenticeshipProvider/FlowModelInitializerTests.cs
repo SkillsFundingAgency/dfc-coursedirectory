@@ -30,6 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
+            var contactEmail = "somecontact@nonexistentprovider.com";
 
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
@@ -44,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
                 standard,
                 createdBy: user,
-                contactEmail: adminUser.Email,
+                contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
@@ -72,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var model = await initializer.Initialize(providerId);
 
                 //assert
-                Assert.Equal(adminUser.Email, model.ApprenticeshipContactEmail);
+                Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
                 Assert.Equal(apprenticeshipId, model.ApprenticeshipId);
@@ -104,6 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
+            var contactEmail = "somecontact@nonexistentprovider.com";
 
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
@@ -118,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
-                contactEmail: adminUser.Email,
+                contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
@@ -146,7 +148,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var model = await initializer.Initialize(providerId);
 
                 //assert
-                Assert.Equal(adminUser.Email, model.ApprenticeshipContactEmail);
+                Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
                 Assert.Equal(apprenticeshipId, model.ApprenticeshipId);
@@ -176,6 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
+            var contactEmail = "somecontact@nonexistentprovider.com";
 
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
@@ -190,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
-                contactEmail: adminUser.Email,
+                contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
@@ -217,7 +220,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var model = await initializer.Initialize(providerId);
 
                 //assert
-                Assert.Equal(adminUser.Email, model.ApprenticeshipContactEmail);
+                Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
                 Assert.Equal(apprenticeshipId, model.ApprenticeshipId);
@@ -278,6 +281,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
             var venueId = Guid.NewGuid();
+            var contactEmail = "somecontact@nonexistentprovider.com";
             var radius = 10;
             var deliveryMode = ApprenticeshipDeliveryModes.BlockRelease;
             var providerId = await TestData.CreateProvider(
@@ -293,7 +297,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
-                contactEmail: adminUser.Email,
+                contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
@@ -322,7 +326,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var model = await initializer.Initialize(providerId);
 
                 //assert
-                Assert.Equal(adminUser.Email, model.ApprenticeshipContactEmail);
+                Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
                 Assert.Equal(apprenticeshipId, model.ApprenticeshipId);
@@ -353,6 +357,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var contactTelephone = "1111 111 1111";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
+            var contactEmail = "somecontact@nonexistentprovider.com";
 
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
@@ -367,7 +372,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
-                contactEmail: adminUser.Email,
+                contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
@@ -396,7 +401,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var model = await initializer.Initialize(providerId);
 
                 //assert
-                Assert.Equal(adminUser.Email, model.ApprenticeshipContactEmail);
+                Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
                 Assert.Equal(apprenticeshipId, model.ApprenticeshipId);

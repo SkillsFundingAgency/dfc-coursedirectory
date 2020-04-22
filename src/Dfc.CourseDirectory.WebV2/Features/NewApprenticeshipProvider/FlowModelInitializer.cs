@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using OneOf.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,12 +40,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 ProviderId = providerId
             });
 
-            var existingSubmission = submission.Match(_ => null,
-                                                      match => match);
-
-            if (existingSubmission != null)
+            if (!(submission.Value is None))
             {
-                var apprenticeship = existingSubmission.Apprenticeships.Single();
+                var apprenticeship = submission.AsT1.Apprenticeships.First();
                 var apprenticeshipId = apprenticeship.ApprenticeshipId;
                 var cosmosApprenticeship = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipsByIds() { ApprenticeshipIds = new Guid[] { apprenticeshipId } });
 
