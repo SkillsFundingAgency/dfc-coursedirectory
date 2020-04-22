@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                     ApprenticeshipQAStatus.Submitted,
                     ApprenticeshipQAStatus.Failed,
                     ApprenticeshipQAStatus.InProgress,
-                    ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.InProgress
+                    ApprenticeshipQAStatus.UnableToComplete
                 }
             });
 
