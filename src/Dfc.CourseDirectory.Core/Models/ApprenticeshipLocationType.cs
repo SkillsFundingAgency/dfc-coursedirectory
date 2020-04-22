@@ -16,8 +16,8 @@ namespace Dfc.CourseDirectory.Core.Models
             apprenticeshipLocationType switch
             {
                 ApprenticeshipLocationType.EmployerBased => "Employer based locations",
-                ApprenticeshipLocationType.ClassroomBased => "Classroom based locations",
-                ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Employer and classroom based locations",
+                ApprenticeshipLocationType.ClassroomBased => "Your locations",
+                ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Your location and employer locations",
                 _ => throw new NotImplementedException($"Unknown value: '{apprenticeshipLocationType}'.")
             };
     }

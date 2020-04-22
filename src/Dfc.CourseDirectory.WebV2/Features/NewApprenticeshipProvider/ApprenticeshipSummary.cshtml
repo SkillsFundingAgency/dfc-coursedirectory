@@ -1,7 +1,7 @@
 ﻿@using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
 @model ViewModel
 @{
-    ViewBag.Title = "Check and publish to the course directory";
+    ViewBag.Title = "Check your apprenticeship information";
 }
 
 @if (!ViewContext.ModelState.IsValid)
@@ -14,20 +14,13 @@
     </govuk-error-summary>
 }
 
-<h1 class="govuk-heading-l">Check and publish to the course directory</h1>
+<h1 class="govuk-heading-l">Check your apprenticeship information</h1>
 
 <h2 class="govuk-heading-m">@Model.StandardOrFrameworkTitle</h2>
 
 <govuk-summary-list>
     <govuk-summary-list-row>
-        <govuk-summary-list-row-key>Standard/framework</govuk-summary-list-row-key>
-        <govuk-summary-list-row-value>@Model.StandardOrFrameworkTitle</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action>
-            <a asp-action="FindStandardOrFramework" append-mptx-id>Change</a>
-        </govuk-summary-list-row-action>
-    </govuk-summary-list-row>
-    <govuk-summary-list-row>
-        <govuk-summary-list-row-key>Apprenticeship information for employers</govuk-summary-list-row-key>
+        <govuk-summary-list-row-key>Apprenticeship information</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
             <a asp-action="ApprenticeshipDetails" asp-fragment="MarketingInformation" append-provider-context append-mptx-id class="govuk-link">Change</a>
