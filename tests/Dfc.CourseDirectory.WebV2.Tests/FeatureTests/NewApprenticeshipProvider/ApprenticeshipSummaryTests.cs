@@ -213,7 +213,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("My apprenticeship", doc.GetSummaryListValueWithKey("Apprenticeship information for employers"));
             Assert.Equal("http://provider.com/apprenticeship", doc.GetSummaryListValueWithKey("Apprenticeship website"));
             Assert.Equal("guy@provider.com", doc.GetSummaryListValueWithKey("Email"));
             Assert.Equal("01234 5678902", doc.GetSummaryListValueWithKey("Telephone"));
