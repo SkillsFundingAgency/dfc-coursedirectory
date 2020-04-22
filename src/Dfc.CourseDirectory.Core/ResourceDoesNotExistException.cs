@@ -4,7 +4,8 @@ namespace Dfc.CourseDirectory.Core
 {
     public enum ResourceType
     {
-        Provider
+        Provider, 
+        Apprenticeship
     }
 
     public class ResourceDoesNotExistException : Exception
