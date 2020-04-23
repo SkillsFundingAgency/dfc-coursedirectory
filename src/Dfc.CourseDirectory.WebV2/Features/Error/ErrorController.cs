@@ -1,14 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Error
 {
     [AllowAnonymous]
     [Route("error")]
-    public class ErrorController : Microsoft.AspNetCore.Mvc.Controller
+    public class ErrorController : Controller
     {
-        public IActionResult Error(int? code, [FromServices] HostingOptions hostingOptions)
+        public IActionResult Error(
+            int? code,
+            [FromServices] HostingOptions hostingOptions,
+            [FromServices] ILoggerFactory loggerFactory)
         {
             // If there is no error, return a 404
             // (prevents browsing to this page directly)
@@ -18,6 +22,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
             if (exceptionHandlerPathFeature == null && statusCodeReExecuteFeature == null)
             {
                 return NotFound();
+            }
+
+            if (exceptionHandlerPathFeature != null)
+            {
+                var logger = loggerFactory.CreateLogger<ErrorController>();
+                logger.LogError(exceptionHandlerPathFeature.Error, exceptionHandlerPathFeature.Error.Message);
             }
 
             var statusCode = code ?? 500;
