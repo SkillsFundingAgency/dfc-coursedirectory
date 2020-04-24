@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
             _clock = clock;
         }
 
-        public async Task SyncProviderData(Guid providerId, int ukprn, string updatedBy)
+        public async Task SyncProviderData(int ukprn, string updatedBy)
         {
             var providerData = await _ukrlpWcfService.GetProviderData(ukprn);
 

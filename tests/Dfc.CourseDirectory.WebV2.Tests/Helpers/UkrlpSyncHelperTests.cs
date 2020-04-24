@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Helpers
             var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
 
             // Act
-            await _ukrlpSyncHelper.SyncProviderData(signInContext.Provider.Id, providerUkprn, signInContext.UserInfo.Email);
+            await _ukrlpSyncHelper.SyncProviderData(providerUkprn, signInContext.UserInfo.Email);
 
             // Assert
             var updatedProvider = mockCosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderByUkprn() { Ukprn = providerUkprn }).Result;
@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Helpers
             var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
 
             // Act
-            await _ukrlpSyncHelper.SyncProviderData(signInContext.Provider.Id, providerUkprn, signInContext.UserInfo.Email);
+            await _ukrlpSyncHelper.SyncProviderData(providerUkprn, signInContext.UserInfo.Email);
 
             // Assert
             var updatedProvider = mockCosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderByUkprn() { Ukprn = providerUkprn }).Result;
