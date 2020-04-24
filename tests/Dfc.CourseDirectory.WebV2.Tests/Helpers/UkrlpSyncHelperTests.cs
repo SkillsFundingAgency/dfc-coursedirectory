@@ -15,11 +15,11 @@ using System.Threading.Tasks;
 using UkrlpService;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.Security
+namespace Dfc.CourseDirectory.WebV2.Tests.Helpers
 {
-    public class SyncUserProviderSignInActionTests : MvcTestBase
+    public class UkrlpSyncHelperTests : MvcTestBase
     {
-        public SyncUserProviderSignInActionTests(CourseDirectoryApplicationFactory factory)
+        public UkrlpSyncHelperTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -61,10 +61,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
-            var signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
 
             // Act
-            await signInActionToTest.OnUserSignedIn(signInContext);
+            await _ukrlpSyncHelper.SyncProviderData(signInContext.Provider.Id, providerUkprn, signInContext.UserInfo.Email);
 
             // Assert
             var updatedProvider = mockCosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderByUkprn() { Ukprn = providerUkprn }).Result;
@@ -77,60 +76,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             Assert.True(ukrlpProviderData.ProviderContact.First().ContactAddress.Locality == updatedProvider.ProviderContact.First().ContactAddress.Locality);
             Assert.True(ukrlpProviderData.ProviderContact.First().ContactPersonalDetails.PersonFamilyName == updatedProvider.ProviderContact.First().ContactPersonalDetails.PersonFamilyName);
 
-        }
-
-        [Fact]
-        public async Task GivenSignInContext_WhenUkprnNotSuppliedAndProviderExists_EnsureProviderDataIsNotUpdated()
-        {
-            // Arrange
-            int providerUkprn = 01234566;
-            var providerData = this.GenerateProviderData(providerUkprn);
-
-            providerData.Id = await TestData.CreateProvider(providerUkprn,
-                                                            providerData.ProviderName,
-                                                            providerData.ProviderType,
-                                                            providerData.ProviderStatus,
-                                                            ApprenticeshipQAStatus.Passed,
-                                                            alias: providerData.Alias,
-                                                            contacts: providerData.ProviderContact.ToList().Select(c => new CreateProviderContact()
-                                                            {
-                                                                ContactType = c.ContactType,
-                                                                ContactTelephone1 = c.ContactTelephone1,
-                                                                ContactWebsiteAddress = c.ContactWebsiteAddress,
-                                                                ContactEmail = c.ContactEmail,
-                                                                AddressSaonDescription = c.ContactAddress.SAON?.Description,
-                                                                AddressPaonDescription = c.ContactAddress.PAON?.Description,
-                                                                AddressStreetDescription = c.ContactAddress.StreetDescription,
-                                                                AddressLocality = c.ContactAddress.Locality,
-                                                                AddressItems = c.ContactAddress.Items,
-                                                                AddressPostCode = c.ContactAddress.PostCode,
-                                                                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
-                                                                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
-                                                            }));
-
-            var signInContext = GetSignInContext(providerUkprn);
-
-            signInContext.ProviderUkprn = null;
-            signInContext.Provider = null;
-
-            var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
-
-            var mockUkrlpWcfService = new Mock<IUkrlpWcfService>();
-            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
-            var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
-            var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
-            var signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
-
-            // Act
-            await signInActionToTest.OnUserSignedIn(signInContext);
-
-            // Assert
-            var updatedProvider = mockCosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderByUkprn() { Ukprn = providerUkprn }).Result;
-
-            Assert.False(ukrlpProviderData.ProviderName == updatedProvider.ProviderName);
-            Assert.True(updatedProvider.UpdatedBy == null);
-            Assert.False(ukrlpProviderData.ProviderContact.First().ContactAddress.Locality == updatedProvider.ProviderContact.First().ContactAddress.Locality);
-            Assert.False(ukrlpProviderData.ProviderContact.First().ContactPersonalDetails.PersonFamilyName == updatedProvider.ProviderContact.First().ContactPersonalDetails.PersonFamilyName);
         }
 
         [Fact]
@@ -147,10 +92,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
-            var signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
 
             // Act
-            await signInActionToTest.OnUserSignedIn(signInContext);
+            await _ukrlpSyncHelper.SyncProviderData(signInContext.Provider.Id, providerUkprn, signInContext.UserInfo.Email);
 
             // Assert
             var updatedProvider = mockCosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderByUkprn() { Ukprn = providerUkprn }).Result;
