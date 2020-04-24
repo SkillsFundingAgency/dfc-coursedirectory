@@ -90,8 +90,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ISignInAction, EnsureProviderExistsSignInAction>();
             services.AddTransient<ISignInAction, SignInTracker>();
             services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
-            services.AddTransient<ISignInAction, SyncUserProviderSignInAction>();
-
+            
             services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
             if (!environment.IsTesting())

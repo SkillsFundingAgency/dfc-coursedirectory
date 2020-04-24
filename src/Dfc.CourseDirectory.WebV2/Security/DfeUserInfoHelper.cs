@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
 using JWT.Algorithms;
 using JWT.Builder;
 using Newtonsoft.Json;
@@ -18,13 +19,16 @@ namespace Dfc.CourseDirectory.WebV2.Security
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly HttpClient _httpClient;
+        private readonly IUkrlpSyncHelper _ukrlpSyncHelper;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IUkrlpSyncHelper ukrlpSyncHelper)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _ukrlpSyncHelper = ukrlpSyncHelper;
 
             _httpClient = new HttpClient();  // TODO Use HttpClientFactory
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {CreateApiToken(settings)}");
@@ -73,6 +77,9 @@ namespace Dfc.CourseDirectory.WebV2.Security
 
             if (ukprn.HasValue)
             {
+                // Sync UKRLP data
+                await _ukrlpSyncHelper.SyncProviderData(context.Provider.Id, context.Provider.Ukprn, context.UserInfo.Email);
+
                 var provider = await GetProvider(ukprn.Value);
 
                 // TODO Handle this nicely
