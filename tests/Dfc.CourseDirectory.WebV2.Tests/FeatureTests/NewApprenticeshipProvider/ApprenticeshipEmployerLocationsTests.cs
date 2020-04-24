@@ -22,11 +22,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -48,11 +46,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -72,11 +68,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -94,12 +88,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
-                    ApprenticeshipIsNational = null
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -121,12 +112,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
-                    ApprenticeshipIsNational = false
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            flowModel.SetApprenticeshipIsNational(false);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -148,11 +137,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .ToContent();
@@ -179,11 +166,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .ToContent();
@@ -207,11 +192,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("National", bool.TrueString)
@@ -234,11 +217,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .ToContent();
@@ -269,11 +250,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = locationType
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(locationType);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             if (gotClassroomLocation)
             {
@@ -316,11 +295,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = locationType
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(locationType);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("National", false)

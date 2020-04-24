@@ -10,26 +10,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
     public class FlowModel : IMptxState, ClassroomLocation.IFlowModelCallback, FindStandardOrFramework.IFlowModelCallback
     {
-        public string ProviderMarketingInformation { get; set; }
-        public StandardOrFramework ApprenticeshipStandardOrFramework { get; set; }
-        public string ApprenticeshipMarketingInformation { get; set; }
-        public string ApprenticeshipWebsite { get; set; }
-        public string ApprenticeshipContactTelephone { get; set; }
-        public string ApprenticeshipContactEmail { get; set; }
-        public string ApprenticeshipContactWebsite { get; set; }
-        public ApprenticeshipLocationType? ApprenticeshipLocationType { get; set; }
-        public bool? ApprenticeshipIsNational { get; set; }
-        public IReadOnlyCollection<string> ApprenticeshipLocationSubRegionIds { get; set; }
-        public Dictionary<Guid, ClassroomLocationEntry> ApprenticeshipClassroomLocations { get; set; }
+        public string ProviderMarketingInformation { get; private set; }
+        public StandardOrFramework ApprenticeshipStandardOrFramework { get; private set; }
+        public string ApprenticeshipMarketingInformation { get; private set; }
+        public string ApprenticeshipWebsite { get; private set; }
+        public string ApprenticeshipContactTelephone { get; private set; }
+        public string ApprenticeshipContactEmail { get; private set; }
+        public string ApprenticeshipContactWebsite { get; private set; }
+        public ApprenticeshipLocationType? ApprenticeshipLocationType { get; private set; }
+        public bool? ApprenticeshipIsNational { get; private set; }
+        public IReadOnlyCollection<string> ApprenticeshipLocationSubRegionIds { get; private set; }
+        public Dictionary<Guid, ClassroomLocationEntry> ApprenticeshipClassroomLocations { get; private set; }
 
-        public bool GotApprenticeshipDetails { get; set; }
-        public bool GotProviderDetails { get; set; }
-        public Guid? ApprenticeshipId { get; set; }
+        public bool GotApprenticeshipDetails { get; private set; }
+        public bool GotProviderDetails { get; private set; }
+        public Guid? ApprenticeshipId { get; private set; }
 
         IReadOnlyCollection<Guid> ClassroomLocation.IFlowModelCallback.BlockedVenueIds =>
             ApprenticeshipClassroomLocations?.Keys;
 
         public void RemoveLocation(Guid venueId) => ApprenticeshipClassroomLocations.Remove(venueId);
+
+        public void SetApprenticeshipId(Guid apprenticeshipId) => ApprenticeshipId = apprenticeshipId;
 
         public void SetClassroomLocationForVenue(
             Guid venueId,

@@ -105,11 +105,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance(
-                new FlowModel()
-                {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
-                });
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
