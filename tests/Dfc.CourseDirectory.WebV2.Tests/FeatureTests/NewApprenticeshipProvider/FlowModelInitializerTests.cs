@@ -1,32 +1,28 @@
-﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
     public class FlowModelInitializerTests : DatabaseTestBase
     {
-        public FlowModelInitializerTests(Testing.DatabaseTestBaseFixture factory) : base(factory)
+        public FlowModelInitializerTests(Testing.DatabaseTestBaseFixture factory)
+            : base(factory)
         {
         }
 
         [Fact]
-        public async Task Initialize_Populates_Apprenticeship_Fields_Standard()
+        public async Task Initialize_ApprenticeshipWithStandard_PopulatesModelCorrectly()
         {
             // Arrange
-            var Clock = Fixture.DatabaseFixture.Clock;
             var ukprn = 12347;
             var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
+            var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
@@ -49,11 +45,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
-                locations:  new List<CreateApprenticeshipLocation> {
+                website: website,
+                locations: new[]
+                {
                     CreateApprenticeshipLocation.CreateRegions(regions)
                 });
 
-            // Create submission
+            var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
+
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
@@ -61,18 +60,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var mockCache = new Mock<IStandardsAndFrameworksCache>();
-            var stan = new Core.Models.Standard { CosmosId = Guid.NewGuid(), NotionalNVQLevelv2 = "Level 2", OtherBodyApprovalRequired=true, StandardCode=1, StandardName="test", Version=1 };
-            mockCache.Setup(w => w.GetStandard(It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(stan));
-
-
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                //act
-                var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, dispatcher, mockCache.Object);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
+
+                // Act
                 var model = await initializer.Initialize(providerId);
 
-                //assert
+                // Assert
+                Assert.True(model.GotApprenticeshipDetails);
                 Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
@@ -86,22 +82,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     {
                         Assert.Equal(item1, regions.First());
                     });
-                Assert.Equal(contactWebsite, model.ApprenticeshipWebsite);
+                Assert.Equal(website, model.ApprenticeshipWebsite);
                 Assert.False(model.ApprenticeshipStandardOrFramework.IsFramework);
                 Assert.True(model.ApprenticeshipStandardOrFramework.IsStandard);
             });
-
-
         }
 
         [Fact]
-        public async Task Initialize_Populates_Apprenticeship_Fields_Framework()
+        public async Task Initialize_ApprenticeshipWithFramework_PopulatesModelSuccessfully()
         {
             // Arrange
-            var Clock = Fixture.DatabaseFixture.Clock;
             var ukprn = 12346;
             var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
+            var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
@@ -124,11 +118,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
-                locations:  new List<CreateApprenticeshipLocation> {
+                website: website,
+                locations: new[]
+                {
                     CreateApprenticeshipLocation.CreateRegions(regions)
                 });
 
-            // Create submission
+            var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
+            
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
@@ -136,18 +133,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var mockCache = new Mock<IStandardsAndFrameworksCache>();
-            mockCache.Setup(w => w.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(framework));
-
-
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, dispatcher, mockCache.Object);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
-                //act
+                // Act
                 var model = await initializer.Initialize(providerId);
 
-                //assert
+                // Assert
+                Assert.True(model.GotApprenticeshipDetails);
                 Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
@@ -161,20 +155,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     {
                         Assert.Equal(item1, regions.First());
                     });
-                Assert.Equal(contactWebsite, model.ApprenticeshipWebsite);
+                Assert.Equal(website, model.ApprenticeshipWebsite);
                 Assert.True(model.ApprenticeshipStandardOrFramework.IsFramework);
                 Assert.False(model.ApprenticeshipStandardOrFramework.IsStandard);
             });
         }
 
         [Fact]
-        public async Task Initialize_Populates_NationalApprenticeship_Fields()
+        public async Task Initialize_NationalApprenticeship_PopulatesModelCorrectly()
         {
             // Arrange
-            var Clock = Fixture.DatabaseFixture.Clock;
             var ukprn = 12346;
             var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
+            var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
@@ -197,11 +191,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
-                locations: new List<CreateApprenticeshipLocation> {
+                website: website,
+                locations: new[]
+                {
                     CreateApprenticeshipLocation.CreateNational()
                 });
 
-            // Create submission
+            var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
+
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
@@ -209,17 +206,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var mockCache = new Mock<IStandardsAndFrameworksCache>();
-            mockCache.Setup(w => w.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(framework));
-
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, dispatcher, mockCache.Object);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
-                //act
+                // Act
                 var model = await initializer.Initialize(providerId);
 
-                //assert
+                // Assert
+                Assert.True(model.GotApprenticeshipDetails);
                 Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
@@ -228,14 +223,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 Assert.Equal(ApprenticeshipLocationType.EmployerBased, model.ApprenticeshipLocationType);
                 Assert.Equal(marketingInfo, model.ApprenticeshipMarketingInformation);
                 Assert.Null(model.ApprenticeshipClassroomLocations);
-                Assert.Equal(contactWebsite, model.ApprenticeshipWebsite);
+                Assert.Equal(website, model.ApprenticeshipWebsite);
                 Assert.True(model.ApprenticeshipStandardOrFramework.IsFramework);
                 Assert.False(model.ApprenticeshipStandardOrFramework.IsStandard);
             });
         }
 
         [Fact]
-        public async Task Initialize_Does_Not_Populate_Apprenticeship_Fields_For_NewProvider()
+        public async Task Initialize_NoSubmission_DoesNotPopulateApprenticeshipFields()
         {
             // Arrange
             var ukprn = 12345;
@@ -246,16 +241,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted,
                 marketingInformation: marketingInfo);
-            var mockCache = new Mock<IStandardsAndFrameworksCache>();
+
+            var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, dispatcher, mockCache.Object);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
-                //act
+                // Act
                 var model = await initializer.Initialize(providerId);
 
-                //assert
+                // Assert
+                Assert.False(model.GotApprenticeshipDetails);
                 Assert.Null(model.ApprenticeshipContactEmail);
                 Assert.Null(model.ApprenticeshipContactTelephone);
                 Assert.Null(model.ApprenticeshipContactWebsite);
@@ -270,17 +267,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Initialize_ApprenticeshipType_Is_BothClassroomAndEmployer()
+        public async Task Initialize_BothLocationType_InitializesModelCorrectly()
         {
             // Arrange
-            var Clock = Fixture.DatabaseFixture.Clock;
             var ukprn = 12346;
             var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
+            var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
-            var venueId = Guid.NewGuid();
             var contactEmail = "somecontact@nonexistentprovider.com";
             var radius = 10;
             var deliveryMode = ApprenticeshipDeliveryModes.BlockRelease;
@@ -293,6 +289,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
+            var venueId = await TestData.CreateVenue(providerId);
+
+            var venue = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetVenueById() { VenueId = venueId });
 
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
                 framework,
@@ -301,12 +300,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
-                locations: new List<CreateApprenticeshipLocation> {
+                website: website,
+                locations: new[]
+                {
                     CreateApprenticeshipLocation.CreateNational(),
-                    CreateApprenticeshipLocation.CreateFromVenue(new Venue { Id=venueId, VenueName="test" }, radius, deliveryMode, ApprenticeshipLocationType.ClassroomBased)
+                    CreateApprenticeshipLocation.CreateFromVenue(
+                        venue,
+                        radius,
+                        deliveryMode,
+                        ApprenticeshipLocationType.ClassroomBased)
                 }); 
 
-            // Create submission
+            var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
+
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
@@ -314,18 +320,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var mockCache = new Mock<IStandardsAndFrameworksCache>();
-            mockCache.Setup(w => w.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(framework));
-
-
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, dispatcher, mockCache.Object);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
-                //act
+                // Act
                 var model = await initializer.Initialize(providerId);
 
-                //assert
+                // Assert
+                Assert.True(model.GotApprenticeshipDetails);
                 Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
@@ -333,28 +336,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 Assert.True(model.ApprenticeshipIsNational);
                 Assert.Equal(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, model.ApprenticeshipLocationType);
                 Assert.Equal(marketingInfo, model.ApprenticeshipMarketingInformation);
-                Assert.Collection<FlowModel.ClassroomLocationEntry>(new List<FlowModel.ClassroomLocationEntry>(model.ApprenticeshipClassroomLocations.Values),
-                location =>
-                {
-                    Assert.Equal(venueId, location.VenueId);
-                    Assert.Equal(radius, location.Radius);
-                    Assert.Equal(deliveryMode, location.DeliveryModes);
-                });
-                Assert.Equal(contactWebsite, model.ApprenticeshipWebsite);
+                Assert.Collection(
+                    model.ApprenticeshipClassroomLocations.Values,
+                    location =>
+                    {
+                        Assert.Equal(venueId, location.VenueId);
+                        Assert.Equal(radius, location.Radius);
+                        Assert.Equal(deliveryMode, location.DeliveryModes);
+                    });
+                Assert.Equal(website, model.ApprenticeshipWebsite);
                 Assert.True(model.ApprenticeshipStandardOrFramework.IsFramework);
                 Assert.False(model.ApprenticeshipStandardOrFramework.IsStandard);
             });
-            
         }
 
         [Fact]
-        public async Task Initialize_ApprenticeshipType_Is_EmployerBased()
+        public async Task Initialize_EmployerBasedLocationType_PopulatesModelCorrectly()
         {
             // Arrange
-            var Clock = Fixture.DatabaseFixture.Clock;
             var ukprn = 12346;
             var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
+            var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var contactEmail = "somecontact@nonexistentprovider.com";
@@ -376,11 +379,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
                 marketingInformation: marketingInfo,
-                locations: new List<CreateApprenticeshipLocation> {
+                website: website,
+                locations: new[]
+                {
                     CreateApprenticeshipLocation.CreateNational()
                 });
 
-            // Create submission
+            var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
+
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
@@ -388,19 +394,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var mockCache = new Mock<IStandardsAndFrameworksCache>();
-            mockCache.Setup(w => w.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(Task.FromResult(framework));
-
-
             await WithSqlQueryDispatcher(async dispatcher =>
             {
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
-                var initializer = new FlowModelInitializer(Fixture.DatabaseFixture.CosmosDbQueryDispatcher.Object, dispatcher, mockCache.Object);
-
-                //act
+                // Act
                 var model = await initializer.Initialize(providerId);
 
-                //assert
+                // Assert
+                Assert.True(model.GotApprenticeshipDetails);
                 Assert.Equal(contactEmail, model.ApprenticeshipContactEmail);
                 Assert.Equal(contactTelephone, model.ApprenticeshipContactTelephone);
                 Assert.Equal(contactWebsite, model.ApprenticeshipContactWebsite);
@@ -409,7 +411,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 Assert.Equal(ApprenticeshipLocationType.EmployerBased, model.ApprenticeshipLocationType);
                 Assert.Equal(marketingInfo, model.ApprenticeshipMarketingInformation);
                 Assert.Null(model.ApprenticeshipClassroomLocations);
-                Assert.Equal(contactWebsite, model.ApprenticeshipWebsite);
+                Assert.Equal(website, model.ApprenticeshipWebsite);
                 Assert.True(model.ApprenticeshipStandardOrFramework.IsFramework);
                 Assert.False(model.ApprenticeshipStandardOrFramework.IsStandard);
             });

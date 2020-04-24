@@ -723,7 +723,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 "E06000001",  // County Durham
                 "E10000009" // Dorset
             });
-            flowModel.ApprenticeshipId = apprenticeshipId;
+            flowModel.SetApprenticeshipId(apprenticeshipId);
             flowModel.SetClassroomLocationForVenue(
                 venueId,
                 originalVenueId: null,
