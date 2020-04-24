@@ -14,10 +14,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             Configuration configuration,
             CreateProviderFromUkrlpData request)
         {
-            var documentUri = UriFactory.CreateDocumentUri(
+
+           var documentUri = UriFactory.CreateDocumentCollectionUri(
                 configuration.DatabaseId,
-                configuration.ProviderCollectionName,
-                request.Id.ToString());
+                configuration.ProviderCollectionName);
 
             var newProvider = new Provider()
             {
