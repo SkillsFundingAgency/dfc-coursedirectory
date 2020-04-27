@@ -69,9 +69,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("ApprenticeshipLocations")
-                        .WithProviderContext(ProviderContext)
-                        .WithMptxInstanceId(Flow.InstanceId)));
+                    success => Flow.State.ApprenticeshipLocationType.HasValue ?
+                        RedirectToAction(nameof(ApprenticeshipSummary))
+                            .WithProviderContext(ProviderContext)
+                            .WithMptxInstanceId(Flow.InstanceId) :
+                        RedirectToAction(nameof(ApprenticeshipLocations))
+                            .WithProviderContext(ProviderContext)
+                            .WithMptxInstanceId(Flow.InstanceId)));
         }
 
         [MptxAction]
