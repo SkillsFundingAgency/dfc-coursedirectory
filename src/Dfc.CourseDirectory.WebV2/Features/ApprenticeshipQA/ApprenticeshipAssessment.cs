@@ -402,6 +402,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                 var subRegionIds = submissionApprenticeship.Locations
                     .Where(l => l.IsEmployerBased)
                     .Select(l => l.AsT1)
+                    .Where(l => l.HasRegions)
                     .Select(l => l.AsT1)
                     .SelectMany(l => l.SubRegionIds);
 
