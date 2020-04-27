@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using OneOf.Types;
 
@@ -19,9 +19,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.ApprenticeshipCollectionName,
                 request.Id.ToString());
 
-            var query = await client.ReadDocumentAsync<Apprenticeship>(documentUri);
+            var partitionKey = new PartitionKey(request.ProviderUkprn);
+
+            var query = await client.ReadDocumentAsync<Apprenticeship>(
+                documentUri,
+                new RequestOptions() { PartitionKey = partitionKey });
+
             var apprenticeship = query.Document;
-            apprenticeship.ProviderUKPRN = request.ProviderUkprn;
+
             apprenticeship.ApprenticeshipTitle = request.ApprenticeshipTitle;
             apprenticeship.ApprenticeshipType = request.ApprenticeshipType;
             apprenticeship.MarketingInformation = request.MarketingInformation;
@@ -41,7 +46,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 Name = l.Name,
                 National = l.National,
                 Phone = l.Phone,
-                ProviderUKPRN = request.ProviderUkprn,
+                ProviderUKPRN = apprenticeship.ProviderUKPRN,
                 Radius = l.Radius,
                 RecordStatus = 1,
                 Regions = l.Regions,
@@ -49,12 +54,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 UpdatedDate = request.UpdatedDate,
                 VenueId = l.VenueId
             }).ToList();
-            apprenticeship.RecordStatus = 1;
             apprenticeship.UpdatedDate = request.UpdatedDate;
             apprenticeship.UpdatedBy = request.UpdatedBy.Email;
-            apprenticeship.BulkUploadErrors = new List<BulkUploadError>();
-            apprenticeship.ValidationErrors = Array.Empty<string>();
-            apprenticeship.LocationValidationErrors = Array.Empty<string>();
 
             request.StandardOrFramework.Switch(
                 standard =>
@@ -72,7 +73,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                     apprenticeship.PathwayCode = framework.PathwayCode;
                 });
 
-            await client.ReplaceDocumentAsync(documentUri, apprenticeship);
+            await client.ReplaceDocumentAsync(
+                documentUri,
+                apprenticeship,
+                new RequestOptions() { PartitionKey = partitionKey });
 
             return new Success();
         }

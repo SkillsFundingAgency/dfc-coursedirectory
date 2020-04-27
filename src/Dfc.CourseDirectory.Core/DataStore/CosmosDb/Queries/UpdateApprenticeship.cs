@@ -1,14 +1,13 @@
-﻿using Dfc.CourseDirectory.Core.Models;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 {
     public class UpdateApprenticeship : ICosmosDbQuery<Success>
     {
         public Guid Id { get; set; }
-        public Guid ProviderId { get; set; }
         public int ProviderUkprn { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public ApprenticeshipType ApprenticeshipType { get; set; }
@@ -21,6 +20,5 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public IEnumerable<CreateApprenticeshipLocation> ApprenticeshipLocations { get; set; }
         public DateTime UpdatedDate { get; set; }
         public UserInfo UpdatedBy { get; set; }
-
     }
 }
