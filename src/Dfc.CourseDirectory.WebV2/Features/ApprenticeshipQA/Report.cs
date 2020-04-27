@@ -48,7 +48,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
         public string Notes { get; set; }
         [CsvHelper.Configuration.Attributes.Name("Why can't they complete")]
         public string UnableToCompleteReasons { get; set; }
-
     }
 
     public class QueryHandler : IRequestHandler<Query, ViewModel>
@@ -86,12 +85,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
                 ProviderIds = results.Select(r => r.ProviderId)
             });
 
-            //map cosmos record
+            // Map from Cosmos record
             infos.ForEach(x =>
             {
                 x.UKPRN = providers[x.ProviderId].UnitedKingdomProviderReferenceNumber;
                 x.ProviderName = providers[x.ProviderId].ProviderName;
             });
+
+            // Remove any providers that are FE-only
+            infos.RemoveAll(p => !providers[p.ProviderId].ProviderType.HasFlag(ProviderType.Apprenticeships));
 
             return new ViewModel()
             {
