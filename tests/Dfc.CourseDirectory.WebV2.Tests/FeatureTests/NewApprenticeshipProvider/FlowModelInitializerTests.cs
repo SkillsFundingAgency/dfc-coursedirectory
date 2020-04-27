@@ -307,8 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     CreateApprenticeshipLocation.CreateFromVenue(
                         venue,
                         radius,
-                        deliveryMode,
-                        ApprenticeshipLocationType.ClassroomBased)
+                        deliveryMode)
                 }); 
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);

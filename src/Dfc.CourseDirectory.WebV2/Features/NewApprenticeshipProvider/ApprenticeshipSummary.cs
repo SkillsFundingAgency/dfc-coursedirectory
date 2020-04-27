@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -137,14 +138,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var apprenticeshipId = Guid.NewGuid();
             var providerUkprn = provider.Ukprn;
 
+            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetAllVenuesForProvider()
+                {
+                    ProviderUkprn = providerUkprn
+                });
+
+            var locations = CreateLocations(providerVenues, providerUkprn);
 
             if (_flow.State.ApprenticeshipId.HasValue)
             {
-                //update existing apprenticeship
+                // Update existing apprenticeship
                 await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new UpdateApprenticeship()
                     {
-                        ApprenticeshipLocations = await CreateLocations(providerUkprn),
+                        ApprenticeshipLocations = locations,
                         ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
                         ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
                             ApprenticeshipType.StandardCode :
@@ -168,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new CreateApprenticeship()
                     {
-                        ApprenticeshipLocations = await CreateLocations(providerUkprn),
+                        ApprenticeshipLocations = locations,
                         ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
                         ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
                             ApprenticeshipType.StandardCode :
@@ -198,7 +206,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         {
                             ApprenticeshipId = apprenticeshipId,
                             ApprenticeshipMarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                            ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle
+                            ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
+                            Locations = locations.Select(l => l.ApprenticeshipLocationType switch
+                            {
+                                ApprenticeshipLocationType.ClassroomBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
+                                    new CreateApprenticeshipQASubmissionApprenticeshipClassroomLocation()
+                                    {
+                                        DeliveryModes = l.DeliveryModes,
+                                        Radius = l.Radius.Value,
+                                        VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                                    }),
+                                ApprenticeshipLocationType.EmployerBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
+                                    l.National == true ?
+                                        new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocation(new National()) :
+                                        new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocation(
+                                            new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions()
+                                            {
+                                                SubRegionIds = l.Regions.ToList()
+                                            })),
+                                _ => throw new NotSupportedException()
+                            }).ToList()
                         }
                     },
                     ProviderMarketingInformation = _flow.State.ProviderMarketingInformation,
@@ -218,7 +245,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
 
-            async Task<IEnumerable<CreateApprenticeshipLocation>> CreateLocations(int providerUkprn)
+            IEnumerable<CreateApprenticeshipLocation> CreateLocations(
+                IReadOnlyCollection<Venue> providerVenues,
+                int providerUkprn)
             {
                 var locations = new List<CreateApprenticeshipLocation>();
 
@@ -233,35 +262,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
                 if (locationType.HasFlag(ApprenticeshipLocationType.ClassroomBased))
                 {
-                    var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                        new GetAllVenuesForProvider()
-                        {
-                            ProviderUkprn = providerUkprn
-                        });
-
                     locations.AddRange(_flow.State.ApprenticeshipClassroomLocations.Select(l =>
                     {
                         var venue = providerVenues.Single(v => v.Id == l.Value.VenueId);
 
-                        // REVIEW: This is likely a data modeling error;
-                        // duplicating here to ensure legacy UI works
-                        var deliveryModes = l.Value.DeliveryModes;
-                        if (locationType.HasFlag(ApprenticeshipLocationType.EmployerBased))
-                        {
-                            deliveryModes |= ApprenticeshipDeliveryModes.EmployerAddress;
-                        }
-
                         return CreateApprenticeshipLocation.CreateFromVenue(
                             venue,
                             l.Value.Radius,
-                            deliveryModes,
-                            locationType);
+                            l.Value.DeliveryModes);
                     }));
                 }
 
                 return locations;
             }
-
         }
 
         private async Task<ViewModel> CreateViewModel(ProviderInfo provider)

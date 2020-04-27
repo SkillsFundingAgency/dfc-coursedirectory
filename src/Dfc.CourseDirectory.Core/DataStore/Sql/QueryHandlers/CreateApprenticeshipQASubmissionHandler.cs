@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
@@ -38,12 +39,14 @@ SELECT SCOPE_IDENTITY() ApprenticeshipQASubmissionId";
                 return transaction.Connection.QuerySingleAsync<int>(sql, paramz, transaction);
             }
 
-            Task CreateSubmissionApprenticeship(CreateApprenticeshipQASubmissionApprenticeship app)
+            async Task CreateSubmissionApprenticeship(CreateApprenticeshipQASubmissionApprenticeship app)
             {
                 var sql = @"
 INSERT INTO Pttcd.ApprenticeshipQASubmissionApprenticeships
 (ApprenticeshipQASubmissionId, ApprenticeshipId, ApprenticeshipTitle, ApprenticeshipMarketingInformation)
-VALUES (@ApprenticeshipQASubmissionId, @ApprenticeshipId, @ApprenticeshipTitle, @ApprenticeshipMarketingInformation)";
+VALUES (@ApprenticeshipQASubmissionId, @ApprenticeshipId, @ApprenticeshipTitle, @ApprenticeshipMarketingInformation)
+
+SELECT SCOPE_IDENTITY() AS ApprenticeshipQASubmissionApprenticeshipId";
 
                 var paramz = new
                 {
@@ -51,6 +54,35 @@ VALUES (@ApprenticeshipQASubmissionId, @ApprenticeshipId, @ApprenticeshipTitle, 
                     app.ApprenticeshipId,
                     app.ApprenticeshipMarketingInformation,
                     app.ApprenticeshipTitle
+                };
+
+                var apprenticeshipQASubmissionApprenticeshipId = 
+                    await transaction.Connection.QuerySingleAsync<int>(sql, paramz, transaction);
+
+                foreach (var location in app.Locations)
+                {
+                    await CreateSubmissionApprenticeshipLocation(apprenticeshipQASubmissionApprenticeshipId, location);
+                }
+            }
+
+            Task CreateSubmissionApprenticeshipLocation(
+                int apprenticeshipQASubmissionApprenticeshipId,
+                CreateApprenticeshipQASubmissionApprenticeshipLocation location)
+            {
+                var sql = @"
+INSERT INTO Pttcd.ApprenticeshipQASubmissionApprenticeshipLocations
+(ApprenticeshipQASubmissionApprenticeshipId, ApprenticeshipLocationType, [National], RegionIds, VenueName, DeliveryModes, Radius)
+VALUES (@ApprenticeshipQASubmissionApprenticeshipId, @ApprenticeshipLocationType, @National, @RegionIds, @VenueName, @DeliveryModes, @Radius)";
+
+                var paramz = new
+                {
+                    ApprenticeshipQASubmissionApprenticeshipId = apprenticeshipQASubmissionApprenticeshipId,
+                    ApprenticeshipLocationType = location.IsClassroomBased ? ApprenticeshipLocationType.ClassroomBased : ApprenticeshipLocationType.EmployerBased,
+                    National = location.Match(c => (bool?)null, e => e.Value is National),
+                    RegionIds = location.Match(c => null, e => e.Match(national => null, r => string.Join(",", r.SubRegionIds))),
+                    VenueName = location.Match(c => c.VenueName, e => null),
+                    DeliveryModes = location.Match(c => (int)c.DeliveryModes, e => (int?)null),
+                    Radius = location.Match(c => c.Radius, e => (int?)null)
                 };
 
                 return transaction.Connection.ExecuteAsync(sql, paramz, transaction);
