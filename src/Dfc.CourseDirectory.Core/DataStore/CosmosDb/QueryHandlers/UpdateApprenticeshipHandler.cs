@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using OneOf.Types;
 
@@ -19,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.ApprenticeshipCollectionName,
                 request.Id.ToString());
 
-            var query = await client.ReadDocumentAsync<Apprenticeship>(documentUri);
+            var query = await client.ReadDocumentAsync<Apprenticeship>(documentUri, new RequestOptions { PartitionKey = new PartitionKey(request.ProviderUkprn) });
             var apprenticeship = query.Document;
             apprenticeship.ProviderUKPRN = request.ProviderUkprn;
             apprenticeship.ApprenticeshipTitle = request.ApprenticeshipTitle;
