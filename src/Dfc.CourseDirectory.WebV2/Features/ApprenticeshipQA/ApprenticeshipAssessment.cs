@@ -150,6 +150,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         public string ApprenticeshipTitle { get; set; }
         public string ApprenticeshipMarketingInformation { get; set; }
         public bool IsReadOnly { get; set; }
+        public bool ApprenticeshipIsNational { get; set; }
+        public IReadOnlyCollection<ViewModelApprenticeshipClassroomLocation> ApprenticeshipClassroomLocations { get; set; }
+        public IReadOnlyCollection<ViewModelApprenticeshipEmployerLocationRegion> ApprenticeshipEmployerLocationRegions { get; set; }
+    }
+
+    public class ViewModelApprenticeshipClassroomLocation
+    {
+        public string VenueName { get; set; }
+        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        public int Radius { get; set; }
+    }
+
+    public class ViewModelApprenticeshipEmployerLocationRegion
+    {
+        public string Name { get; set; }
+        public IReadOnlyCollection<string> SubRegionNames { get; set; }
     }
 
     public class Command : IRequest<CommandResponse>
@@ -365,8 +381,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                 StyleComments = _flow.State.StyleComments,
                 StyleFailedReasons = _flow.State.StyleFailedReasons,
                 StylePassed = _flow.State.StylePassed,
-                IsReadOnly = _flow.State.IsReadOnly
+                IsReadOnly = _flow.State.IsReadOnly,
+                ApprenticeshipIsNational = submissionApprenticeship.Locations.Any(l => l.IsT1 ? l.AsT1.IsNational : false),
+                ApprenticeshipClassroomLocations = submissionApprenticeship.Locations
+                    .Where(l => l.IsClassroomBased)
+                    .Select(l => l.AsT0)
+                    .Select(l => new ViewModelApprenticeshipClassroomLocation()
+                    {
+                        DeliveryModes = l.DeliveryModes,
+                        Radius = l.Radius,
+                        VenueName = l.VenueName
+                    })
+                    .OrderBy(l => l.VenueName)
+                    .ToList(),
+                ApprenticeshipEmployerLocationRegions = GroupRegions()
             };
+
+            IReadOnlyCollection<ViewModelApprenticeshipEmployerLocationRegion> GroupRegions()
+            {
+                var subRegionIds = submissionApprenticeship.Locations
+                    .Where(l => l.IsEmployerBased)
+                    .Select(l => l.AsT1)
+                    .Select(l => l.AsT1)
+                    .SelectMany(l => l.SubRegionIds);
+
+                return Region.All
+                    .SelectMany(r => r.SubRegions.Select(sr => new { SubRegion = sr, Region = r }))
+                    .Where(r => subRegionIds.Contains(r.SubRegion.Id))
+                    .GroupBy(x => x.Region)
+                    .Select(g => new ViewModelApprenticeshipEmployerLocationRegion()
+                    {
+                        Name = g.Key.Name,
+                        SubRegionNames = g.Select(sr => sr.SubRegion.Name).OrderBy(sr => sr).ToList()
+                    })
+                    .OrderBy(g => g.Name)
+                    .ToList();
+            }
         }
 
         private async Task<ApprenticeshipQASubmission> GetSubmission() =>
