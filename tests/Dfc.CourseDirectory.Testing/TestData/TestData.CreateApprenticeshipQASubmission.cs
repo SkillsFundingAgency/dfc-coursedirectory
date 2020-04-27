@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Query = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.CreateApprenticeshipQASubmission;
 
 namespace Dfc.CourseDirectory.Testing
@@ -24,8 +25,13 @@ namespace Dfc.CourseDirectory.Testing
 
             var apps = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipsByIds()
             {
-                Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
+                Ukprn = provider.Ukprn,
                 ApprenticeshipIds = apprenticeshipIds
+            });
+
+            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllVenuesForProvider()
+            {
+                ProviderUkprn = provider.Ukprn
             });
 
             var queryApps = apprenticeshipIds
@@ -34,7 +40,26 @@ namespace Dfc.CourseDirectory.Testing
                 {
                     ApprenticeshipId = a.Id,
                     ApprenticeshipMarketingInformation = a.MarketingInformation,
-                    ApprenticeshipTitle = a.ApprenticeshipTitle
+                    ApprenticeshipTitle = a.ApprenticeshipTitle,
+                    Locations = a.ApprenticeshipLocations.Select(l => l.ApprenticeshipLocationType switch
+                    {
+                        ApprenticeshipLocationType.ClassroomBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
+                            new CreateApprenticeshipQASubmissionApprenticeshipClassroomLocation()
+                            {
+                                DeliveryModes = (ApprenticeshipDeliveryModes)l.DeliveryModes.Sum(),
+                                Radius = l.Radius.Value,
+                                VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                            }),
+                        ApprenticeshipLocationType.EmployerBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
+                            l.National == true ?
+                                new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocation(new National()) :
+                                new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocation(
+                                    new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions()
+                                    {
+                                        SubRegionIds = l.Regions.ToList()
+                                    })),
+                        _ => throw new NotSupportedException()
+                    }).ToList()
                 });
 
             return await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new Query()

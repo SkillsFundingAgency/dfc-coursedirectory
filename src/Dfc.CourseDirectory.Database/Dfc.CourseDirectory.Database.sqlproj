@@ -406,6 +406,7 @@
     <Build Include="Pttcd\Tables\ApprenticeshipQAUnableToCompleteInfo.sql" />
     <Build Include="Pttcd\Tables\UserProviders.sql" />
     <Build Include="Pttcd\Indexes\IX_UserProviders_Provider.sql" />
+    <Build Include="Pttcd\Tables\ApprenticeshipQASubmissionApprenticeshipLocations.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Restore\Notes.txt" />

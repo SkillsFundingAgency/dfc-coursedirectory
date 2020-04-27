@@ -68,4 +68,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[ProviderMarketingInformation]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a876d70b-2f33-4cce-809f-d2b33d15a88c" ChangeDateTime="04/27/2020 10:15:44">
+    <Property Name="ElementName" Value="[Pttcd].[ApprenticeshipQASubmissionApprenticeshipLocations].[DeliveryMethods]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[ApprenticeshipQASubmissionApprenticeshipLocations]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[DeliveryModes]" />
+  </Operation>
 </Operations>

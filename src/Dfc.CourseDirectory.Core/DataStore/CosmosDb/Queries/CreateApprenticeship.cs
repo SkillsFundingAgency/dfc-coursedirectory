@@ -41,8 +41,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public static CreateApprenticeshipLocation CreateFromVenue(
             Venue venue,
             int radius,
-            ApprenticeshipDeliveryModes deliveryModes,
-            ApprenticeshipLocationType locationType /* HACK to ensure legacy UI works */) =>
+            ApprenticeshipDeliveryModes deliveryModes) =>
             new CreateApprenticeshipLocation()
             {
                 Id = Guid.NewGuid(),
@@ -62,7 +61,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
                 },
                 DeliveryModes = deliveryModes,
                 Name = venue.VenueName,
-                ApprenticeshipLocationType = locationType,
+                ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBased,
                 LocationType = LocationType.Venue,
                 Radius = radius
             };
