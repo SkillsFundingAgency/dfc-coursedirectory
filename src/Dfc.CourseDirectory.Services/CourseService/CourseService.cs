@@ -879,8 +879,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         public string ReplaceSpecialCharacters(string value)
         {
-            var replacedString = value.Replace("â€™", "'").Replace("â€“", "–").Replace("�", "£");
-            return replacedString;
+            if (value == null)
+            {
+                return null;
+            }
+
+            return value
+                .Replace("â€™", "'")
+                .Replace("â€“", "–")
+                .Replace("�", "£");
         }
 
         public async Task<IResult> ArchiveProviderLiveCourses(int? UKPRN)
