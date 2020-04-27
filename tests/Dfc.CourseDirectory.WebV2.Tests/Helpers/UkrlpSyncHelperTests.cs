@@ -103,6 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Helpers
             Assert.True(signInContext.UserInfo.Email == updatedProvider.UpdatedBy);
             Assert.True(ukrlpProviderData.UnitedKingdomProviderReferenceNumber == updatedProvider.UnitedKingdomProviderReferenceNumber);
             Assert.True(ukrlpProviderData.ProviderStatus == updatedProvider.ProviderStatus);
+            Assert.True(updatedProvider.ProviderType == ProviderType.Both);
             Assert.True(ukrlpProviderData.ProviderContact.First().ContactAddress.Locality == updatedProvider.ProviderContact.First().ContactAddress.Locality);
             Assert.True(ukrlpProviderData.ProviderContact.First().ContactPersonalDetails.PersonFamilyName == updatedProvider.ProviderContact.First().ContactPersonalDetails.PersonFamilyName);
         }
