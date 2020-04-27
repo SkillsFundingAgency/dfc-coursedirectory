@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OneOf;
 
 namespace Dfc.CourseDirectory.Core.Models
 {
@@ -25,5 +26,57 @@ namespace Dfc.CourseDirectory.Core.Models
         public Guid ApprenticeshipId { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public string ApprenticeshipMarketingInformation { get; set; }
+        public IReadOnlyCollection<ApprenticeshipQASubmissionApprenticeshipLocation> Locations { get; set; }
+    }
+
+    public class ApprenticeshipQASubmissionApprenticeshipLocation :
+        OneOfBase<ApprenticeshipQASubmissionApprenticeshipClassroomLocation, ApprenticeshipQASubmissionApprenticeshipEmployerLocation>
+    {
+        public ApprenticeshipQASubmissionApprenticeshipLocation(
+            ApprenticeshipQASubmissionApprenticeshipClassroomLocation classroomLocation)
+            : base(0, value0: classroomLocation)
+        {
+        }
+
+        public ApprenticeshipQASubmissionApprenticeshipLocation(
+            ApprenticeshipQASubmissionApprenticeshipEmployerLocation employerLocation)
+            : base(1, value1: employerLocation)
+        {
+        }
+
+        public bool IsClassroomBased => IsT0;
+
+        public bool IsEmployerBased => IsT1;
+    }
+
+    public class ApprenticeshipQASubmissionApprenticeshipClassroomLocation
+    {
+        public string VenueName { get; set; }
+        public int Radius { get; set; }
+        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+    }
+
+    public class ApprenticeshipQASubmissionApprenticeshipEmployerLocation :
+        OneOfBase<National, ApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions>
+    {
+        public ApprenticeshipQASubmissionApprenticeshipEmployerLocation(National national)
+            : base(0, value0: national)
+        {
+        }
+
+        public ApprenticeshipQASubmissionApprenticeshipEmployerLocation(
+            ApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions regions)
+            : base(1, value1: regions)
+        {
+        }
+
+        public bool IsNational => IsT0;
+
+        public bool HasRegions => IsT1;
+    }
+
+    public class ApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions
+    {
+        public IReadOnlyCollection<string> SubRegionIds { get; set; }
     }
 }

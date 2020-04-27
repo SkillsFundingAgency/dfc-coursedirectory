@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,6 +55,19 @@ SELECT
     s.ApprenticeshipTitle,
     s.ApprenticeshipMarketingInformation
 FROM Pttcd.ApprenticeshipQASubmissionApprenticeships s
+WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId
+
+SELECT
+    l.ApprenticeshipQASubmissionApprenticeshipLocationId,
+    l.ApprenticeshipQASubmissionApprenticeshipId,
+    l.ApprenticeshipLocationType,
+    l.[National],
+    l.RegionIds,
+    l.VenueName,
+    l.DeliveryModes,
+    l.Radius
+FROM Pttcd.ApprenticeshipQASubmissionApprenticeships s
+JOIN Pttcd.ApprenticeshipQASubmissionApprenticeshipLocations l ON s.ApprenticeshipQASubmissionApprenticeshipId = l.ApprenticeshipQASubmissionApprenticeshipId
 WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
 
             var paramz = new { query.ProviderId };
@@ -85,6 +99,44 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
                 var apps = reader.Read<ApprenticeshipQASubmissionApprenticeship>();
                 submission.Apprenticeships = apps.AsList();
 
+                var locations = reader.Read<Location>();
+
+                var appLocations = apps.ToDictionary(
+                    a => a.ApprenticeshipQASubmissionApprenticeshipId,
+                    _ => new List<ApprenticeshipQASubmissionApprenticeshipLocation>());
+
+                foreach (var location in locations)
+                {
+                    if (location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased)
+                    {
+                        appLocations[location.ApprenticeshipQASubmissionApprenticeshipId].Add(
+                            new ApprenticeshipQASubmissionApprenticeshipLocation(
+                                new ApprenticeshipQASubmissionApprenticeshipClassroomLocation()
+                                {
+                                    DeliveryModes = location.DeliveryModes.Value,
+                                    Radius = location.Radius.Value,
+                                    VenueName = location.VenueName
+                                }));
+                    }
+                    else  // location.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased
+                    {
+                        appLocations[location.ApprenticeshipQASubmissionApprenticeshipId].Add(
+                            new ApprenticeshipQASubmissionApprenticeshipLocation(
+                                location.National == true ?
+                                    new ApprenticeshipQASubmissionApprenticeshipEmployerLocation(new National()) :
+                                    new ApprenticeshipQASubmissionApprenticeshipEmployerLocation(
+                                        new ApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions()
+                                        {
+                                            SubRegionIds = location.RegionIds.Split(',').ToList()
+                                        })));
+                    }
+                }
+
+                foreach (var app in apps)
+                {
+                    app.Locations = appLocations[app.ApprenticeshipQASubmissionApprenticeshipId];
+                }
+
                 return submission;
             }
         }
@@ -100,6 +152,18 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
             public bool? ProviderAssessmentPassed { get; set; }
             public bool? ApprenticeshipAssessmentsPassed { get; set; }
             public bool HidePassedNotification { get; set; }
+        }
+
+        private class Location
+        {
+            public int ApprenticeshipQASubmissionApprenticeshipLocationId { get; set; }
+            public int ApprenticeshipQASubmissionApprenticeshipId { get; set; }
+            public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
+            public bool? National { get; set; }
+            public string RegionIds { get; set; }
+            public string VenueName { get; set; }
+            public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
+            public int? Radius { get; set; }
         }
     }
 }
