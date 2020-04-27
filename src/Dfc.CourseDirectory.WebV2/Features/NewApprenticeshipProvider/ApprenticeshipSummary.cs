@@ -164,7 +164,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         UpdatedDate = _clock.UtcNow,
                         Id = _flow.State.ApprenticeshipId.Value,
                         MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                        ProviderId = request.ProviderId,
                         ProviderUkprn = providerUkprn,
                         StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
                         Url = _flow.State.ApprenticeshipWebsite
