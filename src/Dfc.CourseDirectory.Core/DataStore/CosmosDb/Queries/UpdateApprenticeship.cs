@@ -19,7 +19,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
         public IEnumerable<CreateApprenticeshipLocation> ApprenticeshipLocations { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public UserInfo CreatedByUser { get; set; }
+        public DateTime UpdatedDate { get; set; }
+        public UserInfo UpdatedBy { get; set; }
+
     }
 }
