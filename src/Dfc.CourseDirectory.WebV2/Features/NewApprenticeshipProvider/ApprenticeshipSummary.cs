@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var currentUser = _currentUserProvider.GetCurrentUser();
             var now = _clock.UtcNow;
 
-            var apprenticeshipId = Guid.NewGuid();
+            var apprenticeshipId = _flow.State.ApprenticeshipId.GetValueOrDefault(Guid.NewGuid());
             var providerUkprn = provider.Ukprn;
 
             var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
