@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
                         DateUpdated = _clock.UtcNow,
                         UpdatedBy = updatedBy,
                         UnitedKingdomProviderReferenceNumber = ukprn.ToString(),
-                        ProviderType = ProviderType.FE, // Set to FE by default
+                        ProviderType = ProviderType.Both, 
                         ProviderContact = upsertCommand.ProviderContact,
                         ProviderName = upsertCommand.ProviderName,
                         ProviderStatus = upsertCommand.ProviderStatus,
