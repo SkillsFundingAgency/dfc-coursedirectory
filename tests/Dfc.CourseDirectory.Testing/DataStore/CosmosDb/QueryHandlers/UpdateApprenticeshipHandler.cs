@@ -12,23 +12,24 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
     {
         public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, UpdateApprenticeship request)
         {
-            var apprenticeship = new Apprenticeship()
+            var apprenticeship = inMemoryDocumentStore.Apprenticeships.All.SingleOrDefault(p => p.Id == request.Id);
+
+            if (apprenticeship != null)
             {
-                Id = request.Id,
-                ProviderUKPRN = request.ProviderUkprn,
-                ApprenticeshipTitle = request.ApprenticeshipTitle,
-                ApprenticeshipType = request.ApprenticeshipType,
-                MarketingInformation = request.MarketingInformation,
-                Url = request.Url,
-                ContactTelephone = request.ContactTelephone,
-                ContactEmail = request.ContactEmail,
-                ContactWebsite = request.ContactWebsite,
-                ApprenticeshipLocations = request.ApprenticeshipLocations.Select(l => new ApprenticeshipLocation()
+                apprenticeship.ProviderUKPRN = request.ProviderUkprn;
+                apprenticeship.ApprenticeshipTitle = request.ApprenticeshipTitle;
+                apprenticeship.ApprenticeshipType = request.ApprenticeshipType;
+                apprenticeship.MarketingInformation = request.MarketingInformation;
+                apprenticeship.Url = request.Url;
+                apprenticeship.ContactTelephone = request.ContactTelephone;
+                apprenticeship.ContactEmail = request.ContactEmail;
+                apprenticeship.ContactWebsite = request.ContactWebsite;
+                apprenticeship.ApprenticeshipLocations = request.ApprenticeshipLocations.Select(l => new ApprenticeshipLocation()
                 {
                     Address = l.Address,
                     ApprenticeshipLocationType = l.ApprenticeshipLocationType,
-                    CreatedBy = request.CreatedByUser.Email,
-                    CreatedDate = request.CreatedDate,
+                    CreatedBy = request.UpdatedBy.Email,
+                    CreatedDate = request.UpdatedDate,
                     DeliveryModes = EnumHelper.SplitFlags(l.ApprenticeshipLocationType).Cast<int>().ToList(),
                     Id = Guid.NewGuid(),
                     LocationType = l.LocationType,
@@ -39,38 +40,35 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     Radius = l.Radius,
                     RecordStatus = 1,
                     Regions = l.Regions,
-                    UpdatedBy = request.CreatedByUser.Email,
-                    UpdatedDate = request.CreatedDate,
+                    UpdatedBy = request.UpdatedBy.Email,
+                    UpdatedDate = request.UpdatedDate,
                     VenueId = l.VenueId
-                }).ToList(),
-                RecordStatus = 1,
-                CreatedDate = request.CreatedDate,
-                CreatedBy = request.CreatedByUser.Email,
-                UpdatedDate = request.CreatedDate,
-                UpdatedBy = request.CreatedByUser.Email,
-                BulkUploadErrors = new List<BulkUploadError>(),
-                ValidationErrors = Array.Empty<string>(),
-                LocationValidationErrors = Array.Empty<string>()
-            };
+                }).ToList();
+                apprenticeship.RecordStatus = 1;
+                apprenticeship.UpdatedDate = request.UpdatedDate;
+                apprenticeship.UpdatedBy = request.UpdatedBy.Email;
+                apprenticeship.BulkUploadErrors = new List<BulkUploadError>();
+                apprenticeship.ValidationErrors = Array.Empty<string>();
+                apprenticeship.LocationValidationErrors = Array.Empty<string>();
 
-            request.StandardOrFramework.Switch(
-                standard =>
-                {
-                    apprenticeship.StandardId = standard.CosmosId;
-                    apprenticeship.StandardCode = standard.StandardCode;
-                    apprenticeship.Version = standard.Version;
-                    apprenticeship.NotionalNVQLevelv2 = standard.NotionalNVQLevelv2;
-                },
-                framework =>
-                {
-                    apprenticeship.FrameworkId = framework.CosmosId;
-                    apprenticeship.FrameworkCode = framework.FrameworkCode;
-                    apprenticeship.ProgType = framework.ProgType;
-                    apprenticeship.PathwayCode = framework.PathwayCode;
-                });
+                request.StandardOrFramework.Switch(
+                    standard =>
+                    {
+                        apprenticeship.StandardId = standard.CosmosId;
+                        apprenticeship.StandardCode = standard.StandardCode;
+                        apprenticeship.Version = standard.Version;
+                        apprenticeship.NotionalNVQLevelv2 = standard.NotionalNVQLevelv2;
+                    },
+                    framework =>
+                    {
+                        apprenticeship.FrameworkId = framework.CosmosId;
+                        apprenticeship.FrameworkCode = framework.FrameworkCode;
+                        apprenticeship.ProgType = framework.ProgType;
+                        apprenticeship.PathwayCode = framework.PathwayCode;
+                    });
 
-
-            inMemoryDocumentStore.Apprenticeships.Save(apprenticeship);
+                inMemoryDocumentStore.Apprenticeships.Save(apprenticeship);
+            }
             return new Success();
         }
 
