@@ -690,7 +690,7 @@
             "value": "functionapp"
           },
           "deployStagingSlot": {
-            "value": false
+            "value": true
           },
           "appServiceAppSettings": {
             "value": [
