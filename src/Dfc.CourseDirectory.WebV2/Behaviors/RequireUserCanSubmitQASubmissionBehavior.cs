@@ -49,7 +49,9 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 });
 
             var effectiveQaStatus = qaStatus.ValueOrDefault();
-            var qaStatusIsValid = effectiveQaStatus switch
+
+            // Ignore UnableToComplete here
+            var qaStatusIsValid = (effectiveQaStatus & ~ApprenticeshipQAStatus.UnableToComplete) switch
             {
                 ApprenticeshipQAStatus.NotStarted => true,
                 ApprenticeshipQAStatus.Failed => true,
