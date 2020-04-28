@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public Guid? VenueId { get; set; }
         public bool? National { get; set; }
         public ApprenticeshipLocationAddress Address { get; set; }
-        public List<int> DeliveryModes { get; set; }
+        public List<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public int ProviderUKPRN { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -81,7 +82,7 @@ VALUES (@ApprenticeshipQASubmissionApprenticeshipId, @ApprenticeshipLocationType
                     National = location.Match(c => (bool?)null, e => e.Value is National),
                     RegionIds = location.Match(c => null, e => e.Match(national => null, r => string.Join(",", r.SubRegionIds))),
                     VenueName = location.Match(c => c.VenueName, e => null),
-                    DeliveryModes = location.Match(c => (int)c.DeliveryModes, e => (int?)null),
+                    DeliveryModes = location.Match(c => string.Join(",", c.DeliveryModes.Cast<int>()), e => null),
                     Radius = location.Match(c => c.Radius, e => (int?)null)
                 };
 

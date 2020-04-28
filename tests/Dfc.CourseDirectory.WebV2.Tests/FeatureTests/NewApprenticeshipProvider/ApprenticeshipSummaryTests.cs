@@ -556,7 +556,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
-                q.ApprenticeshipLocations.Single().DeliveryModes == ApprenticeshipDeliveryModes.EmployerAddress &&
+                q.ApprenticeshipLocations.Single().DeliveryModes.Single() == ApprenticeshipDeliveryMode.EmployerAddress &&
                 q.ApprenticeshipLocations.Single().National == false &&
                 q.ApprenticeshipLocations.Single().VenueId == null &&
                 q.ApprenticeshipLocations.Single().Regions.Contains("E06000001") &&
@@ -591,7 +591,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 venueId,
                 originalVenueId: null,
                 radius: 5,
-                deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+                deliveryModes: new[] { ApprenticeshipDeliveryMode.BlockRelease });
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
@@ -609,7 +609,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
-                q.ApprenticeshipLocations.Single().DeliveryModes == ApprenticeshipDeliveryModes.BlockRelease &&
+                q.ApprenticeshipLocations.Single().DeliveryModes.Single() == ApprenticeshipDeliveryMode.BlockRelease &&
                 q.ApprenticeshipLocations.Single().Radius == 5 &&
                 q.ApprenticeshipLocations.Single().VenueId == venueId)));
         }
@@ -647,7 +647,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 venueId,
                 originalVenueId: null,
                 radius: 5,
-                deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+                deliveryModes: new[] { ApprenticeshipDeliveryMode.BlockRelease });
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
@@ -666,12 +666,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
-                    l.DeliveryModes == (ApprenticeshipDeliveryModes.BlockRelease) &&
+                    l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.BlockRelease &&
                     l.Radius == 5 &&
                     l.VenueId == venueId) &&
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
-                    l.DeliveryModes == ApprenticeshipDeliveryModes.EmployerAddress &&
+                    l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.EmployerAddress &&
                     l.National == false &&
                     l.VenueId == null &&
                     l.Regions.Contains("E06000001") &&
@@ -730,7 +730,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 venueId,
                 originalVenueId: null,
                 radius: 5,
-                deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+                deliveryModes: new[] { ApprenticeshipDeliveryMode.BlockRelease });
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
@@ -746,12 +746,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<UpdateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
-                    l.DeliveryModes == (ApprenticeshipDeliveryModes.BlockRelease) &&
+                    l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.BlockRelease &&
                     l.Radius == 5 &&
                     l.VenueId == venueId) &&
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
-                    l.DeliveryModes == ApprenticeshipDeliveryModes.EmployerAddress &&
+                    l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.EmployerAddress &&
                     l.National == false &&
                     l.VenueId == null &&
                     l.Regions.Contains("E06000001") &&

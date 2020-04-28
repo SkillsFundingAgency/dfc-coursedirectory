@@ -120,7 +120,7 @@
                     <td class="govuk-table__cell">@location.VenueName</td>
                     <td class="govuk-table__cell">
                         <ul class="govuk-list govuk-!-margin-0">
-                            @foreach (var dm in EnumHelper.SplitFlags(location.DeliveryModes))
+                            @foreach (var dm in location.DeliveryModes)
                             {
                                 <li>@dm.ToDisplayName()</li>
                             }
