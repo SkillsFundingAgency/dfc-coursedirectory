@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public IEnumerable<CreateApprenticeshipLocation> ApprenticeshipLocations { get; set; }
         public DateTime CreatedDate { get; set; }
         public UserInfo CreatedByUser { get; set; }
+        public int Status { get; set; } = 1;
     }
 
     public class CreateApprenticeshipLocation

@@ -190,7 +190,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         ProviderId = request.ProviderId,
                         ProviderUkprn = providerUkprn,
                         StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
-                        Url = _flow.State.ApprenticeshipWebsite
+                        Url = _flow.State.ApprenticeshipWebsite,
+                        Status = 2  // Pending
                     });
             }
 
