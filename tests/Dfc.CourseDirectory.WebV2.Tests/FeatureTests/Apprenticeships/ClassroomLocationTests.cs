@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
 using Dfc.CourseDirectory.Core.Models;
-using Xunit;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
+using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 {
@@ -71,8 +71,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Radius", 15)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.DayRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.BlockRelease)
                 .ToContent();
 
             // Act
@@ -109,8 +109,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", invalidVenueId)
                 .Add("Radius", 15)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.DayRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.BlockRelease)
                 .ToContent();
 
             // Act
@@ -151,8 +151,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
                 .Add("Radius", 15)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.DayRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.BlockRelease)
                 .ToContent();
 
             // Act
@@ -188,8 +188,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.DayRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.BlockRelease)
                 .ToContent();
 
             // Act
@@ -262,8 +262,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
                 .Add("Radius", 15)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
-                .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.DayRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryMode.BlockRelease)
                 .ToContent();
 
             // Act
@@ -277,9 +277,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             Assert.Equal(venueId, parentMptxInstance.State.VenueId);
             Assert.Equal(15, parentMptxInstance.State.Radius);
-            Assert.Equal(
-                ApprenticeshipDeliveryModes.BlockRelease | ApprenticeshipDeliveryModes.DayRelease,
-                parentMptxInstance.State.DeliveryModes);
+            Assert.Contains(ApprenticeshipDeliveryMode.BlockRelease, parentMptxInstance.State.DeliveryModes);
+            Assert.Contains(ApprenticeshipDeliveryMode.DayRelease, parentMptxInstance.State.DeliveryModes);
         }
 
         [Fact]
@@ -324,7 +323,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                     providerId,
                     venueId,
                     radius: 5,
-                    ApprenticeshipDeliveryModes.BlockRelease),
+                    new[] { ApprenticeshipDeliveryMode.BlockRelease }),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -386,7 +385,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                     providerId,
                     venueId,
                     radius: 5,
-                    ApprenticeshipDeliveryModes.BlockRelease),
+                    new[] { ApprenticeshipDeliveryMode.BlockRelease }),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
@@ -415,7 +414,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             public Guid? VenueId { get; set; }
             public Guid? OriginalVenueId { get; set; }
             public int? Radius { get; set; }
-            public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
+            public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
 
             public IReadOnlyCollection<Guid> BlockedVenueIds { get; set; }
 
@@ -424,7 +423,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 Guid venueId,
                 Guid? originalVenueId,
                 int radius,
-                ApprenticeshipDeliveryModes deliveryModes)
+                IEnumerable<ApprenticeshipDeliveryMode> deliveryModes)
             {
                 VenueId = venueId;
                 OriginalVenueId = originalVenueId;

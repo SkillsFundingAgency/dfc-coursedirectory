@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         public Guid? VenueId { get; set; }
         public Guid? OriginalVenueId { get; set; }
         public int? Radius { get; set; }
-        public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
+        public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
 
         public static FlowModel Add(Guid providerId, bool cancelable) => new FlowModel()
         {
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             Guid providerId,
             Guid venueId,
             int radius,
-            ApprenticeshipDeliveryModes deliveryModes) =>
+            IEnumerable<ApprenticeshipDeliveryMode> deliveryModes) =>
             new FlowModel()
             {
                 Mode = Mode.Edit,
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             Guid venueId,
             Guid? originalVenueId,
             int radius,
-            ApprenticeshipDeliveryModes deliveryModes);
+            IEnumerable<ApprenticeshipDeliveryMode> deliveryModes);
     }
 
     public class Query : IRequest<ViewModel>
@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
     {
         public Guid? VenueId { get; set; }
         public int? Radius { get; set; }
-        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
     }
 
     public class ViewModel : Command
@@ -154,6 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             {
                 var vm = CreateViewModel(providerVenues, blockedVenueIds);
                 request.Adapt(vm);
+                vm.DeliveryModes ??= Array.Empty<ApprenticeshipDeliveryMode>();
 
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
@@ -170,7 +171,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
                 _flow.State.VenueId.Value,
                 _flow.State.OriginalVenueId,
                 _flow.State.Radius.Value,
-                _flow.State.DeliveryModes.Value));
+                _flow.State.DeliveryModes));
 
             return new Success();
         }
@@ -218,7 +219,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
                     _flow.State.VenueId :
                     null,
                 Radius = _flow.State.Radius,
-                DeliveryModes = _flow.State.DeliveryModes.GetValueOrDefault()
+                DeliveryModes = _flow.State.DeliveryModes ?? Array.Empty<ApprenticeshipDeliveryMode>()
             };
 
         private ISet<Guid> GetNormalizedBlockedVenueIds()
@@ -258,7 +259,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
                 RuleFor(c => c.DeliveryModes)
                     .NotEmpty()
-                    .NotEqual(ApprenticeshipDeliveryModes.None)
                     .WithMessageForAllRules("Select at least one option from Day Release and Block Release");
             }
         }

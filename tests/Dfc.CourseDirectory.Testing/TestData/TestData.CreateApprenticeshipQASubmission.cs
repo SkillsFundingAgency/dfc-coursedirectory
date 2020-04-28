@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Testing
                         ApprenticeshipLocationType.ClassroomBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
                             new CreateApprenticeshipQASubmissionApprenticeshipClassroomLocation()
                             {
-                                DeliveryModes = (ApprenticeshipDeliveryModes)l.DeliveryModes.Sum(),
+                                DeliveryModes = l.DeliveryModes,
                                 Radius = l.Radius.Value,
                                 VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
                             }),

@@ -328,7 +328,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     venueId,
                     originalVenueId: null,
                     radius: 5,
-                    ApprenticeshipDeliveryModes.BlockRelease));
+                    new[] { ApprenticeshipDeliveryMode.BlockRelease }));
             }
 
             var subRegion1Id = "E06000001";  // County Durham

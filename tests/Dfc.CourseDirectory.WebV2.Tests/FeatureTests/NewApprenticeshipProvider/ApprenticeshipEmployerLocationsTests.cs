@@ -262,7 +262,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     venueId,
                     originalVenueId: null,
                     radius: 5,
-                    ApprenticeshipDeliveryModes.BlockRelease));
+                    deliveryModes: new[] { ApprenticeshipDeliveryMode.BlockRelease }));
             }
 
             var requestContent = new FormUrlEncodedContentBuilder()

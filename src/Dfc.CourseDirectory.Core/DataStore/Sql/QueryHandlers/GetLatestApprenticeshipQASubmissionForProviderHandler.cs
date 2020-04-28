@@ -113,7 +113,10 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
                             new ApprenticeshipQASubmissionApprenticeshipLocation(
                                 new ApprenticeshipQASubmissionApprenticeshipClassroomLocation()
                                 {
-                                    DeliveryModes = location.DeliveryModes.Value,
+                                    DeliveryModes = location.DeliveryModes
+                                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                        .Select(v => Enum.Parse<ApprenticeshipDeliveryMode>(v))
+                                        .ToList(),
                                     Radius = location.Radius.Value,
                                     VenueName = location.VenueName
                                 }));
@@ -162,7 +165,7 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
             public bool? National { get; set; }
             public string RegionIds { get; set; }
             public string VenueName { get; set; }
-            public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
+            public string DeliveryModes { get; set; }
             public int? Radius { get; set; }
         }
     }
