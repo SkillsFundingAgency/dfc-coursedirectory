@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     UpdatedDate = request.CreatedDate,
                     VenueId = l.VenueId
                 }).ToList(),
-                RecordStatus = 1,
+                RecordStatus = request.Status,
                 CreatedDate = request.CreatedDate,
                 CreatedBy = request.CreatedByUser.Email,
                 UpdatedDate = request.CreatedDate,

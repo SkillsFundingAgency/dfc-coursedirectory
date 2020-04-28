@@ -446,7 +446,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 q.ProviderId == providerId &&
                 q.StandardOrFramework.Standard.StandardCode == standardCode &&
                 q.StandardOrFramework.Standard.Version == standardVersion &&
-                q.Url == "http://provider.com/apprenticeship")));
+                q.Url == "http://provider.com/apprenticeship" &&
+                q.Status == 2)));
 
             SqlQuerySpy.VerifyQuery<CreateApprenticeshipQASubmission, int>(q =>
                 q.Apprenticeships.Single().ApprenticeshipId == apprenticeshipId &&
