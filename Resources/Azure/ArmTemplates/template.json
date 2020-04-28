@@ -219,7 +219,7 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-          "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
+        "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
       }
     },
     "blobStorageSettingsContainerName": {
@@ -277,7 +277,9 @@
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
-    "appServiceName": "[concat(parameters('projectPrefix'),'-as')]"
+    "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
+    "functionAppName": "[concat(parameters('projectPrefix'),'-fa')]",
+    "functionAppInsightsName": "[concat(variables('functionAppName'),'-ai')]"
   },
   "resources": [
     {
@@ -643,6 +645,91 @@
           }
         }
       }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[variables('functionAppInsightsName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('functionAppInsightsName')]"
+          },
+          "attachedService": {
+            "value": ""
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[variables('functionAppName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('appServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[resourcegroup().name]"
+          },
+          "appServiceType": {
+            "value": "functionapp"
+          },
+          "deployStagingSlot": {
+            "value": false
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~3"
+              },
+              {
+                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                "value": "1"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "CosmosDbSettings__EndpointUri",
+                "value": "[parameters('CosmosAccountEndpoint')]"
+              },
+              {
+                "name": "CosmosDbSettings__PrimaryKey",
+                "value": "[parameters('CosmosAccountAccessKey')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "DefaultConnection",
+                "type": "SQLServer",
+                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[variables('functionAppInsightsName')]"
+      ]
     }
   ],
   "outputs": {
