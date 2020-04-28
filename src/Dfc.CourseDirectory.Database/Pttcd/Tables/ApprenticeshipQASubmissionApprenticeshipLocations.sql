@@ -6,6 +6,6 @@
 	[National] BIT,
 	[RegionIds] VARCHAR(MAX),
 	[VenueName] NVARCHAR(MAX),
-	[DeliveryModes] TINYINT,
+	[DeliveryModes] VARCHAR(MAX),
 	[Radius] INT,
 )

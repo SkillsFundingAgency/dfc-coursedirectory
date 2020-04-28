@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             Guid venueId,
             Guid? originalVenueId,
             int radius,
-            ApprenticeshipDeliveryModes deliveryModes)
+            IEnumerable<ApprenticeshipDeliveryMode> deliveryModes)
         {
             ApprenticeshipClassroomLocations ??= new Dictionary<Guid, ClassroomLocationEntry>();
 
@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             Guid venueId,
             Guid? originalVenueId,
             int radius,
-            ApprenticeshipDeliveryModes deliveryModes) =>
+            IEnumerable<ApprenticeshipDeliveryMode> deliveryModes) =>
             SetClassroomLocationForVenue(venueId, originalVenueId, radius, deliveryModes);
 
         void IFlowModelCallback.ReceiveStandardOrFramework(StandardOrFramework standardOrFramework) =>
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         {
             public Guid VenueId { get; set; }
             public int Radius { get; set; }
-            public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+            public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
         }
     }
 }

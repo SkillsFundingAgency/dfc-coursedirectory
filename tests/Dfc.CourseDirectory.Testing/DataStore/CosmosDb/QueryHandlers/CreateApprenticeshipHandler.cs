@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     ApprenticeshipLocationType = l.ApprenticeshipLocationType,
                     CreatedBy = request.CreatedByUser.Email,
                     CreatedDate = request.CreatedDate,
-                    DeliveryModes = EnumHelper.SplitFlags(l.DeliveryModes).Cast<int>().ToList(),
+                    DeliveryModes = l.DeliveryModes.ToList(),
                     Id = Guid.NewGuid(),
                     LocationType = l.LocationType,
                     Name = l.Name,

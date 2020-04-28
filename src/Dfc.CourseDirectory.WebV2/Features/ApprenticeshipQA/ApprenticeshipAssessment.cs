@@ -158,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
     public class ViewModelApprenticeshipClassroomLocation
     {
         public string VenueName { get; set; }
-        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        public IReadOnlyCollection<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
         public int Radius { get; set; }
     }
 

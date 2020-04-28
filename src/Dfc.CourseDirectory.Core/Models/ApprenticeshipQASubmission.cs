@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         public string VenueName { get; set; }
         public int Radius { get; set; }
-        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        public IReadOnlyCollection<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
     }
 
     public class ApprenticeshipQASubmissionApprenticeshipEmployerLocation :

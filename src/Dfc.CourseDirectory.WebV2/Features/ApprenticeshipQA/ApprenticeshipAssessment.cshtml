@@ -155,7 +155,7 @@
                                             <td class="govuk-table__cell">@l.VenueName</td>
                                             <td class="govuk-table__cell">
                                                 <ul class="govuk-list">
-                                                    @foreach (var dm in EnumHelper.SplitFlags(l.DeliveryModes))
+                                                    @foreach (var dm in l.DeliveryModes)
                                                     {
                                                         <li>@dm.ToDisplayName()</li>
                                                     }

@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public Guid? VenueId { get; set; }
         public bool? National { get; set; }
         public ApprenticeshipLocationAddress Address { get; set; }
-        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public IEnumerable<string> Regions { get; set; }
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public static CreateApprenticeshipLocation CreateFromVenue(
             Venue venue,
             int radius,
-            ApprenticeshipDeliveryModes deliveryModes) =>
+            IEnumerable<ApprenticeshipDeliveryMode> deliveryModes) =>
             new CreateApprenticeshipLocation()
             {
                 Id = Guid.NewGuid(),
@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         {
             Id = Guid.NewGuid(),
             National = true,
-            DeliveryModes = ApprenticeshipDeliveryModes.EmployerAddress,
+            DeliveryModes = new[] { ApprenticeshipDeliveryMode.EmployerAddress },
             Regions = Array.Empty<string>(),
             ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
         };
@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         {
             Id = Guid.NewGuid(),
             National = false,
-            DeliveryModes = ApprenticeshipDeliveryModes.EmployerAddress,
+            DeliveryModes = new[] { ApprenticeshipDeliveryMode.EmployerAddress },
             Regions = regionIds,
             ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
             LocationType = LocationType.SubRegion

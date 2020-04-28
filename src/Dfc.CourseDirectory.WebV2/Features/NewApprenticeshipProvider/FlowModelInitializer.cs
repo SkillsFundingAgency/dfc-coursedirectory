@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                             l.VenueId.Value,
                             l.VenueId.Value,
                             l.Radius.Value,
-                            (ApprenticeshipDeliveryModes)l.DeliveryModes.Sum(x => x));
+                            l.DeliveryModes);
                     }
                 }
             }

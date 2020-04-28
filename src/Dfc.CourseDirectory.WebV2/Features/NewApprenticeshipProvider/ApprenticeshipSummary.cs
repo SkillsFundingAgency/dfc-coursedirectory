@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         public Guid VenueId { get; set; }
         public string VenueName { get; set; }
         public int Radius { get; set; }
-        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
     }
 
     public class CompleteCommand : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>

@@ -279,7 +279,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var regions = new List<string> { "123" };
             var contactEmail = "somecontact@nonexistentprovider.com";
             var radius = 10;
-            var deliveryMode = ApprenticeshipDeliveryModes.BlockRelease;
+            var deliveryMode = ApprenticeshipDeliveryMode.BlockRelease;
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: "Provider 1",
@@ -307,7 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     CreateApprenticeshipLocation.CreateFromVenue(
                         venue,
                         radius,
-                        deliveryMode)
+                        new[] { deliveryMode })
                 }); 
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
@@ -341,7 +341,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     {
                         Assert.Equal(venueId, location.VenueId);
                         Assert.Equal(radius, location.Radius);
-                        Assert.Equal(deliveryMode, location.DeliveryModes);
+                        Assert.Contains(deliveryMode, location.DeliveryModes);
                     });
                 Assert.Equal(website, model.ApprenticeshipWebsite);
                 Assert.True(model.ApprenticeshipStandardOrFramework.IsFramework);
