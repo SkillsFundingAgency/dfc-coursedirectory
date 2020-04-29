@@ -30,7 +30,6 @@
   <ItemGroup>
     <None Remove="Content\components\checkboxes.css" />
     <None Remove="Content\components\inset-text.css" />
-    <None Remove="Content\components\panel.css" />
     <None Remove="Content\components\radios.css" />
     <None Remove="Content\components\search-input.css" />
     <None Remove="Content\components\tinymce.css" />

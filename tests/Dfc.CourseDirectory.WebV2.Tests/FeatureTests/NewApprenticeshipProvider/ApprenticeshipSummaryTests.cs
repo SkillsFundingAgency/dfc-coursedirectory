@@ -464,7 +464,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var doc = await response.GetDocument();
 
             Assert.Equal(
-                "Information submitted",
+                "Quality assurance submitted",
                 doc.GetElementsByClassName("govuk-panel__title").Single().TextContent.Trim());
         }
 
