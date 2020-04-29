@@ -21,10 +21,11 @@ namespace Dfc.CourseDirectory.Testing
 
         public static void VerifyExecuteQuery<TQuery, TResult>(
             this Mock<CosmosDbQueryDispatcher> mock,
-            Expression<Func<TQuery, bool>> match)
+            Expression<Func<TQuery, bool>> match,
+            Times? times = null)
             where TQuery : ICosmosDbQuery<TResult>
         {
-            mock.Verify(mock => mock.ExecuteQuery(It.Is(match)));
+            mock.Verify(mock => mock.ExecuteQuery(It.Is(match)), times ?? Times.Once());
         }
     }
 }
