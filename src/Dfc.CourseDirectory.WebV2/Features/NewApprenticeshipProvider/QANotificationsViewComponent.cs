@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             {
                 ProviderType = providerInfo.ProviderType,
                 Status = qaStatus.ValueOrDefault(),
-                HidePassedNotication = submission.Match(none => false, sub => sub.HidePassedNotification)
+                HidePassedNotication = submission.Match(none => qaStatus == ApprenticeshipQAStatus.Passed, sub => sub.HidePassedNotification)
             };
 
             return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", vm);
