@@ -93,14 +93,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
                     ApprenticeshipQAStatus = newStatus
                 });
 
-            foreach (var app in latestSubmission.Apprenticeships)
+            if (newStatus == ApprenticeshipQAStatus.Passed)
             {
-                await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatus()
+                foreach (var app in latestSubmission.Apprenticeships)
                 {
-                    ApprenticeshipId = app.ApprenticeshipId,
-                    ProviderUkprn = provider.Ukprn,
-                    Status = 1  // Live
-                });
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatus()
+                    {
+                        ApprenticeshipId = app.ApprenticeshipId,
+                        ProviderUkprn = provider.Ukprn,
+                        Status = 1  // Live
+                    });
+                }
             }
 
             return new ViewModel()
