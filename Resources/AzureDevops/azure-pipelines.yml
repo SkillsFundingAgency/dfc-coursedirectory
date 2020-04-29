@@ -80,12 +80,18 @@ steps:
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-t:Restore,Build'
 
-- task: DotNetCoreCLI@2
+- script: dotnet test tests/Dfc.CourseDirectory.WebV2.Tests/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
   displayName: Test
+  env:
+    ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
   inputs:
-    command: test
-    projects: 'tests/*Tests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --filter SkipOnCI!=true'
+    testResultsFormat: VSTest
+    testResultsFiles: "**/*.trx"
+    searchFolder: "$(Agent.TempDirectory)"
+  condition: succeededOrFailed()
 
 - task: MSBuild@1
   displayName: Publish Dfc.CourseDirectory.Web

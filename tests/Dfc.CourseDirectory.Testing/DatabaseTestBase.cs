@@ -49,7 +49,6 @@ namespace Dfc.CourseDirectory.Testing
             .Build();
     }
 
-    [Trait("SkipOnCI", "true")]  // Until we have SQL DB on CI
     public abstract class DatabaseTestBase : IAsyncLifetime
     {
         protected DatabaseTestBase(DatabaseTestBaseFixture fixture)
