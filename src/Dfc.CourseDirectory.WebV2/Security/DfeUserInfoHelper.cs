@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
 using JWT.Algorithms;
 using JWT.Builder;
 using Newtonsoft.Json;
@@ -18,13 +19,16 @@ namespace Dfc.CourseDirectory.WebV2.Security
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly HttpClient _httpClient;
+        private readonly IUkrlpSyncHelper _ukrlpSyncHelper;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IUkrlpSyncHelper ukrlpSyncHelper)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _ukrlpSyncHelper = ukrlpSyncHelper;
 
             _httpClient = new HttpClient();  // TODO Use HttpClientFactory
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {CreateApiToken(settings)}");
@@ -73,15 +77,19 @@ namespace Dfc.CourseDirectory.WebV2.Security
 
             if (ukprn.HasValue)
             {
+                // Sync UKRLP data
+                await _ukrlpSyncHelper.SyncProviderData(ukprn.Value, context.UserInfo.Email);
+
                 var provider = await GetProvider(ukprn.Value);
 
                 // TODO Handle this nicely
-                if (provider != null)
+                if (provider == null)
                 {
                     throw new Exception($"Cannot find provider with UKPRN: {ukprn.Value}.");
                 }
 
                 context.Provider = provider;
+                context.UserInfo.CurrentProviderId = provider.Id;
             }
         }
 

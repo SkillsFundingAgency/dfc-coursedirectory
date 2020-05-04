@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 {
-    public class StatusTests : TestBase
+    public class StatusTests : MvcTestBase
     {
         public StatusTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
@@ -30,7 +31,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -85,7 +88,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -117,7 +122,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -159,7 +166,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -210,7 +219,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -266,7 +277,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -302,7 +315,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -341,7 +356,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -381,7 +398,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -421,7 +440,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -465,7 +486,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -503,7 +526,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -541,7 +566,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,

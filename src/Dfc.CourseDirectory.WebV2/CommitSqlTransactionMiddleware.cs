@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 

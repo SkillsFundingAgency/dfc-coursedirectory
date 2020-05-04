@@ -4,28 +4,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Validation;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 {
     using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public class Query : IRequest<Command>, IProviderScopedRequest
+    public class Query : IRequest<Command>
     {
         public Guid ProviderId { get; set; }
     }
     
-    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
         public bool UnableToComplete { get; set; }
@@ -169,6 +170,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
                 ApprenticeshipQAStatus = currentStatus.ValueOrDefault()
             };
         }
+
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => request.ProviderId;
 
         private class Data
         {

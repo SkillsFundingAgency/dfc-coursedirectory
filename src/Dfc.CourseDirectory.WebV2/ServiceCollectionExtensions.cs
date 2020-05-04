@@ -1,27 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.WebV2.Services;
+using Dfc.CourseDirectory.WebV2.Services.Interfaces;
+using Dfc.CourseDirectory.WebV2.TagHelpers;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2
 {
@@ -33,18 +39,6 @@ namespace Dfc.CourseDirectory.WebV2
             IConfiguration configuration)
         {
             var thisAssembly = typeof(ServiceCollectionExtensions).Assembly;
-
-            if (!environment.IsTesting())
-            {
-                services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
-                services.AddSingleton<Configuration>();
-
-                services.Scan(scan => scan
-                    .FromAssembliesOf(typeof(ICosmosDbQuery<>))
-                    .AddClasses(classes => classes.AssignableTo(typeof(ICosmosDbQueryHandler<,>)))
-                        .AsImplementedInterfaces()
-                        .WithTransientLifetime());
-            }
 
             services
                 .AddMvc(options =>
@@ -90,12 +84,28 @@ namespace Dfc.CourseDirectory.WebV2
                     AuthorizationPolicyNames.ApprenticeshipQA,
                     policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
             });
+            
+            // SignInActions - order here is the order they're executed in
+            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
+            services.AddTransient<ISignInAction, EnsureProviderExistsSignInAction>();
+            services.AddTransient<ISignInAction, SignInTracker>();
+            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
+            
+            services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
-            services.Scan(scan => scan
-                .FromAssembliesOf(typeof(ISqlQuery<>))
-                .AddClasses(classes => classes.AssignableTo(typeof(ISqlQueryHandler<,>)))
-                    .AsImplementedInterfaces()
-                    .WithTransientLifetime());
+            if (!environment.IsTesting())
+            {
+                services.AddCosmosDbDataStore(
+                    endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
+                    key: configuration["CosmosDbSettings:PrimaryKey"]);
+            }
+			
+            // HostedService to execute startup tasks.
+            // N.B. it's important this is the first HostedService to run; it may set up dependencies for other services.
+            services.Insert(
+                0,
+                new ServiceDescriptor(typeof(IHostedService), typeof(RunStartupTasksHostedService),
+                ServiceLifetime.Transient));
 
             services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
@@ -106,41 +116,29 @@ namespace Dfc.CourseDirectory.WebV2
                 AddImportsToHtml = false
             });
             services.AddMediatR(typeof(ServiceCollectionExtensions));
-            services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
-            services.AddScoped<SqlConnection>(_ => new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<SqlTransaction>(sp =>
-            {
-                var connection = sp.GetRequiredService<SqlConnection>();
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-                var transaction = connection.BeginTransaction(IsolationLevel.Snapshot);
-
-                var marker = sp.GetRequiredService<SqlTransactionMarker>();
-                marker.OnTransactionCreated(transaction);
-
-                return transaction;
-            });
-            services.AddScoped<SqlTransactionMarker>();
-            services.AddSingleton<IClock, SystemClock>();
+            services.AddScoped<IClock, FrozenSystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
             services.AddBehaviors();
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
-            services.AddSingleton<MptxInstanceContextProvider>();
+            services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
             services.AddSingleton<MptxInstanceContextFactory>();
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
-            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
-            services.AddTransient<ISignInAction, SignInTracker>();
-            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
+
+            services.AddTransient<IUkrlpSyncHelper, UkrlpSyncHelper>();
+            services.AddTransient<IUkrlpWcfService, UkrlpWcfService>();
             services.AddTransient<MptxManager>();
+            services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
+            services.AddTransient<ITagHelperComponent, AppendProviderContextTagHelperComponent>();
+            services.AddTransient<ITagHelperComponent, AppendMptxInstanceTagHelperComponent>();
+            services.AddTransient<Features.ApprenticeshipQA.ProviderAssessment.FlowModelInitializer>();
+            services.AddTransient<Features.ApprenticeshipQA.ApprenticeshipAssessment.FlowModelInitializer>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)

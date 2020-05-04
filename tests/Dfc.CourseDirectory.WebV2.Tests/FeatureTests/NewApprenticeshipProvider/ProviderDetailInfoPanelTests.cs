@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class ProviderDetailInfoPanelTests : TestBase
+    public class ProviderDetailInfoPanelTests : MvcTestBase
     {
         public ProviderDetailInfoPanelTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class DeactivatedProviderErrorActionFilterTests : TestBase
+    public class DeactivatedProviderErrorActionFilterTests : MvcTestBase
     {
         public DeactivatedProviderErrorActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
@@ -23,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            await User.AsProviderUser(providerId, Models.ProviderType.Both, providerStatus);
+            await User.AsProviderUser(providerId, ProviderType.Both, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -42,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            await User.AsProviderUser(providerId, Models.ProviderType.Both, providerStatus);
+            await User.AsProviderUser(providerId, ProviderType.Both, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -58,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            await User.AsProviderUser(providerId, Models.ProviderType.Both, providerStatus);
+            await User.AsProviderUser(providerId, ProviderType.Both, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-allowed");

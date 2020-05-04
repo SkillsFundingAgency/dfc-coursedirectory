@@ -108,10 +108,7 @@ else
 
 @if (User.Identity.IsAuthenticated)
 {
-    var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
     var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
-    var feUser = await Authorization.AuthorizeAsync(User, "Fe");
-    var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
     var providerSuperUser = await Authorization.AuthorizeAsync(User, "ProviderSuperUser");
 
     <h1 class="govuk-heading-xl cd-dashboard-title">Publish to the course directory</h1>
@@ -119,25 +116,22 @@ else
     <div class="govuk-grid-row no-margin">
         <div class="govuk-grid-column-two-thirds no-padding-left">
             <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
+                @if (Model.ProviderType.HasFlag(ProviderType.FE))
                 {
-                    if (Model.ProviderType.HasFlag(ProviderType.FE))
-                    {
-                        <div class="govuk-grid-column-one-half homepage-item ">
-                            @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
-                        </div>
-                    }
-                    if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship) &&
-                        (!Model.QAFeatureIsEnabled || Model.ProviderQACurrentStatus == Dfc.CourseDirectory.WebV2.Models.ApprenticeshipQAStatus.Passed))
-                    {
-                        <div class="govuk-grid-column-one-half homepage-item ">
-                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                        </div>
-                    }
                     <div class="govuk-grid-column-one-half homepage-item ">
-                        @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                        @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
                     </div>
                 }
+                @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship) &&
+              (!Model.QAFeatureIsEnabled || Model.ProviderQACurrentStatus == Dfc.CourseDirectory.Core.Models.ApprenticeshipQAStatus.Passed))
+                {
+                    <div class="govuk-grid-column-one-half homepage-item disabled ">
+                        @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                    </div>
+                }
+                <div class="govuk-grid-column-one-half homepage-item ">
+                    @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                </div>
             </div>
         </div>
         <div class="govuk-grid-column-one-third teal-top-border no-padding">

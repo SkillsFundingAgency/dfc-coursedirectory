@@ -17,7 +17,11 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 .MethodInfo
                 .GetCustomAttribute<MptxActionAttribute>();
 
-            if (mptxActionAttribute == null)
+            var startsMptxAttribute = controllerActionDescriptor
+                .MethodInfo
+                .GetCustomAttribute<StartsMptxAttribute>();
+
+            if (mptxActionAttribute == null && startsMptxAttribute == null)
             {
                 await next();
                 return;
@@ -28,21 +32,21 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             if (ffiid.Count > 0)
             {
-                var flowName = mptxActionAttribute.FlowName;
+                var stateProvider = context.HttpContext.RequestServices.GetRequiredService<IMptxStateProvider>();
+                var instance = stateProvider.GetInstance(ffiid);
 
-                var mptxManager = context.HttpContext.RequestServices.GetRequiredService<MptxManager>();
-                var instanceContext = mptxManager.GetInstance(ffiid);
-
-                if (instanceContext != null && instanceContext.FlowName == flowName)
+                if (instance == null)
                 {
-                    var feature = new MptxInstanceContextFeature(instanceContext);
-                    context.HttpContext.Features.Set(feature);
-                }
-                else
-                {
-                    context.Result = new BadRequestResult();
+                    context.Result = new ViewResult()
+                    {
+                        ViewName = "GenericError",
+                        StatusCode = 404
+                    };
                     return;
                 }
+                
+                var feature = new MptxInstanceFeature(instance);
+                context.HttpContext.Features.Set(feature);
             }
 
             await next();            

@@ -1,5 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

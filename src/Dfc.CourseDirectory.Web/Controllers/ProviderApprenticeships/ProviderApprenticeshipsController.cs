@@ -22,7 +22,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApp
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

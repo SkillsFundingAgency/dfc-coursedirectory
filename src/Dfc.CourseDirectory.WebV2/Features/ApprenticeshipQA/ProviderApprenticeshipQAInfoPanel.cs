@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
                 .OrderByDescending(c => c.LastUpdated)
                 .SingleOrDefault(c => c.ContactType == "P");
 
-            var contactName = contact?.ContactPersonalDetails.PersonGivenName != null && contact?.ContactPersonalDetails.PersonFamilyName != null ?
+            var contactName = contact?.ContactPersonalDetails?.PersonGivenName != null && contact?.ContactPersonalDetails?.PersonFamilyName != null ?
                 string.Join(" ", contact.ContactPersonalDetails.PersonGivenName) + " " +
                     contact.ContactPersonalDetails.PersonFamilyName :
                 null;
@@ -113,7 +113,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
                     address.StreetDescription,
                     address.Locality
                 };
-                parts.AddRange(address.Items);
+
+                if (address.Items != null)
+                {
+                    parts.AddRange(address.Items);
+                }
+
                 parts.Add(address.PostCode);
 
                 return parts.Where(p => !string.IsNullOrEmpty(p)).ToList();

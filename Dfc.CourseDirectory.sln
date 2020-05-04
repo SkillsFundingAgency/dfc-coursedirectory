@@ -11,16 +11,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Common"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Models", "src\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj", "{37C43756-89CC-46FC-A397-2A68740DD08C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "New", "New", "{ED77C6F2-A944-4285-9EB1-6240606ED53A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2", "src\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj", "{A2BD0AC2-271B-463C-87F0-B358B546DDDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2.Tests", "tests\Dfc.CourseDirectory.WebV2.Tests\Dfc.CourseDirectory.WebV2.Tests.csproj", "{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1DB8226-C965-4846-A3F0-A597F8511A8A}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		NuGet.config = NuGet.config
 	EndProjectSection
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dfc.CourseDirectory.Database", "src\Dfc.CourseDirectory.Database\Dfc.CourseDirectory.Database.sqlproj", "{08458BC6-E51F-4320-9663-225509D4B11A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core", "src\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj", "{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{260DB60D-49B4-4B94-A6E8-53069B9FC1BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Functions", "src\Dfc.CourseDirectory.Functions\Dfc.CourseDirectory.Functions.csproj", "{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,13 +61,31 @@ Global
 		{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08458BC6-E51F-4320-9663-225509D4B11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08458BC6-E51F-4320-9663-225509D4B11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08458BC6-E51F-4320-9663-225509D4B11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08458BC6-E51F-4320-9663-225509D4B11A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A2BD0AC2-271B-463C-87F0-B358B546DDDA} = {ED77C6F2-A944-4285-9EB1-6240606ED53A}
-		{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B} = {ED77C6F2-A944-4285-9EB1-6240606ED53A}
+		{4DBAC9AD-D836-4E81-8FFA-40D71A02C996} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
+		{E12E0977-5EDE-4358-8ECA-5D7B346A0226} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
+		{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
+		{37C43756-89CC-46FC-A397-2A68740DD08C} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0079CB89-A4F8-4056-BBC0-FDFBF72BC50C}

@@ -8,27 +8,22 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Onspd;
 using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
-using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
-using Dfc.CourseDirectory.Web.ViewComponents.VenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +43,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueService _venueService;
         private readonly IOnspdSearchHelper _onspdSearchHelper;
         private readonly ICourseService _courseService;
+        private readonly IApprenticeshipService _apprenticeshipService;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -61,7 +57,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IHttpContextAccessor contextAccessor,
             IVenueService venueService,
             IOnspdSearchHelper onspdSearchHelper,
-            ICourseService courseService)
+            ICourseService courseService, 
+            IApprenticeshipService apprenticeshipService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(addressSearchService, nameof(addressSearchService));
@@ -78,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueService = venueService;
             _onspdSearchHelper = onspdSearchHelper;
             _courseService = courseService;
+            _apprenticeshipService = apprenticeshipService;
         }
 
 
@@ -181,8 +179,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult AddVenue()
+        public IActionResult AddVenue([FromQuery] string returnUrl)
         {
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                _contextAccessor.HttpContext.Session.SetString("ADDNEWVENUERETURNURL", returnUrl);
+            }
+
             //_session.SetString("IsEdit", "false");
             return View();
         }
@@ -390,6 +393,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
 
+            var returnUrl = _contextAccessor.HttpContext.Session.GetString("ADDNEWVENUERETURNURL");
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(new Url(returnUrl).SetQueryParam("venueId", venueID));
+            }
+
 
             string option = _contextAccessor.HttpContext.Session.GetString("Option");
 
@@ -528,7 +537,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> CheckForCourses(Guid VenueId)
+        public async Task<IActionResult> CheckForCoursesOrApprenticeships(Guid VenueId)
         {
             List<Course> Courses = new List<Course>();
 
@@ -540,6 +549,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                    ? null
                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                        .Result.Value);
+
+
+            var apprenticeships = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
+            var liveApprenticeships = apprenticeships.Value?.Where(x => x.RecordStatus == RecordStatus.Live);
+            var apprenticeshipLocations = liveApprenticeships.SelectMany(x => x.ApprenticeshipLocations).Where(x => x.VenueId == VenueId && x.RecordStatus == RecordStatus.Live).ToList();
+
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
             var liveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.Live && x.VenueId == VenueId).ToList();
@@ -556,6 +571,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 LiveCoursesExist = liveCourseRuns?.Count() > 0,
                 PendingCoursesExist = migrationPendingCourseRuns?.Count() > 0 || bulkUploadPendingCourseRuns?.Count() > 0 || migrationReadyForLiveCourseRuns?.Count() > 0 || bulkUploadReadyForLiveCourseRuns?.Count() > 0,
+                LiveApprenticeshipsExist = apprenticeshipLocations?.Count() > 0
 
             };
 

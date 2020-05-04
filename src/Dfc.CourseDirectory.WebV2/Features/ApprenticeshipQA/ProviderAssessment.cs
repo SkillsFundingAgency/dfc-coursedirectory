@@ -4,197 +4,79 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Validation;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 {
-    using CommandResponse = OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>;
+    using CommandResponse = OneOf<ModelWithErrors<ViewModel>, Success>;
 
     public struct NoValidSubmission
     {
     }
 
-    public class Query : IRequest<ViewModel>, IProviderScopedRequest
+    public class FlowModel : IMptxState
     {
         public Guid ProviderId { get; set; }
-    }
-
-    public class ViewModel : Command
-    {
-        public string ProviderName { get; set; }
-        public string MarketingInformation { get; set; }
         public bool IsReadOnly { get; set; }
-    }
-
-    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
-    {
-        public Guid ProviderId { get; set; }
         public bool? CompliancePassed { get; set; }
         public ApprenticeshipQAProviderComplianceFailedReasons? ComplianceFailedReasons { get; set; }
         public string ComplianceComments { get; set; }
         public bool? StylePassed { get; set; }
         public ApprenticeshipQAProviderStyleFailedReasons? StyleFailedReasons { get; set; }
         public string StyleComments { get; set; }
-    }
 
-    public class ConfirmationViewModel
-    {
-        public Guid ProviderId { get; set; }
-        public bool CompliancePassed { get; set; }
-        public ApprenticeshipQAProviderComplianceFailedReasons ComplianceFailedReasons { get; set; }
-        public string ComplianceComments { get; set; }
-        public bool StylePassed { get; set; }
-        public ApprenticeshipQAProviderStyleFailedReasons StyleFailedReasons { get; set; }
-        public string StyleComments { get; set; }
-        public bool Passed { get; set; }
-    }
+        public bool GotAssessmentOutcome { get; set; }
 
-    public class Handler :
-        IRequestHandler<Query, ViewModel>,
-        IRestrictQAStatus<Query>,
-        IRequestHandler<Command, CommandResponse>,
-        IRestrictQAStatus<Command>
-    {
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IClock _clock;
+        public bool IsProviderAssessmentPassed() => CompliancePassed.Value && StylePassed.Value;
 
-        public Handler(
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            ICurrentUserProvider currentUserProvider,
-            IClock clock)
-        {
-            _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _currentUserProvider = currentUserProvider;
-            _clock = clock;
-        }
-
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
-        {
-            ApprenticeshipQAStatus.Submitted,
-            ApprenticeshipQAStatus.InProgress
-        };
-
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
-        {
-            ApprenticeshipQAStatus.Submitted,
-            ApprenticeshipQAStatus.InProgress,
-            ApprenticeshipQAStatus.Failed,
-            ApprenticeshipQAStatus.Passed,
-            ApprenticeshipQAStatus.UnableToComplete
-        };
-
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var data = await CheckStatus(request.ProviderId);
-            return CreateViewModel(data);
-        }
-
-        public async Task<CommandResponse> Handle(
-            Command request,
-            CancellationToken cancellationToken)
-        {
-            var data = await CheckStatus(request.ProviderId);
-
-            var validator = new CommandValidator();
-            var validationResult = await validator.ValidateAsync(request);
-
-            if (!validationResult.IsValid)
-            {
-                var vm = CreateViewModel(data);
-                request.Adapt(vm);
-
-                return new ModelWithErrors<ViewModel>(vm, validationResult);
-            }
-
-            // Sanitize request
-            if (request.CompliancePassed == true)
-            {
-                request.ComplianceFailedReasons = ApprenticeshipQAProviderComplianceFailedReasons.None;
-                request.ComplianceComments = null;
-            }
-            if (request.StylePassed == true)
-            {
-                request.StyleFailedReasons = ApprenticeshipQAProviderStyleFailedReasons.None;
-                request.StyleComments = null;
-            }
-
-            var currentUserId = _currentUserProvider.GetCurrentUser().UserId;
-
-            var passed = IsQAPassed(request.CompliancePassed.Value, request.StylePassed.Value);
-
-            var overallPassed = data.LatestSubmission.ApprenticeshipAssessmentsPassed.HasValue ?
-                data.LatestSubmission.ApprenticeshipAssessmentsPassed.Value && passed :
+        public bool? IsSubmissionPassed(bool? apprenticeshipAssessmentPassed) =>
+            apprenticeshipAssessmentPassed.HasValue ?
+                IsProviderAssessmentPassed() && apprenticeshipAssessmentPassed.Value :
                 (bool?)null;
 
-            await _sqlQueryDispatcher.ExecuteQuery(
-                new SetProviderApprenticeshipQAStatus()
-                {
-                    ProviderId = request.ProviderId,
-                    ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
-                });
+        public void SetAssessmentOutcome(
+            bool compliancePassed,
+            ApprenticeshipQAProviderComplianceFailedReasons complianceFailedReasons,
+            string complianceComments,
+            bool stylePassed,
+            ApprenticeshipQAProviderStyleFailedReasons styleFailedReasons,
+            string styleComments)
+        {
+            CompliancePassed = compliancePassed;
+            ComplianceFailedReasons = !compliancePassed ? complianceFailedReasons : ApprenticeshipQAProviderComplianceFailedReasons.None;
+            ComplianceComments = !compliancePassed ? complianceComments : null;
+            StylePassed = stylePassed;
+            StyleFailedReasons = !stylePassed ? styleFailedReasons : ApprenticeshipQAProviderStyleFailedReasons.None;
+            StyleComments = !stylePassed ? styleComments : null;
+            GotAssessmentOutcome = true;
+        }
+    }
 
-            await _sqlQueryDispatcher.ExecuteQuery(
-                new CreateApprenticeshipQAProviderAssessment()
-                {
-                    ApprenticeshipQASubmissionId = data.LatestSubmission.ApprenticeshipQASubmissionId,
-                    AssessedByUserId = currentUserId,
-                    AssessedOn = _clock.UtcNow,
-                    ComplianceComments = request.ComplianceComments,
-                    ComplianceFailedReasons = request.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
-                    CompliancePassed = request.CompliancePassed.Value,
-                    Passed = passed,
-                    StyleComments = request.StyleComments,
-                    StyleFailedReasons = request.StyleFailedReasons ?? ApprenticeshipQAProviderStyleFailedReasons.None,
-                    StylePassed = request.StylePassed
-                });
+    public class FlowModelInitializer
+    {
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-            await _sqlQueryDispatcher.ExecuteQuery(
-                new UpdateApprenticeshipQASubmission()
-                {
-                    ApprenticeshipQASubmissionId = data.LatestSubmission.ApprenticeshipQASubmissionId,
-                    Passed = overallPassed,
-                    LastAssessedByUserId = currentUserId,
-                    LastAssessedOn = _clock.UtcNow,
-                    ProviderAssessmentPassed = passed,
-                    ApprenticeshipAssessmentsPassed = data.LatestSubmission.ApprenticeshipAssessmentsPassed
-                });
-
-            var confirmVm = CreateViewModel(data).Adapt<ConfirmationViewModel>();
-            request.Adapt(confirmVm);
-            confirmVm.Passed = IsQAPassed(request.CompliancePassed.Value, request.StylePassed.Value);
-
-            return confirmVm;
+        public FlowModelInitializer(ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        private async Task<Data> CheckStatus(Guid providerId)
+        public async Task<FlowModel> Initialize(Guid providerId)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderById()
-                {
-                    ProviderId = providerId
-                });
-
-            if (provider == null)
-            {
-                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
-            }
-
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
                 {
@@ -214,37 +96,266 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             var latestSubmission = maybeLatestSubmission.AsT1;
 
-            var assessment = await _sqlQueryDispatcher.ExecuteQuery(
+            var latestAssessment = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQAProviderAssessmentForSubmission()
                 {
                     ApprenticeshipQASubmissionId = latestSubmission.ApprenticeshipQASubmissionId
                 });
 
-            return new Data()
+            return new FlowModel()
             {
-                Provider = provider,
-                QAStatus = qaStatus.ValueOrDefault(),
-                LatestSubmission = latestSubmission,
-                LatestAssessment = assessment
+                ProviderId = providerId,
+                ComplianceComments = latestAssessment.Match(_ => string.Empty, v => v.ComplianceComments),
+                ComplianceFailedReasons = latestAssessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
+                CompliancePassed = latestAssessment.Match(_ => null, v => v.CompliancePassed),
+                StyleComments = latestAssessment.Match(_ => string.Empty, v => v.StyleComments),
+                StyleFailedReasons = latestAssessment.Match(_ => ApprenticeshipQAProviderStyleFailedReasons.None, v => v.StyleFailedReasons),
+                StylePassed = latestAssessment.Match(_ => null, v => v.StylePassed),
+                IsReadOnly = !(qaStatus == ApprenticeshipQAStatus.Submitted || qaStatus == ApprenticeshipQAStatus.InProgress),
+            };
+        }
+    }
+
+    public class Query : IRequest<ViewModel>
+    {
+    }
+
+    public class ViewModel : Command
+    {
+        public Guid ProviderId { get; set; }
+        public string ProviderName { get; set; }
+        public string MarketingInformation { get; set; }
+        public bool IsReadOnly { get; set; }
+    }
+
+    public class Command : IRequest<CommandResponse>
+    {
+        public bool? CompliancePassed { get; set; }
+        public ApprenticeshipQAProviderComplianceFailedReasons? ComplianceFailedReasons { get; set; }
+        public string ComplianceComments { get; set; }
+        public bool? StylePassed { get; set; }
+        public ApprenticeshipQAProviderStyleFailedReasons? StyleFailedReasons { get; set; }
+        public string StyleComments { get; set; }
+    }
+
+    public class ConfirmationQuery : IRequest<ConfirmationViewModel>
+    {
+    }
+
+    public class ConfirmationViewModel : IRequest<ConfirmationCommand>
+    {
+        public Guid ProviderId { get; set; }
+        public bool CompliancePassed { get; set; }
+        public ApprenticeshipQAProviderComplianceFailedReasons ComplianceFailedReasons { get; set; }
+        public string ComplianceComments { get; set; }
+        public bool StylePassed { get; set; }
+        public ApprenticeshipQAProviderStyleFailedReasons StyleFailedReasons { get; set; }
+        public string StyleComments { get; set; }
+        public bool Passed { get; set; }
+    }
+
+    public class ConfirmationCommand : IRequest<Success>
+    {
+    }
+
+    public class Handler :
+        IRequestHandler<Query, ViewModel>,
+        IRestrictQAStatus<Query>,
+        IRequestHandler<Command, CommandResponse>,
+        IRestrictQAStatus<Command>,
+        IRequestHandler<ConfirmationQuery, ConfirmationViewModel>,
+        IRestrictQAStatus<ConfirmationQuery>,
+        IRequestHandler<ConfirmationCommand, Success>,
+        IRestrictQAStatus<ConfirmationCommand>
+    {
+        private static readonly IEnumerable<ApprenticeshipQAStatus> _submittableStatuses = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress
+        };
+
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
+        private readonly MptxInstanceContext<FlowModel> _flow;
+
+        public Handler(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock,
+            MptxInstanceContext<FlowModel> flow)
+        {
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
+            _flow = flow;
+        }
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses => _submittableStatuses;
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<ConfirmationQuery>.PermittedStatuses => _submittableStatuses;
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<ConfirmationCommand>.PermittedStatuses => _submittableStatuses;
+
+        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel();
+
+        public async Task<CommandResponse> Handle(
+            Command request,
+            CancellationToken cancellationToken)
+        {
+            var validator = new CommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                var vm = await CreateViewModel();
+                request.Adapt(vm);
+
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
+            }
+
+            _flow.Update(s => s.SetAssessmentOutcome(
+                request.CompliancePassed.Value,
+                request.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
+                request.ComplianceComments,
+                request.StylePassed.Value,
+                request.StyleFailedReasons ?? ApprenticeshipQAProviderStyleFailedReasons.None,
+                request.StyleComments));
+
+            return new Success();
+        }
+
+        public Task<ConfirmationViewModel> Handle(ConfirmationQuery request, CancellationToken cancellationToken)
+        {
+            if (!_flow.State.GotAssessmentOutcome)
+            {
+                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+
+            var vm = new ConfirmationViewModel()
+            {
+                ProviderId = _flow.State.ProviderId,
+                ComplianceComments = _flow.State.ComplianceComments,
+                ComplianceFailedReasons = _flow.State.ComplianceFailedReasons.Value,
+                CompliancePassed = _flow.State.CompliancePassed.Value,
+                Passed = _flow.State.IsProviderAssessmentPassed(),
+                StyleComments = _flow.State.StyleComments,
+                StyleFailedReasons = _flow.State.StyleFailedReasons.Value,
+                StylePassed = _flow.State.StylePassed.Value
+            };
+
+            return Task.FromResult(vm);
+        }
+
+        public async Task<Success> Handle(ConfirmationCommand request, CancellationToken cancellationToken)
+        {
+            if (!_flow.State.GotAssessmentOutcome)
+            {
+                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+
+            var currentUserId = _currentUserProvider.GetCurrentUser().UserId;
+
+            var submission = await GetSubmission();
+
+            var overallPassed = _flow.State.IsSubmissionPassed(submission.ApprenticeshipAssessmentsPassed);
+
+            await _sqlQueryDispatcher.ExecuteQuery(
+                new SetProviderApprenticeshipQAStatus()
+                {
+                    ProviderId = _flow.State.ProviderId,
+                    ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
+                });
+
+            await _sqlQueryDispatcher.ExecuteQuery(
+                new CreateApprenticeshipQAProviderAssessment()
+                {
+                    ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
+                    AssessedByUserId = currentUserId,
+                    AssessedOn = _clock.UtcNow,
+                    ComplianceComments = _flow.State.ComplianceComments,
+                    ComplianceFailedReasons = _flow.State.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
+                    CompliancePassed = _flow.State.CompliancePassed.Value,
+                    Passed = _flow.State.IsProviderAssessmentPassed(),
+                    StyleComments = _flow.State.StyleComments,
+                    StyleFailedReasons = _flow.State.StyleFailedReasons ?? ApprenticeshipQAProviderStyleFailedReasons.None,
+                    StylePassed = _flow.State.StylePassed
+                });
+
+            await _sqlQueryDispatcher.ExecuteQuery(
+                new UpdateApprenticeshipQASubmission()
+                {
+                    ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
+                    Passed = overallPassed,
+                    LastAssessedByUserId = currentUserId,
+                    LastAssessedOn = _clock.UtcNow,
+                    ProviderAssessmentPassed = _flow.State.IsProviderAssessmentPassed(),
+                    ApprenticeshipAssessmentsPassed = submission.ApprenticeshipAssessmentsPassed
+                });
+
+            await _sqlQueryDispatcher.ExecuteQuery(
+                new SetProviderApprenticeshipQAStatus()
+                {
+                    ProviderId = _flow.State.ProviderId,
+                    ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
+                });
+
+            return new Success();
+        }
+
+        private async Task<ViewModel> CreateViewModel()
+        {
+            var providerId = _flow.State.ProviderId;
+
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                 new GetProviderById()
+                 {
+                     ProviderId = providerId
+                 });
+
+            var submission = await GetSubmission();
+
+            return new ViewModel()
+            {
+                ProviderId = providerId,
+                MarketingInformation = Html.SanitizeHtml(submission.ProviderMarketingInformation),
+                ProviderName = provider.ProviderName,
+                ComplianceComments = _flow.State.ComplianceComments,
+                ComplianceFailedReasons = _flow.State.ComplianceFailedReasons,
+                CompliancePassed = _flow.State.CompliancePassed,
+                StyleComments = _flow.State.StyleComments,
+                StyleFailedReasons = _flow.State.StyleFailedReasons,
+                StylePassed = _flow.State.StylePassed,
+                IsReadOnly = _flow.State.IsReadOnly
             };
         }
 
-        private ViewModel CreateViewModel(Data data) => new ViewModel()
-        {
-            ProviderId = data.Provider.Id,
-            MarketingInformation = data.LatestSubmission.ProviderMarketingInformation,
-            ProviderName = data.Provider.ProviderName,
-            ComplianceComments = data.LatestAssessment.Match(_ => string.Empty, v => v.ComplianceComments),
-            ComplianceFailedReasons = data.LatestAssessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
-            CompliancePassed = data.LatestAssessment.Match(_ => null, v => v.CompliancePassed),
-            StyleComments = data.LatestAssessment.Match(_ => string.Empty, v => v.StyleComments),
-            StyleFailedReasons = data.LatestAssessment.Match(_ => ApprenticeshipQAProviderStyleFailedReasons.None, v => v.StyleFailedReasons),
-            StylePassed = data.LatestAssessment.Match(_ => null, v => v.StylePassed),
-            IsReadOnly = !(data.QAStatus == ApprenticeshipQAStatus.Submitted || data.QAStatus == ApprenticeshipQAStatus.InProgress)
-        };
+        private async Task<ApprenticeshipQASubmission> GetSubmission() =>
+            (await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestApprenticeshipQASubmissionForProvider()
+                {
+                    ProviderId = _flow.State.ProviderId
+                })).AsT1;
 
-        private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
-            compliancePassed && stylePassed;
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => _flow.State.ProviderId;
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => _flow.State.ProviderId;
+
+        Guid IRestrictQAStatus<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => _flow.State.ProviderId;
+
+        Guid IRestrictQAStatus<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => _flow.State.ProviderId;
 
         private class Data
         {

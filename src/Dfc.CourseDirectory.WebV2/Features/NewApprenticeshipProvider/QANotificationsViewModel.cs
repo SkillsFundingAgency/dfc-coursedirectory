@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Models;
+﻿using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -6,5 +6,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
     {
         public ApprenticeshipQAStatus Status { get; set; }
         public ProviderType ProviderType { get; set; }
+        public bool HidePassedNotication { get; set; }
     }
 }

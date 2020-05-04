@@ -1,0 +1,74 @@
+﻿@using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
+@using Flurl
+@model ViewModel
+@{
+    ViewBag.Title = "Select delivery options";
+
+    var addVenueCallback = new Url(ViewContext.HttpContext.Request.GetEncodedPathAndQuery()).RemoveQueryParam("venueId");
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="VenueId" />
+        <govuk-error-summary-item asp-for="Radius" />
+        <govuk-error-summary-item asp-for="DeliveryModes" />
+    </govuk-error-summary>
+}
+
+<form asp-action="ClassroomLocation" append-mptx-id class="pttcd-apprenticeships__classroom-location-form">
+    <h1 class="govuk-heading-l">Select delivery options</h1>
+
+    <govuk-select asp-for="VenueId">
+        <govuk-select-label>Location</govuk-select-label>
+        <govuk-select-hint>Select a location you can travel from to delivery training</govuk-select-hint>
+        <govuk-select-item value="">Please select</govuk-select-item>
+        @foreach (var venue in Model.Venues)
+        {
+            <govuk-select-item value="@venue.venueId" selected="@(Model.VenueId == venue.venueId)" disabled="@venue.blocked">
+                @venue.name
+            </govuk-select-item>
+        }
+    </govuk-select>
+
+    <div class="pttcd-apprenticeships__classroom-location__add-new-venue">
+        <a asp-controller="Venues" asp-action="AddVenue" asp-route-returnUrl="@addVenueCallback" class="govuk-link">I need to add a location to this list</a>
+    </div>
+
+    <govuk-input asp-for="Radius" inputmode="numeric" pattern="[0-9]*" input-class="govuk-input--width-4">
+        <govuk-input-label>How far are you willing to travel from the selected location?</govuk-input-label>
+        <govuk-input-hint>Enter number of miles</govuk-input-hint>
+    </govuk-input>
+
+    <govuk-checkboxes asp-for="DeliveryModes" class="govuk-checkboxes--small">
+        <govuk-checkboxes-fieldset>
+            <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+                <h2 class="govuk-fieldset__heading">How is the training delivered at this location?</h2>
+            </govuk-checkboxes-fieldset-legend>
+        </govuk-checkboxes-fieldset>
+        <govuk-checkboxes-hint>Select all that apply</govuk-checkboxes-hint>
+        <govuk-checkboxes-item value="@ApprenticeshipDeliveryMode.DayRelease" checked="@Model.DeliveryModes.Contains(ApprenticeshipDeliveryMode.DayRelease)">
+            Day Release
+        </govuk-checkboxes-item>
+        <govuk-checkboxes-item value="@ApprenticeshipDeliveryMode.BlockRelease" checked="@Model.DeliveryModes.Contains(ApprenticeshipDeliveryMode.BlockRelease)">
+            Block Release
+        </govuk-checkboxes-item>
+    </govuk-checkboxes>
+
+    <govuk-button type="submit">Continue</govuk-button>
+
+    @if (Model.Mode == Mode.Edit)
+    {
+        <govuk-button asp-action="RemoveClassroomLocation" append-mptx-id class="govuk-button--secondary">Remove</govuk-button>
+    }
+    else if (Model.Mode == Mode.Add)
+    {
+        <govuk-button type="submit" class="govuk-button--secondary" name="Action" value="AddAnother">Add another</govuk-button>
+    }
+
+    @if (Model.Cancelable)
+    {
+        <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary">Cancel</govuk-button>
+    }
+</form>

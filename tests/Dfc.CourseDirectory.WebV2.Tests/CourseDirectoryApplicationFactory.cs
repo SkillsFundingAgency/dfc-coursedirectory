@@ -1,67 +1,62 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Moq;
-using Respawn;
 using Xunit;
-using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
+using Xunit.Abstractions;
+using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
     [CollectionDefinition("Mvc")]
-    public class HttpCollection : ICollectionFixture<CourseDirectoryApplicationFactory>
+    public class MvcCollection : ICollectionFixture<CourseDirectoryApplicationFactory>
     {
     }
 
     public class CourseDirectoryApplicationFactory : WebApplicationFactory<Startup>
     {
-        private readonly Checkpoint _sqlCheckpoint;
-
-        public CourseDirectoryApplicationFactory()
+        public CourseDirectoryApplicationFactory(IMessageSink messageSink)
         {
-            _sqlCheckpoint = CreateCheckpoint();
+            DatabaseFixture = new DatabaseFixture(Configuration, Server.Host.Services, messageSink);
         }
 
-        public MutableClock Clock => Server.Host.Services.GetRequiredService<IClock>() as MutableClock;
+        public MutableClock Clock => DatabaseFixture.Clock;
 
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
 
-        public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher =>
-            Mock.Get(Services.GetRequiredService<ICosmosDbQueryDispatcher>() as CosmosDbQueryDispatcher);
+        public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => DatabaseFixture.CosmosDbQueryDispatcher;
+
+        public DatabaseFixture DatabaseFixture { get; }
 
         public OverridableFeatureFlagProvider FeatureFlagProvider => Services.GetRequiredService<IFeatureFlagProvider>() as OverridableFeatureFlagProvider;
 
         public HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
 
-        public InMemoryDocumentStore InMemoryDocumentStore => Services.GetRequiredService<InMemoryDocumentStore>();
+        public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IDistributedCache>() as ClearableMemoryCache;
 
-        public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
+        public MptxManager MptxManager => Services.GetRequiredService<MptxManager>();
 
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
-        public SqlQuerySpy SqlQuerySpy => Services.GetRequiredService<SqlQuerySpy>();
+        public SqlQuerySpy SqlQuerySpy => DatabaseFixture.SqlQuerySpy;
 
-        public TestData TestData => Services.GetRequiredService<TestData>();
+        public TestData TestData => DatabaseFixture.TestData;
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
         public void OnTestStarting()
         {
+            DatabaseFixture.OnTestStarting();
+
             // Clear calls on any mocks
             ResetMocks();
-
-            // Clear in-memory DB
-            InMemoryDocumentStore.Clear();
 
             // Reset cache
             MemoryCache.Clear();
@@ -78,17 +73,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Reset MPTX state
             MptxStateProvider.Clear();
 
-            // Clear spy calls
-            SqlQuerySpy.Reset();
-
             // Clear StandardsAndFrameworksCache
             Services.GetRequiredService<IStandardsAndFrameworksCache>().Clear();
         }
 
-        public async Task OnTestStarted()
+        public async Task OnTestStartingAsync()
         {
-            // Clear out all data from SQL database
-            await _sqlCheckpoint.Reset(Configuration["ConnectionStrings:DefaultConnection"]);
+            await DatabaseFixture.OnTestStartingAsync();
 
             // Reset to the default calling user
             await User.Reset();
@@ -99,28 +90,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected override IWebHostBuilder CreateWebHostBuilder() => WebHost
             .CreateDefaultBuilder()
             .UseEnvironment("Testing")
-            .ConfigureAppConfiguration(builder =>
-            {
-                var fileProvider = new ManifestEmbeddedFileProvider(typeof(CourseDirectoryApplicationFactory).Assembly);
-
-                builder
-                    .AddJsonFile(fileProvider, "appsettings.Testing.json", optional: false, reloadOnChange: false)
-                    .AddEnvironmentVariables();
-            })
-            .UseStartup<Startup>()
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
-                services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
-            });
+            .ConfigureAppConfiguration(builder => builder.AddTestConfigurationSources())
+            .UseStartup<Startup>();
 
         private void ResetMocks()
         {
         }
-
-        private Checkpoint CreateCheckpoint() => new Checkpoint()
-        {
-            SchemasToInclude = new[] { "Pttcd" }
-        };
     }
 }

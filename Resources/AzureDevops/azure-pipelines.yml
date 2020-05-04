@@ -50,7 +50,7 @@ steps:
 
 # restore symlink
 - script: |
-    del v2
+    del v2 /F /Q
     mklink /D v2 ..\..\Dfc.CourseDirectory.WebV2\Content
   displayName: 'Restore v2 content symlink'
   workingDirectory: src/Dfc.CourseDirectory.Web/wwwroot
@@ -72,31 +72,66 @@ steps:
   inputs:
     version: ${{ variables.DotNetCoreVersion }}
 
-# build
-- task: DotNetCoreCLI@2
-  displayName: dotnet build
+- task: MSBuild@1
+  displayName: Build
   inputs:
-    command: build
-    projects: 'Dfc.CourseDirectory.sln'
-    configuration: ${{ variables.buildConfiguration }}
+    solution: 'Dfc.CourseDirectory.sln'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-t:Restore,Build'
 
-# Test 
-- task: DotNetCoreCLI@2
+- script: dotnet test tests/Dfc.CourseDirectory.WebV2.Tests/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
   displayName: Test
-  inputs:
-    command: test
-    projects: 'tests/*Tests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration) --filter SkipOnCI!=true'
+  env:
+    ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)
 
-- task: DotNetCoreCLI@2
-  displayName: Publish
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
   inputs:
-    command: publish
-    publishWebProjects: True
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
-    zipAfterPublish: True
+    testResultsFormat: VSTest
+    testResultsFiles: "**/*.trx"
+    searchFolder: "$(Agent.TempDirectory)"
+  condition: succeededOrFailed()
 
-# Publish
+- task: MSBuild@1
+  displayName: Publish Dfc.CourseDirectory.Web
+  inputs:
+    solution: 'src/Dfc.CourseDirectory.Web/Dfc.CourseDirectory.Web.csproj'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-t:Publish -p:PublishDir=$(System.DefaultWorkingDirectory)/dist/Dfc.CourseDirectory.Web'
+  
+- task: ArchiveFiles@2
+  displayName: Zip Dfc.CourseDirectory.Web
+  inputs:
+    rootFolderOrFile: 'dist/Dfc.CourseDirectory.Web'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(build.artifactstagingdirectory)/Dfc.CourseDirectory.Web.zip'
+
+- task: MSBuild@1
+  displayName: Publish Dfc.CourseDirectory.Functions
+  inputs:
+    solution: 'src/Dfc.CourseDirectory.Functions/Dfc.CourseDirectory.Functions.csproj'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-t:Publish -p:PublishDir=$(System.DefaultWorkingDirectory)/dist/Dfc.CourseDirectory.Functions'
+  
+- task: ArchiveFiles@2
+  displayName: Zip Dfc.CourseDirectory.Functions
+  inputs:
+    rootFolderOrFile: 'dist/Dfc.CourseDirectory.Functions'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(build.artifactstagingdirectory)/Dfc.CourseDirectory.Functions.zip'
+
+- task: CopyFiles@2
+  displayName: 'Copy files: database'
+  inputs:
+    SourceFolder: 'src/Dfc.CourseDirectory.Database/bin/$(BuildConfiguration)'
+    Contents: '*'
+    TargetFolder: '$(build.artifactstagingdirectory)/database'
+
 - task: PublishBuildArtifacts@1
   displayName: Publish Artifact
   inputs:

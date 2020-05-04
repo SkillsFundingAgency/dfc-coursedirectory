@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class RedirectToProviderSelectionActionFilterTests : TestBase
+    public class RedirectToProviderSelectionActionFilterTests : MvcTestBase
     {
         public RedirectToProviderSelectionActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

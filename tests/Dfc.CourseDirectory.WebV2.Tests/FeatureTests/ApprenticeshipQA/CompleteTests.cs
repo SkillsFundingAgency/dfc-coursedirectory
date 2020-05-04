@@ -2,13 +2,18 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
+using Moq;
+using OneOf;
+using OneOf.Types;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 {
-    public class CompleteTests : TestBase
+    public class CompleteTests : MvcTestBase
     {
         public CompleteTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
@@ -31,9 +36,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
-                ukprn,
-                apprenticeshipTitle: "App title");
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -97,9 +102,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
-                ukprn,
-                apprenticeshipTitle: "App title");
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             if (status != ApprenticeshipQAStatus.NotStarted)
             {
@@ -149,9 +154,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
-                ukprn,
-                apprenticeshipTitle: "App title");
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -172,11 +177,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Theory]
-        [InlineData(true, ApprenticeshipQAStatus.Passed)]
-        [InlineData(false, ApprenticeshipQAStatus.Failed)]
+        [InlineData(true, ApprenticeshipQAStatus.Passed, true)]
+        [InlineData(false, ApprenticeshipQAStatus.Failed, false)]
         public async Task Post_ValidSetsCorrectStatusAndRequestRendersExpectedOutput(
             bool passed,
-            ApprenticeshipQAStatus expectedStatus)
+            ApprenticeshipQAStatus expectedStatus,
+            bool expectApprenticeshipToBeMadeLive)
         {
             // Arrange
             var ukprn = 12345;
@@ -189,9 +195,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
-                ukprn,
-                apprenticeshipTitle: "App title");
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -227,6 +233,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 ProviderId = providerId
             }));
             Assert.Equal(expectedStatus, newStatus);
+
+            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateApprenticeshipStatus, OneOf<NotFound, Success>>(
+                q => q.ApprenticeshipId == apprenticeshipId && q.ProviderUkprn == ukprn && q.Status == 1,
+                expectApprenticeshipToBeMadeLive ? Times.Once() : Times.Never());
         }
     }
 }

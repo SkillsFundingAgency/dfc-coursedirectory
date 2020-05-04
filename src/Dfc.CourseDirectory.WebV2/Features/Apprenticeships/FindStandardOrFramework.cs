@@ -4,25 +4,35 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Models;
-using Dfc.CourseDirectory.WebV2.Validation;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using Mapster;
 using MediatR;
 using OneOf;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework
 {
     using QueryResponse = OneOf<ModelWithErrors<ViewModel>, ViewModel>;
 
-    public class Query : IRequest<ViewModel>, IProviderScopedRequest
+    public class FlowModel : IMptxState<IFlowModelCallback>
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class SearchQuery : IRequest<QueryResponse>, IProviderScopedRequest
+    public interface IFlowModelCallback : IMptxState
     {
-        public Guid ProviderId { get; set; }
+        void ReceiveStandardOrFramework(StandardOrFramework standardOrFramework);
+    }
+
+    public class Query : IRequest<ViewModel>
+    {
+    }
+
+    public class SearchQuery : IRequest<QueryResponse>
+    {
         public string Search { get; set; }
     }
 
@@ -31,6 +41,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
         public string Search { get; set; }
         public bool SearchWasDone { get; set; }
         public IReadOnlyCollection<ViewModelResult> Results { get; set; }
+    }
+
+    public class SelectCommand : IRequest<Success>
+    {
+        public StandardOrFramework StandardOrFramework { get; set; }
     }
 
     public class ViewModelResult
@@ -50,18 +65,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
         IRequestHandler<Query, ViewModel>,
         IRestrictProviderType<Query>,
         IRequestHandler<SearchQuery, QueryResponse>,
-        IRestrictProviderType<SearchQuery>
+        IRestrictProviderType<SearchQuery>,
+        IRequestHandler<SelectCommand, Success>,
+        IRestrictProviderType<SelectCommand>
     {
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly MptxInstanceContext<FlowModel, IFlowModelCallback> _flow;
 
-        public Handler(IStandardsAndFrameworksCache standardsAndFrameworksCache)
+        public Handler(
+            IStandardsAndFrameworksCache standardsAndFrameworksCache,
+            MptxInstanceContext<FlowModel, IFlowModelCallback> flow)
         {
             _standardsAndFrameworksCache = standardsAndFrameworksCache;
+            _flow = flow;
         }
 
         ProviderType IRestrictProviderType<SearchQuery>.ProviderType => ProviderType.Apprenticeships;
 
         ProviderType IRestrictProviderType<Query>.ProviderType => ProviderType.Apprenticeships;
+
+        ProviderType IRestrictProviderType<SelectCommand>.ProviderType => ProviderType.Apprenticeships;
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -105,6 +128,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
                     .ToList()
             };
         }
+
+        public Task<Success> Handle(SelectCommand request, CancellationToken cancellationToken)
+        {
+            _flow.UpdateParent(s => s.ReceiveStandardOrFramework(request.StandardOrFramework));
+
+            return Task.FromResult(new Success());
+        }
+
+        Guid IRestrictProviderType<Query>.GetProviderId(Query request) => _flow.State.ProviderId;
+
+        Guid IRestrictProviderType<SearchQuery>.GetProviderId(SearchQuery request) => _flow.State.ProviderId;
+
+        Guid IRestrictProviderType<SelectCommand>.GetProviderId(SelectCommand request) => _flow.State.ProviderId;
 
         private class QueryValidator : AbstractValidator<SearchQuery>
         {

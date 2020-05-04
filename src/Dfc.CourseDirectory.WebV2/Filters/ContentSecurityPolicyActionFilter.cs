@@ -9,10 +9,12 @@ using Microsoft.Extensions.Hosting;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
-    public class ContentSecurityPolicyActionFilter : IActionFilter
+    public class ContentSecurityPolicyActionFilter : IAsyncActionFilter
     {
-        public void OnActionExecuted(ActionExecutedContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            await next();
+
             if (context.Result != null)
             {
                 var policy = GetPolicy();
@@ -87,10 +89,6 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     $"img-src {string.Join(" ", imgSrc)}; " +
                     $"script-src {string.Join(" ", scriptSrc)}; ";
             }
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
         }
 
         private class ResultWithCspHeader : IActionResult

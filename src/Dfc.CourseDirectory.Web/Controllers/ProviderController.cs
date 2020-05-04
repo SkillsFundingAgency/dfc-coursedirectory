@@ -25,8 +25,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -154,110 +154,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (providerSearchResult.IsSuccess)
             {
-
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
 
                 var oldProviderType = provider.ProviderType;
                 if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeship))
                 {
-                    var providerId = await providerInfoCache.GetProviderIdForUkprn(UKPRN.Value);
                     await sqlQueryDispatcher.ExecuteQuery(
                         new EnsureApprenticeshipQAStatusSetForProvider()
                         {
-                            ProviderId = providerId.Value
+                            ProviderId = provider.id
                         });
                 }
 
                 provider.ProviderType = model.ProviderType;
 
-                try
+                var result = await _providerService.UpdateProviderDetails(provider);
+                if (!result.IsSuccess)
                 {
-                    var result = await _providerService.UpdateProviderDetails(provider);
-                    if (result.IsSuccess)
-                    {
-                        //log something
-                    }
-
-                }
-                catch (Exception)
-                {
-                    //Behaviour to be determined for failure
+                    throw new Exception(result.Error);
                 }
 
+                await providerInfoCache.Remove(provider.id);
+            }
+            else
+            {
+                throw new Exception(providerSearchResult.Error);
             }
 
             return RedirectToAction("Details", "Provider", new { });
         }
 
-        [Authorize]
-        [SelectedProviderNeeded]
-        public async Task<IActionResult> AddOrEditDetails()
-        {
-            var model = new ProviderDetailsAddOrEditViewModel();
+       
 
-            int? UKPRN = _session.GetInt32("UKPRN");
-
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
-
-            if (providerSearchResult.IsSuccess)
-            {
-                var provider = providerSearchResult.Value.Value.FirstOrDefault();
-
-                model = new ProviderDetailsAddOrEditViewModel();
-                model.AliasName = provider?.Alias;
-                model.BriefOverview = provider?.MarketingInformation;
-                model.CourseDirectoryName = string.IsNullOrEmpty(provider?.CourseDirectoryName) ? provider?.ProviderName : provider?.CourseDirectoryName;
-            }
-
-            return View(model);
-        }
-
-        [Authorize]
-        [HttpPost]
-        [SelectedProviderNeeded]
-        public async Task<IActionResult> AddOrEditDetails(ProviderDetailsAddOrEditViewModel model)
-        {
-            int? UKPRN = _session.GetInt32("UKPRN");
-
-            var apprenticeshipUser = await _authorizationService.AuthorizeAsync(User, "Apprenticeship");
-
-            if (!string.IsNullOrEmpty(model.BriefOverview)) model.BriefOverview.TrimEnd();
-
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
-
-            if (providerSearchResult.IsSuccess)
-            {
-
-                Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
-
-                if (apprenticeshipUser.Succeeded) provider.MarketingInformation = model.BriefOverview;
-
-                provider.Alias = model.AliasName;
-
-                var adminLogin = await _authorizationService.AuthorizeAsync(User, "Admin");
-                if (adminLogin.Succeeded)
-                {
-                    provider.CourseDirectoryName = model.CourseDirectoryName;
-                }
-
-                try
-                {
-                    var result = await _providerService.UpdateProviderDetails(provider);
-                    if (result.IsSuccess)
-                    {
-                        //log something
-                    }
-
-                }
-                catch (Exception)
-                {
-                    //Behaviour to be determined for failure
-                }
-
-            }
-
-            return RedirectToAction("Details", "Provider", new { });
-        }
 
         [Authorize]
         [SelectedProviderNeeded]
