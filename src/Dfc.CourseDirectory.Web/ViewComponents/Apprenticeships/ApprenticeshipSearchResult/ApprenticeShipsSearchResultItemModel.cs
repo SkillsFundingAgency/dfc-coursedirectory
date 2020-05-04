@@ -38,6 +38,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
         public string SectorSubjectAreaTier2 { get; set; }
         public string ProgTypeDesc { get; set; }
         public string ProgTypeDesc2 { get; set; }
+        public bool IsFramework => FrameworkCode.HasValue;
 
     }
 }

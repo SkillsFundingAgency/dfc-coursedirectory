@@ -84,13 +84,10 @@
 
                     @if (result.IsFramework)
                     {
-                        <div class="govuk-warning-text govuk-!-margin-bottom-2 govuk-!-margin-top-4">
-                            <span class="govuk-warning-text__icon">!</span>
-                            <strong class="govuk-warning-text__text">
-                                <span class="govuk-warning-text__assistive">Warning</span>
-                                This apprenticeship is available to new starters until 31st July 2020
-                            </strong>
-                        </div>
+    
+                            <govuk-warning-text icon-fallback-text="Danger" class="govuk-!-margin-top-4">This apprenticeship is available to new starters until 31st July 2020</govuk-warning-text>
+
+
                     }
                 </div>
 

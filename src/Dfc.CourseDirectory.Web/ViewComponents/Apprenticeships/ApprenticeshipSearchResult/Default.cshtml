@@ -23,15 +23,15 @@ else
 
     @if (!Model.Items.Any())
     {
-    <div class="">
-        <span class="govuk-visually-hidden">Data Unavailable</span>
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-        {
-            NotificationTitle = "",
-            NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
-            ClassType = "error-summary"
-        })
-    </div>
+        <div class="">
+            <span class="govuk-visually-hidden">Data Unavailable</span>
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = "",
+                NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
+                ClassType = "error-summary"
+            })
+        </div>
     }
     else
     {
@@ -62,6 +62,8 @@ else
 
                         }
 
+
+
                         @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
                         {
                             <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
@@ -71,7 +73,8 @@ else
                             {
                                 <p class="govuk-body">
                                     <a class="govuk-link already-added" href="#" style="display:inline-flex">
-                                        <span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>Choose this apprenticeship</a>
+                                        <span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>Choose this apprenticeship
+                                    </a>
                                 </p>
                             }
                             else
@@ -94,6 +97,16 @@ else
                             }
                         }
 
+                        @if (apprenticeship.IsFramework)
+                        {
+                            <div class="govuk-warning-text govuk-!-margin-bottom-2 govuk-!-margin-top-4">
+                                <span class="govuk-warning-text__icon">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    <span class="govuk-warning-text__assistive">Warning</span>
+                                    This apprenticeship is available to new starters until 31st July 2020
+                                </strong>
+                            </div>
+                        }
                     </div>
                 </div>
 
