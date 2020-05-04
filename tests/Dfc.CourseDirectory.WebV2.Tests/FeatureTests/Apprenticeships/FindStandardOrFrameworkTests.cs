@@ -126,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             var doc = await response.GetDocument();
 
-            Assert.NotNull(doc.GetElementsByClassName("govuk-warning-text govuk-!-margin-bottom-2 govuk-!-margin-top-4"));
+            Assert.NotNull(doc.GetElementById("framework-warning"));
         }
 
         [Fact]
@@ -155,9 +155,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var results = doc.GetElementsByClassName("govuk-warning-text govuk-!-margin-bottom-2 govuk-!-margin-top-4");
+            var results = doc.GetElementById("framework-warning");
 
-            Assert.Empty(results);
+            Assert.Null(results);
         }
 
         [Fact]
