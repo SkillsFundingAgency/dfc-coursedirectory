@@ -52,6 +52,7 @@
                         .SetQueryParam("version", result.StandardVersion);
                 }
 
+
                 <div class="pttcd-apprenticeships__find-standard-or-framework__search-result govuk-!-margin-bottom-4">
                     <h2 class="govuk-heading-m">
                         @result.ApprenticeshipTitle
@@ -79,7 +80,14 @@
                         Choose this apprenticeship
                         <span class="govuk-visually-hidden">@result.ApprenticeshipTitle</span>
                     </a>
+
+
+                    @if (result.IsFramework)
+                    {
+                        <govuk-warning-text icon-fallback-text="Danger" class="govuk-!-margin-top-4" id="framework-warning">This apprenticeship is available to new starters until 31st July 2020</govuk-warning-text>
+                    }
                 </div>
+
             }
         }
         else
