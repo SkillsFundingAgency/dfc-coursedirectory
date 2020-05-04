@@ -9,11 +9,13 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.DashboardCard
         {
             public string Href { get; set; }
             public string Description { get; set; }
+            public bool Disabled { get; set; }
 
-            public Link(string href, string description)
+            public Link(string href, string description, bool disabled = false)
             {
                 Href = href;
                 Description = description;
+                Disabled = disabled;
             }
         }
 

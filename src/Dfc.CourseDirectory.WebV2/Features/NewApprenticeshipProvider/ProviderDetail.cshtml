@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.WebV2.Validation.ProviderValidation
+﻿@using Dfc.CourseDirectory.Core.Validation.ProviderValidation
 @model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetail.ViewModel
 @{
     ViewBag.Title = "Edit your details";
@@ -14,7 +14,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ProviderDetail" append-provider-context="true" mptx-action="true">
+        <form asp-action="ProviderDetail" append-provider-context append-mptx-id>
             <span class="govuk-caption-l">Course Directory</span>
             <h1 class="govuk-heading-l">Edit your details</h1>
 

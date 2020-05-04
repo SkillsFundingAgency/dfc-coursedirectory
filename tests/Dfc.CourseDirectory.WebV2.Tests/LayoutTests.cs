@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public class LayoutTests : TestBase
+    public class LayoutTests : MvcTestBase
     {
         public LayoutTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
@@ -107,9 +108,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(4, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your courses", subNavLinks[1].label);
-            Assert.Equal("Your locations", subNavLinks[2].label);
+            Assert.Equal("Your locations", subNavLinks[1].label);
+            Assert.Equal("Your courses", subNavLinks[2].label);
             Assert.Equal("Bulk upload", subNavLinks[3].label);
+            Assert.Equal("/BulkUpload", subNavLinks[3].href);
         }
 
         [Theory]
@@ -141,11 +143,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Migration reports", topLevelLinks[3].label);
             Assert.Equal("Sign out", topLevelLinks[4].label);
 
-            Assert.Equal(4, subNavLinks.Count);
+            Assert.Equal(3, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your apprenticeships training", subNavLinks[1].label);
-            Assert.Equal("Your locations", subNavLinks[2].label);
-            Assert.Equal("Bulk upload", subNavLinks[3].label);
+            Assert.Equal("Your locations", subNavLinks[1].label);
+            Assert.Equal("Bulk upload", subNavLinks[2].label);
+            Assert.Equal("/BulkUploadApprenticeships", subNavLinks[2].href);
         }
 
         [Theory]
@@ -179,10 +181,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(5, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your courses", subNavLinks[1].label);
+            Assert.Equal("Your locations", subNavLinks[1].label);
             Assert.Equal("Your apprenticeships training", subNavLinks[2].label);
-            Assert.Equal("Your locations", subNavLinks[3].label);
+            Assert.Equal("Your courses", subNavLinks[3].label);
             Assert.Equal("Bulk upload", subNavLinks[4].label);
+            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[4].href);
         }
 
         [Theory]
@@ -198,7 +201,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -209,11 +212,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(5, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your courses", topLevelLinks[1].label);
-            Assert.Equal("Your locations", topLevelLinks[2].label);
+            Assert.Equal("Your locations", topLevelLinks[1].label);
+            Assert.Equal("Your courses", topLevelLinks[2].label);
             Assert.Equal("Bulk upload", topLevelLinks[3].label);
             Assert.Equal("Sign out", topLevelLinks[4].label);
-
+            Assert.Equal("/BulkUpload", topLevelLinks[3].href);
+            
             Assert.Equal(0, subNavLinks.Count);
         }
 
@@ -230,7 +234,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -239,12 +243,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
+            Assert.Equal(4, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your apprenticeships training", topLevelLinks[1].label);
-            Assert.Equal("Your locations", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Your locations", topLevelLinks[1].label);
+            Assert.Equal("Bulk upload", topLevelLinks[2].label);
+            Assert.Equal("/BulkUploadApprenticeships", topLevelLinks[2].href);
+            Assert.Equal("Sign out", topLevelLinks[3].label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -262,7 +266,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -273,13 +277,65 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(6, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your courses", topLevelLinks[1].label);
+            Assert.Equal("Your locations", topLevelLinks[1].label);
             Assert.Equal("Your apprenticeships training", topLevelLinks[2].label);
-            Assert.Equal("Your locations", topLevelLinks[3].label);
+            Assert.Equal("Your courses", topLevelLinks[3].label);
             Assert.Equal("Bulk upload", topLevelLinks[4].label);
+            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[4].href);
             Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(0, subNavLinks.Count);
+        }
+
+        [Theory]
+        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
+        [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
+        public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
+             ProviderType providerType,
+            string expectedHref)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: providerType,
+                providerName: "Test Provider");
+
+            await User.AsDeveloper();
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
+            Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
+        }
+
+        [Theory]
+        [InlineData(ProviderType.FE, "/BulkUpload")]
+        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
+        [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
+        public async Task ProviderTopNavBulkUploadLinksAreCorrect(
+            ProviderType providerType,
+            string expectedHref)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: providerType,
+                providerName: "Test Provider");
+
+            await User.AsProviderUser(providerId, providerType);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+            
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
+            Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
         }
 
         private IReadOnlyList<(string href, string label)> GetTopLevelNavLinks(IHtmlDocument doc)

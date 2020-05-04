@@ -24,7 +24,11 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _serializerSettings = Settings.CreateSerializerSettings();
         }
 
-        public MptxInstance CreateInstance(string flowName, IReadOnlyDictionary<string, object> items, object state)
+        public MptxInstance CreateInstance(
+            Type stateType,
+            string parentInstanceId,
+            object state,
+            IReadOnlyDictionary<string, object> items)
         {
             var instanceId = CreateInstanceId();
 
@@ -32,35 +36,100 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var entry = new DbFileEntry()
             {
-                FlowName = flowName,
+                StateType = stateType,
                 Items = items,
-                State = state
+                State = state,
+                ParentInstanceId = parentInstanceId,
+                ChildInstanceIds = new HashSet<string>()
             };
 
-            UpdateDbFile(dbFile => dbFile.Entries.Add(instanceId, entry));
+            object parentState = null;
+            Type parentStateType = null;
 
-            var instance = new MptxInstance(flowName, instanceId, items, state);
-            return instance;
+            WithDbFile(dbFile =>
+            {
+                if (parentInstanceId != null)
+                {
+                    if (dbFile.Entries.TryGetValue(parentInstanceId, out var parentEntry))
+                    {
+                        parentState = parentEntry.State;
+                        parentStateType = parentEntry.StateType;
+
+                        parentEntry.ChildInstanceIds.Add(instanceId);
+                    }
+                    else
+                    {
+                        throw new InvalidParentException(parentInstanceId);
+                    }
+                }
+
+                dbFile.Entries.Add(instanceId, entry);
+            });
+
+            return new MptxInstance(
+                instanceId,
+                stateType,
+                state,
+                parentInstanceId,
+                parentStateType,
+                parentState,
+                items);
         }
 
-        public void DeleteInstance(string instanceId) =>
-            UpdateDbFile(dbFile => dbFile.Entries.Remove(instanceId));
+        public void DeleteInstance(string instanceId) => WithDbFile(
+            dbFile =>
+            {
+                if (dbFile.Entries.TryGetValue(instanceId, out var entry))
+                {
+                    if (entry.ChildInstanceIds != null)
+                    {
+                        foreach (var child in entry.ChildInstanceIds)
+                        {
+                            dbFile.Entries.Remove(child);
+                        }
+                    }
+
+                    dbFile.Entries.Remove(instanceId);
+                }
+            });
 
         public MptxInstance GetInstance(string instanceId)
         {
             DbFileEntry entry = null;
-            UpdateDbFile(dbFile => dbFile.Entries.TryGetValue(instanceId, out entry));
 
-            if (entry == null)
+            object parentState = null;
+            Type parentStateType = null;
+
+            WithDbFile(dbFile =>
+            {
+                dbFile.Entries.TryGetValue(instanceId, out entry);
+
+                if (entry != null && entry.ParentInstanceId != null)
+                {
+                    var parentEntry = dbFile.Entries[entry.ParentInstanceId];
+
+                    parentState = parentEntry.State;
+                    parentStateType = parentEntry.StateType;
+                }
+            });
+
+            if (entry == null || (entry.ParentInstanceId != null && parentState == null))
             {
                 return null;
             }
 
-            return new MptxInstance(entry.FlowName, instanceId, entry.Items, entry.State);
+            return new MptxInstance(
+                instanceId,
+                entry.StateType,
+                entry.State,
+                entry.ParentInstanceId,
+                parentStateType,
+                parentState,
+                entry.Items);
         }
 
-        public void UpdateInstanceState(string instanceId, Func<object, object> update) =>
-            UpdateDbFile(dbFile => update(dbFile.Entries[instanceId].State));
+        public void SetInstanceState(string instanceId, object state) =>
+            WithDbFile(dbFile => dbFile.Entries[instanceId].State = state);
 
         private static string CreateInstanceId() => Guid.NewGuid().ToString();
 
@@ -74,22 +143,52 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
         }
 
-        private void UpdateDbFile(Action<DbFile> updateDb)
+        private void WithDbFile(Action<DbFile> updateDb)
         {
-            DbFile dbFile;
+            DbFile dbFile = null;
 
-            if (File.Exists(_dbFilePath))
+            var serializer = JsonSerializer.Create(_serializerSettings);
+            serializer.Error += Serializer_Error;
+
+            try
             {
-                dbFile = JsonConvert.DeserializeObject<DbFile>(File.ReadAllText(_dbFilePath), _serializerSettings);
+                if (File.Exists(_dbFilePath))
+                {
+                    using (var streamReader = File.OpenText(_dbFilePath))
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        dbFile = serializer.Deserialize<DbFile>(jsonReader);
+                    }
+                }
+
+                // Maybe the outermost object failed to deserialize (or file didn't exist)
+                dbFile ??= new DbFile();
+                dbFile.Entries ??= new Dictionary<string, DbFileEntry>();
+
+                // If serializing any entries failed they will be null - remove them
+                foreach (var e in dbFile.Entries)
+                {
+                    if (e.Value == null)
+                    {
+                        dbFile.Entries.Remove(e.Key);
+                    }
+                }
+
+                updateDb(dbFile);
+
+                using (var streamWriter = File.CreateText(_dbFilePath))
+                using (var jsonWriter = new JsonTextWriter(streamWriter))
+                {
+                    serializer.Serialize(jsonWriter, dbFile);
+                }
             }
-            else
+            finally
             {
-                dbFile = new DbFile() { Entries = new Dictionary<string, DbFileEntry>() };
+                serializer.Error -= Serializer_Error;
             }
 
-            updateDb(dbFile);
-
-            File.WriteAllText(_dbFilePath, JsonConvert.SerializeObject(dbFile, _serializerSettings));
+            void Serializer_Error(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs e) =>
+                e.ErrorContext.Handled = true;
         }
 
         private class DbFile
@@ -99,9 +198,11 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private class DbFileEntry
         {
-            public string FlowName { get; set; }
+            public Type StateType { get; set; }
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
+            public string ParentInstanceId { get; set; }
+            public HashSet<string> ChildInstanceIds { get; set; }
         }
     }
 }

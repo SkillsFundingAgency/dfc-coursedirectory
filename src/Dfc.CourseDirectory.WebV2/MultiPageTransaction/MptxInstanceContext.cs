@@ -14,8 +14,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             Instance = instance ?? throw new ArgumentNullException(nameof(instance));
         }
 
-        public string FlowName => Instance.FlowName;
-
         public MptxInstance Instance { get; }
 
         public string InstanceId => Instance.InstanceId;
@@ -23,6 +21,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public IReadOnlyDictionary<string, object> Items => Instance.Items;
 
         public object State => Instance.State;
+
+        public Type StateType => Instance.StateType;
 
         protected IMptxStateProvider StateProvider { get; }
     }
@@ -56,23 +56,40 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             ThrowIfCompleted();
 
-            StateProvider.UpdateInstanceState(InstanceId, state =>
-            {
-                update((TState)state);
-                return state;
-            });
-
-            // Refresh the cached state object - required so multiple state updates
-            // in a single refresh are 'seen' everywhere
             update(State);
+
+            StateProvider.SetInstanceState(InstanceId, State);
         }
 
-        private void ThrowIfCompleted()
+        protected void ThrowIfCompleted()
         {
             if (IsCompleted)
             {
                 throw new InvalidOperationException("Instance has been completed.");
             }
+        }
+    }
+
+    public class MptxInstanceContext<TState, TParentState> : MptxInstanceContext<TState>
+        where TState : IMptxState<TParentState>
+        where TParentState : IMptxState
+    {
+        public MptxInstanceContext(IMptxStateProvider stateProvider, MptxInstance instance)
+            : base(stateProvider, instance)
+        {
+        }
+
+        public string ParentInstanceId => Instance.ParentInstanceId;
+
+        public TParentState ParentState => (TParentState)Instance.ParentState;
+
+        public void UpdateParent(Action<TParentState> update)
+        {
+            ThrowIfCompleted();
+
+            update(ParentState);
+
+            StateProvider.SetInstanceState(ParentInstanceId, ParentState);
         }
     }
 }

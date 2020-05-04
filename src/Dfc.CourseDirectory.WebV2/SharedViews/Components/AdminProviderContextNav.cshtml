@@ -1,4 +1,11 @@
 ﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
+@{
+    var currentController = (string)ViewContext.RouteData.Values["Controller"];
+    var currentAction = (string)ViewContext.RouteData.Values["Action"];
+
+    var enableApprenticeshipBulkUpload = Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
+        (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled);
+}
 
 <div class="pttcd-subnav govuk-!-margin-top-6">
     <div class="pttcd-subnav__provider-name">@Model.ProviderContext.ProviderName</div>
@@ -8,6 +15,19 @@
                 Home
             </a>
         </li>
+        <li class="pttcd-subnav__item">
+            <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link">
+                Your locations
+            </a>
+        </li>
+        @if (Model.ProviderContext.ProviderType == ProviderType.Both && enableApprenticeshipBulkUpload)
+        {
+            <li class="pttcd-subnav__item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="pttcd-subnav__item__link">
+                    Your apprenticeships training
+                </a>
+            </li>
+        }
         @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.FE))
         {
             <li class="pttcd-subnav__item">
@@ -16,40 +36,26 @@
                 </a>
             </li>
         }
-        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
-            (!Model.ApprenticeshipQAFeatureIsEnabled || Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed))
+        @if (Model.ProviderContext.ProviderType == ProviderType.Both && enableApprenticeshipBulkUpload)
         {
-            <li class="pttcd-subnav__item">
-                <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="pttcd-subnav__item__link">
-                    Your apprenticeships training
-                </a>
-            </li>
-        }
-        <li class="pttcd-subnav__item">
-            <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link">
-                Your locations
-            </a>
-        </li>
-        @if (Model.ProviderContext.ProviderType == ProviderType.Both)
-        {
-            <li class="pttcd-subnav__item">
+            <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
                     Bulk upload
                 </a>
             </li>
         }
-        else if (Model.ProviderContext.ProviderType == ProviderType.FE)
+        else if (enableApprenticeshipBulkUpload)
         {
-            <li class="pttcd-subnav__item">
-                <a asp-action="Index" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
+            <li class="pttcd-subnav__item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link">
                     Bulk upload
                 </a>
             </li>
         }
-        else
+        else if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.FE))
         {
-            <li class="pttcd-subnav__item">
-                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link">
+            <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="Index" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
                     Bulk upload
                 </a>
             </li>

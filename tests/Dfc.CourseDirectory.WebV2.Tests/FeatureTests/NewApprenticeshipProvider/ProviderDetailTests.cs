@@ -1,14 +1,15 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using Moq;
 using Xunit;
 using FlowModel = Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.FlowModel;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class ProviderDetailTests : TestBase
+    public class ProviderDetailTests : MvcTestBase
     {
         public ProviderDetailTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
@@ -24,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -37,7 +38,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task Get_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>Existing marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -157,7 +157,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task Post_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -170,7 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -195,7 +194,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -221,7 +220,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", new string('x', 751))
@@ -250,7 +249,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -262,7 +261,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 requestContent);
 
             // Assert
-            var state = GetMptxInstanceState<FlowModel>(mptxInstance.InstanceId);
+            var state = GetMptxInstance<FlowModel>(mptxInstance.InstanceId).State;
             Assert.True(state.GotProviderDetails);
             Assert.Equal("<p>New marketing info</p>", state.ProviderMarketingInformation);
 
@@ -285,7 +284,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -298,7 +297,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task GetConfirmation_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -310,7 +308,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -332,7 +330,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -350,7 +348,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -373,7 +371,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -393,7 +391,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -409,7 +407,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task PostConfirmation_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -421,7 +418,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -446,7 +443,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -467,7 +464,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -490,7 +487,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -507,9 +504,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 c.UpdatedOn == Clock.UtcNow)));
 
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.StartsWith(
-                "/apprenticeships/find-standard",
-                response.Headers.Location.OriginalString);
+            Assert.Equal(
+                "/new-apprenticeship-provider/find-standard",
+                UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
     }
 }

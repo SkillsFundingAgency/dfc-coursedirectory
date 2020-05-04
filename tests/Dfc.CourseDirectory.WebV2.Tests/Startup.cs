@@ -1,15 +1,11 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+﻿using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -55,20 +51,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddCourseDirectory(HostingEnvironment, Configuration);
 
             services.AddSingleton<TestUserInfo>();
-            services.AddSingleton<InMemoryDocumentStore>();
-            services.AddSingleton<ICosmosDbQueryDispatcher>(sp => new Mock<CosmosDbQueryDispatcher>(sp) { CallBase = true }.Object);
-            services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
-            services.AddTransient<TestData>();
-            services.AddSingleton<IClock, MutableClock>();
+            services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
             services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
-            services.AddSingleton<SqlQuerySpy>();
-            services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
+            services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
+            services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
 
-            services.Scan(scan => scan
-                .FromAssembliesOf(typeof(Startup))
-                .AddClasses(classes => classes.AssignableTo(typeof(DataStore.CosmosDb.ICosmosDbQueryHandler<,>)))
-                    .AsImplementedInterfaces()
-                    .WithTransientLifetime());
+            DatabaseFixture.ConfigureServices(services);
         }
     }
 }

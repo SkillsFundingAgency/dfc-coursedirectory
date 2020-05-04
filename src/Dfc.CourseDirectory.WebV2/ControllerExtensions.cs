@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Dfc.CourseDirectory.WebV2.Validation;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
@@ -11,9 +12,21 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _stateProvider = stateProvider;
         }
 
-        public MptxInstanceContext CreateContext(MptxInstance instance)
+        public MptxInstanceContext CreateContext(MptxInstance instance, Type stateType, Type parentStateType)
         {
-            var contextType = typeof(MptxInstanceContext<>).MakeGenericType(instance.StateType);
+            if (instance == null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (stateType == null)
+            {
+                throw new ArgumentNullException(nameof(stateType));
+            }
+
+            var contextType = parentStateType != null ?
+                typeof(MptxInstanceContext<,>).MakeGenericType(stateType, parentStateType) :
+                typeof(MptxInstanceContext<>).MakeGenericType(stateType);
 
             return (MptxInstanceContext)ActivatorUtilities.CreateInstance(
                 provider: null,

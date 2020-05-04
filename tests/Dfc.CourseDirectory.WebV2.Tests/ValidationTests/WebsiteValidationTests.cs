@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Validation;
+﻿using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using Xunit;
 

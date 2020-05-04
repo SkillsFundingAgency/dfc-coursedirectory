@@ -814,9 +814,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
             if (string.IsNullOrEmpty(courseRun.CostDescription) && courseRun.Cost.Equals(null))
                 validationMessages.Add(new KeyValuePair<string, string>("COST", $"Enter cost or cost description"));
 
-            if (!string.IsNullOrEmpty(courseRun.CostDescription))
+            if (!string.IsNullOrEmpty(ReplaceSpecialCharacters(courseRun.CostDescription)))
             {
-                if (!HasOnlyFollowingValidCharacters(courseRun.CostDescription))
+                
+                if (!HasOnlyFollowingValidCharacters(ReplaceSpecialCharacters(courseRun.CostDescription)))
                     validationMessages.Add(new KeyValuePair<string, string>("COST_DESCRIPTION", "Cost Description contains invalid characters"));
                 if (courseRun.CostDescription.Length > 255)
                     validationMessages.Add(new KeyValuePair<string, string>("COST_DESCRIPTION", $"Cost description must be 255 characters or less"));
@@ -874,6 +875,19 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validUKPRN.Success;
+        }
+
+        public string ReplaceSpecialCharacters(string value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            return value
+                .Replace("â€™", "'")
+                .Replace("â€“", "–")
+                .Replace("�", "£");
         }
 
         public async Task<IResult> ArchiveProviderLiveCourses(int? UKPRN)

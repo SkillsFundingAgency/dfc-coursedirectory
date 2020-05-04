@@ -8,11 +8,13 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json
         {
             var settings = new JsonSerializerSettings()
             {
+                ContractResolver = new ContractResolver(),
                 Formatting = Formatting.None,
                 TypeNameHandling = TypeNameHandling.Auto
             };
 
             settings.Converters.Add(new StandardOrFrameworkJsonConverter());
+            settings.Converters.Add(new UrlJsonConverter());
 
             return settings;
         }

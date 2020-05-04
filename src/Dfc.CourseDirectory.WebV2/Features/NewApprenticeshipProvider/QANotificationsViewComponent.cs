@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
@@ -32,12 +32,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     ProviderId = providerId
                 });
 
+            var submission = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestApprenticeshipQASubmissionForProvider()
+                {
+                    ProviderId = providerId
+                });
+
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
 
             var vm = new QANotificationsViewModel()
             {
                 ProviderType = providerInfo.ProviderType,
-                Status = qaStatus.ValueOrDefault()
+                Status = qaStatus.ValueOrDefault(),
+                HidePassedNotication = submission.Match(none => qaStatus == ApprenticeshipQAStatus.Passed, sub => sub.HidePassedNotification)
             };
 
             return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", vm);

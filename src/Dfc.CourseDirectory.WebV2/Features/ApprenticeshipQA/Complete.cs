@@ -4,11 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf.Types;
 
@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
     {
     }
 
-    public class Command : IRequest<ViewModel>, IProviderScopedRequest
+    public class Command : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public IEnumerable<ApprenticeshipQAStatus> PermittedStatuses { get; } = new[]
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses => new[]
         {
             ApprenticeshipQAStatus.InProgress
         };
@@ -93,10 +93,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
                     ApprenticeshipQAStatus = newStatus
                 });
 
+            if (newStatus == ApprenticeshipQAStatus.Passed)
+            {
+                foreach (var app in latestSubmission.Apprenticeships)
+                {
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatus()
+                    {
+                        ApprenticeshipId = app.ApprenticeshipId,
+                        ProviderUkprn = provider.Ukprn,
+                        Status = 1  // Live
+                    });
+                }
+            }
+
             return new ViewModel()
             {
                 ProviderName = provider.ProviderName
             };
         }
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => request.ProviderId;
     }
 }

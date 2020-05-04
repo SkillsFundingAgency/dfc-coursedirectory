@@ -5,44 +5,45 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">Review</h1>
-        <h2 class="govuk-heading-l">Provider information</h2>
-        <h2 class="govuk-heading-m">An overview of the provider information for employers</h2>
+        <form asp-action="ProviderAssessmentConfirmation" append-mptx-id>
+            <h1 class="govuk-heading-xl">Review</h1>
+            <h2 class="govuk-heading-l">Provider information</h2>
+            <h2 class="govuk-heading-m">An overview of the provider information for employers</h2>
 
-        @* TODO Use TagHelper *@
-        <dl class="govuk-summary-list qa-check govuk-!-margin-bottom-9">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Compliance
-                </dt>
-                <dd class="govuk-summary-list__value" id="pttcd-apprenticeship-qa-provider-submission-confirmation-compliance-status">
-                    @(Model.CompliancePassed ? "Pass" : "Fail")
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId">
-                        Change
-                    </a>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Style
-                </dt>
-                <dd class="govuk-summary-list__value" id="pttcd-apprenticeship-qa-provider-submission-confirmation-style-status">
-                    @(Model.StylePassed ? "Pass" : "Fail")
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId">
-                        Change
-                    </a>
-                </dd>
-            </div>
-        </dl>
+            <govuk-summary-list>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>
+                        Compliance
+                    </govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                        @(Model.CompliancePassed ? "Pass" : "Fail")
+                    </govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action>
+                        <a class="govuk-link" asp-action="ProviderAssessment" asp-fragment="CompliancePassed" append-mptx-id>
+                            Change
+                        </a>
+                    </govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>
+                        Style
+                    </govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                        @(Model.StylePassed ? "Pass" : "Fail")
+                    </govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action>
+                        <a class="govuk-link" asp-action="ProviderAssessment" asp-fragment="StylePassed" append-mptx-id>
+                            Change
+                        </a>
+                    </govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+            </govuk-summary-list>
 
-        <govuk-inset-text class="pttcd-inset-text--info" id="pttcd-apprenticeship-qa-provider-submission-confirmation-overall-status-message">
-            The provider information has <strong>@(Model.Passed ? "PASSED" : "FAILED")</strong> quality assurance.
-        </govuk-inset-text>
+            <govuk-inset-text class="pttcd-inset-text--info" id="pttcd-apprenticeship-qa-provider-submission-confirmation-overall-status-message">
+                The provider information has <strong>@(Model.Passed ? "PASSED" : "FAILED")</strong> quality assurance.
+            </govuk-inset-text>
 
-        <govuk-button asp-action="ProviderSelected" asp-route-providerId="@Model.ProviderId">Confirm and continue</govuk-button>
+            <govuk-button type="submit">Confirm and continue</govuk-button>
+        </form>
     </div>
 </div>

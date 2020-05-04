@@ -2,4 +2,6 @@
 
 root = true
 
+[*.cs]
+
 dotnet_sort_system_directives_first = true

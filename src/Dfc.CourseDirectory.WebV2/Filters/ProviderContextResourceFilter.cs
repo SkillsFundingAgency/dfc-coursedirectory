@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 }
                 else // user.IsProvider == true
                 {
-                    var usersOwnProviderId = user.ProviderId.Value;
+                    var usersOwnProviderId = user.CurrentProviderId.Value;
 
                     // Route param, if specified, must match user's own org
                     if (routeProviderId.HasValue && routeProviderId.Value != usersOwnProviderId)

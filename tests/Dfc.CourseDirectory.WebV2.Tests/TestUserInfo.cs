@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,9 +53,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 case TestUserType.Helpdesk:
                     return AsHelpdesk();
                 case TestUserType.ProviderSuperUser:
-                    return AsProviderSuperUser(providerId.Value, Models.ProviderType.Both);
+                    return AsProviderSuperUser(providerId.Value, Core.Models.ProviderType.Both);
                 case TestUserType.ProviderUser:
-                    return AsProviderUser(providerId.Value, Models.ProviderType.Both);
+                    return AsProviderUser(providerId.Value, Core.Models.ProviderType.Both);
                 default:
                     throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
             }
@@ -194,6 +194,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             return new ClaimsPrincipal(identity);
         }
 
+        public UserInfo ToUserInfo() => new UserInfo()
+        {
+            UserId = UserId,
+            Email = Email,
+            FirstName = FirstName,
+            LastName = LastName
+        };
+
         private async Task RecordSignIn()
         {
             using (var scope = _serviceScopeFactory.CreateScope())
@@ -207,7 +215,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                         Email = Email,
                         FirstName = FirstName,
                         LastName = LastName,
-                        ProviderId = ProviderId,
+                        CurrentProviderId = ProviderId,
                         Role = Role,
                         UserId = UserId
                     });

@@ -133,6 +133,9 @@
     },
     "FeatureFlags": {
       "value": "__FeatureFlags__"
+    },
+    "RedisCacheName": {
+      "value": "__providerPortalRedisCacheName__"
     }
   }
 }

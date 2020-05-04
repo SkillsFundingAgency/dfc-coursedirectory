@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
@@ -15,11 +16,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
 
     public class ViewModel
     {
-        public IReadOnlyCollection<ProviderApprenticeshipQAInfo> NotStarted { get; set; }
-        public IReadOnlyCollection<ProviderApprenticeshipQAInfo> Submitted { get; set; }
-        public IReadOnlyCollection<ProviderApprenticeshipQAInfo> InProgress { get; set; }
-        public IReadOnlyCollection<ProviderApprenticeshipQAInfo> Failed { get; set; }
-        public IReadOnlyCollection<ProviderApprenticeshipQAInfo> UnableToComplete { get; set; }
+        public IReadOnlyCollection<ViewModelResult> NotStarted { get; set; }
+        public IReadOnlyCollection<ViewModelResult> Submitted { get; set; }
+        public IReadOnlyCollection<ViewModelResult> InProgress { get; set; }
+        public IReadOnlyCollection<ViewModelResult> Failed { get; set; }
+        public IReadOnlyCollection<ViewModelResult> UnableToComplete { get; set; }
+    }
+
+    public class ViewModelResult
+    {
+        public Guid ProviderId { get; set; }
+        public string ProviderName { get; set; }
+        public int ProviderUkprn { get; set; }
+        public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
+        public DateTime? SubmittedOn { get; set; }
+        public UserInfo LastAssessedBy { get; set; }
+        public DateTime AddedOn { get; set; }
+        public ApprenticeshipQAUnableToCompleteReasons? UnableToCompleteReasons { get; set; }
     }
 
     public class QueryHandler : IRequestHandler<Query, ViewModel>
@@ -32,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
-        
+
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderApprenticeshipQAInfoByStatus()
@@ -43,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                     ApprenticeshipQAStatus.Submitted,
                     ApprenticeshipQAStatus.Failed,
                     ApprenticeshipQAStatus.InProgress,
-                    ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.InProgress
+                    ApprenticeshipQAStatus.UnableToComplete
                 }
             });
 
@@ -54,14 +67,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
 
             var infos = (from r in results
                          let provider = providers[r.ProviderId]
-                         select new ProviderApprenticeshipQAInfo()
+                         where provider.ProviderType.HasFlag(ProviderType.Apprenticeships)
+                         select new ViewModelResult()
                          {
                              ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
                              LastAssessedBy = r.LastAssessedBy,
                              ProviderId = r.ProviderId,
                              ProviderName = provider.ProviderName,
                              ProviderUkprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
-                             SubmittedOn = r.SubmittedOn
+                             SubmittedOn = r.SubmittedOn,
+                             AddedOn = r.AddedOn,
+                             UnableToCompleteReasons = r.UnableToCompleteReasons
                          }).ToList();
 
             var unableToComplete = infos
