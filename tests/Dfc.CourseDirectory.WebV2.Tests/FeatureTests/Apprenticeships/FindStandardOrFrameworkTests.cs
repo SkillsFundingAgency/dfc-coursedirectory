@@ -103,7 +103,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         {
             // Arrange
             var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
-
             await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
             await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
             await TestData.CreateFramework(frameworkCode: 789, progType: 2, pathwayCode: 3, nasTitle: "Haircuts");
@@ -123,9 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
             var doc = await response.GetDocument();
-
             Assert.NotNull(doc.GetElementById("framework-warning"));
         }
 
@@ -153,10 +150,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
             var doc = await response.GetDocument();
             var results = doc.GetElementById("framework-warning");
-
             Assert.Null(results);
         }
 
