@@ -13,5 +13,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Shared
         public string TownOrCity { get; set; }
         public string County { get; set; }
         public string Postcode { get; set; }
+        public string Country { get; set; }
+        public bool IsEngland => Country?.Equals("England", StringComparison.InvariantCultureIgnoreCase) ?? false;
     }
 }
