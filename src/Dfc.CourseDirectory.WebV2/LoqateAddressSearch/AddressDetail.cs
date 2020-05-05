@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
+﻿using System.Security.Policy;
+
+namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
 {
     public class AddressDetail
     {
@@ -10,5 +12,6 @@
         public string PostTown { get; set; }
         public string County { get; set; }
         public string Postcode { get; set; }
+        public string CountryName { get; set; }
     }
 }
