@@ -26,5 +26,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
         public string filter1Id { get; set; }
 
         public bool HasSelectedFilters => Filters.SelectMany(x => x.Items).Any(x => x.IsSelected);
+        public int CurrentPage { get; set; }
     }
 }

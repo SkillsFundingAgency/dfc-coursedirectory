@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Dfc.CourseDirectory.WebV2.SharedViews.Components;
+using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -98,7 +100,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                
+
                 if (result.Value.Value.Any())
                 {
                     model = result.Value.Value.Select(x => new ZCodeFoundResultModel()
@@ -265,12 +267,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 model.Items = zCodeResults.OrderByDescending(x => x.LearnAimRef);
                 model.Url = Request.GetDisplayUrl();
-                model.PageParamName = _larsSearchSettings.PageParamName;
+                model.PageParamName = (_larsSearchSettings.PageParamName);
                 model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
                 model.TotalCount = result.Value.ODataCount ?? 0;
                 model.Filters = filters.ToList();
                 model.Level1Id = request.Level1Id;
                 model.Level2Id = request.Level2Id;
+                int resultpage = 0;
+                var success = int.TryParse(HttpContext.Request.Query[_larsSearchSettings.PageParamName], out resultpage);
+
+                if (success)
+                {
+                    model.CurrentPage = resultpage;
+                }
+                else
+                {
+                    model.CurrentPage = 1;
+                }
+
+
                 //model.filter0Id = request.LevelId;
                 //model.filter1Id = request.CategoryId;
 
