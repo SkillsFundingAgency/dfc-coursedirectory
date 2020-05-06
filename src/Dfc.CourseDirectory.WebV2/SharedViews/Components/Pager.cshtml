@@ -1,0 +1,48 @@
+﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.PagerViewModel
+@{
+    var addedEllipsis = false;
+    <nav class="pagination" role="navigation">
+        <div class="govuk-grid-column">
+            <ul>
+                @if (Model.CurrentPage > 1)
+                {
+                    <a href="@Model.GetPageUrl.Invoke(Model.CurrentPage -1)" id="pttcd-pager__PreviousPage" class="govuk-link pagination__item floatright" rel="previous">
+                        &#8592 Previous page
+                    </a>
+                }
+                @foreach (var item in Model.PageNumbers)
+                {
+                    @if (item == Model.CurrentPage)
+                    {
+                        <span class="pttcd-c-pager__Page--CurrentPage pagination__item--current" id="pttcd-pager__CurrentPage">@item</span>
+                    }
+                    else if (item <= Model.TotalPages)
+                    {
+                        <li> <a href="@Model.GetPageUrl.Invoke(item)" class="pttcd-c-pager__Page govuk-link pagination__item">@item</a></li>
+                    }
+
+                    @if (Model.CurrentPage > 3)
+                    {
+                        @if (!addedEllipsis)
+                        {
+                            addedEllipsis = true;
+                            <span class="pttcd-c-Pager__Ellipsis__First">&ctdot;</span>
+                        }
+                    }
+                    @if (item == Model.CurrentPage + 1 && item <= (Model.TotalPages - 3))
+                    {
+
+                        <span class="pttcd-c-pager__Ellipsis__Second">&ctdot;</span>
+
+                    }
+                }
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <a href="@Model.GetPageUrl.Invoke(Model.CurrentPage + 1)" id="pttcd-pager__NextPage" class="govuk-link pagination__item" rel="next">
+                        Next page &#8594;
+                    </a>
+                }
+            </ul>
+        </div>
+    </nav>
+}
