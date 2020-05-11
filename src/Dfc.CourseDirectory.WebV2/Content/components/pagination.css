@@ -1,0 +1,20 @@
+﻿.pttcd-pager__nextpage {
+    text-align: right;
+    width: 30%;
+    float: left;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-repeat: no-repeat;
+}
+.pttcd-c-pager__Pag {
+    margin: 0 auto;
+    width: 40%;
+    text-align: center;   
+}
+.pttcd-c-pager-previous {
+    text-align: left;
+    padding-left: 30px;
+    background-position: 0 4px;
+    background-repeat: no-repeat;
+}
