@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementsByClassName("pttcd-c-Pager__ellipsis__first"));          
+            Assert.NotNull(doc.GetElementsByClassName("pttcd-c-pager__firstellipsis"));          
         }
         [Fact]
         public async Task CurrentPageIsFirstPage_DoesNotRenderEllipsis()
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.Empty(doc.GetElementsByClassName("pttcd-c-Pager__Ellipsis__First"));
+            Assert.Empty(doc.GetElementsByClassName("pttcd-c-pager__firstellipsis"));
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementById("pttcd-pager__nextage"));
+            Assert.Null(doc.GetElementById("pttcd-pager__nextpage"));
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            var currentPage = doc.GetElementsByClassName("pttcd-c-pager__currentpage pagination__item-current");
+            var currentPage = doc.GetElementsByClassName("pttcd-c-pager__page--currentpage");
             Assert.Equal("4", currentPage.First().Text());
         }
 
