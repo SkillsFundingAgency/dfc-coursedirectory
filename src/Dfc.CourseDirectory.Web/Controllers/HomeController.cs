@@ -50,9 +50,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _authorizationService = authorizationService;
         }
 
-        [Authorize]
         public IActionResult Index(string errmsg, [FromServices] IFeatureFlagProvider featureFlagProvider)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return View("../Provider/Landing");
+            }
+
             HttpContext.Session.SetInt32("ProviderSearch", 1);
             HttpContext.Session.SetString("Option", "Home");
             ViewBag.StatusMessage = errmsg;
