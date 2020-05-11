@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.Empty(doc.GetElementsByClassName("pttcd-c-pager-previous"));
+            Assert.Empty(doc.GetElementsByClassName("pttcd-c-pager__previous-page"));
         }
 
         [Fact]
@@ -51,8 +49,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementsByClassName("pttcd-pager__previouspage"));
+            Assert.NotNull(doc.GetElementsByClassName("pttcd-pager__previous-page"));
         }
+
         [Fact]
         public async Task CurrentPageIsGreaterThan3_RendersEllipsis()
         {
@@ -63,8 +62,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementsByClassName("pttcd-c-pager__firstellipsis"));          
+            Assert.NotNull(doc.GetElementsByClassName("pttcd-c-pager__pre-ellipsis"));          
         }
+
         [Fact]
         public async Task CurrentPageIsFirstPage_DoesNotRenderEllipsis()
         {
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.Empty(doc.GetElementsByClassName("pttcd-c-pager__firstellipsis"));
+            Assert.Empty(doc.GetElementsByClassName("pttcd-c-pager__pre-ellipsis"));
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementsByClassName("pttcd-pager__nextpage"));
+            Assert.NotNull(doc.GetElementsByClassName("pttcd-pager__next-page"));
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementById("pttcd-pager__nextpage"));
+            Assert.Null(doc.GetElementById("pttcd-pager__next-page"));
         }
 
         [Fact]
@@ -114,10 +114,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTest.SharedViews
 
             // Assert
             var doc = await response.GetDocument();
-            var currentPage = doc.GetElementsByClassName("pttcd-c-pager__page--currentpage");
+            var currentPage = doc.GetElementsByClassName("pttcd-c-pager__page-list__current-page");
             Assert.Equal("4", currentPage.First().Text());
         }
-
     }
 
     public class PagerController : Controller
