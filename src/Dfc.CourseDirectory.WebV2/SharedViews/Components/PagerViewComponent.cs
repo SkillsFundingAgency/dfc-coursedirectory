@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
@@ -12,22 +10,25 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
         {
             var pageNumbers = new[]
             {
-            1,
-            currentPage - 1,
-            currentPage,
-            currentPage + 1,
-            totalPages
+                1,
+                currentPage - 1,
+                currentPage,
+                currentPage + 1,
+                totalPages
             }
-                 .Where(p => p > 0)
-                 .OrderBy(p => p)
-                 .Distinct();
+            .Where(p => p > 0 && p <= totalPages)
+            .OrderBy(p => p)
+            .Distinct()
+            .ToList();
 
-            var viewModel = new PagerViewModel();
+            var viewModel = new PagerViewModel()
+            {
+                PageNumbers = pageNumbers,
+                TotalPages = totalPages,
+                GetPageUrl = getPageUrl,
+                CurrentPage = currentPage
+            };
 
-            viewModel.PageNumbers = pageNumbers;
-            viewModel.TotalPages = totalPages;
-            viewModel.GetPageUrl = getPageUrl;
-            viewModel.CurrentPage = currentPage;
             return View("~/SharedViews/Components/Pager.cshtml", viewModel);
         }
     }
