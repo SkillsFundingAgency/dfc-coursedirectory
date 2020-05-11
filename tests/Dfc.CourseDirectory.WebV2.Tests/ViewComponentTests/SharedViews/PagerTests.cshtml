@@ -4,6 +4,7 @@
 <!doctype html>
 <html>
 <body>
+
     <vc:pager current-page=@ViewBag.currentPage total-pages=@ViewBag.totalPages get-page-url="@(pageNumber => Url.Action("SomeAction", new { page = pageNumber }))" />
 
 </body>

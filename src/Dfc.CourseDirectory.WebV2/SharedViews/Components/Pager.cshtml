@@ -1,53 +1,43 @@
 ﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.PagerViewModel
-@{
-    var addedEllipsis = false;
- 
-    <nav>
-    <ul class="pttcd-c-pager">
-            @if (Model.CurrentPage > 1)
-            {               
-                   <li> <a href="@Model.GetPageUrl.Invoke(Model.CurrentPage -1)" class="pttcd-c-pager-previous" rel="previous">
-                     Previous page
-                </a> </li>           
-            }
-            <li>
-                @foreach (var item in Model.PageNumbers)
-                {
 
-                    @if (item == Model.CurrentPage)
-                    {
-                        <span class="pttcd-c-pager__page--currentpage">@item</span>
-                    }
-                    else if (item <= Model.TotalPages)
-                    {
-                        <a href="@Model.GetPageUrl.Invoke(item)" class="pttcd-c-pager__page">@item</a>
-                    }
+<nav class="pttcd-c-pager">
+    @if (Model.CurrentPage > 1)
+    {               
+        <a href="@Model.GetPageUrl(Model.CurrentPage - 1)" class="govuk-link pttcd-c-pager__previous-page" rel="previous">
+            Previous page
+        </a>
+    }
 
-                    @if (Model.CurrentPage > 3)
-                    {
-                        @if (!addedEllipsis)
-                        {
-                            addedEllipsis = true;
-                            <span class="pttcd-c-pager__firstellipsis">&ctdot;</span>
-                        }
-                    }
-                    @if (item == Model.CurrentPage + 1 && item <= (Model.TotalPages - 3))
-                    {
+    <ul class="pttcd-c-pager__page-list">
+        @for (int i = 0; i < Model.PageNumbers.Count; i++)
+        {
+            var thisPage = Model.PageNumbers[i];
 
-                        <span class="pttcd-c-pager__secondellipsis">&ctdot;</span>
-
-                    }
-                }
-            </li>
-
-            @if (Model.CurrentPage < Model.TotalPages)
+            @if (i > 0 && Model.PageNumbers[i - 1] - thisPage > 1)
             {
-                <li>
-                    <a href="@Model.GetPageUrl.Invoke(Model.CurrentPage + 1)" class="pttcd-c-pager__nextpage" rel="next">
-                        Next page
-                    </a>
-                </li>
+                <li class="pttcd-c-pager__pre-ellipsis">…</li>
             }
-        </ul>
- </nav>
-}
+
+            @if (thisPage == Model.CurrentPage)
+            {
+                <li class="pttcd-c-pager__page-list__current-page">@thisPage</li>
+            }
+            else
+            {
+                <li><a href="@Model.GetPageUrl(thisPage)" class="govuk-link">@thisPage</a></li>
+            }
+
+            @if (i < Model.PageNumbers.Count - 1 && Model.PageNumbers[i + 1] - thisPage > 1)
+            {
+                <li class="pttcd-c-pager__post-ellipsis">…</li>
+            }
+        }
+    </ul>
+
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a href="@Model.GetPageUrl(Model.CurrentPage + 1)" class="govuk-link pttcd-c-pager__next-page" rel="next">
+            Next page
+        </a>
+    }
+</nav>
