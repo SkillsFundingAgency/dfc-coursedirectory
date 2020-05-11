@@ -30,9 +30,12 @@
   <ItemGroup>
     <None Remove="Content\components\checkboxes.css" />
     <None Remove="Content\components\inset-text.css" />
+    <None Remove="Content\components\pager.css" />
     <None Remove="Content\components\radios.css" />
     <None Remove="Content\components\search-input.css" />
     <None Remove="Content\components\tinymce.css" />
+    <None Remove="Content\images\arrow-pagination-left.svg" />
+    <None Remove="Content\images\arrow-pagination-right.svg" />
     <None Remove="Content\layout.css" />
     <None Remove="Content\nav.css" />
     <None Remove="Content\notification.css" />

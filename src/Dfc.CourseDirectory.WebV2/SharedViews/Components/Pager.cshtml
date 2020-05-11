@@ -1,0 +1,53 @@
+﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.PagerViewModel
+@{
+    var addedEllipsis = false;
+ 
+    <nav>
+    <ul class="pttcd-c-pager">
+            @if (Model.CurrentPage > 1)
+            {               
+                   <li> <a href="@Model.GetPageUrl.Invoke(Model.CurrentPage -1)" class="pttcd-c-pager-previous" rel="previous">
+                     Previous page
+                </a> </li>           
+            }
+            <li>
+                @foreach (var item in Model.PageNumbers)
+                {
+
+                    @if (item == Model.CurrentPage)
+                    {
+                        <span class="pttcd-c-pager__page--currentpage">@item</span>
+                    }
+                    else if (item <= Model.TotalPages)
+                    {
+                        <a href="@Model.GetPageUrl.Invoke(item)" class="pttcd-c-pager__page">@item</a>
+                    }
+
+                    @if (Model.CurrentPage > 3)
+                    {
+                        @if (!addedEllipsis)
+                        {
+                            addedEllipsis = true;
+                            <span class="pttcd-c-pager__firstellipsis">&ctdot;</span>
+                        }
+                    }
+                    @if (item == Model.CurrentPage + 1 && item <= (Model.TotalPages - 3))
+                    {
+
+                        <span class="pttcd-c-pager__secondellipsis">&ctdot;</span>
+
+                    }
+                }
+            </li>
+
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li>
+                    <a href="@Model.GetPageUrl.Invoke(Model.CurrentPage + 1)" class="pttcd-c-pager__nextpage" rel="next">
+                        Next page
+                    </a>
+                </li>
+            }
+        </ul>
+ </nav>
+}
