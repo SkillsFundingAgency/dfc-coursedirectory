@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 .OrderByDescending(c => c.LastUpdated)
                 .SingleOrDefault(c => c.ContactType == "P");
 
-            var contactName = contact?.ContactPersonalDetails.PersonGivenName != null && contact?.ContactPersonalDetails.PersonFamilyName != null ?
+            var contactName = contact?.ContactPersonalDetails?.PersonGivenName != null && contact?.ContactPersonalDetails?.PersonFamilyName != null ?
                 string.Join(" ", contact.ContactPersonalDetails.PersonGivenName) + " " +
                     contact.ContactPersonalDetails.PersonFamilyName :
                 null;
@@ -93,7 +93,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                     address.StreetDescription,
                     address.Locality
                 };
-                parts.AddRange(address.Items);
+
+                if (address.Items != null)
+                {
+                    parts.AddRange(address.Items);
+                }
+
                 parts.Add(address.PostCode);
 
                 return parts.Where(p => !string.IsNullOrEmpty(p)).ToList();

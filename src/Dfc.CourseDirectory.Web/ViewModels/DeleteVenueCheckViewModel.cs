@@ -5,6 +5,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public bool LiveCoursesExist { get; set; }
 
         public bool PendingCoursesExist { get; set; }
+        public bool LiveApprenticeshipsExist { get; set; }
 
 
     }

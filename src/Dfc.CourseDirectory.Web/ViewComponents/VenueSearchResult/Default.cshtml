@@ -34,6 +34,15 @@
                        })
 </div>
 
+<div id="PendingApprenticeshipExistMessage" hidden="hidden">
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                       {
+                           NotificationTitle = "Location cannot be deleted for the for the following reasons:-",
+                           NotificationMessage = "There are apprenticeship training courses associated with this location. You will need to delete the apprenticeship training course or assign a different location before deleting the location",
+                           ClassType = "error-summary"
+                       })
+</div>
+
 <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
     @{
         string message = "";
@@ -234,6 +243,7 @@
         $(function () {
             var $liveCoursesExistMessage = $("#LiveCoursesExistMessage");
             var $pendingCoursesExistMessage = $("#PendingCoursesExistMessage");
+            var $liveApprenticeshipExistMessage = $("#PendingApprenticeshipExistMessage");
 
             var $deleteButton = $(".delete");
 
@@ -288,7 +298,14 @@
                     $('html,body').animate({
                         scrollTop: $liveCoursesExistMessage.offset().top
                     });
+                }
 
+                if (data.liveApprenticeshipsExist) {
+                    continueDelete = false;
+                    $liveApprenticeshipExistMessage.show();
+                    $('html,body').animate({
+                        scrollTop: $liveApprenticeshipExistMessage.offset().top
+                    });
                 }
 
                 if (continueDelete) {
@@ -337,7 +354,7 @@
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
-                $.get("/Venues/CheckForCourses?" + qs, success);
+                $.get("/Venues/CheckForCoursesOrApprenticeships?" + qs, success);
             };
 
             var makeDeleteRequestWithPayload = function (payload, success) {
@@ -380,6 +397,7 @@
                     $(".cd-success-summary").hide();
                     $liveCoursesExistMessage.hide();
                     $pendingCoursesExistMessage.hide();
+                    $liveApprenticeshipExistMessage.hide();
 
                     $('.edit-venue-link').show();
 
