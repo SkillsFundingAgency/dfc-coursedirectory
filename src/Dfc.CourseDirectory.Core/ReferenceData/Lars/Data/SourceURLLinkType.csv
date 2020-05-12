@@ -1,0 +1,7 @@
+"SourceURLLinkType","SourceURLLinkTypeDesc","SourceURLLinkTypeDesc2","SourceURLLink","EffectiveFrom","EffectiveTo"
+"-2","Not Applicable","Not App","Not Applicable/ Not Known","01 Jan 2011",""
+"-1","Unknown","Unknown","Unknown/Unknown","01 Jan 2011",""
+"51","Ofqual: Qualifications","Quals","https://register.ofqual.gov.uk/Search?Category=Qualifications&query={0}","01 Jan 2011",""
+"52","Ofqual: Units","Units","http://register.ofqual.gov.uk/Unit/Details/{0}","01 Jan 2011",""
+"53","Ofqual: 14-19 Diplomas","14-19 Dip","http://register.ofqual.gov.uk/Diploma/Details/{0}","01 Jan 2011",""
+"54","QAA: Access to HE Diplomas","Acc HE Dip","https://ava.qaa.ac.uk/SubSites/PublicSearch/ViewCourse.aspx?QAACourseCode={0}","01 Jan 2011",""
