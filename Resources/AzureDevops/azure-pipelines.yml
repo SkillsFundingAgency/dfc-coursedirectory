@@ -80,7 +80,12 @@ steps:
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-t:Restore,Build'
 
-- script: dotnet test tests/Dfc.CourseDirectory.WebV2.Tests/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+- powershell: |
+    $testProjects = Get-ChildItem tests/ -Directory -Filter *.Tests
+
+    foreach ($project in $testProjects) {
+      dotnet test tests/${project}/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+    }
   displayName: Test
   env:
     ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)
