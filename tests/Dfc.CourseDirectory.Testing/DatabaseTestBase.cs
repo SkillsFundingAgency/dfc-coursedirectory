@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.Testing
 
             var services = new ServiceCollection();
 
-            services.AddSqlDataStore(connectionString);
+            services.AddSqlDataStore(_ => connectionString);
             DatabaseFixture.ConfigureServices(services);
             return services.BuildServiceProvider();
         }

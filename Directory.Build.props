@@ -7,6 +7,5 @@
     <_IsLegacyProject Condition="'$(MSBuildProjectName)' == 'Dfc.CourseDirectory.Web'">true</_IsLegacyProject>
     <TreatWarningsAsErrors Condition="'$(_IsLegacyProject)' != 'true'">true</TreatWarningsAsErrors>
     <LangVersion>8.0</LangVersion>
-    <UserSecretsId>CourseDirectoryWeb</UserSecretsId>
   </PropertyGroup>
 </Project>
