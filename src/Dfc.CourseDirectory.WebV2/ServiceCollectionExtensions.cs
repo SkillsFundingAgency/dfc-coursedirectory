@@ -108,7 +108,6 @@ namespace Dfc.CourseDirectory.WebV2
                 new ServiceDescriptor(typeof(IHostedService), typeof(RunStartupTasksHostedService),
                 ServiceLifetime.Transient));
 
-            services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
@@ -139,8 +138,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ITagHelperComponent, AppendMptxInstanceTagHelperComponent>();
             services.AddTransient<Features.ApprenticeshipQA.ProviderAssessment.FlowModelInitializer>();
             services.AddTransient<Features.ApprenticeshipQA.ApprenticeshipAssessment.FlowModelInitializer>();
-            services.Configure<Configuration>(configuration);
-            services.AddSingleton<Configuration>(sp => sp.GetRequiredService<IOptions<Configuration>>().Value);
+            services.Configure<Settings>(configuration);
+            services.AddSingleton<Settings>(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
