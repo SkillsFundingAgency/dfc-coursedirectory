@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Functions;
@@ -23,6 +24,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
             builder.Services.AddTransient<LarsDataImporter>();
+            builder.Services.AddTransient<IClock, FrozenSystemClock>();
 
             IConfiguration GetConfiguration()
             {
