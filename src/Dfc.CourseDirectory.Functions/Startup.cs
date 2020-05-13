@@ -13,10 +13,19 @@ namespace Dfc.CourseDirectory.Functions
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddSqlDataStore(
-                sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection"));
+            var configuration = GetConfiguration();
+
+            builder.Services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
             builder.Services.AddTransient<LarsDataImporter>();
+
+            IConfiguration GetConfiguration()
+            {
+                // Yuk - waiting on https://github.com/Azure/azure-webjobs-sdk/pull/2405 for a nicer way to do this
+
+                var sp = builder.Services.BuildServiceProvider();
+                return sp.GetRequiredService<IConfiguration>();
+            }
         }
     }
 }
