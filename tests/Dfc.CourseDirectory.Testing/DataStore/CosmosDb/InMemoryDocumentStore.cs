@@ -10,16 +10,24 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
     {
         public InMemoryDocumentCollection<Apprenticeship> Apprenticeships { get; } = new InMemoryDocumentCollection<Apprenticeship>();
         public InMemoryDocumentCollection<Framework> Frameworks { get; } = new InMemoryDocumentCollection<Framework>();
+        public InMemoryDocumentCollection<ProgType> ProgTypes { get; set; } = new InMemoryDocumentCollection<ProgType>();
         public InMemoryDocumentCollection<Provider> Providers { get; } = new InMemoryDocumentCollection<Provider>();
+        public InMemoryDocumentCollection<SectorSubjectAreaTier1> SectorSubjectAreaTier1s { get; set; } = new InMemoryDocumentCollection<SectorSubjectAreaTier1>();
+        public InMemoryDocumentCollection<SectorSubjectAreaTier2> SectorSubjectAreaTier2s { get; set; } = new InMemoryDocumentCollection<SectorSubjectAreaTier2>();
         public InMemoryDocumentCollection<Standard> Standards { get; } = new InMemoryDocumentCollection<Standard>();
+        public InMemoryDocumentCollection<StandardSectorCode> StandardSectorCodes { get; } = new InMemoryDocumentCollection<StandardSectorCode>();
         public InMemoryDocumentCollection<Venue> Venues { get; } = new InMemoryDocumentCollection<Venue>();
 
         public void Clear()
         {
             Apprenticeships.Clear();
             Frameworks.Clear();
+            ProgTypes.Clear();
             Providers.Clear();
+            SectorSubjectAreaTier1s.Clear();
+            SectorSubjectAreaTier2s.Clear();
             Standards.Clear();
+            StandardSectorCodes.Clear();
             Venues.Clear();
         }
     }
@@ -40,6 +48,13 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
         public IReadOnlyCollection<T> All => _documents.Values.Select(CloneDocument).ToList();
 
         public void Clear() => _documents.Clear();
+
+        public void CreateOrUpdate(Func<T, bool> find, Func<T> create, Action<T> update)
+        {
+            var doc = All.SingleOrDefault(find) ?? create();
+            update(doc);
+            Save(doc);
+        }
 
         public void Delete(string id)
         {
