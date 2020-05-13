@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="ReferenceData\Lars\Data\*" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="ReferenceData\Lars\Data\*" />
   </ItemGroup>
   
 </Project>
