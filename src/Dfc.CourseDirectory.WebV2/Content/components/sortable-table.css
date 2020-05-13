@@ -1,3 +1,5 @@
+/* Copied from https://moj-design-system.herokuapp.com/components/sortable-table */
+
 [aria-sort] button,
 [aria-sort] button:hover {
   background-color: transparent;
