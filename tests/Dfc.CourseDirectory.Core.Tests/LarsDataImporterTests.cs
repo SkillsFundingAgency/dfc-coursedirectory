@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using System.Transactions;
 using Dapper;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Testing;
@@ -19,12 +18,22 @@ namespace Dfc.CourseDirectory.Core.Tests
         public Task ImportData() => WithSqlQueryDispatcher(async dispatcher =>
         {
             // Arrange
-            var importer = new LarsDataImporter(dispatcher);
+            var importer = new LarsDataImporter(
+                dispatcher,
+                CosmosDbQueryDispatcher.Object,
+                Clock);
 
             // Act
             await importer.ImportData();
 
             // Assert
+            Assert.Equal(1419, Fixture.DatabaseFixture.InMemoryDocumentStore.Frameworks.All.Count);
+            Assert.Equal(30, Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count);
+            Assert.Equal(17, Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count);
+            Assert.Equal(67, Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count);
+            Assert.Equal(553, Fixture.DatabaseFixture.InMemoryDocumentStore.Standards.All.Count);
+            Assert.Equal(75, Fixture.DatabaseFixture.InMemoryDocumentStore.StandardSectorCodes.All.Count);
+
             Assert.Equal(499, await CountSqlRows("LARS.AwardOrgCode"));
             Assert.Equal(42, await CountSqlRows("LARS.Category"));
             Assert.Equal(123, await CountSqlRows("LARS.LearnAimRefType"));
