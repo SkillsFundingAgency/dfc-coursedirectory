@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.SqlServer.Dac.Model;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
@@ -47,15 +48,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             static IEnumerable<T> ReadCsv<T>(string fileName)
             {
-                var path = Path.Combine("ReferenceData\\Lars\\Data\\", fileName);
+                var assm = typeof(LarsDataImporter).Assembly;
+                var resourcePath = $"{assm.GetName().Name}.ReferenceData.Lars.Data.{fileName}";
 
-                if (!File.Exists(path))
-                {
-                    throw new ArgumentException($"File not found at path '{path}'.", nameof(fileName));
-                }
-
-                using (var reader = File.OpenText(path))
-                using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+                using (var stream = assm.GetManifestResourceStream(resourcePath))
+                using (var streamReader = new StreamReader(stream))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                 {
                     return csvReader.GetRecords<T>().ToList();
                 }
