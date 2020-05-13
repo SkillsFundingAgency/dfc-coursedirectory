@@ -1,4 +1,15 @@
+$(function () {
+	$('*[data-pttcd-module="sortable-table"]').each(function (i, el) {
+		new MOJFrontend.SortableTable({
+			table: el
+		});
+	})
+});
+
+
 var MOJFrontend = MOJFrontend || {};
+
+/* Copied from https://moj-design-system.herokuapp.com/components/sortable-table */
 
 MOJFrontend.SortableTable = function (params) {
 	this.table = $(params.table);
