@@ -1,5 +1,5 @@
 ﻿@inject IFeatureFlagProvider FeatureFlagProvider
-@inject Configuration Configuration 
+@inject Settings Settings 
 @{
     var currentController = (string)ViewContext.RouteData.Values["Controller"];
     var currentAction = (string)ViewContext.RouteData.Values["Action"];
@@ -27,7 +27,7 @@
             </a>
         </li>
         <li class="govuk-header__navigation-item">
-            <a href="@Configuration.ManageUsersUrl" target="_blank" rel="noreferrer" class="govuk-header__link">
+            <a href="@Settings.ManageUsersUrl" target="_blank" rel="noreferrer" class="govuk-header__link">
                 Manage users
             </a>
         </li>

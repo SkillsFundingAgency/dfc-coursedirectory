@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             ILoggerFactory loggerFactory)
         {
             _httpContextAccessor = httpContextAccessor;
-            _serializerSettings = Settings.CreateSerializerSettings();
+            _serializerSettings = Json.Settings.CreateSerializerSettings();
             _logger = loggerFactory.CreateLogger<SessionMptxStateProvider>();
         }
 

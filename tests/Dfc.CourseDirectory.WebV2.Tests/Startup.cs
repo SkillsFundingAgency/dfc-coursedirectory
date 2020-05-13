@@ -55,6 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
             services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
+            services.AddSingleton<Settings>();
 
             DatabaseFixture.ConfigureServices(services);
         }

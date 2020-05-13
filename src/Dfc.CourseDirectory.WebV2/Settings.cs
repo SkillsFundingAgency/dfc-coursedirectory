@@ -1,7 +1,8 @@
 ﻿namespace Dfc.CourseDirectory.WebV2
 {
-    public class HostingOptions
+    public class Settings
     {
+        public string ManageUsersUrl { get; set; }
         public bool RewriteForbiddenToNotFound { get; set; } = true;
     }
 }
