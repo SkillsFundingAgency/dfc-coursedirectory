@@ -1,0 +1,62 @@
+﻿.pttcd-c-pager {
+    margin: 0 0 30px 0;
+    padding: 0;
+    position: relative;
+}
+
+.pttcd-c-pager__page-list {
+    margin: 0;
+    text-align: center;
+    padding: 0;
+}
+
+.pttcd-c-pager__page-list li {
+    display: inline-block;
+    list-style-type: none;
+    margin: 0;
+}
+
+.pttcd-c-pager__page-list a {
+    padding: 4px 12px;
+    line-height: 20px;
+    text-decoration: none;
+}
+
+.pttcd-c-pager__page-list__current-page {
+    color: #B1B4B6;
+    padding: 4px 12px;
+}
+
+.pttcd-c-pager__previous-page {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.pttcd-c-pager__next-page {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.pttcd-c-pager__previous-page:before {
+    display: inline-block;
+    content: '';
+    background-image: url(/v2/images/arrow-pagination-left.svg);
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 10px;
+    justify-self: start;
+    padding-right: 15px;
+}
+
+.pttcd-c-pager__next-page:after {
+    display: inline-block;
+    content: '';
+    background-image: url(/v2/images/arrow-pagination-right.svg);
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 10px;
+    justify-self: end;
+    margin-left: 15px;
+}

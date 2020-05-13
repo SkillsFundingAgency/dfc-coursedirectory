@@ -273,7 +273,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AddressLine2 = searchResult.Line2,
                         TownOrCity = searchResult.PostTown,
                         County = searchResult.County,
-                        Postcode = searchResult.Postcode
+                        Postcode = searchResult.Postcode,
+                        Country = searchResult.CountryName
                     };
                     viewModel.Id = requestModel.Id;
                 }

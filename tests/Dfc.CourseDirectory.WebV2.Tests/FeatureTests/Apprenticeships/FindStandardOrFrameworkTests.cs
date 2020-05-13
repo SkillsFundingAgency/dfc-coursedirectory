@@ -99,6 +99,63 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         }
 
         [Fact]
+        public async Task GetSearch_RendersSearchResultsWithFrameworkWarning()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
+            await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
+            await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
+            await TestData.CreateFramework(frameworkCode: 789, progType: 2, pathwayCode: 3, nasTitle: "Haircuts");
+
+            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                 parentMptxInstance.InstanceId,
+                 new FlowModel() { ProviderId = providerId },
+                 new Dictionary<string, object>()
+                 {
+                    { "ReturnUrl", "callback" }
+                 });
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeships/find-standard/search?ffiid={childMptxInstance.InstanceId}&Search=hair");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetElementById("framework-warning"));
+        }
+
+        [Fact]
+        public async Task GetSearch_RendersSearchResultsWithoutFrameworkWarning()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
+
+            await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
+            await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
+
+            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                 parentMptxInstance.InstanceId,
+                 new FlowModel() { ProviderId = providerId },
+                 new Dictionary<string, object>()
+                 {
+                    { "ReturnUrl", "callback" }
+                 });
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeships/find-standard/search?ffiid={childMptxInstance.InstanceId}&Search=hair");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var doc = await response.GetDocument();
+            var results = doc.GetElementById("framework-warning");
+            Assert.Null(results);
+        }
+
+        [Fact]
         public async Task GetSelect_ValidRequest_UpdatesParentStateAndRedirects()
         {
             // Arrange

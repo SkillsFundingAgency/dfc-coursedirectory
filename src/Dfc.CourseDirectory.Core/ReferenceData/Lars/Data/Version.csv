@@ -1,0 +1,8 @@
+"MajorNumber","MinorNumber","MaintenanceNumber","MainDataSchemaName","RefDataSchemaName","ActivationDate","ExpiryDate","Description","Comment","Created_On","Created_By","Modified_On","Modified_By"
+"1","0","0","Version_001","REF_Version_001","01 Jun 2014","31 Dec 2019","Frist Version of Schema","","01 Jul 2014","System","14 Jun 2019","SYSTEM"
+"2","0","0","Version_002","REF_Version_002","01 Jul 2014","31 Dec 2019","Second Version of Schema","","01 Jul 2014","System","14 Jun 2019","SYSTEM"
+"3","0","0","Version_003","REF_Version_003","01 Jul 2015","31 Dec 2019","Third Version of LARS","","15 May 2015","System","14 Jun 2019","SYSTEM"
+"4","0","0","Version_004","REF_Version_004","01 Jul 2016","31 Dec 2019","Fourth Version of LARS","","09 Aug 2016","System","14 Jun 2019","SYSTEM"
+"5","0","0","Version_005","REF_Version_005","01 Jul 2017","31 Dec 2019","Fifth Version of LARS","","11 Jul 2017","System","14 Jun 2019","SYSTEM"
+"6","0","0","Version_006","REF_Version_006","01 Jul 2018","","Sixth Version of LARS","","18 Jul 2018","SYSTEM","18 Jul 2018","SYSTEM"
+"7","0","0","Version_007","REF_Version_007","01 Jul 2019","","Seventh Version of LARS","","30 Jun 2019","SYSTEM","30 Jun 2019","SYSTEM"
