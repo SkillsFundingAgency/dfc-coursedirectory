@@ -203,6 +203,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> ZCodeNotKnown([FromQuery] ZCodeNotKnownRequestModel request)
         {
+            int resultpage = 0;
             RemoveSessionVariables();
             ZCodeSearchResultModel model = new ZCodeSearchResultModel();
 
@@ -272,7 +273,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Level1Id = request.Level1Id;
                 model.Level2Id = request.Level2Id;
                 //model.filter0Id = request.LevelId;
-                //model.filter1Id = request.CategoryId;
+                //model.filter1Id = request.CategoryId;                
+                var isPageNoSuccess = int.TryParse(HttpContext.Request.Query[_larsSearchSettings.PageParamName], out resultpage);
+
+                if (isPageNoSuccess)
+                {
+                    model.CurrentPage = resultpage;
+                }
+                else
+                {
+                    model.CurrentPage = 1;
+                }
 
             }
 
