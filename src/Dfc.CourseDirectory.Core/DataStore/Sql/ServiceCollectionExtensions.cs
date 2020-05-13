@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +8,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
     {
         public static IServiceCollection AddSqlDataStore(
             this IServiceCollection services,
-            Func<IServiceProvider, string> getConnectionString)
+            string connectionString)
         {
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(ISqlQuery<>))
@@ -18,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                     .WithTransientLifetime());
 
             services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
-            services.AddScoped<SqlConnection>(sp => new SqlConnection(getConnectionString(sp)));
+            services.AddScoped<SqlConnection>(_ => new SqlConnection(connectionString));
             services.AddScoped<SqlTransaction>(sp =>
             {
                 var connection = sp.GetRequiredService<SqlConnection>();
