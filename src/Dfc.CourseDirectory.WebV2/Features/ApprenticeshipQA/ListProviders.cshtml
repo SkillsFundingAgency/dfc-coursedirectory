@@ -11,9 +11,9 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header" aria-sort="none">Provider name</th>
                     <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header" style="width: 120px">Date added</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px" aria-sort="descending">Date added</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -22,7 +22,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
-                        <td class="govuk-table__cell">@provider.AddedOn.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.AddedOn.ToString("yyyyMMdd")">@provider.AddedOn.ToString("dd MMM yyyy")</td>
                     </tr>
                 }
             </tbody>
@@ -38,9 +38,9 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header" aria-sort="none">Provider name</th>
                     <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header" style="width: 135px">Date submitted</th>
+                    <th scope="col" class="govuk-table__header" style="width: 145px" aria-sort="descending">Date submitted</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -49,7 +49,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
-                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.SubmittedOn.Value.ToString("yyyyMMdd")">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
                     </tr>
                 }
             </tbody>
@@ -64,9 +64,9 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header" aria-sort="none">Provider name</th>
                     <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header" style="width: 135px">Date submitted</th>
+                    <th scope="col" class="govuk-table__header" style="width: 145px" aria-sort="descending">Date submitted</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Last QA'd by</th>
                 </tr>
             </thead>
@@ -76,7 +76,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
-                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.SubmittedOn.Value.ToString("yyyyMMdd")">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
                         <td class="govuk-table__cell">@provider.LastAssessedBy.FullName</td>
                     </tr>
                 }
@@ -92,9 +92,9 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header" aria-sort="none">Provider name</th>
                     <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header" style="width: 135px">Date submitted</th>
+                    <th scope="col" class="govuk-table__header" style="width: 145px" aria-sort="descending">Date submitted</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Last QA'd by</th>
                 </tr>
             </thead>
@@ -104,7 +104,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
-                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.SubmittedOn.Value.ToString("yyyyMMdd")">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
                         <td class="govuk-table__cell">@provider.LastAssessedBy.FullName</td>
                     </tr>
                 }
@@ -120,10 +120,10 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header" aria-sort="none">Provider name</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">Reason for not completing</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
+                    <th scope="col" class="govuk-table__header pttcd-!-width-120px" aria-sort="descending">Date added</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -140,7 +140,7 @@
                                 }
                             </ul>
                         </td>
-                        <td class="govuk-table__cell">@(provider.AddedOn.ToString("dd MMM yyyy"))</td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.AddedOn.ToString("yyyyMMdd")">@(provider.AddedOn.ToString("dd MMM yyyy"))</td>
                     </tr>
                 }
             </tbody>
@@ -151,3 +151,15 @@
         }
     </govuk-tabs-item>
 </govuk-tabs>
+
+@section Scripts {
+<script type="text/javascript">
+    $(function () {
+        $('table').each(function (i, el) {
+            new MOJFrontend.SortableTable({
+                table: el
+            });
+        })
+    });
+</script>
+} 
