@@ -36,14 +36,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public OverridableFeatureFlagProvider FeatureFlagProvider => Services.GetRequiredService<IFeatureFlagProvider>() as OverridableFeatureFlagProvider;
 
-        public HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
-
         public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IDistributedCache>() as ClearableMemoryCache;
 
         public MptxManager MptxManager => Services.GetRequiredService<MptxManager>();
 
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
+
+        public Settings Settings => Services.GetRequiredService<Settings>();
 
         public SqlQuerySpy SqlQuerySpy => DatabaseFixture.SqlQuerySpy;
 
@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             MemoryCache.Clear();
 
             // Restore HostingOptions values to default
-            HostingOptions.RewriteForbiddenToNotFound = false;
+            Settings.RewriteForbiddenToNotFound = false;
 
             // Reset the clock
             Clock.UtcNow = MutableClock.Start;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -12,7 +11,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         public ErrorTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
-            Factory.HostingOptions.RewriteForbiddenToNotFound = true;
+            Factory.Settings.RewriteForbiddenToNotFound = true;
         }
 
         [Fact]

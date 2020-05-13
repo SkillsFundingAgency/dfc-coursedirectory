@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             EnsureDataFolderExists(_dbFilePath);
 
-            _serializerSettings = Settings.CreateSerializerSettings();
+            _serializerSettings = Json.Settings.CreateSerializerSettings();
         }
 
         public MptxInstance CreateInstance(
