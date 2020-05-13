@@ -12,6 +12,9 @@
     <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="extensions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
