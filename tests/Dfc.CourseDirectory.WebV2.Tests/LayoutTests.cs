@@ -67,12 +67,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
+            Assert.Equal(6, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Quality assurance", topLevelLinks[1].label);
             Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Migration reports", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Manage users", topLevelLinks[3].label);
+            Assert.Equal("Migration reports", topLevelLinks[4].label);
+            Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -99,12 +100,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
+            Assert.Equal(6, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Quality assurance", topLevelLinks[1].label);
             Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Migration reports", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Manage users", topLevelLinks[3].label);
+            Assert.Equal("Migration reports", topLevelLinks[4].label);
+            Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(4, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
@@ -136,12 +138,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
+            Assert.Equal(6, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Quality assurance", topLevelLinks[1].label);
             Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Migration reports", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Manage users", topLevelLinks[3].label);
+            Assert.Equal("Migration reports", topLevelLinks[4].label);
+            Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(3, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
@@ -172,12 +175,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
+            Assert.Equal(6, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Quality assurance", topLevelLinks[1].label);
             Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Migration reports", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Manage users", topLevelLinks[3].label);
+            Assert.Equal("Migration reports", topLevelLinks[4].label);
+            Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(5, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
