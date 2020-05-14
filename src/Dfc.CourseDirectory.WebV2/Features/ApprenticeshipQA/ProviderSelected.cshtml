@@ -16,7 +16,9 @@
                 @Model.ApprenticeshipQAStatus.ToDisplayName()
             </div>
             <div class="pttcd-apprenticeship-qa__provider-selected__summary__status">
-                <a asp-action="Status" asp-route-providerId="@Model.ProviderId" class="govuk-link">Change</a>
+                <a asp-action="Status" asp-route-providerId="@Model.ProviderId" class="govuk-link">
+                    Change<span class="govuk-visually-hidden"> quality assurance status</span>
+                </a>
             </div>
         </div>
 
