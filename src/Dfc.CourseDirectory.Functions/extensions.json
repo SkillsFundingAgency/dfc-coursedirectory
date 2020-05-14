@@ -1,5 +1,12 @@
 {
-  "extensions":[
-    { "name": "Startup", "typeName":"Dfc.CourseDirectory.Functions.Startup, Dfc.CourseDirectory.Functions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"}
+  "extensions": [
+    {
+      "name": "CosmosDB",
+      "typeName": "Microsoft.Azure.WebJobs.Extensions.CosmosDB.CosmosDBWebJobsStartup, Microsoft.Azure.WebJobs.Extensions.CosmosDB, Version=3.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+    },
+    {
+      "name": "Startup",
+      "typeName": "Dfc.CourseDirectory.Functions.Startup, Dfc.CourseDirectory.Functions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    }
   ]
 }
