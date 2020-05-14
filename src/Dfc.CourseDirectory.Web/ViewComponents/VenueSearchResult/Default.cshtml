@@ -19,8 +19,8 @@
 <div id="LiveCoursesExistMessage" hidden="hidden">
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                        {
-                           NotificationTitle = "Location cannot be deleted for the for the following reasons:-",
-                           NotificationMessage = "There are live courses associated with this location. Please delete these courses or assign a different location to the courses before deleting the location",
+                           NotificationTitle = "The location cannot be deleted",
+                           NotificationMessage = "There are courses associated with this location.  You need to assign a different location to the courses before deleting the location.",
                            ClassType = "error-summary"
                        })
 </div>
