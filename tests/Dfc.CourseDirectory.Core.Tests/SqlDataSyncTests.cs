@@ -65,7 +65,9 @@ namespace Dfc.CourseDirectory.Core.Tests
                 }
             };
 
-            var sqlDataSync = new SqlDataSync(Fixture.Services.GetRequiredService<IServiceScopeFactory>());
+            var sqlDataSync = new SqlDataSync(
+                Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
+                CosmosDbQueryDispatcher.Object);
 
             // Act
             await sqlDataSync.SyncProvider(provider);
