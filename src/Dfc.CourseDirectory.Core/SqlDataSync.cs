@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -11,11 +12,26 @@ namespace Dfc.CourseDirectory.Core
     public class SqlDataSync
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public SqlDataSync(IServiceScopeFactory serviceScopeFactory)
+        public SqlDataSync(
+            IServiceScopeFactory serviceScopeFactory,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
+
+        public async Task SyncAll()
+        {
+            await SyncAllProviders();
+        }
+
+        public Task SyncAllProviders() => _cosmosDbQueryDispatcher.ExecuteQuery(
+            new ProcessAllProviders()
+            {
+                Process = SyncProvider
+            });
 
         public Task SyncProvider(Provider provider) => WithSqlDispatcher(dispatcher =>
             dispatcher.ExecuteQuery(new UpsertProvider()
