@@ -553,7 +553,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var apprenticeships = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
             var liveApprenticeships = apprenticeships.Value?.Where(x => x.RecordStatus == RecordStatus.Live);
-            var apprenticeshipLocations = liveApprenticeships.SelectMany(x => x.ApprenticeshipLocations).Where(x => x.VenueId == VenueId && x.RecordStatus == RecordStatus.Live).ToList();
+            var apprenticeshipLocations = liveApprenticeships.SelectMany(x => x.ApprenticeshipLocations).Where(x => (x.VenueId == VenueId || x.LocationGuidId == VenueId)).ToList();
 
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
