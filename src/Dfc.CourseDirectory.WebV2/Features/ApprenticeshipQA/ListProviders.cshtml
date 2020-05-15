@@ -20,7 +20,7 @@
                 @foreach (var provider in Model.NotStarted)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.ProviderName"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
                         <td class="govuk-table__cell" data-sort-value="@provider.AddedOn.ToString("yyyyMMdd")">@provider.AddedOn.ToString("dd MMM yyyy")</td>
                     </tr>
@@ -47,7 +47,7 @@
                 @foreach (var provider in Model.Submitted)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.ProviderName"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
                         <td class="govuk-table__cell" data-sort-value="@provider.SubmittedOn.Value.ToString("yyyyMMdd")">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
                     </tr>
@@ -74,7 +74,7 @@
                 @foreach (var provider in Model.InProgress)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.ProviderName"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
                         <td class="govuk-table__cell" data-sort-value="@provider.SubmittedOn.Value.ToString("yyyyMMdd")">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
                         <td class="govuk-table__cell">@provider.LastAssessedBy.FullName</td>
@@ -102,7 +102,7 @@
                 @foreach (var provider in Model.Failed)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.ProviderName"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
                         <td class="govuk-table__cell" data-sort-value="@provider.SubmittedOn.Value.ToString("yyyyMMdd")">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
                         <td class="govuk-table__cell">@provider.LastAssessedBy.FullName</td>
@@ -130,7 +130,7 @@
                 @foreach (var provider in Model.UnableToComplete)
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell" data-sort-value="@provider.ProviderName"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
                         <td class="govuk-table__cell">
                             <ul class="govuk-list">
