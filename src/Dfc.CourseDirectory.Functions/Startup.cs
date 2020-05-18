@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Functions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,6 +31,8 @@ namespace Dfc.CourseDirectory.Functions
 
             builder.Services.AddTransient<LarsDataImporter>();
             builder.Services.AddTransient<IClock, FrozenSystemClock>();
+            builder.Services.Decorate<IJobActivator, FunctionInstanceServicesCatalog>();
+            builder.Services.AddSingleton(sp => (FunctionInstanceServicesCatalog)sp.GetRequiredService<IJobActivator>());
 
             IConfiguration GetConfiguration()
             {
