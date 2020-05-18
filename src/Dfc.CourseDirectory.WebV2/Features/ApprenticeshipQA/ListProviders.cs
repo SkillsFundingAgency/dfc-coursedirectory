@@ -82,26 +82,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
 
             var unableToComplete = infos
                 .Where(i => i.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
+                .OrderByDescending(i => i.AddedOn)
                 .ToList();
 
             var notStarted = infos
                 .Where(i => !unableToComplete.Contains(i))
                 .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.NotStarted)
+                .OrderByDescending(i => i.AddedOn)
                 .ToList();
 
             var submitted = infos
                 .Where(i => !unableToComplete.Contains(i))
                 .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Submitted)
+                .OrderByDescending(i => i.SubmittedOn)
                 .ToList();
 
             var failed = infos
                 .Where(i => !unableToComplete.Contains(i))
                 .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Failed)
+                .OrderByDescending(i => i.SubmittedOn)
                 .ToList();
 
             var inProgress = infos
                 .Where(i => !unableToComplete.Contains(i))
                 .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.InProgress)
+                .OrderByDescending(i => i.SubmittedOn)
                 .ToList();
 
             return new ViewModel()
