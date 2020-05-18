@@ -33,6 +33,9 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<IClock, FrozenSystemClock>();
             builder.Services.Decorate<IJobActivator, FunctionInstanceServicesCatalog>();
             builder.Services.AddSingleton(sp => (FunctionInstanceServicesCatalog)sp.GetRequiredService<IJobActivator>());
+#pragma warning disable CS0618 // Type or member is obsolete
+            builder.Services.AddSingleton<IFunctionFilter, CommitSqlTransactionFunctionInvocationFilter>();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             IConfiguration GetConfiguration()
             {
