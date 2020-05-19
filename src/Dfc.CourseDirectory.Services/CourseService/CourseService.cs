@@ -908,7 +908,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
+        public async Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int? CurrentStatus, int StatusToBeChangedTo)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
             Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
