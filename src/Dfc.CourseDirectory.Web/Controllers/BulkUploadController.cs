@@ -452,7 +452,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
                     if (resultArchivingCourses.IsSuccess)
                     {
-                        var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, null, (int)RecordStatus.Live);
                         if(resultGoingLive.IsSuccess)
                         {
                             // Clear the provider "publish in progress" flag.
