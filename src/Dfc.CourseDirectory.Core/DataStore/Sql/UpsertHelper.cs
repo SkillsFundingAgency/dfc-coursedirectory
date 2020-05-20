@@ -63,37 +63,39 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             async Task InsertDataIntoTableVariable()
             {
-                var sqlCommandBuilder = new SqlCommandBuilder();
+                var columns = typeAccessor.GetMembers();
 
-                var sql = new StringBuilder();
+                var table = new DataTable();
 
-                sql.AppendLine($"INSERT INTO {tempTableName} (");
-                sql.AppendLine(string.Join(",", columns.Select(sqlCommandBuilder.QuoteIdentifier)));
-                sql.AppendLine(") VALUES (");
-                sql.AppendLine(string.Join(",", columns.Select(GetParameterNameForColumn)));
-                sql.AppendLine(")");
+                foreach (var column in columns)
+                {
+                    var columnType = column.Type;
+
+                    if (columnType.IsGenericType && columnType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        columnType = Nullable.GetUnderlyingType(columnType);
+                    }
+
+                    table.Columns.Add(column.Name, columnType);
+                }
 
                 foreach (var record in records)
                 {
-                    var parameters = new DynamicParameters();
-
-                    foreach (var column in columns)
-                    {
-                        parameters.Add(GetParameterNameForColumn(column), typeAccessor[record, column]);
-                    }
-
-                    await transaction.Connection.ExecuteAsync(
-                        sql.ToString(),
-                        parameters,
-                        transaction: transaction,
-                        commandTimeout: _commandTimeout);
+                    var itemArray = columns.Select(m => typeAccessor[record, m.Name]).ToArray();
+                    var row = table.Rows.Add(itemArray);
                 }
 
-                static string GetParameterNameForColumn(string columnName) => "@" + columnName;
+                using (var bulk = new SqlBulkCopy(transaction.Connection, new SqlBulkCopyOptions(), transaction))
+                {
+                    bulk.DestinationTableName = tempTableName;
+                    await bulk.WriteToServerAsync(table);
+                }
             }
 
             Task MergeRecords()
             {
+                var columns = typeAccessor.GetMembers().Select(m => m.Name).ToList();
+
                 var sqlCommandBuilder = new SqlCommandBuilder();
 
                 var sql = new StringBuilder();
