@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
+using Dfc.CourseDirectory.WebV2.Helpers;
 using JWT.Algorithms;
 using JWT.Builder;
 using Newtonsoft.Json;
@@ -19,12 +19,12 @@ namespace Dfc.CourseDirectory.WebV2.Security
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly HttpClient _httpClient;
-        private readonly IUkrlpSyncHelper _ukrlpSyncHelper;
+        private readonly UkrlpSyncHelper _ukrlpSyncHelper;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IUkrlpSyncHelper ukrlpSyncHelper)
+            UkrlpSyncHelper ukrlpSyncHelper)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;

@@ -1,17 +1,15 @@
-﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Helpers;
-using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Services.Interfaces;
-using Moq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.WebV2.Security;
+using Moq;
 using UkrlpService;
 using Xunit;
 
