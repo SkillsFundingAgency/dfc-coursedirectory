@@ -9,23 +9,23 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Microsoft.SqlServer.Dac.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
     public class LarsDataImporter
     {
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IClock _clock;
 
         public LarsDataImporter(
-            ISqlQueryDispatcher sqlQueryDispatcher,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IServiceScopeFactory serviceScopeFactory,
             IClock clock)
         {
-            _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _serviceScopeFactory = serviceScopeFactory;
             _clock = clock;
         }
 
@@ -165,70 +165,80 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             {
                 var records = ReadCsv<UpsertLarsAwardOrgCodesRecord>("AwardOrgCode.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsAwardOrgCodes()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsAwardOrgCodes()
                 {
                     Records = records
-                });
+                }));
             }
 
             Task ImportCategoryToSql()
             {
                 var records = ReadCsv<UpsertLarsCategoriesRecord>("Category.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsCategories()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsCategories()
                 {
                     Records = records
-                });
+                }));
             }
 
             Task ImportLearnAimRefTypeToSql()
             {
                 var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>("LearnAimRefType.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                 {
                     Records = records
-                });
+                }));
             }
 
             Task ImportLearningDeliveryToSql()
             {
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>("LearningDelivery.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
                 {
                     Records = records
-                });
+                }));
             }
 
             Task ImportLearningDeliveryCategoryToSql()
             {
                 var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>("LearningDeliveryCategory.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsLearningDeliveryCategories()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveryCategories()
                 {
                     Records = records
-                });
+                }));
             }
 
             Task ImportSectorSubjectAreaTier1ToSql()
             {
                 var records = ReadCsv<UpsertLarsSectorSubjectAreaTier1sRecord>("SectorSubjectAreaTier1.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsSectorSubjectAreaTier1s()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsSectorSubjectAreaTier1s()
                 {
                     Records = records
-                });
+                }));
             }
 
             Task ImportSectorSubjectAreaTier2ToSql()
             {
                 var records = ReadCsv<UpsertLarsSectorSubjectAreaTier2sRecord>("SectorSubjectAreaTier2.csv");
 
-                return _sqlQueryDispatcher.ExecuteQuery(new UpsertLarsSectorSubjectAreaTier2s()
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsSectorSubjectAreaTier2s()
                 {
                     Records = records
-                });
+                }));
+            }
+
+            async Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action)
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                var dispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+
+                await action(dispatcher);
+
+                await dispatcher.Transaction.CommitAsync();
             }
         }
 
