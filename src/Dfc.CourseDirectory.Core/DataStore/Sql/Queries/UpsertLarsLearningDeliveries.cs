@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
@@ -66,8 +67,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string Created_On { get; set; }
         public string Created_By { get; set; }
         public string Modified_By { get; set; }
-        public string Modified_On { get; set; }
-        public string EffectiveTo { get; set; }
-        public string CertificationEndDate { get; set; }
+        public DateTime? Modified_On { get; set; }
+        public DateTime? EffectiveTo { get; set; }
+        public DateTime? CertificationEndDate { get; set; }
     }
 }
