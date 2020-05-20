@@ -1,24 +1,22 @@
-﻿using Dfc.CourseDirectory.WebV2.Services.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UkrlpService;
 
-namespace Dfc.CourseDirectory.WebV2.Services
+namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 {
     public class UkrlpWcfService : IUkrlpWcfService
     {
         public async Task<ProviderRecordStructure> GetProviderData(int ukprn)
         {
-            string[] statusesToFetch =
+            var statusesToFetch = new[]
             {
-                    "A", // Active
+                "A", // Active
             };
 
             List<ProviderRecordStructure> results = new List<ProviderRecordStructure>();
-            foreach (String status in statusesToFetch)
+            foreach (var status in statusesToFetch)
             {
                 var request = BuildRequest(ukprn.ToString());
                 request.SelectionCriteria.ProviderStatus = status;

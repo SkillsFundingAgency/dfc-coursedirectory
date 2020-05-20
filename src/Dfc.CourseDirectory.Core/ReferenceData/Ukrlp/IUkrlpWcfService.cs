@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UkrlpService;
 
-namespace Dfc.CourseDirectory.WebV2.Services.Interfaces
+namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 {
     public interface IUkrlpWcfService
     {

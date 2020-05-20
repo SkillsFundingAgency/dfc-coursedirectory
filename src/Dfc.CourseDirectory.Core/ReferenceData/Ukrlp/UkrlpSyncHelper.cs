@@ -1,21 +1,18 @@
-﻿using Dfc.CourseDirectory.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using UkrlpService;
 
 namespace Dfc.CourseDirectory.WebV2.Helpers
 {
-    public class UkrlpSyncHelper : IUkrlpSyncHelper
+    public class UkrlpSyncHelper
     {
         private readonly IUkrlpWcfService _ukrlpWcfService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
