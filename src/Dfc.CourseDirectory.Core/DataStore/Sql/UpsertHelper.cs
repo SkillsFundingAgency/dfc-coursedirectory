@@ -26,7 +26,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             var tempTableName = "#UpsertHelper";
 
             var typeAccessor = TypeAccessor.Create(typeof(T));
-            var columns = typeAccessor.GetMembers().Select(m => m.Name).ToList();
 
             await CreateTableVariable();
             await InsertDataIntoTableVariable();
@@ -40,10 +39,26 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 var sql = new StringBuilder();
 
                 sql.AppendLine($"CREATE TABLE {tempTableName} (");
-                sql.AppendLine(string.Join(",\n", columns.Select(column => $"{sqlCommandBuilder.QuoteIdentifier(column)} NVARCHAR(MAX) COLLATE {Collation}")));
+                sql.AppendLine(string.Join(",\n", typeAccessor.GetMembers().Select(column => $"{sqlCommandBuilder.QuoteIdentifier(column.Name)} {GetSqlColumnTypeFromClrType(column.Type)}")));
                 sql.AppendLine(")");
 
                 return transaction.Connection.ExecuteAsync(sql.ToString(), transaction: transaction);
+
+                string GetSqlColumnTypeFromClrType(Type type)
+                {
+                    if (type == typeof(string))
+                    {
+                        return $"NVARCHAR(MAX) COLLATE {Collation}";
+                    }
+                    else if (type == typeof(DateTime) || type == typeof(DateTime?))
+                    {
+                        return "DATETIME";
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Cannot determine SQL type from '{type.Name}'.");
+                    }
+                }
             }
 
             async Task InsertDataIntoTableVariable()
