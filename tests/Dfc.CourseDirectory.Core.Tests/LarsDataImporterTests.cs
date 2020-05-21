@@ -2,6 +2,7 @@
 using Dapper;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests
@@ -15,12 +16,12 @@ namespace Dfc.CourseDirectory.Core.Tests
 
         [Fact]
         [SlowTest]
-        public Task ImportData() => WithSqlQueryDispatcher(async dispatcher =>
+        public async Task ImportData()
         {
             // Arrange
             var importer = new LarsDataImporter(
-                dispatcher,
                 CosmosDbQueryDispatcher.Object,
+                Services.GetRequiredService<IServiceScopeFactory>(),
                 Clock);
 
             // Act
@@ -46,10 +47,10 @@ namespace Dfc.CourseDirectory.Core.Tests
             {
                 var query = $"SELECT COUNT(*) FROM {tableName}";
 
-                return dispatcher.Transaction.Connection.QuerySingleAsync<int>(
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.Transaction.Connection.QuerySingleAsync<int>(
                     query,
-                    transaction: dispatcher.Transaction);
+                    transaction: dispatcher.Transaction));
             }
-        });
+        }
     }
 }
