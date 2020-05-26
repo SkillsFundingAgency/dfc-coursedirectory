@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UkrlpService;
 
@@ -13,10 +15,44 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private static readonly string[] _statuses = new[]
         {
             "A", // Active
-            //"V", // Verified
             "PD1", // Deactivation in process
             "PD2" // Deactivation complete
         };
+
+        // Only return providers updated after our Provider migration
+        private static readonly DateTime _updatedSince = new DateTime(2020, 3, 1);
+
+        public async Task<IReadOnlyCollection<ProviderRecordStructure>> GetAllProviderData()
+        {
+            using var client = new ProviderQueryPortTypeClient();
+
+            var results = new List<ProviderRecordStructure>();
+
+            foreach (var status in _statuses)
+            {
+                var request = CreateRequest(status);
+
+                var result = await client.retrieveAllProvidersAsync(request);
+                results.AddRange(result.ProviderQueryResponse.MatchingProviderRecords);
+            }
+
+            return results;
+
+            static ProviderQueryStructure CreateRequest(string status) => new ProviderQueryStructure()
+            {
+                SelectionCriteria = new SelectionCriteriaStructure()
+                {
+                    ApprovedProvidersOnly = YesNoType.No,
+                    ApprovedProvidersOnlySpecified = true,
+                    CriteriaConditionSpecified = true,
+                    ProviderStatus = status,
+                    StakeholderId = StakeholderId,
+                    ProviderUpdatedSince = _updatedSince,
+                    ProviderUpdatedSinceSpecified = true
+                },
+                QueryId = QueryId
+            };
+        }
 
         public async Task<ProviderRecordStructure> GetProviderData(int ukprn)
         {
@@ -24,7 +60,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             foreach (var status in _statuses)
             {
-                var request = CreateRequestForProvider(ukprn, status);
+                var request = CreateRequest(ukprn, status);
 
                 var result = await client.retrieveAllProvidersAsync(request);
                 var response = result.ProviderQueryResponse;
@@ -36,20 +72,20 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
 
             return null;
-        }
 
-        private static ProviderQueryStructure CreateRequestForProvider(int ukprn, string status) => new ProviderQueryStructure()
-        {
-            SelectionCriteria = new SelectionCriteriaStructure()
+            static ProviderQueryStructure CreateRequest(int ukprn, string status) => new ProviderQueryStructure()
             {
-                ApprovedProvidersOnly = YesNoType.No,
-                ApprovedProvidersOnlySpecified = true,
-                CriteriaConditionSpecified = true,
-                ProviderStatus = status,
-                StakeholderId = StakeholderId,
-                UnitedKingdomProviderReferenceNumberList = new[] { ukprn.ToString() },
-            },
-            QueryId = QueryId
-        };
+                SelectionCriteria = new SelectionCriteriaStructure()
+                {
+                    ApprovedProvidersOnly = YesNoType.No,
+                    ApprovedProvidersOnlySpecified = true,
+                    CriteriaConditionSpecified = true,
+                    ProviderStatus = status,
+                    StakeholderId = StakeholderId,
+                    UnitedKingdomProviderReferenceNumberList = new[] { ukprn.ToString() },
+                },
+                QueryId = QueryId
+            };
+        }
     }
 }
