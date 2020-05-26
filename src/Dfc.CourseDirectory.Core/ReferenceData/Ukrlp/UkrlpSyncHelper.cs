@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
         private readonly IUkrlpService _ukrlpService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IClock _clock;
-        private ILogger<UkrlpSyncHelper> _logger;
+        private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UkrlpSyncHelper(
             IUkrlpService ukrlpService, 
@@ -36,6 +36,30 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
             _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
         }
 
+        public async Task SyncAllProviderData()
+        {
+            var allProviders = await _ukrlpService.GetAllProviderData();
+
+            var createdCount = 0;
+            var updatedCount = 0;
+
+            foreach (var providerData in allProviders)
+            {
+                var result = await CreateOrUpdateProvider(providerData);
+
+                if (result == CreateOrUpdateResult.Created)
+                {
+                    createdCount++;
+                }
+                else  // result == CreateOrUpdateResult.Updated
+                {
+                    updatedCount++;
+                }
+            }
+
+            _logger.LogInformation("Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
+        }
+
         public async Task SyncProviderData(int ukprn)
         {
             var providerData = await _ukrlpService.GetProviderData(ukprn);
@@ -47,49 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
                 return;
             }
 
-            var existingProvider = await GetProvider(ukprn);
-
-            var providerStatusDesc = GetProviderStatusDescription(providerData.ProviderStatus);
-
-            var contact = SelectContact(providerData.ProviderContact);
-
-            if (existingProvider == null)
-            {
-                var providerId = Guid.NewGuid();
-
-                await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new CreateProviderFromUkrlpData()
-                    {
-                        Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        DateUpdated = _clock.UtcNow,
-                        ProviderId = providerId,
-                        ProviderContact = contact != null ?
-                            new List<ProviderContact>() { MapContact(contact) } :
-                            new List<ProviderContact>(),
-                        ProviderName = providerData.ProviderName,
-                        ProviderStatus = providerStatusDesc,
-                        ProviderType = NewProviderProviderType,
-                        Status = NewProviderProviderStatus,
-                        Ukprn = ukprn,
-                        UpdatedBy = UpdatedBy
-                    });
-            }
-            else
-            {
-                await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new UpdateProviderFromUkrlpData()
-                    {
-                        Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        DateUpdated = _clock.UtcNow,
-                        ProviderId = existingProvider.Id,
-                        ProviderContact = contact != null ?
-                            new List<ProviderContact>() { MapContact(contact) } :
-                            new List<ProviderContact>(),
-                        ProviderName = providerData.ProviderName,
-                        ProviderStatus = providerStatusDesc,
-                        UpdatedBy = UpdatedBy
-                    });
-            }
+            await CreateOrUpdateProvider(providerData);
 
             _logger.LogInformation("Successfully updated provider information from UKRLP for {0}.", ukprn);
         }
@@ -137,7 +119,62 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
             LastUpdated = contact.LastUpdated
         };
 
+        private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
+        {
+            var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
+
+            var existingProvider = await GetProvider(ukprn);
+
+            var providerStatusDesc = GetProviderStatusDescription(providerData.ProviderStatus);
+
+            var contact = SelectContact(providerData.ProviderContact);
+
+            if (existingProvider == null)
+            {
+                var providerId = Guid.NewGuid();
+
+                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new CreateProviderFromUkrlpData()
+                    {
+                        Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
+                        DateUpdated = _clock.UtcNow,
+                        ProviderId = providerId,
+                        ProviderContact = contact != null ?
+                            new List<ProviderContact>() { MapContact(contact) } :
+                            new List<ProviderContact>(),
+                        ProviderName = providerData.ProviderName,
+                        ProviderStatus = providerStatusDesc,
+                        ProviderType = NewProviderProviderType,
+                        Status = NewProviderProviderStatus,
+                        Ukprn = ukprn,
+                        UpdatedBy = UpdatedBy
+                    });
+
+                return CreateOrUpdateResult.Created;
+            }
+            else
+            {
+                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new UpdateProviderFromUkrlpData()
+                    {
+                        Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
+                        DateUpdated = _clock.UtcNow,
+                        ProviderId = existingProvider.Id,
+                        ProviderContact = contact != null ?
+                            new List<ProviderContact>() { MapContact(contact) } :
+                            new List<ProviderContact>(),
+                        ProviderName = providerData.ProviderName,
+                        ProviderStatus = providerStatusDesc,
+                        UpdatedBy = UpdatedBy
+                    });
+
+                return CreateOrUpdateResult.Updated;
+            }
+        }
+
         private Task<Provider> GetProvider(int ukprn) =>
            _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
+
+        private enum CreateOrUpdateResult { Created, Updated }
     }
 }
