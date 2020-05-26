@@ -24,6 +24,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.StoredProcedures
 
         private async Task DeployStoredProcedures()
         {
+            await DeployStoredProcedureToCollection(_configuration.CoursesCollectionName, "ArchiveCoursesForProvider");
+            await DeployStoredProcedureToCollection(_configuration.ApprenticeshipCollectionName, "ArchiveApprenticeshipsForProvider");
+
             async Task DeployStoredProcedureToCollection(string collection, string storedProcedureName)
             {
                 var scriptFilePath = $"{typeof(StoredProcedureDeployHelper).Namespace}.{storedProcedureName}.js";
