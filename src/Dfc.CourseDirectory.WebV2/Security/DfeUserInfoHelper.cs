@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
             if (ukprn.HasValue)
             {
                 // Sync UKRLP data
-                await _ukrlpSyncHelper.SyncProviderData(ukprn.Value, context.UserInfo.Email);
+                await _ukrlpSyncHelper.SyncProviderData(ukprn.Value);
 
                 var provider = await GetProvider(ukprn.Value);
 
