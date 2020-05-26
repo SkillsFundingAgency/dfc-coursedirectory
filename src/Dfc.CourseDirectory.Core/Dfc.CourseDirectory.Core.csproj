@@ -24,5 +24,15 @@
   <ItemGroup>
     <EmbeddedResource Include="ReferenceData\Lars\Data\*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DataStore\CosmosDb\StoredProcedures\ArchiveApprenticeshipsForProvider.js" />
+    <None Remove="DataStore\CosmosDb\StoredProcedures\ArchiveCoursesForProvider.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\ArchiveApprenticeshipsForProvider.js" />
+    <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\ArchiveCoursesForProvider.js" />
+  </ItemGroup>
   
 </Project>
