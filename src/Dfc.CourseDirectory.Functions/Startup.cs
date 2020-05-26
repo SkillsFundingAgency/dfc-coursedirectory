@@ -37,6 +37,7 @@ namespace Dfc.CourseDirectory.Functions
 #pragma warning disable CS0618 // Type or member is obsolete
             builder.Services.AddSingleton<IFunctionFilter, CommitSqlTransactionFunctionInvocationFilter>();
 #pragma warning restore CS0618 // Type or member is obsolete
+            builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
 
             IConfiguration GetConfiguration()
