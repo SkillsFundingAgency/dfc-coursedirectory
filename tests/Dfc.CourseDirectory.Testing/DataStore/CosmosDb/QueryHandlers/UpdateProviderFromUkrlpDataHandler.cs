@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+﻿using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb;
-using Microsoft.Azure.Documents.Client;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
@@ -13,12 +8,12 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
     {
         public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, UpdateProviderFromUkrlpData request)
         {
-            var provider = inMemoryDocumentStore.Providers.All.SingleOrDefault(p => p.Id == request.Id);
+            var provider = inMemoryDocumentStore.Providers.All.SingleOrDefault(p => p.Id == request.ProviderId);
 
             if (provider != null)
             {
                 provider.ProviderName = request.ProviderName;
-                provider.ProviderContact = request.ProviderContact;
+                provider.ProviderContact = request.ProviderContact.ToList();
                 provider.Alias = request.Alias;
                 provider.ProviderStatus = request.ProviderStatus;
                 provider.DateUpdated = request.DateUpdated;
