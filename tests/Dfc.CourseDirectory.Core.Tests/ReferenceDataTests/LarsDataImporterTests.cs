@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Core.Tests
+namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
     public class LarsDataImporterTests : DatabaseTestBase
     {
