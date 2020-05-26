@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Helpers
 
             var signInContext = GetSignInContext(providerUkprn);
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
-            var mockUkrlpWcfService = new Mock<IUkrlpWcfService>();
+            var mockUkrlpWcfService = new Mock<IUkrlpService>();
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Helpers
 
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
 
-            var mockUkrlpWcfService = new Mock<IUkrlpWcfService>();
+            var mockUkrlpWcfService = new Mock<IUkrlpService>();
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);

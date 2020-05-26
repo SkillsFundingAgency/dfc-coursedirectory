@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
             services.AddTransient<UkrlpSyncHelper>();
-            services.AddTransient<IUkrlpWcfService, UkrlpWcfService>();
+            services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             services.AddTransient<MptxManager>();
             services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
             services.AddTransient<ITagHelperComponent, AppendProviderContextTagHelperComponent>();

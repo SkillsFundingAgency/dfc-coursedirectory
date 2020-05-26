@@ -14,22 +14,22 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
 {
     public class UkrlpSyncHelper
     {
-        private readonly IUkrlpWcfService _ukrlpWcfService;
+        private readonly IUkrlpService _ukrlpService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IClock _clock;
 
-        public UkrlpSyncHelper(IUkrlpWcfService ukrlpWcfService, 
+        public UkrlpSyncHelper(IUkrlpService ukrlpService, 
                                 ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, 
                                 IClock clock)
         {
-            _ukrlpWcfService = ukrlpWcfService;
+            _ukrlpService = ukrlpService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
         }
 
         public async Task SyncProviderData(int ukprn, string updatedBy)
         {
-            var providerData = await _ukrlpWcfService.GetProviderData(ukprn);
+            var providerData = await _ukrlpService.GetProviderData(ukprn);
 
             if(providerData != null)
             {
