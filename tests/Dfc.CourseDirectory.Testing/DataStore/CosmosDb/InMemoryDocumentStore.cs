@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
     public class InMemoryDocumentStore
     {
         public InMemoryDocumentCollection<Apprenticeship> Apprenticeships { get; } = new InMemoryDocumentCollection<Apprenticeship>();
+        public InMemoryDocumentCollection<Course> Courses { get; } = new InMemoryDocumentCollection<Course>();
         public InMemoryDocumentCollection<Framework> Frameworks { get; } = new InMemoryDocumentCollection<Framework>();
         public InMemoryDocumentCollection<ProgType> ProgTypes { get; set; } = new InMemoryDocumentCollection<ProgType>();
         public InMemoryDocumentCollection<Provider> Providers { get; } = new InMemoryDocumentCollection<Provider>();
@@ -21,6 +22,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
         public void Clear()
         {
             Apprenticeships.Clear();
+            Courses.Clear();
             Frameworks.Clear();
             ProgTypes.Clear();
             Providers.Clear();

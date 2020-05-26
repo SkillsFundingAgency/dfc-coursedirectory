@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
@@ -89,8 +90,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 "V" => "Verified",
                 "PD1" => "Deactivation in process",
                 "PD2" => "Deactivation complete",
-                _ => throw new NotSupportedException()
+                _ => throw new NotImplementedException($"Unknown status: '{ukrlpProviderStatus}'.")
             };
+
+        private static bool IsProviderDeactivated(string statusDescription) => statusDescription switch
+        {
+            "Active" => false,
+            "Verified" => false,
+            "Deactivation in process" => true,
+            "Deactivation complete" => true,
+            _ => throw new NotImplementedException($"Unknown status: '{statusDescription}'.")
+        };
 
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
         {
@@ -165,6 +175,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         ProviderStatus = providerStatusDesc,
                         UpdatedBy = UpdatedBy
                     });
+
+                var deactivating = !IsProviderDeactivated(existingProvider.ProviderStatus)
+                    && IsProviderDeactivated(providerStatusDesc);
+
+                if (deactivating)
+                {
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(new ArchiveApprenticeshipsForProvider() { Ukprn = ukprn });
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(new ArchiveCoursesForProvider() { Ukprn = ukprn });
+                }
 
                 return CreateOrUpdateResult.Updated;
             }
