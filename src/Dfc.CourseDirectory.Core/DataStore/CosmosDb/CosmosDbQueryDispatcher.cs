@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.StoredProcedures;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,14 +9,20 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb
     public class CosmosDbQueryDispatcher : ICosmosDbQueryDispatcher
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly StoredProcedureDeployHelper _storedProcedureDeployHelper;
 
-        public CosmosDbQueryDispatcher(IServiceProvider serviceProvider)
+        public CosmosDbQueryDispatcher(
+            IServiceProvider serviceProvider,
+            StoredProcedureDeployHelper storedProcedureDeployHelper)
         {
             _serviceProvider = serviceProvider;
+            _storedProcedureDeployHelper = storedProcedureDeployHelper;
         }
 
         public virtual async Task<T> ExecuteQuery<T>(ICosmosDbQuery<T> query)
         {
+            await _storedProcedureDeployHelper.EnsureStoredProceduresAreDeployed();
+
             var client = _serviceProvider.GetRequiredService<DocumentClient>();
             var configuration = _serviceProvider.GetRequiredService<Configuration>();
 
