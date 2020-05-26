@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Microsoft.Azure.WebJobs;
 
 namespace Dfc.CourseDirectory.Functions
