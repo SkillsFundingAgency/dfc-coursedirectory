@@ -38,7 +38,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 var request = CreateRequest(status);
 
                 var result = await client.retrieveAllProvidersAsync(request);
-                results.AddRange(result.ProviderQueryResponse.MatchingProviderRecords);
+                var records = result.ProviderQueryResponse.MatchingProviderRecords;
+
+                if (records != null)
+                {
+                   results.AddRange(records);
+                }
             }
 
             return results;
