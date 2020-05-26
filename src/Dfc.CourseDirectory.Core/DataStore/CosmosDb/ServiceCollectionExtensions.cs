@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.StoredProcedures;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb
 
             services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
             services.AddSingleton<Configuration>();
+            services.AddSingleton<StoredProcedureDeployHelper>();
 
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(ICosmosDbQuery<>))
