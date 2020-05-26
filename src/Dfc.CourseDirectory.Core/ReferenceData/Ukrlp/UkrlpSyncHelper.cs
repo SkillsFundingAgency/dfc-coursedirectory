@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Microsoft.Extensions.Logging;
 using UkrlpService;
 
-namespace Dfc.CourseDirectory.WebV2.Helpers
+namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 {
     public class UkrlpSyncHelper
     {

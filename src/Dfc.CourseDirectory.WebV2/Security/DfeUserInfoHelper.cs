@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using JWT.Algorithms;
 using JWT.Builder;
 using Newtonsoft.Json;
