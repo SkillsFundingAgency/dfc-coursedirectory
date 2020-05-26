@@ -12,6 +12,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private const string QueryId = "0";
         private const string StakeholderId = "1";
 
+        private static readonly TimeSpan _sendTimeout = TimeSpan.FromMinutes(5);
+        private static readonly TimeSpan _receiveTimeout = TimeSpan.FromMinutes(5);
+
         private static readonly string[] _statuses = new[]
         {
             "A", // Active
@@ -25,6 +28,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         public async Task<IReadOnlyCollection<ProviderRecordStructure>> GetAllProviderData()
         {
             using var client = new ProviderQueryPortTypeClient();
+            client.ChannelFactory.Endpoint.Binding.SendTimeout = _sendTimeout;
+            client.ChannelFactory.Endpoint.Binding.ReceiveTimeout = _receiveTimeout;
 
             var results = new List<ProviderRecordStructure>();
 
