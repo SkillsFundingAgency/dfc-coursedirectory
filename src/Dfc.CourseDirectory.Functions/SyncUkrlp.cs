@@ -14,7 +14,6 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName(nameof(SyncUkrlp))]
-        [NoAutomaticTrigger]
-        public Task Run(string input) => _ukrlpSyncHelper.SyncAllProviderData();
+        public Task Run([TimerTrigger("0 0 5 * * *")] TimerInfo timer) => _ukrlpSyncHelper.SyncAllProviderData();
     }
 }
