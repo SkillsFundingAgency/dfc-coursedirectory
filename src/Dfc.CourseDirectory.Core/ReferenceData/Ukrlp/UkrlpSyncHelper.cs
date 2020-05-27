@@ -35,9 +35,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
         }
 
-        public async Task SyncAllProviderData()
+        public async Task SyncAllProviderData(DateTime updatedSince)
         {
-            var allProviders = await _ukrlpService.GetAllProviderData();
+            var allProviders = await _ukrlpService.GetAllProviderData(updatedSince);
 
             var createdCount = 0;
             var updatedCount = 0;
