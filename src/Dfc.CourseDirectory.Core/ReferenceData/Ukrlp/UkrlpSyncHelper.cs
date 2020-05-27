@@ -82,26 +82,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 .OrderByDescending(c => c.LastUpdated)
                 .FirstOrDefault();
 
-        // See https://skillsfundingagency.atlassian.net/wiki/spaces/DFC/pages/873136299/CD+Beta+-+UKRLP
-        private static string GetProviderStatusDescription(string ukrlpProviderStatus) =>
-            ukrlpProviderStatus switch
-            {
-                "A" => "Active",
-                "V" => "Verified",
-                "PD1" => "Deactivation in process",
-                "PD2" => "Deactivation complete",
-                _ => throw new NotImplementedException($"Unknown status: '{ukrlpProviderStatus}'.")
-            };
-
-        private static bool IsProviderDeactivated(string statusDescription) => statusDescription switch
-        {
-            "Active" => false,
-            "Verified" => false,
-            "Deactivation in process" => true,
-            "Deactivation complete" => true,
-            _ => throw new NotImplementedException($"Unknown status: '{statusDescription}'.")
-        };
-
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
         {
             ContactAddress = new ContactAddress()
@@ -133,8 +113,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             var existingProvider = await GetProvider(ukprn);
 
-            var providerStatusDesc = GetProviderStatusDescription(providerData.ProviderStatus);
-
             var contact = SelectContact(providerData.ProviderContact);
 
             if (existingProvider == null)
@@ -151,7 +129,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                             new List<ProviderContact>() { MapContact(contact) } :
                             new List<ProviderContact>(),
                         ProviderName = providerData.ProviderName,
-                        ProviderStatus = providerStatusDesc,
+                        ProviderStatus = providerData.ProviderStatus,
                         ProviderType = NewProviderProviderType,
                         Status = NewProviderProviderStatus,
                         Ukprn = ukprn,
@@ -172,12 +150,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                             new List<ProviderContact>() { MapContact(contact) } :
                             new List<ProviderContact>(),
                         ProviderName = providerData.ProviderName,
-                        ProviderStatus = providerStatusDesc,
+                        ProviderStatus = providerData.ProviderStatus,
                         UpdatedBy = UpdatedBy
                     });
 
-                var deactivating = !IsProviderDeactivated(existingProvider.ProviderStatus)
-                    && IsProviderDeactivated(providerStatusDesc);
+                var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
+                var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
+
+                var deactivating = !IsDeactivatedStatus(oldStatusCode) && IsDeactivatedStatus(newStatusCode);
 
                 if (deactivating)
                 {
@@ -188,6 +168,22 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 return CreateOrUpdateResult.Updated;
             }
         }
+
+        private static bool IsDeactivatedStatus(string status) => status switch
+        {
+            "A" => false,
+            "PD1" => true,
+            "PD2" => true,
+            _ => throw new NotImplementedException($"Unknown status: '{status}'.")
+        };
+
+        private static string MapProviderStatusDescription(string statusDesc) => statusDesc switch
+        {
+            "Active" => "A",
+            "Provider deactivated, not verified" => "PD1",
+            "Provider deactivated, verified" => "PD2",
+            _ => throw new NotImplementedException($"Unknown status: '{statusDesc}'.")
+        };
 
         private Task<Provider> GetProvider(int ukprn) =>
            _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
