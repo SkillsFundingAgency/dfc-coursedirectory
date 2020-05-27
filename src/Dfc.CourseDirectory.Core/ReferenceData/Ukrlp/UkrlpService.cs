@@ -22,10 +22,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             "PD2" // Deactivation complete
         };
 
-        // Only return providers updated after our Provider migration
-        private static readonly DateTime _updatedSince = new DateTime(2020, 3, 1);
-
-        public async Task<IReadOnlyCollection<ProviderRecordStructure>> GetAllProviderData()
+        public async Task<IReadOnlyCollection<ProviderRecordStructure>> GetAllProviderData(DateTime updatedSince)
         {
             using var client = new ProviderQueryPortTypeClient();
             client.ChannelFactory.Endpoint.Binding.SendTimeout = _sendTimeout;
@@ -48,7 +45,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             return results;
 
-            static ProviderQueryStructure CreateRequest(string status) => new ProviderQueryStructure()
+            ProviderQueryStructure CreateRequest(string status) => new ProviderQueryStructure()
             {
                 SelectionCriteria = new SelectionCriteriaStructure()
                 {
@@ -57,7 +54,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     CriteriaConditionSpecified = true,
                     ProviderStatus = status,
                     StakeholderId = StakeholderId,
-                    ProviderUpdatedSince = _updatedSince,
+                    ProviderUpdatedSince = updatedSince,
                     ProviderUpdatedSinceSpecified = true
                 },
                 QueryId = QueryId
