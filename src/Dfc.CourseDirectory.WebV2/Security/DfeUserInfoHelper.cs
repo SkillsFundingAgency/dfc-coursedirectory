@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class DfeUserInfoHelper : ISignInAction, IDisposable
+    public class DfeUserInfoHelper : ISignInAction
     {
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -24,20 +24,22 @@ namespace Dfc.CourseDirectory.WebV2.Security
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            UkrlpSyncHelper ukrlpSyncHelper)
+            UkrlpSyncHelper ukrlpSyncHelper,
+            IHttpClientFactory httpClientFactory)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _ukrlpSyncHelper = ukrlpSyncHelper;
-
-            _httpClient = new HttpClient();  // TODO Use HttpClientFactory
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {CreateApiToken(settings)}");
+            _httpClient = httpClientFactory.CreateClient("DfeSignIn");
         }
 
-        public void Dispose()
-        {
-            _httpClient.Dispose();
-        }
+        public static string CreateApiToken(DfeSignInSettings settings) =>
+            new JwtBuilder()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .Issuer(settings.Issuer)
+                .Audience(settings.Audience)
+                .WithSecret(settings.ApiSecret)
+                .Build();
 
         public async Task OnUserSignedIn(SignInContext context)
         {
@@ -92,14 +94,6 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 context.UserInfo.CurrentProviderId = provider.Id;
             }
         }
-
-        private static string CreateApiToken(DfeSignInSettings settings) =>
-            new JwtBuilder()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .Issuer(settings.Issuer)
-                .Audience(settings.Audience)
-                .WithSecret(settings.ApiSecret)
-                .Build();
 
         private Task<Provider> GetProvider(int ukprn) =>
             _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });

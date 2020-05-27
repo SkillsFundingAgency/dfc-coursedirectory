@@ -157,6 +157,11 @@ namespace Dfc.CourseDirectory.WebV2
             var overallSessionTimeout = TimeSpan.FromMinutes(90);
 
             services.AddSingleton<DfeUserInfoHelper>();
+            // N.B. We can't use a typed client here because the legacy bits override the HttpClient registration :-/
+            services.AddHttpClient("DfeSignIn", client =>
+            {
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {DfeUserInfoHelper.CreateApiToken(settings)}");
+            });
             services.TryAddSingleton(settings);
 
             services
