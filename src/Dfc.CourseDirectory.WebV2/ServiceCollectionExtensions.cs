@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Helpers;
-using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Services;
-using Dfc.CourseDirectory.WebV2.Services.Interfaces;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
@@ -26,9 +25,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Dfc.CourseDirectory.Core;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Dfc.CourseDirectory.WebV2
 {
@@ -130,8 +128,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
-            services.AddTransient<IUkrlpSyncHelper, UkrlpSyncHelper>();
-            services.AddTransient<IUkrlpWcfService, UkrlpWcfService>();
+            services.AddTransient<UkrlpSyncHelper>();
+            services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             services.AddTransient<MptxManager>();
             services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
             services.AddTransient<ITagHelperComponent, AppendProviderContextTagHelperComponent>();

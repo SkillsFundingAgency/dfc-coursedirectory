@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Functions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Host;
@@ -36,6 +37,8 @@ namespace Dfc.CourseDirectory.Functions
 #pragma warning disable CS0618 // Type or member is obsolete
             builder.Services.AddSingleton<IFunctionFilter, CommitSqlTransactionFunctionInvocationFilter>();
 #pragma warning restore CS0618 // Type or member is obsolete
+            builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
+            builder.Services.AddTransient<UkrlpSyncHelper>();
 
             IConfiguration GetConfiguration()
             {

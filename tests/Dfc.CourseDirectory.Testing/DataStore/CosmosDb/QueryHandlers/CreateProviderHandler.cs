@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 CourseDirectoryName = request.CourseDirectoryName,
                 Alias = request.Alias,
                 ProviderContact = request.ProviderContact?.ToList() ?? new List<ProviderContact>(),
+                Status = Core.Models.ProviderStatus.Onboarded
             };
             inMemoryDocumentStore.Providers.Save(provider);
 

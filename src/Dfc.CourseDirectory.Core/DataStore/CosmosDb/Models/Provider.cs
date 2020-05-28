@@ -16,6 +16,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public ProviderType ProviderType { get; set; }
         public string ProviderName { get; set; }
         public string ProviderStatus { get; set; }
+        public ProviderStatus Status { get; set; }
         public string MarketingInformation { get; set; }
         public string CourseDirectoryName { get; set; }
         public string TradingName { get; set; }

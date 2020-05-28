@@ -26,7 +26,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             var tempTableName = "#UpsertHelper";
 
             var typeAccessor = TypeAccessor.Create(typeof(T));
-            var columns = typeAccessor.GetMembers().Select(m => m.Name).ToList();
 
             await CreateTableVariable();
             await InsertDataIntoTableVariable();
@@ -40,45 +39,63 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 var sql = new StringBuilder();
 
                 sql.AppendLine($"CREATE TABLE {tempTableName} (");
-                sql.AppendLine(string.Join(",\n", columns.Select(column => $"{sqlCommandBuilder.QuoteIdentifier(column)} NVARCHAR(MAX) COLLATE {Collation}")));
+                sql.AppendLine(string.Join(",\n", typeAccessor.GetMembers().Select(column => $"{sqlCommandBuilder.QuoteIdentifier(column.Name)} {GetSqlColumnTypeFromClrType(column.Type)}")));
                 sql.AppendLine(")");
 
                 return transaction.Connection.ExecuteAsync(sql.ToString(), transaction: transaction);
+
+                string GetSqlColumnTypeFromClrType(Type type)
+                {
+                    if (type == typeof(string))
+                    {
+                        return $"NVARCHAR(MAX) COLLATE {Collation}";
+                    }
+                    else if (type == typeof(DateTime) || type == typeof(DateTime?))
+                    {
+                        return "DATETIME";
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Cannot determine SQL type from '{type.Name}'.");
+                    }
+                }
             }
 
             async Task InsertDataIntoTableVariable()
             {
-                var sqlCommandBuilder = new SqlCommandBuilder();
+                var columns = typeAccessor.GetMembers();
 
-                var sql = new StringBuilder();
+                var table = new DataTable();
 
-                sql.AppendLine($"INSERT INTO {tempTableName} (");
-                sql.AppendLine(string.Join(",", columns.Select(sqlCommandBuilder.QuoteIdentifier)));
-                sql.AppendLine(") VALUES (");
-                sql.AppendLine(string.Join(",", columns.Select(GetParameterNameForColumn)));
-                sql.AppendLine(")");
+                foreach (var column in columns)
+                {
+                    var columnType = column.Type;
+
+                    if (columnType.IsGenericType && columnType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        columnType = Nullable.GetUnderlyingType(columnType);
+                    }
+
+                    table.Columns.Add(column.Name, columnType);
+                }
 
                 foreach (var record in records)
                 {
-                    var parameters = new DynamicParameters();
-
-                    foreach (var column in columns)
-                    {
-                        parameters.Add(GetParameterNameForColumn(column), typeAccessor[record, column]);
-                    }
-
-                    await transaction.Connection.ExecuteAsync(
-                        sql.ToString(),
-                        parameters,
-                        transaction: transaction,
-                        commandTimeout: _commandTimeout);
+                    var itemArray = columns.Select(m => typeAccessor[record, m.Name]).ToArray();
+                    var row = table.Rows.Add(itemArray);
                 }
 
-                static string GetParameterNameForColumn(string columnName) => "@" + columnName;
+                using (var bulk = new SqlBulkCopy(transaction.Connection, new SqlBulkCopyOptions(), transaction))
+                {
+                    bulk.DestinationTableName = tempTableName;
+                    await bulk.WriteToServerAsync(table);
+                }
             }
 
             Task MergeRecords()
             {
+                var columns = typeAccessor.GetMembers().Select(m => m.Name).ToList();
+
                 var sqlCommandBuilder = new SqlCommandBuilder();
 
                 var sql = new StringBuilder();
