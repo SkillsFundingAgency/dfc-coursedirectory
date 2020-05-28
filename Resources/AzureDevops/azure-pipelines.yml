@@ -79,6 +79,10 @@ steps:
 
     foreach ($project in $testProjects) {
       dotnet test tests/${project}/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+
+      if ($LASTEXITCODE -ne 0) {
+        Exit $LASTEXITCODE
+      }
     }
   displayName: Test
   env:
