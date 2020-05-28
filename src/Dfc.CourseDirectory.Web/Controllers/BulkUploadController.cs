@@ -447,9 +447,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 try
                 {
                     _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
-                    
+
                     // Publish the bulk-uploaded courses.
-                    var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, null, (int)RecordStatus.Archived);
+                   
+                    var resultArchivingCourses = await _courseService.ArchiveCoursesExceptBulkUploadReadytoGoLive(UKPRN, (int)RecordStatus.Archived);
                     if (resultArchivingCourses.IsSuccess)
                     {
                         var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);

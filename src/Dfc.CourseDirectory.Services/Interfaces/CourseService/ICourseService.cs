@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
         Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
-        Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int? CurrentStatus, int StatusToBeChangedTo);
+        Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo);
         Task<IResult> ArchiveCourseRunsByUKPRN(int UKPRN);
         SelectRegionModel GetRegions();
         Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
@@ -34,5 +34,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
         Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
         Task<IResult<int>> GetTotalLiveCourses();
+        Task<IResult> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN, int StatusToBeChangedTo);
     }
 }
