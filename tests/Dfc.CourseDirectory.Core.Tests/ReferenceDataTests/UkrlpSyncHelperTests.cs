@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         {
             UnitedKingdomProviderReferenceNumber = ukprn.ToString(),
             ProviderName = "Ukrlp Test Provider",
-            ProviderStatus = "A",
+            ProviderStatus = "Active",
             ProviderAliases = new[]
             {
                 new ProviderAliasesStructure() { ProviderAlias = "ProviderAlias" }
