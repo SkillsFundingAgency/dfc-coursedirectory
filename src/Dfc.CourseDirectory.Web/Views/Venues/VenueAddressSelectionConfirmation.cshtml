@@ -1,5 +1,4 @@
-﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation
 
 @{
     var pageTitle = "";
@@ -16,7 +15,7 @@
 }
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
-@if (!Model.Address.IsEngland)
+@if (Model.Address != null ? !Model.Address.IsEngland : false)
 {
     <pttcd-notification title="Non England address">
         You are adding an address that is outside of England. Your course for this address will not appear in any search results.
