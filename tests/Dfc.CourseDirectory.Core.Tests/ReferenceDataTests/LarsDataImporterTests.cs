@@ -32,14 +32,14 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             Assert.Equal(30, Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count);
             Assert.Equal(17, Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count);
             Assert.Equal(67, Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count);
-            Assert.Equal(553, Fixture.DatabaseFixture.InMemoryDocumentStore.Standards.All.Count);
+            Assert.Equal(554, Fixture.DatabaseFixture.InMemoryDocumentStore.Standards.All.Count);
             Assert.Equal(75, Fixture.DatabaseFixture.InMemoryDocumentStore.StandardSectorCodes.All.Count);
 
             Assert.Equal(499, await CountSqlRows("LARS.AwardOrgCode"));
             Assert.Equal(42, await CountSqlRows("LARS.Category"));
             Assert.Equal(123, await CountSqlRows("LARS.LearnAimRefType"));
-            Assert.Equal(117042, await CountSqlRows("LARS.LearningDelivery"));
-            Assert.Equal(81339, await CountSqlRows("LARS.LearningDeliveryCategory"));
+            Assert.Equal(117108, await CountSqlRows("LARS.LearningDelivery"));
+            Assert.Equal(81447, await CountSqlRows("LARS.LearningDeliveryCategory"));
             Assert.Equal(17, await CountSqlRows("LARS.SectorSubjectAreaTier1"));
             Assert.Equal(67, await CountSqlRows("LARS.SectorSubjectAreaTier2"));
 
