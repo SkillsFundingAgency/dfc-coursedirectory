@@ -450,6 +450,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult VenueAddressManualConfirmation(AddVenueSelectionConfirmationRequestModel model)
         {
+            var onspd = _onspdSearchHelper.GetOnsPostcodeData(model.Postcode);
             var viewModel = new VenueAddressSelectionConfirmationViewModel
             {
                 Id = model.Id,
@@ -460,7 +461,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     AddressLine2 = model.AddressLine2,
                     TownOrCity = model.TownOrCity,
                     County = model.County,
-                    Postcode = model.Postcode
+                    Postcode = model.Postcode,
+                    Country = onspd?.Country
                 }
             };
 
