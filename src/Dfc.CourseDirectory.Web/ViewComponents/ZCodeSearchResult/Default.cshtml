@@ -86,7 +86,7 @@
                 }
 
             </div>
-            <vc:pager current-page=Model.CurrentPage total-pages=Model.TotalCount get-page-url="@(pageNumber => Url.Action("ZCodeNotKnown", new {Level1Id =Model.Level1Id, Level2Id=Model.Level2Id,  PageNo = pageNumber}))" />
+            <vc:pager current-page=Model.CurrentPage total-pages=(int)Math.Ceiling((decimal)Model.TotalCount)/Model.ItemsPerPage get-page-url="@(pageNumber => Url.Action("ZCodeNotKnown", new {Level1Id =Model.Level1Id, Level2Id=Model.Level2Id,  PageNo = pageNumber}))" />
            
         </div>
     }
