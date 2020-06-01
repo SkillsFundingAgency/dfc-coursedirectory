@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Url = Request.GetDisplayUrl();
                 model.PageParamName = _larsSearchSettings.PageParamName;
                 model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
-                model.TotalCount = result.Value.ODataCount / model.ItemsPerPage ?? 0;
+                model.TotalCount = result.Value.ODataCount ?? 0;
                 model.Filters = filters.ToList();
                 model.Level1Id = request.Level1Id;
                 model.Level2Id = request.Level2Id;
