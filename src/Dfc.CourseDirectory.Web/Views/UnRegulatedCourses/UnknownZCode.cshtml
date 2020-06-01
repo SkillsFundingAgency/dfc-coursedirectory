@@ -202,7 +202,7 @@
                     });
             };           
             var assignEventsToLarsSearchPagination = function () {
-                var $larsSearchResultPaginationItems = $("#results .pttcd-c-pager");
+                var $larsSearchResultPaginationItems = $(".govuk-link,.pttcd-c-pager__previous-page,.pttcd-c-pager__next-page");
                 $larsSearchResultPaginationItems.on("click",
                     function (e) {
                         e.preventDefault();
