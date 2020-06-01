@@ -5,21 +5,31 @@
     if (Model.Id != null)
     {
         ViewData["Title"] = "Edit location details";
-    } else {
+    }
+    else
+    {
         ViewData["Title"] = "Add a location";
     }
     Layout = "_Layout_Your_Courses";
 }
 @model VenueAddressSelectionConfirmationViewModel
 
-
+@if (Model.Address != null ? !Model.Address.IsEngland : false)
+{
+    <pttcd-notification title="Non England address">
+        You are adding an address that is outside of England. Your course for this address will not appear in any search results.
+    </pttcd-notification>
+}
 <div class="govuk-grid-row">
 
     <div class="govuk-grid-column-two-thirds">
         @{
-            if (Model.Id != null) {
+            if (Model.Id != null)
+            {
                 <h1 class="govuk-heading-l">Edit location details</h1>
-            } else {
+            }
+            else
+            {
                 <h1 class="govuk-heading-l">Add a location</h1>
             }
         }

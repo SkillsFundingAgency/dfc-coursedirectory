@@ -20,9 +20,17 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     },
                     standard =>
                     {
-                        standard.NotionalEndLevel = record.NotionalEndLevel;
-                        standard.OtherBodyApprovalRequired = record.OtherBodyApprovalRequired;
+                        standard.StandardCode = record.StandardCode;
+                        standard.Version = record.Version;
                         standard.StandardName = record.StandardName;
+                        standard.StandardSectorCode = record.StandardSectorCode;
+                        standard.NotionalEndLevel = record.NotionalEndLevel;
+                        standard.EffectiveFrom = record.EffectiveFrom;
+                        standard.EffectiveTo = record.EffectiveTo;
+                        standard.URLLink = record.URLLink;
+                        standard.SectorSubjectAreaTier1 = record.SectorSubjectAreaTier1;
+                        standard.SectorSubjectAreaTier2 = record.SectorSubjectAreaTier2;
+                        standard.OtherBodyApprovalRequired = record.OtherBodyApprovalRequired;
                         standard.RecordStatusId = 2;  // Live
                     });
             }
