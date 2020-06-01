@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
-        public async Task Get_AuthenticadUser_ReturnsOk(TestUserType userType)
+        public async Task Get_AuthenticatedUser_ReturnsOk(TestUserType userType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
         }
 
         [Fact]
-        public async Task Get_UnauthenticadUser_ReturnsOk()
+        public async Task Get_UnauthenticatedUser_ReturnsOk()
         {
             // Arrange
 
