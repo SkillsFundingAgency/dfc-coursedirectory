@@ -131,9 +131,6 @@
     "CosmosAccountAccessKey": {
       "value": "not-a-real-access-key"
     },
-    "FeatureFlags": {
-      "value": "SomeFeatureFlag"
-    },
     "RedisCacheName": {
       "value": "AnAzureCacheInstance"
     }
