@@ -261,12 +261,6 @@
         "description": "Access key for the cosmos db account"
       }
     },
-    "FeatureFlags": {
-      "type": "string",
-      "metadata": {
-        "description": "Feature flags that are passed to the app settings"
-      }
-    },
     "RedisCacheName": {
       "type": "string",
       "metadata": {
@@ -619,10 +613,6 @@
               {
                 "name": "CosmosDbSettings__PrimaryKey",
                 "value": "[parameters('CosmosAccountAccessKey')]"
-              },
-              {
-                "name": "FeatureFlags",
-                "value": "[parameters('FeatureFlags')]"
               },
               {
                 "name": "DataProtection__ContainerName",
