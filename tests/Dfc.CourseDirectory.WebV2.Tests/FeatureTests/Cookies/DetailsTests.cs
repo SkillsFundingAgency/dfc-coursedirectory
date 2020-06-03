@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,6 +14,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
+        [InlineData(TestUserType.Helpdesk)]
+        [InlineData(TestUserType.Developer)]
         public async Task Get_AuthenticatedUser_ReturnsOk(TestUserType userType)
         {
             // Arrange
@@ -36,6 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
         public async Task Get_UnauthenticatedUser_ReturnsOk()
         {
             // Arrange
+            User.SetNotAuthenticated();
 
             // Act
             var response = await HttpClient.GetAsync("cookies/details");
