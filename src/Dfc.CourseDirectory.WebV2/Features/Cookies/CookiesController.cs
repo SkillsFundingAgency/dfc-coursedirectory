@@ -18,10 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Cookies
         }
 
         [HttpGet("details")]
-        public IActionResult CookieDetails()
-        {
-            return View();
-        }
+        public IActionResult Details() => View();
 
         [HttpPost("acceptcookies")]
         [AllowAnonymous]
