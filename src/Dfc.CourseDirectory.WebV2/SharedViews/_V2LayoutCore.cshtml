@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+@{
     var title = (ViewBag.Title != null ? $"{ViewBag.Title} - " : "") + "Course Directory";
 
     if (!ViewData.ModelState.IsValid)
@@ -32,13 +33,15 @@
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
+    <vc:cookie-banner />
+
     <header class="govuk-header" role="banner" data-module="govuk-header">
         <div class="govuk-header__container govuk-width-container">
             <div class="govuk-header__content">
+
                 <a href="/" class="govuk-header__link govuk-header__link--service-name">
                     Publish to the course directory
                 </a>
-
                 @RenderSection("TopNav", required: false)
             </div>
         </div>
@@ -70,6 +73,11 @@
                     <ul class="govuk-footer__inline-list">
                         <li class="govuk-footer__inline-list-item">
                             <a target="_blank" class="govuk-footer__link" asp-controller="Home" asp-action="Help">Help</a>
+                        </li>
+                        <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" asp-controller="cookies" asp-action="details" rel="noreferrer">
+                                Cookies
+                            </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a target="_blank" class="govuk-footer__link" asp-controller="Home" asp-action="Privacy">Privacy</a>
