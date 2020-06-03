@@ -2,7 +2,7 @@
 
 @if (Model.ShowBanner)
 {
-    <form asp-action="AcceptAllCookies" asp-controller="Cookies" asp-route-returnUrl="@Context.Request.GetEncodedUrl()">
+    <form asp-action="AcceptAllCookies" asp-controller="Cookies" asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()">
         <div class="govuk-width-container" id="pttcd-cookie-banner">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
