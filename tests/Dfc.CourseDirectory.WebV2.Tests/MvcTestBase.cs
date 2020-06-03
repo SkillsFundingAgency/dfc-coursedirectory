@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         protected MutableClock Clock => Factory.Clock;
+
+        protected TestCookieSettingsProvider CookieSettingsProvider => Factory.CookieSettingsProvider;
 
         protected Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
 
