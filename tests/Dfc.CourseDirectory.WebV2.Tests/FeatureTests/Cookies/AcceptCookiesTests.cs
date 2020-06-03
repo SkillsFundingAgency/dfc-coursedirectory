@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
 {
-    public class AcceptCookiesTest : MvcTestBase
+    public class AcceptCookiesTests : MvcTestBase
     {
-        public AcceptCookiesTest(CourseDirectoryApplicationFactory factory)
+        public AcceptCookiesTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
 
         [Fact]
-        public async Task Post_ReturnsOk()
+        public async Task Post_ReturnsRedirect()
         {
             // Arrange
 
             // Act
-            var response = await HttpClient.PostAsync("cookies/acceptcookies", null);
-            var doc = await response.GetDocument();
+            var response = await HttpClient.PostAsync("cookies/accept-all?returnUrl=/foo", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.Null(doc.GetElementById("cookiesform"));
+            Assert.Equal("/foo", response.Headers.Location.OriginalString);
         }
     }
 }
