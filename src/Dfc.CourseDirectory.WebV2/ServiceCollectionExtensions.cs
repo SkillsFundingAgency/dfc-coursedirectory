@@ -139,6 +139,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<Settings>(configuration);
             services.AddSingleton<Settings>(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
             services.AddScoped<ICookieSettingsProvider, CookieSettingsProvider>();
+            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
