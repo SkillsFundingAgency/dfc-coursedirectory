@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core.Models;
 using Xunit;
@@ -373,6 +374,35 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Assert
             var doc = await response.GetDocument();
             Assert.Null(doc.GetElementById("pttcd-cookie-banner"));
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData(false, false)]
+        [InlineData(true, true)]
+        public async Task RendersGATrackingCodeBasedOnUsersPreferences(
+            bool? allowAnalyticsCookies,
+            bool expectGATagsToBeRendered)
+        {
+            // Arrange
+            Cookies.CookieSettings settings = null;
+            if (allowAnalyticsCookies != null)
+            {
+                settings = new Cookies.CookieSettings() { AllowAnalyticsCookies = allowAnalyticsCookies.Value };
+            }
+
+            CookieSettingsProvider.SetPreferencesForCurrentUser(settings);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+
+            // Assert
+            var doc = await response.GetDocument();
+
+            var gotGATags = doc.QuerySelectorAll("script")
+                .Where(s => s.GetAttribute("src")?.StartsWith("https://www.googletagmanager.com") == true)
+                .Any();
+            Assert.Equal(expectGATagsToBeRendered, gotGATags);
         }
 
         private IReadOnlyList<(string href, string label)> GetTopLevelNavLinks(IHtmlDocument doc)

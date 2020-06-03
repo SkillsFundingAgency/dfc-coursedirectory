@@ -215,9 +215,6 @@ namespace Dfc.CourseDirectory.Web
             //services.Configure<GoogleAnalyticsOptions>(options => Configuration.GetSection("GoogleAnalytics").Bind(options));
 
 
-            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
-
-
             // Register the background worker helper
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
