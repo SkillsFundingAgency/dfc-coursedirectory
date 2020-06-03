@@ -342,6 +342,39 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
         }
 
+        [Fact]
+        public async Task NoCookiePreferencesSet_RendersCookieBanner()
+        {
+            // Arrange
+            CookieSettingsProvider.SetPreferencesForCurrentUser(null);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+
+            // Assert
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetElementById("pttcd-cookie-banner"));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task CookiePreferencesSet_DoesNotRenderCookieBanner(bool allowAnalyticsCookies)
+        {
+            // Arrange
+            CookieSettingsProvider.SetPreferencesForCurrentUser(new Cookies.CookieSettings()
+            {
+                AllowAnalyticsCookies = allowAnalyticsCookies
+            });
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+
+            // Assert
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementById("pttcd-cookie-banner"));
+        }
+
         private IReadOnlyList<(string href, string label)> GetTopLevelNavLinks(IHtmlDocument doc)
         {
             var results = new List<(string href, string label)>();
