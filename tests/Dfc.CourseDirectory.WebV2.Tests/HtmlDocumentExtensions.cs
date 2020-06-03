@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Collections.Generic;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Xunit;
 using Xunit.Sdk;
@@ -21,6 +22,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var errorMessage = errorElement.InnerHtml.Substring(vht.OuterHtml.Length);
             Assert.Equal(expectedMessage, errorMessage);
         }
+
+        public static IReadOnlyCollection<IElement> GetAllElementsByTestId(this IHtmlDocument doc, string testId) =>
+            doc.Body.GetAllElementsByTestId(testId);
+
+        public static IElement GetElementByTestId(this IHtmlDocument doc, string testId) =>
+            doc.Body.GetElementByTestId(testId);
 
         public static IElement GetElementWithLabel(this IHtmlDocument doc, string label)
         {

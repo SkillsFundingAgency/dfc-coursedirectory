@@ -1,4 +1,6 @@
-﻿using AngleSharp.Dom;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AngleSharp.Dom;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -9,5 +11,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             return element as T;
         }
+
+        public static IReadOnlyCollection<IElement> GetAllElementsByTestId(this IElement element, string testId) =>
+            element.QuerySelectorAll($"*[data-testid='{testId}']").ToList();
+
+        public static IElement GetElementByTestId(this IElement element, string testId) =>
+            GetAllElementsByTestId(element, testId).SingleOrDefault();
     }
 }
