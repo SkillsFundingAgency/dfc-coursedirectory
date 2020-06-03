@@ -135,7 +135,7 @@
             <div>
                 @if (Model.IsReadOnly)
                 {
-                    <govuk-back-link asp-controller="ApprenticeshipQA" asp-action="ProviderSelected" asp-route-providerId="@(Model.ProviderId)" />
+                    <govuk-back-link asp-controller="ApprenticeshipQA" asp-action="ProviderSelected" asp-route-providerId="@(Model.ProviderId)" data-testid="back" />
                 }
                 else
                 {
