@@ -102,8 +102,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal("QA - Course Directory", doc.Title);
             Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
 
-            var firstApp = doc.GetElementsByClassName("pttcd-apprenticeship-qa__provider-selected__apprenticeship").First();
-            var firstAppLabel = firstApp.GetElementsByClassName("pttcd-apprenticeship-qa__provider-selected__summary__label").Single().TextContent.Trim();
+            var firstApp = doc.GetAllElementsByTestId("apprenticeship-assessment").First();
+            var firstAppLabel = firstApp.GetElementByTestId("apprenticeship-assessment-label").TextContent.Trim();
             Assert.Equal("Test Standard", firstAppLabel);
         }
 
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa__provider-selected__provider").First();
+            var providerElement = doc.GetElementByTestId("provider-assessment");
             var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
             Assert.NotNull(providerBadge);
         }
@@ -198,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa__provider-selected__provider").First();
+            var providerElement = doc.GetElementByTestId("provider-assessment");
             var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
             Assert.Null(providerBadge);
         }
@@ -247,7 +247,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa__provider-selected__apprenticeship").First();
+            var providerElement = doc.GetElementByTestId("apprenticeship-assessment");
             var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
             Assert.NotNull(providerBadge);
         }
@@ -294,9 +294,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa__provider-selected__apprenticeship").First();
-            var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
-            Assert.Null(providerBadge);
+            var appElement = doc.GetAllElementsByTestId("apprenticeship-assessment").First();
+            var appBadge = appElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
+            Assert.Null(appBadge);
         }
 
         [Theory]
@@ -343,7 +343,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            var completeButton = doc.GetElementByTestId("complete-button");
             Assert.NotNull(completeButton);
             Assert.Null(completeButton.GetAttribute("disabled"));
         }
@@ -382,7 +382,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            var completeButton = doc.GetElementByTestId("complete-button");
             Assert.NotNull(completeButton);
             Assert.Equal("disabled", completeButton.GetAttribute("disabled"));
         }
@@ -429,9 +429,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            var completeButton = doc.GetElementByTestId("complete-button");
             Assert.Null(completeButton);
-            var infoBox = doc.GetElementsByClassName("govuk-inset-text").SingleOrDefault();
+            var infoBox = doc.GetElementByTestId("status-text");
             Assert.NotNull(infoBox);
             Assert.Equal(
                 "Overall the provider information and apprenticeship training course has FAILED quality assurance.",
@@ -480,9 +480,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            var completeButton = doc.GetElementByTestId("complete-button");
             Assert.Null(completeButton);
-            var infoBox = doc.GetElementsByClassName("govuk-inset-text").SingleOrDefault();
+            var infoBox = doc.GetElementByTestId("status-text");
             Assert.NotNull(infoBox);
             Assert.Equal(
                 "Overall the provider information and apprenticeship training course has PASSED quality assurance.",
