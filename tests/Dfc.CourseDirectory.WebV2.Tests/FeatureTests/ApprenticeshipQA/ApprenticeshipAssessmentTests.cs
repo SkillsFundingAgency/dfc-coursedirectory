@@ -199,7 +199,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 "Marketing info",
                 doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-assessment-marketing-information").TextContent);
             AssertFormFieldsDisabledState(doc, expectDisabled: false);
-            Assert.Empty(doc.GetElementsByClassName("govuk-back-link"));
+            Assert.Null(doc.GetElementByTestId("back"));
         }
 
         [Fact]
@@ -307,7 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var doc = await response.GetDocument();
             AssertFormFieldsDisabledState(doc, expectDisabled: true);
-            Assert.NotEmpty(doc.GetElementsByClassName("govuk-back-link"));
+            Assert.NotNull(doc.GetElementByTestId("back"));
         }
 
         [Theory]
