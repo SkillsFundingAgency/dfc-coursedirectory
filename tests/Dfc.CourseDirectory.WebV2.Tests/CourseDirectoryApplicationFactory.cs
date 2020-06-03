@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public MutableClock Clock => DatabaseFixture.Clock;
 
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
+
+        public TestCookieSettingsProvider CookieSettingsProvider => Services.GetRequiredService<ICookieSettingsProvider>() as TestCookieSettingsProvider;
 
         public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => DatabaseFixture.CosmosDbQueryDispatcher;
 
@@ -75,6 +78,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Clear StandardsAndFrameworksCache
             Services.GetRequiredService<IStandardsAndFrameworksCache>().Clear();
+
+            // Reset cookie preferences
+            CookieSettingsProvider.Reset();
         }
 
         public async Task OnTestStartingAsync()

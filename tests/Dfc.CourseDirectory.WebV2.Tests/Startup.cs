@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -56,6 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
             services.AddSingleton<Settings>();
+            services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
 
             DatabaseFixture.ConfigureServices(services);
         }
