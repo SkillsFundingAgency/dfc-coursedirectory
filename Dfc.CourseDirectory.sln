@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Functions", "src\Dfc.CourseDirectory.Functions\Dfc.CourseDirectory.Functions.csproj", "{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core.Tests", "tests\Dfc.CourseDirectory.Core.Tests\Dfc.CourseDirectory.Core.Tests.csproj", "{67E0AA98-8C6C-4E3D-A686-CAB41AA9B6F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Core.Tests", "tests\Dfc.CourseDirectory.Core.Tests\Dfc.CourseDirectory.Core.Tests.csproj", "{67E0AA98-8C6C-4E3D-A686-CAB41AA9B6F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
