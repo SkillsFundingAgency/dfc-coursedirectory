@@ -20,9 +20,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Cookies
         [HttpGet("details")]
         public IActionResult Details() => View();
 
-        [HttpPost("acceptcookies")]
+        [HttpPost("accept-all")]
         [AllowAnonymous]
-        public IActionResult AcceptCookies()
+        public IActionResult AcceptAllCookies()
         {
             if(Request.Cookies[CookieName] == null)
                 Response.Cookies.Append(CookieName, "true");

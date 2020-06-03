@@ -24,11 +24,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
 
             // Act
             var response = await HttpClient.GetAsync("cookies/details");
-            var doc = await response.GetDocument();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(doc.GetElementById("cookiesform"));
         }
 
         [Fact]
@@ -39,11 +37,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
 
             // Act
             var response = await HttpClient.GetAsync("cookies/details");
-            var doc = await response.GetDocument();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(doc.GetElementById("cookiesform"));
         }
     }
 }
