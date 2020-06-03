@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
@@ -138,6 +139,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<Features.ApprenticeshipQA.ApprenticeshipAssessment.FlowModelInitializer>();
             services.Configure<Settings>(configuration);
             services.AddSingleton<Settings>(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
+            services.AddScoped<ICookieSettingsProvider, CookieSettingsProvider>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
