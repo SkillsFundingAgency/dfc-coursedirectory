@@ -1,5 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.WebV2.Cookies
@@ -8,11 +12,17 @@ namespace Dfc.CourseDirectory.WebV2.Cookies
     {
         private const string CookieName = "cookie-settings";
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static readonly TimeSpan _cookieExpiry = TimeSpan.FromDays(365);
 
-        public CookieSettingsProvider(IHttpContextAccessor httpContextAccessor)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebHostEnvironment _environment;
+
+        public CookieSettingsProvider(
+            IHttpContextAccessor httpContextAccessor,
+            IWebHostEnvironment environment)
         {
             _httpContextAccessor = httpContextAccessor;
+            _environment = environment;
         }
 
         public CookieSettings GetPreferencesForCurrentUser()
@@ -34,7 +44,14 @@ namespace Dfc.CourseDirectory.WebV2.Cookies
                 var (rsp, settings) = ((HttpResponse, CookieSettings))state;
 
                 var serializedSettings = SerializeCookieSettings(settings);
-                rsp.Cookies.Append(CookieName, serializedSettings);
+
+                rsp.Cookies.Append(CookieName, serializedSettings, new CookieOptions()
+                {
+                    Expires = DateTime.Now.Add(_cookieExpiry),
+                    HttpOnly = true,
+                    Secure = _environment.IsProduction(),
+                    SameSite = SameSiteMode.Strict
+                });
 
                 return Task.CompletedTask;
             }, (response, preferences));
