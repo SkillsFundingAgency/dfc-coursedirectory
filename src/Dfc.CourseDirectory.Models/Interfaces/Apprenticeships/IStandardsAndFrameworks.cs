@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         //Generic
         ApprenticeshipType ApprenticeshipType { get; }
         Guid id { get; } // Cosmos DB id
-        DateTime EffectiveFrom { get; }
+        DateTime? EffectiveFrom { get; }
         DateTime? CreatedDateTimeUtc { get; }
         DateTime? ModifiedDateTimeUtc { get; }
         int? RecordStatusId { get; }
@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         int? PathwayCode { get; }
         string PathwayName { get; }
         string NasTitle { get; }
-        DateTime EffectiveTo { get; }
+        DateTime? EffectiveTo { get; }
         string SectorSubjectAreaTier1 { get; }
         string SectorSubjectAreaTier2 { get; }
         string ProgTypeDesc { get; }

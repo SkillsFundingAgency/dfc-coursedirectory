@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 
         //Generic
         public ApprenticeshipType ApprenticeshipType { get; set; }
-        public DateTime EffectiveFrom { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
         public DateTime? CreatedDateTimeUtc { get; set; }
         public DateTime? ModifiedDateTimeUtc { get; set; }
         public int? RecordStatusId { get; set; }
@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public int? PathwayCode { get; set; }
         public string PathwayName { get; set; }
         public string NasTitle { get; set; }
-        public DateTime EffectiveTo { get; set; }
+        public DateTime? EffectiveTo { get; set; }
         public string SectorSubjectAreaTier1 { get; set; }
         public string SectorSubjectAreaTier2 { get; set; }
         public string ProgTypeDesc { get; set; }
