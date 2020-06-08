@@ -278,7 +278,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var marketingInfo = "Providing Online training";
             var regions = new List<string> { "123" };
             var contactEmail = "somecontact@nonexistentprovider.com";
-            var radius = 10;
+            var radius = 30;
             var deliveryMode = ApprenticeshipDeliveryMode.BlockRelease;
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
