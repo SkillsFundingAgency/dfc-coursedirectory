@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -14,25 +14,25 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             Configuration configuration,
             CreateProviderFromUkrlpData request)
         {
-
-           var documentUri = UriFactory.CreateDocumentCollectionUri(
+            var collectionUri = UriFactory.CreateDocumentCollectionUri(
                 configuration.DatabaseId,
                 configuration.ProviderCollectionName);
 
             var newProvider = new Provider()
             {
-                Id = request.Id,
-                UnitedKingdomProviderReferenceNumber = request.UnitedKingdomProviderReferenceNumber,
+                Id = request.ProviderId,
+                UnitedKingdomProviderReferenceNumber = request.Ukprn.ToString(),
                 ProviderName = request.ProviderName,
-                ProviderContact = request.ProviderContact,
+                ProviderContact = request.ProviderContact.ToList(),
                 Alias = request.Alias,
                 ProviderStatus = request.ProviderStatus,
                 ProviderType = request.ProviderType,
+                Status = request.Status,
                 DateUpdated = request.DateUpdated,
                 UpdatedBy = request.UpdatedBy,
             };
 
-            await client.CreateDocumentAsync(documentUri, newProvider);
+            await client.CreateDocumentAsync(collectionUri, newProvider);
 
             return new Success();
         }

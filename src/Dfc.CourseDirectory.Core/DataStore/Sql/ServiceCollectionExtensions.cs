@@ -6,7 +6,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSqlDataStore(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddSqlDataStore(
+            this IServiceCollection services,
+            string connectionString)
         {
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(ISqlQuery<>))

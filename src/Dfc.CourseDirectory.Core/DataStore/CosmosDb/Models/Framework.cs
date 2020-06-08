@@ -14,6 +14,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public int PathwayCode { get; set; }
         public string NasTitle { get; set; }
         public int RecordStatusId { get; set; }
+        public DateTime EffectiveFrom { get; set; }
+        public DateTime EffectiveTo { get; set; }
+        public decimal SectorSubjectAreaTier1 { get; set; }
+        public decimal SectorSubjectAreaTier2 { get; set; }
+        public DateTime CreatedDateTimeUtc { get; set; }
+        public DateTime ModifiedDateTimeUtc { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web
@@ -19,6 +21,15 @@ namespace Dfc.CourseDirectory.Web
                     builder.AddConfiguration(context.Configuration.GetSection("Logging"));
                     var appInsightsKey = context.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
                     builder.AddApplicationInsights(appInsightsKey);
+                })
+                .ConfigureAppConfiguration(builder =>
+                {
+                    var environmentName = Environment.GetEnvironmentVariable("EnvironmentSettings__EnvironmentName");
+
+                    if (!string.IsNullOrEmpty(environmentName))
+                    {
+                        builder.AddJsonFile($"appsettings.Environment.{environmentName}.json", optional: true);
+                    }
                 });
     }
 }

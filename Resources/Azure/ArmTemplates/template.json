@@ -261,12 +261,6 @@
         "description": "Access key for the cosmos db account"
       }
     },
-    "FeatureFlags": {
-      "type": "string",
-      "metadata": {
-        "description": "Feature flags that are passed to the app settings"
-      }
-    },
     "RedisCacheName": {
       "type": "string",
       "metadata": {
@@ -621,10 +615,6 @@
                 "value": "[parameters('CosmosAccountAccessKey')]"
               },
               {
-                "name": "FeatureFlags",
-                "value": "[parameters('FeatureFlags')]"
-              },
-              {
                 "name": "DataProtection__ContainerName",
                 "value": "data-protection-keys"
               },
@@ -705,6 +695,10 @@
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                 "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
               },
               {
                 "name": "CosmosDbSettings__EndpointUri",

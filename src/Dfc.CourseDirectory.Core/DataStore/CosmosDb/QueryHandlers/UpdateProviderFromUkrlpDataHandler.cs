@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -17,14 +17,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             var documentUri = UriFactory.CreateDocumentUri(
                 configuration.DatabaseId,
                 configuration.ProviderCollectionName,
-                request.Id.ToString());
+                request.ProviderId.ToString());
 
             var response = await client.ReadDocumentAsync<Provider>(documentUri);
 
             var provider = response.Document;
 
             provider.ProviderName = request.ProviderName;
-            provider.ProviderContact = request.ProviderContact;
+            provider.ProviderContact = request.ProviderContact.ToList();
             provider.Alias = request.Alias;
             provider.ProviderStatus = request.ProviderStatus;
             provider.DateUpdated = request.DateUpdated;

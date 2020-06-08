@@ -1,10 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb;
-using Microsoft.Azure.Documents.Client;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
@@ -15,10 +11,10 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
         {
             var newProvider = new Provider()
             {
-                Id = request.Id,
-                UnitedKingdomProviderReferenceNumber = request.UnitedKingdomProviderReferenceNumber,
+                Id = request.ProviderId,
+                UnitedKingdomProviderReferenceNumber = request.Ukprn.ToString(),
                 ProviderName = request.ProviderName,
-                ProviderContact = request.ProviderContact,
+                ProviderContact = request.ProviderContact.ToList(),
                 Alias = request.Alias,
                 ProviderStatus = request.ProviderStatus,
                 ProviderType = request.ProviderType,

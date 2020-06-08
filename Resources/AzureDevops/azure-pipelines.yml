@@ -9,7 +9,6 @@ variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
   group: dfc-findacourse-build
-  DotNetCoreVersion: 3.1.x
 
 resources:
   repositories:
@@ -67,11 +66,6 @@ steps:
     gulpFile: 'src/Dfc.CourseDirectory.Web/gulpfile.js'
     targets: 'prod'
 
-- task: UseDotNet@2
-  displayName: 'Use .NET Core SDK ${{ variables.DotNetCoreVersion }}'
-  inputs:
-    version: ${{ variables.DotNetCoreVersion }}
-
 - task: MSBuild@1
   displayName: Build
   inputs:
@@ -80,7 +74,16 @@ steps:
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-t:Restore,Build'
 
-- script: dotnet test tests/Dfc.CourseDirectory.WebV2.Tests/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+- powershell: |
+    $testProjects = Get-ChildItem tests/ -Directory -Filter *.Tests
+
+    foreach ($project in $testProjects) {
+      dotnet test tests/${project}/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+
+      if ($LASTEXITCODE -ne 0) {
+        Exit $LASTEXITCODE
+      }
+    }
   displayName: Test
   env:
     ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)

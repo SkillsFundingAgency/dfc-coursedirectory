@@ -1,4 +1,5 @@
 ﻿@inject IFeatureFlagProvider FeatureFlagProvider
+@inject Settings Settings 
 @{
     var currentController = (string)ViewContext.RouteData.Values["Controller"];
     var currentAction = (string)ViewContext.RouteData.Values["Action"];
@@ -23,6 +24,11 @@
         <li class="govuk-header__navigation-item@(currentController == "SearchProvider" ? " govuk-header__navigation-item--active" : null)">
             <a asp-action="Index" asp-controller="SearchProvider" class="govuk-header__link">
                 Search providers
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item">
+            <a href="@Settings.ManageUsersUrl" target="_blank" rel="noreferrer" class="govuk-header__link">
+                Manage users
             </a>
         </li>
         <li class="govuk-header__navigation-item@(currentController == "Report" && currentAction == "Index" ? " govuk-header__navigation-item--active" : null)">

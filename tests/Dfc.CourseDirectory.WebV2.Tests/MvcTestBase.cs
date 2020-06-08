@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected CourseDirectoryApplicationFactory Factory { get; }
 
-        protected HttpClient HttpClient { get; }
+        protected HttpClient HttpClient { get; set; }
 
         protected MptxManager MptxManager => Factory.MptxManager;
 

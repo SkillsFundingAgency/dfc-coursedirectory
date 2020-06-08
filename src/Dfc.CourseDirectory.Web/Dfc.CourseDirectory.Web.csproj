@@ -5,6 +5,7 @@
     <AssemblyVersion>1.0.19198.1457</AssemblyVersion>
     <FileVersion>1.0.19198.1457</FileVersion>
     <Version>1.0.3</Version>
+    <UserSecretsId>CourseDirectoryWeb</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

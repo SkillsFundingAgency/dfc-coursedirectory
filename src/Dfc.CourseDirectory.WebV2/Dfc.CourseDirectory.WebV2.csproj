@@ -13,14 +13,12 @@
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
     <PackageReference Include="CsvHelper" Version="15.0.2" />
     <PackageReference Include="Flurl" Version="2.8.2" />
-    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-248" />
+    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-250" />
     <PackageReference Include="JWT" Version="5.2.1" />
     <PackageReference Include="Mapster" Version="5.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.3" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.7.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,9 +28,12 @@
   <ItemGroup>
     <None Remove="Content\components\checkboxes.css" />
     <None Remove="Content\components\inset-text.css" />
+    <None Remove="Content\components\pager.css" />
     <None Remove="Content\components\radios.css" />
     <None Remove="Content\components\search-input.css" />
     <None Remove="Content\components\tinymce.css" />
+    <None Remove="Content\images\arrow-pagination-left.svg" />
+    <None Remove="Content\images\arrow-pagination-right.svg" />
     <None Remove="Content\layout.css" />
     <None Remove="Content\nav.css" />
     <None Remove="Content\notification.css" />

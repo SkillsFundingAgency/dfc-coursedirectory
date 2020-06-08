@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Services.UnregulatedProvision
 
+@addTagHelper *, Dfc.CourseDirectory.WebV2
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult.ZCodeSearchResultModel;
@@ -33,10 +34,10 @@
                         <div class="panel">
 
                             <fieldset class="govuk-fieldset">
-                                <legend  class="govuk-visually-hidden">
+                                <legend class="govuk-visually-hidden">
                                     Select @filter.Title
                                 </legend>
-                            
+
                                 <div class="govuk-checkboxes govuk-checkboxes--small">
 
                                     @foreach (var item in filter.Items)
@@ -85,16 +86,8 @@
                 }
 
             </div>
-            @await Component.InvokeAsync(nameof(Pagination),
-                     new
-                     {
-                         url = Model.Url,
-                         pageParamName = Model.PageParamName,
-                         totalNoOfItems = Model.TotalCount,
-                         itemsPerPage = Model.ItemsPerPage,
-                         noOfPagesToDisplay = 10,
-                         isSliding = true
-                     })
+            <vc:pager current-page=Model.CurrentPage total-pages=(int)Math.Ceiling((decimal)Model.TotalCount)/Model.ItemsPerPage get-page-url="@(pageNumber => Url.Action("ZCodeNotKnown", new {Level1Id =Model.Level1Id, Level2Id=Model.Level2Id,  PageNo = pageNumber}))" />
+           
         </div>
     }
 

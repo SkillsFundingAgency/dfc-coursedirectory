@@ -34,5 +34,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
         Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
         Task<IResult<int>> GetTotalLiveCourses();
+        Task<IResult> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN, int StatusToBeChangedTo);
     }
 }

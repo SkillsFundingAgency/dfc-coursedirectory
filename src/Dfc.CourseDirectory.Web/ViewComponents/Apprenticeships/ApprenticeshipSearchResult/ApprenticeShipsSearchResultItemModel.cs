@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
 
         //Generic
         public ApprenticeshipType ApprenticeshipType { get; set; }
-        public DateTime EffectiveFrom { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
         public DateTime? CreatedDateTimeUtc { get; set; }
         public DateTime? ModifiedDateTimeUtc { get; set; }
         public int? RecordStatusId { get; set; }
@@ -33,11 +33,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
         public int? PathwayCode { get; set; }
         public string PathwayName { get; set; }
         public string NasTitle { get; set; }
-        public DateTime EffectiveTo { get; set; }
+        public DateTime? EffectiveTo { get; set; }
         public string SectorSubjectAreaTier1 { get; set; }
         public string SectorSubjectAreaTier2 { get; set; }
         public string ProgTypeDesc { get; set; }
         public string ProgTypeDesc2 { get; set; }
+        public bool IsFramework => FrameworkCode.HasValue;
 
     }
 }

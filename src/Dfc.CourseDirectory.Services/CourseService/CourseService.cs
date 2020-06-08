@@ -43,6 +43,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getCourseMigrationReportByUKPRN;
         private readonly Uri _getAllDfcReports;
         private readonly Uri _getTotalLiveCoursesUri;
+        private readonly Uri _archiveCoursesExceptBulkUploadReadytoGoLiveUri;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -99,6 +100,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
             _getAllDfcReports = settings.Value.ToGetAllDfcReports();
             _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
+            _archiveCoursesExceptBulkUploadReadytoGoLiveUri = settings.Value.ToArchiveCoursesExceptBulkUploadReadytoGoLiveUri();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -1110,6 +1112,27 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 }
             }
         }
+
+        public async Task<IResult> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN,int StatusToBeChangedTo)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));         
+            Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
+           
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+         
+            var response = await httpClient.GetAsync(new Uri(_archiveCoursesExceptBulkUploadReadytoGoLiveUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
+            _logger.LogHttpResponseMessage("Archive courses service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+            }
+            else
+            {
+                return Result.Fail("ChangeCourseRunStatusesForUKPRNSelection service unsuccessful http response");
+            }
+        }
     }
 
     internal static class IGetCourseByIdCriteriaExtensions
@@ -1229,6 +1252,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetTotalLiveCourses");
+        }
+
+        internal static Uri ToArchiveCoursesExceptBulkUploadReadytoGoLiveUri(this ICourseServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/ArchiveCoursesExceptBulkUploadReadytoGoLive");
         }
     }
 

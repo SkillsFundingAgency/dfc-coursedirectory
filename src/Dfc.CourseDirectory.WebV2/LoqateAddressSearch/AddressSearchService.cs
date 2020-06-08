@@ -75,8 +75,6 @@ namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
                 throw new LoqateErrorException(error.Error, error.Description, error.Cause, error.Resolution);
             }
 
-            var x = response.Items.First().ToObject<PostcodeSearchResult>();
-
             return response.Items.Select(i => i.ToObject<T>()).ToList();
         }
 

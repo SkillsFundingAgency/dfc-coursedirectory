@@ -167,6 +167,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Coventry", result.PostTown);
             Assert.Equal("West Midlands", result.County);
             Assert.Equal("CV1 2AA", result.Postcode);
+            Assert.Equal("England", result.CountryName);
         }
 
         [Fact]
