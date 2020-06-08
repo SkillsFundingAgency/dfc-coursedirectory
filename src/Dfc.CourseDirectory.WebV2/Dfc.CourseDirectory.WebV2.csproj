@@ -28,6 +28,7 @@
   <ItemGroup>
     <None Remove="Content\components\checkboxes.css" />
     <None Remove="Content\components\inset-text.css" />
+    <None Remove="Content\components\link-button.css" />
     <None Remove="Content\components\pager.css" />
     <None Remove="Content\components\radios.css" />
     <None Remove="Content\components\search-input.css" />

@@ -1,0 +1,21 @@
+﻿.pttcd-c-link-button {
+    border: 0;
+    color: #1d70b8;
+    display: inline-block;
+    font-family: GDS Transport, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: underline;
+    margin: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.pttcd-c-link-button:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #ffdd00;
+    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    text-decoration: none;
+}
