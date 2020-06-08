@@ -354,7 +354,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementById("pttcd-cookie-banner"));
+            Assert.NotNull(doc.GetAllElementsByTestId("cookie-banner"));
         }
 
         [Theory]
@@ -374,6 +374,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Assert
             var doc = await response.GetDocument();
             Assert.Null(doc.GetElementById("pttcd-cookie-banner"));
+        }
+
+        [Fact]
+        public async Task AllCookiesAccepted_RendersConfirmation()
+        {
+            // Arrange
+            CookieSettingsProvider.SetPreferencesForCurrentUser(null);
+
+            // Act
+            var response = await HttpClient.PostAsync("cookies/accept-all?returnUrl=/foo", null);
+
+            // Assert
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetAllElementsByTestId("cookie-banner-confirmation"));
         }
 
         [Theory]

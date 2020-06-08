@@ -17,7 +17,8 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
         {
             var viewModel = new CookieBannerViewModel()
             {
-                ShowBanner = _cookieSettingsProvider.GetPreferencesForCurrentUser() == null
+                ShowBanner = _cookieSettingsProvider.GetPreferencesForCurrentUser() == null,
+                ShowAcceptedMessage = TempData["AcceptedAllCookies"] != null
             };
 
             return View("~/Features/Cookies/CookieBanner.cshtml", viewModel);

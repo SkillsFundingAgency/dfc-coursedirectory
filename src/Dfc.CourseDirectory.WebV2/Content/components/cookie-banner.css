@@ -1,0 +1,25 @@
+﻿.pttcd-cookie-banner-container {
+    background-color: #f3f2f1;
+    padding: 20px 0;
+}
+
+.pttcd-cookie-banner {
+    padding: 5px;
+    position: relative;
+}
+
+.pttcd-cookie-banner__button {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+.pttcd-cookie-banner__hide {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.pttcd-cookie-banner__confirmation-message {
+    margin-bottom: 10px;
+}
