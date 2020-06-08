@@ -27,6 +27,8 @@
 
   <ItemGroup>
     <None Remove="Content\components\checkboxes.css" />
+    <None Remove="Content\components\cookie-banner.css" />
+    <None Remove="Content\components\cookie-banner.js" />
     <None Remove="Content\components\inset-text.css" />
     <None Remove="Content\components\link-button.css" />
     <None Remove="Content\components\pager.css" />

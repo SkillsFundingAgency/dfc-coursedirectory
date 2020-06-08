@@ -2,8 +2,8 @@
 
 @if (Model.ShowBanner)
 {
-    <form asp-action="AcceptAllCookies" asp-controller="Cookies" asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()">
-        <div class="govuk-width-container" id="pttcd-cookie-banner">
+    <form asp-action="AcceptAllCookies" asp-controller="Cookies" asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" class="pttcd-cookie-banner-container" data-testid="cookie-banner">
+        <div class="govuk-width-container pttcd-cookie-banner">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <div>
@@ -11,10 +11,10 @@
                         <p class="govuk-body">We use <a class="govuk-link" asp-controller="Cookies" asp-action="Details">cookies to collect information</a> about how you use GOV.UK. We use this information to make the website work as well as possible and improve government services.</p>
                     </div>
                     <div>
-                        <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop">
+                        <div class="pttcd-cookie-banner__button govuk-grid-column-full govuk-grid-column-one-half-from-desktop">
                             <govuk-button type="submit" class="govuk-!-margin-bottom-2">Accept all cookies</govuk-button>
                         </div>
-                        <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop">
+                        <div class="pttcd-cookie-banner__button govuk-grid-column-full govuk-grid-column-one-half-from-desktop">
                             <govuk-button asp-action="Settings" asp-controller="Cookies" class="govuk-!-margin-bottom-2">Set cookie preferences</govuk-button>
                         </div>
                     </div>
@@ -22,4 +22,16 @@
             </div>
         </div>
     </form>
+}
+else if (Model.ShowAcceptedMessage)
+{
+    <div class="pttcd-cookie-banner-container" data-testid="cookie-banner-confirmation">
+        <div class="govuk-width-container pttcd-cookie-banner">
+            <p class="govuk-body pttcd-cookie-banner__confirmation-message">
+                You’ve accepted all cookies. You can <a asp-action="Settings" asp-controller="Cookies" class="govuk-link">change your cookie settings</a> at
+                any time.
+            </p>
+            <button type="button" class="pttcd-cookie-banner__hide pttcd-c-link-button govuk-body" needs-js>Hide</button>
+        </div>
+    </div>
 }
