@@ -241,13 +241,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var zCodeResults = new List<ZCodeSearchResultItemModel>();
 
                 foreach (var item in result.Value.Value)
-                {
-                    if (item.AwardOrgAimRef == "APP H CAT C" || item.AwardOrgAimRef == "APP H CAT D" ||
-                        item.AwardOrgAimRef == "APP H CAT H" || item.AwardOrgAimRef == "APP H CAT N")
-                    {
-                    }
-                    else
-                    {
+                {                 
+                   
                         zCodeResults.Add(new ZCodeSearchResultItemModel()
                         {
                             AwardOrgCode = item.AwardOrgCode,
@@ -258,12 +253,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             NotionalNVQLevelv2 = item.NotionalNVQLevelv2
 
                         });
-                    }
+                   
                 }
-
-
-
-
                 model.Items = zCodeResults.OrderByDescending(x => x.LearnAimRef);
                 model.Url = Request.GetDisplayUrl();
                 model.PageParamName = _larsSearchSettings.PageParamName;

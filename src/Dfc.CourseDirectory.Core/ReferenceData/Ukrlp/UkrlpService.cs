@@ -12,8 +12,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private const string QueryId = "0";
         private const string StakeholderId = "1";
 
-        private static readonly TimeSpan _sendTimeout = TimeSpan.FromMinutes(5);
-        private static readonly TimeSpan _receiveTimeout = TimeSpan.FromMinutes(5);
+        private static readonly TimeSpan _sendTimeout = TimeSpan.FromMinutes(10);
+        private static readonly TimeSpan _receiveTimeout = TimeSpan.FromMinutes(10);
 
         private static readonly string[] _statuses = new[]
         {
