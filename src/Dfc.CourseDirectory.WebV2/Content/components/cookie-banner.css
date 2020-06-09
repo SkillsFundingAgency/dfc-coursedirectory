@@ -14,6 +14,10 @@
     margin: 0;
 }
 
+.pttcd-cookie-banner__button button, .pttcd-cookie-banner__button a {
+    width: 90%;
+}
+
 .pttcd-cookie-banner__hide {
     position: absolute;
     top: 5px;
