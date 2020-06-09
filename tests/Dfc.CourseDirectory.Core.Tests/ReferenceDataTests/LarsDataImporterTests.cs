@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             await importer.ImportData();
 
             // Assert
-            Assert.Equal(1419, Fixture.DatabaseFixture.InMemoryDocumentStore.Frameworks.All.Count);
+            Assert.Equal(466, Fixture.DatabaseFixture.InMemoryDocumentStore.Frameworks.All.Count);
             Assert.Equal(30, Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count);
             Assert.Equal(17, Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count);
             Assert.Equal(67, Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count);

@@ -66,18 +66,20 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertFrameworks()
                 {
                     Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertFrameworksRecord()
-                    {
-                        FrameworkCode = r.FworkCode,
-                        ProgType = r.ProgType,
-                        PathwayCode = r.PwayCode,
-                        PathwayName = r.PathwayName,
-                        NasTitle = r.NASTitle,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo,
-                        SectorSubjectAreaTier1 = r.SectorSubjectAreaTier1,
-                        SectorSubjectAreaTier2 = r.SectorSubjectAreaTier2
-                    })
+                    Records = records
+                        .Select(r => new UpsertFrameworksRecord()
+                        {
+                            FrameworkCode = r.FworkCode,
+                            ProgType = r.ProgType,
+                            PathwayCode = r.PwayCode,
+                            PathwayName = r.PathwayName,
+                            NasTitle = r.NASTitle,
+                            EffectiveFrom = r.EffectiveFrom,
+                            EffectiveTo = r.EffectiveTo,
+                            SectorSubjectAreaTier1 = r.SectorSubjectAreaTier1,
+                            SectorSubjectAreaTier2 = r.SectorSubjectAreaTier2
+                        })
+                        .Where(r => r.EffectiveTo > _clock.UtcNow.Date)
                 });
             }
 
