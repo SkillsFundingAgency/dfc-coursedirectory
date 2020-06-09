@@ -24,7 +24,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Cookies
         public async Task<IActionResult> AcceptAllCookies([LocalUrl] string returnUrl) =>
             await _mediator.SendAndMapResponse(
                 new AcceptAllCookies.Command(),
-                response => Redirect(returnUrl));
+                response =>
+                {
+                    TempData["AcceptedAllCookies"] = true;
+                    return Redirect(returnUrl);
+                });
 
         [HttpGet("settings")]
         public async Task<IActionResult> Settings() => await _mediator.SendAndMapResponse(
