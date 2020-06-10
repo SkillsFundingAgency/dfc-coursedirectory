@@ -11,5 +11,7 @@
         public string Audience { get; set; }
         public string ApiSecret { get; set; }
         public string ApiUri { get; set; }
+        public string ApiBaseUri { get; set; }
+        public string ServiceId { get; set; }
     }
 }
