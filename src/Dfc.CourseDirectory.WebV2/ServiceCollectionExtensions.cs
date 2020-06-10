@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.Filters;
-using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -160,6 +159,7 @@ namespace Dfc.CourseDirectory.WebV2
             // N.B. We can't use a typed client here because the legacy bits override the HttpClient registration :-/
             services.AddHttpClient("DfeSignIn", client =>
             {
+                client.BaseAddress = new Uri(settings.ApiBaseUri);
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {DfeUserInfoHelper.CreateApiToken(settings)}");
             });
             services.TryAddSingleton(settings);
@@ -191,7 +191,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Scope.Add("openid");
                     options.Scope.Add("email");
                     options.Scope.Add("profile");
-                    options.Scope.Add("organisation");
+                    options.Scope.Add("organisationid");
                     options.Scope.Add("offline_access");
 
                     // When we expire the session, ensure user is prompted to sign in again at DfE Sign In

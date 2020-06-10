@@ -43,26 +43,30 @@ namespace Dfc.CourseDirectory.WebV2.Security
 
         public async Task OnUserSignedIn(SignInContext context)
         {
-            var organisation = JObject.Parse(context.OriginalPrincipal.FindFirst("Organisation").Value);
+            var organisation = JObject.Parse(context.OriginalPrincipal.FindFirst("organisation").Value);
             var organisationId = organisation["id"].ToString();
-            var ukprn = organisation["ukprn"].ToObject<int?>();
 
-            var userOrgDetails = await GetUserOrganisationDetails(organisationId, context.UserInfo.UserId);
+            var ukprnTask = GetOrganisationUkprn(organisationId, context.UserInfo.UserId);
+            var userRolesTask = GetUserRoles(organisationId, context.UserInfo.UserId);
 
-            var roleNames = new HashSet<string>(userOrgDetails.Roles.Select(r => r.Name));
-            var normalizedRoles = NormalizeRoles(roleNames, out var isProviderScoped);
+            await Task.WhenAll(ukprnTask, userRolesTask);
+
+            var ukprn = ukprnTask.Result;
+            var userRoles = userRolesTask.Result;
+
+            var normalizedRoles = NormalizeRoles(userRoles, out var isProviderScoped);
 
             if (normalizedRoles.Count == 0)
             {
                 throw new InvalidOperationException(
                     $"No recognised roles found. " +
-                    $"Received: ${(userOrgDetails.Roles.Count > 0 ? string.Join(", ", roleNames) : "<none>")}.");
+                    $"Received: ${(userRoles.Count > 0 ? string.Join(", ", userRoles) : "<none>")}.");
             }
             else if (normalizedRoles.Count > 1)
             {
                 throw new NotSupportedException(
-                        $"Too many roles: " +
-                        $"{string.Join(", ", normalizedRoles)}.");
+                    $"Too many roles: " +
+                    $"{string.Join(", ", normalizedRoles)}.");
             }
 
             var role = normalizedRoles.Single();
@@ -98,16 +102,33 @@ namespace Dfc.CourseDirectory.WebV2.Security
         private Task<Provider> GetProvider(int ukprn) =>
             _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
 
-        private async Task<DFEUserInfo> GetUserOrganisationDetails(string organisationId, string userId)
+        private async Task<int?> GetOrganisationUkprn(string organisationId, string userId)
         {
-            var endpoint = $"{_settings.ApiUri}/organisations/{organisationId}/users/{userId}";
+            var endpoint = $"/users/{userId}/organisations";
 
             var response = await _httpClient.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
             var responseJson = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<DFEUserInfo>(responseJson);
+            return JArray.Parse(responseJson)
+                .Single(org => org.SelectToken("id").ToString() == organisationId)
+                ["ukprn"].ToObject<int?>();
+        }
+
+        private async Task<IReadOnlyCollection<string>> GetUserRoles(string organisationId, string userId)
+        {
+            var endpoint = $"/services/{_settings.ServiceId}/organisations/{organisationId}/users/{userId}";
+
+            var response = await _httpClient.GetAsync(endpoint);
+            response.EnsureSuccessStatusCode();
+
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            return JObject.Parse(responseJson)
+                .SelectToken("roles")
+                .Select(role => role.SelectToken("name").ToString())
+                .ToList();
         }
 
         private IReadOnlyCollection<string> NormalizeRoles(
@@ -143,14 +164,6 @@ namespace Dfc.CourseDirectory.WebV2.Security
             // No valid roles...
             isProviderScoped = default;
             return Array.Empty<string>();
-        }
-
-        private class DFEUserInfo
-        {
-            public Guid ServiceId { get; set; }
-            public Guid OrganisationId { get; set; }
-            public Guid UserId { get; set; }
-            public IReadOnlyCollection<Role> Roles { get; set; }
         }
 
         private class Role
