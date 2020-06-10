@@ -45,12 +45,16 @@ namespace Dfc.CourseDirectory.WebV2.Cookies
 
                 var serializedSettings = SerializeCookieSettings(settings);
 
+                // N.B. SameSite cannot be Strict here otherwise the cookie
+                // will not be sent immediately after sign in
+                // (since the request originated from a different domain)
+
                 rsp.Cookies.Append(CookieName, serializedSettings, new CookieOptions()
                 {
                     Expires = DateTime.Now.Add(_cookieExpiry),
                     HttpOnly = true,
                     Secure = _environment.IsProduction(),
-                    SameSite = SameSiteMode.Strict
+                    SameSite = SameSiteMode.Lax
                 });
 
                 return Task.CompletedTask;
