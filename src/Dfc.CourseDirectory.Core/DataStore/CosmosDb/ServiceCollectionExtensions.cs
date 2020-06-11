@@ -12,7 +12,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb
             Uri endpoint,
             string key)
         {
-            var documentClient = new DocumentClient(endpoint, key);
+            var documentClient = new DocumentClient(
+                endpoint,
+                key,
+                new ConnectionPolicy()
+                {
+                    ConnectionMode = ConnectionMode.Direct,
+                    ConnectionProtocol = Protocol.Tcp
+                });
+
             services.AddSingleton(documentClient);
 
             services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
