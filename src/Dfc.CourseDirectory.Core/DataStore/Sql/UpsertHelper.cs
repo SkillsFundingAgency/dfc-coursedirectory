@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
                 return transaction.Connection.ExecuteAsync(sql.ToString(), transaction: transaction);
 
-                string GetSqlColumnTypeFromClrType(Type type)
+                static string GetSqlColumnTypeFromClrType(Type type)
                 {
                     if (type == typeof(string))
                     {
@@ -87,6 +87,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
                 using (var bulk = new SqlBulkCopy(transaction.Connection, new SqlBulkCopyOptions(), transaction))
                 {
+                    bulk.BulkCopyTimeout = _commandTimeout;
                     bulk.DestinationTableName = tempTableName;
                     await bulk.WriteToServerAsync(table);
                 }
