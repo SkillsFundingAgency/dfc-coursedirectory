@@ -104,6 +104,13 @@ namespace Dfc.CourseDirectory.Testing
         
         private void DeploySqlDb()
         {
+            if ((Environment.GetEnvironmentVariable("CD_SkipTestSqlDeployment") ?? string.Empty)
+                .Equals("true", StringComparison.OrdinalIgnoreCase))
+            {
+                _messageSink.OnMessage(new DiagnosticMessage("Skipping database deployment"));
+                return;
+            }
+
             var helper = new SqlDeployHelper();
             helper.Deploy(
                 ConnectionString,
