@@ -22,8 +22,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string TradingName { get; set; }
         public string Alias { get; set; }
         public IList<ProviderContact> ProviderContact { get; set; } = new List<ProviderContact>();
+        public IList<ProviderAlias> ProviderAliases { get; set; } = new List<ProviderAlias>();
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
+        [JsonExtensionData]
+        public IDictionary<string, JToken> AdditionalData { get; set; }
+    }
+
+    public class ProviderAlias
+    {
+        [JsonProperty("ProviderAlias")]
+        public string Alias { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
