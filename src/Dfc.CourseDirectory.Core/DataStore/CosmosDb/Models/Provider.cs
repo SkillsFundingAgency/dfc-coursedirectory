@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
     public class ProviderContact
     {
         public string ContactType { get; set; }
+        public string ContactRole { get; set; }
         public ProviderContactPersonalDetails ContactPersonalDetails { get; set; }
         public ProviderContactAddress ContactAddress { get; set; }
         public string ContactTelephone1 { get; set; }
@@ -58,6 +59,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string StreetDescription { get; set; }
         public string Locality { get; set; }
         public IList<string> Items { get; set; }
+        public string PostTown { get; set; }
         public string PostCode { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }

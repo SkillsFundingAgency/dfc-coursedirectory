@@ -404,6 +404,7 @@
     <Build Include="Pttcd\Indexes\IX_UserProviders_Provider.sql" />
     <Build Include="Pttcd\Tables\ApprenticeshipQASubmissionApprenticeshipLocations.sql" />
     <Build Include="Pttcd\Tables\ProviderContacts.sql" />
+    <Build Include="Pttcd\Indexes\IX_ProviderContacts_ProviderContactIndex.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Restore\Notes.txt" />

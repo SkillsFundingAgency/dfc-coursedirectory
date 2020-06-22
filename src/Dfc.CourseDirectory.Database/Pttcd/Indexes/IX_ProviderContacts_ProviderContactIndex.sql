@@ -1,0 +1,1 @@
+﻿CREATE UNIQUE INDEX [IX_ProviderContacts_ProviderContactIndex] ON [Pttcd].[ProviderContacts] ([ProviderId], [ProviderContactIndex])
