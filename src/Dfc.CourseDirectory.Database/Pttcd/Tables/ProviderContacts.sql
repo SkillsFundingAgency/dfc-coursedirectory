@@ -2,6 +2,7 @@
 (
 	[ProviderContactId] BIGINT IDENTITY NOT NULL CONSTRAINT PK_ProviderContacts PRIMARY KEY,
 	[ProviderId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT FK_ProviderContacts_Provider FOREIGN KEY REFERENCES [Pttcd].[Providers] (ProviderId),
+	[ProviderContactIndex] INT NOT NULL,
 	[ContactType] CHAR,
 	[ContactRole] NVARCHAR(MAX),
 	[AddressSaonDescription] NVARCHAR(MAX),
