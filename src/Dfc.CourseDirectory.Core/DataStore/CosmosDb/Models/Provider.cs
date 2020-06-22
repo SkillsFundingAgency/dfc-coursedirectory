@@ -31,8 +31,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
     public class ProviderContact
     {
         public string ContactType { get; set; }
-        public ContactPersonalDetails ContactPersonalDetails { get; set; }
-        public ContactAddress ContactAddress { get; set; }
+        public ProviderContactPersonalDetails ContactPersonalDetails { get; set; }
+        public ProviderContactAddress ContactAddress { get; set; }
         public string ContactTelephone1 { get; set; }
         public string ContactFax { get; set; }
         public string ContactWebsiteAddress { get; set; }
@@ -42,10 +42,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
 
-    public class ContactAddress
+    public class ProviderContactAddress
     {
-        public SAON SAON { get; set; }
-        public PAON PAON { get; set; }
+        public ProviderContactAddressSAON SAON { get; set; }
+        public ProviderContactAddressPAON PAON { get; set; }
         public string StreetDescription { get; set; }
         public string Locality { get; set; }
         public IList<string> Items { get; set; }
@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
 
-    public class ContactPersonalDetails
+    public class ProviderContactPersonalDetails
     {
         public IList<string> PersonNameTitle { get; set; }
         public IList<string> PersonGivenName { get; set; }
@@ -63,12 +63,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
 
-    public class SAON
+    public class ProviderContactAddressSAON
     {
         public string Description { get; set; }
     }
 
-    public class PAON
+    public class ProviderContactAddressPAON
     {
         public string Description { get; set; }
     }
