@@ -84,10 +84,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
         {
-            ContactAddress = new ContactAddress()
+            ContactAddress = new ProviderContactAddress()
             {
-                SAON = new SAON() { Description = contact.ContactAddress.SAON.Description },
-                PAON = new PAON() { Description = contact.ContactAddress.PAON.Description },
+                SAON = new ProviderContactAddressSAON() { Description = contact.ContactAddress.SAON.Description },
+                PAON = new ProviderContactAddressPAON() { Description = contact.ContactAddress.PAON.Description },
                 StreetDescription = contact.ContactAddress.StreetDescription,
                 Locality = contact.ContactAddress.Locality,
                 Items = contact.ContactAddress.Items,
@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             },
             ContactEmail = contact.ContactEmail,
             ContactFax = contact.ContactFax,
-            ContactPersonalDetails = new ContactPersonalDetails()
+            ContactPersonalDetails = new ProviderContactPersonalDetails()
             {
                 PersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle,
                 PersonGivenName = contact.ContactPersonalDetails.PersonGivenName,
