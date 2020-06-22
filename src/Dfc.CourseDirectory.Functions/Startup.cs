@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Functions
 #pragma warning restore CS0618 // Type or member is obsolete
             builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
+            builder.Services.AddSingleton<SqlDataSync>();
 
             IConfiguration GetConfiguration()
             {
