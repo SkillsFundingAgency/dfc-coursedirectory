@@ -13,7 +13,8 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
             if (provider != null)
             {
                 provider.ProviderName = request.ProviderName;
-                provider.ProviderContact = request.ProviderContact.ToList();
+                provider.ProviderAliases = request.Aliases.ToList();
+                provider.ProviderContact = request.Contacts.ToList();
                 provider.Alias = request.Alias;
                 provider.ProviderStatus = request.ProviderStatus;
                 provider.DateUpdated = request.DateUpdated;

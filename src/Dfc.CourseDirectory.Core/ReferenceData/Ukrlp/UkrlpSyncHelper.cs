@@ -82,6 +82,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 .OrderByDescending(c => c.LastUpdated)
                 .FirstOrDefault();
 
+        private static ProviderAlias MapAlias(ProviderAliasesStructure alias) => new ProviderAlias()
+        {
+            Alias = alias.ProviderAlias
+        };
+
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
         {
             ContactAddress = new ProviderContactAddress()
@@ -123,9 +128,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     new CreateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
+                        Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
-                        ProviderContact = contact != null ?
+                        Contacts = contact != null ?
                             new List<ProviderContact>() { MapContact(contact) } :
                             new List<ProviderContact>(),
                         ProviderName = providerData.ProviderName,
@@ -144,9 +150,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     new UpdateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
+                        Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = existingProvider.Id,
-                        ProviderContact = contact != null ?
+                        Contacts = contact != null ?
                             new List<ProviderContact>() { MapContact(contact) } :
                             new List<ProviderContact>(),
                         ProviderName = providerData.ProviderName,
