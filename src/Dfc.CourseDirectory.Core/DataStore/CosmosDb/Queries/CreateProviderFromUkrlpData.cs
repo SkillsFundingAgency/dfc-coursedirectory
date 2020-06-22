@@ -17,6 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public ProviderType ProviderType { get; set; }
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
-        public IEnumerable<ProviderContact> ProviderContact { get; set; }
+        public IEnumerable<ProviderAlias> Aliases { get; set; }
+        public IEnumerable<ProviderContact> Contacts { get; set; }
     }
 }
