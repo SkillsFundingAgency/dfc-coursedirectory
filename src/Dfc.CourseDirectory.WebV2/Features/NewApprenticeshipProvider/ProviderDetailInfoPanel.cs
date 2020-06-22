@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 Website = contact?.ContactWebsiteAddress != null ? UrlUtil.EnsureHttpPrefixed(contact.ContactWebsiteAddress) : null
             };
 
-            IReadOnlyCollection<string> FormatAddress(ContactAddress address)
+            IReadOnlyCollection<string> FormatAddress(ProviderContactAddress address)
             {
                 var parts = new List<string>()
                 {

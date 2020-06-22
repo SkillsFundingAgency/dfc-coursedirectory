@@ -37,16 +37,16 @@ namespace Dfc.CourseDirectory.Testing
                 Alias = alias,
                 ProviderContact = contacts?.Select(c => new ProviderContact()
                 {
-                    ContactAddress = new ContactAddress()
+                    ContactAddress = new ProviderContactAddress()
                     {
                         Items = c.AddressItems,
                         Locality = c.AddressLocality,
-                        PAON = new PAON() { Description = c.AddressPaonDescription },
-                        SAON = new SAON() { Description = c.AddressSaonDescription },
+                        PAON = new ProviderContactAddressPAON() { Description = c.AddressPaonDescription },
+                        SAON = new ProviderContactAddressSAON() { Description = c.AddressSaonDescription },
                         PostCode = c.AddressPostCode,
                         StreetDescription = c.AddressStreetDescription
                     },
-                    ContactPersonalDetails = new ContactPersonalDetails()
+                    ContactPersonalDetails = new ProviderContactPersonalDetails()
                     {
                         PersonGivenName = new[] { c.PersonalDetailsGivenName },
                         PersonFamilyName = c.PersonalDetailsFamilyName
