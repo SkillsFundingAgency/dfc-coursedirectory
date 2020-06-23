@@ -19,6 +19,7 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -1088,7 +1089,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails, bool updateApprenticeships)
+        public async Task<List<string>> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails, bool updateApprenticeships)
         {
             Throw.IfNull(stream, nameof(stream));
             Throw.IfNull(userDetails, nameof(userDetails));
@@ -1154,7 +1155,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
                 }
 
-                var archivingApprenticeships = _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
+                var archivingApprenticeships = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
                 if (updateApprenticeships)
                 {
                     var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
@@ -1163,7 +1164,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     if (apprenticeships.Any())
                     {
-                        errors.AddRange(UploadApprenticeships(apprenticeships));
+                        errors.AddRange(await UploadApprenticeships(apprenticeships));
                     }
                     else
                     {
@@ -1212,18 +1213,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
-        private List<string> UploadApprenticeships(List<Apprenticeship> apprenticeships)
+        private async Task<List<string>> UploadApprenticeships(List<Apprenticeship> apprenticeships)
         {
             List<string> errors = new List<string>();
             foreach (var apprenticeship in apprenticeships)
             {
-                var result = _apprenticeshipService.AddApprenticeship(apprenticeship).Result;
+                var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
 
                 if (result.IsFailure)
                 {
                     throw new Exception($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
                 }
             }
+
             return errors;
         }
 
