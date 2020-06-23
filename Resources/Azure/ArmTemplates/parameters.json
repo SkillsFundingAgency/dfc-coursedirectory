@@ -101,7 +101,7 @@
     "keyVaultName": {
       "value": "__SharedKeyVaultName__"
     },
-    "keyVaultResourceGroup":{
+    "keyVaultResourceGroup": {
       "value": "__SharedResourceGroup__"
     },
     "certificateName": {
@@ -133,6 +133,9 @@
     },
     "RedisCacheName": {
       "value": "__providerPortalRedisCacheName__"
+    },
+    "providerPortalCosmosDbConnectionString": {
+      "value": "__providerPortalCosmosDbConnectionString__"
     }
   }
 }
