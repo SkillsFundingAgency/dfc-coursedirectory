@@ -101,7 +101,7 @@
     "keyVaultName": {
       "value": "a-keyvault"
     },
-    "keyVaultResourceGroup":{
+    "keyVaultResourceGroup": {
       "value": "keyvault-rg"
     },
     "certificateName": {
@@ -133,6 +133,9 @@
     },
     "RedisCacheName": {
       "value": "AnAzureCacheInstance"
+    },
+    "providerPortalCosmosDbConnectionString": {
+      "value": "https://not-a-real-account.documents.azure.com/"
     }
   }
 }
