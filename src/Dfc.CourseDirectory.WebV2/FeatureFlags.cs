@@ -3,5 +3,6 @@
     public static class FeatureFlags
     {
         public const string ApprenticeshipQA = "ApprenticeshipQA";
+        public const string BulkUpload = "BulkUpload";
     }
 }

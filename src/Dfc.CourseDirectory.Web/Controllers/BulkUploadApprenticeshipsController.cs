@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
+    [RequireBulkUploadFeatureFilter]
     public class BulkUploadApprenticeshipsController : Controller
     {
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;

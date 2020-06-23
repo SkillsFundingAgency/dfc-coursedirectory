@@ -29,6 +29,7 @@ using System.Globalization;
 namespace Dfc.CourseDirectory.Web.Controllers
 {
 
+    [RequireBulkUploadFeatureFilter]
     public class BulkUploadController : Controller
     {
         private readonly ILogger<BulkUploadController> _logger;
