@@ -167,15 +167,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             ".processed"; // stops the Azure trigger from processing the file
                     }
 
-                    Task task = _blobService.UploadFileAsync(
+                    await _blobService.UploadFileAsync(
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                    task.Wait();
 
                     List<string> errors = new List<string>();
                     try
                     {
                        
-                            errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
+                            errors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
                                 _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN), processInline);
                         
                     }
