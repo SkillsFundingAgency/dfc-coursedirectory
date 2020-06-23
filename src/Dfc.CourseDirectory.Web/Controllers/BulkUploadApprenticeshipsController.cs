@@ -173,8 +173,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 ".processed"; // stops the Azure trigger from processing the file
                         }
 
-                        await _blobService.UploadFileAsync(
-                            $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                        if (!processInline)
+                        {
+                            await _blobService.UploadFileAsync(
+                                $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                        }
 
                         List<string> errors = new List<string>();
                         try
