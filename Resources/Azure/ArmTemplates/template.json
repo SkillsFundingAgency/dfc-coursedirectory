@@ -266,6 +266,9 @@
       "metadata": {
         "description": "The name of the project-wide shared redis cache instance"
       }
+    },
+    "providerPortalCosmosDbConnectionString": {
+      "type": "string"
     }
   },
   "variables": {
@@ -707,6 +710,10 @@
               {
                 "name": "CosmosDbSettings__PrimaryKey",
                 "value": "[parameters('CosmosAccountAccessKey')]"
+              },
+              {
+                "name": "CosmosDbSettings__ConnectionString",
+                "value": "[parameters('providerPortalCosmosDbConnectionString')]"
               }
             ]
           },
