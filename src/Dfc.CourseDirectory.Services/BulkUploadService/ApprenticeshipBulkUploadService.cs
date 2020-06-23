@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -99,12 +100,13 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private readonly IApprenticeshipService _apprenticeshipService;
             private readonly IVenueService _venueService;
             private readonly IAuthUserDetails _authUserDetails;
+            private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
                 IVenueService venueService,
-                IAuthUserDetails userDetails
-               )
+                IAuthUserDetails userDetails,
+                IStandardsAndFrameworksCache standardsAndFrameworksCache)
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
                 Throw.IfNull(venueService, nameof(venueService));
@@ -112,7 +114,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 _apprenticeshipService = apprenticeshipService;
                 _venueService = venueService;
                 _authUserDetails = userDetails;
-
+                _standardsAndFrameworksCache = standardsAndFrameworksCache;
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
                 Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
@@ -160,7 +162,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (standardVersion.HasValue)
                     {
-                        var result = GetStandard(standardCode, standardVersion);
+                        var result = GetStandard(standardCode.Value, standardVersion.Value).GetAwaiter().GetResult();
                         if (result == null)
                         {
                             throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Standard Code or Version Number. Standard not found.");
@@ -213,7 +215,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     {
                         if (pathwayCode.HasValue)
                         {
-                            var result = GetFramework(frameworkCode, progType, pathwayCode);
+                            var result = GetFramework(frameworkCode.Value, progType.Value, pathwayCode.Value).GetAwaiter().GetResult();
                             if (result == null)
                             {
                                 throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Framework Code, Prog Type, or Pathway Code. Framework not found.");
@@ -927,37 +929,50 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
             }
 
-            private IStandardsAndFrameworks GetStandard(int? standardCode, int? version)
+            private async Task<IStandardsAndFrameworks> GetStandard(int standardCode, int version)
             {
-                var result = _apprenticeshipService.GetStandardByCode(new StandardSearchCriteria
-                { StandardCode = standardCode, Version = version }).Result;
+                var standard = await _standardsAndFrameworksCache.GetStandard(standardCode, version);
 
-                if (result.IsSuccess && result.HasValue && result.Value.Any())
+                if (standard != null)
                 {
-                    var standard = result.Value.FirstOrDefault();
-                    if (standard != null &&
-                        (standard.StandardCode == standardCode && standard.Version == version))
-                        return standard;
+                    return new StandardsAndFrameworks()
+                    {
+                        id = standard.CosmosId,
+                        StandardCode = standard.StandardCode,
+                        Version = standard.Version,
+                        StandardName = standard.StandardName,
+                        NotionalEndLevel = standard.NotionalNVQLevelv2,
+                        OtherBodyApprovalRequired = standard.OtherBodyApprovalRequired ? "Y" : "N"
+                    };
                 }
-
-                return null;
+                else
+                {
+                    return null;
+                }
             }
 
-            private IStandardsAndFrameworks GetFramework(int? frameworkCode, int? progType, int? pathwayCode)
+            private async Task<IStandardsAndFrameworks> GetFramework(int frameworkCode, int progType, int pathwayCode)
             {
-                var result = _apprenticeshipService.GetFrameworkByCode(new FrameworkSearchCriteria
-                { FrameworkCode = frameworkCode, ProgType = progType, PathwayCode = pathwayCode }).Result;
-                if (result.IsSuccess && result.HasValue && result.Value.Any())
+                var framework = await _standardsAndFrameworksCache.GetFramework(
+                        frameworkCode,
+                        progType,
+                        pathwayCode);
+
+                if (framework != null)
                 {
-                    var framework = result.Value.FirstOrDefault();
-                    if (framework != null && (framework.FrameworkCode == frameworkCode
-                                              && framework.ProgType == progType
-                                              && framework.PathwayCode == pathwayCode))
+                    return new StandardsAndFrameworks()
                     {
-                        return framework;
-                    }
+                        id = framework.CosmosId,
+                        FrameworkCode = framework.FrameworkCode,
+                        ProgType = framework.ProgType,
+                        PathwayCode = framework.PathwayCode,
+                        NasTitle = framework.NasTitle
+                    };
                 }
-                return null;
+                else
+                {
+                    return null;
+                }
             }
 
             private IEnumerable<string> ParseRegionData(string regions)
@@ -1043,18 +1058,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
+        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
 
         public ApprenticeshipBulkUploadService(
             ILogger<ApprenticeshipBulkUploadService> logger,
             IApprenticeshipService apprenticeshipService,
-            IVenueService venueService
-            )
+            IVenueService venueService,
+            IStandardsAndFrameworksCache standardsAndFrameworksCache)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
             _venueService = venueService;
+            _standardsAndFrameworksCache = standardsAndFrameworksCache;
         }
 
         public int CountCsvLines(Stream stream)
@@ -1090,7 +1107,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
+                        var classMap = new ApprenticeshipCsvRecordMap(
+                            _apprenticeshipService,
+                            _venueService,
+                            userDetails,
+                            _standardsAndFrameworksCache);
 
                         csv.Configuration.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
