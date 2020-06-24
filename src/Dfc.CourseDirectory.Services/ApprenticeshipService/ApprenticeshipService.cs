@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports, _getTotalLiveCoursesUri;
 
@@ -44,6 +44,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
+            _addApprenticeshipsUri = settings.Value.AddApprenticeshipsUri();
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
             _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
@@ -115,6 +116,59 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
+
+                _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Apprenticeship add service json response", json);
+
+
+                    return Result.Ok();
+                }
+                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    return Result.Fail("Apprenticeship add service unsuccessful http response - TooManyRequests");
+                }
+                else
+                {
+                    return Result.Fail("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Apprenticeship add service http request error", hre);
+                return Result.Fail<IApprenticeship>("Apprenticeship add service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Apprenticeship add service unknown error.", e);
+
+                return Result.Fail<IApprenticeship>("Apprenticeship add service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
+
+        public async Task<IResult> AddApprenticeships(IEnumerable<IApprenticeship> apprenticeships)
+        {
+            _logger.LogMethodEnter();
+            Throw.IfNull(apprenticeships, nameof(apprenticeships));
+
+            try
+            {
+                _logger.LogInformationObject("Apprenticeship add object.", apprenticeships);
+                _logger.LogInformationObject("Apprenticeship  add URI", _addApprenticeshipUri);
+
+                var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeships);
+
+                var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(_addApprenticeshipsUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
 
@@ -538,6 +592,14 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/AddApprenticeship");
         }
+
+        internal static Uri AddApprenticeshipsUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/AddApprenticeships");
+        }
+
         internal static Uri DeleteBulkUploadApprenticeshipsUri(this IApprenticeshipServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);
