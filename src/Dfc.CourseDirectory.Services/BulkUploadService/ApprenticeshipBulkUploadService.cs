@@ -1155,7 +1155,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
                 }
 
-                var archivingApprenticeships = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
+                var archiveResult = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(
+                    int.Parse(userDetails.UKPRN),
+                    (int)(RecordStatus.BulkUploadPending | RecordStatus.BulkUploadReadyToGoLive),
+                    (int)RecordStatus.Archived);
+                if (archiveResult.IsFailure)
+                {
+                    throw new Exception(archiveResult.Error);
+                }
+
                 if (updateApprenticeships)
                 {
                     var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
