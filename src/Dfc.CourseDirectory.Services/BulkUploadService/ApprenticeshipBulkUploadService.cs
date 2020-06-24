@@ -1215,18 +1215,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         private async Task<List<string>> UploadApprenticeships(List<Apprenticeship> apprenticeships)
         {
-            List<string> errors = new List<string>();
-            foreach (var apprenticeship in apprenticeships)
-            {
-                var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
+            var result = await _apprenticeshipService.AddApprenticeships(apprenticeships);
 
-                if (result.IsFailure)
-                {
-                    throw new Exception($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
-                }
+            if (result.IsFailure)
+            {
+                throw new Exception(result.Error);
             }
 
-            return errors;
+            return new List<string>();
         }
 
         private static string Base64Encode(IReaderRow row)
