@@ -227,12 +227,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> EditVenue(string Id)
         {
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
-
             GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(Id);
 
             var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
             if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
             {
+                var onspd = _onspdSearchHelper.GetOnsPostcodeData(getVenueByIdResult.Value.PostCode);
                 viewModel.Id = Id;
                 viewModel.VenueName = getVenueByIdResult.Value.VenueName;
                 viewModel.Address = new AddressModel
@@ -242,7 +242,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     AddressLine2 = getVenueByIdResult.Value.Address2,
                     TownOrCity = getVenueByIdResult.Value.Town,
                     County = getVenueByIdResult.Value.County,
-                    Postcode = getVenueByIdResult.Value.PostCode
+                    Postcode = getVenueByIdResult.Value.PostCode,
+                    Country = onspd?.Country
                 };
             }
             else
