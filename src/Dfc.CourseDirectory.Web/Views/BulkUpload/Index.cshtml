@@ -29,7 +29,7 @@
 }
 
 
-<h1 class="govuk-heading-l">Bulk upload course information</h1>
+<h1 class="govuk-heading-xl">Bulk upload course information</h1>
 
 @{
     var styleAttribute = (string.IsNullOrEmpty(Model.NotificationTitle) && Model.errors == null)
@@ -76,73 +76,46 @@
       asp-action="Index">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-body">
-                <p>
-                    You can use a file to replace information about all of your published courses. To create the file you can:
-                    <ul>
-                        <li>enter your course information in a blank file</li>
-                        <li>update a template containing your current course information</li>
-                    </ul>
-                </p>
-                <p>
-                    Your updated course information will be published after you have uploaded your file and fixed any errors.
-                </p>
+            <p class="govuk-!-margin-top-0">
+                If you have fewer than 25 courses to update, we recommend you <a asp-controller="Qualifications" asp-action="LandingOptions" class="govuk-link">add, edit or delete</a> each course individually.
+            </p>
 
-                <div id="groupServerSideError" class="govuk-form-group">
-                    <label class="govuk-heading-s" for="bulkUploadFile">
-                        Upload a file
-                    </label>
-                    <span id="serverSideError" class="govuk-error-message" style="display: none">There is an error with the file. See above summary</span>
-                    <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
-                           val-required-message="Select a file to upload"
-                           val-file-extensions="csv"
-                           val-file-extensions-message="The selected file must be a csv"
-                           val-file-size-max="209715200"
-                           val-file-size-max-message="The selected file must be smaller than 200MB" />
-                </div>
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        You'll replace all information about your courses if you continue.
-                    </strong>
-                </div>
+            <h3 class="govuk-heading-m">Creating your bulk upload file</h3>
 
+            <p>
+                You can use a file to replace information about all of your published courses. To create the file you can:
 
-                <div class="cta-container">
-                    <button type="submit" id="uploadButton" class="govuk-button govuk-!-margin-right-3">
-                        Continue
-                    </button>
-                    <a class="govuk-link " asp-controller="Home" asp-action="Index">Cancel</a>
-                </div>
-            </div>
-        </div>
-        <div class="govuk-grid-column-one-third">
-            <div class="sidebar">
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>download a <a asp-action="GetBulkUploadTemplateFile" asp-controller="BlobStorage" class="govuk-link">blank template</a> and add your course information</li>
+                    <li>download and edit a file containing your <a asp-action="GetCurrentCoursesTemplateFile" asp-controller="BlobStorage" class="govuk-link">published course information</a></li>
+                </ul>
+            </p>
 
-                <div class="widget white blue">
-                    <h2 class="govuk-heading-m">Find templates</h2>
+            <h3 class="govuk-heading-m">If you have fewer than 800 rows in your bulk upload file</h3>
 
-                    <ul class="govuk-list">
-                        <li>
-                            @Html.ActionLink("Download an empty file (CSV)", "GetBulkUploadTemplateFile", "BlobStorage")
-                        </li>
-                        <li class="govuk-!-padding-bottom-4">
-                            @if (Model.HasMigrationErrors)
-                            {
-                                <p>Fix all migration errors in order to download a template containing your current courses</p>
-                            }
-                            else
-                            {
-                                @Html.ActionLink("Download a file containing your published courses (CSV)", "GetCurrentCoursesTemplateFile", "BlobStorage")
-                            }
-
-                        </li>
-                    </ul>
-
-                </div>
+            <div id="groupServerSideError" class="govuk-form-group">
+                <label class="govuk-label" for="bulkUploadFile">
+                    Upload a file
+                </label>
+                <span id="serverSideError" class="govuk-error-message" style="display: none">There is an error with the file. See above summary</span>
+                <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
+                       val-required-message="Select a file to upload"
+                       val-file-extensions="csv"
+                       val-file-extensions-message="The selected file must be a csv"
+                       val-file-size-max="209715200"
+                       val-file-size-max-message="The selected file must be smaller than 200MB" />
             </div>
 
+            <div class="cta-container">
+                <govuk-button type="submit" class="govuk-!-margin-right-3" id="uploadButton">Upload</govuk-button>
+                <a asp-action="Index" asp-controller="Home" class="govuk-link">Cancel</a>
+            </div>
+
+            <h3 class="govuk-heading-m">If you have more than 800 rows in your bulk upload file</h3>
+
+            <p class="govuk-!-margin-top-0">To update your course information email 
+                <a href="mailto:support@coursedirectory.org.uk" class="govuk-link">support@coursedirectory.org.uk</a> attaching your bulk upload file.  The support desk will upload your file to Publish to the course directory.
+            </p>
         </div>
     </div>
 </form>
