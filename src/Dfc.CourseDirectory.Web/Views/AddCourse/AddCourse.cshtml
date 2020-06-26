@@ -11,117 +11,126 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Microsoft.AspNetCore.Http
 @{
-    ViewData["Title"] = "Complete qualification details"; 
+    ViewData["Title"] = "Complete qualification details";
     Layout = "_Layout_Your_Courses";
 }
 @inject IHttpContextAccessor HttpContextAccessor
 
 @model AddCourseViewModel
 
-<form asp-controller="AddCourse" asp-action="AddCourse" method="post" id="addCourseSection1">
+<pttcd-back-link class="govuk-!-margin-bottom-7"/>
 
-    @Html.HiddenFor(x => x.AwardOrgCode)
-    @Html.HiddenFor(x => x.LearnAimRef)
-    @Html.HiddenFor(x => x.LearnAimRefTitle)
-    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    @Html.HiddenFor(x => x.courseMode)
-    @Html.HiddenFor(x => x.CourseId)
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-controller="AddCourse" asp-action="AddCourse" method="post" id="addCourseSection1">
+
+            @Html.HiddenFor(x => x.AwardOrgCode)
+            @Html.HiddenFor(x => x.LearnAimRef)
+            @Html.HiddenFor(x => x.LearnAimRefTitle)
+            @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+            @Html.HiddenFor(x => x.courseMode)
+            @Html.HiddenFor(x => x.CourseId)
 
 
 
-    @*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
-    {
-        NotificationTitle = "Qualification details",
-        NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-        ClassType = "info-summary"
-    })*@
-    <h1 class="govuk-heading-l">
-        Add a course
-    </h1>
-    <p class="govuk-body-l">
-        Use these sections to provide information to learners about this course.
-    </p>
-    <p class="govuk-body govuk-!-margin-bottom-8">
-        We provide some suggested information for some courses but you can change it or write your own if it's not right for your course.
-    </p>
-    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is an issue with this qualification
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list"></ul>
-        </div>
-    </div>
-
-    @*<h2 class="govuk-heading-m">Course description</h2>*@
-    <div id="sectionCourseFor">
-        @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
-    </div>
-    <div id="sectionEntryRequirements">
-        @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
-    </div>
-    <div id="sectionWhatWillLearn">
-        @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
-    </div>
-    <div id="sectionHowYouWillLearn">
-        @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
-    </div>
-    <div id="sectionWhatYouNeed">
-        @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
-    </div>
-    <div id="sectionHowAssessed">
-        @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
-    </div>
-    <div id="sectionWhereNext">
-        @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
-    </div>
-    @*<div id="sectionFundingOptions">
-            @await Component.InvokeAsync(nameof(FundingOptions), Model.FundingOptions)
-        </div>*@
-
-    @{
-        var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
-        var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>("SummaryLoadedAtLeastOnce");
-        switch (lastAddCoursePage)
-        {
-            case AddCoursePage.None:
-                <div class="govuk-form-group">
-                    <button type="submit" class="govuk-button" id="goToSection2">
-                        Next
-                    </button>
+            @*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = "Qualification details",
+                NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+                ClassType = "info-summary"
+            })*@
+            <h1 class="govuk-heading-xl">
+                Course description
+            </h1>
+            <p class="govuk-body">
+                The course information you provide will be available on the National Careers Service,
+                <a href="https://nationalcareers.service.gov.uk/find-a-course/search" target="_blank">Find a course</a>,
+                available to learners searching for learning and training opportunities.
+            </p>
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                This is your opportunity to tell learners about your course, the content and style of the course information you
+                provide should be aimed at the learner.
+            </p>
+            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is an issue with this qualification
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list"></ul>
                 </div>
-                break;
-            case AddCoursePage.AddCourseRun:
-                if (summaryPageLoadedAtLeastOnce)
-                {
-                    <div class="govuk-form-group">
-                        <button type="submit" class="govuk-button" id="goToSummary">
-                            Summary
-                        </button>
+            </div>
 
-                        <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
-                    </div>
-                }
-                else
+            @*<h2 class="govuk-heading-m">Course description</h2>*@
+            <div id="sectionCourseFor">
+                @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
+            </div>
+            <div id="sectionEntryRequirements">
+                @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
+            </div>
+            <div id="sectionWhatWillLearn">
+                @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+            </div>
+            <div id="sectionHowYouWillLearn">
+                @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
+            </div>
+            <div id="sectionWhatYouNeed">
+                @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
+            </div>
+            <div id="sectionHowAssessed">
+                @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
+            </div>
+            <div id="sectionWhereNext">
+                @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
+            </div>
+            @*<div id="sectionFundingOptions">
+                    @await Component.InvokeAsync(nameof(FundingOptions), Model.FundingOptions)
+                </div>*@
+
+            @{
+                var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
+                var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>("SummaryLoadedAtLeastOnce");
+                switch (lastAddCoursePage)
                 {
-                    <div class="govuk-form-group">
-                        <button type="submit" class="govuk-button" id="goToSection2">
-                            Next
-                        </button>
-                    </div>
+                    case AddCoursePage.None:
+                        <div class="govuk-form-group">
+                            <button type="submit" class="govuk-button" id="goToSection2">
+                                Continue
+                            </button>
+                        </div>
+                        break;
+                    case AddCoursePage.AddCourseRun:
+                        if (summaryPageLoadedAtLeastOnce)
+                        {
+                            <div class="govuk-form-group">
+                                <button type="submit" class="govuk-button" id="goToSummary">
+                                    Summary
+                                </button>
+
+                                <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="govuk-form-group">
+                                <button type="submit" class="govuk-button" id="goToSection2">
+                                    Next
+                                </button>
+                            </div>
+                        }
+                        break;
+                    case AddCoursePage.Summary:
+                        <div class="govuk-form-group">
+                            <button type="submit" class="govuk-button" id="goToSummary">
+                                Summary
+                            </button>
+                            <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
+                        </div>
+                        break;
                 }
-                break;
-            case AddCoursePage.Summary:
-                <div class="govuk-form-group">
-                    <button type="submit" class="govuk-button" id="goToSummary">
-                        Summary
-                    </button>
-                    <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
-                </div>
-                break;
-        }
-    }
-</form>
+            }
+        </form>
+    </div>
+</div>
 
 <script>
     (function ($) {
