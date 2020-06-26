@@ -19,7 +19,7 @@
             </span>
         }
 
-        <input class="govuk-input" asp-for="@Model.CourseName" type="text" autofocus aria-label="@Model.CourseName" value="@WebUtility.HtmlDecode(@Model.CourseName)"
+        <input class="govuk-input" asp-for="@Model.CourseName" type="text"  aria-label="@Model.CourseName" value="@WebUtility.HtmlDecode(@Model.CourseName)"
                val-required-message="Enter course name"
                val-max-length="255"
                val-max-length-message="The maximum length of Course Name is 255 characters"
