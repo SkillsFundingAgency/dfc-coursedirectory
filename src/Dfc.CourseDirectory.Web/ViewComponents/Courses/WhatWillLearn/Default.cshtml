@@ -27,7 +27,7 @@
                 @Model.HintText
             </span>
         }
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhatWillLearn" rows="5"
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhatWillLearn" rows="7"
                     aria-describedby="@Model.AriaDescribedBy" aria-label="WhatYouWillLearn"
                   val-max-length=@whatWillLearnTextFieldMaxChars val-max-length-message="What you will learn must be @whatWillLearnTextFieldMaxChars characters or less"
                   val-regex="@regex"
@@ -43,7 +43,7 @@
             var $elementWhatWillLearn = $("#@nameof(Model.WhatWillLearn)");
 
             $elementWhatWillLearn.on("blur", function () {
-                
+
                 var trimmed = $elementWhatWillLearn.val().trim();
 
                 $elementWhatWillLearn.val(trimmed);
