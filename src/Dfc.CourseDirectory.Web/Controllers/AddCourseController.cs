@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
-        
+
         private ISession Session => _contextAccessor.HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
@@ -114,9 +114,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 CourseFor = new CourseForModel
                 {
-                    LabelText = "Who is the course for?",
+                    LabelText = "Who this course is for",
                     HintText =
-                        "Provide useful information that helps learners decide whether this course is suitable. For example, is this for learners new to the subject or for those with some experience? ",
+                        "Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.",
                     AriaDescribedBy = "Please enter who this course is for.",
                     CourseFor = course?.CourseDescription ?? defaultCourseText?.CourseDescription
                 },
@@ -125,45 +125,45 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     LabelText = "Entry requirements",
                     HintText =
-                        "Provide information about specific requirements like skills, qualifications and licenses.",
+                        "Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.",
                     AriaDescribedBy = "Please list entry requirements.",
                     EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
-                    LabelText = "What learners will learn",
-                    HintText = "For example, the main topics covered in the course.",
+                    LabelText = "What you’ll learn",
+                    HintText = "The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.",
                     AriaDescribedBy = "Please enter what will be learned",
                     WhatWillLearn = course?.WhatYoullLearn ?? defaultCourseText?.WhatYoullLearn
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
-                    LabelText = "How learners will learn",
-                    HintText = "For example, classroom-based exercises, on the job, in a simulated work environment, online, or a mixture.",
+                    LabelText = "How you’ll learn",
+                    HintText = "The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.",
                     AriaDescribedBy = "Please enter how you’ll learn",
                     HowYouWillLearn = course?.HowYoullLearn ?? defaultCourseText?.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
-                    LabelText = "What learners will need",
+                    LabelText = "What you’ll need to bring",
                     HintText =
-                        "List anything learners will need to provide or pay for themselves like a uniform, personal protective clothing, tools, trips away or devices.",
+                        "What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.",
                     AriaDescribedBy = "Please enter what you need",
                     WhatYouNeed = course?.WhatYoullNeed ?? defaultCourseText?.WhatYoullNeed
                 },
                 HowAssessed = new HowAssessedModel()
                 {
-                    LabelText = "How learners will be assessed",
+                    LabelText = "How you'll be assessed",
                     HintText =
-                        "For example, assessments at the learner's workplace, written assignments, group or individual project work, or exams.",
+                        "The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.",
                     AriaDescribedBy = "Please enter 'How you’ll be assessed'",
                     HowAssessed = course?.HowYoullBeAssessed ?? defaultCourseText?.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next for learners?",
+                    LabelText = "What you can do next",
                     HintText =
-                        "Describe the opportunities beyond this course. For example, a higher level course, apprenticeship or direct entry to employment.",
+                        "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
                     AriaDescribedBy = "Please enter 'Where next?'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 },
@@ -233,7 +233,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ChooseRegion = new ChooseRegionModel {
                     Regions = _courseService.GetRegions(),
                     National = null
-                    
+
                 }
             };
 
@@ -399,7 +399,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             summaryViewModel.FundingOptions = fundingOptions;
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
-         
+
 
             return Json(Url.Action("AddVenue", "Venues"));
 
@@ -531,7 +531,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // load session2
             var addCourseRun = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
-            
+
             // cream scvm
             var summaryViewModel = new AddCourseSummaryViewModel()
             {
@@ -546,8 +546,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhatYouWillNeedToBring = model.WhatYouNeed,
                 HowAssessed = model.HowAssessed,
                 HowYouWillLearn = model.HowYouWillLearn,
-                
-                // page 2 
+
+                // page 2
                 CourseName = addCourseRun.CourseName,
                 CourseId = addCourseRun.CourseProviderReference,
                 DeliveryMode = addCourseRun.DeliveryMode.ToDescription(),
@@ -564,7 +564,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     : addCourseRun.Day + "/" + addCourseRun.Month + "/" + addCourseRun.Year
 
             };
-            
+
             // venues and regions
             var availableVenues = Session.GetObject<SelectVenueModel>(SessionVenues);
             var availableRegions = Session.GetObject<SelectRegionModel>(SessionRegions);
@@ -603,7 +603,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // funding options
             var fundingOptions = new List<string>();
-            
+
             if (model.AdultEducationBudget)
             {
                 fundingOptions.Add("Adult education budget");
@@ -798,7 +798,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     //courseRun.Regions = availableRegions.RegionItems.Select(x => (string)x.Id).ToList();
 
                 }
-                
+
                 courseRuns.Add(courseRun);
 
             }
@@ -1139,7 +1139,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return viewModel;
         }
-        #endregion  
+        #endregion
 
     }
 }

@@ -24,7 +24,7 @@
                 @Model.HintText
             </span>
         }
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowYouWillLearn" rows="5"
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowYouWillLearn" rows="7"
                  aria-describedby="@Model.AriaDescribedBy" aria-label="HowYouWillLearn"
                       val-max-length=@howYouWillLearnTextFieldMaxChars val-max-length-message="How you’ll learn must be @howYouWillLearnTextFieldMaxChars characters or less"
                       val-regex="@regex"
