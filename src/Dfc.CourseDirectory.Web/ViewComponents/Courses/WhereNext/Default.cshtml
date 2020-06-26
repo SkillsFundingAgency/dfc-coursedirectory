@@ -28,7 +28,7 @@
                 @Model.HintText
             </span>
         }
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhereNext" rows="5"
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhereNext" rows="7"
                   aria-describedby="@Model.AriaDescribedBy" aria-label="WhereNext"
                           val-max-length=@whereNextTextFieldMaxChars val-max-length-message="'Where next' must be @whereNextTextFieldMaxChars characters or less"
                           val-regex="@regex"

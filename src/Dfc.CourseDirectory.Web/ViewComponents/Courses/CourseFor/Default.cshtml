@@ -10,7 +10,7 @@
    //Allowing everything got test to open up the input fields.
     @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
     var regex = RegexPattern.AllowEverything;
-    
+
     var courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
 }
 
@@ -31,7 +31,7 @@
 
 
 
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CourseFor" rows="5" aria-label="Course-For"
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CourseFor" rows="7" aria-label="Course-For"
                   aria-describedby="@Model.AriaDescribedBy"
                   val-required-message="Enter who is this course for"
                   val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for? must be @courseForTextFieldMaxChars characters or less"
