@@ -15,11 +15,12 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
+@using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Http
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
 @{
-    ViewData["Title"] = "Copy course"; 
+    ViewData["Title"] = "Copy course";
     Layout = "_Layout_Your_Courses";
 }
 @inject IHttpContextAccessor HttpContextAccessor
@@ -100,7 +101,7 @@
    {
        CourseName = Model.CourseName,
        LabelText = "Course name",
-       HintText = "This is the name people will see when they search for your course.",
+       HintText = new HtmlString("This is the name people will see when they search for your course."),
        AriaDescribedBy = "Please enter the course name."
    })
     </div>
@@ -308,7 +309,7 @@
             var $radioStartDate = $("#StartDateOptions").govUkRadios();
 
 
-          
+
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
@@ -354,7 +355,7 @@
             switch ($radioStartDate.find("input[type='radio']:checked").val()) {
             case "SpecifiedStartDate":
             {
-               
+
                 break;
             }
             case "FlexibleStartDate":
@@ -365,7 +366,7 @@
                 $("#Year").val("");
                 break;
             }
-           
+
             }
 
             validate();
@@ -512,7 +513,7 @@
                     validStates.push(false);
 
                 } else if ($duration.find("input").val().indexOf(".") >= 0) {
-                    
+
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-decimal-message"));
                     validStates.push(false);
                 }

@@ -20,6 +20,7 @@
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Models.Models.Venues
+@using Microsoft.AspNetCore.Html
 @{
     ViewData["Title"] = "Add course details";
     Layout = "_Layout_Your_Courses";
@@ -107,7 +108,9 @@
             {
                 CourseName = Model.CourseName,
                 LabelText = "Course name",
-                HintText = "Enter the name of the course you want people to see in the course directory (you can use or overwrite the default name we have created).",
+                HintText = new HtmlString(@"The course name displayed on the National Career Service,
+                                            <a href='https://nationalcareers.service.gov.uk/find-a-course/search'
+                                               target='_blank'>Find a course</a>."),
                 AriaDescribedBy = "Please enter the course name."
             })
         </div>
