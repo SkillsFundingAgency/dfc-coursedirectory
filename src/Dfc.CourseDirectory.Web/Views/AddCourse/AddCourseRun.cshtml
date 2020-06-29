@@ -120,7 +120,7 @@
             {
                 CourseProviderReference = Model.CourseProviderReference,
                 LabelText = "Your reference",
-                HintText = "Enter a reference that will help you identify this course in your internal systems.",
+                HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
                 AriaDescribedBy = "Please enter the ID for this course"
             })
         </div>
@@ -129,7 +129,7 @@
             @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
             {
                 DeliveryMode = Model.DeliveryMode,
-                LabelText = "Delivery mode",
+                LabelText = "Course type",
                 HintText = "Select one option.",
                 SecondHintText = "Select how you will deliver this course",
                 AriaDescribedBy = "Select how you will deliver this course"
@@ -198,7 +198,7 @@
                 </fieldset>
             </div>
             <span class="">
-                <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
+                <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">Add another location</a>
             </span>
         </div>
 
@@ -218,8 +218,8 @@
             @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
             {
                 Url = Model.Url,
-                LabelText = "External URL",
-                HintText = "Enter the URL for this course on your website. For example, http://www.provider.com/course.",
+                LabelText = "Course webpage",
+                HintText = "The webpage for this course. For example, http://www.provider.com/coursename.",
                 AriaDescribedBy = "Enter the URL for this course"
             })
         </div>
@@ -230,10 +230,10 @@
                 Cost = Model.Cost,
                 CostDescription = Model.CostDescription,
                 CostLabelText = "Cost",
-                CostHintText = "Enter the cost of the course to the learner.",
+                CostHintText = "The cost of the course to the learner.",
                 CostAriaDescribedBy = "Enter the cost in pounds and pence",
                 CostDescriptionLabelText = "Cost description",
-                CostDescriptionHintText = "Enter details related to the cost of this course.",
+                CostDescriptionHintText = "A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.",
                 CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
             })
         </div>
@@ -287,7 +287,7 @@
                     else
                     {
                         <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                            Review your changes
+                            Continue
                         </button>
                                 @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                     }
