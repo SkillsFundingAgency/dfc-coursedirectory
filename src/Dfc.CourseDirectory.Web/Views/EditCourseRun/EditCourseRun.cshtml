@@ -15,12 +15,13 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Http
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
 
 @{
-    ViewData["Title"] = "Edit course details"; 
+    ViewData["Title"] = "Edit course details";
     Layout = "_Layout_Your_Courses";
 }
 
@@ -106,7 +107,7 @@
    {
        CourseName = Model.CourseName,
        LabelText = "Course name",
-       HintText = "This is the name people will see when they search for your course.",
+       HintText = new HtmlString("This is the name people will see when they search for your course."),
        AriaDescribedBy = "Please enter the course name."
    })
     </div>
@@ -323,7 +324,7 @@
             var isOnline = false;
             var isWorkBased = false;
 
-           
+
 
             var $specifiedStartDate = $("#SpecifiedStartDate");
             var $flexibleStartDate = $("#FlexibleStartDate");
@@ -349,7 +350,7 @@
                         $attendancePatternRadioButtons.hide();
                         $regionSection.hide();
 
-                        
+
                         $("#govuk-label-start_date").hide();
 
                         break;
@@ -361,7 +362,7 @@
                         isClassroomBased = false;
                         isOnline = false;
                         isWorkBased = true;
-                        
+
                         $regionSection.show();
 
                         if ($flexibleStartDate.prop('checked')) {
@@ -398,7 +399,7 @@
                 //$("#Year").val("");
                 break;
             }
-           
+
             }
 
             if ($national.find("input[type='radio']:checked").val()==="True") {
@@ -688,8 +689,8 @@
 
 
 
-               
-               
+
+
 
                 // attendance
                 $attendance.govUkRadios("validState");
@@ -842,7 +843,7 @@
                             $attendancePattern.prop("checked", true);
                             $studyMode.prop("checked", true);
                             $regionSection.hide();
-                            
+
                             $("#govuk-label-start_date").show();
 
                             break;
@@ -866,7 +867,7 @@
                             break;
                         }
                     case "WorkBased":
-                        { 
+                        {
                             $flexibleStartDate.prop("checked", true);
                             $specifiedStartDate.prop("checked", false);
                             $venueChoice.hide();
@@ -879,7 +880,7 @@
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
 
-                            
+
                             $("#govuk-label-start_date").hide();
 
                             break;

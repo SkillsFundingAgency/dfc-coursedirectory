@@ -36,12 +36,13 @@
 
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    <div class=" cd-fullwidth-container  ">
-        <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
+<div class=" cd-fullwidth-container">
+    @RenderSection("BackLink", required: false)
+    <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
 
-            @RenderBody()
-        </main>
-    </div>
+        @RenderBody()
+    </main>
+</div>
 
 
 
