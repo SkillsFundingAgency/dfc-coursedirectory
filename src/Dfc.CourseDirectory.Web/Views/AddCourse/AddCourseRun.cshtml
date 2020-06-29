@@ -82,228 +82,232 @@
     ClassType = "info-summary"
 })*@
 
-<h1 class="govuk-heading-xl">
-    Course details
-</h1>
-<p class="govuk-body-l">Use these sections to provide details about this course.</p>
-<form asp-controller="AddCourse" asp-action="AddCourseRun" id="addCourseSection2">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
+                                        Course details
+                                        </h1>
+        <p class="govuk-body-l">Use these sections to provide details about this course.</p>
+        <form asp-controller="AddCourse" asp-action="AddCourseRun" id="addCourseSection2">
 
-    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is an issue with this qualification
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list"></ul>
+        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is an issue with this qualification
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list"></ul>
+            </div>
         </div>
-    </div>
 
-    @Html.HiddenFor(x => x.CourseMode)
-    @Html.HiddenFor(x => x.CourseId)
-    @Html.HiddenFor(x => x.CourseRunId)
-    <div id="sectionCourseName">
-        @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-    {
-        CourseName = Model.CourseName,
-        LabelText = "Course name",
-        HintText = "Enter the name of the course you want people to see in the course directory (you can use or overwrite the default name we have created).",
-        AriaDescribedBy = "Please enter the course name."
-    })
-    </div>
+        @Html.HiddenFor(x => x.CourseMode)
+        @Html.HiddenFor(x => x.CourseId)
+        @Html.HiddenFor(x => x.CourseRunId)
+        <div id="sectionCourseName">
+            @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+            {
+                CourseName = Model.CourseName,
+                LabelText = "Course name",
+                HintText = "Enter the name of the course you want people to see in the course directory (you can use or overwrite the default name we have created).",
+                AriaDescribedBy = "Please enter the course name."
+            })
+        </div>
 
-    <div id="sectionCourseProviderReference">
-        @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-    {
-        CourseProviderReference = Model.CourseProviderReference,
-        LabelText = "Your reference",
-        HintText = "Enter a reference that will help you identify this course in your internal systems.",
-        AriaDescribedBy = "Please enter the ID for this course"
-    })
-    </div>
+        <div id="sectionCourseProviderReference">
+            @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+            {
+                CourseProviderReference = Model.CourseProviderReference,
+                LabelText = "Your reference",
+                HintText = "Enter a reference that will help you identify this course in your internal systems.",
+                AriaDescribedBy = "Please enter the ID for this course"
+            })
+        </div>
 
-    <div id="sectionDeliveryType">
-        @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
-    {
-        DeliveryMode = Model.DeliveryMode,
-        LabelText = "Delivery mode",
-        HintText = "Select one option.",
-        SecondHintText = "Select how you will deliver this course",
-        AriaDescribedBy = "Select how you will deliver this course"
-    })
-    </div>
+        <div id="sectionDeliveryType">
+            @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
+            {
+                DeliveryMode = Model.DeliveryMode,
+                LabelText = "Delivery mode",
+                HintText = "Select one option.",
+                SecondHintText = "Select how you will deliver this course",
+                AriaDescribedBy = "Select how you will deliver this course"
+            })
+        </div>
 
-    <div id="sectionStartDate">
-        @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-        {
-            StartDateType = Model.StartDateType,
-            Day = Model.Day,
-            Month = Model.Month,
-            Year = Model.Year,
-            DayAriaDescribedBy = "",
-            DayLabelText = "Day",
-            MonthAriaDescribedBy = "",
-            MonthLabelText = "Month",
-            YearAriaDescribedBy = "",
-            YearLabelText = "Year",
-            AriaDescribedBy = "",
-            SpecifiedDateHintText = "",
-            FlexibleDateHintText = "Or select a flexible start date:",
-            LabelText = "Start date",
-            ValPastDateRef = DateTime.Now,
-            ValPastDateMessage = "Start Date cannot be earlier than today’s date"
-        })
-    </div>
-    <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                    <h2 class="govuk-fieldset__heading govuk-heading-m">
-                        @Model.SelectVenue.LabelText
-                    </h2>
-                    <span class="govuk-hint govuk-!-margin-top-3">
-                        @Model.SelectVenue.HintText
-                    </span>
-                </legend>
+        <div id="sectionStartDate">
+            @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+            {
+                StartDateType = Model.StartDateType,
+                Day = Model.Day,
+                Month = Model.Month,
+                Year = Model.Year,
+                DayAriaDescribedBy = "",
+                DayLabelText = "Day",
+                MonthAriaDescribedBy = "",
+                MonthLabelText = "Month",
+                YearAriaDescribedBy = "",
+                YearLabelText = "Year",
+                AriaDescribedBy = "",
+                SpecifiedDateHintText = "",
+                FlexibleDateHintText = "Or select a flexible start date:",
+                LabelText = "Start date",
+                ValPastDateRef = DateTime.Now,
+                ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+            })
+        </div>
+        <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading govuk-heading-m">
+                            @Model.SelectVenue.LabelText
+                        </h2>
+                        <span class="govuk-hint govuk-!-margin-top-3">
+                            @Model.SelectVenue.HintText
+                        </span>
+                    </legend>
 
-                <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a location">
-
+                    <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a location">
 
 
 
-                    @{ var i = 0; }
-                    @if (Model.SelectVenue.VenueItems.Count() == 1)
+
+                        @{ var i = 0; }
+                        @if (Model.SelectVenue.VenueItems.Count() == 1)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.SelectVenue.VenueItems)
+                            {
+                                i++;
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
+                                </div>
+
+
+                            }
+                        }
+
+                    </div>
+
+                </fieldset>
+            </div>
+            <span class="">
+                <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
+            </span>
+        </div>
+
+
+
+
+
+
+
+        <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+            <div id="sectionRegions">
+                @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
+            </div>
+        </div>
+
+        <div id="sectionUrl">
+            @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+            {
+                Url = Model.Url,
+                LabelText = "External URL",
+                HintText = "Enter the URL for this course on your website. For example, http://www.provider.com/course.",
+                AriaDescribedBy = "Enter the URL for this course"
+            })
+        </div>
+
+        <div id="sectionCost">
+            @await Component.InvokeAsync(nameof(Cost), new CostModel
+            {
+                Cost = Model.Cost,
+                CostDescription = Model.CostDescription,
+                CostLabelText = "Cost",
+                CostHintText = "Enter the cost of the course to the learner.",
+                CostAriaDescribedBy = "Enter the cost in pounds and pence",
+                CostDescriptionLabelText = "Cost description",
+                CostDescriptionHintText = "Enter details related to the cost of this course.",
+                CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+            })
+        </div>
+
+        <div id="sectionDuration">
+            @await Component.InvokeAsync(nameof(Duration), new DurationModel
+            {
+                DurationLength = Model.DurationLength,
+                DurationUnit = Model.DurationUnit,
+                LabelText = "Duration",
+                HintText = "",
+                AriaDescribedBy = "Select course duration"
+            })
+        </div>
+
+        <div id="FullPartTimeRadioButtons" style="display: none;">
+            @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+            {
+                StudyMode = Model.StudyMode,
+                LabelText = "Study pattern",
+                HintText = "Choose one option."
+            })
+        </div>
+
+        <div id="AttendancePatternRadioButtons" style="display: none;">
+            @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+            {
+                AttendanceMode = Model.AttendanceMode,
+                LabelText = "Attendance",
+                HintText = "Choose one option."
+            })
+        </div>
+
+
+
+        @{
+            var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>
+                ("LastAddCoursePage");
+            var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>
+                ("SummaryLoadedAtLeastOnce");
+            switch (lastAddCoursePage)
+            {
+                case AddCoursePage.AddCourse:
+                    if (summaryPageLoadedAtLeastOnce)
                     {
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                            <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
-                        </div>
+                        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                            Summary
+                        </button>
+                                @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                     }
                     else
                     {
-                        foreach (var item in Model.SelectVenue.VenueItems)
-                        {
-                            i++;
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
-                            </div>
-
-
-                        }
+                        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                            Review your changes
+                        </button>
+                                @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                     }
+                    break;
+                case AddCoursePage.Summary:
+                    <div class="govuk-form-group">
+                        @*id="goToSummary"*@
+                        <button type="submit" class="govuk-button" id="publish" value="publish">
+                            Summary
+                        </button>
 
-                </div>
-
-            </fieldset>
-        </div>
-        <span class="">
-            <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
-        </span>
-    </div>
-
-
-
-
-
-
-
-    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-        <div id="sectionRegions">
-            @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
-        </div>
-    </div>
-
-    <div id="sectionUrl">
-        @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
-        {
-        Url = Model.Url,
-        LabelText = "External URL",
-        HintText = "Enter the URL for this course on your website. For example, http://www.provider.com/course.",
-        AriaDescribedBy = "Enter the URL for this course"
-        })
-    </div>
-
-    <div id="sectionCost">
-        @await Component.InvokeAsync(nameof(Cost), new CostModel
-        {
-        Cost = Model.Cost,
-        CostDescription = Model.CostDescription,
-        CostLabelText = "Cost",
-        CostHintText = "Enter the cost of the course to the learner.",
-        CostAriaDescribedBy = "Enter the cost in pounds and pence",
-        CostDescriptionLabelText = "Cost description",
-        CostDescriptionHintText = "Enter details related to the cost of this course.",
-        CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
-        })
-    </div>
-
-    <div id="sectionDuration">
-        @await Component.InvokeAsync(nameof(Duration), new DurationModel
-        {
-        DurationLength = Model.DurationLength,
-        DurationUnit = Model.DurationUnit,
-        LabelText = "Duration",
-        HintText = "",
-        AriaDescribedBy = "Select course duration"
-        })
-    </div>
-
-    <div id="FullPartTimeRadioButtons" style="display: none;">
-        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
-        {
-        StudyMode = Model.StudyMode,
-        LabelText = "Study pattern",
-        HintText = "Choose one option."
-        })
-    </div>
-
-    <div id="AttendancePatternRadioButtons" style="display: none;">
-        @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
-        {
-        AttendanceMode = Model.AttendanceMode,
-        LabelText = "Attendance",
-        HintText = "Choose one option."
-        })
-    </div>
-
-
-
-    @{
-        var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>
-            ("LastAddCoursePage");
-        var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>
-            ("SummaryLoadedAtLeastOnce");
-        switch (lastAddCoursePage)
-        {
-            case AddCoursePage.AddCourse:
-                if (summaryPageLoadedAtLeastOnce)
-                {
-                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                        Summary
-                    </button>
-                    @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
-                }
-                else
-                {
-                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                        Review your changes
-                    </button>
-                    @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
-                }
-                break;
-            case AddCoursePage.Summary:
-                <div class="govuk-form-group">
-                    @*id="goToSummary"*@
-                    <button type="submit" class="govuk-button" id="publish" value="publish">
-                        Summary
-                    </button>
-
-                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
-                </div>
-                break;
+                        <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                    </div>
+                    break;
+            }
         }
-    }
 
-</form>
+        </form>
+    </div>
+</div>
 
 <script>
     (function($) {
