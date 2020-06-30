@@ -31,7 +31,7 @@
             var $elementUrl = $("#@nameof(Model.Url)");
 
             $elementUrl.on("blur", function () {
-                var trimmed = $elementUrl.val().trim().toLowerCase();
+                var trimmed = $elementUrl.val().trim();
                 $elementUrl.val(trimmed);
                 if ($elementUrl.val() !== "") {
 
