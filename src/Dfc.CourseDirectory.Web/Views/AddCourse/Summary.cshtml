@@ -16,11 +16,13 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Check and publish to the Course directory</h1>
+        <h1 class="govuk-heading-xl">Check and publish your course</h1>
 
         <h2 class="govuk-heading-m">
             @Model.LearnAimRef Level @Model.NotionalNVQLevelv2 @Model.LearnAimRefTitle
         </h2>
+
+        <h3 class="govuk-heading-m">Course details</h3>
 
         <form asp-controller="AddCourse" asp-action="AcceptAndPublish" id="addCourseSummaryPage">
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
@@ -33,7 +35,7 @@
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id = "CourseId", Title = "Course ID", Value = Model.CourseId,
+                    Id = "CourseId", Title = "Your reference", Value = Model.CourseId,
                     Action = "SummaryToAddCourseRun",
                     Controller = "AddCourse",
                     Section = "sectionCourseProviderReference"
@@ -41,7 +43,7 @@
 
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="DeliveryMode", Title = "Delivery mode", Value = Model.DeliveryMode,
+                    Id="DeliveryMode", Title = "Course type", Value = Model.DeliveryMode,
                     Action = "SummaryToAddCourseRun",
                     Controller = "AddCourse",
                     Section = "sectionDeliveryType"
@@ -80,7 +82,7 @@
 
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="Url", Title = "URL", Value = Model.Url,
+                    Id="Url", Title = "Course webpage", Value = Model.Url,
                     Action = "SummaryToAddCourseRun",
                     Controller = "AddCourse",
                     Section = "sectionUrl"
@@ -108,7 +110,7 @@
                 })*@
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="CourseLength", Title = "Course length", Value = Model.CourseLength,
+                    Id="CourseLength", Title = "Duration", Value = Model.CourseLength,
                     Action = "SummaryToAddCourseRun",
                     Controller = "AddCourse",
                     Section = "sectionDuration"
@@ -118,14 +120,14 @@
                 {
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                     {
-                        Id = "AttendancePattern", Title = "Attendance pattern", Value = Model.AttendancePattern,
+                        Id = "AttendancePattern", Title = "Course hours", Value = Model.AttendancePattern,
                         Action = "SummaryToAddCourseRun",
                         Controller = "AddCourse",
                         Section = "FullPartTimeRadioButtons"
                     })
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                     {
-                        Id = "AttendanceTime", Title = "Attendance time", Value = Model.AttendanceTime,
+                        Id = "AttendanceTime", Title = "Attendance pattern", Value = Model.AttendanceTime,
                         Action = "SummaryToAddCourseRun",
                         Controller = "AddCourse",
                         Section = "AttendancePatternRadioButtons"
@@ -133,7 +135,7 @@
                 }
             </dl>
 
-            <h2 class="govuk-heading-m">Course description</h2>
+            <h3 class="govuk-heading-m">Course description</h3>
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
@@ -180,7 +182,7 @@
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="WhereNext", Title = "Where next?", Value = Model.WhereNext,
+                    Id="WhereNext", Title = "What you can do next", Value = Model.WhereNext,
                     Action = "SummaryToAddCourse",
                     Controller = "AddCourse",
                     Section = "sectionWhereNext"
@@ -193,11 +195,17 @@
 
 
             </dl>
-            <h2 class="govuk-heading-m">Now publish your course</h2>
-            <p class="govuk-body">By submitting this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
+            <h2 class="govuk-heading-m">Publish your course</h2>
+            <p class="govuk-body">
+                Your course information will be added to Publish to the course directory and available to learners
+                searching for learning and training opportunities on the National Careers Service.
+            <p class="govuk-body">
+                By submitting this notification you are confirming that, to the best of your
+                knowledge, the details you are providing are correct.
+            </p>
             <div class="govuk-form-group">
                 <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                    Accept & Publish
+                    Publish
                 </button>
             </div>
 
