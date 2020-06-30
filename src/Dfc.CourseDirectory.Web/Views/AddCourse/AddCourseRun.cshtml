@@ -253,7 +253,7 @@
             @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
             {
                 StudyMode = Model.StudyMode,
-                LabelText = "Study pattern",
+                LabelText = "Course hours",
                 HintText = "Choose one option."
             })
         </div>
@@ -262,7 +262,7 @@
             @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
             {
                 AttendanceMode = Model.AttendanceMode,
-                LabelText = "Attendance",
+                LabelText = "Attendance pattern",
                 HintText = "Choose one option."
             })
         </div>
