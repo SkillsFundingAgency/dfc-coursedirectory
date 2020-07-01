@@ -139,13 +139,15 @@
             };
 
             var assignEventsToLarsSearchPagination = function () {
-                var $larsSearchResultPaginationItems = $("#LarsSearchResultContainer .pagination .pagination__item");
-                $larsSearchResultPaginationItems.on("click",
-                    function (e) {
+                $('.pttcd-c-pager a').each(function (i, el) {
+                    var searchEndpoint = $(el).attr('href');
+                    $(el).attr('href', '#');
+
+                    $(el).click(function (e) {
                         e.preventDefault();
-                        var url = $(e.target).attr("href");
-                        makeRequestWithUrl(url, onSucess);
+                        makeRequestWithUrl(searchEndpoint, onSucess);
                     });
+                });
             };
 
             var onSucess = function (data) {
