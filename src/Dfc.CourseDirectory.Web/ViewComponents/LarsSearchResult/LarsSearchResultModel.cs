@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public IEnumerable<LarsSearchResultItemModel> Items { get; }
         public string Url { get; }
         public string PageParamName { get; }
+        public int PageNumber { get; }
         public int ItemsPerPage { get; }
         public IEnumerable<LarsSearchFilterModel> Filters { get; }
         public bool HasSelectedFilters => Filters.SelectMany(x => x.Items).Any(x => x.IsSelected);
@@ -36,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             IEnumerable<LarsSearchResultItemModel> items,
             string url,
             string pageParamName,
+            int pageNumber,
             int itemsPerPage,
             int totalCount,
             IEnumerable<LarsSearchFilterModel> filters = null)
@@ -53,6 +55,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             Items = items;
             Url = url;
             PageParamName = pageParamName;
+            PageNumber = pageNumber;
             ItemsPerPage = itemsPerPage;
             Filters = filters ?? new LarsSearchFilterModel[] { };
             TotalCount = totalCount;
@@ -66,6 +69,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             yield return OriginalSearchTerm;
             yield return Items;
             yield return Url;
+            yield return PageNumber;
             yield return PageParamName;
             yield return ItemsPerPage;
             yield return Filters;

@@ -104,6 +104,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         items,
                         Request.GetDisplayUrl(),
                         _larsSearchSettings.PageParamName,
+                        requestModel.PageNo,
                         _larsSearchSettings.ItemsPerPage,
                         result.Value.ODataCount ?? 0,
                         filters);
