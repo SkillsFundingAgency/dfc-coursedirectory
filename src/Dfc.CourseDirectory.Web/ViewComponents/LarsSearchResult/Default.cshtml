@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Authorization;
+@using Flurl;
 
 @inject IAuthorizationService Authorization
 
@@ -12,6 +13,7 @@
     var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
 }
 
+@addTagHelper *, Dfc.CourseDirectory.WebV2
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult.LarsSearchResultModel;
 
@@ -42,10 +44,10 @@
     else if (!Model.HasErrors) // Model.Items.Any())
     {
         @if (!string.IsNullOrEmpty(@Model.SearchTerm))
-         {
-             <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
-                 Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-             </div>
+        {
+            <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
+                Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
+            </div>
         }
 
         <div class="govuk-grid-column-one-quarter">
@@ -69,7 +71,7 @@
                         <div class="accordion govuk-heading-s" role="button" tabindex="0">@filter.Title</div>
                         <div class="panel">
                             <fieldset class="govuk-fieldset" id="FilterCheckBoxes_@i">
-                                <legend  class="govuk-visually-hidden">
+                                <legend class="govuk-visually-hidden">
                                     Select @filter.Title Level
                                 </legend>
                                 <div class="govuk-checkboxes govuk-checkboxes--small" id="Filter_@i">
@@ -79,7 +81,7 @@
                                         <div class="govuk-checkboxes__item">
                                             <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" aria-labelledby="Filter_@i" value="@item.Value" @item.IsSelected.ThenCheck()>
                                             <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" id="FilterLabel_@item.Id">
-                                                @item.Text 
+                                                @item.Text
                                             </label>
                                         </div>
 
@@ -124,16 +126,7 @@
             </div>
             @if (Model.Items.Any())
             {
-                await Component.InvokeAsync(nameof(Pagination),
-                     new
-                     {
-                         url = Model.Url,
-                         pageParamName = Model.PageParamName,
-                         totalNoOfItems = Model.TotalCount,
-                         itemsPerPage = Model.ItemsPerPage,
-                         noOfPagesToDisplay = 10,
-                         isSliding = true
-                     });
+                <vc:pager current-page=Model.PageNumber get-page-url="@(pageNumber => new Url(Model.Url).SetQueryParam("PageNo", pageNumber))" total-pages=(int)Math.Ceiling((decimal)Model.TotalCount)/Model.ItemsPerPage />
             }
         </div>
 
