@@ -20,10 +20,16 @@
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Models.Models.Venues
+@using Dfc.CourseDirectory.Web.Views.Shared
 @using Microsoft.AspNetCore.Html
 @{
     ViewData["Title"] = "Add course details";
     Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+    {
+        BackLink = true,
+    });
 }
 @inject IHttpContextAccessor HttpContextAccessor
 
@@ -69,11 +75,6 @@
     ClassType = "success-summary"
 })
     }
-}
-
-@section BackLink
-{
-    <pttcd-back-link class="govuk-!-margin-bottom-8 govuk-!-margin-top-0"/>
 }
 
 @*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
