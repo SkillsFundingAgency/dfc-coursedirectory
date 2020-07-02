@@ -242,7 +242,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 CourseFor = new CourseForModel()
                 {
-                    LabelText = "Who is the course for?",
+                    LabelText = "Who is the course for",
                     HintText = "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
                     AriaDescribedBy = "Please enter who this course is for.",
                     CourseFor = course?.CourseDescription ?? defaultCourseText?.CourseDescription
@@ -287,9 +287,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?",
+                    LabelText = "What you can do next",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
-                    AriaDescribedBy = "Please enter 'Where next?'",
+                    AriaDescribedBy = "Please enter 'What you can do next'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 }
             };
@@ -481,7 +481,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourse()
@@ -727,7 +727,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             AttendancePattern = addCourseSection2.AttendanceMode,
                             Regions = addCourseSection2.SelectedRegions,
                             CreatedDate = DateTime.Now,
-                            CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
+                            CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
 
                             RecordStatus = RecordStatus.Live // TODO - To Be Decided
                         };
@@ -758,7 +758,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AttendancePattern = addCourseSection2.AttendanceMode,
                         Regions = addCourseSection2.SelectedRegions,
                         CreatedDate = DateTime.Now,
-                        CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
+                        CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
                         RecordStatus = RecordStatus.Live // TODO - To Be Decided
                     };
 
@@ -1149,7 +1149,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
-        
+
 
         private async Task<AddCourseDetailsViewModel> GetSection2ViewModel()
         {
@@ -1239,7 +1239,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
                 CourseFor = new CourseForModel
                 {
-                    LabelText = "Who is the course for?",
+                    LabelText = "Who is the course for",
                     HintText =
                         "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
                     AriaDescribedBy = "Please enter who this course is for."
@@ -1280,10 +1280,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?",
+                    LabelText = "What you can do next",
                     HintText =
                         "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
-                    AriaDescribedBy = "Please enter 'Where next?'"
+                    AriaDescribedBy = "Please enter 'What you can do next'"
                 },
 
             };
