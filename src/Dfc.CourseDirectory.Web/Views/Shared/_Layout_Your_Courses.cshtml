@@ -1,6 +1,10 @@
 ﻿@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
+@using Dfc.CourseDirectory.Web.Views.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Http
+
+@{ var layoutModel = ViewData.GetLayoutModel(); }
+
 <!DOCTYPE html>
 <html lang="en" class="govuk-template app-html-class">
 
@@ -37,7 +41,10 @@
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
 <div class=" cd-fullwidth-container">
-    @RenderSection("BackLink", required: false)
+    @if (layoutModel.BackLink)
+    {
+        <pttcd-back-link class="govuk-!-margin-bottom-8 govuk-!-margin-top-0"/>
+    }
     <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
 
         @RenderBody()
