@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LabelText = "What you can do next",
                     HintText =
                         "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
-                    AriaDescribedBy = "Please enter 'Where next?'",
+                    AriaDescribedBy = "Please enter 'What you can do next'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 },
                 FundingOptions = new FundingOptionsModel()
@@ -991,7 +991,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
                 CourseFor = new CourseForModel
                 {
-                    LabelText = "Who is the course for?",
+                    LabelText = "Who is the course for",
                     HintText = "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
                     AriaDescribedBy = "Please enter who this course is for."
                 },
@@ -1028,9 +1028,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?",
+                    LabelText = "What you can do next",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
-                    AriaDescribedBy = "Please enter 'Where next?'"
+                    AriaDescribedBy = "Please enter 'What you can do next'"
                 },
                 FundingOptions = new FundingOptionsModel
                 {
