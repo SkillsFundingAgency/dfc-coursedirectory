@@ -9,16 +9,20 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.Views.Shared
 @using Microsoft.AspNetCore.Http
 @{
     ViewData["Title"] = "Complete qualification details";
     Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+    {
+        BackLink = true,
+    });
 }
 @inject IHttpContextAccessor HttpContextAccessor
 
 @model AddCourseViewModel
-
-<pttcd-back-link class="govuk-!-margin-bottom-7"/>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
