@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryList
 @using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
+@using Dfc.CourseDirectory.Web.Views.Shared
 @using Microsoft.AspNetCore.Http
 
 @inject IHttpContextAccessor HttpContextAccessor
@@ -12,6 +13,11 @@
     HttpContextAccessor.HttpContext.Session.SetObject("SummaryLoadedAtLeastOnce", true);
     ViewData["Title"] = "Check and publish to the Course directory";
     Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+    {
+        BackLink = true,
+    });
 }
 
 <div class="govuk-grid-row">
