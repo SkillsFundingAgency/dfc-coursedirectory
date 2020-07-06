@@ -209,17 +209,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> AddCourse(AddCourseSection1RequestModel model)
         {
             // to AddCourseRun or Summary
-            int UKPRN = 0;
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
             Session.SetObject(SessionAddCourseSection1, model);
 
+            return RedirectToAction("AddCourseDetails");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> AddCourseDetails(AddCourseSection1RequestModel model)
+        {
             var addCourseSection2Session = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
 
-            if (Session.GetInt32("UKPRN") != null)
-                UKPRN = Session.GetInt32("UKPRN").Value;
-            else
+            if (Session.GetInt32("UKPRN") == null)
+            {
                 return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
+            }
+            int UKPRN = Session.GetInt32("UKPRN").Value;
 
             var viewModel = new AddCourseDetailsViewModel
             {
@@ -297,8 +304,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
-            return View("AddCourseRun", viewModel);
+            return View(viewModel);
         }
+
 
         [Authorize]
         //public IActionResult AddNewVenue(Guid[] projectId)
@@ -924,7 +932,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
 
             // old BackToAddCourseSection2
-            return View("AddCourseRun", addCourseRun);
+            return View("AddCourseDetails", addCourseRun);
         }
 
 
