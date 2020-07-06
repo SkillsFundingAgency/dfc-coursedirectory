@@ -286,9 +286,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     var criteria = new GetVenueByIdCriteria(requestModel.Id);
                     var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
-
                     if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
                     {
+                        var onspd = _onspdSearchHelper.GetOnsPostcodeData(getVenueByIdResult.Value.PostCode);
                         viewModel.Address = new AddressModel
                         {
                             //Id = getVenueByIdResult.Value.ID,
@@ -296,7 +296,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             AddressLine2 = getVenueByIdResult.Value.Address2,
                             TownOrCity = getVenueByIdResult.Value.Town,
                             County = getVenueByIdResult.Value.County,
-                            Postcode = getVenueByIdResult.Value.PostCode
+                            Postcode = getVenueByIdResult.Value.PostCode,
+                            Country = onspd?.Country
                         };
                     }
 
