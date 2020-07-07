@@ -287,7 +287,6 @@ namespace Dfc.CourseDirectory.Web
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
                   {
                       NoCache = true,
-                      NoStore = true,
                       MustRevalidate = true,
                   };
                 context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
