@@ -13,6 +13,7 @@ variables:
 resources:
   repositories:
   - repository: self
+    clean: true
   - repository: dfc-devops
     type: github
     name: SkillsFundingAgency/dfc-devops
@@ -33,6 +34,9 @@ pr:
     - master
     - dev
     - AppBetaHotfix
+
+workspace:
+  clean: all
 
 steps:
 
