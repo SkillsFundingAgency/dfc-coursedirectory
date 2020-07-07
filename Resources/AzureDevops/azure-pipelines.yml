@@ -9,6 +9,7 @@ variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
   group: dfc-findacourse-build
+  npm_config_cache: $(Pipeline.Workspace)/.npm
 
 resources:
   repositories:
@@ -54,6 +55,14 @@ steps:
     mklink /D v2 ..\..\Dfc.CourseDirectory.WebV2\Content
   displayName: 'Restore v2 content symlink'
   workingDirectory: src/Dfc.CourseDirectory.Web/wwwroot
+
+- task: Cache@2
+  displayName: Cache NPM
+  inputs:
+    key: 'npm | "$(Agent.OS)" | src\Dfc.CourseDirectory.Web\package-lock.json'
+    restoreKeys: |
+       npm | "$(Agent.OS)"
+    path: $(npm_config_cache)
 
 - task: Npm@1
   displayName: 'npm install'
