@@ -718,7 +718,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             DeliveryMode = addCourseSection2.DeliveryMode,
                             FlexibleStartDate = flexibleStartDate,
                             StartDate = specifiedStartDate,
-                            CourseURL = addCourseSection2.Url?.ToLower(),
+                            CourseURL = addCourseSection2.Url,
                             Cost = addCourseSection2.Cost,
                             CostDescription = addCourseSection2.CostDescription,
                             DurationUnit = addCourseSection2.DurationUnit,
