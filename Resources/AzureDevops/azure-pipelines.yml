@@ -35,6 +35,9 @@ pr:
     - dev
     - AppBetaHotfix
 
+workspace:
+  clean: all
+
 steps:
 
 # ARM template
