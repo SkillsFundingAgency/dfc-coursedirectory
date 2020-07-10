@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tests", "tests\Dfc.CourseDirectory.Web.Tests\Dfc.CourseDirectory.Web.Tests.csproj", "{3E624726-E241-462A-9C07-4C0A3FCD41D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Services.Tests", "Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{F734371F-3DE2-4B40-8654-5EBB167D7432}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,10 @@ Global
 		{3E624726-E241-462A-9C07-4C0A3FCD41D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E624726-E241-462A-9C07-4C0A3FCD41D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E624726-E241-462A-9C07-4C0A3FCD41D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +104,7 @@ Global
 		{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
 		{37C43756-89CC-46FC-A397-2A68740DD08C} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
 		{3E624726-E241-462A-9C07-4C0A3FCD41D6} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
+		{F734371F-3DE2-4B40-8654-5EBB167D7432} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0079CB89-A4F8-4056-BBC0-FDFBF72BC50C}

@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         [JsonIgnore]
         public int VenueID { get; }
         [JsonProperty("VENUE_NAME")]
-        public string VenueName { get; }
+        public string VenueName { get; set; }
         [JsonProperty("PROV_VENUE_ID", Required = Required.AllowNull)]
         [JsonIgnore]
         public string ProvVenueID { get; }
@@ -215,6 +215,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             DateUpdated = dateUpdated;
         }
 
+        public Venue() { }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
