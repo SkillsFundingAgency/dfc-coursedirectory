@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
+namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
     public class ProcessAllProvidersHandler : ICosmosDbQueryHandler<ProcessAllProviders, None>
     {
