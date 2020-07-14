@@ -8,7 +8,6 @@
 	[UpdatedBy] NVARCHAR(MAX),
 	[VenueName] NVARCHAR(MAX),
 	[ProviderUkprn] INT,
-	[TribalProviderId] INT,
 	[TribalVenueId] INT,
 	[ProviderVenueRef] NVARCHAR(MAX),
 	[AddressLine1] NVARCHAR(MAX),
