@@ -54,1496 +54,6 @@ namespace UkrlpService
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class AONrangeStructure
-    {
-        
-        private string numberField;
-        
-        private string suffixField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger", Order=0)]
-        public string Number
-        {
-            get
-            {
-                return this.numberField;
-            }
-            set
-            {
-                this.numberField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string Suffix
-        {
-            get
-            {
-                return this.suffixField;
-            }
-            set
-            {
-                this.suffixField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class LandAndPropertyIdentifierStructure
-    {
-        
-        private AONstructure pAONField;
-        
-        private AONstructure sAONField;
-        
-        private string postTownField;
-        
-        private string postCodeField;
-        
-        private string levelField;
-        
-        private LogicalStatusType logicalStatusField;
-        
-        private bool officialAddressMarkerField;
-        
-        private bool officialAddressMarkerFieldSpecified;
-        
-        private System.DateTime lPIstartDateField;
-        
-        private System.DateTime lPIentryDateField;
-        
-        private System.DateTime lPIendDateField;
-        
-        private bool lPIendDateFieldSpecified;
-        
-        private System.DateTime lPIlastUpdateDateField;
-        
-        private object itemField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public AONstructure PAON
-        {
-            get
-            {
-                return this.pAONField;
-            }
-            set
-            {
-                this.pAONField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public AONstructure SAON
-        {
-            get
-            {
-                return this.sAONField;
-            }
-            set
-            {
-                this.sAONField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string PostTown
-        {
-            get
-            {
-                return this.postTownField;
-            }
-            set
-            {
-                this.postTownField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string PostCode
-        {
-            get
-            {
-                return this.postCodeField;
-            }
-            set
-            {
-                this.postCodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public string Level
-        {
-            get
-            {
-                return this.levelField;
-            }
-            set
-            {
-                this.levelField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
-        public LogicalStatusType LogicalStatus
-        {
-            get
-            {
-                return this.logicalStatusField;
-            }
-            set
-            {
-                this.logicalStatusField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
-        public bool OfficialAddressMarker
-        {
-            get
-            {
-                return this.officialAddressMarkerField;
-            }
-            set
-            {
-                this.officialAddressMarkerField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool OfficialAddressMarkerSpecified
-        {
-            get
-            {
-                return this.officialAddressMarkerFieldSpecified;
-            }
-            set
-            {
-                this.officialAddressMarkerFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=7)]
-        public System.DateTime LPIstartDate
-        {
-            get
-            {
-                return this.lPIstartDateField;
-            }
-            set
-            {
-                this.lPIstartDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=8)]
-        public System.DateTime LPIentryDate
-        {
-            get
-            {
-                return this.lPIentryDateField;
-            }
-            set
-            {
-                this.lPIentryDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=9)]
-        public System.DateTime LPIendDate
-        {
-            get
-            {
-                return this.lPIendDateField;
-            }
-            set
-            {
-                this.lPIendDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool LPIendDateSpecified
-        {
-            get
-            {
-                return this.lPIendDateFieldSpecified;
-            }
-            set
-            {
-                this.lPIendDateFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=10)]
-        public System.DateTime LPIlastUpdateDate
-        {
-            get
-            {
-                return this.lPIlastUpdateDateField;
-            }
-            set
-            {
-                this.lPIlastUpdateDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Street", typeof(StreetStructure), Order=11)]
-        [System.Xml.Serialization.XmlElementAttribute("USRN", typeof(string), DataType="integer", Order=11)]
-        public object Item
-        {
-            get
-            {
-                return this.itemField;
-            }
-            set
-            {
-                this.itemField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class AONstructure
-    {
-        
-        private string descriptionField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string Description
-        {
-            get
-            {
-                return this.descriptionField;
-            }
-            set
-            {
-                this.descriptionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public enum LogicalStatusType
-    {
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("1")]
-        Item1,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("2")]
-        Item2,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("3")]
-        Item3,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("5")]
-        Item5,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("6")]
-        Item6,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("8")]
-        Item8,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("9")]
-        Item9,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class StreetStructure
-    {
-        
-        private StreetReferenceTypeType streetReferenceTypeField;
-        
-        private CoordinateStructure startCoordinateField;
-        
-        private CoordinateStructure endCoordinateField;
-        
-        private decimal toleranceField;
-        
-        private string streetVersionNumberField;
-        
-        private System.DateTime streetEntryDateField;
-        
-        private System.DateTime streetClosureDateField;
-        
-        private bool streetClosureDateFieldSpecified;
-        
-        private string responsibleAuthorityField;
-        
-        private StreetDescriptiveIdentifierStructure descriptiveIdentifierField;
-        
-        private StreetDescriptiveIdentifierStructure streetAliasField;
-        
-        private StreetStructureStreetCrossReferences streetCrossReferencesField;
-        
-        private string usrnField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public StreetReferenceTypeType StreetReferenceType
-        {
-            get
-            {
-                return this.streetReferenceTypeField;
-            }
-            set
-            {
-                this.streetReferenceTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public CoordinateStructure StartCoordinate
-        {
-            get
-            {
-                return this.startCoordinateField;
-            }
-            set
-            {
-                this.startCoordinateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public CoordinateStructure EndCoordinate
-        {
-            get
-            {
-                return this.endCoordinateField;
-            }
-            set
-            {
-                this.endCoordinateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public decimal Tolerance
-        {
-            get
-            {
-                return this.toleranceField;
-            }
-            set
-            {
-                this.toleranceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger", Order=4)]
-        public string StreetVersionNumber
-        {
-            get
-            {
-                return this.streetVersionNumberField;
-            }
-            set
-            {
-                this.streetVersionNumberField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=5)]
-        public System.DateTime StreetEntryDate
-        {
-            get
-            {
-                return this.streetEntryDateField;
-            }
-            set
-            {
-                this.streetEntryDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=6)]
-        public System.DateTime StreetClosureDate
-        {
-            get
-            {
-                return this.streetClosureDateField;
-            }
-            set
-            {
-                this.streetClosureDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool StreetClosureDateSpecified
-        {
-            get
-            {
-                return this.streetClosureDateFieldSpecified;
-            }
-            set
-            {
-                this.streetClosureDateFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=7)]
-        public string ResponsibleAuthority
-        {
-            get
-            {
-                return this.responsibleAuthorityField;
-            }
-            set
-            {
-                this.responsibleAuthorityField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
-        public StreetDescriptiveIdentifierStructure DescriptiveIdentifier
-        {
-            get
-            {
-                return this.descriptiveIdentifierField;
-            }
-            set
-            {
-                this.descriptiveIdentifierField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
-        public StreetDescriptiveIdentifierStructure StreetAlias
-        {
-            get
-            {
-                return this.streetAliasField;
-            }
-            set
-            {
-                this.streetAliasField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
-        public StreetStructureStreetCrossReferences StreetCrossReferences
-        {
-            get
-            {
-                return this.streetCrossReferencesField;
-            }
-            set
-            {
-                this.streetCrossReferencesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-        public string usrn
-        {
-            get
-            {
-                return this.usrnField;
-            }
-            set
-            {
-                this.usrnField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public enum StreetReferenceTypeType
-    {
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("1")]
-        Item1,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("2")]
-        Item2,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("3")]
-        Item3,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("4")]
-        Item4,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class CoordinateStructure
-    {
-        
-        private ulong xField;
-        
-        private ulong yField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public ulong X
-        {
-            get
-            {
-                return this.xField;
-            }
-            set
-            {
-                this.xField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public ulong Y
-        {
-            get
-            {
-                return this.yField;
-            }
-            set
-            {
-                this.yField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class StreetDescriptiveIdentifierStructure
-    {
-        
-        private string streetDescriptionField;
-        
-        private string localityField;
-        
-        private string[] itemsField;
-        
-        private ItemsChoiceType1[] itemsElementNameField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string StreetDescription
-        {
-            get
-            {
-                return this.streetDescriptionField;
-            }
-            set
-            {
-                this.streetDescriptionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string Locality
-        {
-            get
-            {
-                return this.localityField;
-            }
-            set
-            {
-                this.localityField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AdministrativeArea", typeof(string), Order=2)]
-        [System.Xml.Serialization.XmlElementAttribute("Town", typeof(string), Order=2)]
-        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
-        public string[] Items
-        {
-            get
-            {
-                return this.itemsField;
-            }
-            set
-            {
-                this.itemsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ItemsElementName", Order=3)]
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemsChoiceType1[] ItemsElementName
-        {
-            get
-            {
-                return this.itemsElementNameField;
-            }
-            set
-            {
-                this.itemsElementNameField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666", IncludeInSchema=false)]
-    public enum ItemsChoiceType1
-    {
-        
-        /// <remarks/>
-        AdministrativeArea,
-        
-        /// <remarks/>
-        Town,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class StreetStructureStreetCrossReferences
-    {
-        
-        private object[] itemsField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ElementaryStreetUnit", typeof(ElementaryStreetUnitStructure), Order=0)]
-        [System.Xml.Serialization.XmlElementAttribute("UniqueStreetReferenceNumbers", typeof(string), DataType="integer", Order=0)]
-        public object[] Items
-        {
-            get
-            {
-                return this.itemsField;
-            }
-            set
-            {
-                this.itemsField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class ElementaryStreetUnitStructure
-    {
-        
-        private string eSUidentityField;
-        
-        private string eSUversionField;
-        
-        private System.DateTime eSUentryDateField;
-        
-        private System.DateTime eSUclosureDateField;
-        
-        private bool eSUclosureDateFieldSpecified;
-        
-        private CoordinateStructure startCoordinateField;
-        
-        private CoordinateStructure endCoordinateField;
-        
-        private decimal toleranceField;
-        
-        private CoordinateStructure[] intermediateCoordField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string ESUidentity
-        {
-            get
-            {
-                return this.eSUidentityField;
-            }
-            set
-            {
-                this.eSUidentityField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger", Order=1)]
-        public string ESUversion
-        {
-            get
-            {
-                return this.eSUversionField;
-            }
-            set
-            {
-                this.eSUversionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=2)]
-        public System.DateTime ESUentryDate
-        {
-            get
-            {
-                return this.eSUentryDateField;
-            }
-            set
-            {
-                this.eSUentryDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=3)]
-        public System.DateTime ESUclosureDate
-        {
-            get
-            {
-                return this.eSUclosureDateField;
-            }
-            set
-            {
-                this.eSUclosureDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ESUclosureDateSpecified
-        {
-            get
-            {
-                return this.eSUclosureDateFieldSpecified;
-            }
-            set
-            {
-                this.eSUclosureDateFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public CoordinateStructure StartCoordinate
-        {
-            get
-            {
-                return this.startCoordinateField;
-            }
-            set
-            {
-                this.startCoordinateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
-        public CoordinateStructure EndCoordinate
-        {
-            get
-            {
-                return this.endCoordinateField;
-            }
-            set
-            {
-                this.endCoordinateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
-        public decimal Tolerance
-        {
-            get
-            {
-                return this.toleranceField;
-            }
-            set
-            {
-                this.toleranceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("IntermediateCoord", Order=7)]
-        public CoordinateStructure[] IntermediateCoord
-        {
-            get
-            {
-                return this.intermediateCoordField;
-            }
-            set
-            {
-                this.intermediateCoordField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class BasicLandAndPropertyUnitStructure
-    {
-        
-        private string uniquePropertyReferenceNumberField;
-        
-        private string custodianCodeField;
-        
-        private RepresentativePointCodeType representativePointCodeField;
-        
-        private LogicalStatusType logicalStatusField;
-        
-        private CoordinateStructure gridReferenceField;
-        
-        private System.DateTime bLPUentryDateField;
-        
-        private System.DateTime bLPUstartDateField;
-        
-        private System.DateTime bLPUendDateField;
-        
-        private bool bLPUendDateFieldSpecified;
-        
-        private System.DateTime bLPUlastUpdateDateField;
-        
-        private LandAndPropertyIdentifierStructure[] landAndPropertyIdentifierField;
-        
-        private ProvenanceStructure[] provenanceField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=0)]
-        public string UniquePropertyReferenceNumber
-        {
-            get
-            {
-                return this.uniquePropertyReferenceNumberField;
-            }
-            set
-            {
-                this.uniquePropertyReferenceNumberField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=1)]
-        public string CustodianCode
-        {
-            get
-            {
-                return this.custodianCodeField;
-            }
-            set
-            {
-                this.custodianCodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public RepresentativePointCodeType RepresentativePointCode
-        {
-            get
-            {
-                return this.representativePointCodeField;
-            }
-            set
-            {
-                this.representativePointCodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public LogicalStatusType LogicalStatus
-        {
-            get
-            {
-                return this.logicalStatusField;
-            }
-            set
-            {
-                this.logicalStatusField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public CoordinateStructure GridReference
-        {
-            get
-            {
-                return this.gridReferenceField;
-            }
-            set
-            {
-                this.gridReferenceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=5)]
-        public System.DateTime BLPUentryDate
-        {
-            get
-            {
-                return this.bLPUentryDateField;
-            }
-            set
-            {
-                this.bLPUentryDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=6)]
-        public System.DateTime BLPUstartDate
-        {
-            get
-            {
-                return this.bLPUstartDateField;
-            }
-            set
-            {
-                this.bLPUstartDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=7)]
-        public System.DateTime BLPUendDate
-        {
-            get
-            {
-                return this.bLPUendDateField;
-            }
-            set
-            {
-                this.bLPUendDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool BLPUendDateSpecified
-        {
-            get
-            {
-                return this.bLPUendDateFieldSpecified;
-            }
-            set
-            {
-                this.bLPUendDateFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=8)]
-        public System.DateTime BLPUlastUpdateDate
-        {
-            get
-            {
-                return this.bLPUlastUpdateDateField;
-            }
-            set
-            {
-                this.bLPUlastUpdateDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("LandAndPropertyIdentifier", Order=9)]
-        public LandAndPropertyIdentifierStructure[] LandAndPropertyIdentifier
-        {
-            get
-            {
-                return this.landAndPropertyIdentifierField;
-            }
-            set
-            {
-                this.landAndPropertyIdentifierField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Provenance", Order=10)]
-        public ProvenanceStructure[] Provenance
-        {
-            get
-            {
-                return this.provenanceField;
-            }
-            set
-            {
-                this.provenanceField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public enum RepresentativePointCodeType
-    {
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("1")]
-        Item1,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("2")]
-        Item2,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("3")]
-        Item3,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("4")]
-        Item4,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("5")]
-        Item5,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("9")]
-        Item9,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class ProvenanceStructure
-    {
-        
-        private ProvenanceCodeType provenanceCodeField;
-        
-        private string annotationField;
-        
-        private System.DateTime provEntryDateField;
-        
-        private System.DateTime provStartDateField;
-        
-        private System.DateTime provEndDateField;
-        
-        private bool provEndDateFieldSpecified;
-        
-        private System.DateTime provLastUpdateDateField;
-        
-        private BLPUextentStructure bLPUextentField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public ProvenanceCodeType ProvenanceCode
-        {
-            get
-            {
-                return this.provenanceCodeField;
-            }
-            set
-            {
-                this.provenanceCodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string Annotation
-        {
-            get
-            {
-                return this.annotationField;
-            }
-            set
-            {
-                this.annotationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=2)]
-        public System.DateTime ProvEntryDate
-        {
-            get
-            {
-                return this.provEntryDateField;
-            }
-            set
-            {
-                this.provEntryDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=3)]
-        public System.DateTime ProvStartDate
-        {
-            get
-            {
-                return this.provStartDateField;
-            }
-            set
-            {
-                this.provStartDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=4)]
-        public System.DateTime ProvEndDate
-        {
-            get
-            {
-                return this.provEndDateField;
-            }
-            set
-            {
-                this.provEndDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ProvEndDateSpecified
-        {
-            get
-            {
-                return this.provEndDateFieldSpecified;
-            }
-            set
-            {
-                this.provEndDateFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=5)]
-        public System.DateTime ProvLastUpdateDate
-        {
-            get
-            {
-                return this.provLastUpdateDateField;
-            }
-            set
-            {
-                this.provLastUpdateDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
-        public BLPUextentStructure BLPUextent
-        {
-            get
-            {
-                return this.bLPUextentField;
-            }
-            set
-            {
-                this.bLPUextentField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public enum ProvenanceCodeType
-    {
-        
-        /// <remarks/>
-        T,
-        
-        /// <remarks/>
-        L,
-        
-        /// <remarks/>
-        F,
-        
-        /// <remarks/>
-        R,
-        
-        /// <remarks/>
-        P,
-        
-        /// <remarks/>
-        O,
-        
-        /// <remarks/>
-        U,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class BLPUextentStructure
-    {
-        
-        private string sourceDescriptionField;
-        
-        private System.DateTime extentEntryDateField;
-        
-        private System.DateTime extentSourceDateField;
-        
-        private System.DateTime extentStartDateField;
-        
-        private System.DateTime extentEndDateField;
-        
-        private bool extentEndDateFieldSpecified;
-        
-        private System.DateTime extentLastUpdateDateField;
-        
-        private BLPUpolygonStructure[] extentDefinitionField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string SourceDescription
-        {
-            get
-            {
-                return this.sourceDescriptionField;
-            }
-            set
-            {
-                this.sourceDescriptionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=1)]
-        public System.DateTime ExtentEntryDate
-        {
-            get
-            {
-                return this.extentEntryDateField;
-            }
-            set
-            {
-                this.extentEntryDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=2)]
-        public System.DateTime ExtentSourceDate
-        {
-            get
-            {
-                return this.extentSourceDateField;
-            }
-            set
-            {
-                this.extentSourceDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=3)]
-        public System.DateTime ExtentStartDate
-        {
-            get
-            {
-                return this.extentStartDateField;
-            }
-            set
-            {
-                this.extentStartDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=4)]
-        public System.DateTime ExtentEndDate
-        {
-            get
-            {
-                return this.extentEndDateField;
-            }
-            set
-            {
-                this.extentEndDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ExtentEndDateSpecified
-        {
-            get
-            {
-                return this.extentEndDateFieldSpecified;
-            }
-            set
-            {
-                this.extentEndDateFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=5)]
-        public System.DateTime ExtentLastUpdateDate
-        {
-            get
-            {
-                return this.extentLastUpdateDateField;
-            }
-            set
-            {
-                this.extentLastUpdateDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ExtentDefinition", Order=6)]
-        public BLPUpolygonStructure[] ExtentDefinition
-        {
-            get
-            {
-                return this.extentDefinitionField;
-            }
-            set
-            {
-                this.extentDefinitionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class BLPUpolygonStructure
-    {
-        
-        private string polygonIDField;
-        
-        private BLPUpolygonStructurePolygonType polygonTypeField;
-        
-        private bool polygonTypeFieldSpecified;
-        
-        private object[] itemsField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger", Order=0)]
-        public string PolygonID
-        {
-            get
-            {
-                return this.polygonIDField;
-            }
-            set
-            {
-                this.polygonIDField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public BLPUpolygonStructurePolygonType PolygonType
-        {
-            get
-            {
-                return this.polygonTypeField;
-            }
-            set
-            {
-                this.polygonTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool PolygonTypeSpecified
-        {
-            get
-            {
-                return this.polygonTypeFieldSpecified;
-            }
-            set
-            {
-                this.polygonTypeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ExternalRef", typeof(ulong), Order=2)]
-        [System.Xml.Serialization.XmlElementAttribute("Vertices", typeof(CoordinateStructure), Order=2)]
-        public object[] Items
-        {
-            get
-            {
-                return this.itemsField;
-            }
-            set
-            {
-                this.itemsField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public enum BLPUpolygonStructurePolygonType
-    {
-        
-        /// <remarks/>
-        H,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives")]
     public partial class PersonMaritalStatusStructure
     {
@@ -1761,8 +271,10 @@ namespace UkrlpService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://ukrlp.co.uk.server.ws.v3")]
-    public partial class VerificationDetailsStructure
+    public partial class VerificationDetailsResponseStructure
     {
+        
+        private string primaryVerificationSourceField;
         
         private string verificationAuthorityField;
         
@@ -1770,6 +282,20 @@ namespace UkrlpService
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=0)]
+        public string PrimaryVerificationSource
+        {
+            get
+            {
+                return this.primaryVerificationSourceField;
+            }
+            set
+            {
+                this.primaryVerificationSourceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=1)]
         public string VerificationAuthority
         {
             get
@@ -1783,7 +309,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=2)]
         public string VerificationID
         {
             get
@@ -1880,6 +406,8 @@ namespace UkrlpService
         
         private string providerNameField;
         
+        private string accessibleProviderNameField;
+        
         private string providerStatusField;
         
         private ProviderContactStructure[] providerContactField;
@@ -1896,7 +424,7 @@ namespace UkrlpService
         
         private ProviderAliasesStructure[] providerAliasesField;
         
-        private VerificationDetailsStructure[] verificationDetailsField;
+        private VerificationDetailsResponseStructure[] verificationDetailsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, DataType="positiveInteger", Order=0)]
@@ -1928,6 +456,20 @@ namespace UkrlpService
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=2)]
+        public string AccessibleProviderName
+        {
+            get
+            {
+                return this.accessibleProviderNameField;
+            }
+            set
+            {
+                this.accessibleProviderNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=3)]
         public string ProviderStatus
         {
             get
@@ -1941,7 +483,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ProviderContact", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute("ProviderContact", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=4)]
         public ProviderContactStructure[] ProviderContact
         {
             get
@@ -1955,7 +497,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=5)]
         public System.DateTime ProviderVerificationDate
         {
             get
@@ -1983,7 +525,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=6)]
         public System.DateTime ExpiryDate
         {
             get
@@ -2011,7 +553,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ProviderAssociations", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute("ProviderAssociations", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=7)]
         public AssociationRecordStructure[] ProviderAssociations
         {
             get
@@ -2025,7 +567,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ProviderAliases", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=7)]
+        [System.Xml.Serialization.XmlElementAttribute("ProviderAliases", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=8)]
         public ProviderAliasesStructure[] ProviderAliases
         {
             get
@@ -2039,8 +581,8 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("VerificationDetails", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=8)]
-        public VerificationDetailsStructure[] VerificationDetails
+        [System.Xml.Serialization.XmlElementAttribute("VerificationDetails", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=9)]
+        public VerificationDetailsResponseStructure[] VerificationDetails
         {
             get
             {
@@ -2062,7 +604,7 @@ namespace UkrlpService
         
         private string contactTypeField;
         
-        private BSaddressStructure contactAddressField;
+        private AddressStructure contactAddressField;
         
         private PersonNameStructure contactPersonalDetailsField;
         
@@ -2096,7 +638,7 @@ namespace UkrlpService
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=1)]
-        public BSaddressStructure ContactAddress
+        public AddressStructure ContactAddress
         {
             get
             {
@@ -2224,147 +766,110 @@ namespace UkrlpService
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666")]
-    public partial class BSaddressStructure
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.ukrlp.gov.uk/commonlibrary")]
+    public partial class AddressStructure
     {
         
-        private AONstructure sAONField;
+        private string address1Field;
         
-        private AONstructure pAONField;
+        private string address2Field;
         
-        private string streetDescriptionField;
+        private string address3Field;
         
-        private string uniqueStreetReferenceNumberField;
+        private string address4Field;
         
-        private string localityField;
+        private string townField;
         
-        private string[] itemsField;
-        
-        private ItemsChoiceType[] itemsElementNameField;
-        
-        private string postTownField;
+        private string countyField;
         
         private string postCodeField;
         
-        private string uniquePropertyReferenceNumberField;
-        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public AONstructure SAON
+        public string Address1
         {
             get
             {
-                return this.sAONField;
+                return this.address1Field;
             }
             set
             {
-                this.sAONField = value;
+                this.address1Field = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public AONstructure PAON
+        public string Address2
         {
             get
             {
-                return this.pAONField;
+                return this.address2Field;
             }
             set
             {
-                this.pAONField = value;
+                this.address2Field = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string StreetDescription
+        public string Address3
         {
             get
             {
-                return this.streetDescriptionField;
+                return this.address3Field;
             }
             set
             {
-                this.streetDescriptionField = value;
+                this.address3Field = value;
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=3)]
-        public string UniqueStreetReferenceNumber
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Address4
         {
             get
             {
-                return this.uniqueStreetReferenceNumberField;
+                return this.address4Field;
             }
             set
             {
-                this.uniqueStreetReferenceNumberField = value;
+                this.address4Field = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public string Locality
+        public string Town
         {
             get
             {
-                return this.localityField;
+                return this.townField;
             }
             set
             {
-                this.localityField = value;
+                this.townField = value;
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AdministrativeArea", typeof(string), Order=5)]
-        [System.Xml.Serialization.XmlElementAttribute("Town", typeof(string), Order=5)]
-        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
-        public string[] Items
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public string County
         {
             get
             {
-                return this.itemsField;
+                return this.countyField;
             }
             set
             {
-                this.itemsField = value;
+                this.countyField = value;
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ItemsElementName", Order=6)]
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemsChoiceType[] ItemsElementName
-        {
-            get
-            {
-                return this.itemsElementNameField;
-            }
-            set
-            {
-                this.itemsElementNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
-        public string PostTown
-        {
-            get
-            {
-                return this.postTownField;
-            }
-            set
-            {
-                this.postTownField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
         public string PostCode
         {
             get
@@ -2376,33 +881,6 @@ namespace UkrlpService
                 this.postCodeField = value;
             }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="integer", Order=9)]
-        public string UniquePropertyReferenceNumber
-        {
-            get
-            {
-                return this.uniquePropertyReferenceNumberField;
-            }
-            set
-            {
-                this.uniquePropertyReferenceNumberField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.govtalk.gov.uk/people/bs7666", IncludeInSchema=false)]
-    public enum ItemsChoiceType
-    {
-        
-        /// <remarks/>
-        AdministrativeArea,
-        
-        /// <remarks/>
-        Town,
     }
     
     /// <remarks/>
@@ -2758,6 +1236,46 @@ namespace UkrlpService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://ukrlp.co.uk.server.ws.v3")]
+    public partial class VerificationDetailsStructure
+    {
+        
+        private string verificationAuthorityField;
+        
+        private string verificationIDField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=0)]
+        public string VerificationAuthority
+        {
+            get
+            {
+                return this.verificationAuthorityField;
+            }
+            set
+            {
+                this.verificationAuthorityField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=1)]
+        public string VerificationID
+        {
+            get
+            {
+                return this.verificationIDField;
+            }
+            set
+            {
+                this.verificationIDField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://ukrlp.co.uk.server.ws.v3")]
     public partial class SelectionCriteriaStructure
     {
         
@@ -2798,6 +1316,8 @@ namespace UkrlpService
         private bool approvedProvidersOnlyFieldSpecified;
         
         private string providerStatusField;
+        
+        private VerificationDetailsStructure verificationDetailsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=0)]
@@ -3067,6 +1587,20 @@ namespace UkrlpService
                 this.providerStatusField = value;
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, Order=13)]
+        public VerificationDetailsStructure VerificationDetails
+        {
+            get
+            {
+                return this.verificationDetailsField;
+            }
+            set
+            {
+                this.verificationDetailsField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -3146,8 +1680,6 @@ namespace UkrlpService
         [System.ServiceModel.OperationContractAttribute(Action="retrieveAllProviders", ReplyAction="*")]
         [System.ServiceModel.FaultContractAttribute(typeof(UkrlpService.faultDetail), Action="retrieveAllProviders", Name="faultDetail")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AONrangeStructure))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(BasicLandAndPropertyUnitStructure))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(PersonMaritalStatusStructure))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(PersonDeathDateStructure))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(PersonBirthDateStructure))]
@@ -3343,7 +1875,7 @@ namespace UkrlpService
         {
             if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
             {
-                return new System.ServiceModel.EndpointAddress("http://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV3");
+                return new System.ServiceModel.EndpointAddress("http://webservices.ukrlp.co.uk/UkrlpProviderQueryWS6/ProviderQueryServiceV6");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
