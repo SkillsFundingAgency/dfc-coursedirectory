@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Tests.ValidationTests;
 using FormFlow.State;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
@@ -72,6 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
+            services.AddTransient<ValidatorBaseTestsValidator>();
 
             DatabaseFixture.ConfigureServices(services);
         }
