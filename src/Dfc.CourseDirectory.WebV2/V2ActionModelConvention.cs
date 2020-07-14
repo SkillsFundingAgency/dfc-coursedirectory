@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Filters;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -15,9 +14,6 @@ namespace Dfc.CourseDirectory.WebV2
             {
                 // All actions require authenticated users by default
                 action.Filters.Add(new AuthorizeFilter());
-
-                // Create a 400 response on invalid ModelState
-                action.Filters.Add(new InvalidModelStateActionFilter());
             }
         }
     }

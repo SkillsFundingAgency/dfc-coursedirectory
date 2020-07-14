@@ -41,13 +41,13 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             if (instance == null)
             {
-                bindingContext.ModelState.AddModelError(bindingContext.ModelName, "No active MPTX instance.");
+                bindingContext.ModelState.AddModelError(bindingContext.FieldName, "No active MPTX instance.");
                 bindingContext.Result = ModelBindingResult.Failed();
             }
             else if (!stateType.IsAssignableFrom(instance.StateType))
             {
                 bindingContext.ModelState.AddModelError(
-                    bindingContext.ModelName,
+                    bindingContext.FieldName,
                     "Persisted state type does not match requested type.");
                 bindingContext.Result = ModelBindingResult.Failed();
             }
