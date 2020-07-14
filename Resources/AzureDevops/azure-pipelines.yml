@@ -25,14 +25,12 @@ trigger:
   branches:
     include:
     - release/*
-    - master
     - main
 
 pr:
   branches:
     include:
     - release/*
-    - master
     - main
 
 workspace:
