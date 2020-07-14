@@ -57,6 +57,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new MptxResourceFilter());
                     options.Filters.Add(new ContentSecurityPolicyActionFilter());
                     options.Filters.Add(new MptxControllerActionFilter());
+                    options.Filters.Add(new InvalidMptxInstanceContextActionFilter());
 
                     options.ModelBinderProviders.Insert(0, new ProviderContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
