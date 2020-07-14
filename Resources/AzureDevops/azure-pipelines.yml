@@ -24,16 +24,15 @@ trigger:
   batch: true
   branches:
     include:
-    - master
-    - dev
-    - AppBetaHotfix
+    - release/*
+    - main
 
 pr:
   branches:
     include:
-    - master
-    - dev
-    - AppBetaHotfix
+    - release/*
+    - main
+
 
 workspace:
   clean: all
