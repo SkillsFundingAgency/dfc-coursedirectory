@@ -785,7 +785,7 @@ namespace UkrlpService
         private string postCodeField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 0)]
         public string Address1
         {
             get
@@ -799,7 +799,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 1)]
         public string Address2
         {
             get
@@ -813,7 +813,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 2)]
         public string Address3
         {
             get
@@ -827,7 +827,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 3)]
         public string Address4
         {
             get
@@ -841,7 +841,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 4)]
         public string Town
         {
             get
@@ -855,7 +855,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 5)]
         public string County
         {
             get
@@ -869,7 +869,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 6)]
         public string PostCode
         {
             get
@@ -901,7 +901,7 @@ namespace UkrlpService
         private string personRequestedNameField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("PersonNameTitle", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("PersonNameTitle", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 0)]
         public string[] PersonNameTitle
         {
             get
@@ -915,7 +915,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("PersonGivenName", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute("PersonGivenName", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 1)]
         public string[] PersonGivenName
         {
             get
@@ -929,7 +929,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 2)]
         public string PersonFamilyName
         {
             get
@@ -943,7 +943,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("PersonNameSuffix", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute("PersonNameSuffix", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 3)]
         public string[] PersonNameSuffix
         {
             get
@@ -957,7 +957,7 @@ namespace UkrlpService
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, Order = 4)]
         public string PersonRequestedName
         {
             get
