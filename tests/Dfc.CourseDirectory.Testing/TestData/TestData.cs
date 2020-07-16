@@ -11,15 +11,18 @@ namespace Dfc.CourseDirectory.Testing
     public partial class TestData
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly SqlDataSync _sqlDataSync;
         private readonly IServiceProvider _serviceProvider;
         private readonly IClock _clock;
 
         public TestData(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            SqlDataSync sqlDataSync,
             IServiceProvider serviceProvider,
             IClock clock)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlDataSync = sqlDataSync;
             _serviceProvider = serviceProvider;
             _clock = clock;
         }
