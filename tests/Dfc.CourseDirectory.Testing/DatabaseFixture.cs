@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
@@ -15,12 +16,17 @@ using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.C
 
 namespace Dfc.CourseDirectory.Testing
 {
-    public class DatabaseFixture
+    public class DatabaseFixture : IDisposable
     {
+        private const string LockName = "Tests";
+        private const int LockTimeoutSeconds = 15 * 60;
+
         private readonly Checkpoint _sqlCheckpoint;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _services;
         private readonly IMessageSink _messageSink;
+        private readonly SqlConnection _lockConnection;
+        private readonly SqlTransaction _lockTransaction;
 
         public DatabaseFixture(IConfiguration configuration, IServiceProvider services, IMessageSink messageSink)
         {
@@ -30,6 +36,12 @@ namespace Dfc.CourseDirectory.Testing
 
             DeploySqlDb();
             _sqlCheckpoint = CreateCheckpoint();
+
+            _lockConnection = new SqlConnection(ConnectionString);
+            _lockConnection.Open();
+            _lockTransaction = _lockConnection.BeginTransaction();
+
+            AcquireLock();
         }
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
@@ -54,6 +66,12 @@ namespace Dfc.CourseDirectory.Testing
             services.AddSingleton<SqlQuerySpy>();
             services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
             services.AddTransient<SqlDataSync>();
+        }
+
+        public void Dispose()
+        {
+            _lockTransaction.Dispose();
+            _lockConnection.Dispose();
         }
 
         public void OnTestStarting()
@@ -95,6 +113,30 @@ namespace Dfc.CourseDirectory.Testing
                 transaction.Commit();
 
                 return result;
+            }
+        }
+
+        private void AcquireLock()
+        {
+            using var cmd = _lockConnection.CreateCommand();
+            cmd.Transaction = _lockTransaction;
+            cmd.CommandText = "sp_getapplock";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add(new SqlParameter("@Resource", LockName));
+            cmd.Parameters.Add(new SqlParameter("@LockMode", "Exclusive"));
+            cmd.CommandTimeout = LockTimeoutSeconds;
+
+            var returnValueParameter = new SqlParameter("@RETURN_VALUE", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.ReturnValue
+            };
+            cmd.Parameters.Add(returnValueParameter);
+
+            cmd.ExecuteNonQuery();
+
+            if ((int)returnValueParameter.Value < 0)
+            {
+                throw new Exception("Failed acquiring lock on test database.");
             }
         }
 
