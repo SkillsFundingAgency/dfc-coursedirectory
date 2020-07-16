@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string TradingName { get; set; }
         public string Alias { get; set; }
         public IEnumerable<UpsertProviderContact> Contacts { get; set; }
-        public DateTime UpdatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
         public string UpdatedBy { get; set; }
     }
 
