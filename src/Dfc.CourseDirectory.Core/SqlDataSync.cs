@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Core
                 CourseDirectoryName = provider.CourseDirectoryName,
                 TradingName = provider.TradingName,
                 Alias = provider.Alias,
-                UpdatedOn = provider.DateUpdated,
+                UpdatedOn = provider.DateUpdated != default ? (DateTime?)provider.DateUpdated : null,
                 UpdatedBy = provider.UpdatedBy,
                 Contacts = provider.ProviderContact.Select(c => new UpsertProviderContact()
                 {
