@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Dfc.CourseDirectory.Testing
 {
-    public class DatabaseTestBaseFixture
+    public class DatabaseTestBaseFixture : IDisposable
     {
         public DatabaseTestBaseFixture(IMessageSink messageSink)
         {
@@ -22,6 +22,8 @@ namespace Dfc.CourseDirectory.Testing
         public DatabaseFixture DatabaseFixture { get; }
 
         public IServiceProvider Services { get; }
+
+        public void Dispose() => DatabaseFixture.Dispose();
 
         public void OnTestStarting()
         {
