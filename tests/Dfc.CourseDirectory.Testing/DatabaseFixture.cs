@@ -53,6 +53,7 @@ namespace Dfc.CourseDirectory.Testing
             services.AddTransient<TestData>();
             services.AddSingleton<SqlQuerySpy>();
             services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
+            services.AddTransient<SqlDataSync>();
         }
 
         public void OnTestStarting()

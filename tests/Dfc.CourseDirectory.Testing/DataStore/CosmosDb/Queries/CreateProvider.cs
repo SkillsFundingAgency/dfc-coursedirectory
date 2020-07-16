@@ -17,6 +17,8 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public string CourseDirectoryName { get; set; }
         public string Alias { get; set; }
         public IEnumerable<ProviderContact> ProviderContact { get; set; }
+        public DateTime DateUpdated { get; set; }
+        public string UpdatedBy { get; set; }
     }
 
     public enum CreateProviderResult { Ok }

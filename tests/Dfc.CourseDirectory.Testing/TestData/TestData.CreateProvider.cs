@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
@@ -57,8 +58,13 @@ namespace Dfc.CourseDirectory.Testing
                     ContactWebsiteAddress = c.ContactWebsiteAddress,
                     LastUpdated = _clock.UtcNow
                 }),
+                DateUpdated = _clock.UtcNow,
+                UpdatedBy = "TestData"
             });
             Assert.Equal(CreateProviderResult.Ok, result);
+
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById() { ProviderId = providerId });
+            await _sqlDataSync.SyncProvider(provider);
 
             if (apprenticeshipQAStatus.HasValue)
             {
