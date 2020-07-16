@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
-                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(ukprn, item.Ukprn);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
                 Assert.Equal("Yes",item.PassedQA);
@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
-                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(ukprn, item.Ukprn);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
                 Assert.Equal("Yes", item.PassedQA);
@@ -281,7 +281,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
-                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(ukprn, item.Ukprn);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
                 Assert.Equal("No", item.PassedQA);
@@ -359,7 +359,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
-                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(ukprn, item.Ukprn);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
                 Assert.Equal("No", item.PassedQA);
@@ -442,7 +442,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
-                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(ukprn, item.Ukprn);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
                 Assert.Equal("No", item.PassedQA);
@@ -485,7 +485,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
-                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(ukprn, item.Ukprn);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal("", item.Email);
                 Assert.Equal("No", item.PassedQA);

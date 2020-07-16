@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     public class GetQAStatusReportResult
     {
         public Guid ProviderId { get; set; }
-        public string UKPRN { get; set; }
+        public int Ukprn { get; set; }
         public string ProviderName { get; set; }
         public string Email { get; set; }
         public DateTime? PassedQAOn { get; set; }

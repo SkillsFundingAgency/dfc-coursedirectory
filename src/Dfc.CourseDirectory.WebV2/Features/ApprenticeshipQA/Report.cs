@@ -1,16 +1,13 @@
-﻿using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
 {
@@ -26,7 +23,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
     {
         [CsvHelper.Configuration.Attributes.Ignore]
         public Guid ProviderId { get; set; }
-        public string UKPRN { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("UKPRN")]
+        public int Ukprn { get; set; }
         [CsvHelper.Configuration.Attributes.Name("Name of provider")]
         public string ProviderName { get; set; }
         public string Email { get; set; }
@@ -53,12 +51,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
     public class QueryHandler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public QueryHandler(ISqlQueryDispatcher sqlQueryDispatcher, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public QueryHandler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -68,6 +64,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
                          select new ReportModel()
                          {
                              ProviderId = r.ProviderId,
+                             ProviderName = r.ProviderName,
+                             Ukprn = r.Ukprn,
                              Email = r.Email,
                              PassedQAOn = r.PassedQAOn.HasValue ? r.PassedQAOn.Value.ToString("dd MMM yyyy") : null,
                              FailedQAOn = r.FailedQAOn.HasValue ? r.FailedQAOn.Value.ToString("dd MMM yyyy") : null,
@@ -79,21 +77,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
                              FailedQA = r.QAStatus == ApprenticeshipQAStatus.Failed ? "Yes" : "No",
                              UnableToComplete = r.QAStatus.HasValue ? (r.QAStatus.Value.HasFlag(ApprenticeshipQAStatus.UnableToComplete) ? "Yes" : "No") : "No"
                          }).ToList();
-
-            var providers = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProvidersByIds()
-            {
-                ProviderIds = results.Select(r => r.ProviderId)
-            });
-
-            // Map from Cosmos record
-            infos.ForEach(x =>
-            {
-                x.UKPRN = providers[x.ProviderId].UnitedKingdomProviderReferenceNumber;
-                x.ProviderName = providers[x.ProviderId].ProviderName;
-            });
-
-            // Remove any providers that are FE-only
-            infos.RemoveAll(p => !providers[p.ProviderId].ProviderType.HasFlag(ProviderType.Apprenticeships));
 
             return new ViewModel()
             {

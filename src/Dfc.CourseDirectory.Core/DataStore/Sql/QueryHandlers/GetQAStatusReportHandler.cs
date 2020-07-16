@@ -11,15 +11,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<IReadOnlyCollection<GetQAStatusReportResult>> Execute(SqlTransaction transaction, GetQAStatusReport query)
         {
             var sql = @"
-SELECT p.ProviderID,
-CASE  submission.Passed WHEN 1 THEN submission.LastAssessedOn ELSE null end AS PassedQAOn,
-CASE  submission.Passed WHEN 0 THEN submission.LastAssessedOn ELSE null end AS FailedQAOn,
-reasons.AddedOn as UnableToCompleteOn,
-reasons.Comments as Notes,
-CASE (p.ApprenticeshipQAStatus & 32) WHEN 0 THEN NULL ELSE reasons.UnableToCompleteReasons END AS UnableToCompleteReasons,
-users.Email,
-p.ApprenticeshipQAStatus AS QAStatus
-FROM [pttcd].[Providers] p
+SELECT
+    p.ProviderID,
+    CASE submission.Passed WHEN 1 THEN submission.LastAssessedOn ELSE null END AS PassedQAOn,
+    CASE submission.Passed WHEN 0 THEN submission.LastAssessedOn ELSE null END AS FailedQAOn,
+    reasons.AddedOn as UnableToCompleteOn,
+    reasons.Comments as Notes,
+    CASE (p.ApprenticeshipQAStatus & 32) WHEN 0 THEN NULL ELSE reasons.UnableToCompleteReasons END AS UnableToCompleteReasons,
+    users.Email,
+    p.ApprenticeshipQAStatus AS QAStatus,
+    p.Ukprn,
+    p.ProviderName
+FROM Pttcd.Providers p
 LEFT JOIN (
     SELECT ProviderId, MAX(ApprenticeshipQASubmissionId) ApprenticeshipQASubmissionId
     FROM Pttcd.ApprenticeshipQASubmissions
@@ -31,11 +34,11 @@ LEFT JOIN (
     GROUP BY ProviderId
 ) LatestUnableToComplete ON p.ProviderId = LatestUnableToComplete.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo reasons on reasons.ApprenticeshipQAUnableToCompleteId = LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId
-LEFT JOIN [Pttcd].ApprenticeshipQASubmissions submission on submission.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
-LEFT JOIN [Pttcd].[Users] users on users.UserId=submission.SubmittedByUserId";
+LEFT JOIN Pttcd.ApprenticeshipQASubmissions submission on submission.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
+LEFT JOIN Pttcd.Users users on users.UserId=submission.SubmittedByUserId
+WHERE p.ProviderType & 2 != 0  -- Apprenticeship/Both providers only";
 
             return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, transaction: transaction)).AsList();
-
         }
     }
 }
