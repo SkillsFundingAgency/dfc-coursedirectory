@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -73,18 +74,19 @@ namespace Dfc.CourseDirectory.Core.Tests
             await sqlDataSync.SyncProvider(provider);
 
             // Assert
-            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertProvider, None>(q =>
-                q.ProviderId == provider.Id &&
-                q.Ukprn == provider.Ukprn &&
-                q.ProviderStatus == Models.ProviderStatus.Onboarded &&
-                q.ProviderType == Models.ProviderType.Both &&
-                q.UkrlpProviderStatusDescription == "Active" &&
-                q.MarketingInformation == "Marketing information" &&
-                q.CourseDirectoryName == "Another name" &&
-                q.TradingName == "Trading name" &&
-                q.Alias == "Alias" &&
-                q.UpdatedOn == Clock.UtcNow &&
-                q.UpdatedBy == "Tests");
+            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertProviders, None>(q =>
+                q.Records.Any(p =>
+                    p.ProviderId == provider.Id &&
+                    p.Ukprn == provider.Ukprn &&
+                    p.ProviderStatus == Models.ProviderStatus.Onboarded &&
+                    p.ProviderType == Models.ProviderType.Both &&
+                    p.UkrlpProviderStatusDescription == "Active" &&
+                    p.MarketingInformation == "Marketing information" &&
+                    p.CourseDirectoryName == "Another name" &&
+                    p.TradingName == "Trading name" &&
+                    p.Alias == "Alias" &&
+                    p.UpdatedOn == Clock.UtcNow &&
+                    p.UpdatedBy == "Tests"));
         }
     }
 }
