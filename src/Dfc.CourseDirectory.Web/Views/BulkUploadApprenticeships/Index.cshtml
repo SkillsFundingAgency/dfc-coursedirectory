@@ -69,7 +69,12 @@
 
         <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="BulkUploadApprenticeships" asp-action="Index">
 
-            <p class="govuk-body">You can upload a CSV file to update your apprenticeship training courses, or you can @Html.ActionLink("add", "Index", "Apprenticeships"), @Html.ActionLink("edit or delete", "Index", "ProviderApprenticeships") each course individually.</p>
+            <p class="govuk-body">You can upload a CSV file to update your apprenticeship training courses, or you can:</p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@Html.ActionLink("add a new", "Index", "Apprenticeships") apprenticeship training course</li>
+                <li>@Html.ActionLink("edit or delete", "Index", "ProviderApprenticeships") each apprenticeship training course individually</li>
+            </ul>
 
             <h3 class="govuk-heading-m">Creating your bulk upload file</h3>
 
