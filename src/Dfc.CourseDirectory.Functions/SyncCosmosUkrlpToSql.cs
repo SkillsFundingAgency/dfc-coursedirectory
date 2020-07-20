@@ -28,11 +28,8 @@ namespace Dfc.CourseDirectory.Functions
             CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> documents)
         {
             var providers = documents.Select(d => JsonConvert.DeserializeObject<Provider>(d.ToString()));
-            
-            foreach (var provider in providers)
-            {
-                await _sqlDataSync.SyncProvider(provider);
-            }
+
+            await _sqlDataSync.SyncProviders(providers);
         }
     }
 }
