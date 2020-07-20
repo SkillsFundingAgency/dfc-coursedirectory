@@ -298,8 +298,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
         private static RedirectToActionResult AssertRedirect(IActionResult result, string expectedController, string expectedAction)
         {
-            Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            var redirect = result as RedirectToActionResult;
+            var redirect = Assert.IsAssignableFrom<RedirectToActionResult>(result);
             Assert.Equal(expectedController, redirect.ControllerName);
             Assert.Equal(expectedAction, redirect.ActionName);
             return redirect;
@@ -314,11 +313,9 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
         private static BulkUploadViewModel ViewModelFrom(IActionResult result)
         {
-            Assert.IsAssignableFrom<ViewResult>(result);
-            var viewResult = result as ViewResult;
+            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
             var model = viewResult.Model;
-            Assert.IsAssignableFrom<BulkUploadViewModel>(model);
-            var bulkUploadViewModel = model as BulkUploadViewModel;
+            var bulkUploadViewModel = Assert.IsAssignableFrom<BulkUploadViewModel>(model);
             return bulkUploadViewModel;
         }
     }
