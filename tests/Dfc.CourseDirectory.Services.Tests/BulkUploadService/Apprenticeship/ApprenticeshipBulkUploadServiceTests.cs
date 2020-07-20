@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
+using VenueStatus = Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 {
