@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Core
@@ -27,12 +28,19 @@ namespace Dfc.CourseDirectory.Core
         public async Task SyncAll()
         {
             await SyncAllProviders();
+            await SyncAllVenues();
         }
 
         public Task SyncAllProviders() => _cosmosDbQueryDispatcher.ExecuteQuery(
             new ProcessAllProviders()
             {
                 ProcessChunk = SyncProviders
+            });
+
+        public Task SyncAllVenues() => _cosmosDbQueryDispatcher.ExecuteQuery(
+            new ProcessAllVenues()
+            {
+                ProcessChunk = SyncVenues
             });
 
         public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
@@ -69,6 +77,35 @@ namespace Dfc.CourseDirectory.Core
                         PersonalDetailsPersonNameGivenName = string.Join(" ", c.ContactPersonalDetails?.PersonGivenName ?? Array.Empty<string>()),
                         PersonalDetailsPersonNameFamilyName = c.ContactPersonalDetails?.PersonFamilyName
                     })
+                })
+            }));
+
+        public Task SyncVenue(Venue venue) => SyncVenues(new[] { venue });
+
+        public Task SyncVenues(IEnumerable<Venue> venues) => WithSqlDispatcher(dispatcher =>
+            dispatcher.ExecuteQuery(new UpsertVenues()
+            {
+                Records = venues.Select(venue => new UpsertVenuesRecord()
+                {
+                    VenueId = venue.Id,
+                    VenueStatus = (VenueStatus)venue.Status,
+                    CreatedOn = venue.CreatedDate != default ? (DateTime?)venue.CreatedDate : null,
+                    CreatedBy = venue.CreatedBy,
+                    UpdatedOn = venue.DateUpdated != default ? (DateTime?)venue.DateUpdated : null,
+                    UpdatedBy = venue.UpdatedBy,
+                    VenueName = venue.VenueName,
+                    ProviderUkprn = venue.Ukprn,
+                    TribalVenueId = venue.LocationId,
+                    ProviderVenueRef = venue.ProvVenueID,
+                    AddressLine1 = venue.AddressLine1,
+                    AddressLine2 = venue.AddressLine2,
+                    Town = venue.Town,
+                    County = venue.County,
+                    Postcode = venue.Postcode,
+                    Position = ((double)venue.Latitude, (double)venue.Longitude),
+                    Telephone = venue.Telephone,
+                    Email = venue.Email,
+                    Website = venue.Website
                 })
             }));
 
