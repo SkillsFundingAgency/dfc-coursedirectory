@@ -34,14 +34,14 @@ namespace Dfc.CourseDirectory.Testing
             _services = services;
             _messageSink = messageSink;
 
-            DeploySqlDb();
-            _sqlCheckpoint = CreateCheckpoint();
-
             _lockConnection = new SqlConnection(ConnectionString);
             _lockConnection.Open();
             _lockTransaction = _lockConnection.BeginTransaction();
 
             AcquireLock();
+
+            DeploySqlDb();
+            _sqlCheckpoint = CreateCheckpoint();
         }
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
