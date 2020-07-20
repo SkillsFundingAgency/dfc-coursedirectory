@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -6,32 +7,55 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpsertProviderHandler : ISqlQueryHandler<UpsertProvider, None>
+    public class UpsertProvidersHandler : ISqlQueryHandler<UpsertProviders, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, UpsertProvider query)
+        public async Task<None> Execute(SqlTransaction transaction, UpsertProviders query)
         {
             await UpsertProvider();
             await UpsertProviderContacts();
 
-            Task UpsertProvider()
+            async Task UpsertProvider()
             {
+                var createTableSql = @"
+CREATE TABLE #Providers (
+	ProviderId UNIQUEIDENTIFIER,
+	Ukprn INT,
+    ProviderStatus TINYINT,
+    ProviderType TINYINT,
+    ProviderName NVARCHAR(MAX),
+    UkrlpProviderStatusDescription NVARCHAR(MAX),
+    MarketingInformation NVARCHAR(MAX),
+    CourseDirectoryName NVARCHAR(MAX),
+    TradingName NVARCHAR(MAX),
+    Alias NVARCHAR(MAX),
+    UpdatedOn DATETIME,
+    UpdatedBy NVARCHAR(MAX)
+)";
+
+                await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
+
+                await BulkCopyHelper.WriteRecords(
+                    query.Records.Select(r => new
+                    {
+                        r.ProviderId,
+                        r.Ukprn,
+                        ProviderStatus = (byte)r.ProviderStatus,
+                        ProviderType = (byte)r.ProviderType,
+                        r.ProviderName,
+                        r.UkrlpProviderStatusDescription,
+                        r.MarketingInformation,
+                        r.CourseDirectoryName,
+                        r.TradingName,
+                        r.Alias,
+                        r.UpdatedOn,
+                        r.UpdatedBy
+                    }),
+                    tableName: "#Providers",
+                    transaction);
+
                 var sql = @"
 MERGE Pttcd.Providers AS target
-USING (
-    SELECT
-        @ProviderId ProviderId,
-        @Ukprn Ukprn,
-        @ProviderStatus ProviderStatus,
-        @ProviderType ProviderType,
-        @ProviderName ProviderName,
-        @UkrlpProviderStatusDescription UkrlpProviderStatusDescription,
-        @MarketingInformation MarketingInformation,
-        @CourseDirectoryName CourseDirectoryName,
-        @TradingName TradingName,
-        @Alias Alias,
-        @UpdatedOn UpdatedOn,
-        @UpdatedBy UpdatedBy
-) AS source
+USING (SELECT * FROM #Providers) AS source
 ON target.ProviderId = source.ProviderId
 WHEN NOT MATCHED THEN
     INSERT (
@@ -75,30 +99,13 @@ WHEN MATCHED THEN
         UpdatedOn = source.UpdatedOn,
         UpdatedBy = source.UpdatedBy;";
 
-                var paramz = new
-                {
-                    query.ProviderId,
-                    query.Ukprn,
-                    query.ProviderStatus,
-                    query.ProviderType,
-                    query.ProviderName,
-                    query.UkrlpProviderStatusDescription,
-                    query.MarketingInformation,
-                    query.CourseDirectoryName,
-                    query.TradingName,
-                    query.Alias,
-                    query.UpdatedOn,
-                    query.UpdatedBy
-                };
-
-                return transaction.Connection.ExecuteAsync(sql, paramz, transaction);
+                await transaction.Connection.ExecuteAsync(sql, transaction: transaction);
             }
 
             async Task UpsertProviderContacts()
             {
-                var createVariableSql = @"
-CREATE TABLE #ProviderContacts
-(
+                var createTableSql = @"
+CREATE TABLE #ProviderContacts (
 	ProviderId UNIQUEIDENTIFIER,
 	ProviderContactIndex INT,
 	ContactType CHAR,
@@ -115,61 +122,29 @@ CREATE TABLE #ProviderContacts
 	PersonalDetailsPersonNameFamilyName NVARCHAR(MAX)
 )";
 
-                await transaction.Connection.ExecuteAsync(createVariableSql, transaction: transaction);
+                await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
 
-                var providerContactIndex = 0;
-                foreach (var contact in query.Contacts)
-                {
-                    var insertContactSql = @"
-INSERT INTO #ProviderContacts (
-    ProviderContactIndex,
-    ContactType,
-    ContactRole,
-    AddressSaonDescription,
-    AddressPaonDescription,
-    AddressStreetDescription,
-    AddressLocality,
-    AddressItems,
-    AddressPostTown,
-    AddressPostcode,
-    PersonalDetailsPersonNameTitle,
-    PersonalDetailsPersonNameGivenName,
-    PersonalDetailsPersonNameFamilyName)
-VALUES (
-    @ProviderContactIndex,
-    @ContactType,
-    @ContactRole,
-    @AddressSaonDescription,
-    @AddressPaonDescription,
-    @AddressStreetDescription,
-    @AddressLocality,
-    @AddressItems,
-    @AddressPostTown,
-    @AddressPostcode,
-    @PersonalDetailsPersonNameTitle,
-    @PersonalDetailsPersonNameGivenName,
-    @PersonalDetailsPersonNameFamilyName)";
-
-                    await transaction.Connection.ExecuteAsync(
-                        insertContactSql,
-                        new
+                await BulkCopyHelper.WriteRecords(
+                    query.Records
+                        .SelectMany(p => p.Contacts.Select((c, i) => new
                         {
-                            ProviderContactIndex = ++providerContactIndex,
-                            contact.ContactType,
-                            contact.ContactRole,
-                            contact.AddressSaonDescription,
-                            contact.AddressPaonDescription,
-                            contact.AddressStreetDescription,
-                            contact.AddressLocality,
-                            contact.AddressItems,
-                            contact.AddressPostTown,
-                            contact.AddressPostcode,
-                            contact.PersonalDetailsPersonNameTitle,
-                            contact.PersonalDetailsPersonNameGivenName,
-                            contact.PersonalDetailsPersonNameFamilyName
-                        },
-                        transaction);
-                }
+                            p.ProviderId,
+                            ProviderContactIndex = i,
+                            c.ContactType,
+                            c.ContactRole,
+                            c.AddressSaonDescription,
+                            c.AddressPaonDescription,
+                            c.AddressStreetDescription,
+                            c.AddressLocality,
+                            c.AddressItems,
+                            c.AddressPostTown,
+                            c.AddressPostcode,
+                            c.PersonalDetailsPersonNameTitle,
+                            c.PersonalDetailsPersonNameGivenName,
+                            c.PersonalDetailsPersonNameFamilyName
+                        })),
+                    tableName: "#ProviderContacts",
+                    transaction);
 
                 var mergeSql = @"
 MERGE Pttcd.ProviderContacts AS target
@@ -192,7 +167,7 @@ WHEN NOT MATCHED THEN
         PersonalDetailsPersonNameGivenName,
         PersonalDetailsPersonNameFamilyName
     ) VALUES (
-        @ProviderId,
+        source.ProviderId,
         source.ProviderContactIndex,
         source.ContactType,
         source.ContactRole,
@@ -221,9 +196,9 @@ WHEN MATCHED THEN UPDATE SET
     PersonalDetailsPersonNameTitle = source.PersonalDetailsPersonNameTitle,
     PersonalDetailsPersonNameGivenName = source.PersonalDetailsPersonNameGivenName,
     PersonalDetailsPersonNameFamilyName = source.PersonalDetailsPersonNameFamilyName
-WHEN NOT MATCHED BY SOURCE AND target.ProviderId = @ProviderId THEN DELETE;";
+WHEN NOT MATCHED BY SOURCE AND target.ProviderId IN (SELECT ProviderId FROM #Providers) THEN DELETE;";
 
-                await transaction.Connection.ExecuteAsync(mergeSql, new { query.ProviderId }, transaction: transaction);
+                await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
             }
 
             return new None();
