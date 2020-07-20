@@ -5,7 +5,12 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpsertProvider : ISqlQuery<None>
+    public class UpsertProviders : ISqlQuery<None>
+    {
+        public IEnumerable<UpsertProvidersRecord> Records { get; set; }
+    }
+
+    public class UpsertProvidersRecord
     {
         public Guid ProviderId { get; set; }
         public int Ukprn { get; set; }
@@ -17,12 +22,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string CourseDirectoryName { get; set; }
         public string TradingName { get; set; }
         public string Alias { get; set; }
-        public IEnumerable<UpsertProviderContact> Contacts { get; set; }
+        public IEnumerable<UpsertProvidersRecordContact> Contacts { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public string UpdatedBy { get; set; }
     }
 
-    public class UpsertProviderContact
+    public class UpsertProvidersRecordContact
     {
         public string ContactType { get; set; }
         public string ContactRole { get; set; }

@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 collectionUri,
                 new FeedOptions() { EnableCrossPartitionQuery = true, MaxItemCount = -1 }).AsDocumentQuery();
 
-            await query.ProcessAll(request.Process);
+            await query.ProcessAll(request.ProcessChunk);
 
             return new None();
         }
