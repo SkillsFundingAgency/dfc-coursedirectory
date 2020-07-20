@@ -88,5 +88,65 @@ namespace Dfc.CourseDirectory.Core.Tests
                     p.UpdatedOn == Clock.UtcNow &&
                     p.UpdatedBy == "Tests"));
         }
+
+        [Fact]
+        public async Task SyncVenue_UpsertsVenue()
+        {
+            // Arrange
+            var venue = new Venue()
+            {
+                Id = Guid.NewGuid(),
+                Ukprn = 12345,
+                VenueName = "Test",
+                AddressLine1 = "Line 1",
+                AddressLine2 = "Line 2",
+                Town = "Town",
+                County = "County",
+                Postcode = "AB1 2DE",
+                Latitude = 1,
+                Longitude = 2,
+                Telephone = "01234 567890",
+                Email = "venue@provider.com",
+                Website = "https://provider.com/venue",
+                Status = 1,
+                LocationId = 42,
+                ProvVenueID = "MY VENUE",
+                CreatedDate = Clock.UtcNow,
+                CreatedBy = "Tests",
+                DateUpdated = Clock.UtcNow,
+                UpdatedBy = "Tests"
+            };
+
+            var sqlDataSync = new SqlDataSync(
+                Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
+                CosmosDbQueryDispatcher.Object);
+
+            // Act
+            await sqlDataSync.SyncVenue(venue);
+
+            // Assert
+            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertVenues, None>(q =>
+                q.Records.Any(v =>
+                    v.VenueId == venue.Id &&
+                    v.ProviderUkprn == 12345 &&
+                    v.VenueName == "Test" &&
+                    v.AddressLine1 == "Line 1" &&
+                    v.AddressLine2 == "Line 2" &&
+                    v.Town == "Town" &&
+                    v.County == "County" &&
+                    v.Postcode == "AB1 2DE" &&
+                    v.Position.Latitude == 1 &&
+                    v.Position.Longitude == 2 &&
+                    v.Telephone == "01234 567890" &&
+                    v.Email == "venue@provider.com" &&
+                    v.Website == "https://provider.com/venue" &&
+                    v.VenueStatus == Models.VenueStatus.Live &&
+                    v.TribalVenueId == 42 &&
+                    v.ProviderVenueRef == "MY VENUE" &&
+                    v.CreatedBy == "Tests" &&
+                    v.CreatedOn == Clock.UtcNow &&
+                    v.UpdatedBy == "Tests" &&
+                    v.UpdatedOn == Clock.UtcNow));
+        }
     }
 }

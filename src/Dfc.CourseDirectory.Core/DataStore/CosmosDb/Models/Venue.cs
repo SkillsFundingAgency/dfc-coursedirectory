@@ -32,6 +32,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         [JsonProperty("WEBSITE")]
         public string Website { get; set; }
         public int Status { get; set; }
+        public int? LocationId { get; set; }
+        [JsonProperty("PROV_VENUE_ID")]
+        public string ProvVenueID { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime DateUpdated { get; set; }
+        public string UpdatedBy { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
