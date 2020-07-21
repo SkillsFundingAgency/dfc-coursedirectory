@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         {
             if (!_values.ContainsKey(field))
             {
-                throw new ArgumentOutOfRangeException($"Unknown field '{field}'");
+                throw new ArgumentOutOfRangeException(field, $"Unknown field '{field}'.");
             }
 
             _values[field] = value;
