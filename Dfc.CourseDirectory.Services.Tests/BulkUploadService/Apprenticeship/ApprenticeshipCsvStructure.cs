@@ -4,7 +4,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 {
     internal static class ApprenticeshipCsvStructure
     {
-        public static readonly List<string> Fields = new List<string>
+        public static readonly IReadOnlyList<string> Fields = new List<string>
         {
             "STANDARD_CODE",
             "STANDARD_VERSION",
