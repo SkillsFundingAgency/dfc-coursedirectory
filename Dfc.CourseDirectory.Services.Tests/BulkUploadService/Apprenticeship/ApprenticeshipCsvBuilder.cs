@@ -16,16 +16,6 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         private string _newLine = "\r\n";
         private readonly List<string> _rows = new List<string>();
 
-        private string CsvHeader()
-        {
-            var csvHeader = string.Join(",", ApprenticeshipCsvStructure.Fields);
-            if (_generateInvalidHeader)
-            {
-                return "modified_first_header_name_" + csvHeader;
-            }
-            return csvHeader;
-        }
-
         /// <summary>
         /// Lambda based API for adding rows.
         /// To add a default valid row:
@@ -87,7 +77,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             }
 
             var sb = new StringBuilder();
-            sb.Append(CsvHeader());
+            sb.Append(CreateCsvHeader());
             sb.Append(_newLine);
             sb.Append(string.Join(_newLine, _rows));
             if (_trailingNewline)
@@ -96,6 +86,16 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             }
 
             return sb.ToString();
+        }
+
+        private string CreateCsvHeader()
+        {
+            var csvHeader = string.Join(",", ApprenticeshipCsvStructure.Fields);
+            if (_generateInvalidHeader)
+            {
+                return "modified_first_header_name_" + csvHeader;
+            }
+            return csvHeader;
         }
     }
 }
