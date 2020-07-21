@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             await using var csvStream = new ApprenticeshipCsvBuilder()
                 .WithRow(row => row.WithStandardCode())
                 .WithRow(row => row.WithStandardCode()) // duplicate row isn't valid, but count doesn't currently check that
-                .Build();
+                .BuildStream();
 
             var actualLineCount = _apprenticeshipBulkUploadService.CountCsvLines(csvStream);
 
@@ -446,7 +446,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
-            await using var csvStream = apprenticeshipCsvBuilder.Build();
+            await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
             var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
@@ -472,7 +472,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
-            await using var csvStream = apprenticeshipCsvBuilder.Build();
+            await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
             var actualException = await Record.ExceptionAsync(
@@ -497,7 +497,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
-            await using var csvStream = apprenticeshipCsvBuilder.Build();
+            await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
             var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
