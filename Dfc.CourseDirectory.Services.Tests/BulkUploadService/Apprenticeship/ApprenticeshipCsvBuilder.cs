@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             return this;
         }
 
-        public Stream Build()
+        public Stream BuildStream()
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(BuildString()));
         }
