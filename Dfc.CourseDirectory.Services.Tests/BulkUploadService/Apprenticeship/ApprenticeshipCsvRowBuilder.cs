@@ -12,8 +12,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         public const string DefaultTestVenueName = "A Test Venue";
 
         private readonly Dictionary<string, string> _values = new Dictionary<string, string>(
-            ApprenticeshipCsvStructure.Fields.Select(
-                fieldName => new KeyValuePair<string, string>(fieldName, "")));
+            ApprenticeshipCsvStructure.Fields.ToDictionary(fieldName => fieldName, _ => ""));
 
         public ApprenticeshipCsvRowBuilder()
         {
