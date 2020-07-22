@@ -72,8 +72,8 @@
             <p class="govuk-body">You can upload a CSV file to update your apprenticeship training courses, or you can:</p>
 
             <ul class="govuk-list govuk-list--bullet">
-                <li>@Html.ActionLink("add a new", "Index", "Apprenticeships") apprenticeship training course</li>
-                <li>@Html.ActionLink("edit or delete", "Index", "ProviderApprenticeships") each apprenticeship training course individually</li>
+                <li>@Html.ActionLink("add a new apprenticeship training course", "Index", "Apprenticeships")</li>
+                <li>@Html.ActionLink("edit or delete each apprenticeship training course individually", "Index", "ProviderApprenticeships")</li>
             </ul>
 
             <h3 class="govuk-heading-m">Creating your bulk upload file</h3>
@@ -81,7 +81,7 @@
             <p class="govuk-body">Uploading and publishing a bulk upload file will replace all of your published apprenticeship training courses. To create the file you can:</p>
 
             <ul class="govuk-list govuk-list--bullet">
-                <li>download a @Html.ActionLink("blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage") and add your apprenticeship training course information</li>
+                <li>@Html.ActionLink("download a blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage") and add your apprenticeship training course information</li>
                 <li>download and edit a file containing your @Html.ActionLink("published apprenticeship training course information", "GetCurrentApprenticeshipsTemplateFile", "BlobStorage")</li>
             </ul>
 
@@ -105,7 +105,7 @@
 
         <h3 class="govuk-heading-m">If you have 376 rows or more in your bulk upload file</h3>
 
-        <p class="govuk-body">To update your apprenticeship training course information email  <a href="mailto:support@coursedirectory.org.uk?subject=Bulk%20upload">support@coursedirectory.org.uk</a> attaching your bulk upload file. The support desk will upload your file to Publish to the course directory.</p>
+        <p class="govuk-body">To update your apprenticeship training course information email  <a href="mailto:support@coursedirectory.org.uk">support@coursedirectory.org.uk</a> attaching your bulk upload file. The support desk will upload your file to Publish to the course directory.</p>
 
     </div>
 </div>
