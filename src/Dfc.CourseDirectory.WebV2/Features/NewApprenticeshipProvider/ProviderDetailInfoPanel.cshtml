@@ -1,53 +1,56 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetailInfoPanel.ViewModel
 
-<h2 class="govuk-heading-m govuk-!-margin-0">Contact details</h2>
-<aside class="pttcd-new-apprenticeship-provider__provider-detail-info-panel" role="complementary">
-    @if (Model.AddressParts.Count > 0)
-    {
-        <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-address">
-            <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Address</h3>
-            <div class="govuk-!-font-size-16">
-                @foreach (var part in Model.AddressParts)
-                {
-                    @part<br />
-                }
+@if (Model.GotContact)
+{
+    <h2 class="govuk-heading-m govuk-!-margin-0">Contact details</h2>
+    <aside class="pttcd-new-apprenticeship-provider__provider-detail-info-panel" role="complementary">
+        @if (Model.AddressParts.Count > 0)
+        {
+            <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-address">
+                <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Address</h3>
+                <div class="govuk-!-font-size-16">
+                    @foreach (var part in Model.AddressParts)
+                    {
+                        @part<br />
+                    }
+                </div>
             </div>
-        </div>
-    }
-    @if (!string.IsNullOrEmpty(Model.Website))
-    {
-        <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-website">
-            <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Web</h3>
-            <div class="govuk-!-font-size-16">
-                <a href="@Model.Website" class="govuk-link" rel="noreferrer" target="_blank">@Model.Website</a>
+        }
+        @if (!string.IsNullOrEmpty(Model.Website))
+        {
+            <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-website">
+                <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Web</h3>
+                <div class="govuk-!-font-size-16">
+                    <a href="@Model.Website" class="govuk-link" rel="noreferrer" target="_blank">@Model.Website</a>
+                </div>
             </div>
-        </div>
-    }
-    @if (!string.IsNullOrEmpty(Model.ContactName))
-    {
-        <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-contact-name">
-            <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Contact name</h3>
-            <div class="govuk-!-font-size-16">
-                @Model.ContactName
+        }
+        @if (!string.IsNullOrEmpty(Model.ContactName))
+        {
+            <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-contact-name">
+                <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Contact name</h3>
+                <div class="govuk-!-font-size-16">
+                    @Model.ContactName
+                </div>
             </div>
-        </div>
-    }
-    @if (!string.IsNullOrEmpty(Model.Email))
-    {
-        <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-email">
-            <h3 class="govuk-heading-m m20 govuk-!-margin-0">Email</h3>
-            <div class="govuk-!-font-size-16">
-                <a href="mailto:@Model.Email" class="govuk-link">@Model.Email</a>
+        }
+        @if (!string.IsNullOrEmpty(Model.Email))
+        {
+            <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-email">
+                <h3 class="govuk-heading-m m20 govuk-!-margin-0">Email</h3>
+                <div class="govuk-!-font-size-16">
+                    <a href="mailto:@Model.Email" class="govuk-link">@Model.Email</a>
+                </div>
             </div>
-        </div>
-    }
-    @if (!string.IsNullOrEmpty(Model.Telephone))
-    {
-        <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-telephone">
-            <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Telephone</h3>
-            <div class="govuk-!-font-size-16">
-                @Model.Telephone
+        }
+        @if (!string.IsNullOrEmpty(Model.Telephone))
+        {
+            <div class="govuk-!-margin-bottom-4" id="pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-telephone">
+                <h3 class="govuk-heading-m m20 govuk-!-margin-0" >Telephone</h3>
+                <div class="govuk-!-font-size-16">
+                    @Model.Telephone
+                </div>
             </div>
-        </div>
-    }
-</aside>
+        }
+    </aside>
+}
