@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using MediatR;
-using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetailInfoPanel
 {
@@ -24,6 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
     public class ViewModel
     {
         public Guid ProviderId { get; set; }
+        public bool GotContact { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
         public string ContactName { get; set; }
         public string Website { get; set; }
@@ -33,21 +29,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class Handler : IRequestHandler<Query, ViewModel>
     {
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IClock _clock;
-        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public Handler(
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IClock clock,
-            ICurrentUserProvider currentUserProvider)
+        public Handler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _clock = clock;
-            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -67,21 +53,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 .OrderByDescending(c => c.LastUpdated)
                 .SingleOrDefault(c => c.ContactType == "P");
 
-            var contactName = contact?.ContactPersonalDetails?.PersonGivenName != null && contact?.ContactPersonalDetails?.PersonFamilyName != null ?
+            if (contact == null)
+            {
+                return new ViewModel()
+                {
+                    ProviderId = request.ProviderId,
+                    GotContact = false
+                };
+            }
+
+            var contactName = contact.ContactPersonalDetails?.PersonGivenName != null && contact.ContactPersonalDetails?.PersonFamilyName != null ?
                 string.Join(" ", contact.ContactPersonalDetails.PersonGivenName) + " " +
                     contact.ContactPersonalDetails.PersonFamilyName :
                 null;
 
             return new ViewModel()
             {
-                AddressParts = contact?.ContactAddress != null ?
+                AddressParts = contact.ContactAddress != null ?
                     FormatAddress(contact.ContactAddress) :
                     Array.Empty<string>(),
                 ContactName = contactName,
-                Email = contact?.ContactEmail,
+                Email = contact.ContactEmail,
+                GotContact = true,
                 ProviderId = provider.Id,
-                Telephone = contact?.ContactTelephone1,
-                Website = contact?.ContactWebsiteAddress != null ? UrlUtil.EnsureHttpPrefixed(contact.ContactWebsiteAddress) : null
+                Telephone = contact.ContactTelephone1,
+                Website = contact.ContactWebsiteAddress != null ? UrlUtil.EnsureHttpPrefixed(contact.ContactWebsiteAddress) : null
             };
 
             IReadOnlyCollection<string> FormatAddress(ProviderContactAddress address)
