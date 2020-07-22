@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
-using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
-using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetailInfoPanel
 {
