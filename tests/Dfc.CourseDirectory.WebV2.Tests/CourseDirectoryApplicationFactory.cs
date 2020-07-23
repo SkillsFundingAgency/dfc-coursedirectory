@@ -54,6 +54,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                DatabaseFixture.Dispose();
+            }
+        }
+
         public void OnTestStarting()
         {
             DatabaseFixture.OnTestStarting();
