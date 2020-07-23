@@ -22,117 +22,94 @@
         });
 }
 
-<h1 class="govuk-heading-xl">Bulk upload apprenticeship training information</h1>
-@{
-    var styleAttribute = (string.IsNullOrEmpty(Model.NotificationTitle) && Model.errors == null)
-        ? "style=\"display: none;\""
-        : string.Empty;
-}
-<div id="errorSummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" @Html.Raw(styleAttribute)>
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        @if (string.IsNullOrEmpty(Model.NotificationTitle))
-        {
-            <span>There is a problem</span>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Bulk upload apprenticeship training course information</h1>
+
+        @{
+            var styleAttribute = (string.IsNullOrEmpty(Model.NotificationTitle) && Model.errors == null)
+                ? "style=\"display: none;\""
+                : string.Empty;
         }
-        else
-        {
-            @Model.NotificationTitle
-        }
-    </h2>
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            @if (!string.IsNullOrEmpty(Model.NotificationMessage))
-            {
-                <li>@Model.NotificationMessage</li>
-            }
-            @if (Model.errors != null && Model.errors.Any())
-            {
-                foreach (var error in Model.errors)
+
+        <div id="errorSummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" @Html.Raw(styleAttribute)>
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                @if (string.IsNullOrEmpty(Model.NotificationTitle))
                 {
-                    <li>
-                        <span id="name-error" class="govuk-error-message">
-                            <span class="govuk-visually-hidden">
-                                Error:
-                            </span>
-                            @error
-                        </span>
-                    </li>
+                    <span>There is a problem</span>
                 }
-            }
-        </ul>
+                else
+                {
+                    @Model.NotificationTitle
+                }
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    @if (!string.IsNullOrEmpty(Model.NotificationMessage))
+                    {
+                        <li>@Model.NotificationMessage</li>
+                    }
+                    @if (Model.errors != null && Model.errors.Any())
+                    {
+                        foreach (var error in Model.errors)
+                        {
+                            <li>
+                                <span id="name-error" class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">
+                                        Error:
+                                    </span>
+                                    @error
+                                </span>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="BulkUploadApprenticeships" asp-action="Index">
+
+            <p class="govuk-body">You can upload a CSV file to update your apprenticeship training courses, or you can:</p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@Html.ActionLink("add a new apprenticeship training course", "Index", "Apprenticeships")</li>
+                <li>@Html.ActionLink("edit or delete each apprenticeship training course individually", "Index", "ProviderApprenticeships")</li>
+            </ul>
+
+            <h3 class="govuk-heading-m">Creating your bulk upload file</h3>
+
+            <p class="govuk-body">Uploading and publishing a bulk upload file will replace all of your published apprenticeship training courses. To create the file you can:</p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@Html.ActionLink("download a blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage") and add your apprenticeship training course information</li>
+                <li>download and edit a file containing your @Html.ActionLink("published apprenticeship training course information", "GetCurrentApprenticeshipsTemplateFile", "BlobStorage")</li>
+            </ul>
+
+            <h3 class="govuk-heading-m">If you have 375 rows or fewer in your bulk upload file</h3>
+
+            <div id="groupServerSideError" class="govuk-form-group">
+                <label class="govuk-label" for="bulkUploadFile">Upload a file</label>
+                <span id="serverSideError" class="govuk-error-message" style="display: none">There is an error with the file. See above summary</span>
+                <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
+                       val-required-message="Select a bulk upload file"
+                       val-file-extensions="csv"
+                       val-file-extensions-message="The selected file must be a CSV"
+                       val-file-size-max="209715200"
+                       val-file-size-max-message="The selected file must be smaller than 200MB" />
+            </div>
+
+            <button type="submit" id="uploadButton" class="govuk-button" data-module="govuk-button">Upload</button>
+            <a class="govuk-link cd-cancel-link" asp-controller="Home" asp-action="Index">Cancel</a>
+
+        </form>
+
+        <h3 class="govuk-heading-m">If you have 376 rows or more in your bulk upload file</h3>
+
+        <p class="govuk-body">To update your apprenticeship training course information email  <a href="mailto:support@coursedirectory.org.uk">support@coursedirectory.org.uk</a> attaching your bulk upload file. The support desk will upload your file to Publish to the course directory.</p>
+
     </div>
 </div>
-<form method="post" id="bulkUploadForm" enctype="multipart/form-data"
-      asp-controller="BulkUploadApprenticeships"
-      asp-action="Index">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-body">
-                <p>
-                    Bulk upload allows you to upload and publish all of your apprenticeship training information in a single file. Your apprenticeship training information will be replaced and deleted each time you publish. To create the file:
-                    <ul>
-                        <li>Enter your apprenticeship training information in a blank template</li>
-                        <li>Update a template containing your published apprenticeship training information</li>
-                    </ul>
-                </p>
-                <p>
-                    Your updated apprenticeship training information will be ready to publish after you have uploaded your file and resolved any errors.
-                </p>
 
-                <div id="groupServerSideError" class="govuk-form-group">
-                    <label class="govuk-heading-s" for="bulkUploadFile">
-                        Upload a file
-                    </label>
-                    <span id="serverSideError" class="govuk-error-message" style="display: none">There is an error with the file. See above summary</span>
-                    <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
-                           val-required-message="Select a file to upload"
-                           val-file-extensions="csv"
-                           val-file-extensions-message="The selected file must be a csv"
-                           val-file-size-max="209715200"
-                           val-file-size-max-message="The selected file must be smaller than 200MB" />
-                </div>
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        You'll replace all information about your apprenticeships if you continue.
-                    </strong>
-                </div>
-
-
-                <div class="cta-container">
-                    <button type="submit" id="uploadButton" class="govuk-button govuk-!-margin-right-3">
-                        Continue
-                    </button>
-                    <a class="govuk-link " asp-controller="Home" asp-action="Index">Cancel</a>
-                </div>
-            </div>
-        </div>
-        <div class="govuk-grid-column-one-third">
-            <div class="sidebar">
-
-                <div class="widget white blue">
-                    <h2 class="govuk-heading-s">Templates</h2>
-
-                    <ul class="govuk-list">
-                        <li>
-                            @Html.ActionLink("Blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage")
-                        </li>
-                        <li class="govuk-!-padding-bottom-4">
-                          
-                            
-                                @Html.ActionLink("Template containing your current published apprenticeship training information", "GetCurrentApprenticeshipsTemplateFile", "BlobStorage")
-                            
-
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-</form>
 <script>
         (function ($) {
             $(function () {
