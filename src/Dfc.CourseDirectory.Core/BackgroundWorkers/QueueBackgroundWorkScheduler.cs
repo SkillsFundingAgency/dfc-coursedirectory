@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,8 +12,7 @@ namespace Dfc.CourseDirectory.Core.BackgroundWorkers
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger _logger;
-        private readonly ConcurrentQueue<(WorkItem WorkItem, object State)> _work;
-        private readonly SemaphoreSlim _gotWorkSignal;
+        private readonly Channel<(WorkItem WorkItem, object State)> _work;
 
         public QueueBackgroundWorkScheduler(
             IServiceScopeFactory serviceScopeFactory,
@@ -22,27 +20,22 @@ namespace Dfc.CourseDirectory.Core.BackgroundWorkers
         {
             _serviceScopeFactory = serviceScopeFactory;
             _logger = loggerFactory.CreateLogger<QueueBackgroundWorkScheduler>();
-            _work = new ConcurrentQueue<(WorkItem WorkItem, object State)>();
-            _gotWorkSignal = new SemaphoreSlim(0);
+            _work = Channel.CreateUnbounded<(WorkItem WorkItem, object State)>();
         }
 
         public override void Dispose()
         {
-            _gotWorkSignal.Dispose();
-            _work.Clear();
+            _work.Writer.Complete();
         }
 
-        public Task Schedule(WorkItem workItem, object state = null)
+        public async Task Schedule(WorkItem workItem, object state = null)
         {
             if (workItem == null)
             {
                 throw new ArgumentNullException(nameof(workItem));
             }
 
-            _work.Enqueue((workItem, state));
-            _gotWorkSignal.Release();
-
-            return Task.CompletedTask;
+            await _work.Writer.WriteAsync((workItem, state));
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -63,23 +56,22 @@ namespace Dfc.CourseDirectory.Core.BackgroundWorkers
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _gotWorkSignal.WaitAsync(stoppingToken);
-                _work.TryDequeue(out var entry);
-                Debug.Assert(entry != default);
-
-                using var scope = _serviceScopeFactory.CreateScope();
-                var scopeServices = scope.ServiceProvider;
-
-                try
+                await foreach (var entry in _work.Reader.ReadAllAsync(stoppingToken))
                 {
-                    await entry.WorkItem(entry.State, scopeServices, stoppingToken);
-                }
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var scopeServices = scope.ServiceProvider;
+
+                    try
+                    {
+                        await entry.WorkItem(entry.State, scopeServices, stoppingToken);
+                    }
 #pragma warning disable CA1031 // Do not catch general exception types
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error executing work item.");
-                }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error executing work item.");
+                    }
 #pragma warning restore CA1031 // Do not catch general exception types
+                }
             }
         }
     }
