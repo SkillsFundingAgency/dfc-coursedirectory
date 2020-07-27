@@ -353,6 +353,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     SubRegion = "",
                     ExpectedError =
                         "Validation error on row 2. Field NATIONAL_DELIVERY must contain a value when Delivery Method is 'Employer'",
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -365,6 +366,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     SubRegion = "",
                     ExpectedError =
                         "Validation error on row 2. Field NATIONAL_DELIVERY must contain a value when Delivery Method is 'Employer'",
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -377,6 +379,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     SubRegion = "",
                     ExpectedError =
                         "Validation error on row 2. Field NATIONAL_DELIVERY must contain a value when Delivery Method is 'Employer'",
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -388,6 +391,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "",
                     SubRegion = "",
                     ExpectedError = "Validation error on row 2. Fields REGION/SUB_REGION are mandatory",
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -399,6 +403,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "Junk",
                     SubRegion = "",
                     ExpectedError = "Validation error on row 2. Field REGION  contains invalid Region names",
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -410,6 +415,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "South East;Junk",
                     SubRegion = "",
                     ExpectedError = "Validation error on row 2. Field REGION  contains invalid Region names",
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -421,7 +427,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "South East;South West",
                     SubRegion = "Devon;Reading;Dorset;Slough",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -433,7 +439,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "South West",
                     SubRegion = "",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -445,7 +451,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "South West",
                     SubRegion = "Derby",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -457,7 +463,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "South West",
                     SubRegion = "Devon",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -468,8 +474,8 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Venue = DefaultVenue,
                     Region = "South West",
                     SubRegion = "Devon;Dorset",
-                    ExpectedOutputDeliveryMode = null,
                     ExpectedError = NoError,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -503,7 +509,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "south west",
                     SubRegion = "devon",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -515,7 +521,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "",
                     SubRegion = "",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
@@ -527,7 +533,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     Region = "",
                     SubRegion = "",
                     ExpectedError = NoError,
-                    ExpectedOutputDeliveryMode = null,
+                    ExpectedOutputDeliveryMode = ApprenticeshipDeliveryMode.EmployerAddress,
                 },
                 new LocationVariationFact
                 {
