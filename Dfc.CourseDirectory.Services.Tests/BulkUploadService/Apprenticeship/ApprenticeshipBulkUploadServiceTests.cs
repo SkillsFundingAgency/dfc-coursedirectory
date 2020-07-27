@@ -121,29 +121,29 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 new Action<ApprenticeshipCsvBuilder>(builder => builder
                     .WithRow(row => row
                         .WithFrameworkCode()
-                        .With("DELIVERY_METHOD", fact.deliveryMethod)
-                        .With("DELIVERY_MODE", fact.deliveryMode)
-                        .With("ACROSS_ENGLAND", fact.acrossEngland)
-                        .With("NATIONAL_DELIVERY", fact.nationalDelivery)
-                        .With("VENUE", fact.venue)
-                        .With("REGION", fact.region)
-                        .With("SUB_REGION", fact.subRegion)
+                        .With("DELIVERY_METHOD", fact.DeliveryMethod)
+                        .With("DELIVERY_MODE", fact.DeliveryMode)
+                        .With("ACROSS_ENGLAND", fact.AcrossEngland)
+                        .With("NATIONAL_DELIVERY", fact.NationalDelivery)
+                        .With("VENUE", fact.Venue)
+                        .With("REGION", fact.Region)
+                        .With("SUB_REGION", fact.SubRegion)
                     )
                 );
 
-            if (fact.expectedError == null)
+            if (fact.ExpectedError == null)
             {
                 IApprenticeship output = null;
                 await Run_SuccessTest(
                     csvBuilder,
                     (f) => output = ValidateAndReturnSingleApprenticeshipWithNoErrors(f));
-                Assert.Equal(fact.expectedOutputDeliveryMode ?? default, (ApprenticeshipDeliveryMode?)output.ApprenticeshipLocations.SingleOrDefault()?.DeliveryModes?.SingleOrDefault());
+                Assert.Equal(fact.ExpectedOutputDeliveryMode ?? default, (ApprenticeshipDeliveryMode?)output.ApprenticeshipLocations.SingleOrDefault()?.DeliveryModes?.SingleOrDefault());
             }
             else
             {
                 await Run_ThrowsTest<BadDataException>(
                     csvBuilder,
-                    fact.expectedError);
+                    fact.ExpectedError);
             }
         }
 
