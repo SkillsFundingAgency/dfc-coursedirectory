@@ -551,7 +551,9 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     $"\"{nameof(LocationVariationFact.DeliveryMethod)}\",\"{nameof(LocationVariationFact.DeliveryMode)}\",\"{nameof(LocationVariationFact.AcrossEngland)}\",\"{nameof(LocationVariationFact.NationalDelivery)}\",\"{nameof(LocationVariationFact.Venue)}\",\"{nameof(LocationVariationFact.Region)}\",\"{nameof(LocationVariationFact.SubRegion)}\",\"{nameof(LocationVariationFact.ExpectedError)}\",\"{nameof(LocationVariationFact.ExpectedOutputDeliveryMode)}\"{System.Environment.NewLine}"
                     + string.Join(System.Environment.NewLine, facts.Select(f => $"\"{f.DeliveryMethod}\",\"{f.DeliveryMode}\",\"{f.AcrossEngland}\",\"{f.NationalDelivery}\",\"{f.Venue}\",\"{f.Region}\",\"{f.SubRegion}\",\"{f.ExpectedError}\",\"{f.ExpectedOutputDeliveryMode}\""))
                     + $"{System.Environment.NewLine}{System.Environment.NewLine}Generated {System.DateTime.Now}";
-                System.IO.File.WriteAllText("/tmp/location-variation-coverage.csv", coverageTable);
+                var coverageFileName = Path.GetTempFileName();
+                System.IO.File.WriteAllText(coverageFileName, coverageTable);
+                Console.Out.WriteLine($"Coverage csv exported to {coverageFileName}");
             */
         }
     }
