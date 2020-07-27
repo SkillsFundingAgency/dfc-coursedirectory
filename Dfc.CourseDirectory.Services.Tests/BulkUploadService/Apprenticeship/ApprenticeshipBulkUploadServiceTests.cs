@@ -22,12 +22,18 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 {
     public class ApprenticeshipBulkUploadServiceTests
     {
+        private const string DefaultVenue = ApprenticeshipCsvRowBuilder.DefaultTestVenueName;
         private ApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
 
         private readonly AuthUserDetails _authUserDetails = new AuthUserDetails { UKPRN = "666" };
         private readonly Mock<IApprenticeshipService> _mockApprenticeshipService = new Mock<IApprenticeshipService>();
         private readonly Mock<IStandardsAndFrameworksCache> _standardsAndFrameworksCacheMock = new Mock<IStandardsAndFrameworksCache>();
         private readonly Mock<IVenueService> _mockVenueService = new Mock<IVenueService>();
+
+        private List<Venue> _mockVenues = new List<Venue>
+        {
+            new Venue {VenueName = DefaultVenue, Status = VenueStatus.Live},
+        };
 
         [Fact]
         public async void TestCountCsvLines()
@@ -104,6 +110,41 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                         },
                         apprenticeship.ApprenticeshipLocations.Single().Regions);
                 });
+        }
+
+
+        [ClassData(typeof(LocationVariationFacts))]
+        [Theory]
+        public async Task TestValidateAndUploadCSV_LocationVariations(LocationVariationFact fact)
+        {
+            var csvBuilder =
+                new Action<ApprenticeshipCsvBuilder>(builder => builder
+                    .WithRow(row => row
+                        .WithFrameworkCode()
+                        .With("DELIVERY_METHOD", fact.DeliveryMethod)
+                        .With("DELIVERY_MODE", fact.DeliveryMode)
+                        .With("ACROSS_ENGLAND", fact.AcrossEngland)
+                        .With("NATIONAL_DELIVERY", fact.NationalDelivery)
+                        .With("VENUE", fact.Venue)
+                        .With("REGION", fact.Region)
+                        .With("SUB_REGION", fact.SubRegion)
+                    )
+                );
+
+            if (fact.ExpectedError == null)
+            {
+                IApprenticeship output = null;
+                await Run_SuccessTest(
+                    csvBuilder,
+                    (f) => output = ValidateAndReturnSingleApprenticeshipWithNoErrors(f));
+                Assert.Equal(fact.ExpectedOutputDeliveryMode ?? default, (ApprenticeshipDeliveryMode?)output.ApprenticeshipLocations.SingleOrDefault()?.DeliveryModes?.SingleOrDefault());
+            }
+            else
+            {
+                await Run_ThrowsTest<BadDataException>(
+                    csvBuilder,
+                    fact.ExpectedError);
+            }
         }
 
         [Fact]
@@ -309,9 +350,9 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 "Validation error on row 2. DELIVERY_METHOD is required.");
         }
 
-        [Theory]
         [InlineData("CONTACT_PHONE", "Telephone is required")]
         [InlineData("CONTACT_EMAIL", "Email is required")]
+        [Theory]
         public async Task TestValidateAndUploadCSV_RequiredFieldBlank_ReturnsErrors(string field, string expectedError)
         {
             await Run_ReturnsErrorsTest(
@@ -321,7 +362,6 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 expectedError);
         }
 
-        [Theory]
         [InlineData("APPRENTICESHIP_WEBPAGE", "example.org")]
         [InlineData("APPRENTICESHIP_WEBPAGE", "http://example.org")]
         [InlineData("APPRENTICESHIP_WEBPAGE", "https://example.org")]
@@ -329,6 +369,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         [InlineData("CONTACT_URL", "example.org")]
         [InlineData("CONTACT_URL", "http://example.org")]
         [InlineData("CONTACT_URL", "https://example.org")]
+        [Theory]
         public async Task TestValidateAndUploadCSV_UrlField_Success(string field, string url)
         {
             await Run_SuccessTest(
@@ -338,7 +379,6 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 ValidateSingleApprenticeshipWithNoErrors);
         }
 
-        [Theory]
         [InlineData("APPRENTICESHIP_WEBPAGE", "x@example.org")]
         [InlineData("APPRENTICESHIP_WEBPAGE", "exampleorg")]
         [InlineData("APPRENTICESHIP_WEBPAGE", "xxx")]
@@ -347,6 +387,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         [InlineData("CONTACT_URL", "exampleorg")]
         [InlineData("CONTACT_URL", "xxx")]
         [InlineData("CONTACT_URL", "x.x")]
+        [Theory]
         public async Task TestValidateAndUploadCSV_UrlFields_Invalid_StoresErrors(string field, string url)
         {
             await Run_SuccessTest(
@@ -361,9 +402,9 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 });
         }
 
-        [Theory]
         [InlineData("APPRENTICESHIP_WEBPAGE")]
         [InlineData("CONTACT_URL")]
+        [Theory]
         public async Task TestValidateAndUploadCSV_UrlFields_TooLong_StoresErrors(string field)
         {
             const string longUrl = "https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.org";
@@ -405,6 +446,90 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 });
         }
 
+        [Fact]
+        public async Task TestValidateAndUploadCSV_AggregatesMultipleLocations_WithStandardCode()
+        {
+            var mockVenue1 = AddMockVenue("mockVenueS1");
+            var mockVenue2 = AddMockVenue("mockVenueS2");
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row
+                        .WithStandardCode()
+                        .With("VENUE", mockVenue1.VenueName)
+                    )
+                    .WithRow(row => row
+                        .WithStandardCode()
+                        .With("VENUE", mockVenue2.VenueName)
+                    ),
+                apprenticeships =>
+                {
+                    Assert.Equal(2, apprenticeships.Single().ApprenticeshipLocations.Count);
+                }
+            );
+        }
+
+        [Fact]
+        public async Task TestValidateAndUploadCSV_AggregatesMultipleLocations_WithFramework()
+        {
+            var mockVenue1 = AddMockVenue("mockVenueF1");
+            var mockVenue2 = AddMockVenue("mockVenueF2");
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row
+                        .WithFrameworkCode()
+                        .With("VENUE", mockVenue1.VenueName)
+                    )
+                    .WithRow(row => row
+                        .WithFrameworkCode()
+                        .With("VENUE", mockVenue2.VenueName)
+                    ),
+                apprenticeships =>
+                {
+                    Assert.Equal(2, apprenticeships.Single().ApprenticeshipLocations.Count);
+                }
+            );
+        }
+
+        [Fact]
+        public async Task TestValidateAndUploadCSV_SplitsLocationsByDeliveryMethod()
+        {
+            var mockVenue1 = AddMockVenue("mockVenue1");
+            var mockVenue2 = AddMockVenue("mockVenue2");
+            var mockVenue3 = AddMockVenue("mockVenue3");
+            var mockVenue4 = AddMockVenue("mockVenue4");
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row
+                        .WithStandardCode()
+                        .With("DELIVERY_METHOD", "employer")
+                        .With("NATIONAL_DELIVERY", "yes") // required for DELIVERY_METHOD=employer, not part of test
+                        .With("VENUE", mockVenue1.VenueName)
+                    )
+                    .WithRow(row => row
+                        .WithStandardCode()
+                        .With("DELIVERY_METHOD", "employer")
+                        .With("NATIONAL_DELIVERY", "yes") // required for DELIVERY_METHOD=employer, not part of test
+                        .With("VENUE", mockVenue2.VenueName)
+                    )
+                    .WithRow(row => row
+                        .WithStandardCode()
+                        .With("DELIVERY_METHOD", "classroom")
+                        .With("VENUE", mockVenue3.VenueName)
+                    )
+                    .WithRow(row => row
+                        .WithStandardCode()
+                        .With("DELIVERY_METHOD", "classroom")
+                        .With("VENUE", mockVenue4.VenueName)
+                    ),
+                apprenticeships =>
+                {
+                    Assert.Equal(2, apprenticeships.Count);
+                    Assert.Equal(2, apprenticeships.First().ApprenticeshipLocations.Count);
+                    Assert.Equal(2, apprenticeships.Skip(1).Single().ApprenticeshipLocations.Count);
+                }
+            );
+        }
+
         private void SetupService()
         {
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
@@ -414,24 +539,18 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 
         private void SetupDependencies()
         {
-            var mockVenue = new Venue
-            {
-                VenueName = ApprenticeshipCsvRowBuilder.DefaultTestVenueName,
-                Status = VenueStatus.Live,
-            };
-
             _mockApprenticeshipService.Setup(m =>
                     m.ChangeApprenticeshipStatusesForUKPRNSelection(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(Result.Ok());
 
             _mockVenueService.Setup(m => m.SearchAsync(It.IsAny<IVenueSearchCriteria>()))
-                .ReturnsAsync(Result.Ok<IVenueSearchResult>(new VenueSearchResult(new List<Venue> {mockVenue})));
+                .ReturnsAsync(Result.Ok<IVenueSearchResult>(new VenueSearchResult(_mockVenues)));
 
             _standardsAndFrameworksCacheMock.Setup(m => m.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new Standard());
+                .ReturnsAsync((int s, int v) => new Standard {StandardCode = s, Version = v});
 
             _standardsAndFrameworksCacheMock.Setup(m => m.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new Framework());
+                .ReturnsAsync((int c, int t, int p) => new Framework{FrameworkCode = c, ProgType = t, PathwayCode = p});
         }
 
         private async Task Run_SuccessTest(Action<ApprenticeshipCsvBuilder> configureCsv,
@@ -532,6 +651,17 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             Assert.Equal(fieldName, bulkUploadError.Header);
             Assert.Equal(expectedError, bulkUploadError.Error);
             Assert.Equal(2, bulkUploadError.LineNumber);
+        }
+
+        private Venue AddMockVenue(string venueName)
+        {
+            var mockVenue = new Venue
+            {
+                VenueName = venueName,
+                Status = VenueStatus.Live,
+            };
+            _mockVenues.Add(mockVenue);
+            return mockVenue;
         }
     }
 }
