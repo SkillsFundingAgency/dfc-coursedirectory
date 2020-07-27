@@ -333,6 +333,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     return deliveryModes.Values.ToList();
                 }
+                else
+                {
+                    return new List<int>{ (int)DeliveryMode.Employer };
+                }
 
                 return new List<int>();
             }
