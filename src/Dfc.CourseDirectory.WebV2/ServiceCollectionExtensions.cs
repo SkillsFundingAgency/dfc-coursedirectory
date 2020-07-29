@@ -148,6 +148,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<Settings>(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
             services.AddScoped<ICookieSettingsProvider, CookieSettingsProvider>();
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
+            services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
