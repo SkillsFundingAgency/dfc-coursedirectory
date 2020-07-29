@@ -78,8 +78,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _apprenticeshipService = apprenticeshipService;
         }
 
-        
-        [Authorize]          
+        [Authorize]
         public IActionResult Index()
         {
             _session.SetString("Option", "BulkUploadApprenticeships");
@@ -98,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
             var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
-            
+
             var model = new BulkUploadViewModel
             {
                 HasMigrationErrors = courseErrors > 0 ? true : false,
@@ -112,7 +111,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             return View("Index",model);
         }
-         
+
         [Authorize]
         public IActionResult Pending()
         {
@@ -131,125 +130,91 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
             var sw = Stopwatch.StartNew();
-
             try
             {
-
-                int? UKPRN;
-                if (_session.GetInt32("UKPRN") != null)
-                    UKPRN = _session.GetInt32("UKPRN").Value;
-                else
-                    return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-
-                BulkUploadViewModel vm = new BulkUploadViewModel();
-
-
-
-                string errorMessage;
-
-                if (Validate.ValidateFile(bulkUploadFile, out errorMessage))
+                var UKPRN = _session.GetInt32("UKPRN");
+                if (UKPRN == null)
                 {
-                    int providerUKPRN = UKPRN.Value;
-                    string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"),
-                         Path.GetFileName(bulkUploadFile.FileName));
-
-                    MemoryStream ms = new MemoryStream();
-                    bulkUploadFile.CopyTo(ms);
-
-                    if (!Validate.isBinaryStream(ms))
-                    {
-                        int csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
-
-                        bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
-
-                        _logger.LogInformation(
-                            $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
-
-                        if (processInline)
-                        {
-                            bulkUploadFileNewName +=
-                                "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
-                                ".processed"; // stops the Azure trigger from processing the file
-                        }
-
-                        if (!processInline)
-                        {
-                            await _blobService.UploadFileAsync(
-                                $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                        }
-
-                        List<string> errors = new List<string>();
-                        try
-                        {
-
-                            errors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
-                                _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN), processInline);
-
-                        }
-                        catch (HeaderValidationException he)
-                        {
-                            errors.Add(he.Message.FirstSentence());
-                            vm.errors = errors;
-                            return View(vm);
-                        }
-                        catch (BadDataException be)
-                        {
-                            errors.AddRange(be.Message.Split(';'));
-                            vm.errors = errors;
-                            return View(vm);
-                        }
-                        catch (Exception e)
-                        {
-                            errors.Add(e.Message);
-                            vm.errors = errors;
-                            return View(vm);
-                        }
-
-                        if (errors.Any())
-                        {
-                            return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                                new
-                                {
-                                    message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must resolve all errors before your apprenticeship training information can be published.",
-                                    errorCount = errors.Count
-                                }
-                                );
-                        }
-                        else
-                        {
-                            if (processInline)
-                            {
-                                // All good => redirect to BulkCourses action
-                                return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
-                            }
-                            else
-                            {
-                                return RedirectToAction("Pending");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        vm.errors = new string[] { "Invalid file content." };
-                    }
+                    return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
+                }
+                if (!Validate.ValidateFile(bulkUploadFile, out var errorMessage))
+                {
+                    return View(new BulkUploadViewModel {errors = new[] {errorMessage}});
                 }
 
-                else
+                await using var ms = new MemoryStream(); // todo: await-using to dispose of stream. Needs test fix.
+                bulkUploadFile.CopyTo(ms);
+
+                if (Validate.isBinaryStream(ms))
                 {
-                    vm.errors = new string[] { errorMessage };
+                    return View(new BulkUploadViewModel {errors = new[] {"Invalid file content."}});
                 }
 
-                return View(vm);
+                var csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
+
+                bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
+
+                _logger.LogInformation(
+                    $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
+
+                var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(bulkUploadFile.FileName)}";
+                if (processInline)
+                {
+                    bulkUploadFileNewName +=
+                        "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
+                        ".processed"; // stops the Azure trigger from processing the file
+                }
+
+                if (!processInline)
+                {
+                    await _blobService.UploadFileAsync(
+                        $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                }
+
+                var errors = new List<string>();
+                try
+                {
+                    errors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
+                        _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN),
+                        processInline);
+                }
+                catch (HeaderValidationException he)
+                {
+                    errors.Add(he.Message.FirstSentence());
+                    return View(new BulkUploadViewModel {errors = errors});
+                }
+                catch (BadDataException be)
+                {
+                    errors.AddRange(be.Message.Split(';'));
+                    return View(new BulkUploadViewModel {errors = errors});
+                }
+                catch (Exception e)
+                {
+                    errors.Add(e.Message);
+                    return View(new BulkUploadViewModel {errors = errors});
+                }
+
+                if (errors.Any())
+                {
+                    return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships", new
+                        {
+                            message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must resolve all errors before your apprenticeship training information can be published.",
+                            errorCount = errors.Count
+                        }
+                    );
+                }
+                if (processInline)
+                {
+                    // All good => redirect to BulkCourses action
+                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
+                }
+                return RedirectToAction("Pending");
             }
             finally
             {
                 sw.Stop();
             }
         }
-
-
-
 
         [Authorize]
         [HttpGet]
@@ -262,7 +227,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Message = message;
                 model.ErrorCount = errorCount;
             }
-           
+
             return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", model);
         }
 
@@ -299,7 +264,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                                
+
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
                 DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
                 DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
@@ -313,7 +278,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
-        {            
+        {
             return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
         }
 
@@ -414,7 +379,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             UKPRN = sUKPRN ?? 0;
-            
+
 
             var resultArchivingApprenticeships = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(
                 UKPRN,
@@ -430,7 +395,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //to publish stuff
             return View("../BulkUploadApprenticeships/Complete/Index", new ApprenticeshipsPublishCompleteViewModel() { NumberOfApprenticeshipsPublished = model.NumberOfApprenticeships, Mode = PublishMode.ApprenticeshipBulkUpload });
         }
-    
+
         private Provider FindProvider(int prn)
         {
             Provider provider = null;

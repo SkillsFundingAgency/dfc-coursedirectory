@@ -59,21 +59,32 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         [Fact]
         public async Task IndexPost_ValidLargeFileSupplied()
         {
+            // arrange
             SetupValidFileMetadata();
             const string csvData = "a,large,csv,file,here";
             SetupFileData(csvData);
             SetupUploadService_Success();
             SetupBackgroundProcessingTriggers();
+            bool streamPassedThrough = false;
+            var filePathPattern = $"^{ProviderUKPRN}" +
+                                  @"\/Apprenticeship Bulk Upload\/Files\/[0-9]{6}-[0-9]{6}-bulkUploadFile.csv$";
 
+            _mockBlobStorageService.Setup(
+                    m => m.UploadFileAsync(It.IsRegex(filePathPattern), It.IsAny<Stream>()))
+                .Returns(Task.CompletedTask)
+                .Callback((string _, Stream stream) => streamPassedThrough = IsOriginalStream(csvData, stream));
+
+            // act
             var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
 
+            // assert
             AssertRedirect(result, null, "Pending");
 
             _mockBlobStorageService.Verify(
-                m => m.UploadFileAsync(
-                    It.IsRegex($"^{ProviderUKPRN}"+@"\/Apprenticeship Bulk Upload\/Files\/[0-9]{6}-[0-9]{6}-bulkUploadFile.csv$"),
-                    ItIsOriginalCsvStream(csvData)),
+                m => m.UploadFileAsync(It.IsRegex(filePathPattern), It.IsAny<Stream>()),
                 Times.Once);
+
+            Assert.True(streamPassedThrough);
         }
 
         [Fact]
@@ -167,16 +178,12 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             VerifyNotUploaded();
         }
 
-        [Matcher]
-        private static Stream ItIsOriginalCsvStream(string originalCsv)
+        private static bool IsOriginalStream(string originalCsv, Stream stream)
         {
-            return Match<Stream>.Create(stream =>
-            {
-                stream.Position = 0;
-                var reader = new StreamReader(stream);
-                var actualCsv = reader.ReadToEnd();
-                return originalCsv == actualCsv;
-            }, () => ItIsOriginalCsvStream(originalCsv));
+            stream.Position = 0;
+            var reader = new StreamReader(stream);
+            var actualCsv = reader.ReadToEnd();
+            return originalCsv == actualCsv;
         }
 
         private BulkUploadApprenticeshipsController BuildController()
