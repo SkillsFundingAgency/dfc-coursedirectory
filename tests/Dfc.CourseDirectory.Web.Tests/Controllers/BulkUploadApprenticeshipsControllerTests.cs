@@ -215,14 +215,14 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             var errors = new List<string>();
             _mockApprenticeshipBulkUploadService.Setup(
                     m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
-                .ReturnsAsync(errors);
+                .ReturnsAsync(ApprenticeshipBulkUploadResult.Success());
         }
 
         private void SetupUploadService_Errors(List<string> errors)
         {
             _mockApprenticeshipBulkUploadService.Setup(
                     m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
-                .ReturnsAsync(errors);
+                .ReturnsAsync(ApprenticeshipBulkUploadResult.Failed(errors));
         }
 
         private void SetupUploadService_ThrowsBadData(string message)

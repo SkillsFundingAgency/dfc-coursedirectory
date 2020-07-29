@@ -154,30 +154,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _logger.LogInformation(
                     $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                var errors = new List<string>();
+                IReadOnlyCollection<string> errors = Array.Empty<string>();
                 try
                 {
                     ms.Position = 0;
 
-                    errors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+                    var result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
                         bulkUploadFile.FileName,
                         ms,
                         _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN),
                         processInline);
+
+                    errors = result.Errors;
                 }
                 catch (HeaderValidationException he)
                 {
-                    errors.Add(he.Message.FirstSentence());
+                    errors = new[] { he.Message.FirstSentence() };
                     return View(new BulkUploadViewModel {errors = errors});
                 }
                 catch (BadDataException be)
                 {
-                    errors.AddRange(be.Message.Split(';'));
+                    errors = be.Message.Split(';');
                     return View(new BulkUploadViewModel {errors = errors});
                 }
                 catch (Exception e)
                 {
-                    errors.Add(e.Message);
+                    errors = new[] { e.Message };
                     return View(new BulkUploadViewModel {errors = errors});
                 }
 

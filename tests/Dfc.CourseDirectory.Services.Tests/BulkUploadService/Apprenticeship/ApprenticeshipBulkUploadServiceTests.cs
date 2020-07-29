@@ -592,12 +592,12 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
-            var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+            var result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
                 fileName, csvStream, _authUserDetails, processInline);
 
             // assert
-            var emptyErrorList = new List<string>();
-            Assert.Equal(emptyErrorList, actualErrors);
+            var actualErrors = result.Errors;
+            Assert.Empty(actualErrors);
             validateDataPassedToApprenticeshipService(dataPassedToApprenticeshipService);
         }
 
@@ -647,10 +647,11 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
-            var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+            var result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
                 "mybulkupload.csv", csvStream, _authUserDetails, processInline);
 
             // assert
+            var actualErrors = result.Errors;
             var expectedErrors = new List<string> {expectedError};
             Assert.Equal(expectedErrors, actualErrors);
             return dataPassedToApprenticeshipService;

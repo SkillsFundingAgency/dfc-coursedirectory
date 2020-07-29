@@ -1089,7 +1089,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public async Task<List<string>> ValidateAndUploadCSV(
+        public async Task<ApprenticeshipBulkUploadResult> ValidateAndUploadCSV(
             string fileName,
             Stream stream,
             AuthUserDetails userDetails,
@@ -1226,7 +1226,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 throw;
             }
 
-            return errors;
+            return errors.Count > 0 ? ApprenticeshipBulkUploadResult.Failed(errors) : ApprenticeshipBulkUploadResult.Success();
         }
 
         private void ValidateHeader(CsvReader csv)
