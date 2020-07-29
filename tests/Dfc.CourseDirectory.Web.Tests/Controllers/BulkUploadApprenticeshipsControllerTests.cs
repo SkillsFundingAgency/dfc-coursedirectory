@@ -72,7 +72,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _mockBlobStorageService.Setup(
                     m => m.UploadFileAsync(It.IsRegex(filePathPattern), It.IsAny<Stream>()))
                 .Returns(Task.CompletedTask)
-                .Callback((string _, Stream stream) => streamPassedThrough = IsOriginalStream(csvData, stream));
+                .Callback(
+                    (string _, Stream stream) => streamPassedThrough = StreamContainsOriginalData(stream, csvData));
 
             // act
             var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
@@ -178,12 +179,12 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             VerifyNotUploaded();
         }
 
-        private static bool IsOriginalStream(string originalCsv, Stream stream)
+        private static bool StreamContainsOriginalData(Stream stream, string originalData)
         {
             stream.Position = 0;
             var reader = new StreamReader(stream);
             var actualCsv = reader.ReadToEnd();
-            return originalCsv == actualCsv;
+            return originalData == actualCsv;
         }
 
         private BulkUploadApprenticeshipsController BuildController()

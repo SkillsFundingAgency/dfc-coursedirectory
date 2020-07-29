@@ -142,7 +142,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return View(new BulkUploadViewModel {errors = new[] {errorMessage}});
                 }
 
-                await using var ms = new MemoryStream(); // todo: await-using to dispose of stream. Needs test fix.
+                await using var ms = new MemoryStream();
                 bulkUploadFile.CopyTo(ms);
 
                 if (Validate.isBinaryStream(ms))
