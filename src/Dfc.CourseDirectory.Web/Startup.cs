@@ -32,6 +32,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.Web.ViewComponents;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.BinaryStorageProvider;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -48,6 +49,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -144,6 +146,15 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
+
+            services.AddSingleton<IBinaryStorageProvider>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<BlobStorageSettings>>().Value;
+                return new BlobStorageBinaryStorageProvider(
+                    settings.AccountName,
+                    settings.AccountKey,
+                    settings.Container);
+            });
 
             services.AddCourseDirectory(_env, Configuration);
 
