@@ -181,7 +181,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
         private static bool StreamContainsOriginalData(Stream stream, string originalData)
         {
-            stream.Position = 0;
             var reader = new StreamReader(stream);
             var actualCsv = reader.ReadToEnd();
             return originalData == actualCsv;

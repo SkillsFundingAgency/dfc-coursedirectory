@@ -145,11 +145,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 await using var ms = new MemoryStream();
                 bulkUploadFile.CopyTo(ms);
 
+                ms.Position = 0;
                 if (Validate.isBinaryStream(ms))
                 {
                     return View(new BulkUploadViewModel {errors = new[] {"Invalid file content."}});
                 }
 
+                ms.Position = 0;
                 var csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
 
                 bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
@@ -167,6 +169,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (!processInline)
                 {
+                    ms.Position = 0;
                     await _blobService.UploadFileAsync(
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                 }
