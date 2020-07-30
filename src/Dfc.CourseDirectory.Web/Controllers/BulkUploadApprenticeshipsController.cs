@@ -33,45 +33,36 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class BulkUploadApprenticeshipsController : Controller
     {
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
         private readonly IUserHelper _userHelper;
-        private IWebHostEnvironment _env;
         private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
-        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public BulkUploadApprenticeshipsController(
             ILogger<BulkUploadApprenticeshipsController> logger,
-            IHttpContextAccessor contextAccessor,
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IApprenticeshipService apprenticeshipService,
             IBlobStorageService blobService,
             ICourseService courseService,
-            IWebHostEnvironment env,
             IProviderService providerService,
             IUserHelper userHelper)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(apprenticeshipBulkUploadService, nameof(apprenticeshipBulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
             Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(providerService, nameof(providerService));
             Throw.IfNull(userHelper, nameof(userHelper));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService;
             _blobService = blobService;
             _courseService = courseService;
-            _env = env;
             _courseService = courseService;
             _providerService = providerService;
             _userHelper = userHelper;
@@ -81,10 +72,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            _session.SetString("Option", "BulkUploadApprenticeships");
+            var session = HttpContext.Session;
+
+            session.SetString("Option", "BulkUploadApprenticeships");
             int? UKPRN;
-            if (_session.GetInt32("UKPRN") != null)
-                UKPRN = _session.GetInt32("UKPRN").Value;
+            if (session.GetInt32("UKPRN") != null)
+                UKPRN = session.GetInt32("UKPRN").Value;
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
@@ -115,10 +108,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Pending()
         {
-            _session.SetString("Option", "ApprenticeshipBulkUpload");
+            var session = HttpContext.Session;
+
+            session.SetString("Option", "ApprenticeshipBulkUpload");
             int? UKPRN;
-            if (_session.GetInt32("UKPRN") != null)
-                UKPRN = _session.GetInt32("UKPRN").Value;
+            if (session.GetInt32("UKPRN") != null)
+                UKPRN = session.GetInt32("UKPRN").Value;
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
@@ -132,7 +127,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var sw = Stopwatch.StartNew();
             try
             {
-                var UKPRN = _session.GetInt32("UKPRN");
+                var UKPRN = HttpContext.Session.GetInt32("UKPRN");
                 if (UKPRN == null)
                 {
                     return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
@@ -246,9 +241,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult DownloadErrorFile()
         {
+            var session = HttpContext.Session;
+
             int? UKPRN;
-            if (_session.GetInt32("UKPRN") != null)
-                UKPRN = _session.GetInt32("UKPRN").Value;
+            if (session.GetInt32("UKPRN") != null)
+                UKPRN = session.GetInt32("UKPRN").Value;
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
@@ -289,7 +286,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
             DateTimeOffset fileUploadDate = new DateTimeOffset();
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = HttpContext.Session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
             {
@@ -339,7 +336,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PublishYourFile()
         {
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = HttpContext.Session.GetInt32("UKPRN");
             if (!sUKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
@@ -363,7 +360,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> PublishYourFile(ApprenticeshipsPublishYourFileViewModel model)
         {
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = HttpContext.Session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
             {

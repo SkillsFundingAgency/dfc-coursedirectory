@@ -24,7 +24,6 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -46,8 +45,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private ISession _session;
         private ClaimsPrincipal _claimsPrincipal;
         private HttpContext _httpContext;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IWebHostEnvironment> _hostingEnvironment;
         private Mock<IUserHelper> _userHelper;
 
         private IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
@@ -69,8 +66,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 Session = _session,
                 User = _claimsPrincipal
             };
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _hostingEnvironment = new Mock<IWebHostEnvironment>();
             _userHelper = new Mock<IUserHelper>();
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
@@ -82,12 +77,10 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             _controller = new BulkUploadApprenticeshipsController(
                 NullLogger<BulkUploadApprenticeshipsController>.Instance,
-                _contextAccessor.Object,
                 _apprenticeshipBulkUploadService,
                 _apprenticeshipService.Object,
                 _blobStorageService.Object,
                 _courseService.Object,
-                _hostingEnvironment.Object,
                 _providerService.Object,
                 _userHelper.Object)
             {
@@ -96,8 +89,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                     HttpContext = _httpContext
                 }
             };
-
-            _contextAccessor.SetupGet(s => s.HttpContext).Returns(_httpContext);
         }
 
         [Fact]

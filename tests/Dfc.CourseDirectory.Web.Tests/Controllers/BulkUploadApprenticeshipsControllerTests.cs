@@ -15,7 +15,6 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -168,12 +167,10 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             var bulkUploadApprenticeshipsController = new BulkUploadApprenticeshipsController(
                 NullLogger<BulkUploadApprenticeshipsController>.Instance,
-                mockHttpContextAccessor.Object,
                 _mockApprenticeshipBulkUploadService.Object,
                 new Mock<IApprenticeshipService>().Object,
                 _mockBlobStorageService.Object,
                 new Mock<ICourseService>().Object,
-                new Mock<IWebHostEnvironment>().Object,
                 new Mock<IProviderService>().Object,
                 new Mock<IUserHelper>().Object);
             bulkUploadApprenticeshipsController.ControllerContext.HttpContext = mockContext;
