@@ -24,7 +24,8 @@ namespace Dfc.CourseDirectory.WebV2.BinaryStorageProvider
 
         public async Task<bool> TryDownloadFile(string path, Stream destination)
         {
-            var blobRef = _blobClient.GetContainerReference(_containerName).GetBlockBlobReference(path);
+            var container = await GetContainer();
+            var blobRef = container.GetBlockBlobReference(path);
 
             if (!await blobRef.ExistsAsync())
             {
@@ -35,11 +36,19 @@ namespace Dfc.CourseDirectory.WebV2.BinaryStorageProvider
             return true;
         }
 
-        public Task UploadFile(string path, Stream source)
+        public async Task UploadFile(string path, Stream source)
         {
-            var blobRef = _blobClient.GetContainerReference(_containerName).GetBlockBlobReference(path);
+            var container = await GetContainer();
+            var blobRef = container.GetBlockBlobReference(path);
 
-            return blobRef.UploadFromStreamAsync(source);
+            await blobRef.UploadFromStreamAsync(source);
+        }
+
+        private async Task<CloudBlobContainer> GetContainer()
+        {
+            var container = _blobClient.GetContainerReference(_containerName);
+            await container.CreateIfNotExistsAsync();
+            return container;
         }
     }
 }
