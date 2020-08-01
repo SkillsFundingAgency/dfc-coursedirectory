@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Dfc.CourseDirectory.WebV2.BinaryStorageProvider
+namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
 {
     public interface IBinaryStorageProvider
     {

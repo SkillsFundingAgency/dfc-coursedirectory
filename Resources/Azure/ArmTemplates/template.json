@@ -624,6 +624,14 @@
               {
                 "name": "ConnectionStrings__Redis",
                 "value": "[concat(parameters('RedisCacheName'), '.redis.cache.windows.net:6380,ssl=True,abortConnect=False,password=', listKeys(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Cache/Redis', parameters('RedisCacheName')), '2015-08-01').primaryKey)]"
+              },
+              {
+                "name": "BlobStorageBinaryStorageProviderSettings__ConnectionString",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+              },
+              {
+                "name": "BlobStorageBinaryStorageProviderSettings__ContainerName",
+                "value": "[parameters('blobStorageSettingsContainerName')]"
               }
             ]
           },
