@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
                 await blob.DownloadToAsync(destination);
                 return true;
             }
-            catch (RequestFailedException ex) when (ex.Status == 404)
+            catch (RequestFailedException ex) when (ex.Status == (int)System.Net.HttpStatusCode.NotFound)
             {
                 return false;
             }
