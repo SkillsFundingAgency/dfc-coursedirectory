@@ -8,7 +8,7 @@
 	[UpdatedOn] DATETIME,
 	[UpdatedBy] NVARCHAR(MAX),
 	[CourseName] NVARCHAR(MAX),
-	[VenueId] UNIQUEIDENTIFIER CONSTRAINT [FK_CourseRuns_Venue] FOREIGN KEY REFERENCES [Pttcd].[Venues] ([VenueId]),
+	[VenueId] UNIQUEIDENTIFIER,
 	[ProviderCourseId] NVARCHAR(MAX),
 	[DeliveryMode] TINYINT,
 	[FlexibleStartDate] BIT,
