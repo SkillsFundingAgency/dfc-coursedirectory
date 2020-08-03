@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Azure.Storage.Blobs;
 using Azure;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
 {
@@ -18,6 +19,16 @@ namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
 
         public async Task<bool> TryDownloadFile(string path, Stream destination)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException("Path cannot be empty.", nameof(path));
+            }
+
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
             await EnsureContainerExists();
 
             var blob = _blobContainerClient.GetBlobClient(path);
@@ -35,6 +46,16 @@ namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
 
         public async Task UploadFile(string path, Stream source)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException("Path cannot be empty.", nameof(path));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             await EnsureContainerExists();
 
             var blob = _blobContainerClient.GetBlobClient(path);
