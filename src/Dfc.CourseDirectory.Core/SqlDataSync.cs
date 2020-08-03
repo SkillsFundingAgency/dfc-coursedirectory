@@ -29,7 +29,14 @@ namespace Dfc.CourseDirectory.Core
         {
             await SyncAllProviders();
             await SyncAllVenues();
+            await SyncAllCourses();
         }
+
+        public Task SyncAllCourses() => _cosmosDbQueryDispatcher.ExecuteQuery(
+            new ProcessAllCourses()
+            {
+                ProcessChunk = SyncCourses
+            });
 
         public Task SyncAllProviders() => _cosmosDbQueryDispatcher.ExecuteQuery(
             new ProcessAllProviders()
@@ -42,6 +49,56 @@ namespace Dfc.CourseDirectory.Core
             {
                 ProcessChunk = SyncVenues
             });
+
+        public Task SyncCourse(Course course) => SyncCourses(new[] { course });
+
+        public Task SyncCourses(IEnumerable<Course> courses) => WithSqlDispatcher(dispatcher =>
+            dispatcher.ExecuteQuery(new UpsertCourses()
+            {
+                Records = courses.Select(course => new UpsertCoursesRecord()
+                {
+                    CourseId = course.Id,
+                    CourseStatus = (CourseStatus)course.CourseStatus,
+                    CreatedOn = course.CreatedDate,
+                    CreatedBy = course.CreatedBy,
+                    UpdatedOn = course.UpdatedDate,
+                    UpdatedBy = course.UpdatedBy,
+                    TribalCourseId = course.CourseId,
+                    LearnAimRef = course.LearnAimRef,
+                    ProviderUkprn = course.ProviderUKPRN,
+                    CourseDescription = course.CourseDescription,
+                    EntryRequirements = course.EntryRequirements,
+                    WhatYoullLearn = course.WhatYoullLearn,
+                    HowYoullLearn = course.HowYoullLearn,
+                    WhatYoullNeed = course.WhatYoullNeed,
+                    HowYoullBeAssessed = course.HowYoullBeAssessed,
+                    WhereNext = course.WhereNext,
+                    CourseRuns = course.CourseRuns.Select(courseRun => new UpsertCoursesRecordCourseRun()
+                    {
+                        CourseRunId = courseRun.Id,
+                        CourseRunStatus = (CourseStatus)courseRun.RecordStatus,
+                        CreatedOn = courseRun.CreatedDate,
+                        CreatedBy = courseRun.CreatedBy,
+                        UpdatedOn = courseRun.UpdatedDate,
+                        UpdatedBy = courseRun.UpdatedBy,
+                        CourseName = courseRun.CourseName,
+                        VenueId = courseRun.VenueId,
+                        ProviderCourseId = courseRun.ProviderCourseID,
+                        DeliveryMode = (CourseDeliveryMode)courseRun.DeliveryMode,
+                        FlexibleStartDate = courseRun.FlexibleStartDate,
+                        StartDate = courseRun.StartDate,
+                        CourseWebsite = courseRun.CourseURL,
+                        Cost = courseRun.Cost,
+                        CostDescription = courseRun.CostDescription,
+                        DurationUnit = (CourseDurationUnit)courseRun.DurationUnit,
+                        DurationValue = courseRun.DurationValue,
+                        StudyMode = (CourseStudyMode)courseRun.StudyMode,
+                        AttendancePattern = (CourseAttendancePattern)courseRun.AttendancePattern,
+                        National = courseRun.National,
+                        Regions = courseRun.Regions ?? Array.Empty<string>()
+                    })
+                })
+            }));
 
         public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
 
