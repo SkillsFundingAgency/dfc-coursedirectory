@@ -7,7 +7,7 @@
 	[UpdatedOn] DATETIME,
 	[UpdatedBy] NVARCHAR(MAX),
 	[TribalCourseId] INT,
-	[LearnAimRef] CHAR(8),
+	[LearnAimRef] VARCHAR(50),
 	[ProviderUkprn] INT,
 	[CourseDescription] NVARCHAR(MAX),
 	[EntryRequirements] NVARCHAR(MAX),
