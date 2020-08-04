@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using Dfc.CourseDirectory.Common.Settings;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
@@ -48,6 +49,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -144,6 +146,9 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
+
+            services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
+            services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));
 
             services.AddCourseDirectory(_env, Configuration);
 
