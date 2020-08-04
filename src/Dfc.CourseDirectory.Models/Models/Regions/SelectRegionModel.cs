@@ -895,7 +895,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000031",
-                            ApiLocationId = 200000091,
+                            ApiLocationId = 200000158,
                             SubRegionName = "Peterborough",
                             Checked = false,
                             Latitude = 52.57339,
@@ -905,7 +905,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000033",
-                            ApiLocationId = 200000092,
+                            ApiLocationId = 200000159,
                             SubRegionName = "Southend-on-Sea",
                             Checked = false,
                             Latitude = 51.54041,
@@ -915,7 +915,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000029",
-                            ApiLocationId = 200000093,
+                            ApiLocationId = 200000160,
                             SubRegionName = "Suffolk",
                             Checked = false,
                             Latitude = 52.1872, 
@@ -925,7 +925,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000034",
-                            ApiLocationId = 200000090,
+                            ApiLocationId = 200000161,
                             SubRegionName = "Thurrock",
                             Checked = false,
                             Latitude = 51.4935,
