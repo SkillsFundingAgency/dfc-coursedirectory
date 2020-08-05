@@ -7,19 +7,37 @@ namespace Dfc.CourseDirectory.WebV2.Validation
 {
     public static class ValidatorBaseExtensions
     {
+        /// <summary>
+        /// Defines a 'date' validator on the current rule builder, extracting the validation state
+        /// from a corresponding entry on the validator's <c>ActionContext</c>.
+        /// </summary>
+        /// <typeparam name="T">Type of object being validated.</typeparam>
+        /// <param name="ruleBuilder">
+        /// The rule builder on which the validator should be defined.
+        /// The validator must inherit from <see cref="ValidatorBase{T}"/>.
+        /// </param>
+        /// <param name="displayName">The display name of the field being validated.</param>
+        /// <param name="missingErrorMessage">The validation message to create if the field is missing.</param>
+        /// <example>
+        /// <code>
+        /// RuleFor(m => m.DateOfBirth).Date(
+        ///     displayName: "Date of birth",
+        ///     missingErrorMessage: "Enter your date of birth");
+        /// </code>
+        /// </example>
         public static IRuleBuilderInitial<T, Date?> Date<T>(
-            this IRuleBuilderInitial<T, Date?> builder,
+            this IRuleBuilderInitial<T, Date?> ruleBuilder,
             string displayName,
             string missingErrorMessage)
         {
-            if (!(builder is FluentValidation.Internal.RuleBuilder<T, Date?> b) ||
+            if (!(ruleBuilder is FluentValidation.Internal.RuleBuilder<T, Date?> b) ||
                 !(b.ParentValidator is ValidatorBase<T> validatorBase))
             {
                 throw new InvalidOperationException(
                     "Rule can only be applied on validators inheriting from ValidatorBase<T>.");
             }
 
-            return builder.Custom((property, context) =>
+            return ruleBuilder.Custom((property, context) =>
             {
                 if (validatorBase.ActionContext.ModelState.TryGetValue(context.PropertyName, out var entry)
                     && entry.Errors.SingleOrDefault()?.Exception is DateParseException dateParseException)
