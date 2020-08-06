@@ -23,10 +23,10 @@ namespace Dfc.CourseDirectory.Testing
 
         public void Reset() => _dispatcherMock.Reset();
 
-        public void VerifyQuery<TQuery, TResult>(Expression<Func<TQuery, bool>> match)
+        public void VerifyQuery<TQuery, TResult>(Predicate<TQuery> match)
             where TQuery : ISqlQuery<TResult>
         {
-            _dispatcherMock.Verify(d => d.ExecuteQuery(It.Is(match)));
+            _dispatcherMock.Verify(d => d.ExecuteQuery(Match.Create(match)));
         }
     }
 
