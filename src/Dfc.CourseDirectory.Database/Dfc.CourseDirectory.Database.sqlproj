@@ -411,6 +411,7 @@
     <Build Include="Pttcd\Tables\Apprenticeships.sql" />
     <Build Include="Pttcd\Tables\ApprenticeshipLocations.sql" />
     <Build Include="Pttcd\Tables\ApprenticeshipLocationRegions.sql" />
+    <Build Include="Pttcd\Tables\CourseRunRegions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Restore\Notes.txt" />
