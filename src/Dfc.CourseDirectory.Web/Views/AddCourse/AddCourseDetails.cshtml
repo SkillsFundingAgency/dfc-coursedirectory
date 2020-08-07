@@ -268,43 +268,8 @@
             })
         </div>
 
-
-
-        @{
-            var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>
-                ("LastAddCoursePage");
-            var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>
-                ("SummaryLoadedAtLeastOnce");
-            switch (lastAddCoursePage)
-            {
-                case AddCoursePage.AddCourse:
-                    if (summaryPageLoadedAtLeastOnce)
-                    {
-                        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                            Summary
-                        </button>
-                                @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
-                    }
-                    else
-                    {
-                        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                            Continue
-                        </button>
-                                @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
-                    }
-                    break;
-                case AddCoursePage.Summary:
-                    <div class="govuk-form-group">
-                        @*id="goToSummary"*@
-                        <button type="submit" class="govuk-button" id="publish" value="publish">
-                            Summary
-                        </button>
-
-                        <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
-                    </div>
-                    break;
-            }
-        }
+        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">Continue</button>
+        @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
 
         </form>
     </div>
