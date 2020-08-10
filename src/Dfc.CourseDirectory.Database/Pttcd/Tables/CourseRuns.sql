@@ -14,7 +14,7 @@
 	[FlexibleStartDate] BIT,
 	[StartDate] DATE,
 	[CourseWebsite] NVARCHAR(MAX),
-	[Cost] DECIMAL,
+	[Cost] MONEY,
 	[CostDescription] NVARCHAR(MAX),
 	[DurationUnit] TINYINT,
 	[DurationValue] INT,
