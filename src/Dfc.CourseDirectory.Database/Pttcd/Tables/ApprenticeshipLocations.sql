@@ -2,7 +2,7 @@
 (
 	[ApprenticeshipLocationId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_ApprenticeshipLocations] PRIMARY KEY,
 	[ApprenticeshipId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [FK_ApprenticeshipLocations_Apprenticeship] FOREIGN KEY REFERENCES [Pttcd].[Apprenticeships] ([ApprenticeshipId]),
-	[ApprenticeshipLocationStatus] TINYINT,
+	[ApprenticeshipLocationStatus] INT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),
 	[UpdatedOn] DATETIME,

@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [Pttcd].[Apprenticeships]
 (
 	[ApprenticeshipId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Apprenticeships] PRIMARY KEY,
-	[ApprenticeshipStatus] TINYINT,
+	[ApprenticeshipStatus] INT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),
 	[UpdatedOn] DATETIME,
