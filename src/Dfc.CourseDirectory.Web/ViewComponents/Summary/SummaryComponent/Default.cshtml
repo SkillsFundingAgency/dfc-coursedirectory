@@ -5,11 +5,13 @@
     <dt class="govuk-summary-list__key">
         @Model.Title
     </dt>
-    <dd class="govuk-summary-list__value"  style="word-break: break-word;">
+    <dd class="govuk-summary-list__value" style="word-break: break-word;">
         @Model.Value
     </dd>
     <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="@Url.Action( Model.Action , Model.Controller)#@Model.Section">change</a>
+        <a class="govuk-link" href="@Url.Action( Model.Action , Model.Controller)#@Model.Section">
+            Change
+            <span class="govuk-visually-hidden"> @Model.Title</span>
+        </a>
     </dd>
 </div>
- 
