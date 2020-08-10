@@ -118,8 +118,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             var selectRegion = new SelectRegionModel
             {
-                LabelText = "Where do you deliver this course?",
-                HintText = "Choose all of the areas in as many regions as you deliver this course",
+                LabelText = "Where in England can you deliver this course?",
+                HintText = "Select all regions and areas that apply.",
                 AriaDescribedBy = "Select all that apply."
             };
 
