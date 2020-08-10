@@ -10,6 +10,7 @@
 	[ProviderId] UNIQUEIDENTIFIER,
 	[ProviderUkprn] INT,
 	[ApprenticeshipType] TINYINT,
+	[ApprenticeshipTitle] NVARCHAR(MAX),
 	[StandardCode] INT,
 	[StandardVersion] INT,
 	[FrameworkCode] INT,
