@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 var createTableSql = @"
 CREATE TABLE #Courses (
     CourseId UNIQUEIDENTIFIER,
-    CourseStatus TINYINT,
+    CourseStatus INT,
     CreatedOn DATETIME,
     CreatedBy NVARCHAR(MAX),
     UpdatedOn DATETIME,
@@ -43,7 +43,7 @@ CREATE TABLE #Courses (
                     query.Records.Select(r => new
                     {
                         r.CourseId,
-                        CourseStatus = (byte)r.CourseStatus,
+                        r.CourseStatus,
                         r.CreatedOn,
                         r.CreatedBy,
                         r.UpdatedOn,
@@ -148,7 +148,7 @@ WHEN MATCHED THEN
 CREATE TABLE #CourseRuns (
     CourseRunId UNIQUEIDENTIFIER,
     CourseId UNIQUEIDENTIFIER,
-    CourseRunStatus TINYINT,
+    CourseRunStatus INT,
     CreatedOn DATETIME,
     CreatedBy NVARCHAR(MAX),
     UpdatedOn DATETIME,
@@ -176,7 +176,7 @@ CREATE TABLE #CourseRuns (
                     {
                         cr.CourseRunId,
                         c.CourseId,
-                        CourseRunStatus = (byte)cr.CourseRunStatus,
+                        cr.CourseRunStatus,
                         cr.CreatedOn,
                         cr.CreatedBy,
                         cr.UpdatedOn,
