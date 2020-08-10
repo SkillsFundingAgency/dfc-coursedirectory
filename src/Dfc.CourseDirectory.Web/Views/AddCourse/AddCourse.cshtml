@@ -90,48 +90,10 @@
                     @await Component.InvokeAsync(nameof(FundingOptions), Model.FundingOptions)
                 </div>*@
 
-            @{
-                var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
-                var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>("SummaryLoadedAtLeastOnce");
-                switch (lastAddCoursePage)
-                {
-                    case AddCoursePage.None:
-                        <div class="govuk-form-group">
-                            <button type="submit" class="govuk-button" id="goToSection2">
-                                Continue
-                            </button>
-                        </div>
-                        break;
-                    case AddCoursePage.AddCourseRun:
-                        if (summaryPageLoadedAtLeastOnce)
-                        {
-                            <div class="govuk-form-group">
-                                <button type="submit" class="govuk-button" id="goToSummary">
-                                    Summary
-                                </button>
+            <div class="govuk-form-group">
+                <button type="submit" class="govuk-button" id="goToSection2">Continue</button>
+            </div>
 
-                                <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="govuk-form-group">
-                                <button type="submit" class="govuk-button" id="goToSection2">
-                                    Next
-                                </button>
-                            </div>
-                        }
-                        break;
-                    case AddCoursePage.Summary:
-                        <div class="govuk-form-group">
-                            <button type="submit" class="govuk-button" id="goToSummary">
-                                Summary
-                            </button>
-                            <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
-                        </div>
-                        break;
-                }
-            }
         </form>
     </div>
 </div>
