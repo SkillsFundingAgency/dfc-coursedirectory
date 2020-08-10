@@ -7,6 +7,7 @@
 	[CreatedBy] NVARCHAR(MAX),
 	[UpdatedOn] DATETIME,
 	[UpdatedBy] NVARCHAR(MAX),
+	[Telephone] NVARCHAR(MAX),
 	[VenueId] UNIQUEIDENTIFIER,
 	[TribalApprenticeshipLocationId] INT,
 	[National] BIT,
