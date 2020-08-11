@@ -39,69 +39,63 @@
                 <span id="select-region-hint" class="govuk-hint govuk-!-margin-top-3">
                     @Model.Regions.HintText
                 </span>
-                <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
-                    @foreach (var item in Model.Regions.RegionItems)
-                    {
-                        <details class="govuk-details">
-                            <summary class="govuk-details__summary">
-                                <span id="regionLabel+@item.Id" class="govuk-details__summary-text">
-                                    @item.RegionName
-                                </span>
-                            </summary>
-                            <div class="govuk-form-group" tabindex="-1">
-                                @{
 
-                                    @foreach (var subregion in item.SubRegion)
-                                    {
+                @{
+                    // Giving the accordion component a distinct ID every time ensures that its state isn't persisted across page loads (e.g. it's always closed on initial load.)
+                    var accordionId = Guid.NewGuid().ToString();
+                }
 
-
-                                        if (@Model.National == true)
-                                        {
-                                            subregion.Checked = false;
-                                        }
-
-
-                                    }
-
-
-                                    var toggleStatus = "Select all";
-                                    var regionsSelected = item.SubRegion.Where(y => y.Checked.Value == true).Count();
-
-                                    if (regionsSelected > 0)
-                                    {
-                                        toggleStatus = "Clear all";
-                                    }
-                                    var selectAllId = "SelectAll_" + item.Id;
-
+                <div id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
+                    <div id="accordion-regions-@accordionId" class="govuk-accordion govuk-!-margin-bottom-0" data-module="accordion">
+                        
+                        @foreach (var region in Model.Regions.RegionItems.Select((v, i) => new { Value = v, Index = i }))
+                        {
+                            if (@Model.National == true)
+                            {
+                                @foreach (var subregion in region.Value.SubRegion)
+                                {
+                                    subregion.Checked = false;
                                 }
-                                <span class="govuk-heading-s"><a tabindex="-1" class="govuk-link" id=@selectAllId region-id="@item.Id" href="#">@toggleStatus</a></span>
-                                <div tabindex="-1" class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+                            }
 
-                                    @{
-                                        var x = 0;
+                            <div class="govuk-accordion__section accordion-regions-section">
+                                <div class="govuk-accordion__section-header">
+                                    <h2 class="govuk-accordion__section-heading">
+                                        <span class="govuk-accordion__section-button" id="accordion-regions-@accordionId-heading-@region.Index">
+                                            @region.Value.RegionName
+                                        </span>
+                                    </h2>
+                                    <div class="govuk-accordion__section-summary govuk-body accordion-regions-summary" id="accordion-regions-@accordionId-summary-@region.Index">
+                                    </div>
+                                </div>
 
-                                    }
-                                    @foreach (var subregion in item.SubRegion)
-                                    {
-                                        x++;
-
-                                        <div class="govuk-checkboxes__item">
-                                            <input tabindex="-1" class="govuk-checkboxes__input" id="RegionName-@item.Id-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
-                                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                <div id="accordion-regions-@accordionId-content-@region.Index" class="govuk-accordion__section-content govuk-checkboxes--small" aria-labelledby="accordion-regions-@accordionId-heading-@region.Index">
+                                    <div class="flex-container govuk-grid-row region-checkboxes accordion-regions-selectall-container" tabindex="-1" aria-hidden="true" style="display:none;">
+                                        <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
+                                            <input type="checkbox" class="govuk-checkboxes__input accordion-regions-checkbox-selectall" tabindex="-1">
+                                            <label for="accordion-regions-@accordionId-selectall-@region.Index" class="govuk-label govuk-checkboxes__label">Select all</label>
                                         </div>
+                                    </div>
 
-                                    }
+                                    <div tabindex="-1" class="flex-container govuk-grid-row region-checkboxes" id="details-content-@region.Value.Id" aria-hidden="true">
+                                        @foreach (var subregion in region.Value.SubRegion.Select((v, i) => new { Value = v, Index = i }))
+                                        {
+                                            <div class="govuk-checkboxes__item">
+                                                <input id="RegionName-@region.Value.Id-@subregion.Index" name="SelectedRegions" type="checkbox" value="@subregion.Value.Id" class="govuk-checkboxes__input accordion-regions-checkbox-subregion" tabindex="-1" region-id="@region.Value.Id" @subregion.Value.Checked.ThenNullableCheck() />
+                                                <label for="RegionName-@region.Value.Id-@subregion.Index" class="govuk-label govuk-checkboxes__label">@subregion.Value.SubRegionName</label>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </details>
-                    }
+                        }
 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <script>
     (function ($) {
@@ -152,34 +146,54 @@
             //Regions Code
             //-----------------------------
 
-            $("a").on("click",
-                function (e) {
+            var updateRegionsSection = function (summary, checkboxes, selectAll) {
+                let itemsSelected = $(checkboxes).filter(':checked').length;
 
-                    var $regionId = $(this).attr('region-id');
+                if (itemsSelected === 0) {
+                    $(summary).hide();
+                    $(selectAll).prop('checked', false);
+                } else if (itemsSelected === checkboxes.length) {
+                    $(summary).show();
+                    $(summary).text('All areas selected');
+                    $(selectAll).prop('checked', true);
+                } else {
+                    $(summary).show();
+                    $(summary).text(`${itemsSelected} area${itemsSelected > 1 ? 's' : ''} selected`);
+                    $(selectAll).prop('checked', false);
+                }
+            };
 
-                    if ($regionId) {
-                        e.preventDefault();
-                        var $selectAllText = $(this).text();
-                        var $allCheckedCheckboxes = $("input[region-id='" + $regionId + "']:checkbox");
-                        var allCheckedFilterCheckboxesLength = $allCheckedCheckboxes.length;
+            $('.accordion-regions-section').each(function () {
+                let summary = $(this).find('.accordion-regions-summary')[0];
+                let selectAll = $(this).find('.accordion-regions-checkbox-selectall')[0];
+                let checkboxes = $(this).find('.accordion-regions-checkbox-subregion');
 
-                        for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-                            if ($selectAllText === "Select all") {
-                                $($allCheckedCheckboxes[i]).prop('checked', true);
-
-                            } else {
-                                $($allCheckedCheckboxes[i]).prop('checked', false);
-
-                            }
-                        }
-
-                        if ($selectAllText === "Select all") {
-                            $(this).text("Clear all");
-                        } else {
-                            $(this).text("Select all");
-                        }
-                    }
+                checkboxes.each(function () {
+                    $(this).change(function () {
+                        updateRegionsSection(summary, checkboxes, selectAll);
+                    });
                 });
+
+                $(selectAll).change(function () {
+                    let checked = $(this).prop('checked');
+
+                    if (checked) {
+                        checkboxes.each(function () {
+                            $(this).prop('checked', true);
+                        });
+                    } else {
+                        checkboxes.each(function () {
+                            $(this).prop('checked', false);
+                        });
+                    }
+
+                    updateRegionsSection(summary, checkboxes, selectAll);
+                });
+
+                $(selectAll).closest('.accordion-regions-selectall-container').show();
+
+                updateRegionsSection(summary, checkboxes, selectAll);
             });
+        });
     })(jQuery);
 </script>
