@@ -65,23 +65,23 @@
                                             @region.Value.RegionName
                                         </span>
                                     </h2>
-                                    <div class="govuk-accordion__section-summary govuk-body accordion-regions-summary" id="accordion-regions-@accordionId-summary-@region.Index">
+                                    <div id="accordion-regions-@accordionId-summary-@region.Index" class="govuk-accordion__section-summary govuk-body accordion-regions-summary" style="display:none;">
                                     </div>
                                 </div>
 
                                 <div id="accordion-regions-@accordionId-content-@region.Index" class="govuk-accordion__section-content govuk-checkboxes--small" aria-labelledby="accordion-regions-@accordionId-heading-@region.Index">
                                     <div class="flex-container govuk-grid-row region-checkboxes accordion-regions-selectall-container" tabindex="-1" aria-hidden="true" style="display:none;">
                                         <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
-                                            <input id="accordion-regions-@accordionId-selectall-@region.Index" type="checkbox" class="govuk-checkboxes__input accordion-regions-checkbox-selectall" tabindex="-1">
+                                            <input id="accordion-regions-@accordionId-selectall-@region.Index" name="accordion-regions-@accordionId-selectall-@region.Index" type="checkbox" class="govuk-checkboxes__input accordion-regions-checkbox-selectall" tabindex="-1">
                                             <label for="accordion-regions-@accordionId-selectall-@region.Index" class="govuk-label govuk-checkboxes__label">Select all</label>
                                         </div>
                                     </div>
 
-                                    <div tabindex="-1" class="flex-container govuk-grid-row region-checkboxes" id="details-content-@region.Value.Id" aria-hidden="true">
+                                    <div class="flex-container govuk-grid-row region-checkboxes" tabindex="-1" aria-hidden="true">
                                         @foreach (var subregion in region.Value.SubRegion.Select((v, i) => new { Value = v, Index = i }))
                                         {
                                             <div class="govuk-checkboxes__item">
-                                                <input id="RegionName-@region.Value.Id-@subregion.Index" name="SelectedRegions" type="checkbox" value="@subregion.Value.Id" class="govuk-checkboxes__input accordion-regions-checkbox-subregion" tabindex="-1" region-id="@region.Value.Id" @subregion.Value.Checked.ThenNullableCheck() />
+                                                <input id="RegionName-@region.Value.Id-@subregion.Index" name="SelectedRegions" type="checkbox" value="@subregion.Value.Id" class="govuk-checkboxes__input accordion-regions-checkbox-subregion" tabindex="-1" region-id="@region.Value.Id" @Html.Raw(subregion.Value.Checked.ThenNullableCheck()) />
                                                 <label for="RegionName-@region.Value.Id-@subregion.Index" class="govuk-label govuk-checkboxes__label">@subregion.Value.SubRegionName</label>
                                             </div>
                                         }
