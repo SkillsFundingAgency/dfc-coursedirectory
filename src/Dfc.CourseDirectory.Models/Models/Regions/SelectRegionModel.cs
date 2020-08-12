@@ -1554,7 +1554,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000028",
-                            ApiLocationId = 200000148,
+                            ApiLocationId = 200000162,
                             SubRegionName = "Bournemouth",
                             Checked = false,
                             Latitude = 50.72168,
