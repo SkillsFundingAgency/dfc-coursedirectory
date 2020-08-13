@@ -13,10 +13,12 @@ using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -40,6 +42,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         {
             ProcessSynchronouslyRowLimit = 100
         });
+        private bool _backgroundWorkScheduled;
 
         private List<Venue> _mockVenues = new List<Venue>
         {
@@ -559,11 +562,54 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 It.IsAny<Stream>()));
         }
 
+        [Fact]
+        public async Task TestValidateAndUploadCSV_ProcessedSynchronously_UploadsApprenticeshipsSynchronously()
+        {
+            // Ensure limit is >= row count so file is processed synchronously
+            _settings.Value.ProcessSynchronouslyRowLimit = 2;
+
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv");
+
+            Assert.False(_backgroundWorkScheduled);
+        }
+
+        [Fact]
+        public async Task TestValidateAndUploadCSV_NotProcessedSynchronously_UploadsApprenticeshipsAsynchronously()
+        {
+            // Ensure limit is < row count so file is *not* processed synchronously
+            _settings.Value.ProcessSynchronouslyRowLimit = 1;
+
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode())
+                    .WithRow(row => row.WithFrameworkCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv");
+
+            Assert.True(_backgroundWorkScheduled);
+        }
+
         private void SetupService()
         {
+            // Need to be able to resolve the service via IApprenticeshipBulkUploadService
+            var serviceProvider = new ServiceCollection()
+                .AddTransient<IApprenticeshipBulkUploadService>(_ => _apprenticeshipBulkUploadService)
+                .BuildServiceProvider();
+
+            // Use a background scheduler that executes work items immediately
+            // and wrap that in a `SignallingBackgroundWorkScheduler` so we can observe the scheduling of work items
+            var backgroundWorkScheduler = new SignallingBackgroundWorkScheduler(
+                new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
+                onScheduled: () => _backgroundWorkScheduled = true);
+
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
                 NullLogger<ApprenticeshipBulkUploadService>.Instance, _mockApprenticeshipService.Object,
                 _mockVenueService.Object, _standardsAndFrameworksCacheMock.Object, _mockBinaryStorageProvider.Object,
+                backgroundWorkScheduler,
                 _settings);
         }
 

@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Helpers;
@@ -18,11 +19,11 @@ using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.WebV2;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -1062,6 +1063,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly IVenueService _venueService;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
+        private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
@@ -1070,6 +1072,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             IVenueService venueService,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
             IBinaryStorageProvider binaryStorageProvider,
+            IBackgroundWorkScheduler backgroundWorkScheduler,
             IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -1077,6 +1080,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
+            _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
             _settings = (settings ?? throw new ArgumentNullException(nameof(settings))).Value;
         }
 
@@ -1097,12 +1101,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             stream.Seek(0L, SeekOrigin.Begin);
             var processSynchronously = csvLineCount <= _settings.ProcessSynchronouslyRowLimit;
 
-            var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(fileName)}";
-            if (processSynchronously)
-            {
-                // Stop the Azure trigger from processing the file
-                bulkUploadFileNewName += $".{DateTime.UtcNow:yyyyMMddHHmmss}.processed";
-            }
+            var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(fileName)}.{DateTime.UtcNow:yyyyMMddHHmmss}.processed";
 
             await _binaryStorageProvider.UploadFile(
                 $"{userDetails.UKPRN}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}",
@@ -1188,6 +1187,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     if (processSynchronously)
                     {
                         await UploadApprenticeships(apprenticeships);
+                    }
+                    else
+                    {
+                        await _backgroundWorkScheduler.Schedule(
+                            (state, sp, ct) =>
+                            {
+                                // Resolve a new instance of ApprenticeshipBulkUploadService here
+                                // instead of closing over `this` in case `this` is Dispose()ed before task is run
+                                var service = (ApprenticeshipBulkUploadService)sp.GetRequiredService<IApprenticeshipBulkUploadService>();
+
+                                return service.UploadApprenticeships(apprenticeships);
+                            });
                     }
                 }
             }

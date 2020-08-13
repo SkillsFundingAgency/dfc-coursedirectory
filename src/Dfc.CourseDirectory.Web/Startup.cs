@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using Dfc.CourseDirectory.Common.Settings;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
@@ -147,6 +148,10 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));
+
+            services.AddSingleton<QueueBackgroundWorkScheduler>();
+            services.AddHostedService(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
+            services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddCourseDirectory(_env, Configuration);
 

@@ -21,11 +21,13 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -74,12 +76,18 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 ProcessSynchronouslyRowLimit = 100
             });
 
+            // Need to be able to resolve the service via IApprenticeshipBulkUploadService
+            var serviceProvider = new ServiceCollection()
+                .AddTransient<IApprenticeshipBulkUploadService>(_ => _apprenticeshipBulkUploadService)
+                .BuildServiceProvider();
+
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
                 NullLogger<ApprenticeshipBulkUploadService>.Instance,
                 _apprenticeshipService.Object,
                 _venueService.Object,
                 _standardsAndFrameworksCache.Object,
                 _binaryStorageProvider.Object,
+                new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
                 _apprenticeshipBulkUploadSettings);
 
             _controller = new BulkUploadApprenticeshipsController(
