@@ -1,0 +1,39 @@
+﻿@using Dfc.CourseDirectory.Web.Views.Shared
+@using Microsoft.AspNetCore.Http
+@model PublishedCourseViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Your course has been published";
+    Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+    {
+        BackLink = false,
+    });
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">Your course has been published</h1>
+            <div class="govuk-panel__body">
+                Course
+                <br><strong>@Model.CourseName</strong>
+            </div>
+        </div>
+        <p class="govuk-body">Your course is available to learners searching for learning and training opportunities on the National Careers Service.</p>
+
+        <p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/course-details?CourseId=@(Model.CourseId)&r=@(Model.CourseRunId)" target="_blank">view your published course</a> to see how it's viewed by learners.</p>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+
+        <ul class="govuk-list">
+            <li><a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a></li>
+            <li><a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link">View, edit, copy or delete a course</a></li>
+            <li><a asp-controller="ProviderSearch" asp-action="SearchProvider" asp-route-UKPRN="@HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN")" class="govuk-link">Back to the home screen</a></li>
+        </ul>
+
+    </div>
+</div>
