@@ -33,6 +33,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
+        public int? ApprenticeshipId { get; set; }
         public List<BulkUploadError> BulkUploadErrors { get; set; }
         public IEnumerable<string> ValidationErrors { get; set; }
         public IEnumerable<string> LocationValidationErrors { get; set; }
@@ -59,6 +60,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
+        public int? ApprenticeshipLocationId { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
