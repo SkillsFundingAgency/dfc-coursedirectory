@@ -2,6 +2,7 @@
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Helpers;
@@ -18,6 +19,7 @@ using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1060,40 +1062,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly IVenueService _venueService;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
+        private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
             ILogger<ApprenticeshipBulkUploadService> logger,
             IApprenticeshipService apprenticeshipService,
             IVenueService venueService,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
-            IBinaryStorageProvider binaryStorageProvider)
+            IBinaryStorageProvider binaryStorageProvider,
+            IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
-        }
-
-        public int CountCsvLines(Stream stream)
-        {
-            Throw.IfNull(stream, nameof(stream));
-
-            int count = 0;
-            stream.Position = 0;
-            StreamReader sr = new StreamReader(stream, true);  // don't dispose the stream we might need it later.
-            while (sr.ReadLine() != null)
-            {
-                ++count;
-            }
-            return count;
+            _settings = (settings ?? throw new ArgumentNullException(nameof(settings))).Value;
         }
 
         public async Task<ApprenticeshipBulkUploadResult> ValidateAndUploadCSV(
             string fileName,
             Stream stream,
-            AuthUserDetails userDetails,
-            bool processInline)
+            AuthUserDetails userDetails)
         {
             Throw.IfNull(stream, nameof(stream));
             Throw.IfNull(userDetails, nameof(userDetails));
@@ -1103,8 +1093,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 throw new ArgumentException("Stream must be seekable.", nameof(stream));
             }
 
+            var csvLineCount = CsvUtil.CountLines(stream);
+            stream.Seek(0L, SeekOrigin.Begin);
+            var processSynchronously = csvLineCount <= _settings.ProcessSynchronouslyRowLimit;
+
             var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(fileName)}";
-            if (processInline)
+            if (processSynchronously)
             {
                 // Stop the Azure trigger from processing the file
                 bulkUploadFileNewName += $".{DateTime.UtcNow:yyyyMMddHHmmss}.processed";
@@ -1186,19 +1180,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     throw new Exception(archiveResult.Error);
                 }
 
-                if (processInline)
+                var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                errors = ValidateApprenticeships(apprenticeships);
+
+                if (errors.Count == 0)
                 {
-                    var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                    errors = ValidateApprenticeships(apprenticeships);
-
-
-                    if (apprenticeships.Any())
+                    if (processSynchronously)
                     {
-                        errors.AddRange(await UploadApprenticeships(apprenticeships));
-                    }
-                    else
-                    {
-                        throw new Exception($"Unable to archive apprenticeships for {int.Parse(userDetails.UKPRN)}");
+                        await UploadApprenticeships(apprenticeships);
                     }
                 }
             }
@@ -1226,7 +1215,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 throw;
             }
 
-            return errors.Count > 0 ? ApprenticeshipBulkUploadResult.Failed(errors) : ApprenticeshipBulkUploadResult.Success();
+            return errors.Count > 0 ?
+                ApprenticeshipBulkUploadResult.Failed(errors) :
+                ApprenticeshipBulkUploadResult.Success(processSynchronously);
         }
 
         private void ValidateHeader(CsvReader csv)
@@ -1244,7 +1235,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
-        private async Task<List<string>> UploadApprenticeships(List<Apprenticeship> apprenticeships)
+        private async Task UploadApprenticeships(List<Apprenticeship> apprenticeships)
         {
             var result = await _apprenticeshipService.AddApprenticeships(apprenticeships);
 
@@ -1252,8 +1243,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 throw new Exception(result.Error);
             }
-
-            return new List<string>();
         }
 
         private static string Base64Encode(IReaderRow row)

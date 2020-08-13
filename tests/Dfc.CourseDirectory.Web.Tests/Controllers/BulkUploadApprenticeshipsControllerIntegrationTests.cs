@@ -27,6 +27,7 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using VenueStatus = Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
@@ -46,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private ClaimsPrincipal _claimsPrincipal;
         private HttpContext _httpContext;
         private Mock<IUserHelper> _userHelper;
+        private IOptions<ApprenticeshipBulkUploadSettings> _apprenticeshipBulkUploadSettings;
 
         private IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private BulkUploadApprenticeshipsController _controller;
@@ -67,13 +69,18 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 User = _claimsPrincipal
             };
             _userHelper = new Mock<IUserHelper>();
+            _apprenticeshipBulkUploadSettings = Options.Create(new ApprenticeshipBulkUploadSettings()
+            {
+                ProcessSynchronouslyRowLimit = 100
+            });
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
                 NullLogger<ApprenticeshipBulkUploadService>.Instance,
                 _apprenticeshipService.Object,
                 _venueService.Object,
                 _standardsAndFrameworksCache.Object,
-                _binaryStorageProvider.Object);
+                _binaryStorageProvider.Object,
+                _apprenticeshipBulkUploadSettings);
 
             _controller = new BulkUploadApprenticeshipsController(
                 NullLogger<BulkUploadApprenticeshipsController>.Instance,

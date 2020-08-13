@@ -15,24 +15,22 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 
         public IReadOnlyCollection<string> Errors { get; private set; }
 
+        public bool ProcessedSynchronously { get; private set; }
+
         public static ApprenticeshipBulkUploadResult Failed(IEnumerable<string> errors) => new ApprenticeshipBulkUploadResult()
         {
             Errors = errors.ToList()
         };
 
-        public static ApprenticeshipBulkUploadResult Success() => new ApprenticeshipBulkUploadResult()
+        public static ApprenticeshipBulkUploadResult Success(bool processedSynchronously) => new ApprenticeshipBulkUploadResult()
         {
-            Errors = Array.Empty<string>()
+            Errors = Array.Empty<string>(),
+            ProcessedSynchronously = processedSynchronously
         };
     }
 
     public interface IApprenticeshipBulkUploadService
     {
-        int CountCsvLines(Stream stream);
-        Task<ApprenticeshipBulkUploadResult> ValidateAndUploadCSV(
-            string fileName,
-            Stream stream,
-            AuthUserDetails userDetails,
-            bool processInline);
+        Task<ApprenticeshipBulkUploadResult> ValidateAndUploadCSV(string fileName, Stream stream, AuthUserDetails userDetails);
     }
 }

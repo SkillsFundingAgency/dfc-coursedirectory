@@ -146,45 +146,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return View(new BulkUploadViewModel {errors = new[] {"Invalid file content."}});
                 }
 
-                ms.Position = 0;
-                var csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
-
-                bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
-
-                _logger.LogInformation(
-                    $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
-
-                IReadOnlyCollection<string> errors = Array.Empty<string>();
+                ApprenticeshipBulkUploadResult result = default;
                 try
                 {
                     ms.Position = 0;
 
-                    var result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+                    result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
                         bulkUploadFile.FileName,
                         ms,
-                        _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN),
-                        processInline);
-
-                    errors = result.Errors;
+                        _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN));
                 }
                 catch (HeaderValidationException he)
                 {
-                    errors = new[] { he.Message.FirstSentence() };
+                    var errors = new[] { he.Message.FirstSentence() };
                     return View(new BulkUploadViewModel {errors = errors});
                 }
                 catch (BadDataException be)
                 {
-                    errors = be.Message.Split(';');
+                    var errors = be.Message.Split(';');
                     return View(new BulkUploadViewModel {errors = errors});
                 }
                 catch (Exception e)
                 {
-                    errors = new[] { e.Message };
+                    var errors = new[] { e.Message };
                     return View(new BulkUploadViewModel {errors = errors});
                 }
 
-                if (errors.Any())
+                if (result.Errors.Count != 0)
                 {
+                    var errors = result.Errors;
                     return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships", new
                         {
                             message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must resolve all errors before your apprenticeship training information can be published.",
@@ -192,12 +182,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         }
                     );
                 }
-                if (processInline)
+
+                if (result.ProcessedSynchronously)
                 {
                     // All good => redirect to BulkCourses action
                     return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
                 }
-                return RedirectToAction("Pending");
+                else
+                {
+                    return RedirectToAction("Pending");
+                }
             }
             finally
             {

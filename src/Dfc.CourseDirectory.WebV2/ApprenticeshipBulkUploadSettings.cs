@@ -2,6 +2,6 @@
 {
     public class ApprenticeshipBulkUploadSettings
     {
-        public int ProcessInlineRowLimit { get; set; }
+        public int ProcessSynchronouslyRowLimit { get; set; }
     }
 }
