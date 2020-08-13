@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -29,7 +26,6 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
-using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -57,7 +53,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string SessionAddCourseSection2 = "AddCourseSection2";
         private const string SessionLastAddCoursePage = "LastAddCoursePage";
         private const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
-
+        private const string SessionPublishedCourse = "PublishedCourse";
 
         public AddCourseController(
             ILogger<CoursesController> logger,
@@ -883,12 +879,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                return RedirectToAction("Index", "ProviderCourses",
-                    new {
-                        CourseRunId = courseRuns[0].id,
-                        NotificationTitle = "Course added",
-                        NotificationMessage = "You added",
-                    });
+                Session.SetObject(SessionPublishedCourse, new PublishedCourseViewModel
+                {
+                    CourseId = course.id,
+                    CourseRunId = courseRuns[0].id,
+                    CourseName = courseRuns[0].CourseName
+                });
+
+                return RedirectToAction("Published");
             }
 
             return RedirectToAction("Index",
@@ -896,7 +894,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //return RedirectToAction("Index", "Home");
         }
-
 
         [Authorize]
         [HttpGet]
@@ -935,6 +932,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("AddCourseDetails", addCourseRun);
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult Published()
+        {
+            var publishedCourse = Session.GetObject<PublishedCourseViewModel>(SessionPublishedCourse);
+
+            if (publishedCourse == null)
+            {
+                var ukprn = Session.GetInt32("UKPRN");
+                return ukprn.HasValue
+                    ? RedirectToAction("SearchProvider", "ProviderSearch", new { UKPRN = ukprn })
+                    : RedirectToAction("Index", "SearchProvider");
+            }
+
+            Session.Remove(SessionPublishedCourse);
+
+            return View(new PublishedCourseViewModel
+            {
+                CourseId = publishedCourse.CourseId,
+                CourseRunId = publishedCourse.CourseRunId,
+                CourseName = publishedCourse.CourseName
+            });
+        }
 
         #region Private methods
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
