@@ -8,6 +8,7 @@ pool:
 variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
+  GitVersionConfigFilePath: Resources/AzureDevOps/GitVersion.yml
   group: dfc-findacourse-build
 
 resources:
@@ -43,9 +44,9 @@ steps:
   displayName: GitVersion
   inputs:
     useConfigFile: true
-    configFilePath: GitVersion.yml
+    configFilePath: ${{ variables.GitVersionConfigFilePath }}
     versionSpec: '5.3.x'
-    
+
 # ARM template
 - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
   parameters:
