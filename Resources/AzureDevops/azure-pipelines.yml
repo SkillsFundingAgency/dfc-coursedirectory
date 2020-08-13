@@ -39,6 +39,13 @@ workspace:
 
 steps:
 
+- task: UseGitVersion@5
+  displayName: GitVersion
+  inputs:
+    useConfigFile: true
+    configFilePath: GitVersion.yml
+    versionSpec: '5.3.x'
+    
 # ARM template
 - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
   parameters:
