@@ -2,6 +2,7 @@
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
@@ -98,24 +99,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
-            private readonly IApprenticeshipService _apprenticeshipService;
             private readonly IVenueService _venueService;
             private readonly IAuthUserDetails _authUserDetails;
             private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
             private List<Venue> _cachedVenues;
 
-            public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
+            public ApprenticeshipCsvRecordMap(
                 IVenueService venueService,
                 IAuthUserDetails userDetails,
                 IStandardsAndFrameworksCache standardsAndFrameworksCache)
             {
-                Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-                Throw.IfNull(venueService, nameof(venueService));
-                Throw.IfNull(userDetails, nameof(userDetails));
-                _apprenticeshipService = apprenticeshipService;
-                _venueService = venueService;
-                _authUserDetails = userDetails;
-                _standardsAndFrameworksCache = standardsAndFrameworksCache;
+                _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+                _authUserDetails = userDetails ?? throw new ArgumentNullException(nameof(userDetails));
+                _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
                 Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
@@ -1062,19 +1059,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IBinaryStorageProvider _binaryStorageProvider;
 
         public ApprenticeshipBulkUploadService(
             ILogger<ApprenticeshipBulkUploadService> logger,
             IApprenticeshipService apprenticeshipService,
             IVenueService venueService,
-            IStandardsAndFrameworksCache standardsAndFrameworksCache)
+            IStandardsAndFrameworksCache standardsAndFrameworksCache,
+            IBinaryStorageProvider binaryStorageProvider)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-            _logger = logger;
-            _apprenticeshipService = apprenticeshipService;
-            _venueService = venueService;
-            _standardsAndFrameworksCache = standardsAndFrameworksCache;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+            _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
         }
 
         public int CountCsvLines(Stream stream)
@@ -1091,10 +1089,33 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public async Task<List<string>> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails, bool updateApprenticeships)
+        public async Task<List<string>> ValidateAndUploadCSV(
+            string fileName,
+            Stream stream,
+            AuthUserDetails userDetails,
+            bool processInline)
         {
             Throw.IfNull(stream, nameof(stream));
             Throw.IfNull(userDetails, nameof(userDetails));
+
+            if (!stream.CanSeek)
+            {
+                throw new ArgumentException("Stream must be seekable.", nameof(stream));
+            }
+
+            var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(fileName)}";
+            if (processInline)
+            {
+                // Stop the Azure trigger from processing the file
+                bulkUploadFileNewName += $".{DateTime.UtcNow:yyyyMMddHHmmss}.processed";
+            }
+
+            await _binaryStorageProvider.UploadFile(
+                $"{userDetails.UKPRN}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}",
+                stream);
+
+            stream.Seek(0L, SeekOrigin.Begin);
+
             List<string> errors = new List<string>();
             List<ApprenticeshipCsvRecord> records = new List<ApprenticeshipCsvRecord>();
             Dictionary<string, string> duplicateCheck = new Dictionary<string, string>();
@@ -1111,7 +1132,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         ValidateHeader(csv);
 
                         var classMap = new ApprenticeshipCsvRecordMap(
-                            _apprenticeshipService,
                             _venueService,
                             userDetails,
                             _standardsAndFrameworksCache);
@@ -1166,7 +1186,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     throw new Exception(archiveResult.Error);
                 }
 
-                if (updateApprenticeships)
+                if (processInline)
                 {
                     var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
                     errors = ValidateApprenticeships(apprenticeships);
@@ -1187,6 +1207,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string errmsg = $"Invalid header row. {ex.Message.FirstSentence()}";
 
                 errors.Add(errmsg);
+
                 throw;
             }
             catch (FieldValidationException ex)

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
@@ -30,6 +32,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         private readonly Mock<IApprenticeshipService> _mockApprenticeshipService = new Mock<IApprenticeshipService>();
         private readonly Mock<IStandardsAndFrameworksCache> _standardsAndFrameworksCacheMock = new Mock<IStandardsAndFrameworksCache>();
         private readonly Mock<IVenueService> _mockVenueService = new Mock<IVenueService>();
+        private readonly Mock<IBinaryStorageProvider> _mockBinaryStorageProvider = new Mock<IBinaryStorageProvider>();
 
         private List<Venue> _mockVenues = new List<Venue>
         {
@@ -531,11 +534,28 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             );
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task TestValidateAndUploadCSV_ProcessInline_UploadsFile(bool processInline)
+        {
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv",
+                processInline);
+
+            _mockBinaryStorageProvider.Verify(m => m.UploadFile(
+                It.Is<string>(f => f.Contains("myfile.csv")),
+                It.IsAny<Stream>()));
+        }
+
         private void SetupService()
         {
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
                 NullLogger<ApprenticeshipBulkUploadService>.Instance, _mockApprenticeshipService.Object,
-                _mockVenueService.Object, _standardsAndFrameworksCacheMock.Object);
+                _mockVenueService.Object, _standardsAndFrameworksCacheMock.Object, _mockBinaryStorageProvider.Object);
         }
 
         private void SetupDependencies()
@@ -554,8 +574,11 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 .ReturnsAsync((int c, int t, int p) => new Framework{FrameworkCode = c, ProgType = t, PathwayCode = p});
         }
 
-        private async Task Run_SuccessTest(Action<ApprenticeshipCsvBuilder> configureCsv,
-            Action<IList<IApprenticeship>> validateDataPassedToApprenticeshipService)
+        private async Task Run_SuccessTest(
+            Action<ApprenticeshipCsvBuilder> configureCsv,
+            Action<IList<IApprenticeship>> validateDataPassedToApprenticeshipService,
+            string fileName = "mybulkupload.csv",
+            bool processInline = true)
         {
             // arrange
             SetupDependencies();
@@ -570,7 +593,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 
             // act
             var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
-                csvStream, _authUserDetails, updateApprenticeships: true); // todo: toggle updateApprenticeships in test(s)
+                fileName, csvStream, _authUserDetails, processInline);
 
             // assert
             var emptyErrorList = new List<string>();
@@ -581,7 +604,8 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         private async Task Run_ThrowsTest<TException>(
                 Action<ApprenticeshipCsvBuilder> configureCsv,
                 string expectedErrorMessage,
-                Action additionalMockSetup = null)
+                Action additionalMockSetup = null,
+                bool processInline = true)
             where TException : Exception
         {
             // arrange
@@ -597,7 +621,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             // act
             var actualException = await Record.ExceptionAsync(
                 async () => await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
-                    csvStream, _authUserDetails, updateApprenticeships: true) // todo: toggle updateApprenticeships in test(s)
+                    "mybulkupload.csv", csvStream, _authUserDetails, processInline)
             );
 
             // assert
@@ -606,7 +630,10 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             Assert.Equal(expectedErrorMessage, actualException.Message);
         }
 
-        private async Task<List<IApprenticeship>> Run_ReturnsErrorsTest(Action<ApprenticeshipCsvBuilder> configureCsv, string expectedError)
+        private async Task<List<IApprenticeship>> Run_ReturnsErrorsTest(
+            Action<ApprenticeshipCsvBuilder> configureCsv,
+            string expectedError,
+            bool processInline = true)
         {
             // arrange
             SetupDependencies();
@@ -621,7 +648,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 
             // act
             var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
-                csvStream, _authUserDetails, updateApprenticeships: true); // todo: toggle updateApprenticeships in test(s)
+                "mybulkupload.csv", csvStream, _authUserDetails, processInline);
 
             // assert
             var expectedErrors = new List<string> {expectedError};

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private Mock<IBlobStorageService> _blobStorageService;
         private Mock<ICourseService> _courseService;
         private Mock<IProviderService> _providerService;
+        private Mock<IBinaryStorageProvider> _binaryStorageProvider;
         private ISession _session;
         private ClaimsPrincipal _claimsPrincipal;
         private HttpContext _httpContext;
@@ -59,6 +61,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _blobStorageService = new Mock<IBlobStorageService>();
             _courseService = new Mock<ICourseService>();
             _providerService = new Mock<IProviderService>();
+            _binaryStorageProvider = new Mock<IBinaryStorageProvider>();
             _session = new FakeSession();
             _claimsPrincipal = new ClaimsPrincipal();
             _httpContext = new DefaultHttpContext()
@@ -74,7 +77,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 NullLogger<ApprenticeshipBulkUploadService>.Instance,
                 _apprenticeshipService.Object,
                 _venueService.Object,
-                _standardsAndFrameworksCache.Object);
+                _standardsAndFrameworksCache.Object,
+                _binaryStorageProvider.Object);
 
             _controller = new BulkUploadApprenticeshipsController(
                 NullLogger<BulkUploadApprenticeshipsController>.Instance,

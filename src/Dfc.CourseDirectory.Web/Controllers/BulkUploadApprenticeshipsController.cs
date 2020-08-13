@@ -159,26 +159,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _logger.LogInformation(
                     $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(bulkUploadFile.FileName)}";
-                if (processInline)
-                {
-                    bulkUploadFileNewName +=
-                        "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
-                        ".processed"; // stops the Azure trigger from processing the file
-                }
-
-                if (!processInline)
-                {
-                    ms.Position = 0;
-                    await _blobService.UploadFileAsync(
-                        $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                }
-
                 var errors = new List<string>();
                 try
                 {
-                    errors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
-                        _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN),
+                    ms.Position = 0;
+
+                    errors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+                        bulkUploadFile.FileName,
+                        ms,
+                        _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN),
                         processInline);
                 }
                 catch (HeaderValidationException he)
