@@ -7,69 +7,404 @@
 @{
     ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName);
     Layout = "_Layout_Your_Courses";
-}
-@{
+
     var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
     var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
     var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
+
+    Func<string, object> editCourseRunChangeLink = @<a asp-controller="EditCourseRun"
+                                                       asp-action="Index"
+                                                       asp-route-learnAimRef="@Model.LearnAimRef"
+                                                       asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+                                                       asp-route-awardOrgCode="@Model.AwardOrgCode"
+                                                       asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                                                       asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                                                       asp-route-courseId="@Model.CourseId"
+                                                       asp-route-courseRunId="@Model.CourseInstanceId"
+                                                       asp-route-mode="@PublishMode.Summary"
+                                                       class="govuk-link">Change<span class="govuk-visually-hidden"> @item</span></a>;
+
+    Func<string, object> editCourseChangeLink = @<a asp-controller="EditCourse"
+                                                    asp-action="Index"
+                                                    asp-route-courseId="@Model.CourseId"
+                                                    asp-route-courseRunId="@Model.CourseInstanceId"
+                                                    asp-route-learnAimRef="@Model.LearnAimRef"
+                                                    asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+                                                    asp-route-awardOrgCode="@Model.AwardOrgCode"
+                                                    asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                                                    asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                                                    asp-route-mode="@PublishMode.Summary"
+                                                    class="govuk-link">Change<span class="govuk-visually-hidden"> @item</span></a>;
 }
 
 <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l"> @WebUtility.HtmlDecode(@Model.QualificationCourseTitle)</span>
-            <h1 class="govuk-heading-l"> @WebUtility.HtmlDecode(@Model.CourseName)</h1>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Lars/QAN:</td>
-                        <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.LearnAimRef))
+
+            <h1 class="govuk-heading-xl">Edit your course information</h1>
+            <h2 class="govuk-heading-l">@WebUtility.HtmlDecode(Model.CourseName)</h2>
+            <p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/course-details?CourseId=@(Model.CourseId)&amp;r=@(Model.CourseId)" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        LARS/QAN
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.LearnAimRef))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.LearnAimRef
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Qualification name
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.QualificationCourseTitle))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.QualificationCourseTitle
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Qualification Level
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.NotionalNVQLevelv2))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.NotionalNVQLevelv2
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Awarding organisation
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.AwardOrgCode))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.AwardOrgCode
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Created
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @Model.CreatedDate.ToString("dd MMMM yyyy")
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+
+                @if (Model.UpdatedDate.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Last updated
+                        </dt>
+                        <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                            @Model.UpdatedDate.Value.ToString("dd MMMM yyyy")
+                        </dd>
+                        <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                            &nbsp;
+                        </dd>
+                    </div>
+                }
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Status
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        <span class="govuk-tag phase-tag-published">Published</span>
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+            </dl>
+
+            <h3 class="govuk-heading-m">Course details</h3>
+            <p class="govuk-body">Information for the learner about how the course will be delivered.</p>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Course name
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.CourseName))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @WebUtility.HtmlDecode(@Model.CourseName)
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("course name")
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Your reference
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.ProviderCourseID))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @WebUtility.HtmlDecode(@Model.ProviderCourseID)
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("your reference")
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Course type
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(deliveryModeAttribute.Name))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @deliveryModeAttribute.Name
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("course type")
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Start date
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @{
+                            if (Model.FlexibleStartDate == true)
+                            {
+                                <text>Flexible</text>
+                            }
+                            else
+                            {
+                                @Model.StartDate.Value.ToString("dd/MM/yyyy")
+                            }
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("start date")
+                    </dd>
+                </div>
+
+                @if (Model.DeliveryMode == DeliveryMode.WorkBased)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Regions
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+
+                            @if (Model.National)
+                            {
+                                <text>National</text>
+                            }
+                            else
+                            {
+                                @foreach (var region in Model.Regions)
+                                {
+                                    <p class="govuk-body">@region</p>
+                                }
+                            }
+                        </dd>
+                        <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                            @editCourseRunChangeLink("regions")
+                        </dd>
+                    </div>
+                }
+
+                @if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Course location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @if (!string.IsNullOrEmpty(Model.VenueName))
+                            {
+                                @WebUtility.HtmlDecode(@Model.VenueName)
+                            }
+                            else
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                        </dd>
+                        <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                            @editCourseRunChangeLink("course location")
+                        </dd>
+                    </div>
+                }
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Course webpage
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.CourseURL))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            <a href="@Model.CourseURL" target="_blank" style="word-break: break-all">@Model.CourseURL</a>
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("course webpage")
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Cost
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if ((!Model.Cost.HasValue))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            <text>&pound;</text>@Model.Cost.Value.ToString("F")
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("cost")
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Cost description
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.CostDescription)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("course description")
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Duration
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (!Model.DurationValue.HasValue)
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            <text>@Model.DurationValue.ToString() @Model.DurationUnit.ToString()</text>
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseRunChangeLink("duration")
+                    </dd>
+                </div>
+
+                @if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Course hours
+                        </dt>
+                        <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                            @if (string.IsNullOrEmpty(@studyModeAttribute.Name))
                             {
                                 <span class="govuk-visually-hidden">Data Unavailable</span>
                             }
                             else
                             {
-                                @Model.LearnAimRef
+                                @studyModeAttribute.Name
                             }
-                        </td>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Level:</td>
-                        <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.NotionalNVQLevelv2))
+                        </dd>
+                        <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                            @editCourseRunChangeLink("course hours")
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Attendance pattern
+                        </dt>
+                        <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                            @if (string.IsNullOrEmpty(@attendanceAttribute.Name))
                             {
                                 <span class="govuk-visually-hidden">Data Unavailable</span>
                             }
                             else
                             {
-                                @Model.NotionalNVQLevelv2
+                                @attendanceAttribute.Name
                             }
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Awarding organisation:</td>
-                        <td class="govuk-table__cell">
+                        </dd>
+                        <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                            @editCourseRunChangeLink("attendance pattern")
+                        </dd>
+                    </div>
+                }
+            </dl>
 
-                            @if (string.IsNullOrEmpty(Model.AwardOrgCode))
-                            {
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            }
-                            else
-                            {
-                                @Model.AwardOrgCode
-                            }
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-
-            <h2 class="govuk-heading-m govuk-!-margin-top-0">
-                <a class="govuk-link" style="padding-right:1em"
-                   asp-controller="EditCourseRun"
+            <div class="govuk-!-margin-bottom-6">
+                <a asp-controller="CopyCourseRun"
                    asp-action="Index"
                    asp-route-learnAimRef="@Model.LearnAimRef"
                    asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
@@ -78,457 +413,105 @@
                    asp-route-learnAimRefTypeDesc="@Model.QualificationType"
                    asp-route-courseId="@Model.CourseId"
                    asp-route-courseRunId="@Model.CourseInstanceId"
-                   asp-route-mode="@PublishMode.Summary">Edit course information<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
-            </h2>
+                   asp-route-publishMode="@PublishMode.Summary"
+                   class="govuk-button govuk-button--secondary govuk-!-margin-right-1" data-module="govuk-button">Copy course details<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
 
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
+                <a asp-controller="ProviderCourses"
+                   asp-action="DeleteCourse"
+                   asp-route-courseId="@Model.CourseId"
+                   asp-route-courseRunId="@Model.CourseInstanceId"
+                   asp-route-courseName="@Model.CourseName"
+                   class="govuk-button govuk-button--warning" data-module="govuk-button">Delete course details<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
+            </div>
 
-                </thead>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Course Name:</td>
-                        <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.CourseName))
-                            {
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            }
-                            else
-                            {
-                                @WebUtility.HtmlDecode(@Model.CourseName)
-                            }
+            <h3 class="govuk-heading-m">Course description</h3>
+            <p class="govuk-body">Changes made to your course description will update all of your courses for this qualification.</p>
 
-                        </td>
-                    </tr>
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Who is the course for
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.CourseDescription)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("who is this course for")
+                    </dd>
+                </div>
 
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">ID:</td>
-                        <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.ProviderCourseID))
-                            {
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            }
-                            else
-                            {
-                                @WebUtility.HtmlDecode(@Model.ProviderCourseID)
-                            }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Entry requirements
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.EntryRequirements)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("entry requirements")
+                    </dd>
+                </div>
 
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What you'll learn
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.WhatYoullLearn)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("what you'll learn")
+                    </dd>
+                </div>
 
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Delivery:</td>
-                        <td class="govuk-table__cell">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        How you'll learn
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.HowYoullLearn)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("how you'll learn")
+                    </dd>
+                </div>
 
-                            @if (string.IsNullOrEmpty(deliveryModeAttribute.Name))
-                            {
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            }
-                            else
-                            {
-                                @deliveryModeAttribute.Name
-                            }
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Start date:</td>
-                        @{
-                            if (Model.FlexibleStartDate == true)
-                            {
-                                <td class="govuk-table__cell">Flexible start date</td>
-                            }
-                            else
-                            {
-                                <td class="govuk-table__cell">@Model.StartDate.Value.ToString("dd/MM/yyyy")</td>
-                            }
-                        }
-                    </tr>
-                    @{
-                        if (Model.DeliveryMode == DeliveryMode.WorkBased)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header" style="vertical-align: text-top;">Region(s):</td>
-                                @{
-                                    if (Model.National)
-                                    {
-                                        <td class="govuk-table__cell">National</td>
-                                    }
-                                    else
-                                    {
-                                        <td class="govuk-table__cell">
-                                            @foreach (var region in Model.Regions)
-                                            {
-                                                @region
-                                                <br />
-                                            }
-                                        </td>
-                                    }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What you'll need to bring
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.WhatYoullNeed)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("what you'll need to bring")
+                    </dd>
+                </div>
 
-                                }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        How you'll be assessed
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.HowYoullBeAssessed)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("how you'll be assessed")
+                    </dd>
+                </div>
 
-                            </tr>
-                        }
-                    }
-                    @{
-                        if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Location:</td>
-                                <td class="govuk-table__cell">
-                                    @if (string.IsNullOrEmpty(Model.VenueName))
-                                    {
-                                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                                    }
-                                    else
-                                    {
-                                        @WebUtility.HtmlDecode(@Model.VenueName)
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    }
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Url:</td>
-                        <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.CourseURL))
-                            {
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            }
-                            else
-                            {
-                                <a href="@Model.CourseURL" target="_blank" style="word-break: break-all">@Model.CourseURL</a>
-                            }
-
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Cost:</td>
-
-                        @if ((!Model.Cost.HasValue))
-                        {
-                            <td class="govuk-table__cell">
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            </td>
-                        }
-                        else
-                        {
-                            <td class="govuk-table__cell">
-                                £@Model.Cost.Value.ToString("F")
-                            </td>
-                        }
-
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Cost description:</td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.CostDescription)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Duration:</td>
-                        <td class="govuk-table__cell">
-                            @if (!Model.DurationValue.HasValue)
-                            {
-                                <span class="govuk-visually-hidden">Data Unavailable</span>
-                            }
-                            else
-                            {
-                                <span> @Model.DurationValue.ToString() @Model.DurationUnit.ToString()</span>
-                            }
-
-                        </td>
-                    </tr>
-                    @{
-                        if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Full time or part time:</td>
-                                <td class="govuk-table__cell">
-                                    @if (string.IsNullOrEmpty( @studyModeAttribute.Name))
-                                    {
-                                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                                    }
-                                    else
-                                    {
-                                        @studyModeAttribute.Name
-                                    }
-
-                                </td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Attendance:</td>
-                                <td class="govuk-table__cell">
-                                    @if (string.IsNullOrEmpty( @attendanceAttribute.Name))
-                                    {
-                                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                                    }
-                                    else
-                                    {
-                                        @attendanceAttribute.Name
-                                    }
-
-                                </td>
-                            </tr>
-                        }
-                    }
-
-                </tbody>
-            </table>
-
-
-            <h3 class="govuk-heading-m govuk-!-margin-top-0">
-                What your learners need to know
-            </h3>
-            <table class="govuk-table">
-                <tbody>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Who is this course for </>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details" role="group">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.CourseDescription)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">Entry requirements </td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details" role="group">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.EntryRequirements)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">What you’ll learn </td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details" role="group">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.WhatYoullLearn)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">How you’ll learn</td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details" role="group">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.HowYoullLearn)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-
-
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">What you’ll need to bring </td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.WhatYoullNeed)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">How you'll be assessed</td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details" role="group">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.HowYoullBeAssessed)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__header">What you can do next</td>
-                        <td class="govuk-table__cell">
-                            <details class="govuk-details" role="group">
-                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-expanded="false">
-                                    <span class="govuk-details__summary-text">
-                                        View
-                                    </span>
-                                </summary>
-                                <div class="govuk-details__text" id="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-hidden="true">
-                                    @WebUtility.HtmlDecode(@Model.WhereNext)
-                                </div>
-                            </details>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="govuk-grid-column-one-third govuk-related-items">
-            <h3 class="govuk-heading-m">Status</h3>
-            <span class="govuk-tag phase-tag-published govuk-!-margin-bottom-4">Published</span>
-            <hr>
-            @{
-                if (Model.UpdatedDate.HasValue)
-                {
-                    <p>Last updated: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
-                }
-                else
-                {
-                    <p>Created: <br>@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
-                }
-            }
-
-            <hr>
-
-            <h3 class="govuk-heading-m m20">Copy</h3>
-            <p>
-                If you run another course that
-                offers this qualification, you
-                can copy this course,
-                edit the details and save it
-                as a new course.
-            </p>
-            <a class="govuk-link" style="padding-right:1em"
-               asp-controller="CopyCourseRun"
-               asp-action="Index"
-               asp-route-learnAimRef="@Model.LearnAimRef"
-               asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
-               asp-route-awardOrgCode="@Model.AwardOrgCode"
-               asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-               asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-               asp-route-courseId="@Model.CourseId"
-               asp-route-courseRunId="@Model.CourseInstanceId"
-               asp-route-publishMode="@PublishMode.Summary">Copy this course<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
-            <hr>
-
-            <h3 class="govuk-heading-m m20">Delete</h3>
-            <p>
-                If you no longer run this course,
-                remove it from the course
-                directory
-            </p>
-
-            <a id="course-delete" class="govuk-button" asp-controller="ProviderCourses" asp-action="DeleteCourse"
-               asp-route-courseId="@Model.CourseId"
-               asp-route-courseRunId="@Model.CourseInstanceId"
-               asp-route-courseName="@Model.CourseName"
-               style="padding-right:1em">Delete this course<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
-
-                      <hr>
-            <h3 class="govuk-heading-m m20">Edit What your learners need to know</h3>
-            <p>
-                Making any changes will update
-                all of the courses that share this
-                qualification
-            </p>
-            <a class="govuk-link"
-               asp-controller="EditCourse"
-               asp-action="Index"
-               asp-route-courseId="@Model.CourseId"
-               asp-route-courseRunId="@Model.CourseInstanceId"
-               asp-route-learnAimRef="@Model.LearnAimRef"
-               asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
-               asp-route-awardOrgCode="@Model.AwardOrgCode"
-               asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-               asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-               asp-route-mode="@PublishMode.Summary">Make changes<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What you can do next
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @WebUtility.HtmlDecode(@Model.WhereNext)
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        @editCourseChangeLink("what you can do next")
+                    </dd>
+                </div>
+            </dl>
         </div>
     </div>
-
 </div>
-
-<script>
-    (function ($) {
-        $(function () {
-            var $archiveButton = $(".archive");
-
-            var $cancelArchiveButton = $(".cancel-archive");
-
-            $cancelArchiveButton.on("click",
-                function (event) {
-                    event.preventDefault();
-                    {
-                        var courseRunId = $(this).attr("data-course-run-id");
-
-                        var archiveOption = $("#archive-" + courseRunId);
-                        archiveOption.show();
-
-                        var confirmArchive = $("#course-confirm-archive-" + courseRunId);
-                        confirmArchive.hide();
-
-                        var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
-                        archiveCancelDelete.hide();
-
-                    }
-                });
-
-
-            $archiveButton.on("click",
-                function (event) {
-                    event.preventDefault();
-
-                    $('.govuk-button').hide();
-
-                    $('.cancel-archive').hide();
-
-                    $('.archive').show();
-
-                    var courseRunId = $(this).attr("data-course-run-id");
-
-                    var archiveOption = $("#archive-" + courseRunId);
-                    archiveOption.hide();
-
-                    var confirmArchive = $("#course-confirm-archive-" + courseRunId);
-                    confirmArchive.show();
-
-                    var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
-                    archiveCancelDelete.show().css("display", "block");
-
-                });
-
-        });
-    })(jQuery);
-</script>
