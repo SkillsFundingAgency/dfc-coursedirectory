@@ -1,12 +1,20 @@
-﻿@using Dfc.CourseDirectory.Models.Enums
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Net
+@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
-@using System.ComponentModel.DataAnnotations
-@using System.Net
+@using Dfc.CourseDirectory.Web.Views.Shared
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 @{
     ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName);
     Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+    {
+        BackLink = true,
+        BackLinkHref = Url.Action("Index", "ProviderCourses"),
+        BackLinkText = "Back to course list"
+    });
 
     var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
     var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
