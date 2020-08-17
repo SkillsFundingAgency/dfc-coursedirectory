@@ -20,7 +20,7 @@
     var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
     var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
 
-    Func<string, object> editCourseRunChangeLink = @<a asp-controller="EditCourseRun"
+    Func<(string name, string fragment), object> editCourseRunChangeLink = @<a asp-controller="EditCourseRun"
                                                        asp-action="Index"
                                                        asp-route-learnAimRef="@Model.LearnAimRef"
                                                        asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
@@ -30,9 +30,10 @@
                                                        asp-route-courseId="@Model.CourseId"
                                                        asp-route-courseRunId="@Model.CourseInstanceId"
                                                        asp-route-mode="@PublishMode.Summary"
-                                                       class="govuk-link">Change<span class="govuk-visually-hidden"> @item</span></a>;
+                                                       asp-fragment="@item.fragment"
+                                                       class="govuk-link">Change<span class="govuk-visually-hidden"> @item.name</span></a>;
 
-    Func<string, object> editCourseChangeLink = @<a asp-controller="EditCourse"
+    Func<(string name, string fragment), object> editCourseChangeLink = @<a asp-controller="EditCourse"
                                                     asp-action="Index"
                                                     asp-route-courseId="@Model.CourseId"
                                                     asp-route-courseRunId="@Model.CourseInstanceId"
@@ -42,7 +43,8 @@
                                                     asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
                                                     asp-route-learnAimRefTypeDesc="@Model.QualificationType"
                                                     asp-route-mode="@PublishMode.Summary"
-                                                    class="govuk-link">Change<span class="govuk-visually-hidden"> @item</span></a>;
+                                                    asp-fragment="@item.fragment"
+                                                    class="govuk-link">Change<span class="govuk-visually-hidden"> @item.name</span></a>;
 }
 
 <div class="govuk-main-wrapper">
@@ -189,7 +191,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("course name")
+                        @editCourseRunChangeLink(("course name", "sectionCourseName"))
                     </dd>
                 </div>
 
@@ -208,7 +210,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("your reference")
+                        @editCourseRunChangeLink(("your reference", "sectionCourseProviderReference"))
                     </dd>
                 </div>
 
@@ -227,7 +229,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("course type")
+                        @editCourseRunChangeLink(("course type", "sectionDeliveryType"))
                     </dd>
                 </div>
 
@@ -248,7 +250,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("start date")
+                        @editCourseRunChangeLink(("start date", "sectionStartDate"))
                     </dd>
                 </div>
 
@@ -273,7 +275,7 @@
                             }
                         </dd>
                         <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                            @editCourseRunChangeLink("regions")
+                            @editCourseRunChangeLink(("regions", "RegionItemsCheckboxList"))
                         </dd>
                     </div>
                 }
@@ -295,7 +297,7 @@
                             }
                         </dd>
                         <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                            @editCourseRunChangeLink("course location")
+                            @editCourseRunChangeLink(("course location", "sectionVenue"))
                         </dd>
                     </div>
                 }
@@ -315,7 +317,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("course webpage")
+                        @editCourseRunChangeLink(("course webpage", "sectionUrl"))
                     </dd>
                 </div>
 
@@ -334,7 +336,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("cost")
+                        @editCourseRunChangeLink(("cost", "sectionCost"))
                     </dd>
                 </div>
 
@@ -346,7 +348,7 @@
                         @WebUtility.HtmlDecode(@Model.CostDescription)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("course description")
+                        @editCourseRunChangeLink(("cost description", "sectionCostDescription"))
                     </dd>
                 </div>
 
@@ -365,7 +367,7 @@
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseRunChangeLink("duration")
+                        @editCourseRunChangeLink(("duration", "sectionDuration"))
                     </dd>
                 </div>
 
@@ -386,7 +388,7 @@
                             }
                         </dd>
                         <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                            @editCourseRunChangeLink("course hours")
+                            @editCourseRunChangeLink(("course hours", "FullPartTimeRadioButtons"))
                         </dd>
                     </div>
 
@@ -405,7 +407,7 @@
                             }
                         </dd>
                         <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                            @editCourseRunChangeLink("attendance pattern")
+                            @editCourseRunChangeLink(("attendance pattern", "AttendancePatternRadioButtons"))
                         </dd>
                     </div>
                 }
@@ -444,7 +446,7 @@
                         @WebUtility.HtmlDecode(@Model.CourseDescription)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("who is this course for")
+                        @editCourseChangeLink(("who is this course for", "sectionCourseFor"))
                     </dd>
                 </div>
 
@@ -456,7 +458,7 @@
                         @WebUtility.HtmlDecode(@Model.EntryRequirements)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("entry requirements")
+                        @editCourseChangeLink(("entry requirements", "sectionEntryRequirements"))
                     </dd>
                 </div>
 
@@ -468,7 +470,7 @@
                         @WebUtility.HtmlDecode(@Model.WhatYoullLearn)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("what you'll learn")
+                        @editCourseChangeLink(("what you'll learn", "sectionWhatWillLearn"))
                     </dd>
                 </div>
 
@@ -480,7 +482,7 @@
                         @WebUtility.HtmlDecode(@Model.HowYoullLearn)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("how you'll learn")
+                        @editCourseChangeLink(("how you'll learn", "sectionHowYouWillLearn"))
                     </dd>
                 </div>
 
@@ -492,7 +494,7 @@
                         @WebUtility.HtmlDecode(@Model.WhatYoullNeed)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("what you'll need to bring")
+                        @editCourseChangeLink(("what you'll need to bring", "sectionWhatYouNeed"))
                     </dd>
                 </div>
 
@@ -504,7 +506,7 @@
                         @WebUtility.HtmlDecode(@Model.HowYoullBeAssessed)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("how you'll be assessed")
+                        @editCourseChangeLink(("how you'll be assessed", "sectionHowAssessed"))
                     </dd>
                 </div>
 
@@ -516,7 +518,7 @@
                         @WebUtility.HtmlDecode(@Model.WhereNext)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        @editCourseChangeLink("what you can do next")
+                        @editCourseChangeLink(("what you can do next", "sectionWhereNext"))
                     </dd>
                 </div>
             </dl>
