@@ -32,7 +32,7 @@
         <ul class="govuk-list">
             <li><a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a></li>
             <li><a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link">View, edit, copy or delete a course</a></li>
-            <li><a asp-controller="ProviderSearch" asp-action="SearchProvider" asp-route-UKPRN="@HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN")" class="govuk-link">Back to the home screen</a></li>
+            <li><a asp-controller="Home" asp-action="Index" class="govuk-link">Back to the home screen</a></li>
         </ul>
 
     </div>
