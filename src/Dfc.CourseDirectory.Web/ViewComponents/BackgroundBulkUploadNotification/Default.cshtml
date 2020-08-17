@@ -1,8 +1,4 @@
-﻿@using Dfc.CourseDirectory.Common.Settings
-@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
-@using Dfc.CourseDirectory.Services.ProviderService
-@using Dfc.CourseDirectory.Web.Helpers
-@using Microsoft.Extensions.Options
+﻿@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Http
@@ -13,35 +9,11 @@
 @inject IAuthorizationService Authorization
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
-
-
-
 @{
-    string datestamp = string.Empty;
-    string timestamp = string.Empty;
-    string dateCombined = string.Empty;
-    if (Model.BulkUploadBackgroundStartTimestamp.HasValue)
-    {
-        datestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("dd MMM yyyy");
-        timestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("HH:mm");
-
-        TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-
-        DateTime gmt =Model.BulkUploadBackgroundStartTimestamp.Value.ToUniversalTime();
-
-        DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(gmt, tzi);
-        dateCombined= dt2.ToString("dd MMM yyyy HH:mm");
-        //model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
-    }
-
-    System.Text.StringBuilder message = new System.Text.StringBuilder
-        ($"Your bulk upload is in progress and may take a few minutes. Continue to refresh this page.Do not add a new course or another bulk upload during this process.Once your bulk upload is complete you will receive a notification to publish your courses.");
-    
-   
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
         NotificationTitle = "Bulk upload processing",
         ClassType = "info-summary",
-        NotificationMessage = message.ToString()
+        NotificationMessage = "Your bulk upload is in progress and may take a few minutes. Continue to refresh this page. Do not add a new course or another bulk upload during this process. Once your bulk upload is complete you will receive a notification to publish your courses.",
     })
 }
