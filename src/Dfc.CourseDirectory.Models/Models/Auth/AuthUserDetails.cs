@@ -39,9 +39,6 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
             ProviderType = providerType;
             ProviderID = providerId;
         }
-
-        public AuthUserDetails() { }
-
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return UserId;
