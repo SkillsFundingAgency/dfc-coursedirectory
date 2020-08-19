@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -29,7 +30,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IEnumerable<CourseRun> CourseRuns { get; set; }
         public IEnumerable<string> ValidationErrors { get; set; }
         public IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
-        public int CourseStatus { get; set; }
+        public CourseStatus CourseStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
@@ -46,19 +47,19 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public Guid? VenueId { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseID { get; set; }
-        public int DeliveryMode { get; set; }
+        public CourseDeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
         public string CourseURL { get; set; }
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
-        public int DurationUnit { get; set; }
+        public CourseDurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
-        public int StudyMode { get; set; }
-        public int AttendancePattern { get; set; }
+        public CourseStudyMode StudyMode { get; set; }
+        public CourseAttendancePattern AttendancePattern { get; set; }
         public bool? National { get; set; }
         public IEnumerable<string> Regions { get; set; }
-        public int RecordStatus { get; set; }
+        public CourseStatus RecordStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }

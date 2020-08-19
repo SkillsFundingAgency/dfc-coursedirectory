@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
@@ -8,17 +9,17 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
         public int Execute(InMemoryDocumentStore inMemoryDocumentStore, ArchiveCoursesForProvider request)
         {
             var providerCourses = inMemoryDocumentStore.Courses.All
-                .Where(a => a.ProviderUKPRN == request.Ukprn && a.CourseStatus != 4);
+                .Where(a => a.ProviderUKPRN == request.Ukprn && a.CourseStatus != CourseStatus.Archived);
 
             var updated = 0;
 
             foreach (var app in providerCourses)
             {
-                app.CourseStatus = 4;
+                app.CourseStatus = CourseStatus.Archived;
                 
                 foreach (var courseRun in app.CourseRuns)
                 {
-                    courseRun.RecordStatus = 4;
+                    courseRun.RecordStatus = CourseStatus.Archived;
                 }
 
                 inMemoryDocumentStore.Courses.Save(app);
