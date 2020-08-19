@@ -183,26 +183,26 @@ namespace Dfc.CourseDirectory.Core.Tests
                         VenueId = Guid.NewGuid(),
                         CourseName = "Maths",
                         ProviderCourseID = "MATHS",
-                        DeliveryMode = 1,
+                        DeliveryMode = CourseDeliveryMode.ClassroomBased,
                         FlexibleStartDate = false,
                         StartDate = new DateTime(2020, 4, 1),
                         CourseURL = "https://provider.com/maths",
                         Cost = 3,
                         CostDescription = "£3",
-                        DurationUnit = 3,  // Months
+                        DurationUnit = CourseDurationUnit.Months,
                         DurationValue = 6,
-                        StudyMode = 2,  // part time
-                        AttendancePattern = 2,  // evening
+                        StudyMode = CourseStudyMode.PartTime,
+                        AttendancePattern = CourseAttendancePattern.Evening,
                         National = true,
                         Regions = new[] { "E12000001" },  // North East
-                        RecordStatus = 1,
+                        RecordStatus = CourseStatus.Live,
                         CreatedDate = Clock.UtcNow,
                         CreatedBy = "Tests",
                         UpdatedDate = Clock.UtcNow,
                         UpdatedBy = "Tests"
                     }
                 },
-                CourseStatus = 1,
+                CourseStatus = CourseStatus.Live,
                 CreatedDate = Clock.UtcNow,
                 CreatedBy = "Tests",
                 UpdatedDate = Clock.UtcNow,
