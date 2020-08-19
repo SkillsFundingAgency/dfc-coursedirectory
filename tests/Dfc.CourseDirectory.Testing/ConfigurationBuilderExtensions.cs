@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.Testing
 
             builder
                 .AddJsonFile(fileProvider, "appsettings.Testing.json", optional: false, reloadOnChange: false)
+                .AddUserSecrets(typeof(ConfigurationBuilderExtensions).Assembly)
                 .AddEnvironmentVariables();
 
             return builder;
