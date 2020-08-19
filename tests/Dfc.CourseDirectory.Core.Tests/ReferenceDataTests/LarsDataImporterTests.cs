@@ -36,14 +36,14 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count.Should().Be(30);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count.Should().Be(17);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count.Should().Be(67);
-                Fixture.DatabaseFixture.InMemoryDocumentStore.Standards.All.Count.Should().Be(554);
+                Fixture.DatabaseFixture.InMemoryDocumentStore.Standards.All.Count.Should().Be(589);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.StandardSectorCodes.All.Count.Should().Be(75);
 
-                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(499);
-                (await CountSqlRows("LARS.Category")).Should().Be(42);
+                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(502);
+                (await CountSqlRows("LARS.Category")).Should().Be(44);
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(123);
-                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(117108);
-                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(81447);
+                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(117753);
+                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(82221);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
             }
