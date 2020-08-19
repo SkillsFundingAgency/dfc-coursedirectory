@@ -1,15 +1,10 @@
-﻿@using Dfc.CourseDirectory.Models.Models.Courses;
-@using Dfc.CourseDirectory.Web.Helpers;
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue.ChooseVenueModel
 
-
-
 <div class="govuk-form-group">
-    <label id="govuk-label-VenueId" class="govuk-label--m" for="VenueId">
+    <label id="govuk-label-VenueId" class="govuk-label govuk-label--m" for="VenueId">
         @Model.LabelText
     </label>
-
 
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
@@ -18,21 +13,12 @@
         </span>
     }
 
+    <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select location"></select>
 
-    <div class="">
-        <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select location"></select>
-
-        @if (Model.DisplayLink)
-        {
-            <a href="#" class="govuk-link--no-visited-state-!-margin-top-3" id="addNewVenue">The course location isn’t shown here</a>
-        }
-    </div>
+    @if (Model.DisplayLink)
+    {
+        <p class="govuk-body govuk-!-margin-top-3">
+            <a href="#" class="govuk-link--no-visited-state-!-margin-top-3 govuk-link" id="addNewVenue">Add another location</a>
+        </p>
+    }
 </div>
-
-<script>
-    (function ($) {
-        $(function () {
-
-        });
-    })(jQuery);
-</script>
