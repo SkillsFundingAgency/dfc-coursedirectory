@@ -1,11 +1,11 @@
-﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents.Linq;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
@@ -23,21 +23,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             var results = await query.FetchAll();
             var resultsDict = results.ToDictionary(r => r.Id, r => r);
-
-            var missingApprenticeships = request.ApprenticeshipIds.Where(id => !resultsDict.ContainsKey(id)).ToList();
-            if (missingApprenticeships.Count > 0)
-            {
-                var exceptions = missingApprenticeships.Select(id => new ResourceDoesNotExistException(ResourceType.Apprenticeship, id));
-
-                if (missingApprenticeships.Count == 1)
-                {
-                    throw exceptions.Single();
-                }
-                else
-                {
-                    throw new AggregateException(exceptions);
-                }
-            }
 
             return resultsDict;
         }

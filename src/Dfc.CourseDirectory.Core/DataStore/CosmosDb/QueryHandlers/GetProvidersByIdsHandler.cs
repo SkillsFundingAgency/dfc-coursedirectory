@@ -27,21 +27,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             var results = await query.FetchAll();
             var resultsDict = results.ToDictionary(r => r.Id, r => r);
 
-            var missingProviders = request.ProviderIds.Where(id => !resultsDict.ContainsKey(id)).ToList();
-            if (missingProviders.Count > 0)
-            {
-                var exceptions = missingProviders.Select(id => new ResourceDoesNotExistException(ResourceType.Provider, id));
-
-                if (missingProviders.Count == 1)
-                {
-                    throw exceptions.Single();
-                }
-                else
-                {
-                    throw new AggregateException(exceptions);
-                }
-            }
-
             return resultsDict;
         }
     }
