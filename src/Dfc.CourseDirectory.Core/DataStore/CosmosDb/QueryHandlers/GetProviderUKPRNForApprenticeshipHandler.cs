@@ -5,15 +5,13 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
     public class GetProviderUkprnForApprenticeshipHandler
-        : ICosmosDbQueryHandler<GetProviderUkprnForApprenticeship, OneOf<NotFound, int>>
+        : ICosmosDbQueryHandler<GetProviderUkprnForApprenticeship, int?>
     {
-        public async Task<OneOf<NotFound, int>> Execute(
+        public async Task<int?> Execute(
             DocumentClient client,
             Configuration configuration,
             GetProviderUkprnForApprenticeship request)
@@ -35,7 +33,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             if (response.Count == 0)
             {
-                return new NotFound();
+                return null;
             }
             else
             {

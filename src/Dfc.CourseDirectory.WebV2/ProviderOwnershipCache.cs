@@ -26,13 +26,13 @@ namespace Dfc.CourseDirectory.WebV2
                 // Cosmos document doesn't stored ProviderID on the apprenticeship but UKPRN
                 // so we need two lookups here :-/
 
-                var maybeUkprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                var ukprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new GetProviderUkprnForApprenticeship() { ApprenticeshipId = apprenticeshipId });
 
-                if (maybeUkprn.Value is int)
+                if (ukprn.HasValue)
                 {
                     var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                        new GetProviderByUkprn() { Ukprn = maybeUkprn.AsT1 });
+                        new GetProviderByUkprn() { Ukprn = ukprn.Value });
 
                     providerId = provider.Id;
                 }
