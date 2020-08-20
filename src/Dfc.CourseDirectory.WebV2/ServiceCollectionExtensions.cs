@@ -120,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
-            services.AddBehaviors();
+            services.AddBehaviors(typeof(ServiceCollectionExtensions).Assembly);
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
             services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();

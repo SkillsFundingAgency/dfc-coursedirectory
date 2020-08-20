@@ -1,7 +1,9 @@
 ﻿using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using GovUk.Frontend.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Distributed;
@@ -50,6 +52,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", _ => { });
 
             services.AddCourseDirectory(HostingEnvironment, Configuration);
+
+            services.AddMediatR(typeof(Startup));
+            services.AddBehaviors(typeof(Startup).Assembly);
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();

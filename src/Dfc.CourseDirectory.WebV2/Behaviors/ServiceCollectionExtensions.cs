@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,9 +8,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddBehaviors(this IServiceCollection services)
+        public static IServiceCollection AddBehaviors(
+            this IServiceCollection services,
+            Assembly handlersAssembly)
         {
-            foreach (var type in typeof(ServiceCollectionExtensions).Assembly.GetTypes())
+            foreach (var type in handlersAssembly.GetTypes())
             {
                 RegisterRequireUserCanSubmitQASubmissionBehavior(type);
                 RegisterRestrictProviderTypeBehavior(type);
