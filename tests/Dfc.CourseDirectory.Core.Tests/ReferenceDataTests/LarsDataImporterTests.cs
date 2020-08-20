@@ -47,15 +47,13 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
             }
+        }
 
-            Task<int> CountSqlRows(string tableName)
-            {
-                var query = $"SELECT COUNT(*) FROM {tableName}";
+        private Task<int> CountSqlRows(string tableName)
+        {
+            var query = $"SELECT COUNT(*) FROM {tableName}";
 
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.Transaction.Connection.QuerySingleAsync<int>(
-                    query,
-                    transaction: dispatcher.Transaction));
-            }
+            return WithSqlQueryDispatcher(dispatcher => dispatcher.Transaction.Connection.QuerySingleAsync<int>(query, transaction: dispatcher.Transaction));
         }
     }
 }
