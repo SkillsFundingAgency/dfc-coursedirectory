@@ -9,27 +9,27 @@ using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Functions
 {
-    public class SyncCosmosApprenticeshipToSql
+    public class RealTimeSyncCosmosCourseToSql
     {
         private readonly SqlDataSync _sqlDataSync;
 
-        public SyncCosmosApprenticeshipToSql(SqlDataSync sqlDataSync)
+        public RealTimeSyncCosmosCourseToSql(SqlDataSync sqlDataSync)
         {
             _sqlDataSync = sqlDataSync;
         }
 
-        [FunctionName(nameof(SyncCosmosApprenticeshipToSql))]
+        [FunctionName(nameof(RealTimeSyncCosmosCourseToSql))]
         public async Task Run([CosmosDBTrigger(
             databaseName: "providerportal",
-            collectionName: "apprenticeship",
+            collectionName: "courses",
             ConnectionStringSetting = "CosmosDbSettings:ConnectionString",
-            LeaseCollectionName = "apprenticeship-lease",
-            LeaseCollectionPrefix = "SyncCosmosApprenticeshipToSql",
+            LeaseCollectionName = "courses-lease",
+            LeaseCollectionPrefix = "SyncCosmosCourseToSql",
             CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> documents)
         {
-            var apprenticeships = documents.Select(d => JsonConvert.DeserializeObject<Apprenticeship>(d.ToString()));
+            var courses = documents.Select(d => JsonConvert.DeserializeObject<Course>(d.ToString()));
 
-            await _sqlDataSync.SyncApprenticeships(apprenticeships);
+            await _sqlDataSync.SyncCourses(courses);
         }
     }
 }
