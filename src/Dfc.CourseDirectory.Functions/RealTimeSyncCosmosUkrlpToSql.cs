@@ -9,16 +9,16 @@ using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Functions
 {
-    public class SyncCosmosUkrlpToSql
+    public class RealTimeSyncCosmosUkrlpToSql
     {
         private readonly SqlDataSync _sqlDataSync;
 
-        public SyncCosmosUkrlpToSql(SqlDataSync sqlDataSync)
+        public RealTimeSyncCosmosUkrlpToSql(SqlDataSync sqlDataSync)
         {
             _sqlDataSync = sqlDataSync;
         }
 
-        [FunctionName(nameof(SyncCosmosUkrlpToSql))]
+        [FunctionName(nameof(RealTimeSyncCosmosUkrlpToSql))]
         public async Task Run([CosmosDBTrigger(
             databaseName: "providerportal",
             collectionName: "ukrlp",
