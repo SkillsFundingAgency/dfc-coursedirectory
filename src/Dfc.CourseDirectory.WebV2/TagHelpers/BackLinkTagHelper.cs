@@ -11,6 +11,10 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
     {
         private readonly IGovUkHtmlGenerator _generator;
 
+        public string Href { get; set; }
+
+        public string Text { get; set; }
+
         public BackLinkTagHelper(IGovUkHtmlGenerator generator)
         {
             _generator = generator;
@@ -19,16 +23,19 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             var tagBuilder = _generator.GenerateBackLink(
-                href: "#",
-                content: new HtmlString("Back"),
-                attributes: new Dictionary<string, string>()
+                Href,
+                new HtmlString(string.IsNullOrWhiteSpace(Text) ? "Back" : Text),
+                new Dictionary<string, string>()
                 {
                     { "class", "needs-js pttcd-c-back-link" },
-                    { "aria-hidden", "" },
-                    { "onclick", "window.history.back()" },
+                    { "aria-hidden", "" }
                 });
 
-            tagBuilder.Attributes.Remove("href");
+            if (string.IsNullOrWhiteSpace(Href))
+            {
+                tagBuilder.Attributes.Add("onclick", "window.history.back()");
+                tagBuilder.Attributes.Remove("href");
+            }
 
             output.TagName = tagBuilder.TagName;
             output.TagMode = TagMode.StartTagAndEndTag;
