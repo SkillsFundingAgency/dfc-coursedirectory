@@ -67,6 +67,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 {
                     Now = _clock.UtcNow,
                     Records = records
+                        .Where(r => r.EffectiveTo.HasValue)
                         .Select(r => new UpsertFrameworksRecord()
                         {
                             FrameworkCode = r.FworkCode,
@@ -75,7 +76,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                             PathwayName = r.PathwayName,
                             NasTitle = r.NASTitle,
                             EffectiveFrom = r.EffectiveFrom,
-                            EffectiveTo = r.EffectiveTo,
+                            EffectiveTo = r.EffectiveTo.Value,
                             SectorSubjectAreaTier1 = r.SectorSubjectAreaTier1,
                             SectorSubjectAreaTier2 = r.SectorSubjectAreaTier2
                         })
@@ -254,7 +255,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             public string PathwayName { get; set; }
             public string NASTitle { get; set; }
             public DateTime EffectiveFrom { get; set; }
-            public DateTime EffectiveTo { get; set; }
+            public DateTime? EffectiveTo { get; set; }
             public decimal SectorSubjectAreaTier1 { get; set; }
             public decimal SectorSubjectAreaTier2 { get; set; }
         }
