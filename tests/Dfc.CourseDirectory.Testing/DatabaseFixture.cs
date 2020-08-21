@@ -142,9 +142,9 @@ namespace Dfc.CourseDirectory.Testing
 
         private Checkpoint CreateCheckpoint() => new Checkpoint()
         {
-            SchemasToInclude = new[] { "Pttcd" }
+            SchemasToInclude = new[] { "Pttcd", "LARS" }
         };
-        
+
         private void DeploySqlDb()
         {
             if ((Environment.GetEnvironmentVariable("CD_SkipTestSqlDeployment") ?? string.Empty)
