@@ -91,14 +91,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertProgTypes()
                 {
                     Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertProgTypesRecord()
-                    {
-                        ProgTypeId = r.ProgType,
-                        ProgTypeDesc = r.ProgTypeDesc,
-                        ProgTypeDesc2 = r.ProgTypeDesc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
+                    Records = records
+                        .Where(r => !r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase))
+                        .Select(r => new UpsertProgTypesRecord
+                        {
+                            ProgTypeId = r.ProgType,
+                            ProgTypeDesc = r.ProgTypeDesc,
+                            ProgTypeDesc2 = r.ProgTypeDesc2,
+                            EffectiveFrom = r.EffectiveFrom,
+                            EffectiveTo = r.EffectiveTo
+                        })
                 });
             }
 
@@ -192,7 +194,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                 {
-                    Records = records
+                    Records = records.Where(r => !r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase))
                 }));
             }
 
@@ -202,7 +204,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
                 {
-                    Records = records
+                    Records = records.Where(r => !r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase))
                 }));
             }
 
