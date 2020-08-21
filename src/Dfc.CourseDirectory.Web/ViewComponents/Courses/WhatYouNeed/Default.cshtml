@@ -16,14 +16,14 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@whatYouNeedTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.WhatYouNeed)" class="govuk-label--m" for="word-count" name="WhatYouNeed">
+        <label id="govuk-label-@nameof(Model.WhatYouNeed)" class="govuk-label govuk-label--m" for="word-count" name="WhatYouNeed">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
         {
-            <span class="govuk-hint govuk-!-margin-top-3">
+            <div class="govuk-hint">
                 @Model.HintText
-            </span>
+            </div>
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhatYouNeed" rows="7"
                    aria-describedby="@Model.AriaDescribedBy" aria-label="WhatYouNeed"
