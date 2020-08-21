@@ -35,13 +35,13 @@ namespace Dfc.CourseDirectory.WebV2
                         new GetProviderByUkprn() { Ukprn = ukprn.Value });
 
                     providerId = provider.Id;
+
+                    _cache.Set(cacheKey, providerId);
                 }
                 else
                 {
                     providerId = null;
                 }
-
-                _cache.Set(cacheKey, providerId);
             }
 
             return providerId;
@@ -65,13 +65,13 @@ namespace Dfc.CourseDirectory.WebV2
                         new GetProviderByUkprn() { Ukprn = maybeUkprn.AsT1 });
 
                     providerId = provider.Id;
+
+                    _cache.Set(cacheKey, providerId);
                 }
                 else
                 {
                     providerId = null;
                 }
-
-                _cache.Set(cacheKey, providerId);
             }
 
             return providerId;
