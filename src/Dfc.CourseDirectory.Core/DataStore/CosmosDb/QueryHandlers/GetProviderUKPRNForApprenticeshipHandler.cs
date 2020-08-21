@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.ApprenticeshipCollectionName);
 
             var query = new SqlQuerySpec(
-                "SELECT c.ProviderUKPRN FROM c WHERE c.id = @apprenticeshipId",
+                "SELECT c.ProviderUKPRN FROM c WHERE c.id = @apprenticeshipId AND c.RecordStatus NOT IN (4, 8)",
                 new SqlParameterCollection()
                 {
                     new SqlParameter("@apprenticeshipId", request.ApprenticeshipId)

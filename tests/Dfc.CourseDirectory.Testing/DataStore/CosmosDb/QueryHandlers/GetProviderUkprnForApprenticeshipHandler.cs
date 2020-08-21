@@ -11,16 +11,11 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
             GetProviderUkprnForApprenticeship request)
         {
             var doc = inMemoryDocumentStore.Apprenticeships.All
-                .SingleOrDefault(a => a.Id == request.ApprenticeshipId);
+                .SingleOrDefault(a => a.Id == request.ApprenticeshipId &&
+                    a.RecordStatus != 4 &&
+                    a.RecordStatus != 8);
 
-            if (doc == null)
-            {
-                return null;
-            }
-            else
-            {
-                return doc.ProviderUKPRN;
-            }
+            return doc?.ProviderUKPRN;
         }
     }
 }
