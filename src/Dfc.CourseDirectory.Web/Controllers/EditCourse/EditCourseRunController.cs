@@ -2,32 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
-using Microsoft.ApplicationInsights;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -115,44 +112,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             return Json(Url.Action("AddVenue", "Venues"));
 
 
-        }
-
-        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
-        {
-            var selectVenue = new SelectVenueModel
-            {
-                LabelText = "Select course venue",
-                HintText = "Select all that apply.",
-                AriaDescribedBy = "Select all that apply.",
-                Ukprn = ukprn
-            };
-            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
-            {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                var venueItems = new List<VenueItemModel>();
-
-                foreach (var venueSearchResultItemModel in items)
-                {
-                    venueItems.Add(new VenueItemModel
-                    {
-                        Id = venueSearchResultItemModel.Id,
-                        VenueName = venueSearchResultItemModel.VenueName
-                    });
-                }
-
-                if (venueItems.Count == 1)
-                {
-                    selectVenue.HintText = string.Empty;
-                    selectVenue.AriaDescribedBy = string.Empty;
-                }
-
-                selectVenue.VenueItems = venueItems;
-            }
-
-            return selectVenue;
         }
 
         [HttpGet]
@@ -280,21 +239,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 }
             }
 
-          
-
             return View("EditCourseRun", vm);
-
-
-
-
         }
-
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid courseRunId, PublishMode mode)
         {
-
             _session.SetString("Option", "AddNewVenueForEdit");
 
             int? UKPRN;
@@ -451,9 +402,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
         }
-
-
-
 
         [HttpPost]
         [Authorize]
@@ -652,24 +600,57 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                      NotificationMessage = "Start date edited"
                                  });
                             default:
-                                return RedirectToAction("index", "ProviderCourses",
+                                TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
+                                return RedirectToAction("Index", "CourseSummary",
                                     new
                                     {
-                                        NotificationTitle = "Course edited",
-                                        NotificationMessage = "You edited",
+                                        courseId = model.CourseId,
                                         courseRunId = model.CourseRunId
                                     });
-
                         }
                     }
-
-
                 }
             }
 
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        {
+            var selectVenue = new SelectVenueModel
+            {
+                LabelText = "Select course venue",
+                HintText = "Select all that apply.",
+                AriaDescribedBy = "Select all that apply.",
+                Ukprn = ukprn
+            };
+            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+            if (result.IsSuccess && result.HasValue)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                var venueItems = new List<VenueItemModel>();
 
+                foreach (var venueSearchResultItemModel in items)
+                {
+                    venueItems.Add(new VenueItemModel
+                    {
+                        Id = venueSearchResultItemModel.Id,
+                        VenueName = venueSearchResultItemModel.VenueName
+                    });
+                }
+
+                if (venueItems.Count == 1)
+                {
+                    selectVenue.HintText = string.Empty;
+                    selectVenue.AriaDescribedBy = string.Empty;
+                }
+
+                selectVenue.VenueItems = venueItems;
+            }
+
+            return selectVenue;
+        }
     }
 }
