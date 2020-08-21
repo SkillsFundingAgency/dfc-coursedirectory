@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-    <UserSecretsId>1a0e7451-56d9-4d15-a253-1d2bd6985264</UserSecretsId>
+    <UserSecretsId>CourseDirectoryTesting</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
