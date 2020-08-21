@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             var query = client.CreateDocumentQuery<Apprenticeship>(collectionUri, new FeedOptions() { EnableCrossPartitionQuery = true })
                 .Where(p => request.ApprenticeshipIds.Contains(p.Id))
+                .Where(p => p.RecordStatus != 4 && p.RecordStatus != 8)
                 .AsDocumentQuery();
 
             var results = await query.FetchAll();
