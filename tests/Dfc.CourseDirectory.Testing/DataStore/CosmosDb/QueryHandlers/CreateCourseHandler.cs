@@ -50,6 +50,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     CreatedBy = request.CreatedByUser.Email,
                     UpdatedDate = request.CreatedDate,
                     UpdatedBy = request.CreatedByUser.Email,
+                    ProviderCourseID = cr.ProviderCourseId
                 }),
                 CourseStatus = Core.Models.CourseStatus.Live,
                 CreatedBy = request.CreatedByUser.Email,

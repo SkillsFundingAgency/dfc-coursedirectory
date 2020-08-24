@@ -47,5 +47,6 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public CourseAttendancePattern AttendancePattern { get; set; }
         public bool? National { get; set; }
         public IEnumerable<string> Regions { get; set; }
+        public string ProviderCourseId { get; set; }
     }
 }
