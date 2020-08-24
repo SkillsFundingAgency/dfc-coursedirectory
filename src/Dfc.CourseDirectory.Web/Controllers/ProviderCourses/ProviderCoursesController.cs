@@ -527,55 +527,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             return ViewComponent(nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults), model);
         }
 
-
-
-
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> DeleteCourse(Guid CourseId, Guid CourseRunId, string CourseName)
-        {
-            int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
-            CourseDeleteViewModel courseDeleteViewModel = new CourseDeleteViewModel();
-            courseDeleteViewModel.CourseId = CourseId;
-            courseDeleteViewModel.CourseRunId = CourseRunId;
-            courseDeleteViewModel.CourseName = CourseName;
-
-            return View("../ProviderCourses/coursedelete/index", courseDeleteViewModel);
-        }
-
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DeleteCourse(CourseDeleteViewModel courseDeleteViewModel)
-        {
-            if (courseDeleteViewModel.CourseDelete == CourseDelete.Delete)
-            {
-                int? UKPRN = _session.GetInt32("UKPRN");
-
-                if (!UKPRN.HasValue)
-                {
-                    return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-                }
-                //archive call
-                var result = await _courseService.UpdateStatus(courseDeleteViewModel.CourseId, courseDeleteViewModel.CourseRunId, (int)RecordStatus.Archived);
-
-                if (result.IsSuccess)
-                {
-                    return RedirectToAction("CourseConfirmationDelete", "ProviderCourses", new { CourseRunId = courseDeleteViewModel.CourseId,CourseName = courseDeleteViewModel.CourseName });
-
-                }
-            }
-
-            return RedirectToAction("Index", "ProviderCourses");
-        }
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CourseConfirmationDelete(Guid CourseRunId, string CourseName)
@@ -587,8 +538,5 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             return View("../ProviderCourses/CourseDeleteConfirmation/index", courseDeleteConfirmViewModel);
         }
-
-
-
     }
 }

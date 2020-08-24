@@ -5,6 +5,7 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.Views.Shared
 @using Dfc.CourseDirectory.WebV2
+@using Microsoft.AspNetCore.Http.Extensions
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 @{
     ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName);
@@ -436,11 +437,11 @@
                asp-route-publishMode="@PublishMode.Summary"
                class="govuk-button govuk-button--secondary govuk-!-margin-right-1" data-module="govuk-button">Copy course details<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
 
-            <a asp-controller="ProviderCourses"
-               asp-action="DeleteCourse"
-               asp-route-courseId="@Model.CourseId"
-               asp-route-courseRunId="@Model.CourseInstanceId"
-               asp-route-courseName="@Model.CourseName"
+                <a asp-controller="Courses"
+                   asp-action="DeleteCourseRun"
+                   asp-route-courseId="@Model.CourseId"
+                   asp-route-courseRunId="@Model.CourseInstanceId"
+                   asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()"
                class="govuk-button govuk-button--warning" data-module="govuk-button">Delete course details<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
         </div>
 

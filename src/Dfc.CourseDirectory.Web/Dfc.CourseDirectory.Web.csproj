@@ -246,9 +246,6 @@
     <Content Update="Views\Apprenticeships\Search\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ProviderCourses\CourseDelete\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\Migration\DeleteConfirmed\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
