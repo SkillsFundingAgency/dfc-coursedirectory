@@ -1,0 +1,93 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Courses.DeleteCourseRun.ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Delete course";
+
+    var returnUrl = ViewData["ReturnUrl"] ?? "/";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="Confirm" />
+    </govuk-error-summary>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form 
+              asp-action="DeleteCourseRun" 
+              asp-route-courseId="@Model.CourseId"
+              asp-route-courseRunId="@Model.CourseRunId"
+              asp-route-returnUrl="@returnUrl">
+            <h1 class="govuk-heading-xl">Delete course</h1>
+
+            <p class="govuk-body">
+                Deleting this course will remove it from Publish to the course directory and National Careers Service, Find a course.
+            </p>
+
+            <govuk-summary-list>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Course name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.CourseName</govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                @if (!string.IsNullOrWhiteSpace(Model.YourReference))
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Your reference</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.YourReference</govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                }
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Course type</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.DeliveryMode.ToDisplayName()</govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Start date</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@(Model.FlexibleStartDate ? "Flexible" : Model.StartDate.Value.ToString("dd/MM/yyyy"))</govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                @if (Model.VenueName != null)
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Course location</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                }
+            </govuk-summary-list>
+
+            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading">
+                            Are you sure?
+                        </h2>
+                    </govuk-checkboxes-fieldset-legend>
+                </govuk-checkboxes-fieldset>
+                <govuk-checkboxes-item value="@(true)">
+                    Yes - I want to delete the course
+                </govuk-checkboxes-item>
+            </govuk-checkboxes>
+
+            <govuk-button type="submit" class="govuk-button--warning" id="pttcd-courses__delete-course__btn">Delete</govuk-button>
+
+            <govuk-button href="@returnUrl" class="govuk-button--secondary" data-testid="cancel-btn">Cancel</govuk-button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function enableDeleteBtn() {
+            $('#pttcd-courses__delete-course__btn').attr(
+                'disabled',
+                $('#Confirm').is(':checked') ? null : 'disabled');
+        }
+
+        // timeout is required otherwise the _checked_ property check doesn't return the correct value
+        // (maybe GDS scripts need chance to run?)
+        setTimeout(enableDeleteBtn, 100);
+
+        $('#Confirm').change(enableDeleteBtn);
+    </script>
+} 
