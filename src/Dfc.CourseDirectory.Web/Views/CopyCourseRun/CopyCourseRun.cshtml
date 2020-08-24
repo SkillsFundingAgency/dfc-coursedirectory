@@ -25,7 +25,6 @@
 }
 @inject IHttpContextAccessor HttpContextAccessor
 
-
 @{
     var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
     if (newVenueObject != null)
@@ -66,199 +65,182 @@
     }
 }
 
-@await Component.InvokeAsync(nameof(Notification), new NotificationModel
-{
-    NotificationTitle = "Qualification details",
-    NotificationMessage = @Model.CourseName + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-    ClassType = "info-summary"
-})
-<h1 class="govuk-heading-l" style="padding-top: 20px;">
-    Copy course
-</h1>
-<form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
+<div class="govuk-grid-row govuk-!-margin-bottom-5">
+    <div class="govuk-grid-column-full">
 
-    <div id="errorsummary" style="display:none">
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-   {
-
-       NotificationTitle = "There is an issue with this qualification",
-       NotificationMessage = "",
-       ClassType = "error-summary"
-   })
-    </div>
-
-    @Html.HiddenFor(x => x.CourseId)
-    @Html.HiddenFor(x => x.CourseRunId)
-    @Html.HiddenFor(x => x.QualificationType)
-    @Html.HiddenFor(x => x.LearnAimRefTitle)
-    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    @Html.HiddenFor(x => x.AwardOrgCode)
-    @Html.HiddenFor(x => x.LearnAimRef)
-
-
-    <div class="section" id="sectionCourseName">
-        @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-   {
-       CourseName = Model.CourseName,
-       LabelText = "Course name",
-       HintText = new HtmlString("This is the name people will see when they search for your course."),
-       AriaDescribedBy = "Please enter the course name."
-   })
-    </div>
-
-    <div class="section" id="sectionCourseProviderReference">
-        @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-   {
-       CourseProviderReference = Model.CourseProviderReference,
-       LabelText = "ID",
-       HintText = "This is how you identify a course in your internal system.",
-       AriaDescribedBy = "Please enter the ID for this course"
-   })
-    </div>
-
-    <div class="section" id="sectionDeliveryType">
-        @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
-   {
-       DeliveryMode = Model.DeliveryMode,
-       LabelText = "Delivery Mode",
-       HintText = "How will this course be delivered",
-       SecondHintText = "Select how you will deliver this course",
-       AriaDescribedBy = "Select how you will deliver this course"
-   })
-    </div>
-
-    <div class="section" id="sectionStartDate">
-        @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-   {
-       StartDateType = Model.StartDateType,
-       Day = Model.Day,
-       Month = Model.Month,
-       Year = Model.Year,
-       DayAriaDescribedBy = "",
-       DayLabelText = "Day",
-       MonthAriaDescribedBy = "",
-       MonthLabelText = "Month",
-       YearAriaDescribedBy = "",
-       YearLabelText = "Year",
-       AriaDescribedBy = "",
-       SpecifiedDateHintText = "e.g. For example, 30 9 2019",
-       FlexibleDateHintText = "Or select a flexible start date:",
-       LabelText = "Start date"
-   })
-    </div>
-
-    <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-        @{var displayLink = true;
-            if (Model.PublishMode == PublishMode.BulkUpload || Model.PublishMode == PublishMode.Migration)
-            {
-                displayLink = false;
-            }
-        }
-        @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
-   {
-       LabelText = "Location",
-       AriaDescribedBy = "Venue",
-       HintText = "Select course run location",
-       Venues = Model.Venues,
-       VenueId = Model.VenueId,
-       DisplayLink = displayLink
-   })
+        <pttcd-notification title="Qualification details">
+            <ul class="govuk-list govuk-!-margin-bottom-0">
+                <li><span class="govuk-!-font-weight-bold">LARS/QAN:</span> @Model.LearnAimRef</li>
+                <li><span class="govuk-!-font-weight-bold">Qualification name:</span> @Model.CourseName</li>
+                <li><span class="govuk-!-font-weight-bold">Qualification level:</span> @Model.NotionalNVQLevelv2</li>
+                <li><span class="govuk-!-font-weight-bold">Awarding organisation:</span> @Model.AwardOrgCode</li>
+            </ul>
+        </pttcd-notification>
 
     </div>
+</div>
 
-    <div class="section" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-            @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
-    </div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
+        <h1 class="govuk-heading-xl">Copy course details</h1>
 
+        <p class="govuk-body-m">Copy and make changes to your course details and create a new course.</p>
 
+        <form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
-    <div class="section" id="sectionUrl">
-        @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
-   {
-       Url = Model.Url,
-       LabelText = "URL",
-       HintText = "Enter the URL for this course e.g. http://www.google.com",
-       AriaDescribedBy = "Enter the URL for this course"
-   })
-    </div>
-
-    <div class="section" id="sectionCost">
-        @await Component.InvokeAsync(nameof(Cost), new CostModel
-   {
-       Cost = Model.Cost,
-       CostDescription = Model.CostDescription,
-       CostLabelText = "Cost",
-       CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-       CostAriaDescribedBy = "Enter the cost in pounds and pence",
-       CostDescriptionLabelText = "Cost description",
-       CostDescriptionHintText = "Enter details related to the cost of this course",
-       CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
-   })
-    </div>
-
-    <div class="section" id="sectionDuration">
-        @await Component.InvokeAsync(nameof(Duration), new DurationModel
-   {
-       DurationLength = Model.DurationLength,
-       DurationUnit = Model.DurationUnit,
-       LabelText = "Duration",
-       HintText = "Select the duration of the course",
-       AriaDescribedBy = "Select course duration"
-   })
-    </div>
-
-
-    <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
-        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
-   {
-       StudyMode = Model.StudyMode,
-       LabelText = "Full time or part time",
-       HintText = "Select the attendance pattern"
-   })
-    </div>
-
-    <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
-        @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
-   {
-       AttendanceMode = Model.AttendanceMode,
-       LabelText = "Attendance",
-       HintText = "Select the time of day the course takes place"
-   })
-    </div>
-    <ul class="flex-container">
-        <li class="flex-item">
-            <button name="saveButton" type="submit" class="govuk-button" id="save">
-                Save
-            </button>
-        </li>
-        <li class="flex-item" style="padding-top: 15px">
-            @{
-                switch (Model.PublishMode)
+            <div id="errorsummary" style="display:none">
+                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                 {
-                    case PublishMode.Summary:
-                        {
-                            @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link" })
-                            break;
-                        }
-                    default:
-                        {
-                            @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
-                            break;
-                        }
+
+                    NotificationTitle = "There is an issue with this qualification",
+                    NotificationMessage = "",
+                    ClassType = "error-summary"
+                })
+            </div>
+
+            @Html.HiddenFor(x => x.CourseId)
+            @Html.HiddenFor(x => x.CourseRunId)
+            @Html.HiddenFor(x => x.QualificationType)
+            @Html.HiddenFor(x => x.LearnAimRefTitle)
+            @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+            @Html.HiddenFor(x => x.AwardOrgCode)
+            @Html.HiddenFor(x => x.LearnAimRef)
+
+            <div class="section" id="sectionCourseName">
+                @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+                {
+                    CourseName = Model.CourseName,
+                    LabelText = "Course name",
+                    HintText = new HtmlString("The course name displayed on the National Career Service, <a href=\"https://nationalcareers.service.gov.uk/find-a-course/search\" class=\"govuk-link\" target=\"_blank\">Find a course</a>."),
+                    AriaDescribedBy = "Please enter the course name."
+                })
+            </div>
+
+            <div class="section" id="sectionCourseProviderReference">
+                @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+                {
+                    CourseProviderReference = Model.CourseProviderReference,
+                    LabelText = "Your reference",
+                    HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
+                    AriaDescribedBy = "Please enter your reference for this course"
+                })
+            </div>
+
+            <div class="section" id="sectionDeliveryType">
+                @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
+                {
+                    DeliveryMode = Model.DeliveryMode,
+                    LabelText = "Course type",
+                    HintText = "Select one option.",
+                    SecondHintText = "Select how you will deliver this course",
+                    AriaDescribedBy = "Select how you will deliver this course"
+                })
+            </div>
+
+            <div class="section" id="sectionStartDate">
+                @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+                {
+                    StartDateType = Model.StartDateType,
+                    Day = Model.Day,
+                    Month = Model.Month,
+                    Year = Model.Year,
+                    DayAriaDescribedBy = "",
+                    DayLabelText = "Day",
+                    MonthAriaDescribedBy = "",
+                    MonthLabelText = "Month",
+                    YearAriaDescribedBy = "",
+                    YearLabelText = "Year",
+                    AriaDescribedBy = "",
+                    SpecifiedDateHintText = "e.g. For example, 30 9 2019",
+                    FlexibleDateHintText = "Or select a flexible start date:",
+                    LabelText = "Start date"
+                })
+            </div>
+
+            <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+                @{var displayLink = true;
+                    if (Model.PublishMode == PublishMode.BulkUpload || Model.PublishMode == PublishMode.Migration)
+                    {
+                        displayLink = false;
+                    }
                 }
-            }
+                @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
+                {
+                    LabelText = "Course location",
+                    AriaDescribedBy = "Venue",
+                    HintText = null,
+                    Venues = Model.Venues,
+                    VenueId = Model.VenueId,
+                    DisplayLink = displayLink
+                })
 
-        </li>
+            </div>
 
+            <div class="section" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+                @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
+            </div>
 
-    </ul>
+            <div class="section" id="sectionUrl">
+                @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+                {
+                    Url = Model.Url,
+                    LabelText = "Course webpage",
+                    HintText = "The webpage for this course. For example, https://www.provider.com/coursename.",
+                    AriaDescribedBy = "Enter the course webpage for this course"
+                })
+            </div>
 
+            <div class="section" id="sectionCost">
+                @await Component.InvokeAsync(nameof(Cost), new CostModel
+                {
+                    Cost = Model.Cost,
+                    CostDescription = Model.CostDescription,
+                    CostLabelText = "Cost",
+                    CostHintText = "Cost of the course to the learner.",
+                    CostAriaDescribedBy = "Enter the cost in pounds and pence",
+                    CostDescriptionLabelText = "Cost description",
+                    CostDescriptionHintText = "A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.",
+                    CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+                })
+            </div>
 
+            <div class="section" id="sectionDuration">
+                @await Component.InvokeAsync(nameof(Duration), new DurationModel
+                {
+                    DurationLength = Model.DurationLength,
+                    DurationUnit = Model.DurationUnit,
+                    LabelText = "Duration",
+                    AriaDescribedBy = "Select course duration"
+                })
+            </div>
 
+            <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
+                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+                {
+                    StudyMode = Model.StudyMode,
+                    LabelText = "Course hours",
+                    HintText = "Select one option."
+                })
+            </div>
 
-</form>
+            <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
+                @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+                {
+                    AttendanceMode = Model.AttendanceMode,
+                    LabelText = "Attendance pattern",
+                    HintText = "Select one option."
+                })
+            </div>
 
+            <button name="saveButton" type="submit" class="govuk-button" id="save">Publish</button>
+
+            <a href="@(HttpContextAccessor.HttpContext.Request.GetTypedHeaders().Referer?.AbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="govuk-button govuk-button--secondary">Cancel</a>
+
+        </form>
+
+    </div>
+</div>
 
 <script>
     (function($) {
