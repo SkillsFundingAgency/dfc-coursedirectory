@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -25,7 +26,8 @@ namespace Dfc.CourseDirectory.Testing
             string whereNext = "We will actively signpost and support you to achieve the next level of progression for all certificated aims.",
             bool adultEducationBudget = false,
             bool advancedLearnerLoan = false,
-            DateTime? createdUtc = null)
+            DateTime? createdUtc = null,
+            Action<CreateCourseCourseRunBuilder> configureCourseRuns = null)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
@@ -38,6 +40,39 @@ namespace Dfc.CourseDirectory.Testing
             }
 
             var courseId = Guid.NewGuid();
+
+            IEnumerable<CreateCourseCourseRun> courseRuns;
+            var courseRunBuilder = new CreateCourseCourseRunBuilder();
+
+            if (configureCourseRuns != null)
+            {
+                configureCourseRuns.Invoke(courseRunBuilder);
+
+                if (courseRunBuilder.CourseRuns.Count == 0)
+                {
+                    throw new InvalidOperationException("At least one CourseRun must be specified.");
+                }
+
+                courseRuns = courseRunBuilder.CourseRuns;
+            }
+            else
+            {
+                courseRuns = new[]
+                {
+                    new CreateCourseCourseRun()
+                    {
+                        CourseRunId = Guid.NewGuid(),
+                        CourseName = qualificationCourseTitle,
+                        DeliveryMode = CourseDeliveryMode.Online,
+                        FlexibleStartDate = true,
+                        Cost = 69,
+                        DurationUnit = CourseDurationUnit.Months,
+                        DurationValue = 6,
+                        AttendancePattern = CourseAttendancePattern.Evening,
+                        National = true
+                    }
+                };
+            }
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new CreateCourse()
@@ -59,26 +94,59 @@ namespace Dfc.CourseDirectory.Testing
                     WhereNext = whereNext,
                     AdultEducationBudget = adultEducationBudget,
                     AdvancedLearnerLoan = advancedLearnerLoan,
-                    CourseRuns = new[]
-                    {
-                        new CreateCourseCourseRun()
-                        {
-                            CourseRunId = Guid.NewGuid(),
-                            CourseName = qualificationCourseTitle,
-                            DeliveryMode = CourseDeliveryMode.Online,
-                            FlexibleStartDate = true,
-                            Cost = 69,
-                            DurationUnit = CourseDurationUnit.Months,
-                            DurationValue = 6,
-                            AttendancePattern = CourseAttendancePattern.Evening,
-                            National = true
-                        }
-                    },
+                    CourseRuns = courseRuns,
                     CreatedDate = createdUtc ?? _clock.UtcNow,
                     CreatedByUser = createdBy
                 });
 
             return courseId;
+        }
+
+        public class CreateCourseCourseRunBuilder
+        {
+            private readonly List<CreateCourseCourseRun> _courseRuns = new List<CreateCourseCourseRun>();
+
+            public IReadOnlyCollection<CreateCourseCourseRun> CourseRuns => _courseRuns;
+
+            public CreateCourseCourseRunBuilder WithCourseRun(
+                CourseDeliveryMode deliveryMode,
+                CourseStudyMode studyMode,
+                CourseAttendancePattern attendancePattern,
+                string courseName = "Education assessment in Maths",
+                bool? national = null,
+                Guid? venueId = null,
+                IEnumerable<string> regions = null,
+                bool? flexibleStartDate = null,
+                DateTime? startDate = null,
+                string courseUrl = null,
+                decimal? cost = 69,
+                string costDescription = null,
+                CourseDurationUnit durationUnit = CourseDurationUnit.Months,
+                int? durationValue = 6)
+            {
+                var courseRunId = Guid.NewGuid();
+
+                _courseRuns.Add(new CreateCourseCourseRun()
+                {
+                    CourseRunId = courseRunId,
+                    VenueId = venueId,
+                    CourseName = courseName,
+                    DeliveryMode = deliveryMode,
+                    FlexibleStartDate = flexibleStartDate ?? !startDate.HasValue,
+                    StartDate = startDate,
+                    CourseUrl = courseUrl,
+                    Cost = cost,
+                    CostDescription = costDescription,
+                    DurationUnit = durationUnit,
+                    DurationValue = durationValue,
+                    StudyMode = studyMode,
+                    AttendancePattern = attendancePattern,
+                    National = national,
+                    Regions = regions
+                });
+
+                return this;
+            }
         }
     }
 }
