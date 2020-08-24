@@ -122,7 +122,8 @@ namespace Dfc.CourseDirectory.Testing
                 decimal? cost = 69,
                 string costDescription = null,
                 CourseDurationUnit durationUnit = CourseDurationUnit.Months,
-                int? durationValue = 6)
+                int? durationValue = 6,
+                string providerCourseId = null)
             {
                 var courseRunId = Guid.NewGuid();
 
@@ -142,7 +143,8 @@ namespace Dfc.CourseDirectory.Testing
                     StudyMode = studyMode,
                     AttendancePattern = attendancePattern,
                     National = national,
-                    Regions = regions
+                    Regions = regions,
+                    ProviderCourseId = providerCourseId
                 });
 
                 return this;
