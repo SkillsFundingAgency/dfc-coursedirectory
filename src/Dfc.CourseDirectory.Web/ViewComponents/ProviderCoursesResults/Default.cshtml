@@ -9,6 +9,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Models.Enums
 @using System.Globalization;
+@using Microsoft.AspNetCore.Http.Extensions
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -310,10 +311,10 @@ else
                        asp-route-publishMode="@PublishMode.Summary">Copy course</a>
 
 
-                    <a id="course-delete" class="govuk-link" asp-controller="ProviderCourses" asp-action="DeleteCourse"
+                    <a id="course-delete" class="govuk-link" asp-controller="Courses" asp-action="DeleteCourseRun"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-courseName="@courseRun.CourseName">Delete course</a>
+                       asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()">Delete course</a>
 
 
                 </div>
