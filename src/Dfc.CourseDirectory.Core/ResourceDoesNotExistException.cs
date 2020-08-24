@@ -6,7 +6,8 @@ namespace Dfc.CourseDirectory.Core
     {
         Provider, 
         Apprenticeship,
-        Course
+        Course,
+        CourseRun
     }
 
     public class ResourceDoesNotExistException : Exception
