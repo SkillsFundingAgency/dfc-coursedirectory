@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
@@ -18,15 +19,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IClock _clock;
+        private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IServiceScopeFactory serviceScopeFactory,
-            IClock clock)
+            IClock clock,
+            ILogger<LarsDataImporter> logger)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _serviceScopeFactory = serviceScopeFactory;
             _clock = clock;
+            _logger = logger;
         }
 
         public async Task ImportData()
@@ -65,7 +69,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<FrameworkRow>(csv);
 
                 var excluded = records.Where(r => !HasEffectiveTo(r)).Select(r => r.FworkCode);
-                Console.Out.WriteLine($"{csv} - Excluded {nameof(FrameworkRow.FworkCode)}s: {string.Join(",", excluded)} (missing {nameof(FrameworkRow.EffectiveTo)})");
+                _logger.LogInformation($"{csv} - Excluded {nameof(FrameworkRow.FworkCode)}s: {string.Join(",", excluded)} (missing {nameof(FrameworkRow.EffectiveTo)})");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertFrameworks()
                 {
@@ -96,7 +100,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<ProgTypeRow>(csv).ToList();
 
                 var excluded = records.Where(IsTLevel).Select(r => r.ProgType);
-                Console.Out.WriteLine($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
+                _logger.LogInformation($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertProgTypes()
                 {
@@ -206,7 +210,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(csv).ToList();
 
                 var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRefType);
-                Console.Out.WriteLine($"{csv} - Excluded {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc)})");
+                _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc)})");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                 {
@@ -222,7 +226,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
 
                 var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
-                Console.Out.WriteLine($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
+                _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
                 {
