@@ -64,7 +64,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "Framework.csv";
                 var records = ReadCsv<FrameworkRow>(csv);
 
-                static bool Excluded(FrameworkRow r) => !r.EffectiveTo.HasValue;
                 var excluded = records.Where(Excluded).Select(r => r.FworkCode);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(FrameworkRow.FworkCode)}s: {string.Join(",", excluded)} (missing {nameof(FrameworkRow.EffectiveTo)})");
 
@@ -87,6 +86,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         })
                         .Where(r => r.EffectiveTo > _clock.UtcNow.Date)
                 });
+
+                static bool Excluded(FrameworkRow r) => !r.EffectiveTo.HasValue;
             }
 
             Task ImportProgTypesToCosmos()
@@ -94,7 +95,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "ProgType.csv";
                 var records = ReadCsv<ProgTypeRow>(csv).ToList();
 
-                static bool Excluded(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
                 var excluded = records.Where(Excluded).Select(r => r.ProgType);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
 
@@ -112,6 +112,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                             EffectiveTo = r.EffectiveTo
                         })
                 });
+
+                static bool Excluded(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportStandardsToCosmos()
@@ -203,7 +205,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "LearnAimRefType.csv";
                 var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(csv).ToList();
 
-                static bool Excluded(UpsertLarsLearnAimRefTypesRecord r) => r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
                 var excluded = records.Where(Excluded).Select(r => r.LearnAimRefType);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc)})");
 
@@ -211,6 +212,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 {
                     Records = records.Where(r => !Excluded(r))
                 }));
+
+                static bool Excluded(UpsertLarsLearnAimRefTypesRecord r) => r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportLearningDeliveryToSql()
@@ -218,7 +221,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "LearningDelivery.csv";
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
 
-                static bool Excluded(UpsertLarsLearningDeliveriesRecord r) => r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
                 var excluded = records.Where(Excluded).Select(r => r.LearnAimRef);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
 
@@ -226,6 +228,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 {
                     Records = records.Where(r => !Excluded(r))
                 }));
+
+                static bool Excluded(UpsertLarsLearningDeliveriesRecord r) => r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportLearningDeliveryCategoryToSql()
