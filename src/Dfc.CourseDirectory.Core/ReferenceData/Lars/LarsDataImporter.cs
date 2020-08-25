@@ -64,14 +64,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "Framework.csv";
                 var records = ReadCsv<FrameworkRow>(csv);
 
-                var excluded = records.Where(Excluded).Select(r => r.FworkCode);
+                var excluded = records.Where(r => !HasEffectiveTo(r)).Select(r => r.FworkCode);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(FrameworkRow.FworkCode)}s: {string.Join(",", excluded)} (missing {nameof(FrameworkRow.EffectiveTo)})");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertFrameworks()
                 {
                     Now = _clock.UtcNow,
                     Records = records
-                        .Where(r => !Excluded(r))
+                        .Where(HasEffectiveTo)
                         .Select(r => new UpsertFrameworksRecord()
                         {
                             FrameworkCode = r.FworkCode,
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         .Where(r => r.EffectiveTo > _clock.UtcNow.Date)
                 });
 
-                static bool Excluded(FrameworkRow r) => !r.EffectiveTo.HasValue;
+                static bool HasEffectiveTo(FrameworkRow r) => r.EffectiveTo.HasValue;
             }
 
             Task ImportProgTypesToCosmos()
@@ -95,14 +95,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "ProgType.csv";
                 var records = ReadCsv<ProgTypeRow>(csv).ToList();
 
-                var excluded = records.Where(Excluded).Select(r => r.ProgType);
+                var excluded = records.Where(IsTLevel).Select(r => r.ProgType);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertProgTypes()
                 {
                     Now = _clock.UtcNow,
                     Records = records
-                        .Where(r => !Excluded(r))
+                        .Where(r => !IsTLevel(r))
                         .Select(r => new UpsertProgTypesRecord
                         {
                             ProgTypeId = r.ProgType,
@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         })
                 });
 
-                static bool Excluded(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
+                static bool IsTLevel(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportStandardsToCosmos()
@@ -205,15 +205,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "LearnAimRefType.csv";
                 var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(csv).ToList();
 
-                var excluded = records.Where(Excluded).Select(r => r.LearnAimRefType);
+                var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRefType);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc)})");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                 {
-                    Records = records.Where(r => !Excluded(r))
+                    Records = records.Where(r => !IsTLevel(r))
                 }));
 
-                static bool Excluded(UpsertLarsLearnAimRefTypesRecord r) => r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
+                static bool IsTLevel(UpsertLarsLearnAimRefTypesRecord r) => r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportLearningDeliveryToSql()
@@ -221,15 +221,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 const string csv = "LearningDelivery.csv";
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
 
-                var excluded = records.Where(Excluded).Select(r => r.LearnAimRef);
+                var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
                 Console.Out.WriteLine($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
                 {
-                    Records = records.Where(r => !Excluded(r))
+                    Records = records.Where(r => !IsTLevel(r))
                 }));
 
-                static bool Excluded(UpsertLarsLearningDeliveriesRecord r) => r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
+                static bool IsTLevel(UpsertLarsLearningDeliveriesRecord r) => r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportLearningDeliveryCategoryToSql()
