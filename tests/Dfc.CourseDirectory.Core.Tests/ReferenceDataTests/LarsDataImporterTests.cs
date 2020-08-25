@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
@@ -24,7 +25,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var importer = new LarsDataImporter(
                 CosmosDbQueryDispatcher.Object,
                 Services.GetRequiredService<IServiceScopeFactory>(),
-                Clock);
+                Clock,
+                GetLogger());
 
             // Act
             await importer.ImportData();
@@ -47,6 +49,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
             }
+        }
+
+        private static ILogger<LarsDataImporter> GetLogger()
+        {
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            return loggerFactory.CreateLogger<LarsDataImporter>();
         }
 
         private Task<int> CountSqlRows(string tableName)
