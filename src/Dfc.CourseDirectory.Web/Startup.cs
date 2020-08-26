@@ -31,7 +31,6 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
-using Dfc.CourseDirectory.Web.ViewComponents;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
@@ -41,15 +40,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -197,7 +195,12 @@ namespace Dfc.CourseDirectory.Web
             }
             else
             {
+#if DEBUG
+                // Adds FileDistributedCache for persistent cached state, including session state, during development ONLY.
+                services.AddSingleton<IDistributedCache>(_ => new FileDistributedCache(() => DateTimeOffset.UtcNow));
+#else
                 services.AddDistributedMemoryCache();
+#endif
             }
 
             services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
