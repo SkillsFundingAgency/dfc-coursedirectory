@@ -1186,7 +1186,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (processSynchronously)
                     {
-                        await UploadApprenticeships(apprenticeships);
+                        await UploadApprenticeships(apprenticeships, addInParallel: true);
                     }
                     else
                     {
@@ -1197,7 +1197,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 // instead of closing over `this` in case `this` is Dispose()ed before task is run
                                 var service = (ApprenticeshipBulkUploadService)sp.GetRequiredService<IApprenticeshipBulkUploadService>();
 
-                                return service.UploadApprenticeships(apprenticeships);
+                                return service.UploadApprenticeships(apprenticeships, addInParallel: false);
                             });
                     }
                 }
@@ -1246,9 +1246,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
-        private async Task UploadApprenticeships(List<Apprenticeship> apprenticeships)
+        private async Task UploadApprenticeships(
+            List<Apprenticeship> apprenticeships,
+            bool addInParallel)
         {
-            var result = await _apprenticeshipService.AddApprenticeships(apprenticeships);
+            var result = await _apprenticeshipService.AddApprenticeships(apprenticeships, addInParallel);
 
             if (result.IsFailure)
             {

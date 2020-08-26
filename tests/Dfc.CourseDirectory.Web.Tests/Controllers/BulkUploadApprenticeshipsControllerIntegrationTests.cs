@@ -138,8 +138,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 .ReturnsAsync(Result.Ok());
 
             var addedApprenticeships = new List<IApprenticeship>();
-            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
-                .Callback<IEnumerable<IApprenticeship>>(a => addedApprenticeships.AddRange(a))
+            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
+                .Callback<IEnumerable<IApprenticeship>, bool>((a, _) => addedApprenticeships.AddRange(a))
                 .ReturnsAsync(Result.Ok());
 
             const string csv = "STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY,REGION,SUB_REGION\r\n" +

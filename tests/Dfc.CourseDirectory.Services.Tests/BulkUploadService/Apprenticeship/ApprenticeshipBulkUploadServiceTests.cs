@@ -637,9 +637,9 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             // arrange
             SetupDependencies();
             IList<IApprenticeship> dataPassedToApprenticeshipService = null;
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok())
-                .Callback<IEnumerable<IApprenticeship>>(x => dataPassedToApprenticeshipService = x.ToList());
+                .Callback<IEnumerable<IApprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
@@ -663,7 +663,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         {
             // arrange
             SetupDependencies();
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok());
             additionalMockSetup?.Invoke();
             SetupService();
@@ -690,9 +690,9 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             // arrange
             SetupDependencies();
             List<IApprenticeship> dataPassedToApprenticeshipService = null;
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok())
-                .Callback<IEnumerable<IApprenticeship>>(x => dataPassedToApprenticeshipService = x.ToList());
+                .Callback<IEnumerable<IApprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
