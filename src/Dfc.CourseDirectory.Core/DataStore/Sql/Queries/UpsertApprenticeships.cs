@@ -54,5 +54,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string Name { get; set; }
         public IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes { get; set; }
         public IEnumerable<string> Regions { get; set; }
+        public Guid? LocationGuidId { get; set; }
     }
 }

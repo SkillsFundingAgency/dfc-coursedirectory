@@ -62,6 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string UpdatedBy { get; set; }
         // ApprenticeshipLocationId should really be Nullable<int> but that's not compatible with the model used elsewhere
         public int ApprenticeshipLocationId { get; set; }
+        public Guid? LocationGuidId { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
