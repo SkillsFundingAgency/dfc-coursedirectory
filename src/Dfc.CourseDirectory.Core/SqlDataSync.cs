@@ -102,7 +102,8 @@ namespace Dfc.CourseDirectory.Core
                         ApprenticeshipLocationType = location.ApprenticeshipLocationType,
                         Name = location.Name,
                         DeliveryModes = location.DeliveryModes,
-                        Regions = location.Regions ?? Array.Empty<string>()
+                        Regions = location.Regions ?? Array.Empty<string>(),
+                        LocationGuidId = location.LocationGuidId
                     })
                 })
             }));

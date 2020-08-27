@@ -172,7 +172,8 @@ CREATE TABLE #ApprenticeshipLocations (
     LocationType TINYINT,
     ApprenticeshipLocationType TINYINT,
     Name NVARCHAR(MAX),
-    DeliveryModes TINYINT
+    DeliveryModes TINYINT,
+    LocationGuidId UNIQUEIDENTIFIER
 )";
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
 
@@ -194,7 +195,8 @@ CREATE TABLE #ApprenticeshipLocations (
                         l.LocationType,
                         l.ApprenticeshipLocationType,
                         l.Name,
-                        DeliveryModes = MapDeliveryModes(l.DeliveryModes)
+                        DeliveryModes = MapDeliveryModes(l.DeliveryModes),
+                        l.LocationGuidId
                     })),
                     tableName: "#ApprenticeshipLocations",
                     transaction: transaction);
@@ -227,7 +229,8 @@ WHEN NOT MATCHED THEN
         LocationType,
         ApprenticeshipLocationType,
         Name,
-        DeliveryModes
+        DeliveryModes,
+        LocationGuidId
     ) VALUES (
         source.ApprenticeshipLocationId,
         source.ApprenticeshipId,
@@ -244,7 +247,8 @@ WHEN NOT MATCHED THEN
         source.LocationType,
         source.ApprenticeshipLocationType,
         source.Name,
-        source.DeliveryModes
+        source.DeliveryModes,
+        source.LocationGuidId
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -263,7 +267,8 @@ WHEN MATCHED THEN
         LocationType = source.LocationType,
         ApprenticeshipLocationType = source.ApprenticeshipLocationType,
         Name = source.Name,
-        DeliveryModes = source.DeliveryModes
+        DeliveryModes = source.DeliveryModes,
+        LocationGuidId = source.LocationGuidId
 WHEN NOT MATCHED BY SOURCE AND target.ApprenticeshipId IN (SELECT ApprenticeshipId FROM #Apprenticeships) THEN DELETE;";
 
                 await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);

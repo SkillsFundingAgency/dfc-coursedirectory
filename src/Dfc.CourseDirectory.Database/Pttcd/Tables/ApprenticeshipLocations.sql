@@ -15,5 +15,6 @@
 	[LocationType] TINYINT,
 	[ApprenticeshipLocationType] TINYINT,
 	[Name] NVARCHAR(MAX),
-	[DeliveryModes] TINYINT
+	[DeliveryModes] TINYINT,
+	[LocationGuidId] UNIQUEIDENTIFIER
 )
