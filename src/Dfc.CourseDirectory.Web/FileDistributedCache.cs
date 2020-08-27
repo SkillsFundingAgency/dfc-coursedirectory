@@ -38,22 +38,10 @@ namespace Dfc.CourseDirectory.Web
             var now = utcNow();
             var value = default(byte[]);
 
-            CacheAction(cache =>
+            CacheAction(now, cache =>
             {
                 if (!cache.TryGetValue(key, out var item))
                 {
-                    return;
-                }
-
-                if (item.AbsoluteExpiration.HasValue && item.AbsoluteExpiration <= now)
-                {
-                    cache.Remove(key);
-                    return;
-                }
-
-                if (item.SlidingExpiration.HasValue && (now - item.LastAccessed) >= item.SlidingExpiration)
-                {
-                    cache.Remove(key);
                     return;
                 }
 
@@ -93,7 +81,7 @@ namespace Dfc.CourseDirectory.Web
                 throw new ArgumentNullException(nameof(key));
             }
 
-            CacheAction(c => c.Remove(key));
+            CacheAction(utcNow(), c => c.Remove(key));
         }
 
         public Task RemoveAsync(string key, CancellationToken token = default)
@@ -129,7 +117,7 @@ namespace Dfc.CourseDirectory.Web
                 absoluteExpiration = absoluteExpiration.HasValue && absoluteExpiration < absoluteExpirationRelativeToNow ? absoluteExpiration : absoluteExpirationRelativeToNow;
             }
 
-            CacheAction(c => c[key] = new CacheItem
+            CacheAction(now, c => c[key] = new CacheItem
             {
                 Value = value,
                 AbsoluteExpiration = absoluteExpiration,
@@ -144,7 +132,7 @@ namespace Dfc.CourseDirectory.Web
             return Task.CompletedTask;
         }
 
-        private void CacheAction(Action<IDictionary<string, CacheItem>> action)
+        private void CacheAction(DateTimeOffset now, Action<IDictionary<string, CacheItem>> action)
         {
             lock (_syncLock)
             {
@@ -163,9 +151,22 @@ namespace Dfc.CourseDirectory.Web
                         cache = new Dictionary<string, CacheItem>();
                     }
 
+                    foreach (var item in cache)
+                    {
+                        if (item.Value.AbsoluteExpiration.HasValue && item.Value.AbsoluteExpiration <= now)
+                        {
+                            cache.Remove(item.Key);
+                        }
+
+                        if (item.Value.SlidingExpiration.HasValue && (now - item.Value.LastAccessed) >= item.Value.SlidingExpiration)
+                        {
+                            cache.Remove(item.Key);
+                        }
+                    }
+
                     action(cache);
 
-                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.SetLength(0);
 
                     using (var writer = new StreamWriter(stream))
                     using (var jsonWriter = new JsonTextWriter(writer))
