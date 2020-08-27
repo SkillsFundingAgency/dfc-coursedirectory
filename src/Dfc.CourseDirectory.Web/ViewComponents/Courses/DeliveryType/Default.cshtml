@@ -1,8 +1,6 @@
 ﻿@using Dfc.CourseDirectory.Models.Models.Courses;
 @using Dfc.CourseDirectory.Web.Helpers;
-
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType.DeliveryTypeModel
-
 
 <div class="govuk-form-group" id="Delivery">
 
@@ -11,10 +9,10 @@
             <h2 class="govuk-fieldset__heading govuk-heading-m">
                 @Model.LabelText
             </h2>
-            <span class="govuk-hint govuk-!-margin-top-3">
-                @Model.HintText
-            </span>
         </legend>
+        <div class="govuk-hint">
+            @Model.HintText
+        </div>
         <div class="govuk-radios govuk-radios" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
 
             <div class="govuk-radios__item">
@@ -33,4 +31,3 @@
         </div>
     </fieldset>
 </div>
-

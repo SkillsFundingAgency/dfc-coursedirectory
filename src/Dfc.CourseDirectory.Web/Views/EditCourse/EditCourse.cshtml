@@ -1,142 +1,103 @@
-﻿
-@using Dfc.CourseDirectory.Models.Enums
+﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@using FundingOptions = Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions.FundingOptions
-
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseViewModel
-
 @{
-    ViewData["Title"] = "Edit Course"; 
+    ViewData["Title"] = "Edit Course";
     Layout = "_Layout_Your_Courses";
 }
-<form asp-controller="EditCourse" asp-action="Index" method="post" id="editCourse">
 
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-    @Html.HiddenFor(x => x.AwardOrgCode)
-    @Html.HiddenFor(x => x.LearnAimRef)
-    @Html.HiddenFor(x => x.LearnAimRefTitle)
-    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    @Html.HiddenFor(x => x.CourseName)
+        <h1 class="govuk-heading-xl">Course description</h1>
 
-    @Html.HiddenFor(x => x.CourseId)
-    @Html.HiddenFor(x => x.CourseRunId)
-    @Html.HiddenFor(x => x.Mode)
+        <form asp-controller="EditCourse" asp-action="Index" method="post" id="editCourse">
 
+            @Html.HiddenFor(x => x.AwardOrgCode)
+            @Html.HiddenFor(x => x.LearnAimRef)
+            @Html.HiddenFor(x => x.LearnAimRefTitle)
+            @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+            @Html.HiddenFor(x => x.CourseName)
 
+            @Html.HiddenFor(x => x.CourseId)
+            @Html.HiddenFor(x => x.CourseRunId)
+            @Html.HiddenFor(x => x.Mode)
 
-    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-   {
+            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is an issue with this qualification
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list"></ul>
+                </div>
+            </div>
 
-       NotificationTitle = "Qualification details",
-       NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-       ClassType = "info-summary"
-   })
-    <h1 class="govuk-heading-l" style="padding-top: 20px;">
-        Edit Course
-    </h1>
+            <p class="govuk-body">The course information you provide will be available on the National Careers Service, <a href="https://nationalcareers.service.gov.uk/find-a-course/search" class="govuk-link" target="_blank">Find a course</a>, available to learners searching for learning and training opportunities.</p>
+            <p class="govuk-body govuk-!-margin-bottom-8">This is your opportunity to tell learners about your course, the content and style of the course information you provide should be aimed at the learner.</p>
 
-    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is an issue with this qualification
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list"></ul>
-        </div>
-    </div>
+            <div class="section" id="sectionCourseFor">
+                @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
+            </div>
+            <div class="section" id="sectionEntryRequirements">
+                @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
+            </div>
+            <div class="section" id="sectionWhatWillLearn">
+                @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+            </div>
+            <div class="section" id="sectionHowYouWillLearn">
+                @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
+            </div>
+            <div class="section" id="sectionWhatYouNeed">
+                @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
+            </div>
+            <div class="section" id="sectionHowAssessed">
+                @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
+            </div>
+            <div class="section" id="sectionWhereNext">
+                @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
+            </div>
 
-    <h3 class="govuk-heading-m">Course description</h3>
+            <h3 class="govuk-heading-m">Publish your course changes</h3>
+            <p class="govuk-body">Your course description will be updated on Publish to the course directory and available to learners searching for learning and training opportunities on the National Careers Service.</p>
+            <p class="govuk-body">Changes made to your course description will update all of your courses for this qualification.</p>
 
-    <div class="section" id="sectionCourseFor">
-        @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
-    </div>
-    <div class="section" id="sectionEntryRequirements">
-        @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
-    </div>
-    <div class="section" id="sectionWhatWillLearn">
-        @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
-    </div>
-    <div class="section" id="sectionHowYouWillLearn">
-        @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
-    </div>
-    <div class="section" id="sectionWhatYouNeed">
-        @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
-    </div>
-    <div class="section" id="sectionHowAssessed">
-        @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
-    </div>
-    <div class="section" id="sectionWhereNext">
-        @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
-    </div>
+            <button type="submit" class="govuk-button" id="save">Publish changes</button>
 
-    @*<div id="sectionFundingOptions">
-            @await Component.InvokeAsync(nameof(FundingOptions), new FundingOptionsModel()
-            {
-                AdvancedLearnerLoan = Model.AdvancedLearnerLoan.Value,
-                AdultEducationBudget = Model.AdultEducationBudget.Value,
-                FundingOptionsHintText="",
-                FundingOptionsLabelText ="Funding options",
-                FundingOptionsAriaDescribedBy =""
-            })
-        </div>*@
-
-    <ul class="flex-container">
-        @{
-            if (Model.Mode == PublishMode.Summary)
-            {
-                <li class="flex-item">
-                    <button type="submit" class="govuk-button" id="save">
-                        Update all courses with this qualification
-                    </button>
-                </li>
-            }
-            else
-            {
-                <li class="flex-item">
-                    <button type="submit" class="govuk-button" id="save">
-                        Save
-                    </button>
-                </li>
-            }
-        }
-
-        <li class="flex-item" style="padding-top: 15px">
             @switch (Model.Mode)
             {
                 case PublishMode.Migration:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })
                     break;
                 case PublishMode.BulkUpload:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })
                     break;
                 case PublishMode.Summary:
-                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link" })
+                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-button govuk-button--secondary" })
                     break;
                 default:
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new
                     {
-                   level = @Model.NotionalNVQLevelv2,
-                   courseId = @Model.CourseId,
-                   courseRunId = Model.CourseRunId,
-                   learnAimRef = @Model.LearnAimRef,
-                   notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
-                   awardOrgCode = @Model.AwardOrgCode,
-                   learnAimRefTitle = @Model.LearnAimRefTitle,
-                   learnAimRefTypeDesc = @Model.QualificationType
-               }, new { @class = "govuk-link" })
+                        level = @Model.NotionalNVQLevelv2,
+                        courseId = @Model.CourseId,
+                        courseRunId = Model.CourseRunId,
+                        learnAimRef = @Model.LearnAimRef,
+                        notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
+                        awardOrgCode = @Model.AwardOrgCode,
+                        learnAimRefTitle = @Model.LearnAimRefTitle,
+                        learnAimRefTypeDesc = @Model.QualificationType
+                    }, new { @class = "govuk-button govuk-button--secondary" })
                     break;
             }
-        </li>
-    </ul>
 
-</form>
+        </form>
+    </div>
+</div>
 
 <script>
     (function ($) {

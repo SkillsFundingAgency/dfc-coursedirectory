@@ -15,6 +15,9 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
         [HtmlAttributeName("title")]
         public string Title { get; set; }
 
+        [HtmlAttributeName("type")]
+        public NotificationType Type { get; set; }
+
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "div";
@@ -28,13 +31,29 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
                 output.Attributes.Add("id", Id);
             }
 
+            if (Type == NotificationType.Success)
+            {
+                output.AddClass("pttcd-c-notification-success", HtmlEncoder.Default);
+            }
+
             var title = new TagBuilder("h2");
             title.AddCssClass("govuk-heading-m");
             title.InnerHtml.Append(Title);
-            output.Content.AppendHtml(title);
 
             var childContent = await output.GetChildContentAsync();
+            if (childContent.IsEmptyOrWhiteSpace)
+            {
+                title.AddCssClass("govuk-!-margin-bottom-0");
+            }
+
+            output.Content.AppendHtml(title);
             output.Content.AppendHtml(childContent);
+        }
+
+        public enum NotificationType
+        {
+            Notification,
+            Success
         }
     }
 }
