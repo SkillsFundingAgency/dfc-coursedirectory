@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -118,46 +113,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if(courseRun.Regions != null)
+            if (courseRun.Regions != null)
             {
-                var allRegions = _courseService.GetRegions().RegionItems;
-                var regions = GetRegions().RegionItems.Select(x => x.Id);
-                vm.Regions = FormattedRegionsByIds(allRegions, courseRun.Regions);
+                var availableRegions = _courseService.GetRegions();
+                var regionIds = availableRegions.SubRegionsDataCleanse(courseRun.Regions.ToList());
+
+                var availableRegionNames = availableRegions.RegionItems
+                    .Select(r => new { r.Id, r.RegionName })
+                    .Concat(availableRegions.RegionItems
+                        .SelectMany(r => r.SubRegion)
+                        .Select(r => new { r.Id, RegionName = r.SubRegionName }));
+
+                vm.Regions = availableRegionNames
+                    .Where(r => regionIds.Contains(r.Id))
+                    .Select(r => r.RegionName);
             }
+
             return View(vm);
         }
-        internal IEnumerable<string> FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
-        {
-            if (list == null) list = new List<RegionItemModel>();
-            if (ids == null) ids = new List<string>();
-
-            var regionNames = (from regionItemModel in list
-                               from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id) || ids.Contains(regionItemModel.Id)
-                               select regionItemModel.RegionName).Distinct().OrderBy(x => x);
-
-            return regionNames;
-        }
-        private SelectRegionModel GetRegions()
-        {
-            var selectRegion = new SelectRegionModel
-            {
-                LabelText = "Where in England can you deliver this course?",
-                HintText = "Select all regions and areas that apply.",
-                AriaDescribedBy = "Select all that apply."
-            };
-
-            if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
-            {
-                selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
-                foreach (var selectRegionRegionItem in selectRegion.RegionItems)
-                {
-                    selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-                }
-            }
-
-            return selectRegion;
-        }
     }
-
 }
