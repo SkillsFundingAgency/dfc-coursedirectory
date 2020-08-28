@@ -44,7 +44,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             Assert.Equal("/SearchProvider", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
-
         [Fact]
         public async Task ControllerImplementingIRequiresProviderContextControllerWithNoContext_ReturnsRedirectToSelectProviderView()
         {

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Features;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
@@ -15,7 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     {
     }
 
-    public class RedirectToProviderSelectionActionFilter : IActionFilter, IOrderedFilter
+    public class RedirectToProviderSelectionActionFilter : IAsyncActionFilter, IOrderedFilter
     {
         public RedirectToProviderSelectionActionFilter()
         {
@@ -23,22 +24,20 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
         public int Order => 9;
 
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
             if (controllerActionDescriptor == null)
             {
+                await next();
                 return;
             }
 
             if (controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null ||
                 controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null)
             {
+                await next();
                 return;
             }
 
@@ -48,14 +47,14 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             var isRequiresProviderContextController = context.Controller is IRequiresProviderContextController;
 
-            var requiresProviderContext = 
+            var requiresProviderContext =
                 controllerActionDescriptor.MethodInfo.GetCustomAttribute<RequiresProviderContextAttribute>() != null ||
                 isRequiresProviderContextController;
 
             if (hasProviderInfoParameter || requiresProviderContext)
             {
-                var providerContextFeature = context.HttpContext.Features.Get<ProviderContextFeature>();
-                var providerContext = providerContextFeature?.ProviderInfo;
+                var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
+                var providerContext = await providerContextProvider.GetProviderContext();
 
                 if (providerContext == null)
                 {
@@ -63,12 +62,15 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                         "Index",
                         "SearchProvider",
                         new { returnUrl = context.HttpContext.Request.GetEncodedUrl() });
+                    return;
                 }
                 else if (isRequiresProviderContextController)
                 {
                     ((IRequiresProviderContextController)context.Controller).ProviderContext = providerContext;
                 }
             }
+
+            await next();
         }
     }
 }

@@ -4,7 +4,7 @@
 @{
     Layout = "_V2LayoutCore";
 
-    var providerContext = ProviderContextProvider.GetProviderContext();
+    var providerContext = await ProviderContextProvider.GetProviderContext();
     var currentUser = CurrentUserProvider.GetCurrentUser();
 }
 

@@ -1,7 +1,10 @@
-﻿namespace Dfc.CourseDirectory.WebV2
+﻿using System.Threading.Tasks;
+
+namespace Dfc.CourseDirectory.WebV2
 {
     public interface IProviderContextProvider
     {
-        ProviderInfo GetProviderContext();
+        Task<ProviderInfo> GetProviderContext();
+        void SetProviderContext(ProviderInfo providerInfo);
     }
 }

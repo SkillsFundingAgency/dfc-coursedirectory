@@ -247,15 +247,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> SearchProvider(
             int UKPRN,
-            [FromServices] IProviderInfoCache providerInfoCache)
+            [FromServices] IProviderInfoCache providerInfoCache,
+            [FromServices] IProviderContextProvider providerContextProvider)
         {
-            if (HttpContext.Features.Get<ProviderContextFeature>() == null)
-            {
-                var providerId = await providerInfoCache.GetProviderIdForUkprn(UKPRN);
-                var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
-
-                HttpContext.Features.Set(new ProviderContextFeature(providerInfo));
-            }
+            var providerInfo = await providerInfoCache.GetProviderInfoForUkprn(UKPRN);
+            providerContextProvider.SetProviderContext(providerInfo);
 
             _session.SetInt32("UKPRN", UKPRN);
             return View("../Provider/Dashboard");

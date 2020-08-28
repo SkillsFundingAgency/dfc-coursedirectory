@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,14 +34,15 @@ namespace Dfc.CourseDirectory.Web
                 return;
             }
 
-            var providerContextFeature = context.HttpContext.Features.Get<ProviderContextFeature>();
+            var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
+            var providerInfo = await providerContextProvider.GetProviderContext();
 
-            if (providerContextFeature == null)
+            if (providerInfo == null)
             {
                 throw new InvalidOperationException("No provider context set.");
             }
 
-            var providerId = providerContextFeature.ProviderInfo.ProviderId;
+            var providerId = providerInfo.ProviderId;
 
             var sqlQueryDispatcher = context.HttpContext.RequestServices.GetRequiredService<ISqlQueryDispatcher>();
 

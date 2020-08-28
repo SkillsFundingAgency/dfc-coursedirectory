@@ -2,10 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Dfc.CourseDirectory.WebV2.Security;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -21,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
         {
             var providerInfoCache = context.HttpContext.RequestServices.GetRequiredService<IProviderInfoCache>();
             var currentUserProvider = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserProvider>();
-            var env = context.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
+            var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
 
             await TryAssignFeature();
 
@@ -45,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
                 Guid providerId;
 
-                var routeProviderId = await TryGetProviderIdFromRequest();
+                var routeProviderId = TryGetProviderIdFromRequest();
 
                 if (user.IsDeveloper || user.IsHelpdesk)
                 {
@@ -75,17 +72,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 var providerInfo = await providerInfoCache.GetProviderInfo(providerId);
                 if (providerInfo != null)
                 {
-                    context.HttpContext.Features.Set(new ProviderContextFeature(providerInfo));
-
-                    if (!env.IsTesting())
-                    {
-                        // LEGACY SUPPORT
-                        context.HttpContext.Session.SetInt32("UKPRN", providerInfo.Ukprn);
-                    }
+                    providerContextProvider.SetProviderContext(providerInfo);
                 }
             }
 
-            async Task<Guid?> TryGetProviderIdFromRequest()
+            Guid? TryGetProviderIdFromRequest()
             {
                 var routeValueProvider = new RouteValueProvider(
                     BindingSource.Path,
@@ -101,26 +92,9 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     .Distinct()
                     .ToList();
 
-                if (matches.Count == 1)
+                if (matches.Count == 1 && Guid.TryParse(matches.Single(), out var providerId))
                 {
-                    if (Guid.TryParse(matches.Single(), out var providerId))
-                    {
-                        return providerId;
-                    }
-
-                    // REVIEW Should we return an error here?
-                }
-                else if (matches.Count == 0)
-                {
-                    if (!env.IsTesting())
-                    {
-                        // LEGACY SUPPORT
-                        var fromSession = context.HttpContext.Session.GetInt32("UKPRN");
-                        if (fromSession.HasValue)
-                        {
-                            return await providerInfoCache.GetProviderIdForUkprn(fromSession.Value);
-                        }
-                    }
+                    return providerId;
                 }
 
                 return null;

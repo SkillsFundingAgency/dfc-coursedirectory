@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.ModelBinding
 {
@@ -19,26 +19,27 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
 
     public class CurrentProviderModelBinder : IModelBinder
     {
-        public Task BindModelAsync(ModelBindingContext bindingContext)
+        public async Task BindModelAsync(ModelBindingContext bindingContext)
         {
             if (bindingContext.ModelType != typeof(ProviderInfo))
             {
                 bindingContext.Result = ModelBindingResult.Failed();
-                return Task.CompletedTask;
+                return;
             }
 
-            var feature = bindingContext.HttpContext.Features.Get<ProviderContextFeature>();
+            var providerContextProvider = bindingContext.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
+            var providerInfo = await providerContextProvider.GetProviderContext();
 
-            if (feature == null)
+            if (providerInfo == null)
             {
                 bindingContext.Result = ModelBindingResult.Failed();
             }
             else
             {
-                bindingContext.Result = ModelBindingResult.Success(feature.ProviderInfo);
+                bindingContext.Result = ModelBindingResult.Success(providerInfo);
             }
 
-            return Task.CompletedTask;
+            return;
         }
     }
 }

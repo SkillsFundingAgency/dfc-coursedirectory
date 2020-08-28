@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,14 +23,14 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
             _providerContextProvider = providerContextProvider;
         }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (!output.Attributes.ContainsName(AttributeName))
             {
                 return;
             }
 
-            var providerContext = _providerContextProvider.GetProviderContext();
+            var providerContext = await _providerContextProvider.GetProviderContext();
             if (providerContext == null)
             {
                 throw new InvalidOperationException("No active provider context.");

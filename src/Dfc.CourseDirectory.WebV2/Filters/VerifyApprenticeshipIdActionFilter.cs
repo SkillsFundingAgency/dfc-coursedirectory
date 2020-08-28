@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
@@ -48,6 +47,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             }
 
             var providerOwnershipCache = context.HttpContext.RequestServices.GetRequiredService<IProviderOwnershipCache>();
+            var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
+
             var providerId = await providerOwnershipCache.GetProviderForApprenticeship((Guid)apprenticeshipId);
 
             if (!providerId.HasValue)
@@ -73,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                         var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
                         context.ActionArguments[p.Name] = providerInfo;
 
-                        context.HttpContext.Features.Set(new ProviderContextFeature(providerInfo));
+                        providerContextProvider.SetProviderContext(providerInfo);
                     }
                     else if (boundValue.ProviderId != providerId.Value)
                     {
