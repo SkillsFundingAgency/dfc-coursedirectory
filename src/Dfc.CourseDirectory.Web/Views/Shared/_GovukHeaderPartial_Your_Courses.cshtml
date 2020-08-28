@@ -15,7 +15,7 @@
 @inject Dfc.CourseDirectory.WebV2.IProviderContextProvider ProviderContextProvider
 
 @{
-    var providerContext = ProviderContextProvider.GetProviderContext();
+    var providerContext = await ProviderContextProvider.GetProviderContext();
     var currentUser = CurrentUserProvider.GetCurrentUser();
 }
 
