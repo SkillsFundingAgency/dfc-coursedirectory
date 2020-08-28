@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -43,10 +44,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportStandardSectorCodesToCosmos();
 
             await ImportAwardOrgCodeToSql();
-            await ImportCategoryToSql();
+            var categoriesRefs = await ImportCategoryToSql();
+            var learningDeliveryRefs = await ImportLearningDeliveryToSql();
             await ImportLearnAimRefTypeToSql();
-            await ImportLearningDeliveryToSql();
-            await ImportLearningDeliveryCategoryToSql();
+            await ImportLearningDeliveryCategoryToSql(categoriesRefs, learningDeliveryRefs);
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
 
@@ -193,14 +194,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }));
             }
 
-            Task ImportCategoryToSql()
+            async Task<HashSet<string>> ImportCategoryToSql()
             {
                 var records = ReadCsv<UpsertLarsCategoriesRecord>("Category.csv");
 
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsCategories()
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsCategories()
                 {
                     Records = records
                 }));
+                return new HashSet<string>(records.Select(r => r.CategoryRef));
             }
 
             Task ImportLearnAimRefTypeToSql()
@@ -219,7 +221,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 static bool IsTLevel(UpsertLarsLearnAimRefTypesRecord r) => r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
-            Task ImportLearningDeliveryToSql()
+            async Task<HashSet<string>> ImportLearningDeliveryToSql()
             {
                 const string csv = "LearningDelivery.csv";
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
@@ -227,21 +229,34 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
                 _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
 
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
+                var includedRecords = records.Where(r => !IsTLevel(r)).ToList();
+                await WithSqlQueryDispatcher(dispatcher =>
                 {
-                    Records = records.Where(r => !IsTLevel(r))
-                }));
+                    return dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
+                    {
+                        Records = includedRecords
+                    });
+                });
+
+                return new HashSet<string>(includedRecords.Select(r => r.LearnAimRef));
 
                 static bool IsTLevel(UpsertLarsLearningDeliveriesRecord r) => r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
-            Task ImportLearningDeliveryCategoryToSql()
+            Task ImportLearningDeliveryCategoryToSql(HashSet<string> categoriesRefs, HashSet<string> learningDeliveryRefs)
             {
-                var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>("LearningDeliveryCategory.csv");
+                const string csv = "LearningDeliveryCategory.csv";
+                var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>(csv);
+
+                // check referential integrity
+                var validRecords = records.Where(r =>
+                    categoriesRefs.Contains(r.CategoryRef) && learningDeliveryRefs.Contains(r.LearnAimRef));
+
+                _logger.LogInformation($"{csv} - Excluded {records.Count() - validRecords.Count()} of {records.Count()} rows due to referential integrity violations");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveryCategories()
                 {
-                    Records = records
+                    Records = validRecords
                 }));
             }
 
