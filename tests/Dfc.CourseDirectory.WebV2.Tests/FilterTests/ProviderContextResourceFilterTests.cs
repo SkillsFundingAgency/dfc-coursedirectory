@@ -69,9 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var response = await HttpClient.GetAsync($"currentprovideractionfiltertests/from-route/{providerId}?providerId={Guid.NewGuid()}");
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.Equal(JTokenType.Null, responseJson.Type);
+            Assert.False(response.IsSuccessStatusCode);
         }
 
         [Theory]
@@ -86,9 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var response = await HttpClient.GetAsync($"currentprovideractionfiltertests?providerId=");
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.Equal(JTokenType.Null, responseJson.Type);
+            Assert.False(response.IsSuccessStatusCode);
         }
 
         [Theory]
@@ -152,20 +148,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var response = await HttpClient.GetAsync($"currentprovideractionfiltertests?providerId={Guid.NewGuid()}");
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.Equal(JTokenType.Null, responseJson.Type);
+            Assert.False(response.IsSuccessStatusCode);
         }
     }
 
     public class ProviderContextModelBinderTestController : Controller
     {
         [HttpGet("currentprovideractionfiltertests")]
-        [AllowNoProviderContext]  // Prevent filter from modifying response
         public IActionResult Get(ProviderContext providerContext) => Json(providerContext);
 
         [HttpGet("currentprovideractionfiltertests/from-route/{providerId}")]
-        [AllowNoProviderContext]  // Prevent filter from modifying response
         public IActionResult GetFromRoute(ProviderContext providerContext) => Json(providerContext);
     }
 }
