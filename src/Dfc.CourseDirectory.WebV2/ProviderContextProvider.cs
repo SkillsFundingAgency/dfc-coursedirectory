@@ -22,14 +22,14 @@ namespace Dfc.CourseDirectory.WebV2
             _providerInfoCache = providerInfoCache;
         }
 
-        public async Task<ProviderInfo> GetProviderContext()
+        public async Task<ProviderContext> GetProviderContext()
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var feature = httpContext.Features.Get<ProviderContextFeature>();
 
             if (feature != null)
             {
-                return feature.ProviderInfo;
+                return feature.ProviderContext;
             }
 
             if (!_env.IsTesting())
@@ -43,26 +43,33 @@ namespace Dfc.CourseDirectory.WebV2
                 if (ukprn.HasValue)
                 {
                     var providerId = await _providerInfoCache.GetProviderIdForUkprn(ukprn.Value);
-
-                    if (providerId != null)
+                    if (providerId == null)
                     {
-                        return await _providerInfoCache.GetProviderInfo(providerId.Value);
+                        return null;
                     }
+
+                    var providerInfo = await _providerInfoCache.GetProviderInfo(providerId.Value);
+                    if (providerInfo == null)
+                    {
+                        return null;
+                    }
+
+                    return new ProviderContext(providerInfo);
                 }
             }
 
             return null;
         }
 
-        public void SetProviderContext(ProviderInfo providerInfo)
+        public void SetProviderContext(ProviderContext providerContext)
         {
-            if (providerInfo == null)
+            if (providerContext == null)
             {
-                throw new ArgumentNullException(nameof(providerInfo));
+                throw new ArgumentNullException(nameof(providerContext));
             }
 
             var httpContext = _httpContextAccessor.HttpContext;
-            httpContext.Features.Set(new ProviderContextFeature(providerInfo));
+            httpContext.Features.Set(new ProviderContextFeature(providerContext));
         }
     }
 }

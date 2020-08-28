@@ -9,10 +9,10 @@ namespace Dfc.CourseDirectory.WebV2
     {
         public static RedirectToActionResult WithProviderContext(
             this RedirectToActionResult result,
-            ProviderInfo providerInfo)
+            ProviderContext providerContext)
         {
             var routeValues = (IDictionary<string, object>)result.RouteValues ?? new Dictionary<string, object>();
-            routeValues[ProviderContextResourceFilter.RouteValueKey] = providerInfo.ProviderId;
+            routeValues[ProviderContextResourceFilter.RouteValueKey] = providerContext.ProviderInfo.ProviderId;
 
             result.RouteValues = new RouteValueDictionary(routeValues);
 

@@ -35,14 +35,14 @@ namespace Dfc.CourseDirectory.Web
             }
 
             var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
-            var providerInfo = await providerContextProvider.GetProviderContext();
+            var providerContext = await providerContextProvider.GetProviderContext();
 
-            if (providerInfo == null)
+            if (providerContext == null)
             {
                 throw new InvalidOperationException("No provider context set.");
             }
 
-            var providerId = providerInfo.ProviderId;
+            var providerId = providerContext.ProviderInfo.ProviderId;
 
             var sqlQueryDispatcher = context.HttpContext.RequestServices.GetRequiredService<ISqlQueryDispatcher>();
 

@@ -251,7 +251,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             [FromServices] IProviderContextProvider providerContextProvider)
         {
             var providerInfo = await providerInfoCache.GetProviderInfoForUkprn(UKPRN);
-            providerContextProvider.SetProviderContext(providerInfo);
+            providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
 
             _session.SetInt32("UKPRN", UKPRN);
             return View("../Provider/Dashboard");

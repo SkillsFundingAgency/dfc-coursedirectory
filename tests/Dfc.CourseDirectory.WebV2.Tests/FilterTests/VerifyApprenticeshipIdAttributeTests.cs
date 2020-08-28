@@ -3,7 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -60,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.True(int.TryParse(responseJson["ukprn"].ToString(), out var boundUkprn), "Binding failed.");
+            Assert.True(int.TryParse(responseJson["providerInfo"]["ukprn"].ToString(), out var boundUkprn), "Binding failed.");
             Assert.Equal(ukprn, boundUkprn);
         }
 
@@ -107,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public IActionResult Get([ApprenticeshipId] Guid apprenticeshipId) => Ok();
 
         [HttpGet("filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}")]
-        public IActionResult GetWithProviderInfo([ApprenticeshipId] Guid apprenticeshipId, ProviderInfo providerInfo) => Json(providerInfo);
+        public IActionResult GetWithProviderInfo([ApprenticeshipId] Guid apprenticeshipId, ProviderContext providerContext) => Json(providerContext);
 
         [HttpGet("filtertests/verifyapprenticeshipidattributetests/overridenstatus/{apprenticeshipId}")]
         public IActionResult GetWithOverridenStatus([ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId) => Ok();

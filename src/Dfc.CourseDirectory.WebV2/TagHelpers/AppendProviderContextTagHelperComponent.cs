@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
                 throw new InvalidOperationException("No active provider context.");
             }
 
-            var providerId = providerContext.ProviderId;
+            var providerId = providerContext.ProviderInfo.ProviderId;
 
             // If the user is a provider user, no need to do anything since context is resolved from claims
             var currentUser = _currentUserProvider.GetCurrentUser();

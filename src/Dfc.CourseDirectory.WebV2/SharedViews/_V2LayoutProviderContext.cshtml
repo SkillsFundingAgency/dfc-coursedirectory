@@ -13,7 +13,7 @@
     {
         @if (currentUser.IsProvider)
         {
-            <vc:provider-top-nav provider-info="@providerContext" />
+            <vc:provider-top-nav provider-info="@providerContext.ProviderInfo" />
         }
         else
         {
@@ -27,7 +27,7 @@
     {
         @* FIXME: Move this class into component when legacy views don't need it *@
         <div class="govuk-width-container">
-            <vc:admin-provider-context-nav provider-info="@providerContext" />
+            <vc:admin-provider-context-nav provider-info="@providerContext.ProviderInfo" />
         </div>
     }
 }

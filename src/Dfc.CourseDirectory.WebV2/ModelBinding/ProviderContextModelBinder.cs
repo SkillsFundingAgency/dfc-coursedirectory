@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
     {
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            if (context.Metadata.ModelType == typeof(ProviderInfo))
+            if (context.Metadata.ModelType == typeof(ProviderContext))
             {
                 return new CurrentProviderModelBinder();
             }
@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
     {
         public async Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            if (bindingContext.ModelType != typeof(ProviderInfo))
+            if (bindingContext.ModelType != typeof(ProviderContext))
             {
                 bindingContext.Result = ModelBindingResult.Failed();
                 return;

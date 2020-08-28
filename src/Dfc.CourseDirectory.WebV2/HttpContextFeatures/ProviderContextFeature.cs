@@ -4,16 +4,11 @@ namespace Dfc.CourseDirectory.WebV2.HttpContextFeatures
 {
     public class ProviderContextFeature
     {
-        public ProviderContextFeature(ProviderInfo providerInfo)
+        public ProviderContextFeature(ProviderContext providerContext)
         {
-            if (providerInfo == null)
-            {
-                throw new ArgumentNullException(nameof(providerInfo));
-            }
-
-            ProviderInfo = providerInfo;
+            ProviderContext = providerContext ?? throw new ArgumentNullException(nameof(providerContext));
         }
 
-        public ProviderInfo ProviderInfo { get; }
+        public ProviderContext ProviderContext { get; }
     }
 }
