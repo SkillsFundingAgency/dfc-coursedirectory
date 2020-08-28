@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.Category")).Should().Be(44);
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(122);
                 (await CountSqlRows("LARS.LearningDelivery")).Should().Be(117730);
-                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(82221);
+                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(82200);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
             }
