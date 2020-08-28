@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Testing;
@@ -21,6 +22,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         [SlowTest]
         public async Task ImportData()
         {
+            Clock.UtcNow = new DateTime(2020, 2, 6, 11, 13, 3, DateTimeKind.Utc);
+
             // Arrange
             var importer = new LarsDataImporter(
                 CosmosDbQueryDispatcher.Object,
