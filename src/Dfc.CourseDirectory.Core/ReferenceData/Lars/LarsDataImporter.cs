@@ -66,16 +66,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             Task ImportFrameworksToCosmos()
             {
                 const string csv = "Framework.csv";
-                var records = ReadCsv<FrameworkRow>(csv);
+                var records = ReadCsv<FrameworkRow>(csv).ToList();
 
-                var excluded = records.Where(r => !HasEffectiveTo(r)).Select(r => r.FworkCode);
-                _logger.LogInformation($"{csv} - Excluded {nameof(FrameworkRow.FworkCode)}s: {string.Join(",", excluded)} (missing {nameof(FrameworkRow.EffectiveTo)})");
+                var excluded = records.Where(r => !IsValid(r));
+                _logger.LogInformation($"{csv} - Excluded {excluded.Count()} of {records.Count()} rows due to out-of-range {nameof(FrameworkRow.EffectiveTo)}.");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertFrameworks()
                 {
                     Now = _clock.UtcNow,
                     Records = records
-                        .Where(HasEffectiveTo)
+                        .Where(IsValid)
                         .Select(r => new UpsertFrameworksRecord()
                         {
                             FrameworkCode = r.FworkCode,
@@ -88,10 +88,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                             SectorSubjectAreaTier1 = r.SectorSubjectAreaTier1,
                             SectorSubjectAreaTier2 = r.SectorSubjectAreaTier2
                         })
-                        .Where(r => r.EffectiveTo > _clock.UtcNow.Date)
                 });
 
-                static bool HasEffectiveTo(FrameworkRow r) => r.EffectiveTo.HasValue;
+                bool IsValid(FrameworkRow r) => r.EffectiveTo.HasValue && r.EffectiveTo > _clock.UtcNow.Date;
             }
 
             Task ImportProgTypesToCosmos()
