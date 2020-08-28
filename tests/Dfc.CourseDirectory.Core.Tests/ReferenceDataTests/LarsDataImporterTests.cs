@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         [SlowTest]
         public async Task ImportData()
         {
-            Clock.UtcNow = new DateTime(2020, 2, 6, 11, 13, 3, DateTimeKind.Utc);
+            Clock.UtcNow = new DateTime(2020, 8, 28, 0, 0, 0, DateTimeKind.Utc);
 
             // Arrange
             var importer = new LarsDataImporter(
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                Fixture.DatabaseFixture.InMemoryDocumentStore.Frameworks.All.Count.Should().Be(466);
+                Fixture.DatabaseFixture.InMemoryDocumentStore.Frameworks.All.Count.Should().Be(0); // All expired on 31 July 2020
                 Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count.Should().Be(28);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count.Should().Be(17);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count.Should().Be(67);
