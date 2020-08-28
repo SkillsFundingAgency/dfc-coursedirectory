@@ -69,6 +69,16 @@ namespace Dfc.CourseDirectory.WebV2
             }
 
             var httpContext = _httpContextAccessor.HttpContext;
+
+            var currentContextFeature = httpContext.Features.Get<ProviderContextFeature>();
+
+            if (currentContextFeature != null &&
+                currentContextFeature.ProviderContext.ProviderInfo.ProviderId != providerContext.ProviderInfo.ProviderId)
+            {
+                throw new InvalidOperationException(
+                    $"Provider context has already been set for another provider: '{currentContextFeature.ProviderContext.ProviderInfo.ProviderId}'.");
+            }
+
             httpContext.Features.Set(new ProviderContextFeature(providerContext));
         }
     }
