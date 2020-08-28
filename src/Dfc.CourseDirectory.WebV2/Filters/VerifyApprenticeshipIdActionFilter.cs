@@ -60,23 +60,24 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 // Stash the provider ID so additional filters can use it
                 context.HttpContext.Features.Set(new ApprenticeshipProviderFeature(providerId.Value));
 
-                // If the action has a ProviderInfo parameter, ensure it's bound and matches this provider ID
+                // If the action has a ProviderContext parameter, ensure it's bound and matches this provider ID
                 var parameterInfoActionParameters = context.ActionDescriptor.Parameters
-                    .Where(p => p.ParameterType == typeof(ProviderInfo))
+                    .Where(p => p.ParameterType == typeof(ProviderContext))
                     .ToList();
 
                 foreach (var p in parameterInfoActionParameters)
                 {
-                    var boundValue = context.ActionArguments.ContainsKey(p.Name) ? (ProviderInfo)context.ActionArguments[p.Name] : null;
+                    var boundValue = context.ActionArguments.ContainsKey(p.Name) ? (ProviderContext)context.ActionArguments[p.Name] : null;
                     if (boundValue == null)
                     {
                         var providerInfoCache = context.HttpContext.RequestServices.GetRequiredService<IProviderInfoCache>();
                         var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
-                        context.ActionArguments[p.Name] = providerInfo;
+                        var providerContext = new ProviderContext(providerInfo);
 
-                        providerContextProvider.SetProviderContext(providerInfo);
+                        context.ActionArguments[p.Name] = providerContext;
+                        providerContextProvider.SetProviderContext(providerContext);
                     }
-                    else if (boundValue.ProviderId != providerId.Value)
+                    else if (boundValue.ProviderInfo.ProviderId != providerId.Value)
                     {
                         // Bound provider doesn't match this apprenticeship's provider - return an error
                         // (this is either a bug in a redirect or the end user messing with the URL)

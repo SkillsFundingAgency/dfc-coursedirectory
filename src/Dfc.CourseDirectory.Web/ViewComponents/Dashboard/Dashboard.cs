@@ -225,7 +225,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 if (actualModel.QAFeatureIsEnabled)
                 {
-                    var providerId = ViewContext.HttpContext.Features.Get<ProviderContextFeature>().ProviderInfo.ProviderId;
+                    var providerId = ViewContext.HttpContext.Features.Get<ProviderContextFeature>().ProviderContext.ProviderInfo.ProviderId;
 
                     actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
                         new GetProviderApprenticeshipQAStatus()

@@ -2,6 +2,6 @@
 {
     public interface IRequiresProviderContextController
     {
-        ProviderInfo ProviderContext { get; set; }
+        ProviderContext ProviderContext { get; set; }
     }
 }

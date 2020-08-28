@@ -72,7 +72,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 var providerInfo = await providerInfoCache.GetProviderInfo(providerId);
                 if (providerInfo != null)
                 {
-                    providerContextProvider.SetProviderContext(providerInfo);
+                    var providerContext = new ProviderContext(providerInfo);
+                    providerContextProvider.SetProviderContext(providerContext);
                 }
             }
 

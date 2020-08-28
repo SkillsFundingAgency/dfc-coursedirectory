@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.True(Guid.TryParse(responseJson["providerId"].ToString(), out var boundProviderId), "Binding failed.");
+            Assert.True(Guid.TryParse(responseJson["providerInfo"]["providerId"].ToString(), out var boundProviderId), "Binding failed.");
             Assert.Equal(providerId, boundProviderId);
         }
 
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.True(Guid.TryParse(responseJson["providerId"].ToString(), out var boundProviderId), "Binding failed.");
+            Assert.True(Guid.TryParse(responseJson["providerInfo"]["providerId"].ToString(), out var boundProviderId), "Binding failed.");
             Assert.Equal(providerId, boundProviderId);
         }
 
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
-            Assert.True(Guid.TryParse(responseJson["providerId"].ToString(), out var boundProviderId), "Binding failed.");
+            Assert.True(Guid.TryParse(responseJson["providerInfo"]["providerId"].ToString(), out var boundProviderId), "Binding failed.");
             Assert.Equal(providerId, boundProviderId);
         }
 
@@ -162,10 +162,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
     {
         [HttpGet("currentprovideractionfiltertests")]
         [AllowNoProviderContext]  // Prevent filter from modifying response
-        public IActionResult Get(ProviderInfo providerInfo) => Json(providerInfo);
+        public IActionResult Get(ProviderContext providerContext) => Json(providerContext);
 
         [HttpGet("currentprovideractionfiltertests/from-route/{providerId}")]
         [AllowNoProviderContext]  // Prevent filter from modifying response
-        public IActionResult GetFromRoute(ProviderInfo providerInfo) => Json(providerInfo);
+        public IActionResult GetFromRoute(ProviderContext providerContext) => Json(providerContext);
     }
 }

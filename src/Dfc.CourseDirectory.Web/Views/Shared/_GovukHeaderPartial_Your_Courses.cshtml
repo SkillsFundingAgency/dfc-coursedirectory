@@ -36,7 +36,7 @@
             {
                 @if (currentUser.IsProvider)
                 {
-                    <vc:provider-top-nav provider-info="@providerContext" />
+                    <vc:provider-top-nav provider-info="@providerContext.ProviderInfo" />
                 }
                 else
                 {
@@ -67,6 +67,6 @@
 @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
 {
     <div class="govuk-body govuk-!-margin-bottom-6 cd-fullwidth-container">
-        <vc:admin-provider-context-nav provider-info="@providerContext" />
+        <vc:admin-provider-context-nav provider-info="@providerContext.ProviderInfo" />
     </div>
 }

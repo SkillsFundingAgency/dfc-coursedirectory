@@ -41,8 +41,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 return;
             }
 
-            var hasProviderInfoParameter = context.ActionDescriptor.Parameters
-                .Where(p => p.ParameterType == typeof(ProviderInfo))
+            var hasProviderContextParameter = context.ActionDescriptor.Parameters
+                .Where(p => p.ParameterType == typeof(ProviderContext))
                 .Any();
 
             var isRequiresProviderContextController = context.Controller is IRequiresProviderContextController;
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 controllerActionDescriptor.MethodInfo.GetCustomAttribute<RequiresProviderContextAttribute>() != null ||
                 isRequiresProviderContextController;
 
-            if (hasProviderInfoParameter || requiresProviderContext)
+            if (hasProviderContextParameter || requiresProviderContext)
             {
                 var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
                 var providerContext = await providerContextProvider.GetProviderContext();

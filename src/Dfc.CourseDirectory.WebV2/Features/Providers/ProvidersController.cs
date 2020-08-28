@@ -14,12 +14,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             _mediator = mediator;
         }
 
-        public ProviderInfo ProviderContext { get; set; }
+        public ProviderContext ProviderContext { get; set; }
 
         [HttpGet("info")]
         public async Task<IActionResult> EditProviderInfo()
         {
-            var query = new EditProviderInfo.Query() { ProviderId = ProviderContext.ProviderId };
+            var query = new EditProviderInfo.Query() { ProviderId = ProviderContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 query,
                 response => response.Match(
@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         [HttpPost("info")]
         public async Task<IActionResult> EditProviderInfo(EditProviderInfo.Command command)
         {
-            command.ProviderId = ProviderContext.ProviderId;
+            command.ProviderId = ProviderContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(

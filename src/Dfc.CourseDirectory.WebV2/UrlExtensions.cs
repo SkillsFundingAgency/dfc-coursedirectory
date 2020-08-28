@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.WebV2
         public static Url WithMptxInstanceId(this Url url, string instanceId) =>
             url.SetQueryParam(Constants.InstanceIdQueryParameter, instanceId);
 
-        public static Url WithProviderContext(this Url url, ProviderInfo providerInfo) =>
-            url.SetQueryParam(ProviderContextResourceFilter.RouteValueKey, providerInfo.ProviderId);
+        public static Url WithProviderContext(this Url url, ProviderContext providerContext) =>
+            url.SetQueryParam(ProviderContextResourceFilter.RouteValueKey, providerContext.ProviderInfo.ProviderId);
     }
 }

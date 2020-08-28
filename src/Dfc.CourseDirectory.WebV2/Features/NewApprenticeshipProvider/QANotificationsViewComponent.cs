@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var providerId = (await _providerContextProvider.GetProviderContext()).ProviderId;
+            var providerId = (await _providerContextProvider.GetProviderContext()).ProviderInfo.ProviderId;
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()

@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
     public class RedirectToProviderSelectionActionFilterTestController : Controller
     {
         [HttpGet("RedirectToProviderSelectionActionFilterTest")]
-        public IActionResult Get(ProviderInfo providerInfo) => Ok("Yay");
+        public IActionResult Get(ProviderContext providerContext) => Ok("Yay");
 
         [HttpGet("RedirectToProviderSelectionActionFilterTest/without-parameter")]
         [RequiresProviderContext]
@@ -90,9 +90,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
     public class RedirectToProviderSelectionActionFilterTestController2 : Controller, IRequiresProviderContextController
     {
-        public ProviderInfo ProviderContext { get; set; }
+        public ProviderContext ProviderContext { get; set; }
 
         [HttpGet("RedirectToProviderSelectionActionFilterTest2")]
-        public IActionResult Get() => Content(ProviderContext.ProviderId.ToString());
+        public IActionResult Get() => Content(ProviderContext.ProviderInfo.ProviderId.ToString());
     }
 }
