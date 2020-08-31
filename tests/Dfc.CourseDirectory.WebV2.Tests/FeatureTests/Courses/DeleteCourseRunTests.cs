@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsTestUser(userType, anotherProviderId);
 
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -212,7 +212,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -249,7 +249,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -286,7 +286,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -323,7 +323,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -349,7 +349,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl={UrlEncoder.Default.Encode(returnUrl)}");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl={UrlEncoder.Default.Encode(returnUrl)}");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -377,7 +377,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
@@ -405,7 +405,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
@@ -437,7 +437,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
@@ -464,7 +464,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
@@ -498,7 +498,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };

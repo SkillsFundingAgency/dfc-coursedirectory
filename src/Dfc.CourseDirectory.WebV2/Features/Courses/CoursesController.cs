@@ -4,19 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses
 {
-    [Route("courses")]
+    [Route("courses/{courseId}/course-runs/{courseRunId}")]
     public class CoursesController : Controller
     {
         private readonly IMediator _mediator;
 
-        public CoursesController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        public CoursesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet("delete")]
         public async Task<IActionResult> DeleteCourseRun(
-            [FromQuery] DeleteCourseRun.Request request,
+            DeleteCourseRun.Request request,
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl) =>
             await _mediator.SendAndMapResponse(
                 request,
