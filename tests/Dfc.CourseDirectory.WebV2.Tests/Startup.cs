@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using FormFlow.State;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +47,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRouting();
+
+            services.AddSingleton<IUserInstanceStateStore, TestUserInstanceStateStore>();
 
             services
                 .AddAuthentication("Test")
