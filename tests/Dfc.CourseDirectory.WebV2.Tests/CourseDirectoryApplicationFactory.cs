@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using FormFlow.State;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -89,6 +90,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Reset cookie preferences
             CookieSettingsProvider.Reset();
+
+            // Clear FormFlow state
+            (Services.GetRequiredService<IUserInstanceStateStore>() as TestUserInstanceStateStore)?.Clear();
         }
 
         public async Task OnTestStartingAsync()
