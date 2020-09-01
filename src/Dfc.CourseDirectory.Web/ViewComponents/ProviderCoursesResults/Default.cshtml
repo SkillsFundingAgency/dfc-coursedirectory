@@ -314,7 +314,7 @@ else
                     <a id="course-delete" class="govuk-link" asp-controller="Courses" asp-action="DeleteCourseRun"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()">Delete course</a>
+                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")">Delete course</a>
 
 
                 </div>
