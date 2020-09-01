@@ -22,6 +22,19 @@ namespace Dfc.CourseDirectory.WebV2
             _providerInfoCache = providerInfoCache;
         }
 
+        public void AssignLegacyProviderContext()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var feature = httpContext.Features.Get<ProviderContextFeature>();
+
+            if (feature == null)
+            {
+                throw new InvalidOperationException("No provider context set.");
+            }
+
+            httpContext.Session.SetInt32("UKPRN", feature.ProviderContext.ProviderInfo.Ukprn);
+        }
+
         public async Task<ProviderContext> GetProviderContext()
         {
             var httpContext = _httpContextAccessor.HttpContext;
