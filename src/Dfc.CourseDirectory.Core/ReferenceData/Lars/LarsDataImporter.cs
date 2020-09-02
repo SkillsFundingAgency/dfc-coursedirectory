@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -10,6 +11,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
@@ -18,15 +20,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IClock _clock;
+        private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IServiceScopeFactory serviceScopeFactory,
-            IClock clock)
+            IClock clock,
+            ILogger<LarsDataImporter> logger)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _serviceScopeFactory = serviceScopeFactory;
             _clock = clock;
+            _logger = logger;
         }
 
         public async Task ImportData()
@@ -39,10 +44,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportStandardSectorCodesToCosmos();
 
             await ImportAwardOrgCodeToSql();
-            await ImportCategoryToSql();
+            var categoriesRefs = await ImportCategoryToSql();
+            var learningDeliveryRefs = await ImportLearningDeliveryToSql();
             await ImportLearnAimRefTypeToSql();
-            await ImportLearningDeliveryToSql();
-            await ImportLearningDeliveryCategoryToSql();
+            await ImportLearningDeliveryCategoryToSql(categoriesRefs, learningDeliveryRefs);
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
 
@@ -61,12 +66,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             Task ImportFrameworksToCosmos()
             {
-                var records = ReadCsv<FrameworkRow>("Framework.csv");
+                const string csv = "Framework.csv";
+                var records = ReadCsv<FrameworkRow>(csv).ToList();
+
+                var excluded = records.Where(r => !IsValid(r));
+                _logger.LogInformation($"{csv} - Excluded {excluded.Count()} of {records.Count()} rows due to out-of-range {nameof(FrameworkRow.EffectiveTo)}.");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertFrameworks()
                 {
                     Now = _clock.UtcNow,
                     Records = records
+                        .Where(IsValid)
                         .Select(r => new UpsertFrameworksRecord()
                         {
                             FrameworkCode = r.FworkCode,
@@ -75,30 +85,39 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                             PathwayName = r.PathwayName,
                             NasTitle = r.NASTitle,
                             EffectiveFrom = r.EffectiveFrom,
-                            EffectiveTo = r.EffectiveTo,
+                            EffectiveTo = r.EffectiveTo.Value,
                             SectorSubjectAreaTier1 = r.SectorSubjectAreaTier1,
                             SectorSubjectAreaTier2 = r.SectorSubjectAreaTier2
                         })
-                        .Where(r => r.EffectiveTo > _clock.UtcNow.Date)
                 });
+
+                bool IsValid(FrameworkRow r) => r.EffectiveTo.HasValue && r.EffectiveTo > _clock.UtcNow.Date;
             }
 
             Task ImportProgTypesToCosmos()
             {
-                var records = ReadCsv<ProgTypeRow>("ProgType.csv");
+                const string csv = "ProgType.csv";
+                var records = ReadCsv<ProgTypeRow>(csv).ToList();
+
+                var excluded = records.Where(IsTLevel).Select(r => r.ProgType);
+                _logger.LogInformation($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
 
                 return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertProgTypes()
                 {
                     Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertProgTypesRecord()
-                    {
-                        ProgTypeId = r.ProgType,
-                        ProgTypeDesc = r.ProgTypeDesc,
-                        ProgTypeDesc2 = r.ProgTypeDesc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
+                    Records = records
+                        .Where(r => !IsTLevel(r))
+                        .Select(r => new UpsertProgTypesRecord
+                        {
+                            ProgTypeId = r.ProgType,
+                            ProgTypeDesc = r.ProgTypeDesc,
+                            ProgTypeDesc2 = r.ProgTypeDesc2,
+                            EffectiveFrom = r.EffectiveFrom,
+                            EffectiveTo = r.EffectiveTo
+                        })
                 });
+
+                static bool IsTLevel(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
             Task ImportStandardsToCosmos()
@@ -175,43 +194,69 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }));
             }
 
-            Task ImportCategoryToSql()
+            async Task<HashSet<string>> ImportCategoryToSql()
             {
                 var records = ReadCsv<UpsertLarsCategoriesRecord>("Category.csv");
 
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsCategories()
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsCategories()
                 {
                     Records = records
                 }));
+                return new HashSet<string>(records.Select(r => r.CategoryRef));
             }
 
             Task ImportLearnAimRefTypeToSql()
             {
-                var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>("LearnAimRefType.csv");
+                const string csv = "LearnAimRefType.csv";
+                var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(csv).ToList();
+
+                var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRefType);
+                _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc)})");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                 {
-                    Records = records
+                    Records = records.Where(r => !IsTLevel(r))
                 }));
+
+                static bool IsTLevel(UpsertLarsLearnAimRefTypesRecord r) => r.LearnAimRefTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
-            Task ImportLearningDeliveryToSql()
+            async Task<HashSet<string>> ImportLearningDeliveryToSql()
             {
-                var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>("LearningDelivery.csv");
+                const string csv = "LearningDelivery.csv";
+                var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
 
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
+                var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
+                _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
+
+                var includedRecords = records.Where(r => !IsTLevel(r)).ToList();
+                await WithSqlQueryDispatcher(dispatcher =>
                 {
-                    Records = records
-                }));
+                    return dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
+                    {
+                        Records = includedRecords
+                    });
+                });
+
+                return new HashSet<string>(includedRecords.Select(r => r.LearnAimRef));
+
+                static bool IsTLevel(UpsertLarsLearningDeliveriesRecord r) => r.LearnAimRefTitle.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
-            Task ImportLearningDeliveryCategoryToSql()
+            Task ImportLearningDeliveryCategoryToSql(HashSet<string> categoriesRefs, HashSet<string> learningDeliveryRefs)
             {
-                var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>("LearningDeliveryCategory.csv");
+                const string csv = "LearningDeliveryCategory.csv";
+                var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>(csv);
+
+                // check referential integrity
+                var validRecords = records.Where(r =>
+                    categoriesRefs.Contains(r.CategoryRef) && learningDeliveryRefs.Contains(r.LearnAimRef));
+
+                _logger.LogInformation($"{csv} - Excluded {records.Count() - validRecords.Count()} of {records.Count()} rows due to referential integrity violations");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveryCategories()
                 {
-                    Records = records
+                    Records = validRecords
                 }));
             }
 
@@ -254,7 +299,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             public string PathwayName { get; set; }
             public string NASTitle { get; set; }
             public DateTime EffectiveFrom { get; set; }
-            public DateTime EffectiveTo { get; set; }
+            public DateTime? EffectiveTo { get; set; }
             public decimal SectorSubjectAreaTier1 { get; set; }
             public decimal SectorSubjectAreaTier2 { get; set; }
         }
