@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             var tagBuilder = _generator.GenerateBackLink(
-                Href,
+                Href ?? string.Empty,
                 new HtmlString(string.IsNullOrWhiteSpace(Text) ? "Back" : Text),
                 new Dictionary<string, string>()
                 {
