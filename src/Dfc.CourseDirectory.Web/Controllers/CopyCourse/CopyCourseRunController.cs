@@ -122,9 +122,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             var regions = _courseService.GetRegions();
 
-            foreach (var subRegion in regions?.RegionItems.SelectMany(r => r.SubRegion))
+            foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
             {
-                subRegion.Checked = courseRun.Regions.Contains(subRegion.Id);
+                subRegion.Checked = courseRun.Regions?.Contains(subRegion.Id);
             }
 
             CopyCourseRunViewModel vm = new CopyCourseRunViewModel
@@ -247,29 +247,29 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             }
             else
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
 
             if (!course.HasValue)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == courseRunId);
 
             if (courseRun == null)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             var venues = await _venueService.SearchAsync(new VenueSearchCriteria(ukprn.ToString(), null));
             var regions = _courseService.GetRegions();
 
-            foreach (var subRegion in regions?.RegionItems.SelectMany(r => r.SubRegion))
+            foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
             {
-                subRegion.Checked = courseRun.Regions.Contains(subRegion.Id);
+                subRegion.Checked = courseRun.Regions?.Contains(subRegion.Id);
             }
 
             var vm = new CopyCourseRunViewModel
@@ -339,9 +339,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
                 if (savedModel.DeliveryMode == DeliveryMode.WorkBased && !savedModel.National)
                 {
-                    foreach (var subRegion in regions?.RegionItems.SelectMany(r => r.SubRegion))
+                    foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
                     {
-                        subRegion.Checked = savedModel.SelectedRegions.Contains(subRegion.Id);
+                        subRegion.Checked = savedModel.SelectedRegions?.Contains(subRegion.Id);
                     }
                 }
             }
@@ -359,7 +359,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (model == null)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             _session.SetObject(CopyCourseRunSaveViewModelSessionKey, model);
@@ -381,7 +381,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (model == null)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             var availableRegions = new Lazy<SelectRegionModel>(() => _courseService.GetRegions());
@@ -436,19 +436,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (model == null)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             if (!model.CourseId.HasValue)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
 
             if (!course.IsSuccess || !course.HasValue)
             {
-                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                return NotFound();
             }
 
             var courseRun = new CourseRun
@@ -527,7 +527,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
                 if (!result.IsSuccess || !result.HasValue)
                 {
-                    return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                    throw new Exception($"{nameof(_courseService.UpdateCourseAsync)} failed during CopyCourseRun: {result.Error}");
                 }
 
                 _session.SetObject(CopyCourseRunPublishedCourseSessionKey, new PublishedCourseViewModel
