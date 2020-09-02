@@ -234,18 +234,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (courseId.HasValue && courseRunId.HasValue)
             {
-                if (savedModel != null)
+                if (savedModel != null && (savedModel.CourseId != courseId || savedModel.CourseRunId != courseRunId))
                 {
-                    if (savedModel.CourseId != courseId || savedModel.CourseRunId != courseRunId)
-                    {
-                        _session.Remove(CopyCourseRunSaveViewModelSessionKey);
-                        savedModel = null;
-                    }
-                    else
-                    {
-                        courseId = savedModel.CourseId;
-                        courseRunId = savedModel.CourseRunId;
-                    }
+                    _session.Remove(CopyCourseRunSaveViewModelSessionKey);
+                    savedModel = null;
                 }
             }
             else if (savedModel != null)
