@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction("Details", "Provider").WithProviderContext(providerContext)));
+        }
+
+        [HttpGet("")]
+        [AssignLegacyProviderContext]  // This can go once the 'edit provider type' journey is in v2
+        public async Task<IActionResult> ProviderDetails(ProviderContext providerContext)
+        {
+            var request = new ProviderDetails.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
+            return await _mediator.SendAndMapResponse(request, vm => View(vm));
         }
     }
 }

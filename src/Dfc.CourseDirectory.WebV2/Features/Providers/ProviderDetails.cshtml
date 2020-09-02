@@ -1,0 +1,42 @@
+@model Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails.ViewModel
+@{
+    ViewContext.SetLayoutData(title: Model.ProviderName, showBackLink: true);
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l" data-testid="ProviderName">@Model.ProviderName</h1>
+
+        <govuk-summary-list>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Course directory status</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.CourseDirectoryStatus</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>UKPRN</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.Ukprn</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>
+                @if (Model.CanChangeProviderType)
+                {
+                    <govuk-summary-list-row-action>
+                        <a asp-controller="Provider" asp-action="AddOrEditProviderType" asp-route-updateProviderType="true" class="govuk-link" data-testid="ChangeProviderType">
+                            Change
+                            <span class="govuk-visually-hidden">provider type</span>
+                        </a>
+                    </govuk-summary-list-row-action>
+                }
+            </govuk-summary-list-row>
+        </govuk-summary-list>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <vc:provider-info-panel provider-id="@Model.ProviderId" />
+    </div>
+</div>

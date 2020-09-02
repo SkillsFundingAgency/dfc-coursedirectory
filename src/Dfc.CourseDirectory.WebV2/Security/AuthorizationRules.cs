@@ -11,6 +11,9 @@ namespace Dfc.CourseDirectory.WebV2.Security
         public static bool CanUpdateProviderCourseDirectoryName(AuthenticatedUserInfo userInfo) =>
             userInfo.IsDeveloper;
 
+        public static bool CanUpdateProviderType(AuthenticatedUserInfo userInfo) =>
+            userInfo.IsDeveloper || userInfo.IsHelpdesk;
+
         public static bool CanUpdateProviderMarketingInformation(AuthenticatedUserInfo userInfo) =>
             userInfo.IsDeveloper;
     }
