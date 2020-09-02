@@ -11,6 +11,7 @@
 
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+    var elevated = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "Apprenticeship");
 
     var providerUser = await Authorization.AuthorizeAsync(User, "Provider");
@@ -172,23 +173,26 @@
                         }
                     </td>
                 </tr>
-                @if (apprenticeshipUser.Succeeded)
+                @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship))
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">Brief overview of your organisation for employers</td>
                         <td class="govuk-table__cell"></td>
                         <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.BriefOverview))
+                            @if (elevated.Succeeded)
                             {
-                                <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Providers" append-provider-context
-                                   asp-action="EditProviderInfo">Add</a>
-                            }
-                            else
-                            {
-                                <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Providers" append-provider-context
-                                   asp-action="EditProviderInfo">Edit</a>
+                                @if (string.IsNullOrEmpty(Model.BriefOverview))
+                                {
+                                    <a class="govuk-link" style="padding-right: 1em"
+                                       asp-controller="Providers" append-provider-context
+                                       asp-action="EditProviderInfo">Add</a>
+                                }
+                                else
+                                {
+                                    <a class="govuk-link" style="padding-right: 1em"
+                                       asp-controller="Providers" append-provider-context
+                                       asp-action="EditProviderInfo">Edit</a>
+                                }
                             }
                         </td>
                     </tr>
