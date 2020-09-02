@@ -8,13 +8,10 @@ namespace Dfc.CourseDirectory.WebV2.Security
             userInfo.IsDeveloper ||
             (userInfo.IsProvider && userInfo.CurrentProviderId.Value == providerId);
 
-        public static bool CanUpdateProviderCourseDirectoryName(AuthenticatedUserInfo userInfo) =>
-            userInfo.IsDeveloper;
-
         public static bool CanUpdateProviderType(AuthenticatedUserInfo userInfo) =>
             userInfo.IsDeveloper || userInfo.IsHelpdesk;
 
         public static bool CanUpdateProviderMarketingInformation(AuthenticatedUserInfo userInfo) =>
-            userInfo.IsDeveloper;
+            userInfo.IsDeveloper || userInfo.IsHelpdesk;
     }
 }

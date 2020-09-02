@@ -22,9 +22,9 @@ namespace Dfc.CourseDirectory.Core.Validation.ProviderValidation
         {
             field
                 .NotEmpty()
-                    .WithMessage("Enter provider marketing information")
+                    .WithMessage("Enter brief overview of your organisation for employers")
                 .ValidHtml(maxLength: Constants.MarketingInformationStrippedMaxLength)
-                    .WithMessage($"Marketing information must be {Constants.MarketingInformationStrippedMaxLength} characters or fewer");
+                    .WithMessage($"Brief overview of your organisation for employers must be {Constants.MarketingInformationStrippedMaxLength} characters or fewer");
         }
     }
 }

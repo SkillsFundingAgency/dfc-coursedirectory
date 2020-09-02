@@ -235,7 +235,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("MarketingInformation", "Marketing information must be 750 characters or fewer");
+            doc.AssertHasError("MarketingInformation", "Brief overview of your organisation for employers must be 750 characters or fewer");
         }
 
         [Fact]
@@ -499,7 +499,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<UpdateProviderInfo>(c =>
                 c.ProviderId == providerId &&
-                c.MarketingInformation.AsT1 == "<p>New marketing info</p>" &&
+                c.MarketingInformation == "<p>New marketing info</p>" &&
                 c.UpdatedBy.UserId == User.UserId &&
                 c.UpdatedOn == Clock.UtcNow)));
 

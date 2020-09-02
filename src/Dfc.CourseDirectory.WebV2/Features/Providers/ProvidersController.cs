@@ -22,9 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             var query = new EditProviderInfo.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 query,
-                response => response.Match(
-                    errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK),
-                    vm => View(vm)));
+                command => View(command));
         }
 
         [HttpPost("info")]
