@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
@@ -14,9 +15,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.ProviderCollectionName,
                 request.ProviderId.ToString());
 
-            var response = await client.ReadDocumentAsync<Provider>(documentUri);
-
-            return response.Document;
+            try
+            {
+                var response = await client.ReadDocumentAsync<Provider>(documentUri);
+                return response.Document;
+            }
+            catch (DocumentClientException dex) when (dex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
         }
     }
 }
