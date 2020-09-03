@@ -320,7 +320,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             var providerId = _flow.State.ProviderId;
 
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                 new GetProviderById()
+                 new Core.DataStore.CosmosDb.Queries.GetProviderById()
                  {
                      ProviderId = providerId
                  });

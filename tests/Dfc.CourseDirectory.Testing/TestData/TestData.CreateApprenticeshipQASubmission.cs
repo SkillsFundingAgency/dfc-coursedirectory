@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Testing
             string providerMarketingInformation,
             IEnumerable<Guid> apprenticeshipIds)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
             {
                 ProviderId = providerId
             });

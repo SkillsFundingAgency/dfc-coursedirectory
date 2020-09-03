@@ -1,0 +1,31 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Display name", showBackLink: true);
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="DisplayName" append-provider-context>
+            <govuk-radios asp-for="DisplayNameSource">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            Display name
+                        </h1>
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-hint>
+                    Select the name you would like displayed to learners.
+                </govuk-radios-hint>
+                <govuk-radios-item value="@(ProviderDisplayNameSource.ProviderName)" id="ProviderName">
+                    @Model.ProviderName
+                </govuk-radios-item>
+                <govuk-radios-item value="@(ProviderDisplayNameSource.TradingName)" id="TradingName">
+                    @Model.TradingName
+                </govuk-radios-item>
+            </govuk-radios>
+
+            <govuk-button type="submit">Save and continue</govuk-button>
+        </form>
+    </div>
+</div>

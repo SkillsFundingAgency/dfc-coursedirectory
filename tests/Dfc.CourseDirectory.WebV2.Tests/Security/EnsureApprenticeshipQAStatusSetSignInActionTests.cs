@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                 providerType: providerType,
                 apprenticeshipQAStatus: null);
 
-            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderById()
+            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
             {
                 ProviderId = providerId
             });
@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                 providerType: providerType,
                 apprenticeshipQAStatus: null);
 
-            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderById()
+            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
             {
                 ProviderId = providerId
             });

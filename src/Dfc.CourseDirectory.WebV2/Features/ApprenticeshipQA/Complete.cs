@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderById()
+                new Core.DataStore.CosmosDb.Queries.GetProviderById()
                 {
                     ProviderId = request.ProviderId
                 });
