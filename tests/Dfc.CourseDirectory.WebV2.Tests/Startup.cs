@@ -31,6 +31,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             app.UseGdsFrontEnd();
 
+            app.UseSession();
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -45,6 +47,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession();
+
             services.AddRouting();
 
             services
