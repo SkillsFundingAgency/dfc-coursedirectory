@@ -1,1 +1,4 @@
 mode: ContinuousDelivery
+branches:
+  master:
+    regex: ^main
