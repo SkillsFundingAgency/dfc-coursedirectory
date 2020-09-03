@@ -25,6 +25,17 @@
                 <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
             </govuk-summary-list-row>
+            @if (Model.ShowDisplayName)
+            {
+                <govuk-summary-list-row data-testid="DisplayName">
+                    <govuk-summary-list-row-key>Display name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.DisplayName</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="DisplayName" append-provider-context>
+                        Change
+                        <span class="govuk-visually-hidden">display name</span>
+                    </govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+            }
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>

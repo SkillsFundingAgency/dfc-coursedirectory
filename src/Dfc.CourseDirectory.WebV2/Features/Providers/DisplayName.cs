@@ -43,11 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await GetProvider(request.ProviderId);
-
-            if (string.IsNullOrEmpty(provider.Alias))
-            {
-                throw new ErrorException<NoAliasDefined>(new NoAliasDefined());
-            }
+            CheckHaveAlias(provider);
 
             return new ViewModel()
             {
@@ -76,11 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
         public async Task<Success> Handle(Command request, CancellationToken cancellationToken)
         {
             var provider = await GetProvider(request.ProviderId);
-
-            if (string.IsNullOrEmpty(provider.Alias))
-            {
-                throw new ErrorException<NoAliasDefined>(new NoAliasDefined());
-            }
+            CheckHaveAlias(provider);
 
             var result = await _sqlQueryDispatcher.ExecuteQuery(new SetProviderDisplayNameSource()
             {
@@ -94,6 +86,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
             }
 
             return new Success();
+        }
+
+        private void CheckHaveAlias(Provider provider)
+        {
+            if (!provider.HaveAlias)
+            {
+                throw new ErrorException<NoAliasDefined>(new NoAliasDefined());
+            }
         }
     }
 }

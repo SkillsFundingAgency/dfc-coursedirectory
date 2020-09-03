@@ -238,5 +238,50 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
             Assert.Null(doc.GetElementByTestId("ChangeMarketingInformation"));
         }
+
+        [Theory]
+        [InlineData(ProviderDisplayNameSource.ProviderName, "My Provider")]
+        [InlineData(ProviderDisplayNameSource.TradingName, "My Trading Name")]
+        public async Task Get_ProviderHasAlias_RendersDisplayName(
+            ProviderDisplayNameSource displayNameSource,
+            string expectedDisplayName)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerName: "My Provider",
+                alias: "My Trading Name",
+                displayNameSource: displayNameSource);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal(expectedDisplayName, doc.GetSummaryListValueWithKey("Display name"));
+        }
+
+        [Fact]
+        public async Task Get_ProviderDoesNotHaveAlias_DoesNotRenderDisplayName()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerName: "My Provider",
+                alias: null);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementByTestId("DisplayName"));
+        }
     }
 }

@@ -1,6 +1,10 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName.ViewModel
 @{
-    ViewContext.SetLayoutData(title: "Display name", showBackLink: true);
+    ViewContext.SetLayoutData(title: "Display name");
+}
+
+@section BackLink {
+    <pttcd-back-link />
 }
 
 <div class="govuk-grid-row">
