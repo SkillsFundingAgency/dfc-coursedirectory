@@ -311,7 +311,7 @@ else
                        asp-route-publishMode="@PublishMode.Summary">Copy course</a>
 
 
-                    <a id="course-delete" class="govuk-link" asp-controller="Courses" asp-action="DeleteCourseRun"
+                    <a id="course-delete" class="govuk-link" asp-controller="DeleteCourseRun" asp-action="Get"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
                        asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")">Delete course</a>
