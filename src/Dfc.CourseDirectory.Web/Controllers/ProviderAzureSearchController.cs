@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> SelectProvider([FromQuery] string UKPRN)
+        public IActionResult SelectProvider([FromQuery] string UKPRN)
         {
             if (string.IsNullOrWhiteSpace(UKPRN) || !int.TryParse(UKPRN, out int value))
                 return new NoContentResult();

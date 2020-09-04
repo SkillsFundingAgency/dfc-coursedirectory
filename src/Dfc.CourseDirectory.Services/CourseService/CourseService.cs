@@ -1000,7 +1000,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     return Result.Fail("Delete Bulk Upload Course unsuccessful: " + response.ReasonPhrase);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Fail("Update course unsuccessful http response");
             }

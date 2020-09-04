@@ -31,7 +31,9 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
 
         public DbCommand GetCommand(DbConnection connection, string commandText, CommandType commandType)
         {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             SqlCommand command = new SqlCommand(commandText, connection as SqlConnection);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
             command.CommandType = commandType;
             return command;
         }
@@ -84,7 +86,7 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
                     returnValue = cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //LogException("Failed to ExecuteNonQuery for " + procedureName, ex, parameters);
                 throw;
@@ -101,7 +103,9 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
             {
                 using (SqlConnection connection = this.GetConnection())
                 {
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                     SqlCommand cmd = new SqlCommand(command, connection);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
 
 
                     if (parameters != null && parameters.Count > 0)
@@ -112,7 +116,7 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
                     returnValue = cmd.ExecuteScalar();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //LogException("Failed to ExecuteScalar for " + procedureName, ex, parameters);
                 throw;
@@ -124,7 +128,6 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
         public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
             _logger.LogCritical("Running: " + procedureName + " to get user tokens");
-            DbDataReader ds;
             DataTable values = new DataTable();
             try
             {

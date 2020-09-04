@@ -25,13 +25,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
           
         }
         [Authorize]
-        public async Task<IActionResult> Index([FromQuery] ZCodeSearchRequestModel requestModel)
+        public IActionResult Index([FromQuery] ZCodeSearchRequestModel requestModel)
         {
             ZCodeSearchResultModel model = new ZCodeSearchResultModel();
 
             if (requestModel == null)
             {
-              //model = new ZCodeSearchResultModel();
+                //model = new ZCodeSearchResultModel();
             }
             //else
             //{

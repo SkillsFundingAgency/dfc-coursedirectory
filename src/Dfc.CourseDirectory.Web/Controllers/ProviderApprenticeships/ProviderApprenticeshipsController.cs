@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> DeleteApprenticeship()
+        public IActionResult DeleteApprenticeship()
         {
             return RedirectToAction("Index", "Apprenticeships");
         }

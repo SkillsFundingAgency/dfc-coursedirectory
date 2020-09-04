@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddCourse(AddCourseSection1RequestModel model)
+        public IActionResult AddCourse(AddCourseSection1RequestModel model)
         {
             // to AddCourseRun or Summary
 

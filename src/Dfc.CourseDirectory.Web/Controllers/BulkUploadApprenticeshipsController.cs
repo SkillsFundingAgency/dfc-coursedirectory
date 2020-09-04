@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
         private readonly IUserHelper _userHelper;
-        private IHostingEnvironment _env;
+        private IWebHostEnvironment _env;
         private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IApprenticeshipService apprenticeshipService,
             IBlobStorageService blobService,
             ICourseService courseService,
-            IHostingEnvironment env,
+            IWebHostEnvironment env,
             IProviderService providerService,
             IUserHelper userHelper)
         {
@@ -221,7 +221,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> WhatDoYouWantToDoNext(string message, int errorCount)
+        public IActionResult WhatDoYouWantToDoNext(string message, int errorCount)
         {
             var model = new WhatDoYouWantToDoNextViewModel();
 
@@ -236,7 +236,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
+        public IActionResult WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
         {
             bool fromBulkUpload = !string.IsNullOrEmpty(model.Message);
 
@@ -280,14 +280,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
+        public IActionResult DownloadErrorFile(DownloadErrorFileViewModel model)
         {
             return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
         }
 
-         [Authorize]
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteFile()
+        public IActionResult DeleteFile()
         {
             var model = new DeleteFileViewModel();
 
@@ -336,7 +336,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
+        public IActionResult DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
             var model = new DeleteFileConfirmationViewModel
             {
@@ -410,7 +410,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     provider = providerSearchResult.Value.Value.FirstOrDefault();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // @ToDo: decide how to handle this
             }

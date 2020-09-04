@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(ChooseRegionModel model)
+        public IViewComponentResult Invoke(ChooseRegionModel model)
         {
             if(model.Regions == null)
                 model.Regions =_courseService.GetRegions();

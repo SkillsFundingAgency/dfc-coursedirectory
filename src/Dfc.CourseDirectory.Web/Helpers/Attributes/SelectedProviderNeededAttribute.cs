@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Web.Helpers.Attributes
             int qsUKPRN;
             Int32.TryParse(context.HttpContext.Request.Query["UKPRN"].ToString(), out qsUKPRN);
             var session = context.HttpContext.Session.GetInt32("UKPRN");
-            if (qsUKPRN != null && session == null)
+            if (session == null)
             {
                 context.HttpContext.Session.SetInt32("UKPRN", qsUKPRN);
             }

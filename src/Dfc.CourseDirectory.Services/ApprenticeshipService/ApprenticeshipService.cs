@@ -447,7 +447,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                     return Result.Fail("Delete Bulk Upload Apprenticeship unsuccessful: " + response.ReasonPhrase);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Fail("Delete Bulk Upload Apprenticeship http response");
             }

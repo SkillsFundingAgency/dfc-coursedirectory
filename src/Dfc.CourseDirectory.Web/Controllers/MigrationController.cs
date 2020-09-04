@@ -35,14 +35,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILarsSearchSettings _larsSearchSettings;
         private readonly ILarsSearchService _larsSearchService;
 
-        private IHostingEnvironment _env;
+        private IWebHostEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public MigrationController(
             ILogger<MigrationController> logger,
             IHttpContextAccessor contextAccessor,
             IBulkUploadService bulkUploadService,
-            IHostingEnvironment env, IUserHelper userHelper, ICourseService courseService, IVenueService venueService, ILarsSearchService larsSearchService, IOptions<LarsSearchSettings> larsSearchSettings)
+            IWebHostEnvironment env, IUserHelper userHelper, ICourseService courseService, IVenueService venueService, ILarsSearchService larsSearchService, IOptions<LarsSearchSettings> larsSearchSettings)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Options(OptionsViewModel viewModel)
+        public IActionResult Options(OptionsViewModel viewModel)
         {
             switch (viewModel.MigrationOption)
             {
@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         [HttpPost]
 
-        public async Task<IActionResult> Errors(ErrorsViewModel model)
+        public IActionResult Errors(ErrorsViewModel model)
         {
             switch (model.MigrationErrors)
             {
@@ -167,7 +167,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> DeleteCourseRun(Guid courseId, Guid courseRunId)
         {
             int? sUKPRN = _session.GetInt32("UKPRN");
-            int UKPRN;
             if (!sUKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });

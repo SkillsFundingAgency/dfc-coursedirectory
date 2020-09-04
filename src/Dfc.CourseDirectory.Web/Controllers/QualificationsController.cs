@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
         [Authorize]
-        public async Task<IActionResult> QualificationsList()
+        public IActionResult QualificationsList()
         {
             var qualificationTypes = new List<string>();
 
@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                         .Result.Value;
 
-                IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
+                IActionResult view = GetCoursesViewModel("", "", "", "", null);
                 CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
 
                 IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value?
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
         [Authorize]
-        private async Task<IActionResult> GetCoursesViewModelAsync(string status, string learnAimRef,
+        private IActionResult GetCoursesViewModel(string status, string learnAimRef,
             string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
         {
             if (!string.IsNullOrEmpty(status))
