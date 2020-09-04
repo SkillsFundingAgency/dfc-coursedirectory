@@ -13,6 +13,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     /// </remarks>
     public sealed class AssignLegacyProviderContextAttribute : ActionFilterAttribute
     {
+        public AssignLegacyProviderContextAttribute()
+        {
+            Order = 10;  // Run after RedirectToProviderSelectionActionFilter
+        }
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
