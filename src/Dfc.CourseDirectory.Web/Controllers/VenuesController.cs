@@ -525,7 +525,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> CheckForVenue(string VenueName)
+        public IActionResult CheckForVenue(string VenueName)
         {
             int? sUKPRN = _session.GetInt32("UKPRN");
             int UKPRN;
@@ -536,7 +536,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var result = _venueService.GetVenuesByPRNAndNameAsync(new GetVenuesByPRNAndNameCriteria(UKPRN.ToString(), VenueName)).Result;
 
-            if (result.IsSuccess && result.Value.Value.Any(x => x.Status==Live))// && result.Value.Value.FirstOrDefault()?.Status == VenueStatus.Live)
+            if (result.IsSuccess && result.Value.Value.Any(x => x.Status == Live))// && result.Value.Value.FirstOrDefault()?.Status == VenueStatus.Live)
                 return Ok(true);
             return Ok(false);
         }
@@ -611,7 +611,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LandingOptions(LocationsLandingViewModel model)
+        public IActionResult LandingOptions(LocationsLandingViewModel model)
         {
             switch (model.LocationsLandingOptions)
             {

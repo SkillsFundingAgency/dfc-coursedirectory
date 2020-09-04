@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipL
 {
     public class ApprenticeshipLocationList :ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(ApprenticeshipLocationListModel model)
+        public IViewComponentResult Invoke(ApprenticeshipLocationListModel model)
         {
             return View("~/ViewComponents/Apprenticeships/ApprenticeshipLocationList/Default.cshtml", model);
 

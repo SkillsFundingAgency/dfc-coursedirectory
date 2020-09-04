@@ -236,7 +236,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //@ToDo: decide how to handle this - should at least be logged. Caused by NPE during call to course service
                 List<string> errors = new List<string>() { "There was a system problem whilst obtaining course data from the course directory. Please wait a few moments and refresh your browser page." };
@@ -256,7 +256,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                     provider = providerSearchResult.Value.Value.FirstOrDefault();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // @ToDo: decide how to handle this
             }

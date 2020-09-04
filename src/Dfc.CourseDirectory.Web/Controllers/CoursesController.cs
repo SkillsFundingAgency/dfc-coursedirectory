@@ -214,7 +214,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
+        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
             _session.SetString("LearnAimRef", learnAimRef);
             _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
@@ -465,7 +465,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
-        public async Task<IActionResult> LandingOptions(CoursesLandingViewModel model)
+        public IActionResult LandingOptions(CoursesLandingViewModel model)
         {
             switch (model.CoursesLandingOptions)
             {

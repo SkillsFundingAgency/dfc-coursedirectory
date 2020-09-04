@@ -1,12 +1,6 @@
 <Project>
   <PropertyGroup>
-    <_IsLegacyProject>false</_IsLegacyProject>
-    <_IsLegacyProject Condition="'$(MSBuildProjectName)' == 'Dfc.CourseDirectory.Common'">true</_IsLegacyProject>
-    <_IsLegacyProject Condition="'$(MSBuildProjectName)' == 'Dfc.CourseDirectory.Models'">true</_IsLegacyProject>
-    <_IsLegacyProject Condition="'$(MSBuildProjectName)' == 'Dfc.CourseDirectory.Services'">true</_IsLegacyProject>
-    <_IsLegacyProject Condition="'$(MSBuildProjectName)' == 'Dfc.CourseDirectory.Web'">true</_IsLegacyProject>
-    <_IsLegacyProject Condition="'$(MSBuildProjectName)' == 'Dfc.CourseDirectory.Web.Tests'">true</_IsLegacyProject>
-    <TreatWarningsAsErrors Condition="'$(_IsLegacyProject)' != 'true' And '$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 </Project>

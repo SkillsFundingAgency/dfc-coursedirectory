@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
-        private IHostingEnvironment _env;
+        private IWebHostEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
         private IBackgroundTaskQueue _queue;
 
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IBulkUploadService bulkUploadService,
                 IBlobStorageService blobService,
                 ICourseService courseService,
-                IHostingEnvironment env,
+                IWebHostEnvironment env,
                 IProviderService providerService,
                 IBackgroundTaskQueue queue)
         {
@@ -219,7 +219,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> WhatDoYouWantToDoNext(string message)
+        public IActionResult WhatDoYouWantToDoNext(string message)
         {
             var model = new WhatDoYouWantToDoNextViewModel();
 
@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
+        public IActionResult WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
         {
             var fromBulkUpload = false;
             if (!string.IsNullOrEmpty(model.Message))
@@ -285,7 +285,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
+        public IActionResult DownloadErrorFile(DownloadErrorFileViewModel model)
         {
             // where to go????
             return View("../Bulkupload/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
@@ -294,7 +294,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteFile()
+        public IActionResult DeleteFile()
         {
             var model = new DeleteFileViewModel();
 
@@ -305,7 +305,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
+        public IActionResult DeleteFile(DeleteFileViewModel model)
         {
             DateTimeOffset fileUploadDate = new DateTimeOffset();
             int? sUKPRN = _session.GetInt32("UKPRN");
@@ -320,7 +320,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var provider = FindProvider(UKPRN);
-            if(null == provider)
+            if (null == provider)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to find Provider data to delete bulk upload." });
             }
@@ -360,9 +360,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             });
 
             // COUR-1972 make sure we get a date on the Delete Confirmation page even if the physical delete above didn't find any files to delete.
-            if(null != provider.BulkUploadStatus)
+            if (null != provider.BulkUploadStatus)
             {
-                if(provider.BulkUploadStatus.StartedTimestamp.HasValue)
+                if (provider.BulkUploadStatus.StartedTimestamp.HasValue)
                 {
                     fileUploadDate = provider.BulkUploadStatus.StartedTimestamp.Value.ToLocalTime();
                 }
@@ -382,7 +382,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
+        public IActionResult DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
             var model = new DeleteFileConfirmationViewModel();
 
@@ -397,7 +397,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PublishYourFile(int NumberOfCourses)
+        public IActionResult PublishYourFile(int NumberOfCourses)
         {
             var model = new PublishYourFileViewModel();
 
@@ -409,7 +409,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
+        public IActionResult PublishYourFile(PublishYourFileViewModel model)
         {
             int? sUKPRN = _session.GetInt32("UKPRN");
             int UKPRN;
@@ -498,7 +498,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LandingOptions(BulkuploadLandingViewModel model)
+        public IActionResult LandingOptions(BulkuploadLandingViewModel model)
         {
             switch (model.BulkUploadLandingOptions)
             { 
@@ -524,7 +524,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     provider = providerSearchResult.Value.Value.FirstOrDefault();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // @ToDo: decide how to handle this
             }

@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteLocation(Guid VenueId)
+        public IActionResult DeleteLocation(Guid VenueId)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DeleteLocation(LocationDeleteViewModel locationDeleteViewModel)
+        public IActionResult DeleteLocation(LocationDeleteViewModel locationDeleteViewModel)
         {
             if (locationDeleteViewModel.LocationDelete == LocationDelete.Delete)
             {
@@ -152,7 +152,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> LocationConfirmationDelete(Guid VenueId)
+        public IActionResult LocationConfirmationDelete(Guid VenueId)
         {
             IVenue venueResult = _venueService
                 .GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result
@@ -170,7 +170,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> LocationConfirmationDelete()
+        public IActionResult LocationConfirmationDelete()
         {
             return RedirectToAction("Index", "Venues");
         }

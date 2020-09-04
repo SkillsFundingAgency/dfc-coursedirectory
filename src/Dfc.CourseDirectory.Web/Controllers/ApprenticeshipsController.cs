@@ -449,7 +449,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Summary(SummaryRequestModel requestModel)
+        public IActionResult Summary(SummaryRequestModel requestModel)
         {
             int UKPRN;
 
@@ -814,7 +814,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> WhatWouldYouLIkeToDo(WhatWouldYouLikeToDoViewModel theModel)
+        public IActionResult WhatWouldYouLIkeToDo(WhatWouldYouLikeToDoViewModel theModel)
         {
             switch (theModel.ApprenticeshipWhatWouldYouLikeToDo)
             {
@@ -918,7 +918,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DeleteDeliveryOption(DeleteDeliveryOptionViewModel model)
+        public IActionResult DeleteDeliveryOption(DeleteDeliveryOptionViewModel model)
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
             var Location = apprenticeship?.ApprenticeshipLocations.FirstOrDefault(x => x.Id == model.Id);

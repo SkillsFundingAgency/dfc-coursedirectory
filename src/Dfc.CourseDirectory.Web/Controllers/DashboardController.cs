@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IEnvironmentHelper _environmentHelper;
-        private IHostingEnvironment _env;
+        private IWebHostEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public DashboardController(
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
                 IBlobStorageService blobStorageService,
-                IHostingEnvironment env,
+                IWebHostEnvironment env,
                 IEnvironmentHelper environmentHelper)
         {
             Throw.IfNull(logger, nameof(logger));

@@ -340,8 +340,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     return new List<int>{ (int)DeliveryMode.Employer };
                 }
-
-                return new List<int>();
             }
 
             private bool? Mandatory_Checks_ACROSS_ENGLAND(IReaderRow row)

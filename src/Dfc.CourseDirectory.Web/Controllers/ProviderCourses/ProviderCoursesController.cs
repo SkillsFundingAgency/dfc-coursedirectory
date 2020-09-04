@@ -529,7 +529,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CourseConfirmationDelete(Guid CourseRunId, string CourseName)
+        public IActionResult CourseConfirmationDelete(Guid CourseRunId, string CourseName)
         {
             CourseDeleteConfirmViewModel courseDeleteConfirmViewModel = new CourseDeleteConfirmViewModel();
             courseDeleteConfirmViewModel.CourseRunId = CourseRunId;

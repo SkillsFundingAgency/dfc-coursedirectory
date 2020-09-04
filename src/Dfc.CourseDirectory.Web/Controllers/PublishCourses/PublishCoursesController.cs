@@ -266,7 +266,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DownloadErrorFile()
+        public IActionResult DownloadErrorFile()
         {
             var model = new DownloadErrorFileViewModel();
             model.ErrorFileCreatedDate = DateTime.Now;

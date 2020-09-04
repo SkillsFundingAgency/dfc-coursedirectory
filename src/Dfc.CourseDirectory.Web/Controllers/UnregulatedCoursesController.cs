@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
-        public async Task<List<SelectListItem>> GetSSALevelTwo(string Level1Id)
+        public List<SelectListItem> GetSSALevelTwo(string Level1Id)
         {
             List<SelectListItem> levelTwos = new List<SelectListItem>();
 

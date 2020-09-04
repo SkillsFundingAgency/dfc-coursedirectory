@@ -205,7 +205,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 new Mock<IApprenticeshipService>().Object,
                 _mockBlobStorageService.Object,
                 new Mock<ICourseService>().Object,
-                new Mock<IHostingEnvironment>().Object,
+                new Mock<IWebHostEnvironment>().Object,
                 new Mock<IProviderService>().Object,
                 new Mock<IUserHelper>().Object);
             bulkUploadApprenticeshipsController.ControllerContext.HttpContext = mockContext;

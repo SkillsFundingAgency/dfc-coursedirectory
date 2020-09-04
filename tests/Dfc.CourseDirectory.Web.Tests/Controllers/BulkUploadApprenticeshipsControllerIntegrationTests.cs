@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private ClaimsPrincipal _claimsPrincipal;
         private HttpContext _httpContext;
         private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IHostingEnvironment> _hostingEnvironment;
+        private Mock<IWebHostEnvironment> _hostingEnvironment;
         private Mock<IUserHelper> _userHelper;
 
         private IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 User = _claimsPrincipal
             };
             _contextAccessor = new Mock<IHttpContextAccessor>();
-            _hostingEnvironment = new Mock<IHostingEnvironment>();
+            _hostingEnvironment = new Mock<IWebHostEnvironment>();
             _userHelper = new Mock<IUserHelper>();
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
