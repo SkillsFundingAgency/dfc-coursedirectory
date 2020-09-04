@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal($"/provider/details?providerId={providerId}", response.Headers.Location.OriginalString);
+            Assert.Equal($"/providers?providerId={providerId}", response.Headers.Location.OriginalString);
         }
     }
 }

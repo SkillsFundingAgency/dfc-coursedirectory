@@ -152,9 +152,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
+            Provider provider;
             if (providerSearchResult.IsSuccess)
             {
-                Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
+                provider = providerSearchResult.Value.Value.FirstOrDefault();
 
                 var oldProviderType = provider.ProviderType;
                 if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeship))
@@ -181,107 +182,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 throw new Exception(providerSearchResult.Error);
             }
 
-            return RedirectToAction("Details", "Provider", new { });
-        }
-
-       
-
-
-        [Authorize]
-        [SelectedProviderNeeded]
-        public async Task<IActionResult> Details()
-        {
-
-            var model = new ProviderDetailsViewModel();
-
-            int? UKPRN = _session.GetInt32("UKPRN");
-
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
-
-            if (providerSearchResult.IsSuccess)
-            {
-                var provider = providerSearchResult.Value.Value.FirstOrDefault();
-
-                model.Status = provider.ProviderStatus;
-                model.ProviderName = string.IsNullOrEmpty(provider.CourseDirectoryName) ? provider.ProviderName: provider.CourseDirectoryName;
-                model.LegalName = provider.ProviderName;
-
-                if (provider.ProviderAliases != null)
-                {
-                    model.TradingName = provider.ProviderAliases?.FirstOrDefault()?.ProviderAlias?.ToString();
-                    model.AliasName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias?.ToString();
-                }
-              
-                model.UKPRN = UKPRN.ToString();
-                model.UnitedKingdomProviderReferenceNumber = provider.UnitedKingdomProviderReferenceNumber;
-                model.BriefOverview = provider.MarketingInformation;
-                model.Alias = provider.Alias;
-                model.ProviderType = provider.ProviderType;
-
-                string AddressLine1 = string.Empty;
-                string AddressLine2 = string.Empty;
-                string AddressLine3 = string.Empty;
-                string AddressLine4 = string.Empty;
-                string TownCity = string.Empty;
-                string PostCode = string.Empty;
-
-                if (provider.ProviderContact != null)
-                {
-                    var providerContactTypeP = provider.ProviderContact.Where(s => s.ContactType.Equals("P", StringComparison.InvariantCultureIgnoreCase));
-                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.SAON?.Description != null)
-                    {
-                        AddressLine1 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.SAON?.Description.ToString();
-                    }
-
-                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.PAON?.Description != null)
-                    {
-                        AddressLine2 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.PAON?.Description.ToString();
-                    }
-
-
-                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.StreetDescription != null)
-                    {
-                        AddressLine3 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.StreetDescription.ToString();
-                    }
-
-
-                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.Locality != null)
-                    {
-                        AddressLine4 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.Locality.ToString();
-                    }
-
-
-                    if (!string.IsNullOrEmpty(providerContactTypeP.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
-                    {
-                        TownCity = providerContactTypeP.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
-                    }
-
-
-                    if (!string.IsNullOrEmpty(providerContactTypeP?.FirstOrDefault()?.ContactAddress?.PostCode))
-                    {
-                        PostCode = providerContactTypeP?.FirstOrDefault()?.ContactAddress?.PostCode;
-                    }
-
-
-                    model.AddressLine1 = AddressLine1;
-                    model.AddressLine2 = AddressLine2;
-                    model.AddressLine3 = AddressLine3;
-                    model.AddressLine4 = AddressLine4;
-                    model.TownCity = TownCity;
-
-                    model.PostCode = PostCode;
-
-                    model.Telephone = providerContactTypeP?.FirstOrDefault()?.ContactTelephone1;
-                    model.Web = providerContactTypeP?.FirstOrDefault()?.ContactWebsiteAddress;
-                    model.Email = providerContactTypeP?.FirstOrDefault()?.ContactEmail;
-                }
-
-            }
-
-
-
-
-            return View(model);
+            return RedirectToAction("ProviderDetails", "Providers", new { providerId = provider.id });
         }
 
         [Authorize]
