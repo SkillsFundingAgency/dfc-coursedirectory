@@ -25,7 +25,7 @@
                 <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
             </govuk-summary-list-row>
-            @if (Model.ShowDisplayName)
+            @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ProviderDisplayName) && Model.ShowDisplayName)
             {
                 <govuk-summary-list-row data-testid="DisplayName">
                     <govuk-summary-list-row-key>Display name</govuk-summary-list-row-key>
