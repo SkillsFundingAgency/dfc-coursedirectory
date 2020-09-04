@@ -125,7 +125,6 @@ namespace Dfc.CourseDirectory.Core.Tests.BackgroundWorkersTests
             await scheduler.StartAsync(cancellationToken: default);
             await scheduler.Schedule(workItem);
             executingSignal.Wait(100);
-            Assert.NotEqual(default, itemCancellationToken);
             Assert.False(itemCancellationToken.IsCancellationRequested);
             await scheduler.StopAsync(cancellationToken: default);
             Assert.True(itemCancellationToken.IsCancellationRequested);
