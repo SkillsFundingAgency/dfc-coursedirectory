@@ -21,7 +21,7 @@
                 Your locations
             </a>
         </li>
-        @if (Model.ProviderContext.ProviderType == ProviderType.Both && enableApprenticeshipBulkUpload)
+        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships))
         {
             <li class="govuk-header__navigation-item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="govuk-header__link">
@@ -39,7 +39,6 @@
         }
         @if (Model.ProviderContext.ProviderType == ProviderType.Both && enableApprenticeshipBulkUpload)
         {
-
             <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link">
                     Bulk upload
