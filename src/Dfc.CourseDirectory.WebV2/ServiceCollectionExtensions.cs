@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
@@ -14,6 +16,7 @@ using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
+using FormFlow;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -107,6 +110,9 @@ namespace Dfc.CourseDirectory.WebV2
                 0,
                 new ServiceDescriptor(typeof(IHostedService), typeof(RunStartupTasksHostedService),
                 ServiceLifetime.Transient));
+
+            services.AddFormFlow();
+            services.AddFormFlowStateTypes(typeof(ServiceCollectionExtensions));
 
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();

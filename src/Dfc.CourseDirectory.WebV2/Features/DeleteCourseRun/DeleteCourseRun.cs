@@ -10,12 +10,20 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using FluentValidation.Results;
+using FormFlow;
 using MediatR;
 using OneOf;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries.DeleteCourseRun;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Courses.DeleteCourseRun
+namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 {
+    [FormFlowState]
+    public class FlowModel
+    {
+        public string CourseName { get; set; }
+        public int ProviderUkprn { get; set; }
+    }
+
     public class Request : IRequest<ViewModel>
     {
         public Guid CourseId { get; set; }
@@ -46,24 +54,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.DeleteCourseRun
         public string CourseName { get; set; }
     }
 
+    public class ConfirmedQuery : IRequest<ConfirmedViewModel>
+    {
+    }
+
+    public class ConfirmedViewModel
+    {
+        public string CourseName { get; set; }
+        public bool HasOtherCourseRuns { get; set; }
+    }
+
     public class Handler :
         IRequireUserCanAccessCourse<Request>,
         IRequestHandler<Request, ViewModel>,
         IRequireUserCanAccessCourse<Command>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, SuccessViewModel>>
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, SuccessViewModel>>,
+        IRequestHandler<ConfirmedQuery, ConfirmedViewModel>
     {
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly FormFlowInstance<FlowModel> _formFlowInstance;
 
         public Handler(
             IProviderInfoCache providerInfoCache,
             IProviderOwnershipCache providerOwnershipCache,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            FormFlowInstance<FlowModel> formFlowInstance)
         {
             _providerInfoCache = providerInfoCache;
             _providerOwnershipCache = providerOwnershipCache;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _formFlowInstance = formFlowInstance;
         }
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
@@ -95,11 +117,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.DeleteCourseRun
                 ProviderUkprn = ukprn
             });
 
+            // The next page needs this info - stash it in the FlowModel
+            // since it will no longer able to query for it.
+            _formFlowInstance.UpdateState(new FlowModel()
+            {
+                CourseName = courseRun.CourseName,
+                ProviderUkprn = ukprn
+            });
+
+            _formFlowInstance.Complete();
+
             return new SuccessViewModel()
             {
                 CourseId = request.CourseId,
                 CourseRunId = request.CourseRunId,
                 CourseName = courseRun.CourseName
+            };
+        }
+
+        public async Task<ConfirmedViewModel> Handle(ConfirmedQuery request, CancellationToken cancellationToken)
+        {
+            var ukprn = _formFlowInstance.State.ProviderUkprn;
+
+            var liveCourses = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllCoursesForProvider()
+            {
+                CourseStatuses = CourseStatus.Live,
+                ProviderUkprn = ukprn
+            });
+
+            return new ConfirmedViewModel()
+            {
+                CourseName = _formFlowInstance.State.CourseName,
+                HasOtherCourseRuns = liveCourses.Any()
             };
         }
 

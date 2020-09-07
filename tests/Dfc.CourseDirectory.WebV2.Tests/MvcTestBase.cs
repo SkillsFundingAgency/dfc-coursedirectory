@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using FormFlow;
+using FormFlow.State;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -51,6 +53,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Task DisposeAsync() => Task.CompletedTask;
 
         public Task InitializeAsync() => Factory.OnTestStartingAsync();
+
+        protected FormFlowInstance<TState> CreateFormFlowInstanceFromRouteParameters<TState>(
+            string key,
+            IReadOnlyDictionary<string, object> routeParameters,
+            TState state,
+            IReadOnlyDictionary<object, object> properties = null)
+        {
+            var instanceId = FormFlowInstanceId.GenerateForRouteValues(key, routeParameters);
+
+            var instanceStateProvider = Factory.Services.GetRequiredService<IUserInstanceStateProvider>();
+
+            return (FormFlowInstance<TState>)instanceStateProvider.CreateInstance(
+                key,
+                instanceId,
+                typeof(TState),
+                state,
+                properties);
+        }
 
         protected MptxInstanceContext<TState> CreateMptxInstance<TState>(TState state)
             where TState : IMptxState =>

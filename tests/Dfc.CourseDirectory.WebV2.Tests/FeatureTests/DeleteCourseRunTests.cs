@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
@@ -6,12 +7,14 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun;
+using FormFlow;
 using OneOf;
 using OneOf.Types;
 using Xunit;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries.DeleteCourseRun;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 {
     public class DeleteCourseRunTests : MvcTestBase
     {
@@ -30,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -51,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -76,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsTestUser(userType, anotherProviderId);
 
@@ -102,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -138,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -175,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -212,7 +215,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -249,7 +252,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -286,7 +289,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -323,7 +326,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2Fcourses");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -349,7 +352,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl={UrlEncoder.Default.Encode(returnUrl)}");
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl={UrlEncoder.Default.Encode(returnUrl)}");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
@@ -377,12 +380,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -405,12 +410,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -437,12 +444,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsTestUser(userType, anotherProviderId);
+
+            CreateFormFlowInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -464,12 +473,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -498,12 +509,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/delete?courseId={courseId}&courseRunId={courseRunId}&returnUrl=%2fcourses")
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -512,11 +525,169 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Courses
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
 
             Assert.Equal(
-                $"/ProviderCourses/CourseConfirmationDelete?courseRunId={courseRunId}&courseName={UrlEncoder.Default.Encode("Maths")}",
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed",
                 response.Headers.Location.OriginalString);
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<DeleteCourseRunQuery, OneOf<NotFound, Success>>(q =>
                 q.CourseId == courseId && q.CourseRunId == courseRunId && q.ProviderUkprn == 12345);
+        }
+
+        [Fact]
+        public async Task GetConfirmed_RendersExpectedCourseName()
+        {
+            // Arrange
+            var providerUkprn = 12345;
+            var providerId = await TestData.CreateProvider(ukprn: providerUkprn);
+
+            var courseId = await TestData.CreateCourse(
+                providerId,
+                qualificationCourseTitle: "Maths",
+                createdBy: User.ToUserInfo());
+
+            var courseRunId = await GetCourseRunIdForCourse(courseId);
+
+            await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
+            {
+                CourseId = courseId,
+                CourseRunId = courseRunId,
+                ProviderUkprn = providerUkprn
+            });
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed");
+
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(
+                courseId,
+                courseRunId,
+                new FlowModel()
+                {
+                    CourseName = "Maths",
+                    ProviderUkprn = providerUkprn
+                });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            Assert.Equal("Maths", doc.GetElementByTestId("CourseName").TextContent);
+        }
+
+        [Fact]
+        public async Task GetConfirmed_NoOtherLiveCourseRuns_DoesNotRenderViewEditCopyLink()
+        {
+            // Arrange
+            var providerUkprn = 12345;
+            var providerId = await TestData.CreateProvider(ukprn: providerUkprn);
+
+            var courseId = await TestData.CreateCourse(
+                providerId,
+                qualificationCourseTitle: "Maths",
+                createdBy: User.ToUserInfo());
+
+            var courseRunId = await GetCourseRunIdForCourse(courseId);
+
+            await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
+            {
+                CourseId = courseId,
+                CourseRunId = courseRunId,
+                ProviderUkprn = providerUkprn
+            });
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed");
+
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(
+                courseId,
+                courseRunId,
+                new FlowModel()
+                {
+                    CourseName = "Maths",
+                    ProviderUkprn = providerUkprn
+                });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementByTestId("ViewEditCopyDeleteLink"));
+        }
+
+        [Fact]
+        public async Task GetConfirmed_HasOtherLiveCourseRuns_DoesRenderViewEditCopyLink()
+        {
+            // Arrange
+            var providerUkprn = 12345;
+            var providerId = await TestData.CreateProvider(ukprn: providerUkprn);
+
+            var courseId = await TestData.CreateCourse(
+                providerId,
+                qualificationCourseTitle: "Maths",
+                createdBy: User.ToUserInfo());
+
+            var courseRunId = await GetCourseRunIdForCourse(courseId);
+
+            // Create another live course
+            await TestData.CreateCourse(providerId, createdBy: User.ToUserInfo());
+
+            await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
+            {
+                CourseId = courseId,
+                CourseRunId = courseRunId,
+                ProviderUkprn = providerUkprn
+            });
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed");
+
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            CreateFormFlowInstance(
+                courseId,
+                courseRunId,
+                new FlowModel()
+                {
+                    CourseName = "Maths",
+                    ProviderUkprn = providerUkprn
+                });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetElementByTestId("ViewEditCopyDeleteLink"));
+        }
+
+        private FormFlowInstance<FlowModel> CreateFormFlowInstance(
+            Guid courseId,
+            Guid courseRunId,
+            FlowModel flowModel = null)
+        {
+            var routeParameters = new Dictionary<string, object>()
+            {
+                { "courseId", courseId },
+                { "courseRunId", courseRunId },
+            };
+
+            return CreateFormFlowInstanceFromRouteParameters(
+                "DeleteCourseRun",
+                routeParameters,
+                flowModel ?? new FlowModel());
         }
 
         private async Task<Guid> GetCourseRunIdForCourse(Guid courseId)

@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.Courses.DeleteCourseRun.ViewModel
+﻿@model Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun.ViewModel
 @{
     Layout = "_V2LayoutProviderContext";
     ViewBag.Title = "Delete course";
@@ -17,7 +17,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form 
-              asp-action="DeleteCourseRun" 
+              asp-action="Post" 
               asp-route-courseId="@Model.CourseId"
               asp-route-courseRunId="@Model.CourseRunId"
               asp-route-returnUrl="@returnUrl">
