@@ -24,8 +24,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UkrlpSyncHelper(
-            IUkrlpService ukrlpService, 
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, 
+            IUkrlpService ukrlpService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             ILoggerFactory loggerFactory)
         {
@@ -91,12 +91,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         {
             ContactAddress = new ProviderContactAddress()
             {
-                SAON = new ProviderContactAddressSAON() { Description = contact.ContactAddress.SAON.Description },
-                PAON = new ProviderContactAddressPAON() { Description = contact.ContactAddress.PAON.Description },
-                StreetDescription = contact.ContactAddress.StreetDescription,
-                Locality = contact.ContactAddress.Locality,
-                Items = contact.ContactAddress.Items,
-                PostCode = contact.ContactAddress.PostCode
+                SAON = new ProviderContactAddressSAON { Description = contact.ContactAddress.Address1 },
+                PAON = new ProviderContactAddressPAON { Description = contact.ContactAddress.Address2 },
+                StreetDescription = contact.ContactAddress.Address3,
+                Locality = contact.ContactAddress.Address4,
+                Items = new List<string>
+                {
+                    contact.ContactAddress.Town,
+                    contact.ContactAddress.County,
+                }.Where(s => s != null).ToList(),
+                PostTown = null, // town still in Items to avoid changing data after upgrade from v3 to v6 UKRLP client
+                PostCode = contact.ContactAddress.PostCode,
             },
             ContactEmail = contact.ContactEmail,
             ContactFax = contact.ContactFax,
@@ -104,7 +109,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 PersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle,
                 PersonGivenName = contact.ContactPersonalDetails.PersonGivenName,
-                PersonFamilyName = contact.ContactPersonalDetails.PersonFamilyName
+                PersonFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
             },
             ContactTelephone1 = contact.ContactTelephone1,
             ContactType = contact.ContactType,
