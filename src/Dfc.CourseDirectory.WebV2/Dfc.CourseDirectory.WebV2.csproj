@@ -35,6 +35,7 @@
     <None Remove="Content\components\pager.css" />
     <None Remove="Content\components\radios.css" />
     <None Remove="Content\components\search-input.css" />
+    <None Remove="Content\components\summary-list.css" />
     <None Remove="Content\components\tinymce.css" />
     <None Remove="Content\images\arrow-pagination-left.svg" />
     <None Remove="Content\images\arrow-pagination-right.svg" />
