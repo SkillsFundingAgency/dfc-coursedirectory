@@ -100,32 +100,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("Provider name", doc.GetElementById("CourseDirectoryName").GetAttribute("value"));
+            Assert.Equal("Provider name", doc.GetElementById("ProviderName").GetAttribute("value"));
             Assert.Equal("<p>Existing marketing info</p>", doc.GetElementById("MarketingInformation").TextContent.Trim());
-        }
-
-        [Fact]
-        public async Task Get_ProviderHasCourseDirectoryNameRendersExpectedOutput()
-        {
-            // Arrange
-            var providerId = await TestData.CreateProvider(
-                providerName: "Provider name",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
-                courseDirectoryName: "Alias");
-
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
-
-            var mptxInstance = CreateMptxInstance(new FlowModel());
-
-            // Act
-            var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("Alias", doc.GetElementById("CourseDirectoryName").GetAttribute("value"));
         }
 
         [Fact]

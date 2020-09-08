@@ -259,7 +259,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             var flowModel = await initializer.Initialize(providerContext.ProviderInfo.ProviderId);
             var flow = mptxManager.CreateInstance(flowModel);
             return RedirectToAction(nameof(ProviderDetail))
-                .WithMptxInstanceId(flow);
+                .WithMptxInstanceId(flow)
+                .WithProviderContext(providerContext);
         }
 
         [MptxAction]

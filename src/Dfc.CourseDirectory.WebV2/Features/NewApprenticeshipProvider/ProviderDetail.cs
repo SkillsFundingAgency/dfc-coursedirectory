@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class ViewModel : Command
     {
-        public string CourseDirectoryName { get; set; }
+        public string ProviderName { get; set; }
     }
 
     public class ConfirmationQuery : IRequest<ConfirmationViewModel>
@@ -46,9 +46,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
     public class ConfirmationViewModel : ConfirmationCommand
     {
         public string ProviderName { get; set; }
-        public string CourseDirectoryName { get; set; }
+        public string CourseDirectoryStatus { get; set; }
         public int Ukprn { get; set; }
-        public string LegalName { get; set; }
         public string TradingName { get; set; }
         public ProviderType ProviderType { get; set; }
         public string MarketingInformation { get; set; }
@@ -124,11 +123,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             {
                 ProviderId = request.ProviderId,
                 ProviderName = provider.ProviderName,
-                CourseDirectoryName = GetCourseDirectoryName(provider),
-                LegalName = provider.ProviderName,
+                CourseDirectoryStatus = provider.ProviderStatus,
                 MarketingInformation = _flow.State.ProviderMarketingInformation,
                 ProviderType = provider.ProviderType,
-                TradingName = provider.TradingName,
+                TradingName = provider.Alias,
                 Ukprn = provider.Ukprn
             };
         }
@@ -152,11 +150,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             return new Success();
         }
 
-        private static string GetCourseDirectoryName(Provider provider) =>
-            !string.IsNullOrEmpty(provider.CourseDirectoryName) ?
-                provider.CourseDirectoryName :
-                provider.ProviderName;
-
         private async Task<ViewModel> CreateViewModel(Guid providerId)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
@@ -169,7 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             {
                 ProviderId = provider.Id,
                 MarketingInformation = _flow.State.ProviderMarketingInformation,
-                CourseDirectoryName = GetCourseDirectoryName(provider)
+                ProviderName = provider.ProviderName
             };
         }
 
