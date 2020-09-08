@@ -9,7 +9,7 @@
         <h1 class="govuk-heading-l">@Model.CourseDirectoryName</h1>
 
         <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__summary-list">
-            <govuk-summary-list>
+            <govuk-summary-list class="pttcd-summary-list">
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course Directory name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CourseDirectoryName</govuk-summary-list-row-value>
@@ -30,18 +30,13 @@
                     <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
+                <govuk-summary-list-row class="pttcd-summary-list__row__split">
+                    <govuk-summary-list-row-key>Brief overview of your organisation for employers</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                        @Html.Raw(Model.MarketingInformation)
+                    </govuk-summary-list-row-value>
+                </govuk-summary-list-row>
             </govuk-summary-list>
-            <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information">
-                <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header">
-                    <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header__label">
-                        Brief overview of your organisation for employers
-                    </div>
-                    <a asp-action="ProviderDetail" class="govuk-link pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header__link" append-mptx-id>Change</a>
-                </div>
-                <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__value">
-                    @Html.Raw(Model.MarketingInformation)
-                </div>
-            </div>
         </div>
 
         <form asp-action="ProviderDetailConfirmation" append-provider-context append-mptx-id>
