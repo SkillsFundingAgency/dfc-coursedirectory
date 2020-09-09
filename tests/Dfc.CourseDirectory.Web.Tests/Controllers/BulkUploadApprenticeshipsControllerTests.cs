@@ -15,7 +15,6 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -54,38 +53,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             AssertRedirect(result, "BulkUploadApprenticeships", "PublishYourFile");
             VerifyNotUploaded();
-        }
-
-        [Fact]
-        public async Task IndexPost_ValidLargeFileSupplied()
-        {
-            // arrange
-            SetupValidFileMetadata();
-            const string csvData = "a,large,csv,file,here";
-            SetupFileData(csvData);
-            SetupUploadService_Success();
-            SetupBackgroundProcessingTriggers();
-            bool streamPassedThrough = false;
-            var filePathPattern = $"^{ProviderUKPRN}" +
-                                  @"\/Apprenticeship Bulk Upload\/Files\/[0-9]{6}-[0-9]{6}-bulkUploadFile.csv$";
-
-            _mockBlobStorageService.Setup(
-                    m => m.UploadFileAsync(It.IsRegex(filePathPattern), It.IsAny<Stream>()))
-                .Returns(Task.CompletedTask)
-                .Callback(
-                    (string _, Stream stream) => streamPassedThrough = StreamContainsOriginalData(stream, csvData));
-
-            // act
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
-
-            // assert
-            AssertRedirect(result, null, "Pending");
-
-            _mockBlobStorageService.Verify(
-                m => m.UploadFileAsync(It.IsRegex(filePathPattern), It.IsAny<Stream>()),
-                Times.Once);
-
-            Assert.True(streamPassedThrough);
         }
 
         [Fact]
@@ -200,12 +167,10 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             var bulkUploadApprenticeshipsController = new BulkUploadApprenticeshipsController(
                 NullLogger<BulkUploadApprenticeshipsController>.Instance,
-                mockHttpContextAccessor.Object,
                 _mockApprenticeshipBulkUploadService.Object,
                 new Mock<IApprenticeshipService>().Object,
                 _mockBlobStorageService.Object,
                 new Mock<ICourseService>().Object,
-                new Mock<IWebHostEnvironment>().Object,
                 new Mock<IProviderService>().Object,
                 new Mock<IUserHelper>().Object);
             bulkUploadApprenticeshipsController.ControllerContext.HttpContext = mockContext;
@@ -245,49 +210,40 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 });
         }
 
-        private void SetupUploadService_Success()
+        private void SetupUploadService_Success(bool processedSynchronously = true)
         {
             var errors = new List<string>();
             _mockApprenticeshipBulkUploadService.Setup(
-                    m => m.ValidateAndUploadCSV(It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
-                .ReturnsAsync(errors);
+                    m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>()))
+                .ReturnsAsync(ApprenticeshipBulkUploadResult.Success(processedSynchronously));
         }
 
         private void SetupUploadService_Errors(List<string> errors)
         {
             _mockApprenticeshipBulkUploadService.Setup(
-                    m => m.ValidateAndUploadCSV(It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
-                .ReturnsAsync(errors);
+                    m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>()))
+                .ReturnsAsync(ApprenticeshipBulkUploadResult.Failed(errors));
         }
 
         private void SetupUploadService_ThrowsBadData(string message)
         {
             _mockApprenticeshipBulkUploadService.Setup(
-                    m => m.ValidateAndUploadCSV(It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
+                    m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>()))
                 .ThrowsAsync(new BadDataException(null, message));
         }
 
         private void SetupUploadService_ThrowsHeaderException(string message)
         {
             _mockApprenticeshipBulkUploadService.Setup(
-                    m => m.ValidateAndUploadCSV(It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
+                    m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>()))
                 .ThrowsAsync(new HeaderValidationException(null, null, null, message));
         }
 
         private void SetupUploadService_ThrowsException(string message)
         {
             _mockApprenticeshipBulkUploadService.Setup(
-                    m => m.ValidateAndUploadCSV(It.IsAny<Stream>(), It.IsAny<AuthUserDetails>(), It.IsAny<bool>()))
+                    m => m.ValidateAndUploadCSV(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<AuthUserDetails>()))
                 .ThrowsAsync(new Exception(message));
-        }
-
-        /// <summary>
-        /// Configure mocks to trigger the `processInline` flag to end up as `false`
-        /// </summary>
-        private void SetupBackgroundProcessingTriggers()
-        {
-            _mockApprenticeshipBulkUploadService.Setup(m => m.CountCsvLines(It.IsAny<Stream>())).Returns(1000);
-            _mockBlobStorageService.Setup(m => m.InlineProcessingThreshold).Returns(200);
         }
 
         private static void AssertError(string expectedError, IActionResult result)

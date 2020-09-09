@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
@@ -20,13 +21,15 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using VenueStatus = Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
@@ -41,12 +44,12 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private Mock<IBlobStorageService> _blobStorageService;
         private Mock<ICourseService> _courseService;
         private Mock<IProviderService> _providerService;
+        private Mock<IBinaryStorageProvider> _binaryStorageProvider;
         private ISession _session;
         private ClaimsPrincipal _claimsPrincipal;
         private HttpContext _httpContext;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IWebHostEnvironment> _hostingEnvironment;
         private Mock<IUserHelper> _userHelper;
+        private IOptions<ApprenticeshipBulkUploadSettings> _apprenticeshipBulkUploadSettings;
 
         private IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private BulkUploadApprenticeshipsController _controller;
@@ -59,6 +62,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _blobStorageService = new Mock<IBlobStorageService>();
             _courseService = new Mock<ICourseService>();
             _providerService = new Mock<IProviderService>();
+            _binaryStorageProvider = new Mock<IBinaryStorageProvider>();
             _session = new FakeSession();
             _claimsPrincipal = new ClaimsPrincipal();
             _httpContext = new DefaultHttpContext()
@@ -66,24 +70,32 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 Session = _session,
                 User = _claimsPrincipal
             };
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _hostingEnvironment = new Mock<IWebHostEnvironment>();
             _userHelper = new Mock<IUserHelper>();
+            _apprenticeshipBulkUploadSettings = Options.Create(new ApprenticeshipBulkUploadSettings()
+            {
+                ProcessSynchronouslyRowLimit = 100
+            });
+
+            // Need to be able to resolve the service via IApprenticeshipBulkUploadService
+            var serviceProvider = new ServiceCollection()
+                .AddTransient<IApprenticeshipBulkUploadService>(_ => _apprenticeshipBulkUploadService)
+                .BuildServiceProvider();
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
                 NullLogger<ApprenticeshipBulkUploadService>.Instance,
                 _apprenticeshipService.Object,
                 _venueService.Object,
-                _standardsAndFrameworksCache.Object);
+                _standardsAndFrameworksCache.Object,
+                _binaryStorageProvider.Object,
+                new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
+                _apprenticeshipBulkUploadSettings);
 
             _controller = new BulkUploadApprenticeshipsController(
                 NullLogger<BulkUploadApprenticeshipsController>.Instance,
-                _contextAccessor.Object,
                 _apprenticeshipBulkUploadService,
                 _apprenticeshipService.Object,
                 _blobStorageService.Object,
                 _courseService.Object,
-                _hostingEnvironment.Object,
                 _providerService.Object,
                 _userHelper.Object)
             {
@@ -92,8 +104,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                     HttpContext = _httpContext
                 }
             };
-
-            _contextAccessor.SetupGet(s => s.HttpContext).Returns(_httpContext);
         }
 
         [Fact]
@@ -128,8 +138,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 .ReturnsAsync(Result.Ok());
 
             var addedApprenticeships = new List<IApprenticeship>();
-            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
-                .Callback<IEnumerable<IApprenticeship>>(a => addedApprenticeships.AddRange(a))
+            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
+                .Callback<IEnumerable<IApprenticeship>, bool>((a, _) => addedApprenticeships.AddRange(a))
                 .ReturnsAsync(Result.Ok());
 
             const string csv = "STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY,REGION,SUB_REGION\r\n" +

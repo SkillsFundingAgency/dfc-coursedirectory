@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
@@ -11,12 +13,17 @@ using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
+using Options = Microsoft.Extensions.Options.Options;
 using VenueStatus = Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
@@ -30,28 +37,17 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         private readonly Mock<IApprenticeshipService> _mockApprenticeshipService = new Mock<IApprenticeshipService>();
         private readonly Mock<IStandardsAndFrameworksCache> _standardsAndFrameworksCacheMock = new Mock<IStandardsAndFrameworksCache>();
         private readonly Mock<IVenueService> _mockVenueService = new Mock<IVenueService>();
+        private readonly Mock<IBinaryStorageProvider> _mockBinaryStorageProvider = new Mock<IBinaryStorageProvider>();
+        private readonly IOptions<ApprenticeshipBulkUploadSettings> _settings = Options.Create(new ApprenticeshipBulkUploadSettings()
+        {
+            ProcessSynchronouslyRowLimit = 100
+        });
+        private bool _backgroundWorkScheduled;
 
         private List<Venue> _mockVenues = new List<Venue>
         {
             new Venue {VenueName = DefaultVenue, Status = VenueStatus.Live},
         };
-
-        [Fact]
-        public async void TestCountCsvLines()
-        {
-            SetupDependencies();
-            SetupService();
-            await using var csvStream = new ApprenticeshipCsvBuilder()
-                .WithRow(row => row.WithStandardCode())
-                .WithRow(row => row.WithStandardCode()) // duplicate row isn't valid, but count doesn't currently check that
-                .BuildStream();
-
-            var actualLineCount = _apprenticeshipBulkUploadService.CountCsvLines(csvStream);
-
-            const int headerRowLines = 1;
-            const int dataRowLines = 2;
-            Assert.Equal(headerRowLines + dataRowLines, actualLineCount);
-        }
 
         [Fact]
         public async Task TestValidateAndUploadCSV_WithoutFrameworkOrStandard_Throws()
@@ -531,11 +527,90 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             );
         }
 
+        [Fact]
+        public async Task TestValidateAndUploadCSV_ProcessedSynchronously_UploadsFile()
+        {
+            // Ensure limit is >= row count so file is processed synchronously
+            _settings.Value.ProcessSynchronouslyRowLimit = 2;
+
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv");
+
+            _mockBinaryStorageProvider.Verify(m => m.UploadFile(
+                It.Is<string>(f => f.Contains("myfile.csv")),
+                It.IsAny<Stream>()));
+        }
+
+        [Fact]
+        public async Task TestValidateAndUploadCSV_NotProcessedSynchronously_UploadsFile()
+        {
+            // Ensure limit is < row count so file is *not* processed synchronously
+            _settings.Value.ProcessSynchronouslyRowLimit = 1;
+
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode())
+                    .WithRow(row => row.WithFrameworkCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv");
+
+            _mockBinaryStorageProvider.Verify(m => m.UploadFile(
+                It.Is<string>(f => f.Contains("myfile.csv")),
+                It.IsAny<Stream>()));
+        }
+
+        [Fact]
+        public async Task TestValidateAndUploadCSV_ProcessedSynchronously_UploadsApprenticeshipsSynchronously()
+        {
+            // Ensure limit is >= row count so file is processed synchronously
+            _settings.Value.ProcessSynchronouslyRowLimit = 2;
+
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv");
+
+            Assert.False(_backgroundWorkScheduled);
+        }
+
+        [Fact]
+        public async Task TestValidateAndUploadCSV_NotProcessedSynchronously_UploadsApprenticeshipsAsynchronously()
+        {
+            // Ensure limit is < row count so file is *not* processed synchronously
+            _settings.Value.ProcessSynchronouslyRowLimit = 1;
+
+            await Run_SuccessTest(
+                builder => builder
+                    .WithRow(row => row.WithStandardCode())
+                    .WithRow(row => row.WithFrameworkCode()),
+                validateDataPassedToApprenticeshipService: _ => { },  // no need to validate here
+                fileName: "myfile.csv");
+
+            Assert.True(_backgroundWorkScheduled);
+        }
+
         private void SetupService()
         {
+            // Need to be able to resolve the service via IApprenticeshipBulkUploadService
+            var serviceProvider = new ServiceCollection()
+                .AddTransient<IApprenticeshipBulkUploadService>(_ => _apprenticeshipBulkUploadService)
+                .BuildServiceProvider();
+
+            // Use a background scheduler that executes work items immediately
+            // and wrap that in a `SignallingBackgroundWorkScheduler` so we can observe the scheduling of work items
+            var backgroundWorkScheduler = new SignallingBackgroundWorkScheduler(
+                new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
+                onScheduled: () => _backgroundWorkScheduled = true);
+
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
                 NullLogger<ApprenticeshipBulkUploadService>.Instance, _mockApprenticeshipService.Object,
-                _mockVenueService.Object, _standardsAndFrameworksCacheMock.Object);
+                _mockVenueService.Object, _standardsAndFrameworksCacheMock.Object, _mockBinaryStorageProvider.Object,
+                backgroundWorkScheduler,
+                _settings);
         }
 
         private void SetupDependencies()
@@ -554,27 +629,29 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 .ReturnsAsync((int c, int t, int p) => new Framework{FrameworkCode = c, ProgType = t, PathwayCode = p});
         }
 
-        private async Task Run_SuccessTest(Action<ApprenticeshipCsvBuilder> configureCsv,
-            Action<IList<IApprenticeship>> validateDataPassedToApprenticeshipService)
+        private async Task Run_SuccessTest(
+            Action<ApprenticeshipCsvBuilder> configureCsv,
+            Action<IList<IApprenticeship>> validateDataPassedToApprenticeshipService,
+            string fileName = "mybulkupload.csv")
         {
             // arrange
             SetupDependencies();
             IList<IApprenticeship> dataPassedToApprenticeshipService = null;
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok())
-                .Callback<IEnumerable<IApprenticeship>>(x => dataPassedToApprenticeshipService = x.ToList());
+                .Callback<IEnumerable<IApprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
             await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
-            var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
-                csvStream, _authUserDetails, updateApprenticeships: true); // todo: toggle updateApprenticeships in test(s)
+            var result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+                fileName, csvStream, _authUserDetails);
 
             // assert
-            var emptyErrorList = new List<string>();
-            Assert.Equal(emptyErrorList, actualErrors);
+            var actualErrors = result.Errors;
+            Assert.Empty(actualErrors);
             validateDataPassedToApprenticeshipService(dataPassedToApprenticeshipService);
         }
 
@@ -586,7 +663,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         {
             // arrange
             SetupDependencies();
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok());
             additionalMockSetup?.Invoke();
             SetupService();
@@ -597,7 +674,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             // act
             var actualException = await Record.ExceptionAsync(
                 async () => await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
-                    csvStream, _authUserDetails, updateApprenticeships: true) // todo: toggle updateApprenticeships in test(s)
+                    "mybulkupload.csv", csvStream, _authUserDetails)
             );
 
             // assert
@@ -606,24 +683,27 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             Assert.Equal(expectedErrorMessage, actualException.Message);
         }
 
-        private async Task<List<IApprenticeship>> Run_ReturnsErrorsTest(Action<ApprenticeshipCsvBuilder> configureCsv, string expectedError)
+        private async Task<List<IApprenticeship>> Run_ReturnsErrorsTest(
+            Action<ApprenticeshipCsvBuilder> configureCsv,
+            string expectedError)
         {
             // arrange
             SetupDependencies();
             List<IApprenticeship> dataPassedToApprenticeshipService = null;
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok())
-                .Callback<IEnumerable<IApprenticeship>>(x => dataPassedToApprenticeshipService = x.ToList());
+                .Callback<IEnumerable<IApprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
             await using var csvStream = apprenticeshipCsvBuilder.BuildStream();
 
             // act
-            var actualErrors = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
-                csvStream, _authUserDetails, updateApprenticeships: true); // todo: toggle updateApprenticeships in test(s)
+            var result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
+                "mybulkupload.csv", csvStream, _authUserDetails);
 
             // assert
+            var actualErrors = result.Errors;
             var expectedErrors = new List<string> {expectedError};
             Assert.Equal(expectedErrors, actualErrors);
             return dataPassedToApprenticeshipService;

@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
     {
         Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN);
         Task<IResult> AddApprenticeship(IApprenticeship apprenticeship);
-        Task<IResult> AddApprenticeships(IEnumerable<IApprenticeship> apprenticeships);
+        Task<IResult> AddApprenticeships(IEnumerable<IApprenticeship> apprenticeships, bool addInParallel);
         Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria);
 
         Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id);

@@ -154,7 +154,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult> AddApprenticeships(IEnumerable<IApprenticeship> apprenticeships)
+        public async Task<IResult> AddApprenticeships(
+            IEnumerable<IApprenticeship> apprenticeships,
+            bool addInParallel)
         {
             _logger.LogMethodEnter();
             Throw.IfNull(apprenticeships, nameof(apprenticeships));
@@ -168,7 +170,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync(_addApprenticeshipsUri, content);
+                var response = await _httpClient.PostAsync(
+                    _addApprenticeshipsUri + $"?parallel={addInParallel}",
+                    content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
 
