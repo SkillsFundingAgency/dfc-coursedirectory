@@ -19,8 +19,6 @@ namespace Dfc.CourseDirectory.Functions
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            var environment = Environment.GetEnvironmentVariable("ENVIRONMENT") ?? "Production";
-
             var configuration = GetConfiguration();
             builder.Services.AddSingleton(configuration);
 

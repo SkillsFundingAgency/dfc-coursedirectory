@@ -1,10 +1,7 @@
 {
   "profiles": {
     "Dfc.CourseDirectory.Functions": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ENVIRONMENT": "Development"
-      }
+      "commandName": "Project"
     }
   }
 }
