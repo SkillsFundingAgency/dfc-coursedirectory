@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddSingleton(configuration);
 
             builder.Services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
-			
+
             builder.Services.AddCosmosDbDataStore(
                 endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
                 key: configuration["CosmosDbSettings:PrimaryKey"]);
@@ -48,12 +48,8 @@ namespace Dfc.CourseDirectory.Functions
                 var baseConfig = sp.GetRequiredService<IConfiguration>();
 
                 var configBuilder = new ConfigurationBuilder()
-                    .AddConfiguration(baseConfig);
-
-                if (environment.Equals(Environments.Development, StringComparison.OrdinalIgnoreCase))
-                {
-                    configBuilder.AddUserSecrets(typeof(Startup).Assembly);
-                }
+                    .AddConfiguration(baseConfig)
+                    .AddUserSecrets(typeof(Startup).Assembly);
 
                 return configBuilder.Build();
             }
