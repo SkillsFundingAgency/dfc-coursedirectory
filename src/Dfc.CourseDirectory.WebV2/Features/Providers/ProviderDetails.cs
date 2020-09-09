@@ -25,8 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
         public string CourseDirectoryStatus { get; set; }
         public int Ukprn { get; set; }
         public string TradingName { get; set; }
-        public bool ShowDisplayName { get; set; }
         public string DisplayName { get; set; }
+        public bool CanChangeDisplayName { get; set; }
         public ProviderType ProviderType { get; set; }
         public bool CanChangeProviderType { get; set; }
         public string MarketingInformation { get; set; }
@@ -76,8 +76,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                 CourseDirectoryStatus = cosmosProvider.ProviderStatus,
                 Ukprn = cosmosProvider.Ukprn,
                 TradingName = cosmosProvider.Alias,
-                ShowDisplayName = sqlProvider.HaveAlias,
                 DisplayName = sqlProvider.DisplayName,
+                CanChangeDisplayName = sqlProvider.HaveAlias,
                 ProviderType = cosmosProvider.ProviderType,
                 CanChangeProviderType = AuthorizationRules.CanUpdateProviderType(currentUser),
                 MarketingInformation = cosmosProvider.MarketingInformation != null ?

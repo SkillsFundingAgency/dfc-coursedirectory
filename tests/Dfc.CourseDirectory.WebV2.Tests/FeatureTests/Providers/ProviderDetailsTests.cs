@@ -242,7 +242,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [Theory]
         [InlineData(ProviderDisplayNameSource.ProviderName, "My Provider")]
         [InlineData(ProviderDisplayNameSource.TradingName, "My Trading Name")]
-        public async Task Get_ProviderHasAlias_RendersDisplayName(
+        public async Task Get_ProviderHasAlias_RendersCorrectDisplayName(
             ProviderDisplayNameSource displayNameSource,
             string expectedDisplayName)
         {
@@ -264,13 +264,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             Assert.Equal(expectedDisplayName, doc.GetSummaryListValueWithKey("Display name"));
         }
 
-        [Fact]
-        public async Task Get_ProviderDoesNotHaveAlias_DoesNotRenderDisplayName()
+        [Theory]
+        [InlineData(ProviderDisplayNameSource.ProviderName)]
+        [InlineData(ProviderDisplayNameSource.TradingName)]
+        public async Task Get_ProviderHasAlias_RendersChangeDisplayNameLink(ProviderDisplayNameSource displayNameSource)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
                 providerName: "My Provider",
-                alias: null);
+                alias: "My Trading Name",
+                displayNameSource: displayNameSource);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
 
@@ -281,7 +284,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementByTestId("DisplayName"));
+            Assert.NotNull(doc.GetElementByTestId("ChangeDisplayName"));
         }
     }
 }

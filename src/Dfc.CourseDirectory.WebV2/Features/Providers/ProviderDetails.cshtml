@@ -25,15 +25,18 @@
                 <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
             </govuk-summary-list-row>
-            @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ProviderDisplayName) && Model.ShowDisplayName)
+            @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ProviderDisplayName))
             {
                 <govuk-summary-list-row data-testid="DisplayName">
                     <govuk-summary-list-row-key>Display name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.DisplayName</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="DisplayName" append-provider-context>
-                        Change
-                        <span class="govuk-visually-hidden">display name</span>
-                    </govuk-summary-list-row-action>
+                    @if (Model.CanChangeDisplayName)
+                    {
+                        <govuk-summary-list-row-action asp-action="DisplayName" append-provider-context data-testid="ChangeDisplayName">
+                            Change
+                            <span class="govuk-visually-hidden">display name</span>
+                        </govuk-summary-list-row-action>
+                    }
                 </govuk-summary-list-row>
             }
             <govuk-summary-list-row>
