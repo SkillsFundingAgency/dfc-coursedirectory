@@ -106,6 +106,7 @@
             @Html.HiddenFor(x => x.NotionalNVQLevelv2)
             @Html.HiddenFor(x => x.AwardOrgCode)
             @Html.HiddenFor(x => x.LearnAimRef)
+            @Html.HiddenFor(x => x.RefererAbsolutePath)
 
             <div class="section" id="sectionCourseName">
                 @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -233,9 +234,9 @@
                 })
             </div>
 
-            <button name="saveButton" type="submit" class="govuk-button" id="save">Publish</button>
+            <button name="saveButton" type="submit" class="govuk-button" id="save">Continue</button>
 
-            <a href="@(HttpContextAccessor.HttpContext.Request.GetTypedHeaders().Referer?.AbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="govuk-button govuk-button--secondary">Cancel</a>
+            <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="govuk-button govuk-button--secondary">Cancel</a>
 
         </form>
 
@@ -324,9 +325,9 @@
             }
 
             if (!isWorkBased) {
-                var $nationalTrue = $("#National_true");
+                var $nationalTrue = $("#nationalTrue");
                 $nationalTrue.prop("checked", false);
-                var $nationalFalse = $("#National_false");
+                var $nationalFalse = $("#nationalFalse");
                 $nationalFalse.prop("checked", false);
                 var $regionSection = $("#regions-section");
                 $regionSection.hide();

@@ -1,0 +1,156 @@
+﻿@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryList
+@using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
+@model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunSummaryViewModel
+@{
+    ViewData["Title"] = "Copy course";
+    Layout = "_Layout_Your_Courses";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">Check and publish your course</h1>
+        <h2 class="govuk-heading-l">@Model.LearnAimRefTitle</h2>
+        <h3 class="govuk-heading-m">Course details</h3>
+
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "CourseName",
+                Title = "Course name",
+                Value = Model.CourseName,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionCourseName"
+            })
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "CourseId",
+                Title = "Your reference",
+                Value = Model.CourseProviderReference,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionCourseProviderReference"
+            })
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "DeliveryMode",
+                Title = "Course type",
+                Value = Model.DeliveryMode.ToDescription(),
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionDeliveryType"
+            })
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "StartDate",
+                Title = "Start date",
+                Value = Model.StartDate,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionStartDate"
+            })
+
+            @if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+            {
+                @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
+                {
+                    Id = "Venues",
+                    Title = "Course location",
+                    Value = Model.Venues,
+                    Action = "Index",
+                    Controller = "CopyCourseRun",
+                    Section = "sectionVenue"
+                })
+            }
+            else if (Model.DeliveryMode == DeliveryMode.WorkBased)
+            {
+                @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
+                {
+                    Id = "Regions",
+                    Title = "Regions",
+                    Value = Model.Regions,
+                    Action = "Index",
+                    Controller = "CopyCourseRun",
+                    Section = "RegionItemsCheckboxList"
+                })
+            }
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "Url",
+                Title = "Course webpage",
+                Value = Model.Url,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionUrl"
+            })
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "Cost",
+                Title = "Cost",
+                Value = string.IsNullOrWhiteSpace(Model.Cost) ? Model.Cost : "£" + Model.Cost,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionCost"
+            })
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "CostDesc",
+                Title = "Cost description",
+                Value = Model.CostDescription,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionCost"
+            })
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "CourseLength",
+                Title = "Duration",
+                Value = Model.CourseLength,
+                Action = "Index",
+                Controller = "CopyCourseRun",
+                Section = "sectionDuration"
+            })
+
+            @if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+            {
+                @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
+                    Id = "AttendancePattern",
+                    Title = "Course hours",
+                    Value = Model.AttendancePattern.ToDescription(),
+                    Action = "Index",
+                    Controller = "CopyCourseRun",
+                    Section = "FullPartTimeRadioButtons"
+                })
+                @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
+                    Id = "AttendanceTime",
+                    Title = "Attendance pattern",
+                    Value = Model.StudyMode.ToDescription(),
+                    Action = "Index",
+                    Controller = "CopyCourseRun",
+                    Section = "AttendancePatternRadioButtons"
+                })
+            }
+
+        </dl>
+
+        <h3 class="govuk-heading-m">Publish your course</h3>
+        <p class="govuk-body">Your course information will be added to Publish to the course directory and available to learners searching for learning and training opportunities on the National Careers Service.</p>
+
+        <form asp-controller="CopyCourseRun" asp-action="Publish">
+            <button type="submit" class="govuk-button" data-module="govuk-button">Publish</button>
+        </form>
+    </div>
+</div>

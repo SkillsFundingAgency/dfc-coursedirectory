@@ -23,10 +23,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string DurationLength { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
-
         public List<SelectListItem> Venues { get; set; }
         public Guid? VenueId { get; set; }
-
         public ChooseRegionModel ChooseRegion { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
@@ -36,14 +34,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public AttendancePattern AttendanceMode { get; set; }
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-
         public string QualificationType { get; set; }
-
         public bool FlexibleStartDate { get; set; }
-
         public string NotionalNVQLevelv2 { get; set; }
         public PublishMode PublishMode { get; set; }
-
+        public string RefererAbsolutePath { get; set; }
     }
-
 }
