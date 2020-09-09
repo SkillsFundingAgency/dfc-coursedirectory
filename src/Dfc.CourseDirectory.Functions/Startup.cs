@@ -1,10 +1,13 @@
 ﻿using System;
+using Azure;
+using Azure.Search.Documents;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Functions;
+using Dfc.CourseDirectory.Functions.Config;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +43,9 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
             builder.Services.AddSingleton<SqlDataSync>();
+
+            builder.Services.AddSingleton<Func<SearchClientSettings, SearchClient>>(settings =>
+                new SearchClient(new Uri(settings.Url), settings.IndexName, new AzureKeyCredential(settings.Key)));
 
             IConfiguration GetConfiguration()
             {

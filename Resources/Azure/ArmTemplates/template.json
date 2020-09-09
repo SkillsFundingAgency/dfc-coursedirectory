@@ -722,6 +722,14 @@
               {
                 "name": "CosmosDbSettings__ConnectionString",
                 "value": "[parameters('providerPortalCosmosDbConnectionString')]"
+              },
+              {
+                "name": "AzureSearchUrl",
+                "value": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]"
+              },
+              {
+                "name": "AzureSearchAdminKey",
+                "value": "[parameters('searchAdminKey')]"
               }
             ]
           },
