@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using UkrlpService;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 {
     public class UkrlpService : IUkrlpService
     {
+        private readonly ILogger<UkrlpService> _logger;
+
         // Magic values to make the service happy
         private const string QueryId = "0";
         private const string StakeholderId = "1";
@@ -22,9 +25,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             "PD2" // Deactivation complete
         };
 
+        public UkrlpService(ILogger<UkrlpService> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<IReadOnlyCollection<ProviderRecordStructure>> GetAllProviderData(DateTime updatedSince)
         {
             using var client = new ProviderQueryPortTypeClient();
+            _logger.LogDebug($"UKRLP Sync: Using UKRLP endpoint '{client.Endpoint.Address.Uri}'");
+
             client.ChannelFactory.Endpoint.Binding.SendTimeout = _sendTimeout;
             client.ChannelFactory.Endpoint.Binding.ReceiveTimeout = _receiveTimeout;
 
@@ -34,6 +44,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 var request = CreateRequest(status);
 
+                _logger.LogDebug($"UKRLP Sync: Fetching UKRLP data for status '{status}'...");
                 var result = await client.retrieveAllProvidersAsync(request);
                 var records = result.ProviderQueryResponse.MatchingProviderRecords;
 
@@ -41,6 +52,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 {
                    results.AddRange(records);
                 }
+                _logger.LogDebug($"UKRLP Sync: {records?.Length ?? 0} records received from UKRLP API for status '{status}.'");
             }
 
             return results;

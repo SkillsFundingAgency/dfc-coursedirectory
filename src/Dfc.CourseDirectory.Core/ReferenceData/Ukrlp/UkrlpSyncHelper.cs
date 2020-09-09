@@ -37,13 +37,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncAllProviderData(DateTime updatedSince)
         {
+            _logger.LogInformation($"UKRLP Sync: Beginning {nameof(SyncAllProviderData)}, fetching providers from UKRLP API...");
             var allProviders = await _ukrlpService.GetAllProviderData(updatedSince);
+            _logger.LogInformation($"UKRLP Sync: {allProviders.Count} providers received, processing...");
 
             var createdCount = 0;
             var updatedCount = 0;
 
             foreach (var providerData in allProviders)
             {
+                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount+updatedCount+1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
                 var result = await CreateOrUpdateProvider(providerData);
 
                 if (result == CreateOrUpdateResult.Created)
@@ -56,23 +59,24 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 }
             }
 
-            _logger.LogInformation("Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
+            _logger.LogInformation("UKRLP Sync: Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
         }
 
         public async Task SyncProviderData(int ukprn)
         {
+            _logger.LogDebug($"UKRLP Sync: Fetching updated UKRLP data for UKPRN {ukprn}...");
             var providerData = await _ukrlpService.GetProviderData(ukprn);
 
             if (providerData == null)
             {
-                _logger.LogWarning("Failed to update provider information from UKRLP for {0}.", ukprn);
+                _logger.LogWarning("UKRLP Sync: Failed to update provider information from UKRLP for {0}.", ukprn);
 
                 return;
             }
 
             await CreateOrUpdateProvider(providerData);
 
-            _logger.LogInformation("Successfully updated provider information from UKRLP for {0}.", ukprn);
+            _logger.LogInformation("UKRLP Sync: Successfully updated provider information from UKRLP for {0}.", ukprn);
         }
 
         // internal for testing
