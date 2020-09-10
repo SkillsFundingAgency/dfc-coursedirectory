@@ -32,9 +32,8 @@
                 </govuk-summary-list-row>
                 <govuk-summary-list-row class="pttcd-summary-list__row__split">
                     <govuk-summary-list-row-key>Brief overview of your organisation for employers</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        @Html.Raw(Model.MarketingInformation)
-                    </govuk-summary-list-row-value>
+                    @* N.B. Don't add whitespace to element below - we rely on CSS :empty selector *@
+                    <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
             </govuk-summary-list>
         </div>

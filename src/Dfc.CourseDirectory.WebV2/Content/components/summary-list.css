@@ -56,8 +56,13 @@
         width: 100%;
     }
 
+    .pttcd-summary-list__row__split .govuk-summary-list__value:empty {
+        padding: 0 !important;
+    }
+
     .pttcd-summary-list__row__split .govuk-summary-list__actions {
         border-bottom: 0;
+        padding-right: 0;
         position: absolute;
         right: 0;
     }
