@@ -19,6 +19,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Fact]
+        public async Task Get_ProviderUser_ReturnsForbidden()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Both,
+                providerName: "Provider name",
+                alias: "Trading name");
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"providers/display-name?providerId={providerId}");
+
+            await User.AsProviderUser(providerId, ProviderType.Both);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
         public async Task Get_ProviderDoesNotExist_ReturnsRedirect()
         {
             // Arrange
@@ -79,6 +101,35 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
             Assert.Equal("checked", doc.GetElementById(expectedCheckedElementId).GetAttribute("checked"));
+        }
+
+        [Fact]
+        public async Task Post_ProviderUser_ReturnsForbidden()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Both,
+                providerName: "Provider name",
+                alias: "Trading name");
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("DisplayNameSource", "TradingName")
+                .ToContent();
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"providers/display-name?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            await User.AsProviderUser(providerId, ProviderType.Both);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]

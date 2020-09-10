@@ -77,7 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                 Ukprn = cosmosProvider.Ukprn,
                 TradingName = cosmosProvider.Alias,
                 DisplayName = sqlProvider.DisplayName,
-                CanChangeDisplayName = sqlProvider.HaveAlias,
+                CanChangeDisplayName = sqlProvider.HaveAlias && AuthorizationRules.CanUpdateProviderDisplayName(currentUser),
                 ProviderType = cosmosProvider.ProviderType,
                 CanChangeProviderType = AuthorizationRules.CanUpdateProviderType(currentUser),
                 MarketingInformation = cosmosProvider.MarketingInformation != null ?

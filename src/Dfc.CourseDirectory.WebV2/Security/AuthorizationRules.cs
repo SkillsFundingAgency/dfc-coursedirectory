@@ -8,6 +8,9 @@ namespace Dfc.CourseDirectory.WebV2.Security
             userInfo.IsDeveloper ||
             (userInfo.IsProvider && userInfo.CurrentProviderId.Value == providerId);
 
+        public static bool CanUpdateProviderDisplayName(AuthenticatedUserInfo userInfo) =>
+            userInfo.IsDeveloper || userInfo.IsHelpdesk || userInfo.Role == RoleNames.ProviderSuperUser;
+
         public static bool CanUpdateProviderType(AuthenticatedUserInfo userInfo) =>
             userInfo.IsDeveloper || userInfo.IsHelpdesk;
 

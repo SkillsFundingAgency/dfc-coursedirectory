@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using OneOf.Types;
 
@@ -34,14 +35,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
         IRequestHandler<Command, Success>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public Handler(ISqlQueryDispatcher sqlQueryDispatcher)
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, ICurrentUserProvider currentUserProvider)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
+            CheckUserPermissions();
+
             var provider = await GetProvider(request.ProviderId);
             CheckHaveAlias(provider);
 
@@ -54,23 +59,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
             };
         }
 
-        private async Task<Provider> GetProvider(Guid providerId)
-        {
-            var provider = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderById()
-            {
-                ProviderId = providerId
-            });
-
-            if (provider == null)
-            {
-                throw new ResourceDoesNotExistException(ResourceType.Provider, providerId);
-            }
-
-            return provider;
-        }
-
         public async Task<Success> Handle(Command request, CancellationToken cancellationToken)
         {
+            CheckUserPermissions();
+
             var provider = await GetProvider(request.ProviderId);
             CheckHaveAlias(provider);
 
@@ -94,6 +86,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
             {
                 throw new ErrorException<NoAliasDefined>(new NoAliasDefined());
             }
+        }
+
+        private void CheckUserPermissions()
+        {
+            var currentUser = _currentUserProvider.GetCurrentUser();
+
+            if (currentUser.Role == RoleNames.ProviderUser)
+            {
+                throw new NotAuthorizedException();
+            }
+        }
+
+        private async Task<Provider> GetProvider(Guid providerId)
+        {
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderById()
+            {
+                ProviderId = providerId
+            });
+
+            if (provider == null)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.Provider, providerId);
+            }
+
+            return provider;
         }
     }
 }
