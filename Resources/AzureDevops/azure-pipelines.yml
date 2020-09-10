@@ -91,27 +91,14 @@ steps:
     arguments: '--configuration ${{ variables.BuildConfiguration }}'
   displayName: Build
 
-- powershell: |
-    $testProjects = Get-ChildItem tests/ -Directory -Filter *.Tests
-
-    foreach ($project in $testProjects) {
-      dotnet test tests/${project}/ --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
-
-      if ($LASTEXITCODE -ne 0) {
-        Exit $LASTEXITCODE
-      }
-    }
-  displayName: Test
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'tests/**/*.Tests.csproj'
+    arguments: '--configuration ${{ variables.BuildConfiguration }} --filter SkipOnCI!=true'
   env:
     ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)
-
-- task: PublishTestResults@2
-  displayName: "Publish Test Results"
-  inputs:
-    testResultsFormat: VSTest
-    testResultsFiles: "**/*.trx"
-    searchFolder: "$(Agent.TempDirectory)"
-  condition: succeededOrFailed()
+  displayName: Test
 
 - task: DotNetCoreCLI@2
   displayName: Publish Dfc.CourseDirectory.Web
