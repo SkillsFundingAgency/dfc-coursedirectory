@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         }
 
         [Fact]
-        public async Task SyncProviderData_CreatesProvider()
+        public async Task SyncProviderData_ProviderDoesNotExist_CreatesProviderInfo()
         {
             // Arrange
             const int ukprn = 1234569;
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         }
 
         [Fact]
-        public async Task SyncProviderData_UpdatesExistingProvider()
+        public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
             // Arrange
             const int ukprn = 1234567;
