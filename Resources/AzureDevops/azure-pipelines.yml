@@ -77,12 +77,19 @@ steps:
     targets: 'prod'
 
 - task: MSBuild@1
-  displayName: Build
+  displayName: Build database
   inputs:
-    solution: 'Dfc.CourseDirectory.sln'
+    solution: 'src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
-    msbuildArguments: '-t:Restore,Build'
+    msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration ${{ variables.BuildConfiguration }}'
+  displayName: Build
 
 - powershell: |
     $testProjects = Get-ChildItem tests/ -Directory -Filter *.Tests
