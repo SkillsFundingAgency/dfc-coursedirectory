@@ -5,6 +5,7 @@ namespace Dfc.CourseDirectory.Core.Models
     [Flags]
     public enum ProviderType
     {
+        Undefined = 0,
         FE = 1,
         Apprenticeships = 2,
         Both = FE | Apprenticeships,
@@ -15,6 +16,7 @@ namespace Dfc.CourseDirectory.Core.Models
         public static string ToDisplayName(this ProviderType providerType) =>
             providerType switch
             {
+                ProviderType.Undefined => "",
                 ProviderType.Apprenticeships => "Apprenticeships",
                 ProviderType.FE => "F.E.",
                 ProviderType.Both => "Both",
