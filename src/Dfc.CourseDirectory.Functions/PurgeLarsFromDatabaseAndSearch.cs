@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Functions
             var deletedResult = await _sqlQueryDispatcher.ExecuteQuery(new DeleteLarsLearningDelivery(learnAimRef));
 
             deletedResult.Switch(
-                deletedLearnAimRef => log.LogInformation($"{nameof(PurgeLarsFromDatabaseAndSearch)} successfully deleted {nameof(learnAimRef)}: {{{nameof(learnAimRef)}}} from database.", learnAimRef),
+                _ => log.LogInformation($"{nameof(PurgeLarsFromDatabaseAndSearch)} successfully deleted {nameof(learnAimRef)}: {{{nameof(learnAimRef)}}} from database.", learnAimRef),
                 _ => log.LogWarning($"{nameof(PurgeLarsFromDatabaseAndSearch)} failed to find {nameof(learnAimRef)} {{{nameof(learnAimRef)}}} in database.", learnAimRef));
 
             try

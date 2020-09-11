@@ -7,9 +7,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class DeleteLarsLearningDeliveryHandler : ISqlQueryHandler<DeleteLarsLearningDelivery, OneOf<string, None>>
+    public class DeleteLarsLearningDeliveryHandler : ISqlQueryHandler<DeleteLarsLearningDelivery, OneOf<Success, NotFound>>
     {
-        public async Task<OneOf<string, None>> Execute(SqlTransaction transaction, DeleteLarsLearningDelivery query)
+        public async Task<OneOf<Success, NotFound>> Execute(SqlTransaction transaction, DeleteLarsLearningDelivery query)
         {
             var sql = @$"
                 DELETE FROM LARS.LearningDelivery
@@ -20,10 +20,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
             if (string.IsNullOrWhiteSpace(result))
             {
-                return new None();
+                return new NotFound();
             }
 
-            return result;
+            return new Success();
         }
     }
 }
