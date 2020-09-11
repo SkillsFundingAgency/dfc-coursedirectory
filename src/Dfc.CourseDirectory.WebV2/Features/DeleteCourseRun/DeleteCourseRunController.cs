@@ -38,7 +38,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         [HttpGet("confirmed")]
         [AssignLegacyProviderContext]
-        public async Task<IActionResult> Confirmed(FormFlowInstance instance, ConfirmedQuery request) =>
-            await _mediator.SendAndMapResponse(request, vm => View(vm));
+        public async Task<IActionResult> Confirmed(
+            [FromServices] IProviderContextProvider providerContextProvider,
+            [FromServices] IProviderInfoCache providerInfoCache,
+            FormFlowInstance instance,
+            ConfirmedQuery request)
+        {
+            var vm = await _mediator.Send(request);
+
+            var providerInfo = await providerInfoCache.GetProviderInfo(vm.ProviderId);
+            providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
+
+            return View(vm);
+        }
     }
 }

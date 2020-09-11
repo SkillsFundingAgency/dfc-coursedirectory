@@ -565,6 +565,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 new FlowModel()
                 {
                     CourseName = "Maths",
+                    ProviderId = providerId,
                     ProviderUkprn = providerUkprn
                 });
 
@@ -611,6 +612,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 new FlowModel()
                 {
                     CourseName = "Maths",
+                    ProviderId = providerId,
                     ProviderUkprn = providerUkprn
                 });
 
@@ -660,6 +662,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 new FlowModel()
                 {
                     CourseName = "Maths",
+                    ProviderId = providerId,
                     ProviderUkprn = providerUkprn
                 });
 
