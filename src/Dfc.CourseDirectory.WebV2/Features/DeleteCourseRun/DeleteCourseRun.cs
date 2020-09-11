@@ -21,6 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
     public class FlowModel
     {
         public string CourseName { get; set; }
+        public Guid ProviderId { get; set; }
         public int ProviderUkprn { get; set; }
     }
 
@@ -60,6 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
     public class ConfirmedViewModel
     {
+        public Guid ProviderId { get; set; }
         public string CourseName { get; set; }
         public bool HasOtherCourseRuns { get; set; }
     }
@@ -122,6 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             _formFlowInstance.UpdateState(new FlowModel()
             {
                 CourseName = courseRun.CourseName,
+                ProviderId = (await _providerInfoCache.GetProviderIdForUkprn(ukprn)).Value,
                 ProviderUkprn = ukprn
             });
 
@@ -147,6 +150,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
             return new ConfirmedViewModel()
             {
+                ProviderId = _formFlowInstance.State.ProviderId,
                 CourseName = _formFlowInstance.State.CourseName,
                 HasOtherCourseRuns = liveCourses.Any()
             };
