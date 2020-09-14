@@ -1,6 +1,10 @@
 @model Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails.ViewModel
 @{
-    ViewContext.SetLayoutData(title: Model.ProviderName, showBackLink: true);
+    ViewContext.SetLayoutData(title: Model.ProviderName);
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="Provider" asp-action="Dashboard">Back to home screen</govuk-back-link>
 }
 
 <div class="govuk-grid-row">
