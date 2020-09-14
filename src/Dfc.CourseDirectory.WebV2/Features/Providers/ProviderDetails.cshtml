@@ -32,9 +32,8 @@
                     <govuk-summary-list-row-value>@Model.DisplayName</govuk-summary-list-row-value>
                     @if (Model.CanChangeDisplayName)
                     {
-                        <govuk-summary-list-row-action asp-action="DisplayName" append-provider-context data-testid="ChangeDisplayName">
+                        <govuk-summary-list-row-action href="@ProviderContext.AppendToUrl(Url.Action("DisplayName"))" visually-hidden-text="display name" data-testid="ChangeDisplayName">
                             Change
-                            <span class="govuk-visually-hidden">display name</span>
                         </govuk-summary-list-row-action>
                     }
                 </govuk-summary-list-row>
