@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
+using Dfc.CourseDirectory.WebV2.ViewHelpers;
 using FormFlow;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
@@ -149,6 +150,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddScoped<ICookieSettingsProvider, CookieSettingsProvider>();
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
             services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
+            services.AddTransient<ProviderContextHelper>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
