@@ -7,6 +7,10 @@
     <vc:admin-top-nav />
 }
 
+@section BackLink {
+    @RenderSection("BackLink", required: false)
+}
+
 @RenderBody()
 
 @section Scripts {

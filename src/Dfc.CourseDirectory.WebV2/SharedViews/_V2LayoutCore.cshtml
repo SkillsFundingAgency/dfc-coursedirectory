@@ -59,10 +59,7 @@
 
         @RenderSection("PreMain", required: false)
 
-        @if (ViewBag.ShowBackLink == true)
-        {
-            <pttcd-back-link />
-        }
+        @RenderSection("BackLink", required: false)
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             @RenderBody()
