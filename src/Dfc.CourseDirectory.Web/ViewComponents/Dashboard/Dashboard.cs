@@ -37,9 +37,11 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly IFeatureFlagProvider _featureFlagProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
-            IEnvironmentHelper environmentHelper, IFeatureFlagProvider featureFlagProvider, ISqlQueryDispatcher sqlQueryDispatcher)
+            IEnvironmentHelper environmentHelper, IFeatureFlagProvider featureFlagProvider, ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderContextProvider providerContextProvider)
         {
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
@@ -58,6 +60,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             _environmentHelper = environmentHelper;
             _featureFlagProvider = featureFlagProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerContextProvider = providerContextProvider;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(DashboardModel model)
@@ -225,7 +228,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 if (actualModel.QAFeatureIsEnabled)
                 {
-                    var providerId = ViewContext.HttpContext.Features.Get<ProviderContextFeature>().ProviderContext.ProviderInfo.ProviderId;
+                    var providerId = (await _providerContextProvider.GetProviderContext()).ProviderInfo.ProviderId;
 
                     actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
                         new GetProviderApprenticeshipQAStatus()
