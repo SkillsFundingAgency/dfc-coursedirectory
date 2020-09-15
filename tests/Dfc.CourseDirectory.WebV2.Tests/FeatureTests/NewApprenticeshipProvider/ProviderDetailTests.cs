@@ -100,7 +100,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("Provider name", doc.GetElementById("ProviderName").GetAttribute("value"));
             Assert.Equal("<p>Existing marketing info</p>", doc.GetElementById("MarketingInformation").TextContent.Trim());
         }
 

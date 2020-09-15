@@ -15,12 +15,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ProviderDetail" append-provider-context append-mptx-id>
-            <span class="govuk-caption-l">Course Directory</span>
-            <h1 class="govuk-heading-l">Edit your details</h1>
-
-            <govuk-input asp-for="ProviderName" disabled="true">
-                <govuk-input-label>Course Directory name</govuk-input-label>
-            </govuk-input>
+            <h1 class="govuk-heading-l">Provider information</h1>
 
             <pttcd-rich-text-editor>
                 <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
