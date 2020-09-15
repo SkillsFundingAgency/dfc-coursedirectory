@@ -19,16 +19,16 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
 
     public class CurrentProviderModelBinder : IModelBinder
     {
-        public async Task BindModelAsync(ModelBindingContext bindingContext)
+        public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             if (bindingContext.ModelType != typeof(ProviderContext))
             {
                 bindingContext.Result = ModelBindingResult.Failed();
-                return;
+                return Task.CompletedTask;
             }
 
             var providerContextProvider = bindingContext.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
-            var providerInfo = await providerContextProvider.GetProviderContext();
+            var providerInfo = providerContextProvider.GetProviderContext();
 
             if (providerInfo == null)
             {
@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
                 bindingContext.Result = ModelBindingResult.Success(providerInfo);
             }
 
-            return;
+            return Task.CompletedTask;
         }
     }
 }

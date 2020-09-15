@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -41,26 +42,37 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 }
 
                 Guid providerId;
+                bool strict = true;
 
-                var routeProviderId = TryGetProviderIdFromRequest();
+                var requestProviderId = TryGetProviderIdFromRequest();
+
+                if (!requestProviderId.HasValue)
+                {
+                    requestProviderId = await TryGetProviderIdFromLegacyContext();
+
+                    if (requestProviderId.HasValue)
+                    {
+                        strict = false;
+                    }
+                }
 
                 if (user.IsDeveloper || user.IsHelpdesk)
                 {
-                    if (!routeProviderId.HasValue)
+                    if (!requestProviderId.HasValue)
                     {
                         return;
                     }
                     else
                     {
-                        providerId = routeProviderId.Value;
+                        providerId = requestProviderId.Value;
                     }
                 }
                 else // user.IsProvider == true
                 {
                     var usersOwnProviderId = user.CurrentProviderId.Value;
 
-                    // Route param, if specified, must match user's own org
-                    if (routeProviderId.HasValue && routeProviderId.Value != usersOwnProviderId)
+                    // Route param or session value, if specified, must match user's own org
+                    if (requestProviderId.HasValue && requestProviderId.Value != usersOwnProviderId)
                     {
                         context.Result = new ForbidResult();
                         return;
@@ -72,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 var providerInfo = await providerInfoCache.GetProviderInfo(providerId);
                 if (providerInfo != null)
                 {
-                    var providerContext = new ProviderContext(providerInfo);
+                    var providerContext = new ProviderContext(providerInfo, strict);
                     providerContextProvider.SetProviderContext(providerContext);
                 }
             }
@@ -96,6 +108,17 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 if (matches.Count == 1 && Guid.TryParse(matches.Single(), out var providerId))
                 {
                     return providerId;
+                }
+
+                return null;
+            }
+
+            async Task<Guid?> TryGetProviderIdFromLegacyContext()
+            {
+                var ukprn = context.HttpContext.Session.GetInt32("UKPRN");
+                if (ukprn.HasValue)
+                {
+                    return await providerInfoCache.GetProviderIdForUkprn(ukprn.Value);
                 }
 
                 return null;

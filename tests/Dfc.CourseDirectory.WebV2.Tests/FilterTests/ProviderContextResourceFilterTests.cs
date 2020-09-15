@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUser_UsesProviderFromQueryParam(TestUserType userType)
+        public async Task AdminUser_QueryParamSpecified_AssignsContext(TestUserType userType)
         {
             // Arrange
             var ukprn = 12345;
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUser_UsesProviderFromRoute(TestUserType userType)
+        public async Task AdminUser_RouteValueSpecified_AssignsContext(TestUserType userType)
         {
             // Arrange
             var ukprn = 12345;
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUser_QueryParamAndRouteSpecifiedButDontMatchFailsBinding(TestUserType userType)
+        public async Task AdminUser_QueryParamAndRouteSpecifiedButDontMatch_DoesNotAssignContext(TestUserType userType)
         {
             // Arrange
             var ukprn = 12345;
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUser_NoQueryParamFailsBinding(TestUserType userType)
+        public async Task AdminUser_MissingQueryParam_DoesNotAssignContext(TestUserType userType)
         {
             // Arrange
             await User.AsTestUser(userType);
@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.ProviderUser)]
         [InlineData(TestUserType.ProviderSuperUser)]
-        public async Task ProviderUser_UsesProviderFromAuthToken(TestUserType userType)
+        public async Task ProviderUser_AssignsContextFromAuthToken(TestUserType userType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.ProviderUser)]
         [InlineData(TestUserType.ProviderSuperUser)]
-        public async Task ProviderUser_QueryParamSpecifiedDoesntMatchAuthTokenReturnsForbidden(TestUserType userType)
+        public async Task ProviderUser_QueryParamSpecifiedDoesntMatchAuthToken_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         [Theory]
         [InlineData(TestUserType.ProviderUser)]
         [InlineData(TestUserType.ProviderSuperUser)]
-        public async Task ProviderUser_RouteParamSpecifiedDoesntMatchAuthTokenReturnsForbidden(TestUserType userType)
+        public async Task ProviderUser_RouteParamSpecifiedDoesntMatchAuthToken_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         }
 
         [Fact]
-        public async Task ProviderDoesNotExistFailsBinding()
+        public async Task AdminUser_ProviderDoesNotExist_DoesNotAssignContext()
         {
             // Arrange
             await User.AsTestUser(TestUserType.Developer);

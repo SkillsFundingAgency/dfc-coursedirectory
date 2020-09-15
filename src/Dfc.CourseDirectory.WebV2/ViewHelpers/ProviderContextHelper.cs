@@ -1,19 +1,20 @@
 ﻿using System;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Flurl;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Dfc.CourseDirectory.WebV2.ViewHelpers
 {
-    public class ProviderContextHelper : IViewContextAware
+    public class ProviderContextHelper
     {
-        private ViewContext _viewContext;
+        private readonly IProviderContextProvider _providerContextProvider;
+
+        public ProviderContextHelper(IProviderContextProvider providerContextProvider)
+        {
+            _providerContextProvider = providerContextProvider;
+        }
 
         public ProviderInfo ProviderInfo => ProviderContext?.ProviderInfo;
 
-        private ProviderContext ProviderContext =>
-            _viewContext.HttpContext.Features.Get<ProviderContextFeature>()?.ProviderContext;
+        private ProviderContext ProviderContext => _providerContextProvider.GetProviderContext();
 
         public static implicit operator ProviderContext(ProviderContextHelper helper) =>
             helper.ProviderContext;
@@ -26,11 +27,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewHelpers
             }
 
             return new Url(url).WithProviderContext(this);
-        }
-
-        void IViewContextAware.Contextualize(ViewContext viewContext)
-        {
-            _viewContext = viewContext;
         }
     }
 }
