@@ -141,7 +141,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             services.AddTransient<MptxManager>();
             services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
-            services.AddTransient<ITagHelperComponent, AppendProviderContextTagHelperComponent>();
             services.AddTransient<ITagHelperComponent, AppendMptxInstanceTagHelperComponent>();
             services.AddTransient<Features.ApprenticeshipQA.ProviderAssessment.FlowModelInitializer>();
             services.AddTransient<Features.ApprenticeshipQA.ApprenticeshipAssessment.FlowModelInitializer>();

@@ -14,7 +14,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ProviderDetail" append-provider-context append-mptx-id>
+        <form asp-action="ProviderDetail" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
             <h1 class="govuk-heading-l">Provider information</h1>
 
             <pttcd-rich-text-editor>

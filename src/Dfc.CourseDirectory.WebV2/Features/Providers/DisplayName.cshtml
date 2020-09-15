@@ -9,7 +9,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="DisplayName" append-provider-context>
+        <form asp-action="DisplayName" asp-all-route-data="@ProviderContext.RouteValues">
             <govuk-radios asp-for="DisplayNameSource">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--xl">

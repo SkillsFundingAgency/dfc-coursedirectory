@@ -56,8 +56,7 @@
                         </button>
                     </li>
                     <li class="flex-item" style="padding-top: 15px">
-
-                        @Html.ActionLink("Cancel", "Details", "Provider", new { }, new { @class = "govuk-link" })
+                        <a asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Cancel</a>
                     </li>
                 </ul>
 

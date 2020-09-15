@@ -23,7 +23,7 @@
         <govuk-summary-list-row-key>Apprenticeship information</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
-            <a asp-action="ApprenticeshipDetails" asp-fragment="MarketingInformation" append-provider-context append-mptx-id class="govuk-link">
+            <a asp-action="ApprenticeshipDetails" asp-fragment="MarketingInformation" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> apprenticeship information</span>
             </a>
         </govuk-summary-list-row-action>
@@ -32,7 +32,7 @@
         <govuk-summary-list-row-key>Apprenticeship website</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.Website</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
-            <a asp-action="ApprenticeshipDetails" asp-fragment="Website" append-provider-context append-mptx-id class="govuk-link">
+            <a asp-action="ApprenticeshipDetails" asp-fragment="Website" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> apprenticeship website</span>
             </a>
         </govuk-summary-list-row-action>
@@ -41,7 +41,7 @@
         <govuk-summary-list-row-key>Email</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ContactEmail</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
-            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactEmail" append-provider-context append-mptx-id class="govuk-link">
+            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactEmail" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> email</span>
             </a>
         </govuk-summary-list-row-action>
@@ -50,7 +50,7 @@
         <govuk-summary-list-row-key>Telephone</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ContactTelephone</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
-            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactTelephone" append-provider-context append-mptx-id class="govuk-link">
+            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactTelephone" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> telephone</span>
             </a>
         </govuk-summary-list-row-action>
@@ -59,7 +59,7 @@
         <govuk-summary-list-row-key>Contact URL</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ContactWebsite</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
-            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactWebsite" append-provider-context append-mptx-id class="govuk-link">
+            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactWebsite" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> contact URL</span>
             </a>
         </govuk-summary-list-row-action>
@@ -68,7 +68,7 @@
         <govuk-summary-list-row-key>Location type</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ApprenticeshipLocationType.ToDisplayName()</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
-            <a asp-action="ApprenticeshipLocations" append-provider-context append-mptx-id class="govuk-link">
+            <a asp-action="ApprenticeshipLocations" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> location type</span>
             </a>
         </govuk-summary-list-row-action>
@@ -114,7 +114,7 @@
 {
     <table class="govuk-table">
         <caption class="govuk-table__caption">
-            <a asp-action="AddApprenticeshipClassroomLocation" append-mptx-id class="govuk-link govuk-body govuk-!-margin-bottom-0" style="float:right">Add</a>
+            <a asp-action="AddApprenticeshipClassroomLocation" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link govuk-body govuk-!-margin-bottom-0" style="float:right">Add</a>
             @ApprenticeshipLocationType.ClassroomBased.ToDisplayName()
         </caption>
         <thead>
@@ -142,7 +142,7 @@
                         @location.Radius miles
                     </td>
                     <td class="govuk-table__cell" style="text-align:right">
-                        <a asp-action="EditApprenticeshipClassroomLocation" asp-route-venueId="@location.VenueId" append-mptx-id class="govuk-link">Change<span class="govuk-visually-hidden"> location</span></a>
+                        <a asp-action="EditApprenticeshipClassroomLocation" asp-all-route-data="@ProviderContext.RouteValues" asp-route-venueId="@location.VenueId" append-mptx-id class="govuk-link">Change<span class="govuk-visually-hidden"> location</span></a>
                     </td>
                 </tr>
             }
@@ -150,7 +150,7 @@
     </table>
 }
 
-<form asp-action="ApprenticeshipSummaryConfirmation" append-provider-context append-mptx-id>
+<form asp-action="ApprenticeshipSummaryConfirmation" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <govuk-button type="submit" class="govuk-!-margin-right-1">Submit for quality assurance</govuk-button>
     <govuk-button asp-action="Index" asp-controller="Home" class="govuk-button--secondary">Cancel</govuk-button>
 </form>

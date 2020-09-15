@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Flurl;
 
 namespace Dfc.CourseDirectory.WebV2.ViewHelpers
@@ -13,6 +15,11 @@ namespace Dfc.CourseDirectory.WebV2.ViewHelpers
         }
 
         public ProviderInfo ProviderInfo => ProviderContext?.ProviderInfo;
+
+        public IDictionary<string, string> RouteValues => new Dictionary<string, string>()
+        {
+            { ProviderContextResourceFilter.RouteValueKey, ProviderInfo?.ProviderId.ToString() }
+        };
 
         private ProviderContext ProviderContext => _providerContextProvider.GetProviderContext();
 

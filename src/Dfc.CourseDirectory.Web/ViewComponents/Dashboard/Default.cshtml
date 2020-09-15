@@ -141,7 +141,7 @@ else
 
                     <ul class="govuk-list cd-homepage__lis">
                         <li class="cd-homepage__list--item">
-                            <a asp-controller="Provider" asp-action="Details" class="govuk-link">Manage your organisation details</a>
+                            <a asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Manage your organisation details</a>
                         </li>
                         @{
                             string orgId = User.Claims.Where(c => c.Type == "OrganisationId")

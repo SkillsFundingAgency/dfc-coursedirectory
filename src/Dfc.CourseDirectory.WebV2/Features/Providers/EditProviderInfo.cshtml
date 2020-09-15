@@ -20,7 +20,7 @@
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Provider information</h1>
 
-        <form asp-action="EditProviderInfo" append-provider-context>
+        <form asp-action="EditProviderInfo" asp-all-route-data="@ProviderContext.RouteValues">
             <pttcd-rich-text-editor>
                 <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
                     <govuk-character-count-label>Brief overview of your organisation for employers</govuk-character-count-label>
