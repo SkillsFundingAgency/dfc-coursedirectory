@@ -13,8 +13,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 
         public string DisplayName => DisplayNameSource switch
         {
+            ProviderDisplayNameSource.TradingName when HaveAlias => Alias,
             ProviderDisplayNameSource.ProviderName => ProviderName,
-            ProviderDisplayNameSource.TradingName => Alias,
             _ => throw new NotSupportedException($"Unknown {nameof(DisplayNameSource)}: '{DisplayNameSource}'.")
         };
 
