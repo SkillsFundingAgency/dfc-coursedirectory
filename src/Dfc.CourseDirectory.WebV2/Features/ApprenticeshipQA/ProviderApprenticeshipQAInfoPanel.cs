@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderById()
+                new Core.DataStore.CosmosDb.Queries.GetProviderById()
                 {
                     ProviderId = request.ProviderId
                 });

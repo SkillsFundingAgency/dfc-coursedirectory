@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.Testing
             string marketingInformation = "",
             string courseDirectoryName = "",
             string alias = "",
+            ProviderDisplayNameSource displayNameSource = default,
             IEnumerable<CreateProviderContact> contacts = null)
         {
             var providerId = Guid.NewGuid();
@@ -63,7 +64,8 @@ namespace Dfc.CourseDirectory.Testing
             });
             Assert.Equal(CreateProviderResult.Ok, result);
 
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById() { ProviderId = providerId });
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new Core.DataStore.CosmosDb.Queries.GetProviderById() { ProviderId = providerId });
             await _sqlDataSync.SyncProvider(provider);
 
             if (apprenticeshipQAStatus.HasValue)
@@ -73,6 +75,16 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         ProviderId = providerId,
                         ApprenticeshipQAStatus = apprenticeshipQAStatus.Value
+                    }));
+            }
+
+            if (displayNameSource != default)
+            {
+                await WithSqlQueryDispatcher(
+                    dispatcher => dispatcher.ExecuteQuery(new SetProviderDisplayNameSource()
+                    {
+                        ProviderId = providerId,
+                        DisplayNameSource = displayNameSource
                     }));
             }
 

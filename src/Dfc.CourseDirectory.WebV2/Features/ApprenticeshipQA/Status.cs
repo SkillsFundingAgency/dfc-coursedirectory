@@ -149,7 +149,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
         private async Task<Data> CheckStatus(Guid providerId)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderById()
+                new Core.DataStore.CosmosDb.Queries.GetProviderById()
                 {
                     ProviderId = providerId
                 });

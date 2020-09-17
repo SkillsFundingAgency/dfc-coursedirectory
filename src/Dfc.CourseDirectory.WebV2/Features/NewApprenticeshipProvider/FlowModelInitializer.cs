@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             var model = new FlowModel();
 
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderById()
+                new Core.DataStore.CosmosDb.Queries.GetProviderById()
                 {
                     ProviderId = providerId
                 });

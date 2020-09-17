@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers
 {
@@ -14,6 +15,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         public ProvidersController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [RequireFeatureFlag(FeatureFlags.ProviderDisplayName)]
+        [HttpGet("display-name")]
+        public async Task<IActionResult> DisplayName(ProviderContext providerContext)
+        {
+            var query = new DisplayName.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+        }
+
+        [RequireFeatureFlag(FeatureFlags.ProviderDisplayName)]
+        [HttpPost("display-name")]
+        public async Task<IActionResult> DisplayName(DisplayName.Command command, ProviderContext providerContext)
+        {
+            command.ProviderId = providerContext.ProviderInfo.ProviderId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                success => RedirectToAction(nameof(ProviderDetails)).WithProviderContext(providerContext));
         }
 
         [HttpGet("info")]
