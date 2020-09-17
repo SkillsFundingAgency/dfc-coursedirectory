@@ -22,9 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             var provider = response.Document;
 
-            request.Alias.Switch(_ => { }, v => provider.Alias = v);
-            request.MarketingInformation.Switch(_ => { }, v => provider.MarketingInformation = v);
-            request.CourseDirectoryName.Switch(_ => { }, v => provider.CourseDirectoryName = v);
+            provider.MarketingInformation = request.MarketingInformation;
             provider.DateUpdated = request.UpdatedOn;
             provider.UpdatedBy = request.UpdatedBy.Email;
 

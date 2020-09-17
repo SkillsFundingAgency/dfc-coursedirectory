@@ -1,55 +1,33 @@
 ﻿@using Dfc.CourseDirectory.Core.Validation.ProviderValidation
-@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo.CommandViewModel
+@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo.Command
 @{
-    ViewBag.Title = "Edit your details";
+    ViewContext.SetLayoutData(title: "Provider information");
+}
+
+@section BackLink {
+    <pttcd-back-link />
 }
 
 @if (!ViewData.ModelState.IsValid)
 {
     <govuk-error-summary>
         <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="Alias" />
-        <govuk-error-summary-item asp-for="CourseDirectoryName" />
         <govuk-error-summary-item asp-for="MarketingInformation" />
     </govuk-error-summary>
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-l">Course Directory</span>
-        <h1 class="govuk-heading-l">Edit your details</h1>
+        <h1 class="govuk-heading-l">Provider information</h1>
 
         <form asp-action="EditProviderInfo" append-provider-context>
-            <govuk-input asp-for="Alias">
-                <govuk-input-label>Your alias</govuk-input-label>
-            </govuk-input>
+            <pttcd-rich-text-editor>
+                <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
+                    <govuk-character-count-label>Brief overview of your organisation for employers</govuk-character-count-label>
+                </govuk-character-count>
+            </pttcd-rich-text-editor>
 
-            @if (Model.CourseDirectoryNameIsEditable)
-            {
-                <govuk-input asp-for="CourseDirectoryName">
-                    <govuk-input-label>Course directory name</govuk-input-label>
-                </govuk-input>
-            }
-
-            @if (Model.ShowMarketingInformation)
-            {
-                @if (Model.MarketingInformationIsEditable)
-                {
-                    <pttcd-rich-text-editor>
-                        <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
-                            <govuk-character-count-label>Brief overview of your organisation for employers</govuk-character-count-label>
-                        </govuk-character-count>
-                    </pttcd-rich-text-editor>
-                }
-                else
-                {
-                    <govuk-textarea asp-for="MarketingInformation" disabled="true">
-                        <govuk-textarea-label>Brief overview of your organisation for employers</govuk-textarea-label>
-                    </govuk-textarea>
-                }
-            }
-
-            <govuk-button type="Submit">Save</govuk-button>
+            <govuk-button type="Submit">Save and continue</govuk-button>
         </form>
     </div>
 </div>

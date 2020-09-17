@@ -1,54 +1,44 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
-using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
 {
-    using CommandResponse = OneOf<ModelWithErrors<CommandViewModel>, Success>;
-    using QueryResponse = OneOf<ModelWithErrors<CommandViewModel>, CommandViewModel>;
-
-    public class Query : IRequest<QueryResponse>
+    public class Query : IRequest<Command>
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
         public Guid ProviderId { get; set; }
-        public string Alias { get; set; }
         public string MarketingInformation { get; set; }
-        public string CourseDirectoryName { get; set; }
-    }
-
-    public class CommandViewModel : Command
-    {
-        public bool ShowMarketingInformation { get; set; }
-        public bool MarketingInformationIsEditable { get; set; }
-        public bool CourseDirectoryNameIsEditable { get; set; }
     }
 
     public class Handler :
-        IRequestHandler<Query, QueryResponse>,
-        IRequestHandler<Command, CommandResponse>
+        IRequireUserIsAdmin<Query>,
+        IRestrictProviderType<Query>,
+        IRequestHandler<Query, Command>,
+        IRequireUserIsAdmin<Command>,
+        IRestrictProviderType<Command>,
+        IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly CommandValidator _validator;
 
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
@@ -58,38 +48,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
-            _validator = new CommandValidator(CourseDirectoryNameIsEditable, MarketingInformationIsEditable);
         }
 
-        private bool CourseDirectoryNameIsEditable =>
-            AuthorizationRules.CanUpdateProviderCourseDirectoryName(_currentUserProvider.GetCurrentUser());
+        ProviderType IRestrictProviderType<Query>.ProviderType => ProviderType.Apprenticeships;
 
-        private bool MarketingInformationIsEditable =>
-            AuthorizationRules.CanUpdateProviderMarketingInformation(_currentUserProvider.GetCurrentUser());
+        ProviderType IRestrictProviderType<Command>.ProviderType => ProviderType.Apprenticeships;
 
-        public async Task<QueryResponse> Handle(
-            Query request,
-            CancellationToken cancellationToken)
+        public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
-            var vm = await CreateViewModel(request.ProviderId);
+            var provider = await GetProvider(request.ProviderId);
 
-            var validationResult = await _validator.ValidateAsync(vm);
-
-            return new ModelWithErrors<CommandViewModel>(vm, validationResult);
+            return new Command()
+            {
+                ProviderId = request.ProviderId,
+                MarketingInformation = provider.MarketingInformation
+            };
         }
 
-        public async Task<CommandResponse> Handle(
+        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
-            var validationResult = await _validator.ValidateAsync(request);
+            var validator = new CommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
-                var vm = await CreateViewModel(request.ProviderId);
-                request.Adapt(vm);
-
-                return new ModelWithErrors<CommandViewModel>(vm, validationResult);
+                return new ModelWithErrors<Command>(request, validationResult);
             }
 
             var currentUser = _currentUserProvider.GetCurrentUser();
@@ -97,39 +82,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
             var updateCommand = new UpdateProviderInfo()
             {
                 ProviderId = request.ProviderId,
-                Alias = request.Alias,
-                MarketingInformation = MarketingInformationIsEditable ?
-                    OneOf<None, string>.FromT1(request.MarketingInformation) :
-                    new None(),
-                CourseDirectoryName = CourseDirectoryNameIsEditable ?
-                    OneOf<None, string>.FromT1(request.CourseDirectoryName) :
-                    new None(),
+                MarketingInformation = request.MarketingInformation,
                 UpdatedBy = currentUser,
                 UpdatedOn = _clock.UtcNow
             };
             await _cosmosDbQueryDispatcher.ExecuteQuery(updateCommand);
 
             return new Success();
-        }
-
-        private async Task<CommandViewModel> CreateViewModel(Guid providerId)
-        {
-            var provider = await GetProvider(providerId);
-
-            var showBriefOverview = (provider.ProviderType & ProviderType.Apprenticeships) != 0;
-
-            return new CommandViewModel()
-            {
-                Alias = provider.Alias,
-                MarketingInformation = provider.MarketingInformation,
-                MarketingInformationIsEditable = MarketingInformationIsEditable,
-                ShowMarketingInformation = showBriefOverview,
-                CourseDirectoryName = !string.IsNullOrEmpty(provider.CourseDirectoryName) ?
-                    provider.CourseDirectoryName :
-                    provider.ProviderName,
-                CourseDirectoryNameIsEditable = CourseDirectoryNameIsEditable,
-                ProviderId = providerId
-            };
         }
 
         private async Task<Provider> GetProvider(Guid providerId)
@@ -139,29 +98,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
 
             if (result == null)
             {
-                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
+                throw new ResourceDoesNotExistException(ResourceType.Provider, providerId);
             }
 
             return result;
         }
 
+        Guid IRestrictProviderType<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRestrictProviderType<Command>.GetProviderId(Command request) => request.ProviderId;
+
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(
-                bool courseDirectoryNameIsEditable,
-                bool marketingInformationIsEditable)
+            public CommandValidator()
             {
-                RuleFor(c => c.Alias).Alias();
-
-                if (courseDirectoryNameIsEditable)
-                {
-                    RuleFor(c => c.CourseDirectoryName).CourseDirectoryName();
-                }
-
-                if (marketingInformationIsEditable)
-                {
-                    RuleFor(c => c.MarketingInformation).MarketingInformation();
-                }
+                RuleFor(c => c.MarketingInformation).MarketingInformation();
             }
         }
     }
