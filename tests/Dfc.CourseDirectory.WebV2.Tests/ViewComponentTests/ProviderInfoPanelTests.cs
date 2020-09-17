@@ -8,11 +8,11 @@ using Dfc.CourseDirectory.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
+namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
 {
-    public class ProviderDetailInfoPanelTests : MvcTestBase
+    public class ProviderInfoPanelTests : MvcTestBase
     {
-        public ProviderDetailInfoPanelTests(CourseDirectoryApplicationFactory factory)
+        public ProviderInfoPanelTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"providerdetailsinfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerinfopaneltests/{providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -67,19 +67,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             Assert.Equal(
                 "1st Line of Address\n2nd Line of Address\nThe Street\nThe Town\nUnited Kingdom\nAB1 2CD",
-                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-address"));
+                GetBlockLabelContent(doc, "ProviderInfoPanel-Address"));
             Assert.Equal(
                 "http://provider1.com",
-                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-website"));
+                GetBlockLabelContent(doc, "ProviderInfoPanel-Website"));
             Assert.Equal(
                 "The Contact",
-                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-contact-name"));
+                GetBlockLabelContent(doc, "ProviderInfoPanel-ContactName"));
             Assert.Equal(
                 "email@provider1.com",
-                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-email"));
+                GetBlockLabelContent(doc, "ProviderInfoPanel-Email"));
             Assert.Equal(
                 "01234 567890",
-                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-telephone"));
+                GetBlockLabelContent(doc, "ProviderInfoPanel-Telephone"));
         }
 
         [Fact]
@@ -123,31 +123,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"providerdetailsinfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerinfopaneltests/{providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
 
-            Assert.Null(doc.GetElementById("pttcd-detail-info-panel__provider-address"));
-            Assert.Null(doc.GetElementById("pttcd-detail-info-panel__provider-website"));
-            Assert.Null(doc.GetElementById("pttcd-detail-info-panel__provider-contact-name"));
-            Assert.Null(doc.GetElementById("pttcd-detail-info-panel__provider-email"));
-            Assert.Null(doc.GetElementById("pttcd-detail-info-panel__provider-telephone"));
+            Assert.Null(doc.GetElementById("ProviderInfoPanel-Address"));
+            Assert.Null(doc.GetElementById("ProviderInfoPanel-Website"));
+            Assert.Null(doc.GetElementById("ProviderInfoPanel-ContactName"));
+            Assert.Null(doc.GetElementById("ProviderInfoPanel-Email"));
+            Assert.Null(doc.GetElementById("ProviderInfoPanel-Telephone"));
         }
 
-        private string GetBlockLabelContent(IHtmlDocument doc, string id)
+        private string GetBlockLabelContent(IHtmlDocument doc, string testid)
         {
-            var block = doc.GetElementById(id);
+            var block = doc.GetElementByTestId(testid);
             return block.GetElementsByTagName("div").Single().TextContent.Trim();
         }
     }
 
-    public class ProviderDetailsInfoPanelTestsController : Controller
+    public class ProviderInfoPanelTestsController : Controller
     {
-        [HttpGet("providerdetailsinfopaneltests/{providerId}")]
+        [HttpGet("providerinfopaneltests/{providerId}")]
         public IActionResult Get(Guid providerId) =>
-            View("~/FeatureTests/NewApprenticeshipProvider/ProviderDetailInfoPanel.cshtml", providerId);
+            View("~/ViewComponentTests/ProviderInfoPanel.cshtml", providerId);
     }
 }

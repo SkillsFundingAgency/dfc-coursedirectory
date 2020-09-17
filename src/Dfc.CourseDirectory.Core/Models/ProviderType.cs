@@ -16,8 +16,8 @@ namespace Dfc.CourseDirectory.Core.Models
             providerType switch
             {
                 ProviderType.Apprenticeships => "Apprenticeships",
-                ProviderType.FE => "FE",
-                ProviderType.Both => "FE & Apprenticeships",
+                ProviderType.FE => "F.E.",
+                ProviderType.Both => "F.E. & Apprenticeships",
                 _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
             };
     }

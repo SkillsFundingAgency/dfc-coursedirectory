@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers
 {
     [Route("providers")]
+    [AssignLegacyProviderContext]
     public class ProvidersController : Controller
     {
         private readonly IMediator _mediator;
@@ -36,6 +38,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction("Details", "Provider").WithProviderContext(providerContext)));
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> ProviderDetails(ProviderContext providerContext)
+        {
+            var request = new ProviderDetails.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
+            return await _mediator.SendAndMapResponse(request, vm => View(vm));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
@@ -14,15 +13,15 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     /// </remarks>
     public sealed class AssignLegacyProviderContextAttribute : ActionFilterAttribute
     {
+        public AssignLegacyProviderContextAttribute()
+        {
+            Order = 10;  // Run after RedirectToProviderSelectionActionFilter
+        }
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            var env = context.HttpContext.RequestServices.GetRequiredService<IHostEnvironment>();
-
-            if (!env.IsTesting())
-            {
-                var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
-                providerContextProvider.AssignLegacyProviderContext();
-            }
+            var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
+            providerContextProvider.AssignLegacyProviderContext();
         }
     }
 }

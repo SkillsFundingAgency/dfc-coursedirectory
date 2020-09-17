@@ -6,5 +6,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.StubControllers
     {
         [HttpGet("provider/details")]
         public IActionResult Details(ProviderInfo providerInfo) => Ok();
+
+        [HttpGet("Provider/Dashboard")]
+        public IActionResult Dashboard() => Ok();
     }
 }
