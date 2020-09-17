@@ -1,3 +1,4 @@
+@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider FeatureFlagProvider
 @model Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails.ViewModel
 @{
     ViewContext.SetLayoutData(title: Model.ProviderName);
@@ -38,6 +39,25 @@
                 }
             </govuk-summary-list-row>
         </govuk-summary-list>
+
+        <govuk-details>
+            <govuk-details-summary>
+                Help with your provider details
+            </govuk-details-summary>
+            <govuk-details-text>
+                <h3 class="govuk-heading-s">UKPRN</h3>
+                <p class="govuk-body">A unique number allocated to providers by the UKRLP verification team, after successful UKRLP registration.</p>
+                <h3 class="govuk-heading-s">Trading name</h3>
+                <p class="govuk-body">The name your organisation trades under if it is different to the organisation name.</p><p>
+                    Trading names can be added when registering with UKRLP or after registration. Sign in to the <a href="https://www.ukrlp.co.uk/ukrlp/ukrlp.login" target="_blank" class="govuk-link">UK Register of Learning Providers</a> to add or edit your trading name.
+                </p>
+                @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ProviderDisplayName))
+                {
+                    <h3 class="govuk-heading-s">Display name</h3>
+                    <p class="govuk-body">The name displayed to learners who can view and search for learning opportunities on the National Careers Service, Find a course.</p>
+                }
+            </govuk-details-text>
+        </govuk-details>
     </div>
 
     <div class="govuk-grid-column-one-third">
