@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 
@@ -24,6 +25,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
         public string TradingName { get; set; }
         public ProviderType ProviderType { get; set; }
         public bool CanChangeProviderType { get; set; }
+        public string MarketingInformation { get; set; }
+        public bool ShowMarketingInformation { get; set; }
+        public bool CanUpdateMarketingInformation { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -61,7 +65,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                 Ukprn = provider.Ukprn,
                 TradingName = provider.Alias,
                 ProviderType = provider.ProviderType,
-                CanChangeProviderType = AuthorizationRules.CanUpdateProviderType(currentUser)
+                CanChangeProviderType = AuthorizationRules.CanUpdateProviderType(currentUser),
+                MarketingInformation = provider.MarketingInformation != null ?
+                    Html.SanitizeHtml(provider.MarketingInformation) :
+                    null,
+                ShowMarketingInformation = provider.ProviderType.HasFlag(ProviderType.Apprenticeships),
+                CanUpdateMarketingInformation = AuthorizationRules.CanUpdateProviderMarketingInformation(currentUser)
             };
         }
     }

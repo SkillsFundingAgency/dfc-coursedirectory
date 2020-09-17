@@ -12,7 +12,7 @@
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l" data-testid="ProviderName">@Model.ProviderName</h1>
 
-        <govuk-summary-list>
+        <govuk-summary-list class="pttcd-summary-list">
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>Course directory status</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.CourseDirectoryStatus</govuk-summary-list-row-value>
@@ -30,14 +30,26 @@
                 <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>
                 @if (Model.CanChangeProviderType)
                 {
-                    <govuk-summary-list-row-action>
-                        <a asp-controller="Provider" asp-action="AddOrEditProviderType" asp-route-updateProviderType="true" class="govuk-link" data-testid="ChangeProviderType">
-                            Change
-                            <span class="govuk-visually-hidden">provider type</span>
-                        </a>
+                    <govuk-summary-list-row-action asp-controller="Provider" asp-action="AddOrEditProviderType" asp-route-updateProviderType="true" class="govuk-link" data-testid="ChangeProviderType">
+                        Change
+                        <span class="govuk-visually-hidden">provider type</span>
                     </govuk-summary-list-row-action>
                 }
             </govuk-summary-list-row>
+            @if (Model.ShowMarketingInformation)
+            {
+                <govuk-summary-list-row class="pttcd-summary-list__row__split" data-testid="MarketingInformation">
+                    <govuk-summary-list-row-key>Provider information</govuk-summary-list-row-key>
+                    @* N.B. Don't add whitespace to element below - we rely on CSS :empty selector *@
+                    <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
+                    @if (Model.CanUpdateMarketingInformation)
+                    {
+                        <govuk-summary-list-row-action asp-action="EditProviderInfo" asp-route-providerId="@Model.ProviderId" visually-hidden-text="provider information" data-testid="ChangeMarketingInformation">
+                            Change
+                        </govuk-summary-list-row-action>
+                    }
+                </govuk-summary-list-row>
+            }
         </govuk-summary-list>
 
         <govuk-details>

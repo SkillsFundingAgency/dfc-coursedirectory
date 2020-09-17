@@ -143,5 +143,100 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
             Assert.Null(doc.GetElementByTestId("ChangeProviderType"));
         }
+
+        [Theory]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.Both)]
+        public async Task Get_ApprenticeshipProviderType_RendersMarketingInformation(ProviderType providerType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: providerType,
+                marketingInformation: "Marketing information");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("Marketing information", doc.GetSummaryListValueWithKey("Provider information"));
+        }
+
+        [Theory]
+        [InlineData(ProviderType.FE)]
+        public async Task Get_NotApprenticeshipProviderType_DoesNotRenderMarketingInformation(ProviderType providerType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: providerType,
+                marketingInformation: "Marketing information");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementByTestId("MarketingInformation"));
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
+        public async Task Get_UserIsAdmin_DoesRenderChangeMarketingInformationLink(TestUserType userType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Apprenticeships,
+                marketingInformation: "Marketing information");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            await User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetElementByTestId("ChangeMarketingInformation"));
+        }
+
+        [Theory]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task Get_UserIsNotAdmin_DoesNotRenderChangeMarketingInformationLink(TestUserType userType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Apprenticeships,
+                marketingInformation: "Marketing information");
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            await User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementByTestId("ChangeMarketingInformation"));
+        }
     }
 }
