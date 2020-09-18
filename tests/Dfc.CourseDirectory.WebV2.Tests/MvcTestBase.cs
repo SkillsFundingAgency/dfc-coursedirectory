@@ -44,6 +44,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected MptxManager MptxManager => Factory.MptxManager;
 
+        protected SingletonSession Session => Factory.Session;
+
         protected SqlQuerySpy SqlQuerySpy => Factory.SqlQuerySpy;
 
         protected TestData TestData => Factory.TestData;

@@ -6,6 +6,7 @@ using FormFlow.State;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
+        public SingletonSession Session => ((SingletonSessionStore)Services.GetRequiredService<ISessionStore>()).Instance;
+
         public Settings Settings => Services.GetRequiredService<Settings>();
 
         public SqlQuerySpy SqlQuerySpy => DatabaseFixture.SqlQuerySpy;
@@ -67,32 +70,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             DatabaseFixture.OnTestStarting();
 
-            // Clear calls on any mocks
             ResetMocks();
 
-            // Reset cache
             MemoryCache.Clear();
 
             // Restore HostingOptions values to default
             Settings.RewriteForbiddenToNotFound = false;
 
-            // Reset the clock
             Clock.UtcNow = MutableClock.Start;
 
-            // Reset feature flag provider
             FeatureFlagProvider.Reset();
 
-            // Reset MPTX state
             MptxStateProvider.Clear();
 
-            // Clear StandardsAndFrameworksCache
             Services.GetRequiredService<IStandardsAndFrameworksCache>().Clear();
 
-            // Reset cookie preferences
             CookieSettingsProvider.Reset();
 
-            // Clear FormFlow state
             (Services.GetRequiredService<IUserInstanceStateStore>() as TestUserInstanceStateStore)?.Clear();
+
+            Session.Clear();
         }
 
         public async Task OnTestStartingAsync()
