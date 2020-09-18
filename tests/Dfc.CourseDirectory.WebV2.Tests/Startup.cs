@@ -7,6 +7,7 @@ using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSession();
+            services.AddSingleton<ISessionStore, SingletonSessionStore>();
 
             services.AddRouting();
 
