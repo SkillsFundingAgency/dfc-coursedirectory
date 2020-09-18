@@ -11,7 +11,7 @@
     </govuk-error-summary>
 }
 
-<form asp-action="ApprenticeshipEmployerLocations" append-provider-context append-mptx-id>
+<form asp-action="ApprenticeshipEmployerLocations" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <govuk-radios asp-for="National">
         <govuk-radios-fieldset is-page-heading="true">
             <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">

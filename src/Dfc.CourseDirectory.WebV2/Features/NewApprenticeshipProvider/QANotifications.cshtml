@@ -17,7 +17,7 @@
         <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-failed">
             <p>Your information has not passed quality assurance against the style and compliance standards.</p>
             <p>An email has been sent providing the reasons why your information has not met the standards, you will need to fix the errors and submit for quality assurance again.</p>
-            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context>
+            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                 Fix errors and submit
             </a>
         </pttcd-notification>
@@ -25,7 +25,7 @@
     else if (Model.Status == ApprenticeshipQAStatus.Passed && !Model.HidePassedNotication)
     {
         <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-passed">
-            <form asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" asp-controller="NewApprenticeshipProvider" asp-action="HidePassedNotification" method="post" append-provider-context>
+            <form asp-controller="NewApprenticeshipProvider" asp-action="HidePassedNotification" asp-all-route-data="@ProviderContext.RouteValues" asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" method="post">
                 <p>Your information has passed quality assurance against the style and compliance standards.</p>
                 <p>You can publish all of your apprenticeship training courses.</p>
                 <govuk-button class="govuk-button--secondary govuk-!-margin-bottom-0" type="submit">Close notification</govuk-button>
@@ -45,7 +45,7 @@
             </ol>
 
             <p>Once you have passed quality assurance you can publish all of your apprenticeship training courses.</p>
-            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context>
+            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                 Add your information and one apprenticeship
             </a>
         </pttcd-notification>

@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Web
             }
 
             var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
-            var providerContext = await providerContextProvider.GetProviderContext();
+            var providerContext = providerContextProvider.GetProviderContext();
 
             if (providerContext == null)
             {

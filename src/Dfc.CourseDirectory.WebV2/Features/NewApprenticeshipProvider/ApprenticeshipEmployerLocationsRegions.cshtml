@@ -11,7 +11,7 @@
     </govuk-error-summary>
 }
 
-<form asp-action="ApprenticeshipEmployerLocationsRegions" append-provider-context append-mptx-id>
+<form asp-action="ApprenticeshipEmployerLocationsRegions" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <govuk-fieldset>
         <govuk-fieldset-legend>
             <h1 class="govuk-heading-l">Select the regions where you provide this training</h1>

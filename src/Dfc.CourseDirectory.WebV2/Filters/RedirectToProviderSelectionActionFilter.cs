@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
-    public class RedirectToProviderSelectionActionFilter : IAsyncActionFilter, IOrderedFilter
+    public class RedirectToProviderSelectionActionFilter : IActionFilter, IOrderedFilter
     {
         public RedirectToProviderSelectionActionFilter()
         {
@@ -16,7 +14,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
         public int Order => 9;
 
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
         {
             // If the action has a parameter of type ProviderContext and/or
             // the controller/action is decorated with RequiresProviderContextAttribute then we consider
@@ -30,10 +32,10 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             var requiresProviderContext = hasProviderContextParameter ||
                 context.ActionDescriptor.Properties.ContainsKey(typeof(RequiresProviderContextMarker));
 
-            if (hasProviderContextParameter || requiresProviderContext)
+            if (requiresProviderContext)
             {
                 var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
-                var providerContext = await providerContextProvider.GetProviderContext();
+                var providerContext = providerContextProvider.GetProviderContext();
 
                 if (providerContext == null)
                 {
@@ -41,11 +43,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                         "Index",
                         "SearchProvider",
                         new { returnUrl = context.HttpContext.Request.GetEncodedUrl() });
-                    return;
                 }
             }
-
-            await next();
         }
     }
 }

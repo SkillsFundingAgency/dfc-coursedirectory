@@ -5,40 +5,36 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-l">Course Directory</span>
-        <h1 class="govuk-heading-l">@Model.CourseDirectoryName</h1>
+        <h1 class="govuk-heading-l">@Model.ProviderName</h1>
 
-        <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__summary-list">
-            <govuk-summary-list class="pttcd-summary-list">
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Course Directory name</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.CourseDirectoryName</govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>UKPRN</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.Ukprn</govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Legal name</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.LegalName</govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row class="pttcd-summary-list__row__split">
-                    <govuk-summary-list-row-key>Brief overview of your organisation for employers</govuk-summary-list-row-key>
+        <govuk-summary-list class="pttcd-summary-list">
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Course directory status</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.CourseDirectoryStatus</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>UKPRN</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.Ukprn</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row class="pttcd-summary-list__row__split" data-testid="MarketingInformation">
+                <govuk-summary-list-row-key>Provider information</govuk-summary-list-row-key>
                     @* N.B. Don't add whitespace to element below - we rely on CSS :empty selector *@
                     <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-            </govuk-summary-list>
-        </div>
+                <govuk-summary-list-row-action asp-action="ProviderDetail" asp-route-providerId="@Model.ProviderId" asp-route-ffiid="@Context.Request.Query["ffiid"]" visually-hidden-text="provider information">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+        </govuk-summary-list>
 
-        <form asp-action="ProviderDetailConfirmation" append-provider-context append-mptx-id>
+        <form asp-action="ProviderDetailConfirmation" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
             <govuk-button type="submit">Save and continue</govuk-button>
         </form>
     </div>

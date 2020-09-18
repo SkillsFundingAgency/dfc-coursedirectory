@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -9,17 +7,10 @@ namespace Dfc.CourseDirectory.WebV2
     public class ProviderContextProvider : IProviderContextProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IWebHostEnvironment _env;
-        private readonly IProviderInfoCache _providerInfoCache;
 
-        public ProviderContextProvider(
-            IHttpContextAccessor httpContextAccessor,
-            IWebHostEnvironment env,
-            IProviderInfoCache providerInfoCache)
+        public ProviderContextProvider(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _env = env;
-            _providerInfoCache = providerInfoCache;
         }
 
         public void AssignLegacyProviderContext()
@@ -35,43 +26,11 @@ namespace Dfc.CourseDirectory.WebV2
             httpContext.Session.SetInt32("UKPRN", feature.ProviderContext.ProviderInfo.Ukprn);
         }
 
-        public async Task<ProviderContext> GetProviderContext()
+        public ProviderContext GetProviderContext()
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var feature = httpContext.Features.Get<ProviderContextFeature>();
-
-            if (feature != null)
-            {
-                return feature.ProviderContext;
-            }
-
-            if (!_env.IsTesting())
-            {
-                // Legacy page support - old pages use UKPRN in session for holding onto provider
-                // so look for that as a fallback.
-                // N.B. It's disabled for tests so that new features (i.e. those that have test coverage)
-                // are required to use new mechanism.
-
-                var ukprn = httpContext.Session.GetInt32("UKPRN");
-                if (ukprn.HasValue)
-                {
-                    var providerId = await _providerInfoCache.GetProviderIdForUkprn(ukprn.Value);
-                    if (providerId == null)
-                    {
-                        return null;
-                    }
-
-                    var providerInfo = await _providerInfoCache.GetProviderInfo(providerId.Value);
-                    if (providerInfo == null)
-                    {
-                        return null;
-                    }
-
-                    return new ProviderContext(providerInfo);
-                }
-            }
-
-            return null;
+            return feature?.ProviderContext;
         }
 
         public void SetProviderContext(ProviderContext providerContext)
@@ -85,11 +44,18 @@ namespace Dfc.CourseDirectory.WebV2
 
             var currentContextFeature = httpContext.Features.Get<ProviderContextFeature>();
 
-            if (currentContextFeature != null &&
-                currentContextFeature.ProviderContext.ProviderInfo.ProviderId != providerContext.ProviderInfo.ProviderId)
+            if (currentContextFeature != null && currentContextFeature.ProviderContext.Strict)
             {
-                throw new InvalidOperationException(
-                    $"Provider context has already been set for another provider: '{currentContextFeature.ProviderContext.ProviderInfo.ProviderId}'.");
+                if (currentContextFeature.ProviderContext.ProviderInfo.ProviderId != providerContext.ProviderInfo.ProviderId)
+                {
+                    throw new InvalidOperationException(
+                        $"Provider context has already been set for another provider: '{currentContextFeature.ProviderContext.ProviderInfo.ProviderId}'.");
+                }
+                else if (currentContextFeature.ProviderContext.Strict && !providerContext.Strict)
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot replace a strict provider context with a non-strict one.");
+                }
             }
 
             httpContext.Features.Set(new ProviderContextFeature(providerContext));
