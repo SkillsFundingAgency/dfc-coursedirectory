@@ -51,7 +51,7 @@
             </govuk-summary-list-row>
             @if (Model.ShowMarketingInformation)
             {
-                <govuk-summary-list-row class="pttcd-summary-list__row__split" data-testid="MarketingInformation">
+                <govuk-summary-list-row class="pttcd-summary-list__row__split pttcd-providers__provider-details__marketing-information" data-testid="MarketingInformation">
                     <govuk-summary-list-row-key>Provider information</govuk-summary-list-row-key>
                     @* N.B. Don't add whitespace to element below - we rely on CSS :empty selector *@
                     <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>

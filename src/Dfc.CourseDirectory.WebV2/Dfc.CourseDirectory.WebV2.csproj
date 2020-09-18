@@ -52,6 +52,8 @@
     <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-employer-locations.js" />
     <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-summary.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail.css" />
+    <None Remove="Content\pages\providers\provider-details.css" />
     <None Remove="Content\utilities\needs-js.css" />
     <None Remove="Content\utilities\needs-js.js" />
     <None Remove="Content\utilities\table.css" />

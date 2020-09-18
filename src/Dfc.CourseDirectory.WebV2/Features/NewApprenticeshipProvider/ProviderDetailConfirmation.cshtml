@@ -24,7 +24,7 @@
                 <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.ProviderType.ToDisplayName()</govuk-summary-list-row-value>
             </govuk-summary-list-row>
-            <govuk-summary-list-row class="pttcd-summary-list__row__split" data-testid="MarketingInformation">
+            <govuk-summary-list-row class="pttcd-summary-list__row__split pttcd-new-apprenticeship-provider__provider-detail__marketing-information" data-testid="MarketingInformation">
                 <govuk-summary-list-row-key>Provider information</govuk-summary-list-row-key>
                     @* N.B. Don't add whitespace to element below - we rely on CSS :empty selector *@
                     <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
