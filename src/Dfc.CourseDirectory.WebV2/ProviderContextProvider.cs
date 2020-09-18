@@ -44,12 +44,18 @@ namespace Dfc.CourseDirectory.WebV2
 
             var currentContextFeature = httpContext.Features.Get<ProviderContextFeature>();
 
-            if (currentContextFeature != null &&
-                currentContextFeature.ProviderContext.Strict &&
-                currentContextFeature.ProviderContext.ProviderInfo.ProviderId != providerContext.ProviderInfo.ProviderId)
+            if (currentContextFeature != null && currentContextFeature.ProviderContext.Strict)
             {
-                throw new InvalidOperationException(
-                    $"Provider context has already been set for another provider: '{currentContextFeature.ProviderContext.ProviderInfo.ProviderId}'.");
+                if (currentContextFeature.ProviderContext.ProviderInfo.ProviderId != providerContext.ProviderInfo.ProviderId)
+                {
+                    throw new InvalidOperationException(
+                        $"Provider context has already been set for another provider: '{currentContextFeature.ProviderContext.ProviderInfo.ProviderId}'.");
+                }
+                else if (currentContextFeature.ProviderContext.Strict && !providerContext.Strict)
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot replace a strict provider context with a non-strict one.");
+                }
             }
 
             httpContext.Features.Set(new ProviderContextFeature(providerContext));
