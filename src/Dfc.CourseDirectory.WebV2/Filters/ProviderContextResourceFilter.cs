@@ -42,6 +42,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 }
 
                 Guid providerId;
+
+                // A 'strict' provider context means it cannot be changed for a given request
                 bool strict = true;
 
                 var requestProviderId = TryGetProviderIdFromRequest();
@@ -116,12 +118,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             async Task<Guid?> TryGetProviderIdFromLegacyContext()
             {
                 var ukprn = context.HttpContext.Session.GetInt32("UKPRN");
-                if (ukprn.HasValue)
-                {
-                    return await providerInfoCache.GetProviderIdForUkprn(ukprn.Value);
-                }
 
-                return null;
+                return ukprn.HasValue ? await providerInfoCache.GetProviderIdForUkprn(ukprn.Value) : null;
             }
         }
     }
