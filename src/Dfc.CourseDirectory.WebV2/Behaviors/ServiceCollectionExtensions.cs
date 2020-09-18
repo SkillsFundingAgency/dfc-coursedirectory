@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             foreach (var type in handlersAssembly.GetTypes())
             {
                 RegisterRequireUserCanAccessCourseBehavior(type);
+                RegisterRequireUserCanAccessVenueBehavior(type);
                 RegisterRequireUserCanSubmitQASubmissionBehavior(type);
                 RegisterRequireUserIsAdminBehavior(type);
                 RegisterRestrictProviderTypeBehavior(type);
@@ -44,6 +45,32 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     services.AddScoped(pipelineBehaviorType, behaviourType);
 
                     // Register the handler as an IRequireUserCanAccessCourse<TRequest, TResponse>
+                    var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
+                    services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
+                }
+            }
+
+            void RegisterRequireUserCanAccessVenueBehavior(Type type)
+            {
+                // For any type implementing IRequireUserCanAccessVenue<TRequest>
+                // add a RequireUserCanAccessVenueBehavior behavior for its request & response types
+
+                var requireUserCanAccessVenue = typeof(IRequireUserCanAccessVenue<>);
+
+                var restrictTypes = type.GetInterfaces()
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == requireUserCanAccessVenue)
+                    .ToList();
+
+                foreach (var t in restrictTypes)
+                {
+                    var requestType = t.GenericTypeArguments[0];
+                    var responseType = GetResponseTypeFromRequestType(requestType);
+
+                    var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
+                    var behaviourType = typeof(RequireUserCanAccessVenueBehavior<,>).MakeGenericType(requestType, responseType);
+                    services.AddScoped(pipelineBehaviorType, behaviourType);
+
+                    // Register the handler as an IRequireUserCanAccessVenue<TRequest, TResponse>
                     var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
                     services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
                 }

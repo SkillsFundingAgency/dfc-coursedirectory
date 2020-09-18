@@ -7,7 +7,8 @@ namespace Dfc.CourseDirectory.Core
         Provider, 
         Apprenticeship,
         Course,
-        CourseRun
+        CourseRun,
+        Venue
     }
 
     public class ResourceDoesNotExistException : Exception
