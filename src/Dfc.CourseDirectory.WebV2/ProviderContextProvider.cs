@@ -53,8 +53,8 @@ namespace Dfc.CourseDirectory.WebV2
                 }
                 else if (currentContextFeature.ProviderContext.Strict && !providerContext.Strict)
                 {
-                    throw new InvalidOperationException(
-                        $"Cannot replace a strict provider context with a non-strict one.");
+                    // Don't allow going from strict -> non-strict
+                    return;
                 }
             }
 
