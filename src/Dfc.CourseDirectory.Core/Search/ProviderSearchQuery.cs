@@ -19,7 +19,11 @@ namespace Dfc.CourseDirectory.Core.Search
 
         public (string SearchText, SearchOptions Options) GenerateSearchQuery()
         {
-            return new AzureSearchQueryBuilder($"{SearchText?.Trim()}*")
+            var searchText = SearchText
+                .RemoveNonAlphanumericChars()
+                .ApplyWildcardsToAllSegments();
+
+            return new AzureSearchQueryBuilder(searchText)
                 .WithSearchMode(SearchMode.All)
                 .WithSearchInFilter(nameof(Provider.Town), Towns?.Distinct())
                 .WithSize(Size ?? DefaultSize)
