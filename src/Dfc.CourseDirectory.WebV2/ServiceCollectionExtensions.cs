@@ -151,6 +151,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
             services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
             services.AddTransient<ProviderContextHelper>();
+            services.AddTransient<Features.EditVenue.EditVenueFlowModelFactory>();
 
             services.AddAzureSearchClient<ProviderSearchQuery, Provider>(
                 new Uri(configuration["AzureSearchUrl"]),
