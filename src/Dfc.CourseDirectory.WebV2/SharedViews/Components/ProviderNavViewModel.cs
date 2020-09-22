@@ -7,5 +7,6 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
         public ProviderInfo ProviderContext { get; set; }
         public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
         public bool ApprenticeshipQAFeatureIsEnabled { get; set; }
+        public bool ShowApprenticeshipsLink { get; set; }
     }
 }
