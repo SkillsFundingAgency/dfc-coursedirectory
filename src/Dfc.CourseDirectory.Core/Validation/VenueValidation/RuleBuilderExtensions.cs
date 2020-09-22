@@ -10,5 +10,12 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .EmailAddress()
                     .WithMessage("Enter an email address in the correct format, like name@example.com");
         }
+
+        public static void PhoneNumber<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .Apply(Rules.PhoneNumber)
+                    .WithMessage("Enter a telephone number in the correct format");
+        }
     }
 }

@@ -1,0 +1,77 @@
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using FluentValidation;
+using FormFlow;
+using MediatR;
+using OneOf;
+using OneOf.Types;
+
+namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
+{
+    public class Query : IRequest<Command>
+    {
+        public Guid VenueId { get; set; }
+    }
+
+    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
+    {
+        public Guid VenueId { get; set; }
+        public string PhoneNumber { get; set; }
+    }
+
+    public class Handler :
+        IRequireUserCanAccessVenue<Query>,
+        IRequestHandler<Query, Command>,
+        IRequireUserCanAccessVenue<Command>,
+        IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
+    {
+        private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
+
+        public Handler(FormFlowInstance<EditVenueFlowModel> formFlowInstance)
+        {
+            _formFlowInstance = formFlowInstance;
+        }
+
+        public Task<Command> Handle(Query request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new Command()
+            {
+                VenueId = request.VenueId,
+                PhoneNumber = _formFlowInstance.State.PhoneNumber
+            });
+        }
+
+        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
+            Command request,
+            CancellationToken cancellationToken)
+        {
+            var validator = new CommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return new ModelWithErrors<Command>(request, validationResult);
+            }
+
+            _formFlowInstance.UpdateState(state => state.PhoneNumber = request.PhoneNumber ?? string.Empty);
+
+            return new Success();
+        }
+
+        Guid IRequireUserCanAccessVenue<Query>.GetVenueId(Query request) => request.VenueId;
+
+        Guid IRequireUserCanAccessVenue<Command>.GetVenueId(Command request) => request.VenueId;
+
+        private class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(c => c.PhoneNumber).PhoneNumber();
+            }
+        }
+    }
+}

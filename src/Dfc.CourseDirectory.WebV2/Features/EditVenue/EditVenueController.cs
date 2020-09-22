@@ -43,6 +43,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
                     success => RedirectToAction(nameof(Details), new { venueId })));
         }
 
+        [HttpGet("phone-number")]
+        public async Task<IActionResult> PhoneNumber(PhoneNumber.Query request) =>
+            await _mediator.SendAndMapResponse(request, vm => View(vm));
+
+        [HttpPost("phone-number")]
+        public async Task<IActionResult> PhoneNumber(Guid venueId, PhoneNumber.Command request)
+        {
+            request.VenueId = venueId;
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(Details), new { venueId })));
+        }
+
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             await _formFlowInstanceFactory.GetOrCreateInstanceAsync(() =>
