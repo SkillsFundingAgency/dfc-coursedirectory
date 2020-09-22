@@ -17,5 +17,12 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .Apply(Rules.PhoneNumber)
                     .WithMessage("Enter a telephone number in the correct format");
         }
+
+        public static void Website<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .Apply(Rules.Website)
+                    .WithMessage("The format of URL is incorrect");
+        }
     }
 }

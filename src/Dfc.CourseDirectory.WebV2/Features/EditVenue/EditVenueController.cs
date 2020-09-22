@@ -58,6 +58,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
                     success => RedirectToAction(nameof(Details), new { venueId })));
         }
 
+        [HttpGet("website")]
+        public async Task<IActionResult> Website(Website.Query request) =>
+            await _mediator.SendAndMapResponse(request, vm => View(vm));
+
+        [HttpPost("website")]
+        public async Task<IActionResult> Website(Guid venueId, Website.Command request)
+        {
+            request.VenueId = venueId;
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(Details), new { venueId })));
+        }
+
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             await _formFlowInstanceFactory.GetOrCreateInstanceAsync(() =>

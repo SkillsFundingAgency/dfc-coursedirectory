@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string Website { get; set; }
     }
 
     public class EditVenueFlowModelFactory
@@ -37,7 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
             {
                 Email = venue.Email,
                 Name = venue.VenueName,
-                PhoneNumber = venue.Telephone
+                PhoneNumber = venue.Telephone,
+                Website = venue.Website
             };
         }
     }
