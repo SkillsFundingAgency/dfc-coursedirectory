@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Filters;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         }
 
         [HttpGet("")]
-        public IActionResult Details(Guid venueId) => RedirectToAction("EditVenue", "Venues", new { Id = venueId });
+        public async Task<IActionResult> Details(Details.Query query) =>
+            await _mediator.SendAndMapResponse(query, vm => View(vm));
 
         [HttpGet("address")]
         public async Task<IActionResult> Address(Address.Query request) =>
@@ -101,6 +104,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(Details), new { venueId })));
+        }
+
+        [HttpPost("")]
+        public async Task<IActionResult> Save(Guid venueId) => throw new NotImplementedException();
+
+        [HttpPost("cancel")]
+        [AssignLegacyProviderContext]
+        public IActionResult Cancel(FormFlowInstance formFlowInstance)
+        {
+            formFlowInstance.Delete();
+
+            return RedirectToAction("Index", "Venues");
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
