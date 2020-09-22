@@ -22,6 +22,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
@@ -135,6 +136,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
             {
                 model = new VenueSearchResultModel(result.Error);
+            }
+
+            // The v2 EditVenue journey sets a TempData entry after venue has been updated
+            if (TempData.ContainsKey(TempDataKeys.UpdatedVenueId))
+            {
+                model = new VenueSearchResultModel(
+                    model.SearchTerm,
+                    model.Items,
+                    newItem: model.Items.Single(v => v.Id == TempData[TempDataKeys.UpdatedVenueId].ToString()),
+                    updated: true);
             }
 
             var viewModel = new VenueSearchResultsViewModel

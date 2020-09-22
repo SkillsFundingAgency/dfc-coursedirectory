@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using FormFlow;
@@ -107,7 +106,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Save(Guid venueId) => throw new NotImplementedException();
+        [AssignLegacyProviderContext]
+        public async Task<IActionResult> Save(Guid venueId, Save.Command command)
+        {
+            command.VenueId = venueId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                success =>
+                {
+                    TempData[TempDataKeys.UpdatedVenueId] = venueId;
+
+                    return RedirectToAction("Index", "Venues");
+                });
+        }
 
         [HttpPost("cancel")]
         [AssignLegacyProviderContext]

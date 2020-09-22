@@ -12,7 +12,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="Save">
+        <form asp-action="Save" asp-route-venueId="@Model.VenueId">
             <h1 class="govuk-heading-xl">Check your location details before saving</h1>
 
             <govuk-summary-list>
