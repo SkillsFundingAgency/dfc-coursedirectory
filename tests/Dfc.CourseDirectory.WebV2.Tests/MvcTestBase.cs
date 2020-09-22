@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task InitializeAsync() => Factory.OnTestStartingAsync();
 
-        protected FormFlowInstance<TState> CreateFormFlowInstanceFromRouteParameters<TState>(
+        protected FormFlowInstance<TState> CreateFormFlowInstanceForRouteParameters<TState>(
             string key,
             IReadOnlyDictionary<string, object> routeParameters,
             TState state,
@@ -77,6 +77,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected MptxInstanceContext<TState> CreateMptxInstance<TState>(TState state)
             where TState : IMptxState =>
             MptxManager.CreateInstance(state);
+
+        protected FormFlowInstance<TState> GetFormFlowInstanceForRouteParameters<TState>(
+            string key,
+            IReadOnlyDictionary<string, object> routeParameters)
+        {
+            var instanceId = FormFlowInstanceId.GenerateForRouteValues(key, routeParameters);
+
+            var instanceStateProvider = Factory.Services.GetRequiredService<IUserInstanceStateProvider>();
+
+            return (FormFlowInstance<TState>)instanceStateProvider.GetInstance(instanceId);
+        }
 
         protected MptxInstanceContext<TState> GetMptxInstance<TState>(string instanceId)
             where TState : IMptxState =>
