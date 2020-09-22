@@ -1,17 +1,9 @@
-﻿
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Models.Models.Providers;
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@*@model Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResultModel;*@
-@using Dfc.CourseDirectory.Web.ViewModels.ProviderSearch
+@using Dfc.CourseDirectory.Web.ViewModels.SearchProvider
 @inject IHttpContextAccessor HttpContextAccessor
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model ProviderSearchViewModel
-
-
-@{
-    //var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
-}
+@model SearchProviderResultsViewModel
 
 @if (Model.Providers != null && Model.Providers.Any() && Model.Providers.FirstOrDefault() != null) // && !Model.HasErrors)
 {
@@ -30,7 +22,7 @@
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
-                @foreach (ProviderAzureSearchResultItem p in Model.Providers)
+                @foreach (var p in Model.Providers)
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">@p.UKPRN</td>
@@ -46,7 +38,7 @@
                             }
                             else if (p.Status == Status.Registered && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                             {
-                            <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.id'); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span> <span class="govuk-visually-hidden">@p.CourseDirectoryName</span></a>
+                            <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.Id'); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span> <span class="govuk-visually-hidden">@p.CourseDirectoryName</span></a>
                             }                           
                         </td>
                     </tr>
@@ -69,7 +61,6 @@
 
     function OnBoardProvider(UKPRN,id) {
 
-      
         $.ajax({
             url: '/ProviderSearch/OnBoardProvider',
             type: "POST",

@@ -102,7 +102,7 @@
     <Content Update="ViewComponents\Courses\ChooseRegion\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\ProviderAzureSearchResult\Default.cshtml">
+    <Content Update="ViewComponents\SearchProviderResults\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\ProviderCoursesResults\Default.cshtml">

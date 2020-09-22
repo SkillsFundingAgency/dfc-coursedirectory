@@ -1,16 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Common.Settings;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -18,6 +6,17 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Common.Settings;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using static Dfc.CourseDirectory.Services.CourseService.CourseValidationResult;
 
 namespace Dfc.CourseDirectory.Services.CourseService
@@ -30,7 +29,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly HttpClient _httpClient;
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
-        private readonly Uri _providerSearchUri;
         private readonly Uri _updateCourseUri;
         private readonly Uri _getCourseByIdUri;
         private readonly Uri _updateStatusUri;
@@ -87,7 +85,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _addCourseUri = settings.Value.ToAddCourseUri();
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
-            _providerSearchUri = facSettings.Value.ToProviderSearchUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
             _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
@@ -177,63 +174,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get Course By Id service unknown error.", e);
 
                 return Result.Fail<ICourse>("Get Course By Id service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
-        }
-
-        // TODO - Provider search is in the course service for now, needs moving!
-        public async Task<IResult<ProviderAzureSearchResults>> ProviderSearchAsync(ProviderSearchCriteria criteria)
-        {
-            Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
-
-            try
-            {
-                _logger.LogInformationObject("Provider search criteria", criteria);
-                _logger.LogInformationObject("Provider search URI", _providerSearchUri);
-
-                if (!_httpClient.DefaultRequestHeaders.Any(h => h.Key == "UserName"))
-                    _httpClient.DefaultRequestHeaders.Add("UserName", _apiUserName);
-                if (!_httpClient.DefaultRequestHeaders.Any(h => h.Key == "Password"))
-                    _httpClient.DefaultRequestHeaders.Add("Password", _apiPassword);
-
-                StringContent content = new StringContent(JsonConvert.SerializeObject(criteria),
-                                                          Encoding.UTF8,
-                                                          "application/json");
-
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _facSettings.ApiKey);
-                var response = await _httpClient.PostAsync(_providerSearchUri, content);
-
-                _logger.LogHttpResponseMessage("Provider search service http response", response);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                        return Result.Ok<ProviderAzureSearchResults>(new ProviderAzureSearchResults());
-
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Provider search service json response", json);
-                    ProviderAzureSearchResults providers = JsonConvert.DeserializeObject<ProviderAzureSearchResults>(json);
-
-                    //ProviderSearchResult searchResult = new ProviderSearchResult(providers);
-                    return Result.Ok<ProviderAzureSearchResults>(providers); // searchResult);
-                }
-                else
-                    return Result.Fail<ProviderAzureSearchResults>("Provider search service unsuccessful http response");
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogException("Provider search service http request error", hre);
-                return Result.Fail<ProviderAzureSearchResults>("Provider search service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogException("Provider search service unknown error.", e);
-                return Result.Fail<ProviderAzureSearchResults>("Provider search service unknown error.");
             }
             finally
             {

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.AzureSearch;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.Filters;
@@ -150,6 +151,11 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
             services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
             services.AddTransient<ProviderContextHelper>();
+
+            services.AddAzureSearchClient<ProviderSearchQuery, Provider>(
+                new Uri(configuration["AzureSearchUrl"]),
+                configuration["AzureSearchQueryKey"],
+                "provider");
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
