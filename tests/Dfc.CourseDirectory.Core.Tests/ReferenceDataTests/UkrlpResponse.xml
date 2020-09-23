@@ -5,35 +5,31 @@
             <MatchingProviderRecords>
                 <UnitedKingdomProviderReferenceNumber>10040271</UnitedKingdomProviderReferenceNumber>
                 <ProviderName>JOHN FRANK TRAINING LTD</ProviderName>
+                <AccessibleProviderName>Accessible Legal Name</AccessibleProviderName>
                 <ProviderStatus>Provider deactivated, not verified</ProviderStatus>
                 <ProviderContact>
                     <ContactType>L</ContactType>
                     <ContactAddress>
-                        <ns2:SAON>
-                            <ns2:Description>Heskin Hall Farm</ns2:Description>
-                        </ns2:SAON>
-                        <ns2:PAON>
-                            <ns2:Description>Wood Lane</ns2:Description>
-                        </ns2:PAON>
-                        <ns2:StreetDescription>Heskin</ns2:StreetDescription>
-                        <ns2:Town>Chorley</ns2:Town>
-                        <ns2:PostCode>PR7 5PA</ns2:PostCode>
+                        <Address1>Heskin Hall Farm</Address1>
+                        <Address2>Wood Lane</Address2>
+                        <Address3>Heskin</Address3>
+                        <Town>Chorley</Town>
+                        <County>Lancashire</County>
+                        <PostCode>PR7 5PA</PostCode>
                     </ContactAddress>
                     <ContactPersonalDetails/>
                     <ContactTelephone1>07700 900213</ContactTelephone1>
-                    <LastUpdated>2019-01-09T01:00:00.411+01:00</LastUpdated>
+                    <LastUpdated>2019-01-09T01:00:00.980+01:00</LastUpdated>
                 </ProviderContact>
                 <ProviderContact>
                     <ContactType>P</ContactType>
                     <ContactAddress>
-                        <ns2:SAON/>
-                        <ns2:PAON>
-                            <ns2:Description>Martland Mill</ns2:Description>
-                        </ns2:PAON>
-                        <ns2:StreetDescription>Mart Lane</ns2:StreetDescription>
-                        <ns2:Locality>Burscough</ns2:Locality>
-                        <ns2:Town>Ormskirk</ns2:Town>
-                        <ns2:PostCode>L40 0SD</ns2:PostCode>
+                        <Address2>Martland Mill</Address2>
+                        <Address3>Mart Lane</Address3>
+                        <Address4>Burscough</Address4>
+                        <Town>Ormskirk</Town>
+                        <County>Lancashire</County>
+                        <PostCode>L40 0SD</PostCode>
                     </ContactAddress>
                     <ContactPersonalDetails>
                         <ns3:PersonNameTitle>Mr</ns3:PersonNameTitle>
@@ -43,13 +39,14 @@
                     <ContactRole>Managing Director</ContactRole>
                     <ContactTelephone1>07700 900835</ContactTelephone1>
                     <ContactEmail>fred.smith35@example.org</ContactEmail>
-                    <LastUpdated>2013-01-31T15:24:13.411+01:00</LastUpdated>
+                    <LastUpdated>2013-01-31T15:24:13.980+01:00</LastUpdated>
                 </ProviderContact>
-                <ProviderVerificationDate>2020-06-11T17:17:30.411+01:00</ProviderVerificationDate>
+                <ProviderVerificationDate>2020-06-11T17:17:30.979+01:00</ProviderVerificationDate>
                 <ProviderAliases>
                     <ProviderAlias>John Frank Training</ProviderAlias>
                 </ProviderAliases>
                 <VerificationDetails>
+                    <PrimaryVerificationSource>true</PrimaryVerificationSource>
                     <VerificationAuthority>Companies House</VerificationAuthority>
                     <VerificationID>07891191</VerificationID>
                 </VerificationDetails>

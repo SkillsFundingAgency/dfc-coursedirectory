@@ -50,8 +50,9 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 returnedProviderData.ProviderAssociations.Should().BeNull();
 
                 returnedProviderData.ProviderName.Should().Be("JOHN FRANK TRAINING LTD");
+                returnedProviderData.AccessibleProviderName.Should().Be("Accessible Legal Name");
                 returnedProviderData.ProviderStatus.Should().Be("Provider deactivated, not verified");
-                returnedProviderData.ProviderVerificationDate.Should().Be(new DateTime(2020, 06, 11, 17, 17, 30, 411));
+                returnedProviderData.ProviderVerificationDate.Should().Be(new DateTime(2020, 06, 11, 17, 17, 30, 979));
                 returnedProviderData.ProviderVerificationDateSpecified.Should().BeTrue();
                 returnedProviderData.UnitedKingdomProviderReferenceNumber.Should().Be("10040271");
 
@@ -62,20 +63,18 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 var verification = returnedProviderData.VerificationDetails.Should().ContainSingle().Subject;
                 verification.VerificationAuthority.Should().Be("Companies House");
                 verification.VerificationID.Should().Be("07891191");
+                verification.PrimaryVerificationSource.Should().Be("true");
 
                 returnedProviderData.ProviderContact.Should().HaveCount(2);
 
                 var contactL = returnedProviderData.ProviderContact.Should().ContainSingle(c => c.ContactType == "L").Subject;
-                var contactLItem1 = contactL.ContactAddress.Items.Should().ContainSingle().Subject;
-                contactLItem1.Should().Be("Chorley");
-                contactL.ContactAddress.Locality.Should().BeNull();
-                contactL.ContactAddress.PAON.Description.Should().Be("Wood Lane");
+                contactL.ContactAddress.Address1.Should().Be("Heskin Hall Farm");
+                contactL.ContactAddress.Address2.Should().Be("Wood Lane");
+                contactL.ContactAddress.Address3.Should().Be("Heskin");
+                contactL.ContactAddress.Address4.Should().BeNull();
+                contactL.ContactAddress.Town.Should().Be("Chorley");
+                contactL.ContactAddress.County.Should().Be("Lancashire");
                 contactL.ContactAddress.PostCode.Should().Be("PR7 5PA");
-                contactL.ContactAddress.PostTown.Should().BeNull();
-                contactL.ContactAddress.SAON.Description.Should().Be("Heskin Hall Farm");
-                contactL.ContactAddress.StreetDescription.Should().Be("Heskin");
-                contactL.ContactAddress.UniquePropertyReferenceNumber.Should().BeNull();
-                contactL.ContactAddress.UniqueStreetReferenceNumber.Should().BeNull();
                 contactL.ContactEmail.Should().BeNull();
                 contactL.ContactFax.Should().BeNull();
                 contactL.ContactPersonalDetails.Should().NotBeNull();
@@ -91,16 +90,13 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 contactL.ContactWebsiteAddress.Should().BeNull();
 
                 var contactP = returnedProviderData.ProviderContact.Should().ContainSingle(c => c.ContactType == "P").Subject;
-                var contactPItem1 = contactP.ContactAddress.Items.Should().ContainSingle().Subject;
-                contactPItem1.Should().Be("Ormskirk");
-                contactP.ContactAddress.Locality.Should().Be("Burscough");
-                contactP.ContactAddress.PAON.Description.Should().Be("Martland Mill");
+                contactP.ContactAddress.Address1.Should().BeNull();
+                contactP.ContactAddress.Address2.Should().Be("Martland Mill");
+                contactP.ContactAddress.Address3.Should().Be("Mart Lane");
+                contactP.ContactAddress.Address4.Should().Be("Burscough");
+                contactP.ContactAddress.Town.Should().Be("Ormskirk");
+                contactP.ContactAddress.County.Should().Be("Lancashire");
                 contactP.ContactAddress.PostCode.Should().Be("L40 0SD");
-                contactP.ContactAddress.PostTown.Should().BeNull();
-                contactP.ContactAddress.SAON.Description.Should().BeNull();
-                contactP.ContactAddress.StreetDescription.Should().Be("Mart Lane");
-                contactP.ContactAddress.UniquePropertyReferenceNumber.Should().BeNull();
-                contactP.ContactAddress.UniqueStreetReferenceNumber.Should().BeNull();
                 contactP.ContactEmail.Should().Be("fred.smith35@example.org");
                 contactP.ContactFax.Should().BeNull();
                 contactP.ContactPersonalDetails.Should().NotBeNull();

@@ -112,7 +112,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             {
                 ContactType = "P",
                 LastUpdated = new DateTime(2020, 3, 1),
-                ContactAddress = new BSaddressStructure(),
+                ContactAddress = new AddressStructure(),
                 ContactPersonalDetails = new PersonNameStructure()
             };
 
@@ -120,7 +120,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             {
                 ContactType = "P",
                 LastUpdated = new DateTime(2020, 4, 1),
-                ContactAddress = new BSaddressStructure(),
+                ContactAddress = new AddressStructure(),
                 ContactPersonalDetails = new PersonNameStructure()
             };
 
@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             {
                 ContactType = "L",
                 LastUpdated = new DateTime(2020, 5, 1),
-                ContactAddress = new BSaddressStructure(),
+                ContactAddress = new AddressStructure(),
                 ContactPersonalDetails = new PersonNameStructure()
             };
 
@@ -159,12 +159,19 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             actualContact.ContactPersonalDetails.Should().NotBeNull();
 
             var actualContactAddress = actualContact.ContactAddress;
-            actualContactAddress.SAON.Description.Should().Be(ukrlpContact.ContactAddress.SAON.Description);
-            actualContactAddress.PAON.Description.Should().Be(ukrlpContact.ContactAddress.PAON.Description);
-            actualContactAddress.StreetDescription.Should().Be(ukrlpContact.ContactAddress.StreetDescription);
-            actualContactAddress.Locality.Should().Be(ukrlpContact.ContactAddress.Locality);
-            actualContactAddress.Items.SingleOrDefault().Should().Be(ukrlpContact.ContactAddress.Items.Single());
-            actualContactAddress.PostTown.Should().BeNull(); // original value is not copied across when address is recreated
+            actualContactAddress.SAON.Description.Should().Be(ukrlpContact.ContactAddress.Address1);
+            actualContactAddress.PAON.Description.Should().Be(ukrlpContact.ContactAddress.Address2);
+            actualContactAddress.StreetDescription.Should().Be(ukrlpContact.ContactAddress.Address3);
+            actualContactAddress.Locality.Should().Be(ukrlpContact.ContactAddress.Address4);
+
+            // Town is still mapped to items as it was in the v3 client to minimize change in data
+            actualContactAddress.PostTown.Should().BeNull();
+            actualContactAddress.Items.Should().BeEquivalentTo(new List<string>
+            {
+                ukrlpContact.ContactAddress.Town,
+                ukrlpContact.ContactAddress.County,
+            });
+
             actualContactAddress.PostCode.Should().Be(ukrlpContact.ContactAddress.PostCode);
             actualContactAddress.AdditionalData.Should().BeNull();
 
@@ -202,15 +209,15 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 new ProviderContactStructure
                 {
                     ContactType = "P",
-                    ContactAddress = new BSaddressStructure
+                    ContactAddress = new AddressStructure
                     {
-                        SAON = new AONstructure {Description = "Ukrlp SAON Description"},
-                        PAON = new AONstructure {Description = "Ukrlp PAON Description"},
-                        StreetDescription = "Ukrlp Street",
-                        Locality = "Ukrlp Locality",
-                        Items = new[] {"Ukrlp Item Description "},
-                        PostTown = "Ukrlp PostTown",
-                        PostCode = "Ukrlp PostCode"
+                        Address1 = "ukrlp Address1",
+                        Address2 = "ukrlp Address2",
+                        Address3 = "ukrlp Address3",
+                        Address4 = "ukrlp Address4",
+                        Town = "ukrlp Town",
+                        County = "ukrlp County",
+                        PostCode = "Ukrlp PostCode",
                     },
                     ContactPersonalDetails = new PersonNameStructure
                     {
