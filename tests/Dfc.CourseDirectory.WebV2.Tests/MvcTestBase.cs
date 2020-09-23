@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow;
@@ -43,6 +45,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected HttpClient HttpClient { get; set; }
 
         protected MptxManager MptxManager => Factory.MptxManager;
+
+        protected Mock<ISearchClient<OnspdSearchQuery, Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
 
         protected SingletonSession Session => Factory.Session;
 
