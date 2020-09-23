@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.Search
 {
-    public class OnspdSearchQuery : IAzureSearchQuery
+    public class OnspdSearchQuery : IAzureSearchQuery<Onspd>
     {
         public string Postcode { get; set; }
 

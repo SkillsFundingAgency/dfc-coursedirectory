@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using FluentAssertions;
 using Moq;
@@ -14,12 +16,26 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
     public class AzureSearchClientTests
     {
         private readonly Mock<SearchClient> _searchClient;
-        private readonly AzureSearchClient<IAzureSearchQuery, object> _client;
+        private readonly AzureSearchClient<object> _client;
 
         public AzureSearchClientTests()
         {
             _searchClient = new Mock<SearchClient>();
-            _client = new AzureSearchClient<IAzureSearchQuery, object>(_searchClient.Object);
+            _client = new AzureSearchClient<object>(_searchClient.Object);
+        }
+
+        [Fact]
+        public async Task Search_WithNullQuery_ThrowsException()
+        {
+            Func<Task<Core.Search.SearchResult<object>>> action = () => _client.Search(null as IAzureSearchQuery<object>);
+            await action.Should().ThrowExactlyAsync<ArgumentNullException>();
+        }
+
+        [Fact]
+        public async Task Search_WithQueryNotImplementsIAzureSearchQuery_ThrowsException()
+        {
+            Func<Task<Core.Search.SearchResult<object>>> action = () => _client.Search(new Mock<ISearchQuery<object>>().Object);
+            await action.Should().ThrowExactlyAsync<ArgumentException>();
         }
 
         [Fact]
@@ -74,7 +90,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
             var searchText = "TestSearchText";
             var searchOptions = new SearchOptions();
 
-            var query = new Mock<IAzureSearchQuery>();
+            var query = new Mock<IAzureSearchQuery<object>>();
             query.Setup(s => s.GenerateSearchQuery())
                 .Returns((searchText, searchOptions));
 

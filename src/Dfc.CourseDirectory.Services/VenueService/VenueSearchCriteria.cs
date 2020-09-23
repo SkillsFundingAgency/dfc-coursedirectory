@@ -1,7 +1,6 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Enums;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces;
-using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {

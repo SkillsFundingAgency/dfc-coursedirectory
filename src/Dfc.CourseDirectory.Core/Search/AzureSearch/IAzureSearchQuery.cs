@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 {
-    public interface IAzureSearchQuery
+    public interface IAzureSearchQuery<TResult> : ISearchQuery<TResult>
     {
         (string SearchText, SearchOptions Options) GenerateSearchQuery();
     }

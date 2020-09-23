@@ -8,7 +8,7 @@ using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.Search
 {
-    public class ProviderSearchQuery : IAzureSearchQuery
+    public class ProviderSearchQuery : IAzureSearchQuery<Provider>
     {
         private const int DefaultSize = 20;
 

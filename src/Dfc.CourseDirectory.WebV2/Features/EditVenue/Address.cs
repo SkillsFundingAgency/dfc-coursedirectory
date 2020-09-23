@@ -35,11 +35,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
-        private readonly ISearchClient<OnspdSearchQuery, Onspd> _onspdSearchClient;
+        private readonly ISearchClient<Onspd> _onspdSearchClient;
 
         public Handler(
             FormFlowInstance<EditVenueFlowModel> formFlowInstance,
-            ISearchClient<OnspdSearchQuery, Onspd> onspdSearchClient)
+            ISearchClient<Onspd> onspdSearchClient)
         {
             _formFlowInstance = formFlowInstance;
             _onspdSearchClient = onspdSearchClient;
