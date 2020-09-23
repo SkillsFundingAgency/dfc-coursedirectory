@@ -27,11 +27,15 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
                     ProviderId = providerInfo.ProviderId
                 });
 
+            var apprenticeshipQAEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
+
             var vm = new ProviderNavViewModel()
             {
-                ApprenticeshipQAFeatureIsEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA),
+                ApprenticeshipQAFeatureIsEnabled = apprenticeshipQAEnabled,
                 ApprenticeshipQAStatus = qaStatus ?? ApprenticeshipQAStatus.NotStarted,
-                ProviderContext = providerInfo
+                ProviderContext = providerInfo,
+                ShowApprenticeshipsLink = providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
+                    (qaStatus == ApprenticeshipQAStatus.Passed || !apprenticeshipQAEnabled)
             };
 
             return View("~/SharedViews/Components/ProviderTopNav.cshtml", vm);

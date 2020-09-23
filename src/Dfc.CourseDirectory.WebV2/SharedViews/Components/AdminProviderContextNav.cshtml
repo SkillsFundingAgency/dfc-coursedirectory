@@ -20,10 +20,10 @@
                 Your locations
             </a>
         </li>
-        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships))
+        @if (Model.ShowApprenticeshipsLink)
         {
             <li class="pttcd-subnav__item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="pttcd-subnav__item__link">
+                <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="pttcd-subnav__item__link" data-testid="adminsubnav-apprenticeships">
                     Your apprenticeships training
                 </a>
             </li>

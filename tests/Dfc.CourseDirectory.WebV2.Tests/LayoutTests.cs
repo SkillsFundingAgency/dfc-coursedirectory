@@ -69,12 +69,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].label);
-            Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Manage users", topLevelLinks[3].label);
-            Assert.Equal("Migration reports", topLevelLinks[4].label);
-            Assert.Equal("Sign out", topLevelLinks[5].label);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
+            Assert.Equal("Search providers", topLevelLinks[2].Label);
+            Assert.Equal("Manage users", topLevelLinks[3].Label);
+            Assert.Equal("Migration reports", topLevelLinks[4].Label);
+            Assert.Equal("Sign out", topLevelLinks[5].Label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -102,19 +102,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].label);
-            Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Manage users", topLevelLinks[3].label);
-            Assert.Equal("Migration reports", topLevelLinks[4].label);
-            Assert.Equal("Sign out", topLevelLinks[5].label);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
+            Assert.Equal("Search providers", topLevelLinks[2].Label);
+            Assert.Equal("Manage users", topLevelLinks[3].Label);
+            Assert.Equal("Migration reports", topLevelLinks[4].Label);
+            Assert.Equal("Sign out", topLevelLinks[5].Label);
 
             Assert.Equal(4, subNavLinks.Count);
-            Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your locations", subNavLinks[1].label);
-            Assert.Equal("Your courses", subNavLinks[2].label);
-            Assert.Equal("Bulk upload", subNavLinks[3].label);
-            Assert.Equal("/BulkUpload", subNavLinks[3].href);
+            Assert.Equal("Home", subNavLinks[0].Label);
+            Assert.Equal("Your locations", subNavLinks[1].Label);
+            Assert.Equal("Your courses", subNavLinks[2].Label);
+            Assert.Equal("Bulk upload", subNavLinks[3].Label);
+            Assert.Equal("/BulkUpload", subNavLinks[3].Href);
         }
 
         [Theory]
@@ -140,19 +140,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].label);
-            Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Manage users", topLevelLinks[3].label);
-            Assert.Equal("Migration reports", topLevelLinks[4].label);
-            Assert.Equal("Sign out", topLevelLinks[5].label);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
+            Assert.Equal("Search providers", topLevelLinks[2].Label);
+            Assert.Equal("Manage users", topLevelLinks[3].Label);
+            Assert.Equal("Migration reports", topLevelLinks[4].Label);
+            Assert.Equal("Sign out", topLevelLinks[5].Label);
 
             Assert.Equal(4, subNavLinks.Count);
-            Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your locations", subNavLinks[1].label);
-            Assert.Equal("Your apprenticeships training", subNavLinks[2].label);
-            Assert.Equal("Bulk upload", subNavLinks[3].label);
-            Assert.Equal("/BulkUploadApprenticeships", subNavLinks[3].href);
+            Assert.Equal("Home", subNavLinks[0].Label);
+            Assert.Equal("Your locations", subNavLinks[1].Label);
+            Assert.Equal("Your apprenticeships training", subNavLinks[2].Label);
+            Assert.Equal("Bulk upload", subNavLinks[3].Label);
+            Assert.Equal("/BulkUploadApprenticeships", subNavLinks[3].Href);
         }
 
         [Theory]
@@ -178,20 +178,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].label);
-            Assert.Equal("Search providers", topLevelLinks[2].label);
-            Assert.Equal("Manage users", topLevelLinks[3].label);
-            Assert.Equal("Migration reports", topLevelLinks[4].label);
-            Assert.Equal("Sign out", topLevelLinks[5].label);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
+            Assert.Equal("Search providers", topLevelLinks[2].Label);
+            Assert.Equal("Manage users", topLevelLinks[3].Label);
+            Assert.Equal("Migration reports", topLevelLinks[4].Label);
+            Assert.Equal("Sign out", topLevelLinks[5].Label);
 
             Assert.Equal(5, subNavLinks.Count);
-            Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your locations", subNavLinks[1].label);
-            Assert.Equal("Your apprenticeships training", subNavLinks[2].label);
-            Assert.Equal("Your courses", subNavLinks[3].label);
-            Assert.Equal("Bulk upload", subNavLinks[4].label);
-            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[4].href);
+            Assert.Equal("Home", subNavLinks[0].Label);
+            Assert.Equal("Your locations", subNavLinks[1].Label);
+            Assert.Equal("Your apprenticeships training", subNavLinks[2].Label);
+            Assert.Equal("Your courses", subNavLinks[3].Label);
+            Assert.Equal("Bulk upload", subNavLinks[4].Label);
+            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[4].Href);
         }
 
         [Theory]
@@ -217,12 +217,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(5, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your locations", topLevelLinks[1].label);
-            Assert.Equal("Your courses", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
-            Assert.Equal("/BulkUpload", topLevelLinks[3].href);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Your locations", topLevelLinks[1].Label);
+            Assert.Equal("Your courses", topLevelLinks[2].Label);
+            Assert.Equal("Bulk upload", topLevelLinks[3].Label);
+            Assert.Equal("Sign out", topLevelLinks[4].Label);
+            Assert.Equal("/BulkUpload", topLevelLinks[3].Href);
             
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -250,12 +250,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(5, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your locations", topLevelLinks[1].label);
-            Assert.Equal("Your apprenticeships training", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("/BulkUploadApprenticeships", topLevelLinks[3].href);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Your locations", topLevelLinks[1].Label);
+            Assert.Equal("Your apprenticeships training", topLevelLinks[2].Label);
+            Assert.Equal("Bulk upload", topLevelLinks[3].Label);
+            Assert.Equal("/BulkUploadApprenticeships", topLevelLinks[3].Href);
+            Assert.Equal("Sign out", topLevelLinks[4].Label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -283,13 +283,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var subNavLinks = GetSubNavLinks(doc);
 
             Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your locations", topLevelLinks[1].label);
-            Assert.Equal("Your apprenticeships training", topLevelLinks[2].label);
-            Assert.Equal("Your courses", topLevelLinks[3].label);
-            Assert.Equal("Bulk upload", topLevelLinks[4].label);
-            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[4].href);
-            Assert.Equal("Sign out", topLevelLinks[5].label);
+            Assert.Equal("Home", topLevelLinks[0].Label);
+            Assert.Equal("Your locations", topLevelLinks[1].Label);
+            Assert.Equal("Your apprenticeships training", topLevelLinks[2].Label);
+            Assert.Equal("Your courses", topLevelLinks[3].Label);
+            Assert.Equal("Bulk upload", topLevelLinks[4].Label);
+            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[4].Href);
+            Assert.Equal("Sign out", topLevelLinks[5].Label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -343,6 +343,52 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var doc = await response.GetDocument();
             var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
             Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
+        }
+
+        [Theory]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task ProviderUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Both,
+                providerName: "Test Provider",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            await User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementByTestId("topnav-apprenticeships"));
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
+        public async Task AdminUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Both,
+                providerName: "Test Provider",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            await User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementByTestId("adminsubnav-apprenticeships"));
         }
 
         [Fact]
@@ -421,7 +467,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(expectGATagsToBeRendered, gotGATags);
         }
 
-        private IReadOnlyList<(string href, string label)> GetTopLevelNavLinks(IHtmlDocument doc)
+        private IReadOnlyList<(string Href, string Label)> GetTopLevelNavLinks(IHtmlDocument doc)
         {
             var results = new List<(string href, string label)>();
 
@@ -437,7 +483,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             return results;
         }
 
-        private IReadOnlyList<(string href, string label)> GetSubNavLinks(IHtmlDocument doc)
+        private IReadOnlyList<(string Href, string Label)> GetSubNavLinks(IHtmlDocument doc)
         {
             var results = new List<(string href, string label)>();
 
