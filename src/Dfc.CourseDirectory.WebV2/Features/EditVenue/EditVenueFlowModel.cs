@@ -14,6 +14,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Website { get; set; }
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+        public string Town { get; set; }
+        public string County { get; set; }
+        public string Postcode { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
+        public bool NewAddressIsOutsideOfEngland { get; set; }
     }
 
     public class EditVenueFlowModelFactory
@@ -39,7 +47,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
                 Email = venue.Email,
                 Name = venue.VenueName,
                 PhoneNumber = venue.Telephone,
-                Website = venue.Website
+                Website = venue.Website,
+                AddressLine1 = venue.AddressLine1,
+                AddressLine2 = venue.AddressLine2,
+                Town = venue.Town,
+                County = venue.County,
+                Postcode = venue.Postcode,
+                Latitude = venue.Latitude,
+                Longitude = venue.Longitude
             };
         }
     }

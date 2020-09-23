@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using FluentValidation;
@@ -8,6 +9,47 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 {
     public static class RuleBuilderExtensions
     {
+        private static readonly Regex _addressLinePattern = new Regex(
+            @"^[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$",
+            RegexOptions.Compiled);
+
+        private static readonly Regex _countyPattern = new Regex(
+            @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$",
+            RegexOptions.Compiled);
+
+        private static readonly Regex _townPattern = new Regex(
+            @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$",
+            RegexOptions.Compiled);
+
+        public static void AddressLine1<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotEmpty()
+                    .WithMessage("Enter address line 1")
+                .MaximumLength(Constants.AddressLine1MaxLength)
+                    .WithMessage($"Address line 1 must be {Constants.AddressLine1MaxLength} characters or less")
+                .Matches(_addressLinePattern)
+                    .WithMessage("Address line 1 must only include letters a to z, numbers, hyphens and spaces");
+        }
+
+        public static void AddressLine2<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .MaximumLength(Constants.AddressLine2MaxLength)
+                    .WithMessage($"Address line 2 must be {Constants.AddressLine2MaxLength} characters or less")
+                .Matches(_addressLinePattern)
+                    .WithMessage("Address line 2 must only include letters a to z, numbers, hyphens and spaces");
+        }
+
+        public static void County<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .MaximumLength(Constants.CountyMaxLength)
+                    .WithMessage($"County must be {Constants.CountyMaxLength} characters or less")
+                .Matches(_countyPattern)
+                    .WithMessage("County must only include letters a to z, numbers, hyphens and spaces");
+        }
+
         public static void Email<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
@@ -20,6 +62,26 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
             field
                 .Apply(Rules.PhoneNumber)
                     .WithMessage("Enter a telephone number in the correct format");
+        }
+
+        public static void Postcode<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotEmpty()
+                    .WithMessage("Enter a postcode")
+                .Apply(Rules.Postcode)
+                    .WithMessage("Enter a valid postcode");
+        }
+
+        public static void Town<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotEmpty()
+                    .WithMessage("Enter a town or city")
+                .MaximumLength(Constants.TownMaxLength)
+                    .WithMessage($"Town or city must be {Constants.TownMaxLength} characters or less")
+                .Matches(_townPattern)
+                    .WithMessage("Town or city must only include letters a to z, numbers, hyphens and spaces");
         }
 
         public static void VenueName<T>(
