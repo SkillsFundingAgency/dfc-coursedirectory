@@ -365,9 +365,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            var topLevelLinks = GetTopLevelNavLinks(doc);
-            var topLevelLinkLabels = topLevelLinks.Select(l => l.Label);
-            Assert.DoesNotContain("Your apprenticeships training", topLevelLinkLabels);
+            Assert.Null(doc.GetElementByTestId("topnav-apprenticeships"));
         }
 
         [Theory]
@@ -390,9 +388,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            var subNavLinks = GetSubNavLinks(doc);
-            var subNavLinkLabels = subNavLinks.Select(l => l.Label);
-            Assert.DoesNotContain("Your apprenticeships training", subNavLinkLabels);
+            Assert.Null(doc.GetElementByTestId("adminsubnav-apprenticeships"));
         }
 
         [Fact]
