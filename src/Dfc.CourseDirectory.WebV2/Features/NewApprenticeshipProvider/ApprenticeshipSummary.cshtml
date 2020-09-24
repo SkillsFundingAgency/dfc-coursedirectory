@@ -66,7 +66,7 @@
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Location type</govuk-summary-list-row-key>
-        <govuk-summary-list-row-value>@Model.ApprenticeshipLocationType.ToDisplayName()</govuk-summary-list-row-value>
+        <govuk-summary-list-row-value>@Model.ApprenticeshipLocationType.ToDescription()</govuk-summary-list-row-value>
         <govuk-summary-list-row-action>
             <a asp-action="ApprenticeshipLocations" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link">
                 Change<span class="govuk-visually-hidden"> location type</span>
@@ -81,7 +81,7 @@
     <table class="govuk-table">
         <caption class="govuk-table__caption">
             <a asp-action="ApprenticeshipEmployerLocations" append-mptx-id class="govuk-link govuk-body govuk-!-margin-bottom-0" style="float:right">Change</a>
-            @ApprenticeshipLocationType.EmployerBased.ToDisplayName()
+            @ApprenticeshipLocationType.EmployerBased.ToDescription()
         </caption>
         <tbody class="govuk-table__body">
             @if (Model.ApprenticeshipIsNational == true)
@@ -115,7 +115,7 @@
     <table class="govuk-table">
         <caption class="govuk-table__caption">
             <a asp-action="AddApprenticeshipClassroomLocation" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id class="govuk-link govuk-body govuk-!-margin-bottom-0" style="float:right">Add</a>
-            @ApprenticeshipLocationType.ClassroomBased.ToDisplayName()
+            @ApprenticeshipLocationType.ClassroomBased.ToDescription()
         </caption>
         <thead>
             <tr class="govuk-table__row">
@@ -134,7 +134,7 @@
                         <ul class="govuk-list govuk-!-margin-0">
                             @foreach (var dm in location.DeliveryModes)
                             {
-                                <li>@dm.ToDisplayName()</li>
+                                <li>@dm.ToDescription()</li>
                             }
                         </ul>
                     </td>

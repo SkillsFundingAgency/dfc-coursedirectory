@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class ApprenticeshipQAUnableToCompleteReasonsExtensions
     {
-        public static string ToDisplayName(this ApprenticeshipQAUnableToCompleteReasons status)
+        public static string ToDescription(this ApprenticeshipQAUnableToCompleteReasons status)
         {
             switch (status)
             {

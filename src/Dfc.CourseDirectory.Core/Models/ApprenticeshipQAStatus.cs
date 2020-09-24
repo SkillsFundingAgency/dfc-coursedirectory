@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class ApprenticeshipQAStatusExtensions
     {
-        public static string ToDisplayName(this ApprenticeshipQAStatus status)
+        public static string ToDescription(this ApprenticeshipQAStatus status)
         {
             if (status.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
             {

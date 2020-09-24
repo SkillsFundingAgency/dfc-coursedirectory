@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class ApprenticeshipLocationTypeExtensions
     {
-        public static string ToDisplayName(this ApprenticeshipLocationType apprenticeshipLocationType) =>
+        public static string ToDescription(this ApprenticeshipLocationType apprenticeshipLocationType) =>
             apprenticeshipLocationType switch
             {
                 ApprenticeshipLocationType.EmployerBased => "Employer based locations",

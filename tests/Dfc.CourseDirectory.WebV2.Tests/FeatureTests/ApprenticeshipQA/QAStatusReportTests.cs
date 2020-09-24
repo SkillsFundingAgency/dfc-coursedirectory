@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Empty(item.UnableToCompleteReasons);
-                Assert.Equal(ApprenticeshipQAStatus.Passed.ToDisplayName(), item.QAStatus);
+                Assert.Equal(ApprenticeshipQAStatus.Passed.ToDescription(), item.QAStatus);
             });
         }
 
@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Empty(item.UnableToCompleteReasons);
-                Assert.Equal(ApprenticeshipQAStatus.Passed.ToDisplayName(), item.QAStatus);
+                Assert.Equal(ApprenticeshipQAStatus.Passed.ToDescription(), item.QAStatus);
             });
         }
 
@@ -292,7 +292,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Empty(item.UnableToCompleteReasons);
-                Assert.Equal(ApprenticeshipQAStatus.Failed.ToDisplayName(), item.QAStatus);
+                Assert.Equal(ApprenticeshipQAStatus.Failed.ToDescription(), item.QAStatus);
             });
         }
 
@@ -369,10 +369,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal("Yes", item.UnableToComplete);
                 Assert.Equal(unableToCompleteOn.ToString("dd MMM yyyy"), item.UnableToCompleteOn);
                 Assert.Equal(unableToCompleteComments, item.Notes);
-                Assert.Contains(unableReason1.ToDisplayName(), item.UnableToCompleteReasons);
-                Assert.Contains(unableReason2.ToDisplayName(), item.UnableToCompleteReasons);
-                Assert.Contains(unableReason3.ToDisplayName(), item.UnableToCompleteReasons);
-                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete.ToDisplayName(), item.QAStatus);
+                Assert.Contains(unableReason1.ToDescription(), item.UnableToCompleteReasons);
+                Assert.Contains(unableReason2.ToDescription(), item.UnableToCompleteReasons);
+                Assert.Contains(unableReason3.ToDescription(), item.UnableToCompleteReasons);
+                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete.ToDescription(), item.QAStatus);
             });
         }
 
@@ -452,8 +452,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal("Yes", item.UnableToComplete);
                 Assert.Equal(unableToCompleteOn.ToString("dd MMM yyyy"), item.UnableToCompleteOn);
                 Assert.Equal(unableToCompleteComments, item.Notes);
-                Assert.Equal(item.UnableToCompleteReasons, unableReason.ToDisplayName());
-                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete.ToDisplayName(), item.QAStatus);
+                Assert.Equal(item.UnableToCompleteReasons, unableReason.ToDescription());
+                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete.ToDescription(), item.QAStatus);
             });
         }
 
@@ -493,7 +493,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal("No", item.FailedQA);
                 Assert.Empty(item.FailedQAOn);
                 Assert.Equal("No", item.UnableToComplete);
-                Assert.Equal(ApprenticeshipQAStatus.NotStarted.ToDisplayName(), item.QAStatus);
+                Assert.Equal(ApprenticeshipQAStatus.NotStarted.ToDescription(), item.QAStatus);
             });
         }
 

@@ -136,7 +136,7 @@
                             <ul class="govuk-list">
                                 @foreach (var reason in EnumHelper.SplitFlags(provider.UnableToCompleteReasons.Value))
                                 {
-                                    <li>@reason.ToDisplayName()</li>
+                                    <li>@reason.ToDescription()</li>
                                 }
                             </ul>
                         </td>

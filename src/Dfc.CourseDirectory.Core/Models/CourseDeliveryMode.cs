@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class CourseDeliveryModeExtensions
     {
-        public static string ToDisplayName(this CourseDeliveryMode deliveryMode) => deliveryMode switch
+        public static string ToDescription(this CourseDeliveryMode deliveryMode) => deliveryMode switch
         {
             CourseDeliveryMode.ClassroomBased => "Classroom based",
             CourseDeliveryMode.Online => "Online",
