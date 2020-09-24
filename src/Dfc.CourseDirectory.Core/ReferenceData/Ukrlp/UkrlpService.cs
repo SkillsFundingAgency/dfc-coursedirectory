@@ -8,6 +8,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 {
     public class UkrlpService : IUkrlpService
     {
+        private readonly IUkrlpWcfClientFactory _ukrlpWcfClientFactory;
+
         // Magic values to make the service happy
         private const string QueryId = "0";
         private const string StakeholderId = "1";
@@ -22,11 +24,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             "PD2" // Deactivation complete
         };
 
+        public UkrlpService(IUkrlpWcfClientFactory ukrlpWcfClientFactory)
+        {
+            _ukrlpWcfClientFactory = ukrlpWcfClientFactory ?? throw new ArgumentNullException(nameof(ukrlpWcfClientFactory));
+        }
+
         public async Task<IReadOnlyCollection<ProviderRecordStructure>> GetAllProviderData(DateTime updatedSince)
         {
-            using var client = new ProviderQueryPortTypeClient();
-            client.ChannelFactory.Endpoint.Binding.SendTimeout = _sendTimeout;
-            client.ChannelFactory.Endpoint.Binding.ReceiveTimeout = _receiveTimeout;
+            using var client = _ukrlpWcfClientFactory.Build(new WcfConfiguration
+            {
+                SendTimeout = _sendTimeout,
+                ReceiveTimeout = _receiveTimeout,
+            });
 
             var results = new List<ProviderRecordStructure>();
 
@@ -63,7 +72,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task<ProviderRecordStructure> GetProviderData(int ukprn)
         {
-            using var client = new ProviderQueryPortTypeClient();
+            using var client = _ukrlpWcfClientFactory.Build();
 
             foreach (var status in _statuses)
             {
