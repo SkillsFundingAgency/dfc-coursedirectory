@@ -139,7 +139,7 @@
                     @if (Model.ApprenticeshipClassroomLocations.Count > 0)
                     {
                         <govuk-accordion-item>
-                            <govuk-accordion-item-heading>@ApprenticeshipLocationType.ClassroomBased.ToDisplayName()</govuk-accordion-item-heading>
+                            <govuk-accordion-item-heading>@ApprenticeshipLocationType.ClassroomBased.ToDescription()</govuk-accordion-item-heading>
                             <table class="govuk-table pttcd-table--last-row-border-0">
                                 <thead class="govuk-table__head">
                                     <tr class="govuk-table__row">
@@ -157,7 +157,7 @@
                                                 <ul class="govuk-list">
                                                     @foreach (var dm in l.DeliveryModes)
                                                     {
-                                                        <li>@dm.ToDisplayName()</li>
+                                                        <li>@dm.ToDescription()</li>
                                                     }
                                                 </ul>
                                             </td>
@@ -171,7 +171,7 @@
                     @if (Model.ApprenticeshipEmployerLocationRegions.Count > 0 || Model.ApprenticeshipIsNational == true)
                     {
                         <govuk-accordion-item>
-                            <govuk-accordion-item-heading>@ApprenticeshipLocationType.EmployerBased.ToDisplayName()</govuk-accordion-item-heading>
+                            <govuk-accordion-item-heading>@ApprenticeshipLocationType.EmployerBased.ToDescription()</govuk-accordion-item-heading>
                             <table class="govuk-table pttcd-table--last-row-border-0">
                                 <thead class="govuk-table__head">
                                     <tr class="govuk-table__row">

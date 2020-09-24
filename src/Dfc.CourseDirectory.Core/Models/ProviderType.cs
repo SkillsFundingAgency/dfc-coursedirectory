@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class ProviderTypeExtensions
     {
-        public static string ToDisplayName(this ProviderType providerType) =>
+        public static string ToDescription(this ProviderType providerType) =>
             providerType switch
             {
                 ProviderType.Undefined => "",

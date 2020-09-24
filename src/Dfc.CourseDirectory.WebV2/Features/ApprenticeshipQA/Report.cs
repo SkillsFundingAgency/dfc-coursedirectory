@@ -69,10 +69,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
                              Email = r.Email,
                              PassedQAOn = r.PassedQAOn.HasValue ? r.PassedQAOn.Value.ToString("dd MMM yyyy") : null,
                              FailedQAOn = r.FailedQAOn.HasValue ? r.FailedQAOn.Value.ToString("dd MMM yyyy") : null,
-                             UnableToCompleteReasons = r.UnableToCompleteReasons.HasValue ? string.Join(",", EnumHelper.SplitFlags(r.UnableToCompleteReasons.Value).ToList().Select(x => x.ToDisplayName()).ToList()) : null,
+                             UnableToCompleteReasons = r.UnableToCompleteReasons.HasValue ? string.Join(",", EnumHelper.SplitFlags(r.UnableToCompleteReasons.Value).ToList().Select(x => x.ToDescription()).ToList()) : null,
                              UnableToCompleteOn = r.UnabletoCompleteOn.HasValue ? r.UnabletoCompleteOn.Value.ToString("dd MMM yyyy") : null,
                              Notes = r.Notes,
-                             QAStatus = r.QAStatus.HasValue ? r.QAStatus.Value.ToDisplayName() : null,
+                             QAStatus = r.QAStatus.HasValue ? r.QAStatus.Value.ToDescription() : null,
                              PassedQA = r.QAStatus == ApprenticeshipQAStatus.Passed ? "Yes" : "No",
                              FailedQA = r.QAStatus == ApprenticeshipQAStatus.Failed ? "Yes" : "No",
                              UnableToComplete = r.QAStatus.HasValue ? (r.QAStatus.Value.HasFlag(ApprenticeshipQAStatus.UnableToComplete) ? "Yes" : "No") : "No"

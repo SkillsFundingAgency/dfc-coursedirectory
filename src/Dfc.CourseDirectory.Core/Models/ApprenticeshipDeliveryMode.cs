@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class ApprenticeshipDeliveryModesExtensions
     {
-        public static string ToDisplayName(this ApprenticeshipDeliveryMode apprenticeshipDeliveryMode) =>
+        public static string ToDescription(this ApprenticeshipDeliveryMode apprenticeshipDeliveryMode) =>
             apprenticeshipDeliveryMode switch
             {
                 ApprenticeshipDeliveryMode.EmployerAddress => "Employer Address",
