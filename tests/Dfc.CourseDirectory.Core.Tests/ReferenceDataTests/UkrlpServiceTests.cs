@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Microsoft.Extensions.Logging.Abstractions;
 using UkrlpService;
 using Xunit;
 
@@ -26,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // a nice way of preventing it because the HttpListener works by blocking till a request arrives.
             requestListener.Start();
 
-            var ukrlpService = new ReferenceData.Ukrlp.UkrlpService(ukrlpWcfClientBuilder);
+            var ukrlpService = new ReferenceData.Ukrlp.UkrlpService(ukrlpWcfClientBuilder, NullLogger<ReferenceData.Ukrlp.UkrlpService>.Instance);
             ProviderRecordStructure returnedProviderData;
             try
             {
