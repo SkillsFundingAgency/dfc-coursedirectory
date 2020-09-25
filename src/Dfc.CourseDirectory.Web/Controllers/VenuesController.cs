@@ -234,38 +234,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(viewModel);
         }
+
         [Authorize]
-        public async Task<IActionResult> EditVenue(string Id)
-        {
-            var viewModel = new VenueAddressSelectionConfirmationViewModel();
-            GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(Id);
-
-            var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
-            if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
-            {
-                var onspd = _onspdSearchHelper.GetOnsPostcodeData(getVenueByIdResult.Value.PostCode);
-                viewModel.Id = Id;
-                viewModel.VenueName = getVenueByIdResult.Value.VenueName;
-                viewModel.Address = new AddressModel
-                {
-                    //Id = getVenueByIdResult.Value.ID,
-                    AddressLine1 = getVenueByIdResult.Value.Address1,
-                    AddressLine2 = getVenueByIdResult.Value.Address2,
-                    TownOrCity = getVenueByIdResult.Value.Town,
-                    County = getVenueByIdResult.Value.County,
-                    Postcode = getVenueByIdResult.Value.PostCode,
-                    Country = onspd?.Country
-                };
-            }
-            else
-            {
-                viewModel.Error = getVenueByIdResult.Error;
-            }
-
-            viewModel.Id = Id;
-
-            return View("VenueAddressSelectionConfirmation", viewModel);
-        }
+        public IActionResult EditVenue(string Id) => RedirectToAction("Details", "EditVenue", new { venueId = Id });
+        
         [Authorize]
         public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel, string VenueName)
         {
@@ -480,59 +452,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             return View(viewModel);
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> EditVenueName(EditVenueRequestModel requestModel)
-        {
-            AddressModel addressModel = null;
-
-            if (!string.IsNullOrEmpty(requestModel.Id))
-            {
-                GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(requestModel.Id);
-
-                var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
-                if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
-                {
-                    addressModel = new AddressModel
-                    {
-                        //Id = getVenueByIdResult.Value.ID,
-                        AddressLine1 = getVenueByIdResult.Value.Address1,
-                        AddressLine2 = getVenueByIdResult.Value.Address2,
-                        TownOrCity = getVenueByIdResult.Value.Town,
-                        County = getVenueByIdResult.Value.County,
-                        Postcode = getVenueByIdResult.Value.PostCode
-                    };
-                }
-
-            } else {
-                addressModel = requestModel.Address;
-            }
-
-            EditVenueNameModel model = new EditVenueNameModel
-            {
-                VenueName = requestModel.VenueName,
-                PostcodeId = requestModel.PostcodeId,
-                Address = addressModel,
-                Id = requestModel.Id
-            };
-
-            return View(model);
-        }
-
-        [Authorize]
-        [HttpPost]
-        public IActionResult EditVenueAddress(EditVenueRequestModel requestModel)
-        {
-            EditVenueAddressModel model = new EditVenueAddressModel
-            {
-                Id = requestModel.Id,
-                VenueName = requestModel.VenueName,
-                PostcodeId = requestModel.PostcodeId,
-                Address = requestModel.Address
-            };
-            return View(model);
         }
 
         [Authorize]
