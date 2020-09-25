@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 returnedProviderData.ProviderName.Should().Be("JOHN FRANK TRAINING LTD");
                 returnedProviderData.AccessibleProviderName.Should().Be("Accessible Legal Name");
                 returnedProviderData.ProviderStatus.Should().Be("Provider deactivated, not verified");
-                returnedProviderData.ProviderVerificationDate.Should().Be(new DateTime(2020, 06, 11, 17, 17, 30, 979));
+                // returnedProviderData.ProviderVerificationDate - ignoring, not in use
                 returnedProviderData.ProviderVerificationDateSpecified.Should().BeTrue();
                 returnedProviderData.UnitedKingdomProviderReferenceNumber.Should().Be("10040271");
 
@@ -89,6 +89,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 contactL.ContactTelephone1.Should().Be("07700 900213");
                 contactL.ContactTelephone2.Should().BeNull();
                 contactL.ContactWebsiteAddress.Should().BeNull();
+                // contactL.LastUpdated  - ignoring, not in use
 
                 var contactP = returnedProviderData.ProviderContact.Should().ContainSingle(c => c.ContactType == "P").Subject;
                 contactP.ContactAddress.Address1.Should().BeNull();
@@ -111,6 +112,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 contactP.ContactTelephone1.Should().Be("07700 900835");
                 contactP.ContactTelephone2.Should().BeNull();
                 contactP.ContactWebsiteAddress.Should().BeNull();
+                // contactP.LastUpdated  - ignoring, not in use
             }
         }
 
