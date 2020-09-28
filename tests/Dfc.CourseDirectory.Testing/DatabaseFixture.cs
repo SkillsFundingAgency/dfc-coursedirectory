@@ -66,6 +66,7 @@ namespace Dfc.CourseDirectory.Testing
             services.AddSingleton<SqlQuerySpy>();
             services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
             services.AddTransient<SqlDataSync>();
+            services.AddLogging();
         }
 
         public void Dispose()
