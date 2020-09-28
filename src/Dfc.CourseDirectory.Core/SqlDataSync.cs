@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core
 {
@@ -16,13 +17,16 @@ namespace Dfc.CourseDirectory.Core
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ILogger _logger;
 
         public SqlDataSync(
             IServiceScopeFactory serviceScopeFactory,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ILogger<SqlDataSync> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _logger = logger;
         }
 
         public async Task SyncAll()
@@ -33,29 +37,37 @@ namespace Dfc.CourseDirectory.Core
             await SyncAllApprenticeships();
         }
 
-        public Task SyncAllApprenticeships() => _cosmosDbQueryDispatcher.ExecuteQuery(
-            new ProcessAllApprenticeships()
-            {
-                ProcessChunk = SyncApprenticeships
-            });
+        public Task SyncAllApprenticeships() => WithExclusiveSqlLock(
+            nameof(SyncAllApprenticeships),
+            () => _cosmosDbQueryDispatcher.ExecuteQuery(
+                new ProcessAllApprenticeships()
+                {
+                    ProcessChunk = SyncApprenticeships
+                }));
 			
-        public Task SyncAllCourses() => _cosmosDbQueryDispatcher.ExecuteQuery(
-            new ProcessAllCourses()
-            {
-                ProcessChunk = SyncCourses
-            });
+        public Task SyncAllCourses() => WithExclusiveSqlLock(
+            nameof(SyncAllCourses),
+            () =>_cosmosDbQueryDispatcher.ExecuteQuery(
+                new ProcessAllCourses()
+                {
+                    ProcessChunk = SyncCourses
+                }));
 
-        public Task SyncAllProviders() => _cosmosDbQueryDispatcher.ExecuteQuery(
-            new ProcessAllProviders()
-            {
-                ProcessChunk = SyncProviders
-            });
+        public Task SyncAllProviders() => WithExclusiveSqlLock(
+            nameof(SyncAllProviders),
+            () => _cosmosDbQueryDispatcher.ExecuteQuery(
+                new ProcessAllProviders()
+                {
+                    ProcessChunk = SyncProviders
+                }));
 
-        public Task SyncAllVenues() => _cosmosDbQueryDispatcher.ExecuteQuery(
-            new ProcessAllVenues()
-            {
-                ProcessChunk = SyncVenues
-            });
+        public Task SyncAllVenues() => WithExclusiveSqlLock(
+            nameof(SyncAllVenues),
+                () => _cosmosDbQueryDispatcher.ExecuteQuery(
+                new ProcessAllVenues()
+                {
+                    ProcessChunk = SyncVenues
+                }));
 
         public Task SyncApprenticeship(Apprenticeship apprenticeship) => SyncApprenticeships(new[] { apprenticeship });
 
@@ -223,6 +235,32 @@ namespace Dfc.CourseDirectory.Core
                     Website = venue.Website
                 })
             }));
+
+        private async Task WithExclusiveSqlLock(string lockName, Func<Task> action)
+        {
+            // Grab an exclusive lock inside a transaction that spans the entire duration of `action`'s execution.
+            // ISqlQueryDispatcher owns the transaction; Dispose()ing the scope Dispose()s the transaction too.
+            // Note that commiting this transaction is not necessary.
+            // If the lock cannot be grabbed immediately then log & bail.
+
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var sqlDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+
+            var result = await sqlDispatcher.ExecuteQuery(new GetExclusiveLock()
+            {
+                Name = lockName,
+                TimeoutMilliseconds = 0  // Return immediately if lock cannot be acquired
+            });
+
+            if (!result)
+            {
+                _logger.LogWarning($"Failed to acquire exclusive lock: '{lockName}'.");
+                return;
+            }
+
+            await action();
+        }
 
         private async Task WithSqlDispatcher(Func<ISqlQueryDispatcher, Task> action)
         {

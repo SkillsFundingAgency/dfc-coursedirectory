@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using OneOf.Types;
 using Xunit;
 
@@ -70,7 +71,8 @@ namespace Dfc.CourseDirectory.Core.Tests
 
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
-                CosmosDbQueryDispatcher.Object);
+                CosmosDbQueryDispatcher.Object,
+                new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncProvider(provider);
@@ -121,7 +123,8 @@ namespace Dfc.CourseDirectory.Core.Tests
 
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
-                CosmosDbQueryDispatcher.Object);
+                CosmosDbQueryDispatcher.Object,
+                new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncVenue(venue);
@@ -212,7 +215,8 @@ namespace Dfc.CourseDirectory.Core.Tests
 
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
-                CosmosDbQueryDispatcher.Object);
+                CosmosDbQueryDispatcher.Object,
+                new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncCourse(course);
@@ -324,7 +328,8 @@ namespace Dfc.CourseDirectory.Core.Tests
 
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
-                CosmosDbQueryDispatcher.Object);
+                CosmosDbQueryDispatcher.Object,
+                new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncApprenticeship(apprenticeship);
