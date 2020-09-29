@@ -15,6 +15,8 @@ namespace Dfc.CourseDirectory.Core
 {
     public class SqlDataSync
     {
+        private const int ApprenticeshipBatchSize = 300;
+
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ILogger _logger;
@@ -42,7 +44,13 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllApprenticeships()
                 {
-                    ProcessChunk = SyncApprenticeships
+                    ProcessChunk = async chunk =>
+                    {
+                        foreach (var c in chunk.Buffer(ApprenticeshipBatchSize))
+                        {
+                            await SyncApprenticeships(c);
+                        }
+                    }
                 }));
 			
         public Task SyncAllCourses() => WithExclusiveSqlLock(
@@ -63,7 +71,7 @@ namespace Dfc.CourseDirectory.Core
 
         public Task SyncAllVenues() => WithExclusiveSqlLock(
             nameof(SyncAllVenues),
-                () => _cosmosDbQueryDispatcher.ExecuteQuery(
+            () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllVenues()
                 {
                     ProcessChunk = SyncVenues
