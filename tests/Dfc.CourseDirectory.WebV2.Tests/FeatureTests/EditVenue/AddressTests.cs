@@ -415,7 +415,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                     County: "Updated county",
                     Postcode: "X",
                     ExpectedErrorInputId: "Postcode",
-                    ExpectedErrorMessage: "Enter a valid postcode"
+                    ExpectedErrorMessage: "Enter a real postcode"
                 )
             }
             .Select(t => new object[] { t.AddressLine1, t.AddressLine2, t.Town, t.County, t.Postcode, t.ExpectedErrorInputId, t.ExpectedErrorMessage })

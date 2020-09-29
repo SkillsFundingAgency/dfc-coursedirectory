@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Email", "Enter an email address in the correct format, like name@example.com");
+            doc.AssertHasError("Email", "Enter an email address in the correct format");
         }
 
         [Theory]

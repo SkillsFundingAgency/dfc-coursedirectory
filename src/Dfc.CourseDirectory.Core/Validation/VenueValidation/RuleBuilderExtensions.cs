@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .EmailAddress()
-                    .WithMessage("Enter an email address in the correct format, like name@example.com");
+                    .WithMessage("Enter an email address in the correct format");
         }
 
         public static void PhoneNumber<T>(this IRuleBuilderInitial<T, string> field)
@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .NotEmpty()
                     .WithMessage("Enter a postcode")
                 .Apply(Rules.Postcode)
-                    .WithMessage("Enter a valid postcode");
+                    .WithMessage("Enter a real postcode");
         }
 
         public static void Town<T>(this IRuleBuilderInitial<T, string> field)
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .Apply(Rules.Website)
-                    .WithMessage("The format of URL is incorrect");
+                    .WithMessage("Enter a website in the correct format");
         }
     }
 }

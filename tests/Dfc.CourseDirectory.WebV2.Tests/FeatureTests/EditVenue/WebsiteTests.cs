@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Website", "The format of URL is incorrect");
+            doc.AssertHasError("Website", "Enter a website in the correct format");
         }
 
         [Theory]
