@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                     bulk.ColumnMappings.Add(new SqlBulkCopyColumnMapping(c.ColumnName, c.ColumnName));
                 }
 
+                bulk.BulkCopyTimeout = 0;
                 bulk.DestinationTableName = tableName;
                 await bulk.WriteToServerAsync(table);
             }
