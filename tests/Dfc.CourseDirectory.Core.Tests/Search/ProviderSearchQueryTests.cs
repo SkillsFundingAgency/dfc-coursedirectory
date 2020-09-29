@@ -33,41 +33,12 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
         [InlineData("TestSearchText", "TestSearchText*")]
         [InlineData(" TestSearchText", "TestSearchText*")]
         [InlineData("TestSearchText ", "TestSearchText*")]
+        [InlineData("TestSearchText's", @"TestSearchText\'s")]
+        [InlineData("Test Search Text", "Test Search Text*")]
+        [InlineData("Test Search Text ", "Test Search Text*")]
+        [InlineData("Test  Search Text", "Test  Search Text*")]
+        [InlineData(@"T\e+s|t 'Sea'-rch* (#T?xt", @"T\\e\+s\|t \'Sea\'\-rch\* \(T\?xt*")]
         public void GenerateSearchQuery_WithSearchText_ReturnsQueryWithExpectedSearchText(string searchText, string expectedResult)
-        {
-            var query = new ProviderSearchQuery
-            {
-                SearchText = searchText
-            };
-
-            var result = query.GenerateSearchQuery();
-
-            result.SearchText.Should().Be(expectedResult);
-        }
-
-        [Theory]
-        [InlineData("TestSearchText!?", "TestSearchText*")]
-        [InlineData("TestSearchText!? ", "TestSearchText*")]
-        [InlineData(" TestSearchText!?", "TestSearchText*")]
-        [InlineData(@"Test!£$%^&*()_+-=`\|,.<>/?{}[]~#@':;SearchText", "TestSearchText*")]
-        [InlineData(@"Test!£$%^&*()_+-=`\|,.<>/?{}[]~#@':; SearchText", "Test* SearchText*")]
-        public void GenerateSearchQuery_WithSearchTextContainingNonAlphanumericChars_ReturnsQueryWithNoNonAlphanumericCharsInSearchText(string searchText, string expectedResult)
-        {
-            var query = new ProviderSearchQuery
-            {
-                SearchText = searchText
-            };
-
-            var result = query.GenerateSearchQuery();
-
-            result.SearchText.Should().Be(expectedResult);
-        }
-
-        [Theory]
-        [InlineData("Test Search Text", "Test* Search* Text*")]
-        [InlineData("Test  Search Text", "Test* Search* Text*")]
-        [InlineData("Test Search Text ", "Test* Search* Text*")]
-        public void GenerateSearchQuery_WithSearchTextContainingMultipleWords_ReturnsQueryWithWildcardedSearchText(string searchText, string expectedResult)
         {
             var query = new ProviderSearchQuery
             {

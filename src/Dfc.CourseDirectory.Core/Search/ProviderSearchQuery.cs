@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
@@ -20,8 +21,14 @@ namespace Dfc.CourseDirectory.Core.Search
         public (string SearchText, SearchOptions Options) GenerateSearchQuery()
         {
             var searchText = SearchText
-                .RemoveNonAlphanumericChars()
-                .ApplyWildcardsToAllSegments();
+                .EscapeSimpleQuerySearchOperators()
+                .Trim();
+
+            if (!searchText.EndsWith("'s", StringComparison.InvariantCultureIgnoreCase))
+            {
+                searchText = searchText
+                    .AppendWildcardWhenLastCharIsAlphanumeric();
+            }
 
             return new AzureSearchQueryBuilder(searchText)
                 .WithSearchMode(SearchMode.All)

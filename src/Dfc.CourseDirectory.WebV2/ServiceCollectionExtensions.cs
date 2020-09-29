@@ -155,7 +155,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddAzureSearchClient<ProviderSearchQuery, Provider>(
                 new Uri(configuration["AzureSearchUrl"]),
                 configuration["AzureSearchQueryKey"],
-                "provider");
+                configuration["ProviderAzureSearchIndexName"]);
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)

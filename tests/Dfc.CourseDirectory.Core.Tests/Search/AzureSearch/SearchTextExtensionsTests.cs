@@ -9,6 +9,74 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
         [Theory]
         [InlineData(null)]
         [InlineData("")]
+        public void EscapeSimpleQuerySearchOperators_WithNullOrEmptySearchText_ReturnsEmptyString(string searchText)
+        {
+            var result = searchText.EscapeSimpleQuerySearchOperators();
+
+            result.Should().Be(string.Empty);
+        }
+
+        [Theory]
+        [InlineData(@"\", @"\\")]
+        [InlineData(@"+", @"\+")]
+        [InlineData(@"|", @"\|")]
+        [InlineData(@"""", @"\""")]
+        [InlineData(@"(", @"\(")]
+        [InlineData(@")", @"\)")]
+        [InlineData(@"'", @"\'")]
+        [InlineData(@"*", @"\*")]
+        [InlineData(@"?", @"\?")]
+        [InlineData(@"#", "")]
+        [InlineData(@"-", @"\-")]
+        [InlineData(@"\+|()'-*?#", @"\\\+\|\(\)\'\-\*\?")]
+        public void EscapeSimpleQuerySearchOperators_WithSearchTextContainingSimpleSearchQueryOperator_ReturnsEscapedSearchText(string searchText, string expectedResult)
+        {
+            var result = searchText.EscapeSimpleQuerySearchOperators();
+
+            result.Should().Be(expectedResult);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void AppendWildcardWhenLastCharIsAlphanumeric_WithNullOrEmptySearchText_ReturnsEmptyString(string searchText)
+        {
+            var result = searchText.AppendWildcardWhenLastCharIsAlphanumeric();
+
+            result.Should().Be(string.Empty);
+        }
+
+        [Theory]
+        [InlineData("a")]
+        [InlineData("B")]
+        [InlineData("Test a")]
+        [InlineData("Test B")]
+        [InlineData("1")]
+        [InlineData("Test 1")]
+        public void AppendWildcardWhenLastCharIsAlphanumeric_WithLastCharAlphanumeric_ReturnsSearchTextWithWildcard(string searchText)
+        {
+            var result = searchText.AppendWildcardWhenLastCharIsAlphanumeric();
+
+            result.Should().Be($"{searchText}*");
+        }
+
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("Test ")]
+        [InlineData("-")]
+        [InlineData("Test-")]
+        [InlineData("*")]
+        [InlineData("Test*")]
+        public void AppendWildcardWhenLastCharIsAlphanumeric_WithLastCharNotAlphanumeric_ReturnsSearchTextWithNoWildcard(string searchText)
+        {
+            var result = searchText.AppendWildcardWhenLastCharIsAlphanumeric();
+
+            result.Should().Be(searchText);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
         public void RemoveNonAlphanumericChars_WithNullOrEmptySearchText_ReturnsEmptyString(string searchText)
         {
             var result = searchText.RemoveNonAlphanumericChars();

@@ -64,7 +64,7 @@
 
             var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
-                $.get("/SearchProvider/Search/?keyword=" + payload, success);
+                $.get("/SearchProvider/Search/?keyword=" + encodeURIComponent(payload), success);
             };
 
             var removeSearchResults = function () {
