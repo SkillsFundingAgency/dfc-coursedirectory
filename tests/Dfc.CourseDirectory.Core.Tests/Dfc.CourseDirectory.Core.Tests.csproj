@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <None Update="ReferenceDataTests\UkrlpResponse.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
