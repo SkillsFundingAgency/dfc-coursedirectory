@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -6,8 +7,7 @@ using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
-    public class RequireUserCanAccessVenueBehavior<TRequest, TResponse>
-        : IPipelineBehavior<TRequest, TResponse>
+    public class RequireUserCanAccessVenueBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly IRequireUserCanAccessVenue<TRequest> _descriptor;
         private readonly ICurrentUserProvider _currentUserProvider;
@@ -29,7 +29,10 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             _providerInfoCache = providerInfoCache;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(
+            TRequest request,
+            CancellationToken cancellationToken,
+            RequestHandlerDelegate<TResponse> next)
         {
             var VenueId = _descriptor.GetVenueId(request);
             var providerId = await _providerOwnershipCache.GetProviderForVenue(VenueId);
@@ -39,9 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 throw new ResourceDoesNotExistException(ResourceType.Venue, VenueId);
             }
 
-            var isAuthorized = IsAuthorized();
-
-            if (isAuthorized)
+            if (IsAuthorized(providerId))
             {
                 var providerInfo = await _providerInfoCache.GetProviderInfo(providerId.Value);
                 _providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
@@ -52,29 +53,29 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             {
                 throw new NotAuthorizedException();
             }
+        }
 
-            bool IsAuthorized()
+        private bool IsAuthorized(Guid? providerId)
+        {
+            var currentUser = _currentUserProvider.GetCurrentUser();
+
+            if (currentUser == null)
             {
-                var currentUser = _currentUserProvider.GetCurrentUser();
-
-                if (currentUser == null)
-                {
-                    return false;
-                }
-
-                if (currentUser.Role == RoleNames.Developer || currentUser.Role == RoleNames.Helpdesk)
-                {
-                    return true;
-                }
-
-                if ((currentUser.Role == RoleNames.ProviderUser || currentUser.Role == RoleNames.ProviderSuperUser) &&
-                    currentUser.CurrentProviderId == providerId)
-                {
-                    return true;
-                }
-
                 return false;
             }
+
+            if (currentUser.Role == RoleNames.Developer || currentUser.Role == RoleNames.Helpdesk)
+            {
+                return true;
+            }
+
+            if ((currentUser.Role == RoleNames.ProviderUser || currentUser.Role == RoleNames.ProviderSuperUser) &&
+                currentUser.CurrentProviderId == providerId)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
