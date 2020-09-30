@@ -18,6 +18,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1DB8226-C965-4846-A3F0-A597F8511A8A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		LICENSE = LICENSE
+		README.md = README.md
+		Directory.Build.props = Directory.Build.props
+		.tool-versions = .tool-versions
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dfc.CourseDirectory.Database", "src\Dfc.CourseDirectory.Database\Dfc.CourseDirectory.Database.sqlproj", "{08458BC6-E51F-4320-9663-225509D4B11A}"
