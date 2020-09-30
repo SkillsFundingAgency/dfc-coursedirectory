@@ -1,4 +1,8 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Providers;
@@ -7,11 +11,6 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Services.ProviderService
 {
@@ -37,27 +36,29 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             _settings = settings.Value;
             _httpClient = httpClient;
 
-            _getProviderByPRNUri = settings.Value.ToGetProviderByPRNUri();
-            _updateProviderByIdUri = settings.Value.ToUpdateProviderByIdUri();
-            _updateProviderDetailsUri = settings.Value.ToUpdateProviderDetailsUri();
+            _getProviderByPRNUri = ToGetProviderByPRNUri(settings.Value);
+            _updateProviderByIdUri = ToUpdateProviderByIdUri(settings.Value);
+            _updateProviderDetailsUri = ToUpdateProviderDetailsUri(settings.Value);
         }
 
-        public async Task<IResult<IProviderSearchResult>> GetProviderByPRNAsync(IProviderSearchCriteria criteria)
+        public async Task<IResult<IEnumerable<Provider>>> GetProviderByPRNAsync(string prn)
         {
-            Throw.IfNull(criteria, nameof(criteria));
             _logger.LogMethodEnter();
+
+            if (string.IsNullOrWhiteSpace(prn))
+            {
+                throw new ArgumentException($"{prn} cannot be null or empty or whitespace.", nameof(prn));
+            }
 
             try
             {
-                _logger.LogInformationObject("Provider search criteria.", criteria);
+                _logger.LogInformationObject("Provider search criteria.", prn);
                 _logger.LogInformationObject("Provider search URI", _getProviderByPRNUri);
-
-                //var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
 
                 // dependency injection not working for _httpClient when this is called from async code so use our own local version
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await httpClient.GetAsync(_getProviderByPRNUri + $"?PRN={criteria.Search}");
+                var response = await httpClient.GetAsync($"{_getProviderByPRNUri}?PRN={prn}");
 
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
@@ -72,28 +73,23 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
                     var providers = JsonConvert.DeserializeObject<IEnumerable<Provider>>(json);
 
-                    var searchResult = new ProviderSearchResult(providers)
-                    {
-                        Value = providers
-                    };
-
-                    return Result.Ok<IProviderSearchResult>(searchResult);
+                    return Result.Ok(providers);
                 }
                 else
                 {
-                    return Result.Fail<IProviderSearchResult>("Provider search service unsuccessful http response");
+                    return Result.Fail<IEnumerable<Provider>>("Provider search service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Provider search service http request error", hre);
-                return Result.Fail<IProviderSearchResult>("Provider search service http request error.");
+                return Result.Fail<IEnumerable<Provider>>("Provider search service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Provider search service unknown error.", e);
 
-                return Result.Fail<IProviderSearchResult>("Provider search service unknown error.");
+                return Result.Fail<IEnumerable<Provider>>("Provider search service unknown error.");
             }
             finally
             {
@@ -208,48 +204,26 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 _logger.LogMethodExit();
             }
         }
-    }
 
-    internal static class ProviderServiceSettingsExtensions
-    {
-        internal static Uri ToGetProviderByPRNUri(this IProviderServiceSettings extendee)
+        private static Uri ToGetProviderByPRNUri(IProviderServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetProviderByPRN");
         }
 
-        internal static Uri ToUpdateProviderByIdUri(this IProviderServiceSettings extendee)
+        internal static Uri ToUpdateProviderByIdUri(IProviderServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/UpdateProviderById");
         }
 
-        internal static Uri ToUpdateProviderDetailsUri(this IProviderServiceSettings extendee)
+        internal static Uri ToUpdateProviderDetailsUri(IProviderServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/UpdateProviderDetails");
         }
-    }
-
-    internal static class ProviderServiceCriteriaExtensions
-    {
-        internal static string ToJson(this IProviderSearchCriteria extendee)
-        {
-            ProviderSearchJson json = new ProviderSearchJson
-            {
-                PRN = extendee.Search
-            };
-            var result = JsonConvert.SerializeObject(json);
-
-            return result;
-        }
-    }
-
-    internal class ProviderSearchJson
-    {
-        public string PRN { get; set; }
     }
 }

@@ -1,27 +1,25 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Web.Helpers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Web.ViewModels.Migration;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.WebV2;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
@@ -245,10 +243,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             Dfc.CourseDirectory.Models.Models.Providers.Provider provider = null;
             try
             {
-                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(prn.ToString()))).Result;
+                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(prn.ToString())).Result;
                 if (providerSearchResult.IsSuccess)
                 {
-                    provider = providerSearchResult.Value.Value.FirstOrDefault();
+                    provider = providerSearchResult.Value.FirstOrDefault();
                 }
             }
             catch (Exception)

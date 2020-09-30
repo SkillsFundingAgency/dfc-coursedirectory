@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
         }
 
-       // [Authorize(Policy = "ElevatedUserRole")]
+        [Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
             if (!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
@@ -77,13 +77,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     throw new ArgumentNullException(nameof(requestModel));
                 }
 
-                var result = await _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(requestModel.SearchTerm));
+                var result = await _providerService.GetProviderByPRNAsync(requestModel.SearchTerm);
 
                 if (result.IsSuccess && result.HasValue)
                 {
                     model = new ProviderSearchResultModel(
                         requestModel.SearchTerm,
-                        result.Value.Value);
+                        result.Value);
                 }
                 else
                 {

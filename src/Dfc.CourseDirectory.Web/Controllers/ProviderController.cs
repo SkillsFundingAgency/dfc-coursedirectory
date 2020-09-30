@@ -1,4 +1,11 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Models.Courses;
@@ -11,22 +18,14 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Provider;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Web.Helpers.Attributes;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -129,12 +128,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             int? UKPRN = _session.GetInt32("UKPRN");
 
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
 
             if (providerSearchResult.IsSuccess)
             {
                 model = new ProviderTypeAddOrEditViewModel();
-                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.Undefined;
+                model.ProviderType = providerSearchResult.Value.FirstOrDefault()?.ProviderType ?? ProviderType.Undefined;
             }
 
             return View("UpdateProviderType", model);
@@ -150,12 +149,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
 
             Provider provider;
             if (providerSearchResult.IsSuccess)
             {
-                provider = providerSearchResult.Value.Value.FirstOrDefault();
+                provider = providerSearchResult.Value.FirstOrDefault();
 
                 var oldProviderType = provider.ProviderType;
                 if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeship))

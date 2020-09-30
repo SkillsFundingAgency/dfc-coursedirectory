@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
@@ -10,10 +6,5 @@ namespace Dfc.CourseDirectory.Web.RequestModels
     {
         [Required(ErrorMessage = "Enter Search Term")]
         public string SearchTerm { get; set; }
-
-        public ProviderSearchRequestModel()
-        {
-
-        }
     }
 }
