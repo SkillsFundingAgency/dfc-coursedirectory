@@ -1,28 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult;
+using Dfc.CourseDirectory.WebV2;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.CourseService;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Web.ViewModels;
-using System.Diagnostics;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -31,36 +26,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<ProviderSearchController> _logger;
         private readonly IProviderServiceSettings _providerServiceSettings;
         private readonly IProviderService _providerService;
-        private readonly IProviderSearchHelper _providerSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUserHelper _userHelper;
-        private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
+
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public ProviderSearchController(
             ILogger<ProviderSearchController> logger,
             IOptions<ProviderServiceSettings> providerServiceSettings,
             IProviderService providerService,
-            IProviderSearchHelper providerSearchHelper,
             IHttpContextAccessor contextAccessor,
             IUserHelper userHelper,
-            IOptions<CourseServiceSettings> courseSearchSettings,
-            ICourseService courseService
-
-            )
+            ICourseService courseService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(providerServiceSettings, nameof(providerServiceSettings));
             Throw.IfNull(providerService, nameof(providerService));
-            Throw.IfNull(providerSearchHelper, nameof(providerSearchHelper));
             Throw.IfNull(userHelper, nameof(userHelper));
-            Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
             Throw.IfNull(courseService, nameof(courseService));
 
             _logger = logger;
             _providerServiceSettings = providerServiceSettings.Value;
             _providerService = providerService;
-            _providerSearchHelper = providerSearchHelper;
             _contextAccessor = contextAccessor;
             _userHelper = userHelper;
             _courseService = courseService;
@@ -69,28 +57,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
        // [Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
-           
-                if (!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
+            if (!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
+            {
+                return new ContentResult
                 {
-                    return new ContentResult
-                    {
-                        ContentType = "text/html",
-                        Content = "<script>location.reload();</script>"
-                    };
-                }
-                _logger.LogMethodEnter();
-                _logger.LogInformationObject("RequestModel", requestModel);
-           
+                    ContentType = "text/html",
+                    Content = "<script>location.reload();</script>"
+                };
+            }
+            _logger.LogMethodEnter();
+            _logger.LogInformationObject("RequestModel", requestModel);
 
             ProviderSearchResultModel model = new ProviderSearchResultModel();
             
-
             try
             {
-               
-                var criteria = _providerSearchHelper.GetProviderSearchCriteria(requestModel);
+                if (requestModel == null)
+                {
+                    throw new ArgumentNullException(nameof(requestModel));
+                }
 
-                var result = await _providerService.GetProviderByPRNAsync(criteria);
+                var result = await _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(requestModel.SearchTerm));
 
                 if (result.IsSuccess && result.HasValue)
                 {
@@ -172,11 +159,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                            
                     }
                 }
+
                 _logger.LogInformationObject("Model", model);
-                       
-                    
-
-
             }
             catch (Exception ex)
             {
