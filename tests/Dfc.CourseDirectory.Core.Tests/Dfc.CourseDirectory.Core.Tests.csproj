@@ -25,4 +25,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ReferenceDataTests\UkrlpResponse.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

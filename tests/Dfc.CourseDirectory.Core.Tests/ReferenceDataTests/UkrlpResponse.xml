@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns4:ProviderQueryResponse xmlns:ns2="http://www.govtalk.gov.uk/people/bs7666" xmlns:ns3="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns4="http://ukrlp.co.uk.server.ws.v3">
+            <MatchingProviderRecords>
+                <UnitedKingdomProviderReferenceNumber>10040271</UnitedKingdomProviderReferenceNumber>
+                <ProviderName>JOHN FRANK TRAINING LTD</ProviderName>
+                <AccessibleProviderName>Accessible Legal Name</AccessibleProviderName>
+                <ProviderStatus>Provider deactivated, not verified</ProviderStatus>
+                <ProviderContact>
+                    <ContactType>L</ContactType>
+                    <ContactAddress>
+                        <Address1>Heskin Hall Farm</Address1>
+                        <Address2>Wood Lane</Address2>
+                        <Address3>Heskin</Address3>
+                        <Town>Chorley</Town>
+                        <County>Lancashire</County>
+                        <PostCode>PR7 5PA</PostCode>
+                    </ContactAddress>
+                    <ContactPersonalDetails/>
+                    <ContactTelephone1>07700 900213</ContactTelephone1>
+                    <LastUpdated>2019-01-09T01:00:00.980+01:00</LastUpdated>
+                </ProviderContact>
+                <ProviderContact>
+                    <ContactType>P</ContactType>
+                    <ContactAddress>
+                        <Address2>Martland Mill</Address2>
+                        <Address3>Mart Lane</Address3>
+                        <Address4>Burscough</Address4>
+                        <Town>Ormskirk</Town>
+                        <County>Lancashire</County>
+                        <PostCode>L40 0SD</PostCode>
+                    </ContactAddress>
+                    <ContactPersonalDetails>
+                        <ns3:PersonNameTitle>Mr</ns3:PersonNameTitle>
+                        <ns3:PersonGivenName>Fred</ns3:PersonGivenName>
+                        <ns3:PersonFamilyName>Smith</ns3:PersonFamilyName>
+                    </ContactPersonalDetails>
+                    <ContactRole>Managing Director</ContactRole>
+                    <ContactTelephone1>07700 900835</ContactTelephone1>
+                    <ContactEmail>fred.smith35@example.org</ContactEmail>
+                    <LastUpdated>2013-01-31T15:24:13.980+01:00</LastUpdated>
+                </ProviderContact>
+                <ProviderVerificationDate>2020-06-11T17:17:30.979+01:00</ProviderVerificationDate>
+                <ProviderAliases>
+                    <ProviderAlias>John Frank Training</ProviderAlias>
+                </ProviderAliases>
+                <VerificationDetails>
+                    <PrimaryVerificationSource>true</PrimaryVerificationSource>
+                    <VerificationAuthority>Companies House</VerificationAuthority>
+                    <VerificationID>07891191</VerificationID>
+                </VerificationDetails>
+            </MatchingProviderRecords>
+            <QueryId>2</QueryId>
+            <StakeholderId>2</StakeholderId>
+        </ns4:ProviderQueryResponse>
+    </S:Body>
+</S:Envelope>

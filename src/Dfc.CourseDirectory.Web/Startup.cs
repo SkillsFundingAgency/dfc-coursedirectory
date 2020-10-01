@@ -6,6 +6,7 @@ using System.Net.Http;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
@@ -82,6 +83,7 @@ namespace Dfc.CourseDirectory.Web
             });
 
             services.AddSingleton<IConfiguration>(Configuration);
+            services.AddTransient<IUkrlpWcfClientFactory, UkrlpWcfClientFactory>();
             services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
             services.Configure<CourseForComponentSettings>(Configuration.GetSection("AppUISettings:CourseForComponentSettings"));
             services.Configure<EntryRequirementsComponentSettings>(Configuration.GetSection("AppUISettings:EntryRequirementsComponentSettings"));
@@ -187,7 +189,7 @@ namespace Dfc.CourseDirectory.Web
                                                                         _apprenticeshipClaims.Contains(c.Value))));
                 options.AddPolicy("Fe", policy =>
                     policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
-                                                                             x.User.Claims.Any(c => c.Type == "ProviderType" && 
+                                                                             x.User.Claims.Any(c => c.Type == "ProviderType" &&
                                                                                                     _feClaims.Contains(c.Value, StringComparer.OrdinalIgnoreCase))));
             });
 
@@ -262,7 +264,7 @@ namespace Dfc.CourseDirectory.Web
                 return new Uri(blob.Uri + sasToken);
             }
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,

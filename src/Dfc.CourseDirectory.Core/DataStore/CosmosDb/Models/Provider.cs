@@ -54,8 +54,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
 
     public class ProviderContactAddress
     {
+        /// <summary>
+        /// Secondary Addressable Object Name, e.g. Building name/number
+        /// </summary>
         public ProviderContactAddressSAON SAON { get; set; }
+
+        /// <summary>
+        /// Primary Addressable Object Name, e.g. Flat number.
+        /// </summary>
         public ProviderContactAddressPAON PAON { get; set; }
+
         public string StreetDescription { get; set; }
         public string Locality { get; set; }
         public IList<string> Items { get; set; }

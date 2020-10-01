@@ -24,8 +24,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UkrlpSyncHelper(
-            IUkrlpService ukrlpService, 
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, 
+            IUkrlpService ukrlpService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             ILoggerFactory loggerFactory)
         {
@@ -37,13 +37,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncAllProviderData(DateTime updatedSince)
         {
+            _logger.LogInformation($"UKRLP Sync: Beginning {nameof(SyncAllProviderData)}, fetching providers from UKRLP API...");
             var allProviders = await _ukrlpService.GetAllProviderData(updatedSince);
+            _logger.LogInformation($"UKRLP Sync: {allProviders.Count} providers received, processing...");
 
             var createdCount = 0;
             var updatedCount = 0;
 
             foreach (var providerData in allProviders)
             {
+                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount+updatedCount+1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
                 var result = await CreateOrUpdateProvider(providerData);
 
                 if (result == CreateOrUpdateResult.Created)
@@ -54,25 +57,32 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 {
                     updatedCount++;
                 }
+
+                if ((createdCount + updatedCount) % 200 == 0)
+                {
+                    _logger.LogInformation(
+                        $"UKRLP Sync: processed provider {createdCount + updatedCount} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
+                }
             }
 
-            _logger.LogInformation("Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
+            _logger.LogInformation("UKRLP Sync: Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
         }
 
         public async Task SyncProviderData(int ukprn)
         {
+            _logger.LogDebug($"UKRLP Sync: Fetching updated UKRLP data for UKPRN {ukprn}...");
             var providerData = await _ukrlpService.GetProviderData(ukprn);
 
             if (providerData == null)
             {
-                _logger.LogWarning("Failed to update provider information from UKRLP for {0}.", ukprn);
+                _logger.LogWarning("UKRLP Sync: Failed to update provider information from UKRLP for {0}.", ukprn);
 
                 return;
             }
 
             await CreateOrUpdateProvider(providerData);
 
-            _logger.LogInformation("Successfully updated provider information from UKRLP for {0}.", ukprn);
+            _logger.LogInformation("UKRLP Sync: Successfully updated provider information from UKRLP for {0}.", ukprn);
         }
 
         // internal for testing
@@ -91,12 +101,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         {
             ContactAddress = new ProviderContactAddress()
             {
-                SAON = new ProviderContactAddressSAON() { Description = contact.ContactAddress.SAON.Description },
-                PAON = new ProviderContactAddressPAON() { Description = contact.ContactAddress.PAON.Description },
-                StreetDescription = contact.ContactAddress.StreetDescription,
-                Locality = contact.ContactAddress.Locality,
-                Items = contact.ContactAddress.Items,
-                PostCode = contact.ContactAddress.PostCode
+                SAON = new ProviderContactAddressSAON { Description = contact.ContactAddress.Address1 },
+                PAON = new ProviderContactAddressPAON { Description = contact.ContactAddress.Address2 },
+                StreetDescription = contact.ContactAddress.Address3,
+                Locality = contact.ContactAddress.Address4,
+                Items = new List<string>
+                {
+                    contact.ContactAddress.Town,
+                    contact.ContactAddress.County,
+                }.Where(s => s != null).ToList(),
+                PostTown = null, // town still in Items to avoid changing data after upgrade from v3 to v6 UKRLP client
+                PostCode = contact.ContactAddress.PostCode,
             },
             ContactEmail = contact.ContactEmail,
             ContactFax = contact.ContactFax,
@@ -104,7 +119,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 PersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle,
                 PersonGivenName = contact.ContactPersonalDetails.PersonGivenName,
-                PersonFamilyName = contact.ContactPersonalDetails.PersonFamilyName
+                PersonFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
             },
             ContactTelephone1 = contact.ContactTelephone1,
             ContactType = contact.ContactType,

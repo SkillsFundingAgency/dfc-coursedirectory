@@ -25,12 +25,13 @@ namespace Dfc.CourseDirectory.Functions
             var configuration = builder.GetContext().Configuration;
 
             builder.Services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
-			
+
             builder.Services.AddCosmosDbDataStore(
                 endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
                 key: configuration["CosmosDbSettings:PrimaryKey"]);
 
             builder.Services.AddTransient<LarsDataImporter>();
+            builder.Services.AddTransient<IUkrlpWcfClientFactory, UkrlpWcfClientFactory>();
             builder.Services.AddTransient<IClock, FrozenSystemClock>();
             builder.Services.Decorate<IJobActivator, FunctionInstanceServicesCatalog>();
             builder.Services.AddSingleton(sp => (FunctionInstanceServicesCatalog)sp.GetRequiredService<IJobActivator>());
