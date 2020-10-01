@@ -25,99 +25,31 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class ProviderController : Controller
     {
-        private readonly ILogger<ProviderController> _logger;
         private readonly ISession _session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IProviderService _providerService;
-        private readonly IAuthorizationService _authorizationService;
 
         public ProviderController(
-            ILogger<ProviderController> logger,
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService,
-            IProviderService providerService,
-            IAuthorizationService Authorization, IAuthorizationService authorizationService)
+            IProviderService providerService)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(providerService, nameof(providerService));
 
-            _logger = logger;
             _session = contextAccessor.HttpContext.Session;
             _courseService = courseService;
             _venueService = venueService;
             _providerService = providerService;
-            _authorizationService = authorizationService;
-        }
-
-        [Authorize(Policy = "ElevatedUserRole")]
-        public IActionResult Index()
-        {
-            _session.SetString("Option", "Provider");
-            _session.SetInt32("ProviderSearch", 0);
-            _logger.LogMethodEnter();
-            _logger.LogMethodExit();
-            return View();
-        }
-
-
-        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
-        {
-            if (list == null) list = new List<Venue>();
-
-            var found = list.ToList().Find(x => x.ID == id.ToString());
-
-            return found;
-        }
-
-        internal string FormatAddress(Venue venue)
-        {
-            if (venue == null) return string.Empty;
-
-            return venue.VenueName;
-        }
-
-        internal string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
-        {
-            if (list == null) list = new List<RegionItemModel>();
-            if (ids == null) ids = new List<string>();
-
-            var regionNames = (from regionItemModel in list
-                               from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id)
-                               select regionItemModel.RegionName).Distinct().OrderBy(x => x).ToList();
-
-            return string.Join(", ", regionNames);
-        }
-
-        internal string CourseNameByCourseRunId(IEnumerable<CourseRunViewModel> courseRuns, string id)
-        {
-            if (courseRuns == null) return string.Empty;
-            if (string.IsNullOrWhiteSpace(id)) return string.Empty;
-
-            var found = courseRuns.FirstOrDefault(x => x.Id == id)?.CourseName;
-
-            return found;
-        }
-
-        internal string QualificationTitleByCourseId(IEnumerable<CourseViewModel> courses, string id)
-        {
-            if (courses == null) return string.Empty;
-            if (string.IsNullOrWhiteSpace(id)) return string.Empty;
-
-            var found = courses.FirstOrDefault(x => x.Id == id)?.QualificationTitle;
-
-            return found;
         }
 
         [Authorize("Admin")]
@@ -349,6 +281,55 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             return View(viewModel);
+        }
+
+        private Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
+        {
+            if (list == null) list = new List<Venue>();
+
+            var found = list.ToList().Find(x => x.ID == id.ToString());
+
+            return found;
+        }
+
+        private string FormatAddress(Venue venue)
+        {
+            if (venue == null) return string.Empty;
+
+            return venue.VenueName;
+        }
+
+        private string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        {
+            if (list == null) list = new List<RegionItemModel>();
+            if (ids == null) ids = new List<string>();
+
+            var regionNames = (from regionItemModel in list
+                               from subRegionItemModel in regionItemModel.SubRegion
+                               where ids.Contains(subRegionItemModel.Id)
+                               select regionItemModel.RegionName).Distinct().OrderBy(x => x).ToList();
+
+            return string.Join(", ", regionNames);
+        }
+
+        private string CourseNameByCourseRunId(IEnumerable<CourseRunViewModel> courseRuns, string id)
+        {
+            if (courseRuns == null) return string.Empty;
+            if (string.IsNullOrWhiteSpace(id)) return string.Empty;
+
+            var found = courseRuns.FirstOrDefault(x => x.Id == id)?.CourseName;
+
+            return found;
+        }
+
+        private string QualificationTitleByCourseId(IEnumerable<CourseViewModel> courses, string id)
+        {
+            if (courses == null) return string.Empty;
+            if (string.IsNullOrWhiteSpace(id)) return string.Empty;
+
+            var found = courses.FirstOrDefault(x => x.Id == id)?.QualificationTitle;
+
+            return found;
         }
     }
 }

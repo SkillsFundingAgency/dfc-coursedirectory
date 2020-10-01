@@ -35,7 +35,6 @@
     <Compile Remove="Helpers\IPostCodeSearchHelper.cs" />
     <Compile Remove="Helpers\PostCodeSearchHelper.cs" />
     <Compile Remove="ViewComponents\Courses\Duration\DurationUnitModel.cs" />
-    <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterItemModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSSA\ZCodeSearchResultItemModel.cs" />
@@ -165,9 +164,6 @@
     <Content Update="Controllers\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\ProviderSearchResult\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -258,9 +254,6 @@
     <Content Update="Views\Provider\Dashboard.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Provider\Search.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\PublishApprenticeships\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -298,9 +291,6 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Venues\VenueSearchResults.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Provider\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>
