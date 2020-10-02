@@ -35,12 +35,11 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private readonly IProviderService _providerService;
         private readonly IEnvironmentHelper _environmentHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
-        private readonly IFeatureFlagProvider _featureFlagProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
 
         public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
-            IEnvironmentHelper environmentHelper, IFeatureFlagProvider featureFlagProvider, ISqlQueryDispatcher sqlQueryDispatcher,
+            IEnvironmentHelper environmentHelper, ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             Throw.IfNull(courseService, nameof(courseService));
@@ -58,7 +57,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             _blobStorageService = blobStorageService;
             _providerService = providerService;
             _environmentHelper = environmentHelper;
-            _featureFlagProvider = featureFlagProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
         }
@@ -224,19 +222,13 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             }
             actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
 
-                actualModel.QAFeatureIsEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
+                var providerId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId;
 
-                if (actualModel.QAFeatureIsEnabled)
-                {
-                    var providerId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId;
-
-                    actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
-                        new GetProviderApprenticeshipQAStatus()
-                        {
-                            ProviderId = providerId
-                        }) ?? Core.Models.ApprenticeshipQAStatus.NotStarted;
-
-                }
+                actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetProviderApprenticeshipQAStatus()
+                    {
+                        ProviderId = providerId
+                    }) ?? Core.Models.ApprenticeshipQAStatus.NotStarted;
 
             }
             catch (Exception)

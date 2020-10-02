@@ -8,14 +8,10 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
 {
     public class ProviderTopNavViewComponent : ViewComponent
     {
-        private readonly IFeatureFlagProvider _featureFlagProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public ProviderTopNavViewComponent(
-            IFeatureFlagProvider featureFlagProvider,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+        public ProviderTopNavViewComponent(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            _featureFlagProvider = featureFlagProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
@@ -27,15 +23,12 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
                     ProviderId = providerInfo.ProviderId
                 });
 
-            var apprenticeshipQAEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
-
             var vm = new ProviderNavViewModel()
             {
-                ApprenticeshipQAFeatureIsEnabled = apprenticeshipQAEnabled,
                 ApprenticeshipQAStatus = qaStatus ?? ApprenticeshipQAStatus.NotStarted,
                 ProviderContext = providerInfo,
                 ShowApprenticeshipsLink = providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
-                    (qaStatus == ApprenticeshipQAStatus.Passed || !apprenticeshipQAEnabled)
+                    qaStatus == ApprenticeshipQAStatus.Passed
             };
 
             return View("~/SharedViews/Components/ProviderTopNav.cshtml", vm);

@@ -16,24 +16,12 @@ namespace Dfc.CourseDirectory.Web
         public RestrictApprenticeshipQAStatusAttribute(params ApprenticeshipQAStatus[] allowedStatuses)
         {
             AllowedStatuses = new HashSet<ApprenticeshipQAStatus>(allowedStatuses);
-            AllowWhenApprenticeshipQAFeatureDisabled = true;
         }
 
         public ISet<ApprenticeshipQAStatus> AllowedStatuses { get; }
 
-        public bool AllowWhenApprenticeshipQAFeatureDisabled { get; set; }
-
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var featureFlagProvider = context.HttpContext.RequestServices.GetRequiredService<IFeatureFlagProvider>();
-            var qaFeatureIsEnabled = featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
-
-            if (!qaFeatureIsEnabled && AllowWhenApprenticeshipQAFeatureDisabled)
-            {
-                await next();
-                return;
-            }
-
             var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
             var providerContext = providerContextProvider.GetProviderContext();
 

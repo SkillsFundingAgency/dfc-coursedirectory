@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 {
-    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class PublishApprenticeshipsController : Controller
     {
         private readonly ILogger<PublishApprenticeshipsController> _logger;
