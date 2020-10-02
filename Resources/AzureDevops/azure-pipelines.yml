@@ -53,7 +53,6 @@ steps:
   parameters:
     ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
     SolutionBaseName: '${{ variables.SolutionBaseName }}'
-    targetPath: '$(build.artifactstagingdirectory)'
 
 - task: CopyFiles@2
   displayName: 'Copy Files: AzureSearch'
@@ -64,40 +63,40 @@ steps:
 # restore symlink
 - script: |
     del v2 /F /Q
-    mklink /D v2 ..\..\Dfc.CourseDirectory.WebV2\Content
+    mklink /D v2 ..\..\$(SolutionBaseName).WebV2\Content
   displayName: 'Restore v2 content symlink'
-  workingDirectory: src/Dfc.CourseDirectory.Web/wwwroot
+  workingDirectory: src/$(SolutionBaseName).Web/wwwroot
 
 - task: Npm@1
   displayName: 'npm install'
   inputs:
-    workingDir: 'src/Dfc.CourseDirectory.Web'
+    workingDir: 'src/$(SolutionBaseName).Web'
     verbose: false
   enabled: false
 
 - task: Gulp@0
   displayName: 'Gulp '
   inputs:
-    gulpFile: 'src/Dfc.CourseDirectory.Web/gulpfile.js'
+    gulpFile: 'src/$(SolutionBaseName).Web/gulpfile.js'
     targets: 'prod'
   enabled: false
 
 - task: MSBuild@1
   displayName: Build database
   inputs:
-    solution: 'src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
+    solution: 'src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
 
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.sln` explodes
 - powershell: |
-    dotnet sln Dfc.CourseDirectory.sln remove src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
+    dotnet sln $(SolutionBaseName).sln remove src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    projects: 'Dfc.CourseDirectory.sln'
+    projects: '$(SolutionBaseName).sln'
     arguments: '--configuration ${{ variables.BuildConfiguration }}'
   displayName: Build
 
@@ -114,7 +113,7 @@ steps:
   displayName: Publish Dfc.CourseDirectory.Web
   inputs:
     command: publish
-    projects: 'src/Dfc.CourseDirectory.Web/Dfc.CourseDirectory.Web.csproj'
+    projects: 'src/$(SolutionBaseName).Web/$(SolutionBaseName).Web.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: True
 
@@ -122,7 +121,7 @@ steps:
   displayName: Publish Dfc.CourseDirectory.Functions
   inputs:
     command: publish
-    projects: 'src/Dfc.CourseDirectory.Functions/Dfc.CourseDirectory.Functions.csproj'
+    projects: 'src/$(SolutionBaseName).Functions/$(SolutionBaseName).Functions.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
@@ -130,7 +129,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy files: database'
   inputs:
-    SourceFolder: 'src/Dfc.CourseDirectory.Database/bin/$(BuildConfiguration)'
+    SourceFolder: 'src/$(SolutionBaseName).Database/bin/$(BuildConfiguration)'
     Contents: '*'
     TargetFolder: '$(build.artifactstagingdirectory)/database'
 
@@ -138,4 +137,4 @@ steps:
   displayName: Publish Artifact
   inputs:
      pathtoPublish: $(Build.ArtifactStagingDirectory)
-     artifactName: Dfc.CourseDirectory
+     artifactName: $(SolutionBaseName)
