@@ -17,10 +17,7 @@
 @inject IProviderService providerService
 @inject IWebHostEnvironment env
 
-@if (Model.QAFeatureIsEnabled)
-{
-    <vc:qa-notifications />
-}
+<vc:qa-notifications />
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
@@ -123,7 +120,7 @@ else
                     </div>
                 }
                 @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship) &&
-              (!Model.QAFeatureIsEnabled || Model.ProviderQACurrentStatus == Dfc.CourseDirectory.Core.Models.ApprenticeshipQAStatus.Passed))
+                    Model.ProviderQACurrentStatus == Dfc.CourseDirectory.Core.Models.ApprenticeshipQAStatus.Passed)
                 {
                     <div class="govuk-grid-column-one-half homepage-item disabled ">
                         @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")

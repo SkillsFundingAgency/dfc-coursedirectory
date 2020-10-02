@@ -46,6 +46,5 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public bool ApprenticeshipBulkUploadHasErrors { get; set; }
         public int ApprenticeshipBulkUploadReadyToGoLiveCount { get; set; }
         public Core.Models.ApprenticeshipQAStatus ProviderQACurrentStatus { get; set; }
-        public bool QAFeatureIsEnabled { get; set; } 
     }
 }

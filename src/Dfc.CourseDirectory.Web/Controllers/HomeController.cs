@@ -67,14 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (admin.Succeeded)
             {
-                if (featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA))
-                {
-                    return RedirectToAction("Dashboard", "HelpdeskDashboard");
-                }
-                else
-                {
-                    return RedirectToAction("Index", "SearchProvider");
-                }
+                return RedirectToAction("Dashboard", "HelpdeskDashboard");
             }
             else
             {

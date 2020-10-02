@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 {
-    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class EditDeliveryMethodController : Controller
     {
         private readonly ILogger<EditDeliveryMethodController> _logger;

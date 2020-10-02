@@ -31,7 +31,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class ProviderApprenticeshipsController : Controller
     {
         private readonly ILogger<ProviderApprenticeshipsController> _logger;

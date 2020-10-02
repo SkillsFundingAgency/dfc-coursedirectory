@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     [Authorize("Apprenticeship")]
     [SelectedProviderNeeded]
-    [RestrictApprenticeshipQAStatus(Core.Models.ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
+    [RestrictApprenticeshipQAStatus(Core.Models.ApprenticeshipQAStatus.Passed)]
     public class ApprenticeshipsController : Controller
     {
         private readonly ILogger<ApprenticeshipsController> _logger;
