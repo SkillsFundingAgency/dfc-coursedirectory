@@ -53,6 +53,7 @@ steps:
   parameters:
     ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
     SolutionBaseName: '${{ variables.SolutionBaseName }}'
+    targetPath: '$(build.artifactstagingdirectory)'
 
 - task: CopyFiles@2
   displayName: 'Copy Files: AzureSearch'
