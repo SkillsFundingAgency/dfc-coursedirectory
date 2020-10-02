@@ -18,43 +18,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
         }
 
-        [Theory]
-        [InlineData(TestUserType.ProviderSuperUser)]
-        [InlineData(TestUserType.ProviderUser)]
-        public async Task Get_UserCannotAccessVenue_ReturnsForbidden(TestUserType userType)
-        {
-            // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId, website: "provider.com");
-
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/website");
-
-            await User.AsTestUser(userType, anotherProviderId);
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task Get_VenueDoesNotExist_ReturnsNotFound()
-        {
-            // Arrange
-            var venueId = Guid.NewGuid();
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/website");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        }
-
         [Fact]
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
