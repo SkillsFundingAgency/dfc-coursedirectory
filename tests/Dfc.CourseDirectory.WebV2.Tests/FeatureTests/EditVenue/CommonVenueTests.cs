@@ -2,13 +2,17 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
 {
     public class CommonVenueTests: MvcTestBase
     {
-        public CommonVenueTests(CourseDirectoryApplicationFactory factory) : base(factory) { }
+        public CommonVenueTests(CourseDirectoryApplicationFactory factory)
+            : base(factory)
+        {
+        }
 
         [Theory]
         [InlineData("", TestUserType.ProviderSuperUser)] // details
@@ -39,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Theory]
@@ -60,8 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
-
     }
 }

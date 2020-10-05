@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using FluentAssertions;
 using FormFlow;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -31,10 +32,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            Assert.Equal("Test Venue", doc.GetElementById("Name").InnerHtml);
+            doc.GetElementById("Name").InnerHtml.Should().Be("Test Venue");
         }
 
         [Theory]
@@ -54,10 +55,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            Assert.Equal(existingValue, doc.GetElementById("Name").InnerHtml);
+            doc.GetElementById("Name").InnerHtml.Should().Be(existingValue);
         }
 
         [Theory]
@@ -86,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]
@@ -108,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -131,7 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
             doc.AssertHasError("Name", "Enter location name");
@@ -157,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
             doc.AssertHasError("Name", "Location name must be 250 characters or fewer");
@@ -185,7 +186,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
             doc.AssertHasError("Name", "Location name must not already exist");
@@ -211,11 +212,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal($"/venues/{venueId}", response.Headers.Location.OriginalString);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should().Be($"/venues/{venueId}");
 
             var formFlowInstance = GetFormFlowInstance(venueId);
-            Assert.Equal("Another Venue", formFlowInstance.State.Name);
+            formFlowInstance.State.Name.Should().Be("Another Venue");
         }
 
         private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)

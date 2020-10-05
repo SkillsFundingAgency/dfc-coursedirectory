@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using FluentAssertions;
 using FormFlow;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -32,10 +32,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            Assert.Equal("01234 567890", doc.GetElementById("PhoneNumber").GetAttribute("value"));
+            doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be("01234 567890");
         }
 
         [Theory]
@@ -56,10 +56,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            Assert.Equal(existingValue, doc.GetElementById("PhoneNumber").GetAttribute("value"));
+            doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be(existingValue);
         }
 
         [Theory]
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
             doc.AssertHasError("PhoneNumber", "Enter a telephone number in the correct format");
@@ -161,11 +161,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal($"/venues/{venueId}", response.Headers.Location.OriginalString);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should().Be($"/venues/{venueId}");
 
             var formFlowInstance = GetFormFlowInstance(venueId);
-            Assert.Equal(phoneNumber, formFlowInstance.State.PhoneNumber);
+            formFlowInstance.State.PhoneNumber.Should().Be(phoneNumber);
         }
 
         private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)

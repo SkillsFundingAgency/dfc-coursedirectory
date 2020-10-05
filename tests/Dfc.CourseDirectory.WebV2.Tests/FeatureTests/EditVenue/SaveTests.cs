@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using FluentAssertions;
 using FormFlow;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf;
@@ -62,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]
@@ -83,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -121,8 +122,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal("/Venues", response.Headers.Location.OriginalString);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should().Be("/Venues");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateVenue, OneOf<NotFound, Success>>(q =>
                 q.VenueId == venueId &&

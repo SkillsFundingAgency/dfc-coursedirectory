@@ -8,6 +8,8 @@ using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using FormFlow;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -41,14 +43,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var doc = await response.GetDocument();
-            Assert.Equal("Test Venue line 1", doc.GetElementById("AddressLine1").GetAttribute("value"));
-            Assert.Equal("Test Venue line 2", doc.GetElementById("AddressLine2").GetAttribute("value"));
-            Assert.Equal("Town", doc.GetElementById("Town").GetAttribute("value"));
-            Assert.Equal("County", doc.GetElementById("County").GetAttribute("value"));
-            Assert.Equal("AB1 2DE", doc.GetElementById("Postcode").GetAttribute("value"));
+            using (new AssertionScope())
+            {
+                var doc = await response.GetDocument();
+                doc.GetElementById("AddressLine1").GetAttribute("value").Should().Be("Test Venue line 1");
+                doc.GetElementById("AddressLine2").GetAttribute("value").Should().Be("Test Venue line 2");
+                doc.GetElementById("Town").GetAttribute("value").Should().Be("Town");
+                doc.GetElementById("County").GetAttribute("value").Should().Be("County");
+                doc.GetElementById("Postcode").GetAttribute("value").Should().Be("AB1 2DE");
+            }
         }
 
         [Fact]
@@ -74,14 +79,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var doc = await response.GetDocument();
-            Assert.Equal("Updated line 1", doc.GetElementById("AddressLine1").GetAttribute("value"));
-            Assert.Equal("Updated line 2", doc.GetElementById("AddressLine2").GetAttribute("value"));
-            Assert.Equal("Updated town", doc.GetElementById("Town").GetAttribute("value"));
-            Assert.Equal("Updated county", doc.GetElementById("County").GetAttribute("value"));
-            Assert.Equal("UP1 D8D", doc.GetElementById("Postcode").GetAttribute("value"));
+            using (new AssertionScope())
+            {
+                var doc = await response.GetDocument();
+                doc.GetElementById("AddressLine1").GetAttribute("value").Should().Be("Updated line 1");
+                doc.GetElementById("AddressLine2").GetAttribute("value").Should().Be("Updated line 2");
+                doc.GetElementById("Town").GetAttribute("value").Should().Be("Updated town");
+                doc.GetElementById("County").GetAttribute("value").Should().Be("Updated county");
+                doc.GetElementById("Postcode").GetAttribute("value").Should().Be("UP1 D8D");
+            }
         }
 
         [Theory]
@@ -130,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]
@@ -172,7 +180,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Theory]
@@ -223,7 +231,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
             doc.AssertHasError(expectedErrorInputId, expectedErrorMessage);
@@ -273,18 +281,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.Equal($"/venues/{venueId}", response.Headers.Location.OriginalString);
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.OriginalString.Should().Be($"/venues/{venueId}");
 
-            var formFlowInstance = GetFormFlowInstance(venueId);
-            Assert.Equal("Updated address line 1", formFlowInstance.State.AddressLine1);
-            Assert.Equal("Updated address line 2", formFlowInstance.State.AddressLine2);
-            Assert.Equal("Updated town", formFlowInstance.State.Town);
-            Assert.Equal("Updated county", formFlowInstance.State.County);
-            Assert.Equal("CV1 2AA", formFlowInstance.State.Postcode);
-            Assert.Equal(42M, formFlowInstance.State.Latitude);
-            Assert.Equal(43M, formFlowInstance.State.Longitude);
-            Assert.Equal(expectedNewAddressIsOutsideOfEnglandValue, formFlowInstance.State.NewAddressIsOutsideOfEngland);
+            using (new AssertionScope())
+            {
+                var formFlowInstance = GetFormFlowInstance(venueId);
+                formFlowInstance.State.AddressLine1.Should().Be("Updated address line 1");
+                formFlowInstance.State.AddressLine2.Should().Be("Updated address line 2");
+                formFlowInstance.State.Town.Should().Be("Updated town");
+                formFlowInstance.State.County.Should().Be("Updated county");
+                formFlowInstance.State.Postcode.Should().Be("CV1 2AA");
+                formFlowInstance.State.Latitude.Should().Be(42M);
+                formFlowInstance.State.Longitude.Should().Be(43M);
+                formFlowInstance.State.NewAddressIsOutsideOfEngland.Should().Be(expectedNewAddressIsOutsideOfEnglandValue);
+            }
         }
 
         public static IEnumerable<object[]> InvalidAddressData { get; } =

@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using FormFlow;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -38,16 +40,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var doc = await response.GetDocument();
-            Assert.Equal("Test Venue", doc.GetSummaryListValueWithKey("Location name"));
-            Assert.Equal(
-                "Test Venue line 1\nTown\nAB1 2DE",
-                doc.GetSummaryListValueWithKey("Address"));
-            Assert.Equal("test-venue@provider.com", doc.GetSummaryListValueWithKey("Email"));
-            Assert.Equal("01234 567890", doc.GetSummaryListValueWithKey("Phone"));
-            Assert.Equal("provider.com/test-venue", doc.GetSummaryListValueWithKey("Website"));
+            using (new AssertionScope())
+            {
+                var doc = await response.GetDocument();
+                doc.GetSummaryListValueWithKey("Location name").Should().Be("Test Venue");
+                Assert.Equal(
+                    "Test Venue line 1\nTown\nAB1 2DE",
+                    doc.GetSummaryListValueWithKey("Address"));
+                doc.GetSummaryListValueWithKey("Email").Should().Be("test-venue@provider.com");
+                doc.GetSummaryListValueWithKey("Phone").Should().Be("01234 567890");
+                doc.GetSummaryListValueWithKey("Website").Should().Be("provider.com/test-venue");
+            }
         }
 
         [Fact]
@@ -80,17 +85,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var doc = await response.GetDocument();
-            Assert.Equal("Updated name", doc.GetSummaryListValueWithKey("Location name"));
-            Assert.Equal(
-                "Updated line 1\nUpdated line 2\nUpdated town\nUpdated county\nUP1 D8D",
-                doc.GetSummaryListValueWithKey("Address"));
-            Assert.Equal("updated@provider.com", doc.GetSummaryListValueWithKey("Email"));
-            Assert.Equal("02345 678901", doc.GetSummaryListValueWithKey("Phone"));
-            Assert.Equal("updated-provider.com", doc.GetSummaryListValueWithKey("Website"));
-            Assert.Null(doc.GetElementByTestId("outsideofengland-notification"));
+            using (new AssertionScope())
+            {
+                var doc = await response.GetDocument();
+                doc.GetSummaryListValueWithKey("Location name").Should().Be("Updated name");
+                Assert.Equal(
+                    "Updated line 1\nUpdated line 2\nUpdated town\nUpdated county\nUP1 D8D",
+                    doc.GetSummaryListValueWithKey("Address"));
+                doc.GetSummaryListValueWithKey("Email").Should().Be("updated@provider.com");
+                doc.GetSummaryListValueWithKey("Phone").Should().Be("02345 678901");
+                doc.GetSummaryListValueWithKey("Website").Should().Be("updated-provider.com");
+                Assert.Null(doc.GetElementByTestId("outsideofengland-notification"));
+            }
         }
 
         [Fact]
@@ -119,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             Assert.NotNull(doc.GetElementByTestId("outsideofengland-notification"));
