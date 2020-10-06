@@ -7,10 +7,11 @@
 @using Dfc.CourseDirectory.Services.ProviderService
 @using Dfc.CourseDirectory.Web.ViewComponents.BackLink
 
+@addTagHelper *, GovUk.Frontend.AspNetCore
+
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IAuthorizationService Authorization
 @inject IProviderService providerService
-@inject IGovukPhaseBannerService bannerService
 @inject Dfc.CourseDirectory.WebV2.Security.ICurrentUserProvider CurrentUserProvider
 @inject Dfc.CourseDirectory.WebV2.IProviderContextProvider ProviderContextProvider
 
@@ -19,10 +20,6 @@
     var currentUser = CurrentUserProvider.GetCurrentUser();
 }
 
-@{
-    var bannerSettings = bannerService.GetSettings();
-
-}
 <header class="govuk-header " role="banner" data-module="header">
 
     <div class="govuk-header__container cd-fullwidth-container cd-header">
@@ -50,19 +47,11 @@
 
 </header>
 
-<div class="govuk-phase-banner cd-fullwidth-container govuk-!-margin-bottom-6">
-
-    <p class="govuk-phase-banner__content">
-        <strong class="govuk-tag govuk-phase-banner__content__tag ">
-            @bannerSettings.Tag
-        </strong>
-        <span class="govuk-phase-banner__text">
-            This is a new service – your
-            <a href="https://www.smartsurvey.co.uk/s/SHIM0G/" target="_blank" rel="noreferrer" class="govuk-link">feedback</a> will help us to improve it.
-        </span>
-    </p>
-
-</div>
+<govuk-phase-banner class="cd-fullwidth-container govuk-!-margin-bottom-6">
+    <govuk-phase-banner-tag>beta</govuk-phase-banner-tag>
+    This is a new service – your
+    <a href="https://www.smartsurvey.co.uk/s/SHIM0G/" target="_blank" rel="noreferrer" class="govuk-link">feedback</a> will help us to improve it.
+</govuk-phase-banner>
 
 @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
 {

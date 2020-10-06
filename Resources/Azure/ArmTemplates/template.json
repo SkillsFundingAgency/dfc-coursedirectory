@@ -370,22 +370,6 @@
                 "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
               },
               {
-                "name": "GovukPhaseBannerSettings__IsVisible",
-                "value": true
-              },
-              {
-                "name": "GovukPhaseBannerSettings__Tag",
-                "value": "Beta"
-              },
-              {
-                "name": "GovukPhaseBannerSettings__LinkUrl",
-                "value": "https://www.smartsurvey.co.uk/s/VPOK2/"
-              },
-              {
-                "name": "GovukPhaseBannerSettings__LinkText",
-                "value": "feedback"
-              },
-              {
                 "name": "LarsSearchSettings__ApiUrl",
                 "value": "[parameters('larsApiUrl')]"
               },
