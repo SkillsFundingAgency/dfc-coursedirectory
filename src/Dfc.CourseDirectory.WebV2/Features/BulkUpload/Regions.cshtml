@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Regions and sub regions";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">Regions and sub regions</h1>
+        <p class="govuk-body">Use the list to enter the sub regions where you can deliver your courses or apprenticeships.</p>
+        <p class="govuk-body">To succesfully complete the sub region field in your bulk upload file you must:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>only enter the sub regions shown below</li>
+            <li>exclude the region name
+            <li>include all sub regions in one field, do not separate for regions</li>
+            <li>multiple sub regions must be separated by a semi colon</li>
+        </ul>
+
+        <p class="govuk-body"><span class="govuk-!-font-weight-bold">Example:</span> Derby;Norfolk;Leicester;Brent</p>
+
+        <govuk-accordion id="bulkupload-formatting-regions-accordion">
+            @foreach (var region in Region.All.OrderBy(r => r.Name))
+            {
+                <govuk-accordion-item>
+                    <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>
+                    <ul class="govuk-list">
+                        @foreach (var subRegion in region.SubRegions.OrderBy(sr => sr.Name))
+                        {
+                            <li>@subRegion.Name</li>
+                        }
+                    </ul>
+                </govuk-accordion-item>
+            }
+        </govuk-accordion>
+
+    </div>
+</div>

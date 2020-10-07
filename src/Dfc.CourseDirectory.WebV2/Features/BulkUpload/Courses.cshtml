@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Preparing your bulk upload file";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">Preparing your bulk upload file</h1>
+        <p class="govuk-body">You can upload a CSV file to update your courses in Publish to the course directory.</p>
+
+        <h2 class="govuk-heading-m">Creating your bulk upload file</h2>
+        <p class="govuk-body">To create your file you can download:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li><a asp-action="GetCurrentCoursesTemplateFile" asp-controller="BlobStorage" class="govuk-link">your published course information (CSV)</a></li>
+            <li><a asp-action="GetBulkUploadTemplateFile" asp-controller="BlobStorage" class="govuk-link">a course information template (CSV)</a></li>
+        </ul>
+
+        <h2 class="govuk-heading-m">How to complete your bulk upload file</h2>
+        <p class="govuk-body">To ensure a bulk upload is successful you must:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li><a asp-action="AddVenue" asp-controller="Venues" class="govuk-link">add new venues</a> to the service prior to a bulk upload</li>
+            <li>include existing courses and new courses in the file</li>
+            <li>complete all mandatory fields</li>
+            <li>follow the <a asp-action="CoursesFormatting" asp-controller="BulkUpload" class="govuk-link">format requirements</a></li>
+            <li>save the file as a CSV</li>
+        </ul>
+
+        <a asp-action="Upload" asp-controller="BulkUpload" class="govuk-button">Continue</a>
+
+    </div>
+</div>
