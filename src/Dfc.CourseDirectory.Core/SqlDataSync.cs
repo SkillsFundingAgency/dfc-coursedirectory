@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
@@ -10,6 +11,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace Dfc.CourseDirectory.Core
 {
@@ -48,7 +50,10 @@ namespace Dfc.CourseDirectory.Core
                     {
                         foreach (var c in chunk.Buffer(ApprenticeshipBatchSize))
                         {
-                            await SyncApprenticeships(c);
+                            await Policy
+                                .Handle<SqlException>()
+                                .Retry(3)
+                                .Execute(() => SyncApprenticeships(c));
                         }
                     }
                 }));
