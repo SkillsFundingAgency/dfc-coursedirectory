@@ -4,7 +4,7 @@
     var currentAction = (string)ViewContext.RouteData.Values["Action"];
 
     var enableApprenticeshipBulkUpload = Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
-        (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled);
+        Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed;
 }
 
 <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>

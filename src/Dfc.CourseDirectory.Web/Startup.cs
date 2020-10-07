@@ -108,9 +108,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddTransient((provider) => new HttpClient());
 
             services.AddScoped<IAuthService, AuthService>();
-            services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
-            services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
 
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));

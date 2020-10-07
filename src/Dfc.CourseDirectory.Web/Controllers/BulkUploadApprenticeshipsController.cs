@@ -29,7 +29,7 @@ using System.Diagnostics;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class BulkUploadApprenticeshipsController : Controller
     {
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;

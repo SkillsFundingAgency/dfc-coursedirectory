@@ -1,18 +1,17 @@
-﻿using Dfc.CourseDirectory.WebV2.Filters;
+﻿using System;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
     [Route("apprenticeship-qa")]
     [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
-    [RequireFeatureFlag(FeatureFlags.ApprenticeshipQA)]
     public class ApprenticeshipQAController : Controller
     {
         private readonly IMediator _mediator;

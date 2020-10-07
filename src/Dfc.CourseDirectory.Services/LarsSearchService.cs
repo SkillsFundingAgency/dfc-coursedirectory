@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.Services
                 ContractResolver = new LarsSearchCriteriaContractResolver()
             };
 
-            settings.Converters.Add(new StringEnumConverter() { CamelCaseText = false });
+            settings.Converters.Add(new StringEnumConverter());
 
             var result = JsonConvert.SerializeObject(extendee, settings);
 
@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.Services
                 ContractResolver = new LarsSearchCriteriaContractResolver()
             };
 
-            settings.Converters.Add(new StringEnumConverter() { CamelCaseText = false });
+            settings.Converters.Add(new StringEnumConverter());
 
             var result = JsonConvert.SerializeObject(extendee, settings);
 

@@ -44,51 +44,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("Option", "Qualifications");
             return View();
         }
-        [Authorize]
-        public IActionResult QualificationsList()
-        {
-            var qualificationTypes = new List<string>();
-
-            var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
-            if (providerUKPRN != null)
-            {
-                _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
-            }
-
-            var UKPRN = _session.GetInt32("UKPRN");
-
-
-
-            List<QualificationViewModel> qualificationsList = new List<QualificationViewModel>();
-
-            if (UKPRN.HasValue)
-            {
-                QualificationViewModel qualification = new QualificationViewModel();
-
-                var coursesByUKPRN = !UKPRN.HasValue
-                    ? null
-                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                        .Result.Value;
-
-                IActionResult view = GetCoursesViewModel("", "", "", "", null);
-                CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
-
-                IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value?
-                    .Select(c => new CoursesForQualificationAndCountViewModel
-                    {
-                        QualificationType = c.QualType,
-
-                        CourseRunCount = c.Value.SelectMany(d => d.Value.SelectMany(g => g.CourseRuns)).Count(),
-
-                    }).ToList();
-
-
-                return View(coursesForQualifcationsWithCourseRunsCount);
-            }
-
-            return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-
-        }
 
         [Authorize]
         public IActionResult LandingOptions()

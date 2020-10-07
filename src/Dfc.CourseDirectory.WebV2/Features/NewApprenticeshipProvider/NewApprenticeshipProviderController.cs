@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
@@ -14,7 +13,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
     [Route("new-apprenticeship-provider")]
     [RequiresProviderContext]
-    [RequireFeatureFlag(FeatureFlags.ApprenticeshipQA)]
     public class NewApprenticeshipProviderController : Controller, IMptxController<FlowModel>
     {
         private readonly IMediator _mediator;
