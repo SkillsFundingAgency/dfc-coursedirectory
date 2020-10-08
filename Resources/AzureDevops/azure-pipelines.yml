@@ -72,14 +72,12 @@ steps:
   inputs:
     workingDir: 'src/$(SolutionBaseName).Web'
     verbose: false
-  enabled: false
 
 - task: Gulp@0
   displayName: 'Gulp '
   inputs:
     gulpFile: 'src/$(SolutionBaseName).Web/gulpfile.js'
     targets: 'prod'
-  enabled: false
 
 - task: MSBuild@1
   displayName: Build database
