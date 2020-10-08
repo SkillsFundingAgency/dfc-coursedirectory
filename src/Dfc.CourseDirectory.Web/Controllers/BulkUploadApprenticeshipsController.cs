@@ -1,5 +1,12 @@
-﻿using CsvHelper;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using CsvHelper;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
@@ -11,28 +18,15 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Filters;
-using Dfc.CourseDirectory.Core.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class BulkUploadApprenticeshipsController : Controller
     {
-        private readonly ILogger<BulkUploadApprenticeshipsController> _logger;
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
@@ -42,7 +36,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
 
         public BulkUploadApprenticeshipsController(
-            ILogger<BulkUploadApprenticeshipsController> logger,
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IApprenticeshipService apprenticeshipService,
             IBlobStorageService blobService,
@@ -50,7 +43,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IProviderService providerService,
             IUserHelper userHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(apprenticeshipBulkUploadService, nameof(apprenticeshipBulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
             Throw.IfNull(courseService, nameof(courseService));
@@ -59,7 +51,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(userHelper, nameof(userHelper));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
-            _logger = logger;
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService;
             _blobService = blobService;
             _courseService = courseService;
@@ -70,25 +61,39 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
+        {
+            return RedirectToAction("Apprenticeships", "BulkUpload");
+        }
+
+        [Authorize]
+        [HttpGet("/bulk-upload/apprenticeships/upload")]
+        public async Task<IActionResult> Upload()
         {
             var session = HttpContext.Session;
 
             session.SetString("Option", "BulkUploadApprenticeships");
+
             int? UKPRN;
             if (session.GetInt32("UKPRN") != null)
+            {
                 UKPRN = session.GetInt32("UKPRN").Value;
+            }
             else
+            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
 
-            Provider provider = FindProvider(UKPRN.Value);
-            if(null == provider)
+            Provider provider = await FindProvider(UKPRN.Value);
+            
+            if (provider == null)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
             }
 
+            var courseCounts = await _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN));
 
-            var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
             var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
 
             var model = new BulkUploadViewModel
@@ -96,33 +101,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 HasMigrationErrors = courseErrors > 0 ? true : false,
             };
 
-            if(null != provider.ApprenticeshipBulkUploadStatus)
+            if (provider.ApprenticeshipBulkUploadStatus != null)
             {
                 model.BulkUploadBackgroundInProgress = provider.ApprenticeshipBulkUploadStatus.InProgress;
                 model.BulkUploadBackgroundRowCount = provider.ApprenticeshipBulkUploadStatus.TotalRowCount;
                 model.BulkUploadBackgroundStartTimestamp = provider.ApprenticeshipBulkUploadStatus.StartedTimestamp;
             }
-            return View("Index",model);
+
+            return View(model);
         }
 
         [Authorize]
-        public IActionResult Pending()
-        {
-            var session = HttpContext.Session;
-
-            session.SetString("Option", "ApprenticeshipBulkUpload");
-            int? UKPRN;
-            if (session.GetInt32("UKPRN") != null)
-                UKPRN = session.GetInt32("UKPRN").Value;
-            else
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-
-            return View("./Pending/Index");
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Index(IFormFile bulkUploadFile)
+        [HttpPost("/bulk-upload/apprenticeships/upload")]
+        public async Task<IActionResult> Upload(IFormFile bulkUploadFile)
         {
             var sw = Stopwatch.StartNew();
             try
@@ -200,6 +191,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        public IActionResult Pending()
+        {
+            var session = HttpContext.Session;
+
+            session.SetString("Option", "ApprenticeshipBulkUpload");
+            int? UKPRN;
+            if (session.GetInt32("UKPRN") != null)
+                UKPRN = session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            return View("./Pending/Index");
+        }
+
+        [Authorize]
         [HttpGet]
         public IActionResult WhatDoYouWantToDoNext(string message, int errorCount)
         {
@@ -218,8 +224,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
         {
-            bool fromBulkUpload = !string.IsNullOrEmpty(model.Message);
-
             switch (model.WhatDoYouWantToDoNext)
             {
                 case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
@@ -230,9 +234,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("DeleteFile", "BulkUploadApprenticeships");
                 default:
                     return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships");
-
             }
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult DownloadErrorFile()
@@ -271,10 +275,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult DeleteFile()
         {
-            var model = new DeleteFileViewModel();
-
-
-            return View("../BulkUploadApprenticeships/DeleteFile/Index", model);
+            return View("../BulkUploadApprenticeships/DeleteFile/Index", new DeleteFileViewModel());
         }
 
         [Authorize]
@@ -352,6 +353,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PublishYourFile(ApprenticeshipsPublishYourFileViewModel model)
@@ -381,12 +383,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../BulkUploadApprenticeships/Complete/Index", new ApprenticeshipsPublishCompleteViewModel() { NumberOfApprenticeshipsPublished = model.NumberOfApprenticeships, Mode = PublishMode.ApprenticeshipBulkUpload });
         }
 
-        private Provider FindProvider(int prn)
+        private async Task<Provider> FindProvider(int prn)
         {
             Provider provider = null;
             try
             {
-                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(prn.ToString())).Result;
+                var providerSearchResult = await _providerService.GetProviderByPRNAsync(prn.ToString());
                 if (providerSearchResult.IsSuccess)
                 {
                     provider = providerSearchResult.Value.FirstOrDefault();
