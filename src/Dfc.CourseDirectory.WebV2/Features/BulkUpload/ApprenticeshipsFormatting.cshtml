@@ -1,0 +1,395 @@
+﻿@{
+    ViewBag.Title = "Formatting a bulk upload file";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Formatting a bulk upload file</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <p class="govuk-body">The tables below show information about each field in the bulk upload file for apprenticeship training courses and how to complete it correctly.</p>
+
+        <h2 class="govuk-heading-m">STANDARD_CODE</h2>
+        <p class="govuk-body">Standards are listed by LARS (Learning Aims Reference Service) codes.</p>
+        <p class="govuk-body">Codes can be found at <a href="https://findalearningaimbeta.fasst.org.uk/" class="govuk-link">Find a learning aim</a>.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">STANDARD_VERSION</h2>
+        <p class="govuk-body">Standards on Publish to the course directory are version 1.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">1</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">Apprenticeship frameworks</h2>
+        <p class="govuk-body">Apprenticeship frameworks have been replaced by standards.</p>
+        <p class="govuk-body">While we continue to update the service the following headings are required in the csv file and must be left blank:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li><span class="govuk-!-font-weight-bold">FRAMEWORKS_CODE</span></li>
+            <li><span class="govuk-!-font-weight-bold">FRAMEWORKS_PROG_TYPE</span></li>
+            <li><span class="govuk-!-font-weight-bold">FRAMEWORKS_PATHWAY_CODE</span></li>
+        </ul>
+
+        <p class="govuk-body">Read more about the <a href="https://www.gov.uk/government/publications/removal-of-apprenticeship-frameworks" class="govuk-link">withdrawal of apprenticeship frameworks</a>.</p>
+
+        <h2 class="govuk-heading-m">APPRENTICESHIP_INFORMATION</h2>
+        <p class="govuk-body">Provide information for employers about how you will deliver this apprenticeship training course. The information should meet <a href="https://www.gov.uk/government/publications/find-apprenticeship-training-how-to-submit-data" class="govuk-link">style and compliance guidelines</a>.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">750</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">APPRENTICESHIP_WEBPAGE</h2>
+        <p class="govuk-body">The webpage for this apprenticeship training course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">https://www.provider.com/apprenticeshipname</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">CONTACT_EMAIL</h2>
+        <p class="govuk-body">The email address for this apprenticeship training course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">name@example.com</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">CONTACT_PHONE</h2>
+        <p class="govuk-body">The telephone number for this apprenticeship training course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">01632 960 001<br>07700 900 982<br>+44 0808 157 0192</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">CONTACT_URL</h2>
+        <p class="govuk-body">The contact webpage for your organisation.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">https://www.provider.com/contact</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">DELIVERY_METHOD</h2>
+        <p class="govuk-body">Apprenticeship training can be delivered by the following methods:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>classroom - at your location on day or block release</li>
+            <li>employer - at the employer's location</li>
+            <li>both - at your location and the employer's location</li>
+        </ul>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">All apprenticeship training courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter<br></th>
+                    <td class="govuk-table__cell">Classroom<br>Employer<br>Both</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">VENUE</h2>
+        <p class="govuk-body">You can only enter a venue that is already added to Publish to the course directory.</p>
+        <p class="govuk-body">If you have a new venue you must <a asp-action="AddVenue" asp-controller="Venues" class="govuk-link">add this to your locations</a> before you can complete a bulk upload.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">When <span class="govuk-!-font-weight-bold">DELIVERY_METHOD</span> is Classroom or Both.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">255</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">My Location Name</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        For apprenticeship training courses with more than one venue, each apprenticeship must be entered on a separate row.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">RADIUS</h2>
+        <p class="govuk-body">How far you are willing to travel from the venue to deliver this apprenticeship training course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">When <span class="govuk-!-font-weight-bold">DELIVERY_METHOD</span> is Both and not delivered across the whole of England.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Unit<br></th>
+                    <td class="govuk-table__cell">Miles</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        The radius must be between 1 and 874.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">DELIVERY_MODE</h2>
+        <p class="govuk-body">How the training is delivered for this apprenticeship training course.</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>day - for example one day a week at the training provider's location</li>
+            <li>block - for example 3-4 weeks at the training provider's location</li>
+            <li>employer - training is delivered at the employer's location</li>
+        </ul>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">When <span class="govuk-!-font-weight-bold">DELIVERY_METHOD</span> is Classroom or Both.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Day<br>Block<br>Employer</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">Day;Block;Employer</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">ACROSS_ENGLAND</h2>
+        <p class="govuk-body">You can deliver the apprenticeship training course anywhere in England and you will be shown as a national provider for this course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">When <span class="govuk-!-font-weight-bold">DELIVERY_METHOD</span> is Both.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Yes<br>No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes</th>
+                    <td class="govuk-table__cell">For an apprenticeship training course not delivered across England you must enter a <span class="govuk-!-font-weight-bold">RADIUS</span>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">NATIONAL_DELIVERY</h2>
+        <p class="govuk-body">You can deliver the apprenticeship training course anywhere in England and you will be shown as a national provider for this course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">When <span class="govuk-!-font-weight-bold">DELIVERY_METHOD</span> is Employer.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Yes<br>No</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">REGION</h2>
+        <p class="govuk-body">This field must be kept blank.</p>
+
+        <h2 class="govuk-heading-m">SUB_REGION</h2>
+        <p class="govuk-body">All the areas where you can deliver the course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">When <span class="govuk-!-font-weight-bold">DELIVERY_METHOD</span> is Employer.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">Derby;Norfolk;Leicester;Brent</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell"><a asp-action="Regions" asp-controller="BulkUpload" class="govuk-link">Regions and sub regions</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <aside class="pttcd-related-content" role="complementary">
+
+            <h2 id="related-content" class="pttcd-related-content__heading">Related content</h2>
+
+            <nav role="navigation" class="pttcd-related-content__content-section" aria-labelledby="related-content">
+                <ul class="pttcd-related-content__link-list">
+                    <li class="pttcd-related-content__link">
+                        <a asp-action="Apprenticeships" asp-controller="BulkUpload" class="govuk-link">Peparing your bulk upload file</a>
+                    </li>
+                    <li class="pttcd-related-content__link">
+                        <a asp-action="Upload" asp-controller="BulkUploadApprenticeships" class="govuk-link">Upload your file</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <h2 id="related-download-links" class="pttcd-related-content__heading">Download bulk upload files</h2>
+
+            <div class="pttcd-related-content__content-section" aria-labelledby="related-download-links">
+                <ul class="pttcd-related-content__link-list">
+                    <li class="pttcd-related-content__link">
+                        <a asp-action="GetCurrentApprenticeshipsTemplateFile" asp-controller="BlobStorage" class="govuk-link">
+                            <span class="govuk-visually-hidden">Download </span>
+                            Your published apprenticeship training course information (CSV)
+                        </a>
+                    </li>
+                    <li class="pttcd-related-content__link">
+                        <a asp-action="GetApprenticeshipBulkUploadTemplateFile" asp-controller="BlobStorage" class="govuk-link">
+                            <span class="govuk-visually-hidden">Download </span>
+                            An apprenticeships training course template (CSV)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </aside>
+    </div>
+
+</div>

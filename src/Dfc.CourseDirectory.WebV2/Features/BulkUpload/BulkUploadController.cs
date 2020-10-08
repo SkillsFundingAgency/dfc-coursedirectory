@@ -18,6 +18,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload
             return View();
         }
 
+        [HttpGet("apprenticeships")]
+        public IActionResult Apprenticeships()
+        {
+            return View();
+        }
+
+        [HttpGet("apprenticeships-formatting")]
+        public IActionResult ApprenticeshipsFormatting()
+        {
+            return View();
+        }
+
         [HttpGet("regions")]
         public IActionResult Regions()
         {
