@@ -1,57 +1,57 @@
 ﻿(function ($) {
-    var regionIndex = 0;
-
     $('.pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region').each(function (i, el) {
-        var $checkboxes = $(el).find('input[type="checkbox"]');
+        const $checkboxes = $(el).find('input[type="checkbox"]');
+        const totalCheckboxCount = $checkboxes.length;
 
-        var selectAllCheckboxId = 'region-' + regionIndex + '-select-all';
+        const $selectAllCheckboxWrapper = $('<div />')
+            .addClass('govuk-checkboxes__item')
+            .addClass('govuk-!-margin-bottom-3')
+            .css('width', '100%');
 
-        var updateCheckboxes = function () {
-            var checked = $('#' + selectAllCheckboxId).is(':checked');
-            $checkboxes.prop('checked', checked);
-        };
+        const $checkbox = $('<input />')
+            .attr('type', 'checkbox')
+            .attr('id', $(el).closest('.govuk-accordion').attr('id') + '-region-' + i + '-select-all')
+            .addClass('govuk-checkboxes__input')
+            .change(function (e) {
+                $checkboxes.prop('checked', $(e.target).is(':checked'));
+                refresh();
+            });
 
-        var createSelectAllCheckbox = function () {
-            var $selectAllCheckboxWrapper = $('<div />')
-                .addClass('govuk-checkboxes__item')
-                .addClass('govuk-!-margin-bottom-3')
-                .css('width', '100%');
+        const $label = $('<label />')
+            .attr('for', $checkbox.attr('id'))
+            .addClass('govuk-checkboxes__label')
+            .addClass('govuk-label')
+            .html('Select all');
 
-            var $checkbox = $('<input />')
-                .attr('type', 'checkbox')
-                .attr('id', selectAllCheckboxId)
-                .addClass('govuk-checkboxes__input')
-                .change(updateCheckboxes);
-            $selectAllCheckboxWrapper.append($checkbox);
+        const $summary = $('<div />')
+            .addClass('govuk-accordion__section-summary')
+            .addClass('govuk-body')
+            .hide();
 
-            var $label = $('<label />')
-                .attr('for', selectAllCheckboxId)
-                .addClass('govuk-checkboxes__label')
-                .addClass('govuk-label')
-                .html('All');
-            $selectAllCheckboxWrapper.append($label);
+        $selectAllCheckboxWrapper.append($checkbox);
+        $selectAllCheckboxWrapper.append($label);
+        $(el).find('.govuk-checkboxes').prepend($selectAllCheckboxWrapper);
+        $(el).find('.govuk-accordion__section-header').append($summary);
 
-            $(el).find('.govuk-checkboxes').prepend($selectAllCheckboxWrapper);
-        };
-
-        var refreshSelectAllCheckbox = function () {
-            var checkedCount = $checkboxes.filter(':checked').length;
-            var uncheckedCount = $checkboxes.not(':checked').length;
-            var totalCount = $checkboxes.length;
-
-            if (checkedCount === totalCount) {
-                $('#' + selectAllCheckboxId).prop('checked', true);
+        const refresh = function () {
+            const checkedCount = $checkboxes.filter(':checked').length;
+            
+            if (checkedCount === totalCheckboxCount) {
+                $checkbox.prop('checked', true);
+                $summary.text('All areas selected').show();
             }
-            else if (uncheckedCount > 0) {
-                $('#' + selectAllCheckboxId).prop('checked', false);
-            };
+            else if (checkedCount > 0) {
+                $checkbox.prop('checked', false);
+                $summary.text(checkedCount + ' area' + (checkedCount > 1 ? 's' : '') + ' selected').show();
+            }
+            else {
+                $checkbox.prop('checked', false);
+                $summary.text('').hide();
+            }
         };
 
-        $checkboxes.change(refreshSelectAllCheckbox);
+        $checkboxes.change(refresh);
 
-        createSelectAllCheckbox();
-        refreshSelectAllCheckbox();
-
-        regionIndex++;
+        refresh();
     });
 })(window.jQuery);

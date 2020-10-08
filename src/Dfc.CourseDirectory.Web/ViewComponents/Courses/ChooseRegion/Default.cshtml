@@ -158,7 +158,7 @@
                     $(selectAll).prop('checked', true);
                 } else {
                     $(summary).show();
-                    $(summary).text(`${itemsSelected} area${itemsSelected > 1 ? 's' : ''} selected`);
+                    $(summary).text(itemsSelected + ' area' + (itemsSelected > 1 ? 's' : '') + ' selected');
                     $(selectAll).prop('checked', false);
                 }
             };
