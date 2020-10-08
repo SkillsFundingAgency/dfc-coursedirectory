@@ -18,13 +18,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
         {
             var locations = request.Apprenticeship.ApprenticeshipLocations;
 
-            for (var i = 1; i < locations.Count; i++)
+            foreach (var l in locations)
             {
-                var thisLocation = locations[i];
-
-                if (locations.Take(i).Any(l => l.Id == thisLocation.Id))
+                if (request.DuplicateLocationIds.Contains(l.Id))
                 {
-                    thisLocation.Id = Guid.NewGuid();
+                    l.Id = Guid.NewGuid();
                 }
             }
 
