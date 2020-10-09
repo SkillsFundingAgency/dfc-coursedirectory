@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     var results = _courseService.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value.ToList();
                     var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
                     var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
-                    var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
+                    var invalidCourseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
                     List<Course> filteredList = new List<Course>();
                     var allRegions = _courseService.GetRegions().RegionItems;
                     foreach (var course in invalidCourses)
@@ -124,10 +124,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         }
                     }
 
-                    if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
+                    if (invalidCourseRuns.Count() == 0 && courseId != null && courseRunId != null)
                     {
-                        var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), notificationTitle);
-                        return RedirectToAction("IndexSuccess", "Home", dashboardVm);
+                        return BadRequest();
                     }
 
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();

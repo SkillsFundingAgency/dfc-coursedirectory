@@ -1,12 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Authorization;
+﻿@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Services.Interfaces.ProviderService
-@using Dfc.CourseDirectory.Services.ProviderService
-
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IAuthorizationService Authorization
-
 @inject IProviderService providerService
 
 <header class="govuk-header " tabindex="0"  role="banner" data-module="header">
@@ -48,8 +44,8 @@
                             var ukPRN = HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN");
                             if (ukPRN != null)
                             {
-                                var providerSearchResult = await providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukPRN.ToString()));
-                                providerName = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderName;
+                                var providerSearchResult = await providerService.GetProviderByPRNAsync(ukPRN.ToString());
+                                providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName;
                             }
                         }
                         @providerName</div>

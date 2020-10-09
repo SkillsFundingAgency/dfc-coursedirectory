@@ -33,6 +33,11 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
         [InlineData("TestSearchText", "TestSearchText*")]
         [InlineData(" TestSearchText", "TestSearchText*")]
         [InlineData("TestSearchText ", "TestSearchText*")]
+        [InlineData("TestSearchText's", @"TestSearchText\'s")]
+        [InlineData("Test Search Text", "Test Search Text*")]
+        [InlineData("Test Search Text ", "Test Search Text*")]
+        [InlineData("Test  Search Text", "Test  Search Text*")]
+        [InlineData(@"T\e+s|t 'Sea'-rch* (#T?xt", @"T\\e\+s\|t \'Sea\'\-rch\* \(T\?xt*")]
         public void GenerateSearchQuery_WithSearchText_ReturnsQueryWithExpectedSearchText(string searchText, string expectedResult)
         {
             var query = new ProviderSearchQuery

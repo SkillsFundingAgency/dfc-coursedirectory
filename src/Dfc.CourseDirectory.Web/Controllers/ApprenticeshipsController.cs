@@ -1076,7 +1076,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
                 //TribalProviderId
-                ProviderId = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukprn.ToString())).Result.Value.Value.FirstOrDefault().id,
+                ProviderId = _providerService.GetProviderByPRNAsync(ukprn.ToString()).Result.Value.FirstOrDefault().id,
                 ProviderUKPRN = ukprn,
                 ApprenticeshipTitle = model.ApprenticeshipTitle,
                 ApprenticeshipType = model.ApprenticeshipType,

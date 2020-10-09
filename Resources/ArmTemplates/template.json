@@ -616,6 +616,14 @@
               {
                 "name": "BlobStorageBinaryStorageProviderSettings__ContainerName",
                 "value": "[parameters('blobStorageSettingsContainerName')]"
+              },
+              {
+                "name": "AzureSearchUrl",
+                "value": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]"
+              },
+              {
+                "name": "AzureSearchQueryKey",
+                "value": "[parameters('searchQueryKey')]"
               }
             ]
           },

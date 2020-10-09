@@ -103,7 +103,6 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
             services.AddScoped<IProviderService, ProviderService>();
-            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
 
             services.AddTransient((provider) => new HttpClient());
 

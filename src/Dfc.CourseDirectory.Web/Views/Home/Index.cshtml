@@ -1,177 +1,41 @@
-﻿
-@using Microsoft.AspNetCore.Authorization;
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Identity
-@using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch
-@using Dfc.CourseDirectory.Models.Enums
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
-@inject IAuthorizationService Authorization
-@inject IHttpContextAccessor HttpContextAccessor
-
-@model Dfc.CourseDirectory.Web.ViewModels.DashboardViewModel;
-@{
-    ViewData["Title"] = "Find a Provider";
+﻿@{
+    ViewData["Title"] = "Publish to the course directory";
     Layout = "_Layout_Your_Courses";
 }
 
-@{
-   
-    var isSignedIn = User.Identity.IsAuthenticated;
-}
+<div class="cd-dashboard provider">
+    <div class="govuk-main-wrapper govuk-body " aria-labelledby="pagetitle">
+        <h1 id="pagetitle" class="govuk-heading-l">Publish to the course directory</h1>
+        <h2 class="govuk-heading-m">Who is this service for?</h2>
+        <div class="govuk-grid-row no-margin">
+            <div class="govuk-grid-column-two-thirds no-padding-left">
+                <p class="govuk-body">This service is for learning providers who are contracted to the Education and Skills Funding Agency and provide courses in England for people aged 16-18 or 19+.</p>
+                <p class="govuk-body">Use this service to:</p>
 
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>add new courses to the course directory</li>
+                    <li>edit and update courses in the course directory</li>
+                    <li>remove courses from the course directory</li>
+                </ul>
 
+                <p class="govuk-body">To use this service you need to sign in using DfE Sign-in.</p>
 
+                <a role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-8" asp-controller="Auth" asp-action="Login">Start now</a>
 
-    @if (ViewBag.StatusMessage != null && isSignedIn == true)
-    {
-        <div class="failure-container">
-            <h1 class="govuk-heading-m" style="font-size: 24px; font-weight: 700">@ViewBag.StatusMessage</h1>
-        </div>
-    }
-    <div id="VenueSearchResultContainer">
-        @if (isSignedIn) //And is an ITSM OR Admin users
-        {
-            var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
-
-            if (authorised.Succeeded)
-            {
-                <h1 class="govuk-heading-l">Find a course or training provider</h1>
-                @await Component.InvokeAsync(nameof(ProviderSearch))
-
-            }
-            else
-            {
-
-                ViewData["Title"] = "Course management dashboard";
-
-                @if (@Model.MigrationPendingCount == 0)
-                {
-                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                    {
-                        NotificationTitle = "No migration errors",
-                        NotificationMessage = Model.MigrationOKMessage,
-                        ClassType = "info-summary",
-                        Link = "<a class='govuk-link' href='/Migration/Options'> What now?</a>"
-                    })
-                }
-
-                @if (@Model.MigrationPendingCount > 0)
-                {
-                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                    {
-                        NotificationTitle = "Migration errors",
-                        NotificationMessage = Model.MigrationErrorMessage,
-                        ClassType = "info-summary",
-                        Link = $"<a class='govuk-link' href='/Migration/Errors?livecourses={Model.LiveCourseCount}&errors={Model.MigrationPendingCount}'> What now?</a>"
-                    })
-                }
-
-                @if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
-                {
-                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                    {
-                        NotificationTitle = "Bulk upload",
-                        ClassType = "info-summary",
-                        Link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>"
-                    })
-                }
-
-                <span class="govuk-caption-xl">Course Directory</span>
-
-                if (!string.IsNullOrEmpty(Model.SuccessHeader))
-                {
-                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                    {
-                        NotificationTitle = Model.SuccessHeader,
-                        ClassType = "success-summary"
-                    })
-                }
-                <h1 class="govuk-heading-l">Course management dashboard</h1>
-                if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
-                {
-                    <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
-                        <div class="cd-info-summary__body">
-                            <div class="cd-info-summary__list">
-                                @foreach (string msg in Model?.ValidationMessages)
-                                {
-                                    <a href="/DQI"> @msg </a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-
-
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">
-                        <div class="cd-status-panel">
-                            <h3 class="govuk-heading-l">@(Model?.LiveCourseCount ?? 0)</h3>
-                            <div class="govuk-heading-s">Live courses</div>
-                        </div>
-                        <div>
-                            <ul class="govuk-list">
-                                <li><a class="govuk-link" asp-controller="RegulatedQualification" asp-action="Index">Publish a course</a></li>
-                                <li><a class="govuk-link" asp-controller="ProviderCourses" asp-action="Index">@((Model?.LiveCourseCount != null && Model?.LiveCourseCount > 0) ? "Manage your courses" : "")</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="govuk-grid-column-one-quarter">
-                        <div class="cd-status-panel">
-                            <h3 class="govuk-heading-l">@(Model?.PendingCourseCount ?? 0)</h3>
-                            <div class="govuk-heading-s">Pending courses</div>
-                        </div>
-                        <div>
-                            <ul class="govuk-list">
-
-                                <li><a class="govuk-link" href="~/migration">Migrated courses</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-
-            }
-        }
-        else
-        {
-
-            <h1 id="pagetitle" class="govuk-heading-l">Publish to the course directory</h1>
-            <h2 class="govuk-heading-m">Who is this service for?</h2>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">This service is for learning providers who are contracted to the Education and Skills Funding Agency and provide courses in England for people aged 16-18 or 19+.</p>
-                    <p class="">Use this service to:</p>
-
-                    <ul class="govuk-list govuk-list--bullet">
-                        <li>add new courses to the course directory</li>
-                        <li>edit and update courses in the course directory</li>
-                        <li>remove courses from the course directory</li>
-                    </ul>
-
-                    <p class="">To use this service you need to sign in using DfE Sign-in.</p>
-
-                    <a role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-8" asp-controller="Auth" asp-action="Login">Start now</a>
-
-                </div>
-
-                <div class="govuk-grid-column-one-third word-wrap-break">
-
-                    <div class="app-related-items sidebar" >
-                        <div class="widget white">
-                            <h3 class="govuk-heading-m" id="subsection-title">
-                                Get help from the Course Directory Support Team
-                            </h3>
-                            <p class="govuk-body">Call 0844 811 5073 or email <a class="govuk-link" href="mailto:support@coursedirectory.org.uk">support@coursedirectory.org.uk</a></p>
-                            <p class="govuk-caption-m">Monday to Friday, 9am to 5pm</p>
-                            <p class="govuk-caption-m">Find out about <a class="govuk-link" target="_blank" href="https://www.gov.uk/call-charges">call charges</a>.</p>
-                        </div>
-                    </div>
-
-                </div>
             </div>
 
-        }
+            <div class="govuk-grid-column-one-third  word-wrap-break teal-top-border ">
+                <div class="app-related-items sidebar">
+                    <div class="widget white">
+                        <h3 class="govuk-heading-m" id="subsection-title">
+                            Get help from the Course Directory Support Team
+                        </h3>
+                        <p class="govuk-body">Call 0844 811 5073 or email <a class="govuk-link" href="mailto:support@coursedirectory.org.uk">support@coursedirectory.org.uk</a></p>
+                        <p class="govuk-caption-m">Monday to Friday, 9am to 5pm</p>
+                        <p class="govuk-caption-m">Find out about <a class="govuk-link" target="_blank" href="https://www.gov.uk/call-charges">call charges</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>

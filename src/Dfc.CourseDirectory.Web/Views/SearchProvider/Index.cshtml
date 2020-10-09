@@ -1,22 +1,13 @@
 ﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult
-@using Dfc.CourseDirectory.Web.ViewModels.ProviderSearch
-@model ProviderSearchViewModel
+@using Dfc.CourseDirectory.Web.ViewComponents.SearchProviderResults
+@using Dfc.CourseDirectory.Web.ViewModels.SearchProvider
+@model SearchProviderResultsViewModel
 @{
     ViewData["Title"] = "Search Providers";
     Layout = "_Layout_Your_Courses";
 }
 
 <div>
-    @*<div class="govuk-breadcrumbs">
-            <ol class="govuk-breadcrumbs__list">
-                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
-                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Providers</a></li>
-                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</a></li>
-            </ol>
-        </div>*@
-
-
     <div class="cd-hero-green">
         <div class="">
             <header class="cd-hero-search">
@@ -30,9 +21,9 @@
                             </div>
                             <form class="site-search ui-front" id="header-search">
                                 <div class="search-input-wrapper">
-                                    <input class="govuk-input search-input js-search-focus" placeholder="Search" aria-labelledby="searchLabel"  id="providerSearchTerm" name="providerSearchTerm" type="text" autofocus>
+                                    <input class="govuk-input search-input js-search-focus" placeholder="Search" aria-labelledby="searchLabel" id="providerSearchTerm" name="providerSearchTerm" type="text" autofocus>
                                     <div class="cd-c-search__item cd-search__submit-wrapper">
-                                        <button type="button" class=" submit" id="searchProvider">Search</button>
+                                        <button type="button" class="submit" id="searchProvider">Search</button>
                                     </div>
                                 </div>
 
@@ -45,9 +36,8 @@
         </div>
     </div>
 
-
     <div id="ProviderSearchResultContainer">
-        @await Component.InvokeAsync(nameof(ProviderAzureSearchResult), Model)
+        @await Component.InvokeAsync(nameof(SearchProviderResults), Model)
     </div>
 </div>
 
@@ -69,24 +59,12 @@
 
             var isNullOrWhitespace = function (input) {
                 if (typeof input === 'undefined' || input == null) return true;
-                return input //.replace(/\s/g, '')
-                    .length < 3;
+                return input.length < 3;
             }
-
-            var replaceAll = function (search, find, replace) {
-                return search.split(find).join(replace);
-            };
 
             var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
-                //var qs = $.param(payload);
-                //qs = replaceAll(qs, "%5B%5D", "");
-                $.get("/ProviderAzureSearch/?Keyword=" + payload, success); // qs, success);
-            };
-
-            var makeRequestWithUrl = function (url, success) {
-                console.log(url);
-                $.get(url, success);
+                $.get("/SearchProvider/Search/?keyword=" + encodeURIComponent(payload), success);
             };
 
             var removeSearchResults = function () {
@@ -107,82 +85,12 @@
                 if (isNullOrWhitespace($searchTerm.val())) {
                     removeSearchResults();
                 } else {
-                    //var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
-                    //    $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
-                    //var $allCheckedAwardOrgCodeFilterCheckboxes =
-                    //    $("input[name='AwardOrgCodeFilter']:checkbox:checked");
-                    //var $allSectorSubjectAreaTier1FilterCheckboxes =
-                    //    $("input[name='SectorSubjectAreaTier1Filter']:checkbox:checked");
-                    //var $allSectorSubjectAreaTier2FilterCheckboxes =
-                    //    $("input[name='SectorSubjectAreaTier2Filter']:checkbox:checked");
-
-                    makeRequestWithPayload( //{
-                        $searchTerm.val(),
-                        //SearchTerm: $searchTerm.val(),
-                        //NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function() {
-                        //    return $(this).val();
-                        //}).get(),
-                        //AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function() {
-                        //    return $(this).val();
-                        //}).get(),
-                        //SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function() {
-                        //    return $(this).val();
-                        //}).get(),
-                        //SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function() {
-                        //    return $(this).val();
-                        //}).get()
-                        //},
-                        onSuccess);
+                    makeRequestWithPayload($searchTerm.val(), onSuccess);
                 }
             };
 
-            //var assignEventsToAllCheckboxes = function() {
-            //    var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
-            //    var $awardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox");
-            //    var $sectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox");
-            //    var $sectorSubjectAreaTier2FilterCheckboxes = $("input[name='SectorSubjectAreaTier2Filter']:checkbox");
-
-            //    $notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
-            //    $awardOrgCodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
-            //    $sectorSubjectAreaTier1FilterCheckboxes.on("click", doSearch);
-            //    $sectorSubjectAreaTier2FilterCheckboxes.on("click", doSearch);
-            //};
-
-            //var assignEventToClearAllFiltersLink = function() {
-            //    var $clearAllFiltersLink = $("#ClearAllFilters");
-
-            //    $clearAllFiltersLink.on("click",
-            //        function(e) {
-            //            e.preventDefault();
-            //            var $allCheckedFilterCheckboxes = $(
-            //                "input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked, input[name='SectorSubjectAreaTier1Filter']:checkbox, input[name='SectorSubjectAreaTier2Filter']:checkbox");
-            //            var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
-
-            //            for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-            //                if (i === (allCheckedFilterCheckboxesLength - 1)) {
-            //                    $($allCheckedFilterCheckboxes[i]).trigger("click");
-            //                } else {
-            //                    $($allCheckedFilterCheckboxes[i]).prop('checked', false);
-            //                }
-            //            }
-            //        });
-            //};
-
-            //var assignEventsToSearchPagination = function() {
-            //    var $searchResultPaginationItems = $("#ProviderSearchResultContainer .pagination .pagination__item");
-            //    $searchResultPaginationItems.on("click",
-            //        function(e) {
-            //            e.preventDefault();
-            //            var url = $(e.target).attr("href");
-            //            makeRequestWithUrl(url, onSuccess);
-            //        });
-            //};
-
             var onSuccess = function (data) {
                 replaceSearchResult(data);
-                //assignEventsToAllCheckboxes();
-                //assignEventToClearAllFiltersLink();
-                //assignEventsToSearchPagination();
             };
 
             $searchTerm.on("keyup", debounce(doSearch, 400));

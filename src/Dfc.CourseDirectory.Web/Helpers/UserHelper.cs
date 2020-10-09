@@ -1,18 +1,13 @@
 ﻿using System;
-using Dfc.CourseDirectory.Common;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Services.ProviderService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
@@ -80,10 +75,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
         internal Guid GetProviderDetails(int ukprn)
         {
-            var result = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukprn.ToString())).Result;
+            var result = _providerService.GetProviderByPRNAsync(ukprn.ToString()).Result;
             if (result.IsSuccess && result.HasValue)
             {
-                return result.Value.Value.Select(x => x.id).FirstOrDefault();
+                return result.Value.Select(x => x.id).FirstOrDefault();
             }
             else return Guid.Empty;
         }

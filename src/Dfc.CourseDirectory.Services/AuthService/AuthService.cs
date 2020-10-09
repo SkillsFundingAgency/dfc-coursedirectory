@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.Interfaces.AuthService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Services.AuthService
@@ -24,9 +23,9 @@ namespace Dfc.CourseDirectory.Services.AuthService
             if (roleName == "Provider User" || roleName == "Provider Superuser")
             {
                 var providerDetails =
-                    await _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN));
+                    await _providerService.GetProviderByPRNAsync(UKPRN);
 
-                var provider = providerDetails.Value?.Value?.FirstOrDefault();
+                var provider = providerDetails.Value?.FirstOrDefault();
                 if (providerDetails.IsSuccess && provider != null)
                 {
                     return provider.ProviderType.ToString();

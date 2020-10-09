@@ -1,4 +1,10 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Mime;
+using System.Text;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
@@ -10,13 +16,6 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
@@ -54,14 +53,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
         public FileStreamResult DownloadCurrentCourseProvisions()
         {
             int? UKPRN;
-            IProviderSearchResult providerSearchResult = null;
             string providerName = String.Empty;
             if (_session.GetInt32("UKPRN").HasValue)
             {
-
                 UKPRN = _session.GetInt32("UKPRN").Value;
-                providerSearchResult = _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.Value.ToString())).Result.Value;
-                providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName.Replace(" ", "");
+                var providerSearchResult = _providerService.GetProviderByPRNAsync(UKPRN.Value.ToString()).Result.Value;
+                providerName = providerSearchResult.FirstOrDefault()?.ProviderName.Replace(" ", "");
             }
             else
             {

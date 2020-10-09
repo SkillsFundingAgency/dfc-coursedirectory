@@ -386,10 +386,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Provider provider = null;
             try
             {
-                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(prn.ToString()))).Result;
+                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(prn.ToString())).Result;
                 if (providerSearchResult.IsSuccess)
                 {
-                    provider = providerSearchResult.Value.Value.FirstOrDefault();
+                    provider = providerSearchResult.Value.FirstOrDefault();
                 }
             }
             catch (Exception)
