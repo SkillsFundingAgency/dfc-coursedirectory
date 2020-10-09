@@ -17,7 +17,6 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -43,38 +42,38 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         }
 
         [Fact]
-        public async Task IndexPost_ValidFileSupplied()
+        public async Task UploadPost_ValidFileSupplied()
         {
             SetupValidFileMetadata();
             SetupFileData("a,small,csv,file,here");
             SetupUploadService_Success();
 
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
 
             AssertRedirect(result, "BulkUploadApprenticeships", "PublishYourFile");
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_NoProviderSelected()
+        public async Task UploadPost_NoProviderSelected()
         {
             UnSetProvider();
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
             AssertRedirect(result, "Home", "Index");
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_NoFileSupplied()
+        public async Task UploadPost_NoFileSupplied()
         {
             _mockFormFile.Setup(m => m.Length).Returns(0);
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
             AssertError("No file uploaded", result);
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_BadData_SemicolonSeparated()
+        public async Task UploadPost_BadData_SemicolonSeparated()
         {
             // Characterization test for the handling of the BadDataException thrown when duplicates encountered,
             // which has a semicolon-separated error message:
@@ -84,60 +83,60 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             SetupFileData("Y");
             SetupUploadService_ThrowsBadData("oh;my;goodness");
 
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
 
             AssertErrors(new List<string> {"oh", "my", "goodness"}, result);
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_HeaderException()
+        public async Task UploadPost_HeaderException()
         {
             SetupValidFileMetadata();
             SetupFileData("Z");
             SetupUploadService_ThrowsHeaderException("Header error message. Subsequent sentence that is stripped out.");
 
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
 
             AssertError("Header error message.", result);
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_Exception()
+        public async Task UploadPost_Exception()
         {
             const string message = "This; is ... an intact message"; // semicolons and dots to check split code isn't being hit
             SetupValidFileMetadata();
             SetupFileData("F");
             SetupUploadService_ThrowsException(message);
 
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
 
             AssertError(message, result);
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_InvalidFileSupplied()
+        public async Task UploadPost_InvalidFileSupplied()
         {
             SetupValidFileMetadata();
             SetupFileData(new byte[] {0x1});
 
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
 
             AssertError("Invalid file content.", result);
             VerifyNotUploaded();
         }
 
         [Fact]
-        public async Task IndexPost_Errors()
+        public async Task UploadPost_Errors()
         {
             SetupValidFileMetadata();
             SetupFileData("Y");
             var errorsToReturn = new List<string>{"alpha", "tango"};
             SetupUploadService_Errors(errorsToReturn);
 
-            var result = await _bulkUploadApprenticeshipsController.Index(_mockFormFile.Object);
+            var result = await _bulkUploadApprenticeshipsController.Upload(_mockFormFile.Object);
 
             var redirect = AssertRedirect(result, "BulkUploadApprenticeships", "WhatDoYouWantToDoNext");
             Assert.Equal(errorsToReturn.Count, redirect.RouteValues["errorCount"]);
@@ -166,7 +165,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             mockHttpContextAccessor.SetupGet(m => m.HttpContext).Returns(mockContext);
 
             var bulkUploadApprenticeshipsController = new BulkUploadApprenticeshipsController(
-                NullLogger<BulkUploadApprenticeshipsController>.Instance,
                 _mockApprenticeshipBulkUploadService.Object,
                 new Mock<IApprenticeshipService>().Object,
                 _mockBlobStorageService.Object,

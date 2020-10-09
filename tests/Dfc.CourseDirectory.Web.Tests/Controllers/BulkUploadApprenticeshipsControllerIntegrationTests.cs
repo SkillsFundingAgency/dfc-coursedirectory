@@ -91,7 +91,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 _apprenticeshipBulkUploadSettings);
 
             _controller = new BulkUploadApprenticeshipsController(
-                NullLogger<BulkUploadApprenticeshipsController>.Instance,
                 _apprenticeshipBulkUploadService,
                 _apprenticeshipService.Object,
                 _blobStorageService.Object,
@@ -107,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         }
 
         [Fact]
-        public async Task Index_WithBulkUploadFile_UploadsApprenticeshipsAndReturnsRedirectToActionResult()
+        public async Task Upload_WithBulkUploadFile_UploadsApprenticeshipsAndReturnsRedirectToActionResult()
         {
             var ukPrn = 12345678;
             var authUserDetails = new AuthUserDetails
@@ -155,7 +154,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 }
             };
 
-            var result = await _controller.Index(bulkUploadFile);
+            var result = await _controller.Upload(bulkUploadFile);
 
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("PublishYourFile", redirectResult.ActionName);
