@@ -1,3 +1,7 @@
 ﻿.pttcd-table--last-row-border-0 tbody tr:last-child td {
     border: 0;
 }
+
+.pttcd-table-header-width__40 th {
+    width: 40%;
+}

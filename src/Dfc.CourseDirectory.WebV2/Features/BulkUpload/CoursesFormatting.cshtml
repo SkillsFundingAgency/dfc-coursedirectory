@@ -1,0 +1,669 @@
+﻿@{
+    ViewBag.Title = "Formatting a bulk upload file";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Formatting a bulk upload file</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <p class="govuk-body">The tables below show information about each field in the bulk upload file and how to complete it correctly.</p>
+
+        <h2 class="govuk-heading-m">LARS_QAN</h2>
+        <p class="govuk-body">Regulated and non regulated qualifications are listed by LARS (Learning Aims Reference) or QAN (Qualification Accreditation Number) code.</p>
+        <p class="govuk-body">Codes can be found at <a href="https://findalearningaimbeta.fasst.org.uk/" class="govuk-link">Find a learning aim</a>.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">8</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">50079281<br>Z9483628<br>00280206<br>5011752X</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">Codes must be 8 digits. For codes with less than 8 digits add one or more zeros to the beginning of the code.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">WHO_IS_THIS_COURSE_FOR</h2>
+        <p class="govuk-body">Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">2000</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">ENTRY_REQUIREMENTS</h2>
+        <p class="govuk-body">Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">500</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">WHAT_YOU_WILL_LEARN</h2>
+        <p class="govuk-body">The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">500</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">HOW_YOU_WILL_LEARN</h2>
+        <p class="govuk-body">The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">500</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">WHAT_YOU_WILL_NEED_TO_BRING</h2>
+        <p class="govuk-body">What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">500</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">HOW_YOU_WILL_BE_ASSESSED</h2>
+        <p class="govuk-body">The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">500</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">WHERE_NEXT</h2>
+        <p class="govuk-body">The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">500</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">ADVANCED_LEARNER_OPTION</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Yes<br>No</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">ADULT_EDUCATION_BUDGET</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Yes<br>No</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">COURSE_NAME</h2>
+        <p class="govuk-body">The course name displayed on the National Career Service, <a href="https://nationalcareers.service.gov.uk/find-a-course/search" class="govuk-link">Find a course</a>.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">255</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Avoid using special characters and line breaks.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">ID</h2>
+        <p class="govuk-body">A reference that will help you identify this course in your internal systems. This will not be visible to learners.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">255</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">DELIVERY_MODE</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter<br></th>
+                    <td class="govuk-table__cell">Classroom based<br>Online<br>Work based</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        For courses with more than one delivery mode, each course must be entered on a separate row.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">START_DATE</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Courses with a specific start date.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">24/09/2022</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        Start dates must be after today's date.<br><br>
+                        For courses with more than one start date, each course must be entered on a separate row.<br><br>
+
+                        If your course does not have a specific start date leave blank.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">FLEXIBLE_START_DATE</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Courses with a flexible start date.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        If your course does not have a flexible start date leave blank.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">VENUE</h2>
+
+        <p class="govuk-body">You can only enter a venue that is already added to Publish to the course directory.</p>
+        <p class="govuk-body">If you have a new venue you must <a asp-action="AddVenue" asp-controller="Venues" class="govuk-link">add this to your locations</a> before you can complete a bulk upload.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">255</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">My Location Name</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">NATIONAL_DELIVERY</h2>
+
+        <p class="govuk-body">You can deliver the course anywhere in England and you will be shown as a national provider for this course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell">Yes<br>No</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">REGION</h2>
+        <p class="govuk-body">This field must be kept blank.</p>
+
+        <h2 class="govuk-heading-m">SUB_REGION</h2>
+
+        <p class="govuk-body">All the areas where you can deliver the course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Work based courses that are not delivered nationally.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">Derby;Norfolk;Leicester;Brent</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter</th>
+                    <td class="govuk-table__cell"><a asp-action="Regions" asp-controller="BulkUpload" class="govuk-link">Regions and sub regions</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">URL</h2>
+
+        <p class="govuk-body">The webpage for this course.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">255</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">https://www.provider.com/coursename</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">COST</h2>
+
+        <p class="govuk-body">Cost of the course to the learner.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses where <span class="govuk-!-font-weight-bold">COST_DESCRIPTION</span> is blank.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Currency</th>
+                    <td class="govuk-table__cell">GBP</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">1500.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">COST_DESCRIPTION</h2>
+
+        <p class="govuk-body">A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses where <span class="govuk-!-font-weight-bold">COST</span> is blank.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">255</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">DURATION</h2>
+
+        <p class="govuk-body">The number of days, weeks, months or years the course runs for.</p>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Character limit</th>
+                    <td class="govuk-table__cell">3</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Example</th>
+                    <td class="govuk-table__cell">18</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">DURATION_UNIT</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom, online and work based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter<br></th>
+                    <td class="govuk-table__cell">Hours<br>Days<br>Weeks<br>Months<br>Years</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">STUDY_MODE</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter<br></th>
+                    <td class="govuk-table__cell">Full time<br>Part time<br>Flexible</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        For courses with more than one study mode, each course must be entered on a separate row.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="govuk-heading-m">ATTENDANCE_PATTERN</h2>
+
+        <table class="govuk-table pttcd-table-header-width__40">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">When to complete</th>
+                    <td class="govuk-table__cell">Classroom based courses.</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Mandatory</th>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">What to enter<br></th>
+                    <td class="govuk-table__cell">Daytime<br>Evening<br>Weekend<br>Day/Block Release</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Notes<br></th>
+                    <td class="govuk-table__cell">
+                        For courses with more than one attendance pattern, each course must be entered on a separate row.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <aside class="pttcd-related-content" role="complementary">
+
+            <h2 id="related-content" class="pttcd-related-content__heading">Related content</h2>
+
+            <nav role="navigation" class="pttcd-related-content__content-section" aria-labelledby="related-content">
+                <ul class="pttcd-related-content__link-list">
+                    <li class="govuk-link pttcd-related-content__link">
+                        <a asp-action="Courses" asp-controller="BulkUpload" class="govuk-link">Peparing your bulk upload file</a>
+                    </li>
+                    <li class="govuk-link pttcd-related-content__link">
+                        <a asp-action="Upload" asp-controller="BulkUpload" class="govuk-link">Upload your file</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <h2 id="related-download-links" class="pttcd-related-content__heading">Download bulk upload files</h2>
+
+            <div class="pttcd-related-content__content-section" aria-labelledby="related-download-links">
+                <ul class="pttcd-related-content__link-list">
+                    <li class="pttcd-related-content__link">
+                        <a asp-action="GetCurrentCoursesTemplateFile" asp-controller="BlobStorage" class="govuk-link">
+                            <span class="govuk-visually-hidden">Download </span>
+                            Your published course information (CSV)
+                        </a>
+                    </li>
+                    <li class="pttcd-related-content__link">
+                        <a asp-action="GetBulkUploadTemplateFile" asp-controller="BlobStorage" class="govuk-link">
+                            <span class="govuk-visually-hidden">Download </span>
+                            A course information template (CSV)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </aside>
+    </div>
+
+</div>

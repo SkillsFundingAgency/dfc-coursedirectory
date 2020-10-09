@@ -1,0 +1,53 @@
+﻿.pttcd-related-content {
+    color: #0b0c0c;
+    border-top: 2px solid #207E77;
+}
+
+.pttcd-related-content__content-section {
+    margin-bottom: 30px;
+}
+
+.pttcd-related-content__link-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    margin-bottom: 1.25em;
+}
+
+.pttcd-related-content__link {
+    font-family: "GDS Transport", Arial, sans-serif;
+    list-style-type: none;
+    margin-top: 15px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.pttcd-related-content__heading {
+    color: #0b0c0c;
+    font-family: "GDS Transport", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.25;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 40.0625em) {
+    .pttcd-related-content__heading {
+        font-size: 19px;
+        line-height: 1.3157894737;
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .pttcd-related-content__link {
+        font-size: 16px;
+        line-height: 1.28;
+    }
+}
+
+.pttcd-related-content__section-link {
+    font-weight: bold;
+}

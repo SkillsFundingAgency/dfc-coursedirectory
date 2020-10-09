@@ -1,34 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Web.BackgroundWorkers;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
-using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.BlobStorageService;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Web.BackgroundWorkers;
-using System.Globalization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-
     public class BulkUploadController : Controller
     {
         private readonly ILogger<BulkUploadController> _logger;
@@ -72,9 +67,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _queue = queue;
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return RedirectToAction("Courses", "BulkUpload");
+        }
 
         [Authorize]
-        public IActionResult Index()
+        [HttpGet("/bulk-upload/courses/upload")]
+        public IActionResult Upload()
         {
             _session.SetString("Option", "BulkUpload");
             int? UKPRN;
@@ -84,45 +86,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
             Provider provider = FindProvider(UKPRN.Value);
-            if(null == provider)
+            if (null == provider)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
             }
 
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
-            var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
+            var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending && x.Count > 0 || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
 
             var model = new BulkUploadViewModel
             {
                 HasMigrationErrors = courseErrors > 0 ? true : false,
             };
 
-            if(null != provider.BulkUploadStatus)
+            if (null != provider.BulkUploadStatus)
             {
                 model.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
                 model.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
                 model.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
             }
 
-            return View("Index", model);
+            return View(model);
         }
 
         [Authorize]
-        public IActionResult Pending()
-        {
-            _session.SetString("Option", "BulkUpload");
-            int? UKPRN;
-            if (_session.GetInt32("UKPRN") != null)
-                UKPRN = _session.GetInt32("UKPRN").Value;
-            else
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-
-            return View("./Pending/Index");
-        }
-
-        [Authorize]
-        [HttpPost("BulkUpload")]
-        public async Task<IActionResult> Index(IFormFile bulkUploadFile)
+        [HttpPost("/bulk-upload/courses/upload")]
+        public async Task<IActionResult> Upload(IFormFile bulkUploadFile)
         {
             int? UKPRN;
             if (_session.GetInt32("UKPRN") != null)
@@ -206,7 +195,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             return View(vm);
         }
-        
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Pending()
+        {
+            _session.SetString("Option", "BulkUpload");
+            int? UKPRN;
+            if (_session.GetInt32("UKPRN") != null)
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            return View("./Pending/Index");
+        }
 
         [Authorize]
         [HttpGet]
@@ -215,7 +217,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
             return RedirectToAction("WhatDoYouWantToDoNext");
         }
-
 
         [Authorize]
         [HttpGet]
@@ -227,10 +228,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 model.Message = message;
             }
-           
+
             return View("../BulkUpload/WhatDoYouWantToDoNext/Index", model);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -256,7 +256,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-
         [Authorize]
         [HttpGet]
         public IActionResult DownloadErrorFile()
@@ -271,7 +270,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                
+
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
                 DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
                 DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
@@ -291,7 +290,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../Bulkupload/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
         }
 
-
         [Authorize]
         [HttpGet]
         public IActionResult DeleteFile()
@@ -301,7 +299,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../Bulkupload/DeleteFile/Index", model);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -376,8 +373,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Delete All Bulk Uploaded Courses Error" });
             }
-
-
         }
 
         [Authorize]
@@ -405,7 +400,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../Bulkupload/PublishYourFile/Index", model);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -449,7 +443,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
 
                     // Publish the bulk-uploaded courses.
-                   
+
                     var resultArchivingCourses = await _courseService.ArchiveCoursesExceptBulkUploadReadytoGoLive(UKPRN, (int)RecordStatus.Archived);
                     if (resultArchivingCourses.IsSuccess)
                     {
@@ -501,10 +495,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult LandingOptions(BulkuploadLandingViewModel model)
         {
             switch (model.BulkUploadLandingOptions)
-            { 
+            {
                 case BulkUploadLandingOptions.Apprenticeship:
-                   return RedirectToAction("Index", "BulkUploadApprenticeships");
-                   
+                    return RedirectToAction("Index", "BulkUploadApprenticeships");
+
                 case BulkUploadLandingOptions.FE:
                     return RedirectToAction("Index", "BulkUpload");
                 default:
