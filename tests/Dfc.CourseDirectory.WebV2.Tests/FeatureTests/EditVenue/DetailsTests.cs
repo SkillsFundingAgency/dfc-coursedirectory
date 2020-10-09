@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 providerId,
                 venueName: "Test Venue",
                 email: "test-venue@provider.com",
-                telephone: "01234 567890",
+                telephone: "01632 960000",
                 website: "provider.com/test-venue",
                 addressLine1: "Test Venue line 1",
                 town: "Town",
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                     "Test Venue line 1\nTown\nAB1 2DE",
                     doc.GetSummaryListValueWithKey("Address"));
                 doc.GetSummaryListValueWithKey("Email").Should().Be("test-venue@provider.com");
-                doc.GetSummaryListValueWithKey("Phone").Should().Be("01234 567890");
+                doc.GetSummaryListValueWithKey("Phone").Should().Be("01632 960000");
                 doc.GetSummaryListValueWithKey("Website").Should().Be("provider.com/test-venue");
             }
         }
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             {
                 state.Name = "Updated name";
                 state.Email = "updated@provider.com";
-                state.PhoneNumber = "02345 678901";
+                state.PhoneNumber = "01632 960000";
                 state.Website = "updated-provider.com";
                 state.AddressLine1 = "Updated line 1";
                 state.AddressLine2 = "Updated line 2";
@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                     "Updated line 1\nUpdated line 2\nUpdated town\nUpdated county\nUP1 D8D",
                     doc.GetSummaryListValueWithKey("Address"));
                 doc.GetSummaryListValueWithKey("Email").Should().Be("updated@provider.com");
-                doc.GetSummaryListValueWithKey("Phone").Should().Be("02345 678901");
+                doc.GetSummaryListValueWithKey("Phone").Should().Be("01632 960000");
                 doc.GetSummaryListValueWithKey("Website").Should().Be("updated-provider.com");
                 Assert.Null(doc.GetElementByTestId("outsideofengland-notification"));
             }
