@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
             {
                 Email = venue.Email,
                 Name = venue.VenueName,
-                PhoneNumber = venue.Telephone,
+                PhoneNumber = venue.PHONE,
                 Website = venue.Website,
                 AddressLine1 = venue.AddressLine1,
                 AddressLine2 = venue.AddressLine2,

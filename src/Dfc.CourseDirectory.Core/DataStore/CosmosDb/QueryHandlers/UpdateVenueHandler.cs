@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             venue.VenueName = request.Name;
             venue.Email = request.Email;
-            venue.Telephone = request.PhoneNumber;
+            venue.PHONE = request.PhoneNumber;
             venue.Website = request.Website;
             venue.AddressLine1 = request.AddressLine1;
             venue.AddressLine2 = request.AddressLine2;

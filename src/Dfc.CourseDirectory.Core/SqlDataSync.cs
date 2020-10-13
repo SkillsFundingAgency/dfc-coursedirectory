@@ -243,7 +243,7 @@ namespace Dfc.CourseDirectory.Core
                     County = venue.County,
                     Postcode = venue.Postcode,
                     Position = ((double)venue.Latitude, (double)venue.Longitude),
-                    Telephone = venue.Telephone,
+                    Telephone = venue.PHONE,
                     Email = venue.Email,
                     Website = venue.Website
                 })

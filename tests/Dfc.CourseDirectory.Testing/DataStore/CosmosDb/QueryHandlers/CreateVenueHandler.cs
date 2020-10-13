@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 Ukprn = request.ProviderUkprn,
                 VenueName = request.VenueName,
                 Email = request.Email,
-                Telephone = request.Telephone,
+                PHONE = request.Telephone,
                 Website = request.Website,
                 AddressLine1 = request.AddressLine1,
                 AddressLine2 = request.AddressLine2,

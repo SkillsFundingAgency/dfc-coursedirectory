@@ -25,8 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string Postcode { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
-        [JsonProperty("PHONE")]
-        public string Telephone { get; set; }
+        public string PHONE { get; set; }
         [JsonProperty("EMAIL")]
         public string Email { get; set; }
         [JsonProperty("WEBSITE")]
@@ -39,6 +38,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string CreatedBy { get; set; }
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
+        [Obsolete("Use PHONE instead.")]
+        public string Telephone { get => PHONE; set => PHONE = value; }
+        public bool ShouldSerializeTelephone() => false;
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }

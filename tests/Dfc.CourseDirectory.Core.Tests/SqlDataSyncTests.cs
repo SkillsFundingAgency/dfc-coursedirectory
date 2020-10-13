@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                 Postcode = "AB1 2DE",
                 Latitude = 1,
                 Longitude = 2,
-                Telephone = "01234 567890",
+                PHONE = "01234 567890",
                 Email = "venue@provider.com",
                 Website = "https://provider.com/venue",
                 Status = 1,

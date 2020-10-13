@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
                     Email = venue.Email,
                     Latitude = venue.Latitude,
                     Longitude = venue.Longitude,
-                    Phone = venue.Telephone,
+                    Phone = venue.PHONE,
                     Postcode = venue.Postcode,
                     Town = venue.Town,
                     Website = venue.Website
