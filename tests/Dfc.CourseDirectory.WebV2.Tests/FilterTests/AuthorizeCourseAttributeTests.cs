@@ -1,19 +1,16 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
-using MediatR;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
+namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class RequireUserCanAccessCourseBehaviorTests : MvcTestBase
+    public class AuthorizeCourseAttributeTests : MvcTestBase
     {
-        public RequireUserCanAccessCourseBehaviorTests(CourseDirectoryApplicationFactory factory)
+        public AuthorizeCourseAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -30,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/RequireUserCanAccessCourseBehaviorTests?courseId={courseId}");
+                $"/AuthorizeCourseAttributeTests/{courseId}");
 
             await User.AsTestUser(userType);
 
@@ -53,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/RequireUserCanAccessCourseBehaviorTests?courseId={courseId}");
+                $"/AuthorizeCourseAttributeTests/{courseId}");
 
             await User.AsTestUser(userType, providerId);
 
@@ -78,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/RequireUserCanAccessCourseBehaviorTests?courseId={courseId}");
+                $"/AuthorizeCourseAttributeTests/{courseId}");
 
             await User.AsTestUser(userType, anotherProviderId);
 
@@ -99,7 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/RequireUserCanAccessCourseBehaviorTests?courseId={courseId}");
+                $"/AuthorizeCourseAttributeTests/{courseId}");
 
             User.SetNotAuthenticated();
 
@@ -111,35 +108,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
         }
     }
 
-    [Route("RequireUserCanAccessCourseBehaviorTests")]
-    public class RequireUserCanAccessCourseBehaviorTestsController : Controller
+    [Route("AuthorizeCourseAttributeTests/{courseId}")]
+    public class AuthorizeCourseAttributeTestsController : Controller
     {
         [HttpGet("")]
         [AllowAnonymous]  // Disable the up-front authentication check so our behavior gets executed
-        public async Task<IActionResult> Get(
-            [FromQuery] RequireUserCanAccessCourseBehaviorTestsRequest request,
-            [FromServices] IMediator mediator)
-        {
-            await mediator.Send(request);
-            return Ok();
-        }
-    }
-
-    public class RequireUserCanAccessCourseBehaviorTestsRequest : IRequest
-    {
-        public Guid CourseId { get; set; }
-    }
-
-    public class RequireUserCanAccessCourseBehaviorTestsHandler :
-        IRequestHandler<RequireUserCanAccessCourseBehaviorTestsRequest>,
-        IRequireUserCanAccessCourse<RequireUserCanAccessCourseBehaviorTestsRequest>
-    {
-        public Task<Unit> Handle(RequireUserCanAccessCourseBehaviorTestsRequest request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new Unit());
-        }
-
-        Guid IRequireUserCanAccessCourse<RequireUserCanAccessCourseBehaviorTestsRequest>.GetCourseId(RequireUserCanAccessCourseBehaviorTestsRequest request) =>
-            request.CourseId;
+        [AuthorizeCourse]
+        public IActionResult Get() => Ok();
     }
 }

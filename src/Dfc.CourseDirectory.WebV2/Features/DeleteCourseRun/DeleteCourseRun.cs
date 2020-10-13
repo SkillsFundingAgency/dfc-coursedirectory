@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
@@ -67,9 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
     }
 
     public class Handler :
-        IRequireUserCanAccessCourse<Request>,
         IRequestHandler<Request, ViewModel>,
-        IRequireUserCanAccessCourse<Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, SuccessViewModel>>,
         IRequestHandler<ConfirmedQuery, ConfirmedViewModel>
     {
@@ -212,9 +209,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId.Value);
             return providerInfo.Ukprn;
         }
-
-        Guid IRequireUserCanAccessCourse<Request>.GetCourseId(Request request) => request.CourseId;
-
-        Guid IRequireUserCanAccessCourse<Command>.GetCourseId(Command request) => request.CourseId;
     }
 }
