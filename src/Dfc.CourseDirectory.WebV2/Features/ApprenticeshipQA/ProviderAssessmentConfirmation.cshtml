@@ -5,7 +5,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ProviderAssessmentConfirmation" append-mptx-id>
+        <form asp-action="PostConfirmation" asp-route-providerId="@Model.ProviderId">
             <h1 class="govuk-heading-xl">Review</h1>
             <h2 class="govuk-heading-l">Provider information</h2>
             <h2 class="govuk-heading-m">An overview of the provider information for employers</h2>
@@ -18,10 +18,8 @@
                     <govuk-summary-list-row-value>
                         @(Model.CompliancePassed ? "Pass" : "Fail")
                     </govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action>
-                        <a class="govuk-link" asp-action="ProviderAssessment" asp-fragment="CompliancePassed" append-mptx-id>
-                            Change<span class="govuk-visually-hidden"> compliance</span>
-                        </a>
+                    <govuk-summary-list-row-action visually-hidden-text="compliance"  asp-action="Get" asp-fragment="CompliancePassed" asp-route-providerId="@Model.ProviderId">
+                        Change
                     </govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
@@ -31,10 +29,8 @@
                     <govuk-summary-list-row-value>
                         @(Model.StylePassed ? "Pass" : "Fail")
                     </govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action>
-                        <a class="govuk-link" asp-action="ProviderAssessment" asp-fragment="StylePassed" append-mptx-id>
-                            Change<span class="govuk-visually-hidden"> style</span>
-                        </a>
+                    <govuk-summary-list-row-action visually-hidden-text="style" asp-action="Get" asp-fragment="StylePassed" asp-route-providerId="@Model.ProviderId">
+                        Change
                     </govuk-summary-list-row-action>
                 </govuk-summary-list-row>
             </govuk-summary-list>

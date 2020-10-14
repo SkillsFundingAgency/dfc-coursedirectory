@@ -18,7 +18,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ProviderAssessment" append-mptx-id>
+        <form asp-action="Post" asp-route-providerId="@Model.ProviderId">
             <h1 class="govuk-heading-xl">@Model.ProviderName</h1>
             <div class="govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-l">Provider information</h2>
