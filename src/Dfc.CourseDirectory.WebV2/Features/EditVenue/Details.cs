@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using FormFlow;
 using MediatR;
 
@@ -25,9 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Details
         public bool NewAddressIsOutsideOfEngland { get; set; }
     }
 
-    public class Handler :
-        IRequireUserCanAccessVenue<Query>,
-        IRequestHandler<Query, ViewModel>
+    public class Handler : IRequestHandler<Query, ViewModel>
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
 
@@ -62,7 +59,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Details
 
             return Task.FromResult(vm);
         }
-
-        Guid IRequireUserCanAccessVenue<Query>.GetVenueId(Query request) => request.VenueId;
     }
 }

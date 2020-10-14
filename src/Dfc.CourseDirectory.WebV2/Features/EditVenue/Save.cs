@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using FormFlow;
 using MediatR;
 using OneOf.Types;
@@ -15,9 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
         public Guid VenueId { get; set; }
     }
 
-    public class Handler :
-        IRequireUserCanAccessVenue<Command>,
-        IRequestHandler<Command, Success>
+    public class Handler : IRequestHandler<Command, Success>
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -50,7 +47,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
 
             return new Success();
         }
-
-        Guid IRequireUserCanAccessVenue<Command>.GetVenueId(Command request) => request.VenueId;
     }
 }

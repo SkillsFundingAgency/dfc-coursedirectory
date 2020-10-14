@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
 using FormFlow;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core.Validation.VenueValidation;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 
 namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
 {
@@ -25,9 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
     }
 
     public class Handler :
-        IRequireUserCanAccessVenue<Query>,
         IRequestHandler<Query, Command>,
-        IRequireUserCanAccessVenue<Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
@@ -75,10 +72,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
 
             return new Success();
         }
-
-        Guid IRequireUserCanAccessVenue<Query>.GetVenueId(Query request) => request.VenueId;
-
-        Guid IRequireUserCanAccessVenue<Command>.GetVenueId(Command request) => request.VenueId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using FluentValidation;
 using FormFlow;
 using MediatR;
@@ -24,9 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
     }
 
     public class Handler :
-        IRequireUserCanAccessVenue<Query>,
         IRequestHandler<Query, Command>,
-        IRequireUserCanAccessVenue<Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
@@ -61,10 +58,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
 
             return new Success();
         }
-
-        Guid IRequireUserCanAccessVenue<Query>.GetVenueId(Query request) => request.VenueId;
-
-        Guid IRequireUserCanAccessVenue<Command>.GetVenueId(Command request) => request.VenueId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

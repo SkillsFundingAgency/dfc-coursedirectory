@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
 {
     [Route("venues/{venueId:guid}")]
+    [AuthorizeVenue(venueIdRouteParameterName: "venueId")]
     [FormFlowAction(key: "EditVenue", stateType: typeof(EditVenueFlowModel), idRouteParameterNames: "venueId")]
     public class EditVenueController : Controller
     {

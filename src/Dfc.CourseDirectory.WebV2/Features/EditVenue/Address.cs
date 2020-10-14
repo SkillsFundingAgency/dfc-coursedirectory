@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using FluentValidation;
 using FluentValidation.Results;
 using FormFlow;
@@ -32,9 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
     }
 
     public class Handler :
-        IRequireUserCanAccessVenue<Query>,
         IRequestHandler<Query, Command>,
-        IRequireUserCanAccessVenue<Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
@@ -101,10 +98,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
 
             return new Success();
         }
-
-        Guid IRequireUserCanAccessVenue<Query>.GetVenueId(Query request) => request.VenueId;
-
-        Guid IRequireUserCanAccessVenue<Command>.GetVenueId(Command request) => request.VenueId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

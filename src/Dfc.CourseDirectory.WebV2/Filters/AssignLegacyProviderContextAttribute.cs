@@ -15,7 +15,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     {
         public AssignLegacyProviderContextAttribute()
         {
-            Order = 10;  // Run after RedirectToProviderSelectionActionFilter
+            // Run late to allow other filters that assign provider context to run first
+            Order = 1000;
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
