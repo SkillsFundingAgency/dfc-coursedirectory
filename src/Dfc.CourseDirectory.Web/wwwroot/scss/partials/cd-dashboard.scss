@@ -241,11 +241,16 @@ $grey: #6f777b;
     padding-right: 1em;
     //font-weight:800;
 }
+
 .teal-top-border {
     border-top: 5px solid $ExploreCareersGreen;
 
     &.bg-grey {
-        background-color:#f8f8f8;
+        background-color: #f8f8f8;
+    }
+
+    &-light {
+        border-top: 2px solid $ExploreCareersGreen;
     }
 }
 
