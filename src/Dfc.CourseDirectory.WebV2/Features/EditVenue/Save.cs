@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Security;
 using FormFlow;
 using MediatR;
 using OneOf.Types;
@@ -18,13 +20,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
     {
         private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         public Handler(
             FormFlowInstance<EditVenueFlowModel> formFlowInstance,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
             _formFlowInstance = formFlowInstance;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         public async Task<Success> Handle(Command request, CancellationToken cancellationToken)
@@ -42,7 +50,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
                 County = _formFlowInstance.State.County,
                 Postcode = _formFlowInstance.State.Postcode,
                 Latitude = _formFlowInstance.State.Latitude,
-                Longitude = _formFlowInstance.State.Longitude
+                Longitude = _formFlowInstance.State.Longitude,
+                UpdatedDate = _clock.UtcNow,
+                UpdatedBy = _currentUserProvider.GetCurrentUser()
             });
 
             return new Success();

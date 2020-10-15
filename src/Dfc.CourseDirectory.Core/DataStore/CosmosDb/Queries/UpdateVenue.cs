@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 using OneOf;
 using OneOf.Types;
 
@@ -18,5 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public string Postcode { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
+        public DateTime UpdatedDate { get; set; }
+        public UserInfo UpdatedBy { get; set; }
     }
 }

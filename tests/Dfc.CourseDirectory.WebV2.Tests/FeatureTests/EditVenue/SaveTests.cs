@@ -137,7 +137,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 q.County == "Updated county" &&
                 q.Postcode == "UP1 D8D" &&
                 q.Latitude == 42 &&
-                q.Longitude == 42);
+                q.Longitude == 42 &&
+                q.UpdatedBy.UserId == User.UserId &&
+                q.UpdatedDate == Clock.UtcNow);
         }
 
         private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)

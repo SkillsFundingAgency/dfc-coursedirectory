@@ -27,6 +27,8 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
             venue.Postcode = request.Postcode;
             venue.Latitude = request.Latitude;
             venue.Longitude = request.Longitude;
+            venue.UpdatedBy = request.UpdatedBy.Email;
+            venue.DateUpdated = request.UpdatedDate;
 
             inMemoryDocumentStore.Venues.Save(venue);
 
