@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
@@ -17,6 +16,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 using Dfc.CourseDirectory.Core;
+using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment
 {
@@ -26,7 +26,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
     {
     }
 
-    public class FlowModel : IMptxState
+    [FormFlowState]
+    public class FlowModel
     {
         public Guid ApprenticeshipId { get; set; }
         public bool IsReadOnly { get; set; }
@@ -146,6 +147,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
     public class ViewModel : Command
     {
+        public Guid ApprenticeshipId { get; set; }
         public Guid ProviderId { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public string ApprenticeshipMarketingInformation { get; set; }
@@ -184,6 +186,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
     public class ConfirmationViewModel : IRequest<ConfirmationCommand>
     {
+        public Guid ApprenticeshipId { get; set; }
         public Guid ProviderId { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public bool CompliancePassed { get; set; }
@@ -218,18 +221,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly MptxInstanceContext<FlowModel> _flow;
+        private readonly FormFlowInstance<FlowModel> _formFlowInstance;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            MptxInstanceContext<FlowModel> flow)
+            FormFlowInstance<FlowModel> formFlowInstance)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
-            _flow = flow;
+            _formFlowInstance = formFlowInstance;
         }
 
         IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses => _submittableStatuses;
@@ -264,7 +267,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            _flow.Update(s => s.SetAssessmentOutcome(
+            _formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
                 request.CompliancePassed.Value,
                 request.ComplianceFailedReasons ?? ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                 request.ComplianceComments,
@@ -277,27 +280,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
         public async Task<ConfirmationViewModel> Handle(ConfirmationQuery request, CancellationToken cancellationToken)
         {
-            if (!_flow.State.GotAssessmentOutcome)
+            if (!_formFlowInstance.State.GotAssessmentOutcome)
             {
                 throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
             }
 
-            var apprenticeshipId = _flow.State.ApprenticeshipId;
+            var apprenticeshipId = _formFlowInstance.State.ApprenticeshipId;
 
             var submission = await GetSubmission();
             var submissionApprenticeship = submission.Apprenticeships.Single(a => a.ApprenticeshipId == apprenticeshipId);
 
             var vm = new ConfirmationViewModel()
             {
-                ProviderId = _flow.State.ProviderId,
+                ApprenticeshipId = _formFlowInstance.State.ApprenticeshipId,
+                ProviderId = _formFlowInstance.State.ProviderId,
                 ApprenticeshipTitle = submissionApprenticeship.ApprenticeshipTitle,
-                ComplianceComments = _flow.State.ComplianceComments,
-                ComplianceFailedReasons = _flow.State.ComplianceFailedReasons.Value,
-                CompliancePassed = _flow.State.CompliancePassed.Value,
-                Passed = _flow.State.IsApprenticeshipAssessmentPassed(),
-                StyleComments = _flow.State.StyleComments,
-                StyleFailedReasons = _flow.State.StyleFailedReasons.Value,
-                StylePassed = _flow.State.StylePassed.Value
+                ComplianceComments = _formFlowInstance.State.ComplianceComments,
+                ComplianceFailedReasons = _formFlowInstance.State.ComplianceFailedReasons.Value,
+                CompliancePassed = _formFlowInstance.State.CompliancePassed.Value,
+                Passed = _formFlowInstance.State.IsApprenticeshipAssessmentPassed(),
+                StyleComments = _formFlowInstance.State.StyleComments,
+                StyleFailedReasons = _formFlowInstance.State.StyleFailedReasons.Value,
+                StylePassed = _formFlowInstance.State.StylePassed.Value
             };
 
             return vm;
@@ -305,19 +309,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
         public async Task<Success> Handle(ConfirmationCommand request, CancellationToken cancellationToken)
         {
-            if (!_flow.State.GotAssessmentOutcome)
+            if (!_formFlowInstance.State.GotAssessmentOutcome)
             {
                 throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
             }
 
-            var apprenticeshipId = _flow.State.ApprenticeshipId;
-            var providerId = _flow.State.ProviderId;
+            var apprenticeshipId = _formFlowInstance.State.ApprenticeshipId;
+            var providerId = _formFlowInstance.State.ProviderId;
 
             var currentUserId = _currentUserProvider.GetCurrentUser().UserId;
 
             var submission = await GetSubmission();
 
-            var overallPassed = _flow.State.IsSubmissionPassed(submission.ProviderAssessmentPassed);
+            var overallPassed = _formFlowInstance.State.IsSubmissionPassed(submission.ProviderAssessmentPassed);
 
             await _sqlQueryDispatcher.ExecuteQuery(
                 new SetProviderApprenticeshipQAStatus()
@@ -333,13 +337,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     ApprenticeshipId = apprenticeshipId,
                     AssessedByUserId = currentUserId,
                     AssessedOn = _clock.UtcNow,
-                    ComplianceComments = _flow.State.ComplianceComments,
-                    ComplianceFailedReasons = _flow.State.ComplianceFailedReasons.Value,
-                    CompliancePassed = _flow.State.CompliancePassed.Value,
-                    Passed = _flow.State.IsApprenticeshipAssessmentPassed(),
-                    StyleComments = _flow.State.StyleComments,
-                    StyleFailedReasons = _flow.State.StyleFailedReasons.Value,
-                    StylePassed = _flow.State.StylePassed.Value
+                    ComplianceComments = _formFlowInstance.State.ComplianceComments,
+                    ComplianceFailedReasons = _formFlowInstance.State.ComplianceFailedReasons.Value,
+                    CompliancePassed = _formFlowInstance.State.CompliancePassed.Value,
+                    Passed = _formFlowInstance.State.IsApprenticeshipAssessmentPassed(),
+                    StyleComments = _formFlowInstance.State.StyleComments,
+                    StyleFailedReasons = _formFlowInstance.State.StyleFailedReasons.Value,
+                    StylePassed = _formFlowInstance.State.StylePassed.Value
                 });
 
             await _sqlQueryDispatcher.ExecuteQuery(
@@ -350,13 +354,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     LastAssessedByUserId = currentUserId,
                     LastAssessedOn = _clock.UtcNow,
                     ProviderAssessmentPassed = submission.ProviderAssessmentPassed,
-                    ApprenticeshipAssessmentsPassed = _flow.State.IsApprenticeshipAssessmentPassed()
+                    ApprenticeshipAssessmentsPassed = _formFlowInstance.State.IsApprenticeshipAssessmentPassed()
                 });
 
             await _sqlQueryDispatcher.ExecuteQuery(
                 new SetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = _flow.State.ProviderId,
+                    ProviderId = _formFlowInstance.State.ProviderId,
                     ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
                 });
 
@@ -365,23 +369,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
         private async Task<ViewModel> CreateViewModel()
         {
-            var apprenticeshipId = _flow.State.ApprenticeshipId;
+            var apprenticeshipId = _formFlowInstance.State.ApprenticeshipId;
 
             var submission = await GetSubmission();
             var submissionApprenticeship = submission.Apprenticeships.Single(a => a.ApprenticeshipId == apprenticeshipId);
 
             return new ViewModel()
             {
+                ApprenticeshipId = _formFlowInstance.State.ApprenticeshipId,
                 ApprenticeshipMarketingInformation = Html.SanitizeHtml(submissionApprenticeship.ApprenticeshipMarketingInformation),
                 ApprenticeshipTitle = submissionApprenticeship.ApprenticeshipTitle,
-                ProviderId = _flow.State.ProviderId,
-                ComplianceComments = _flow.State.ComplianceComments,
-                ComplianceFailedReasons = _flow.State.ComplianceFailedReasons,
-                CompliancePassed = _flow.State.CompliancePassed,
-                StyleComments = _flow.State.StyleComments,
-                StyleFailedReasons = _flow.State.StyleFailedReasons,
-                StylePassed = _flow.State.StylePassed,
-                IsReadOnly = _flow.State.IsReadOnly,
+                ProviderId = _formFlowInstance.State.ProviderId,
+                ComplianceComments = _formFlowInstance.State.ComplianceComments,
+                ComplianceFailedReasons = _formFlowInstance.State.ComplianceFailedReasons,
+                CompliancePassed = _formFlowInstance.State.CompliancePassed,
+                StyleComments = _formFlowInstance.State.StyleComments,
+                StyleFailedReasons = _formFlowInstance.State.StyleFailedReasons,
+                StylePassed = _formFlowInstance.State.StylePassed,
+                IsReadOnly = _formFlowInstance.State.IsReadOnly,
                 ApprenticeshipIsNational = submissionApprenticeship.Locations.Any(l => l.IsT1 ? l.AsT1.IsNational : false),
                 ApprenticeshipClassroomLocations = submissionApprenticeship.Locations
                     .Where(l => l.IsClassroomBased)
@@ -424,16 +429,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             (await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
-                    ProviderId = _flow.State.ProviderId
+                    ProviderId = _formFlowInstance.State.ProviderId
                 })).AsT1;
 
-        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => _flow.State.ProviderId;
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => _formFlowInstance.State.ProviderId;
 
-        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => _flow.State.ProviderId;
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => _formFlowInstance.State.ProviderId;
 
-        Guid IRestrictQAStatus<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => _flow.State.ProviderId;
+        Guid IRestrictQAStatus<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => _formFlowInstance.State.ProviderId;
 
-        Guid IRestrictQAStatus<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => _flow.State.ProviderId;
+        Guid IRestrictQAStatus<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => _formFlowInstance.State.ProviderId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

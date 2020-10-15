@@ -55,7 +55,7 @@
             {
                 <div class="pttcd-apprenticeship-qa__provider-selected__summary govuk-!-margin-bottom-9" data-testid="apprenticeship-assessment">
                     <div class="pttcd-apprenticeship-qa__provider-selected__summary__label" data-testid="apprenticeship-assessment-label">
-                        <a asp-action="ApprenticeshipAssessmentStart" asp-route-providerId="@Model.ProviderId" asp-route-apprenticeshipId="@app.ApprenticeshipId" class="govuk-link">
+                        <a asp-controller="ApprenticeshipAssessment" asp-action="Get" asp-route-apprenticeshipId="@app.ApprenticeshipId" class="govuk-link">
                             @app.ApprenticeshipTitle
                         </a>
                     </div>
