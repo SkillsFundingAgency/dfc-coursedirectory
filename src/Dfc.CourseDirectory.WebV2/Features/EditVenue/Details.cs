@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Validation;
 using FormFlow;
 using MediatR;
 
@@ -51,7 +52,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Details
                 AddressParts = addressParts,
                 Email = state.Email,
                 LocationName = state.Name,
-                PhoneNumber = state.PhoneNumber,
+                PhoneNumber = !string.IsNullOrEmpty(state.PhoneNumber) ?
+                    PhoneNumberHelper.FormatPhoneNumber(state.PhoneNumber) :
+                    null,
                 VenueId = request.VenueId,
                 Website = state.Website,
                 NewAddressIsOutsideOfEngland = state.NewAddressIsOutsideOfEngland

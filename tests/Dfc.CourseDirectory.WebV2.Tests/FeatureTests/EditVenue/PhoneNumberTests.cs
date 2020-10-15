@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId, telephone: "01632 960000");
+            var venueId = await TestData.CreateVenue(providerId, telephone: "020 7946 0000");
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be("01632 960000");
+            doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be("020 7946 0000");
         }
 
         [Theory]
@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId, telephone: "01632 960000");
+            var venueId = await TestData.CreateVenue(providerId, telephone: "020 7946 0000");
 
             var formFlowInstance = await CreateFormFlowInstance(venueId);
             formFlowInstance.UpdateState(state => state.PhoneNumber = existingValue);
@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("PhoneNumber", "01632 960000")
+                .Add("PhoneNumber", "020 7946 0000")
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/phone-number")
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var venueId = Guid.NewGuid();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("PhoneNumber", "01632 960000")
+                .Add("PhoneNumber", "020 7946 0000")
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/phone-number")
@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         }
 
         [Theory]
-        [InlineData("01632 960000")]
+        [InlineData("020 7946 0000")]
         [InlineData("")]
         public async Task Post_ValidRequest_UpdatesFormFlowInstanceAndRedirects(string phoneNumber)
         {
