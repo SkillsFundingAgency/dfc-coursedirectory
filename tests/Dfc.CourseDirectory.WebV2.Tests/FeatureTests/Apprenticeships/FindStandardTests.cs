@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using FluentAssertions;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
@@ -23,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 $"apprenticeships/find-standard?providerId={providerId}&returnUrl=%2Fcallback");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -37,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 $"apprenticeships/find-standard/search?providerId={providerId}&returnUrl=%2Fcallback&Search=h");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
             doc.AssertHasError(
@@ -62,13 +63,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 $"apprenticeships/find-standard/search?providerId={providerId}&returnUrl=%2Fcallback&Search=hair");
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
 
-            Assert.Equal(
-                "Found 2 results for hair",
-                doc.GetElementById("pttcd-apprenticeships__find-provision__results-count").TextContent.Trim());
+            doc.GetElementById("pttcd-apprenticeships__find-provision__results-count").TextContent.Trim().Should()
+                .Be("Found 2 results for hair");
         }
 
         [Fact]
@@ -88,9 +88,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             var doc = await response.GetDocument();
 
-            Assert.Equal(
-                "/callback?standardCode=456&version=2",
-                doc.GetAllElementsByTestId("choose-apprenticeship-link")[0].GetAttribute("href"));
+            doc.GetAllElementsByTestId("choose-apprenticeship-link")[0].GetAttribute("href").Should()
+                .Be("/callback?standardCode=456&version=2");
         }
     }
 }
