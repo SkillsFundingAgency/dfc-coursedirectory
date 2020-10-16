@@ -22,21 +22,37 @@ The dacpac will automatically be deployed and create all the database schema and
 
 ### Running the web app locally
 
-Get user secrets from another developer on the team.
+#### Secrets
 
-Manually create empty database `CourseDirectory`:
+* Get user secrets from another developer on the team.
+
+#### Create the database
+
+* Manually create empty database `CourseDirectory`:
+
 ```
 create database CourseDirectory;
 ALTER DATABASE CourseDirectory SET ALLOW_SNAPSHOT_ISOLATION ON;
 ```
+
+#### Deploy database from Visual Studio
+
+* Right-click "Publish" on the database project then deploy to database `CourseDirectory`.
+
+#### Deploy database from CLI
+
 Temporarily configure user secret `ConnectionStrings:DefaultConnection` for project `CourseDirectoryTesting` to point to database `CourseDirectory`.
 
 Run the tests in `Dfc.CourseDirectory.WebV2.Tests`, this will cause the dacpac to deploy.
 
 Undo the temporary user secret configuration change.
 
+#### Run the web project
+
 Run project `Dfc.CourseDirectory.Web`
 
 Navigate to https://localhost:44345/ in a browser.
 
-Ask the team for a valid DfE Sign-in account with provider(s) associated with it.
+#### Login
+
+Ask the team to make you a valid DfE Sign-in account with provider(s) associated with it.
