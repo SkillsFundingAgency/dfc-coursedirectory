@@ -7,7 +7,7 @@ using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
-using FindStandardOrFramework = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
+using FindStandard = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -224,13 +224,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("find-standard")]
-        public IActionResult FindStandardOrFramework(
+        public IActionResult FindStandard(
             [FromServices] MptxManager mptxManager,
             ProviderContext providerContext)
         {
-            var childFlow = mptxManager.CreateInstance<FindStandardOrFramework.FlowModel, FindStandardOrFramework.IFlowModelCallback>(
+            var childFlow = mptxManager.CreateInstance<FindStandard.FlowModel, FindStandard.IFlowModelCallback>(
                 Flow.InstanceId,
-                new FindStandardOrFramework.FlowModel()
+                new FindStandard.FlowModel()
                 {
                     ProviderId = providerContext.ProviderInfo.ProviderId
                 },
@@ -243,7 +243,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                             .WithProviderContext(providerContext)
                     }
                 });
-            return RedirectToAction("FindStandardOrFramework", "Apprenticeships")
+            return RedirectToAction("FindStandard", "Apprenticeships")
                 .WithMptxInstanceId(childFlow.InstanceId);
         }
 
@@ -306,7 +306,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     RedirectToAction(nameof(ApprenticeshipSummary))
                         .WithProviderContext(providerContext)
                         .WithMptxInstanceId(Flow) :
-                    RedirectToAction(nameof(FindStandardOrFramework))
+                    RedirectToAction(nameof(FindStandard))
                         .WithProviderContext(providerContext)
                         .WithMptxInstanceId(Flow));
         }

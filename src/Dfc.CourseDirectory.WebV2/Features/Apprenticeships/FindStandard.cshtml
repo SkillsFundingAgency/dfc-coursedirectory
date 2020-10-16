@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework.ViewModel
+﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard.ViewModel
 @{
     ViewBag.Title = "Find apprenticeship";
 
@@ -13,7 +13,7 @@
     </govuk-error-summary>
 }
 
-<form asp-action="FindStandardOrFrameworkSearch" method="get" append-mptx-id>
+<form asp-action="FindStandardSearch" method="get" append-mptx-id>
     <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
 
     <pttcd-search-input asp-for="Search">
@@ -33,34 +33,14 @@
 
             @foreach (var result in Model.Results)
             {
-                var resultReturnUrl = new Flurl.Url(Url.Action("FindStandardOrFrameworkSelect"))
+                var resultReturnUrl = new Flurl.Url(Url.Action("FindStandardSelect"))
+                    .SetQueryParam("standardCode", result.StandardCode)
+                    .SetQueryParam("version", result.StandardVersion)
                     .WithMptxInstanceId(mptxInstanceId);
-
-                if (result.IsFramework)
-                {
-                    resultReturnUrl
-                        .SetQueryParam("standardOrFrameworkType", "framework")
-                        .SetQueryParam("frameworkCode", result.FrameworkCode)
-                        .SetQueryParam("progType", result.FrameworkProgType)
-                        .SetQueryParam("pathwayCode", result.FrameworkPathwayCode);
-                }
-                else
-                {
-                    resultReturnUrl
-                        .SetQueryParam("standardOrFrameworkType", "standard")
-                        .SetQueryParam("standardCode", result.StandardCode)
-                        .SetQueryParam("version", result.StandardVersion);
-                }
-
 
                 <div class="pttcd-apprenticeships__find-standard-or-framework__search-result govuk-!-margin-bottom-4">
                     <h2 class="govuk-heading-m">
                         @result.ApprenticeshipTitle
-
-                        @if (result.IsFramework)
-                        {
-                            <govuk-tag class="govuk-!-margin-left-3">Framework</govuk-tag>
-                        }
                     </h2>
 
                     @if (result.OtherBodyApprovalRequired == true)
@@ -80,14 +60,7 @@
                         Choose this apprenticeship
                         <span class="govuk-visually-hidden">@result.ApprenticeshipTitle</span>
                     </a>
-
-
-                    @if (result.IsFramework)
-                    {
-                        <govuk-warning-text icon-fallback-text="Danger" class="govuk-!-margin-top-4" id="framework-warning">This apprenticeship is available to new starters until 31st July 2020</govuk-warning-text>
-                    }
                 </div>
-
             }
         }
         else

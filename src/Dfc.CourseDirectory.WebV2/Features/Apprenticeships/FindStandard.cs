@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FluentValidation;
 using Mapster;
 using MediatR;
 using OneOf;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework
+namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard
 {
     using QueryResponse = OneOf<ModelWithErrors<ViewModel>, ViewModel>;
 
@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
 
     public interface IFlowModelCallback : IMptxState
     {
-        void ReceiveStandardOrFramework(StandardOrFramework standardOrFramework);
+        void ReceiveStandard(Standard standard);
     }
 
     public class Query : IRequest<ViewModel>
@@ -45,20 +45,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
 
     public class SelectCommand : IRequest<Success>
     {
-        public StandardOrFramework StandardOrFramework { get; set; }
+        public Standard Standard { get; set; }
     }
 
     public class ViewModelResult
     {
         public string ApprenticeshipTitle { get; set; }
         public bool IsFramework { get; set; }
-        public bool? OtherBodyApprovalRequired { get; set; }
+        public bool OtherBodyApprovalRequired { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
-        public int? FrameworkCode { get; set; }
-        public int? FrameworkProgType { get; set; }
-        public int? FrameworkPathwayCode { get; set; }
-        public int? StandardCode { get; set; }
-        public int? StandardVersion { get; set; }
+        public int StandardCode { get; set; }
+        public int StandardVersion { get; set; }
     }
 
     public class Handler :
@@ -106,24 +103,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var searchResults = await _standardsAndFrameworksCache.SearchStandardsAndFrameworks(request.Search);
+            var searchResults = await _standardsAndFrameworksCache.SearchStandards(request.Search);
 
             return new ViewModel()
             {
                 Search = request.Search,
                 SearchWasDone = true,
                 Results = searchResults
-                    .Select(r => new ViewModelResult()
+                    .Select(s => new ViewModelResult()
                     {
-                        ApprenticeshipTitle = r.Match(s => s.StandardName, f => f.NasTitle),
-                        IsFramework = r.Value is Framework,
-                        NotionalNVQLevelv2 = r.Match(s => s.NotionalNVQLevelv2, f => null),
-                        OtherBodyApprovalRequired = r.Match(s => s.OtherBodyApprovalRequired, f => (bool?)null),
-                        FrameworkCode = r.Match(s => (int?)null, f => f.FrameworkCode),
-                        FrameworkProgType = r.Match(s => (int?)null, f => f.ProgType),
-                        FrameworkPathwayCode = r.Match(s => (int?)null, f => f.PathwayCode),
-                        StandardCode = r.Match(s => s.StandardCode, f => (int?)null),
-                        StandardVersion = r.Match(s => s.Version, f => (int?)null)
+                        ApprenticeshipTitle = s.StandardName,
+                        NotionalNVQLevelv2 = s.NotionalNVQLevelv2,
+                        OtherBodyApprovalRequired = s.OtherBodyApprovalRequired,
+                        StandardCode = s.StandardCode,
+                        StandardVersion = s.Version
                     })
                     .ToList()
             };
@@ -131,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFrame
 
         public Task<Success> Handle(SelectCommand request, CancellationToken cancellationToken)
         {
-            _flow.UpdateParent(s => s.ReceiveStandardOrFramework(request.StandardOrFramework));
+            _flow.UpdateParent(s => s.ReceiveStandard(request.Standard));
 
             return Task.FromResult(new Success());
         }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -60,33 +61,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
 
         [MptxAction]
         [HttpGet("find-standard")]
-        public async Task<IActionResult> FindStandardOrFramework()
+        public async Task<IActionResult> FindStandard()
         {
-            var query = new FindStandardOrFramework.Query();
+            var query = new FindStandard.Query();
             return await _mediator.SendAndMapResponse(query, response => View(response));
         }
 
         [MptxAction]
         [HttpGet("find-standard/search")]
-        public async Task<IActionResult> FindStandardOrFrameworkSearch(FindStandardOrFramework.SearchQuery query)
+        public async Task<IActionResult> FindStandardSearch(FindStandard.SearchQuery query)
         {
             return await _mediator.SendAndMapResponse(
                 query,
                 response => response.Match(
-                    errors => this.ViewFromErrors("FindStandardOrFramework", errors),
-                    vm => View("FindStandardOrFramework", vm)));
+                    errors => this.ViewFromErrors("FindStandard", errors),
+                    vm => View("FindStandard", vm)));
         }
 
         [MptxAction]
         [HttpGet("find-standard/select")]
-        public async Task<IActionResult> FindStandardOrFrameworkSelect(
-            StandardOrFramework standardOrFramework,
-            MptxInstanceContext<FindStandardOrFramework.FlowModel, FindStandardOrFramework.IFlowModelCallback> flow)
+        [RequireValidModelState]
+        public async Task<IActionResult> FindStandardSelect(
+            Standard standard,
+            MptxInstanceContext<FindStandard.FlowModel, FindStandard.IFlowModelCallback> flow)
         {
-            var command = new FindStandardOrFramework.SelectCommand()
+            var command = new FindStandard.SelectCommand()
             {
-                StandardOrFramework = standardOrFramework
+                Standard = standard
             };
+
             return await _mediator.SendAndMapResponse(
                 command,
                 response => Redirect(flow.Items["ReturnUrl"].ToString()));

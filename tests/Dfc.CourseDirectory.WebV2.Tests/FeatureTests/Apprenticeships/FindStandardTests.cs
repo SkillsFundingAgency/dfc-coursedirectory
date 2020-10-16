@@ -2,14 +2,14 @@
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
+using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 {
-    public class FindStandardOrFrameworkTests : MvcTestBase
+    public class FindStandardTests : MvcTestBase
     {
-        public FindStandardOrFrameworkTests(CourseDirectoryApplicationFactory factory)
+        public FindStandardTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -73,6 +73,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
             await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
+
+            // Framework should no longer be returned in search results
             await TestData.CreateFramework(frameworkCode: 789, progType: 2, pathwayCode: 3, nasTitle: "Haircuts");
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
@@ -94,65 +96,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var doc = await response.GetDocument();
 
             Assert.Equal(
-                "Found 3 results for hair",
+                "Found 2 results for hair",
                 doc.GetElementById("pttcd-apprenticeships__find-provision__results-count").TextContent.Trim());
-        }
-
-        [Fact]
-        public async Task GetSearch_RendersSearchResultsWithFrameworkWarning()
-        {
-            // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
-            await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
-            await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
-            await TestData.CreateFramework(frameworkCode: 789, progType: 2, pathwayCode: 3, nasTitle: "Haircuts");
-
-            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
-            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
-                 parentMptxInstance.InstanceId,
-                 new FlowModel() { ProviderId = providerId },
-                 new Dictionary<string, object>()
-                 {
-                    { "ReturnUrl", "callback" }
-                 });
-
-            // Act
-            var response = await HttpClient.GetAsync(
-                $"apprenticeships/find-standard/search?ffiid={childMptxInstance.InstanceId}&Search=hair");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementById("framework-warning"));
-        }
-
-        [Fact]
-        public async Task GetSearch_RendersSearchResultsWithoutFrameworkWarning()
-        {
-            // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
-
-            await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
-            await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
-
-            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
-            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
-                 parentMptxInstance.InstanceId,
-                 new FlowModel() { ProviderId = providerId },
-                 new Dictionary<string, object>()
-                 {
-                    { "ReturnUrl", "callback" }
-                 });
-
-            // Act
-            var response = await HttpClient.GetAsync(
-                $"apprenticeships/find-standard/search?ffiid={childMptxInstance.InstanceId}&Search=hair");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var doc = await response.GetDocument();
-            var results = doc.GetElementById("framework-warning");
-            Assert.Null(results);
         }
 
         [Fact]
@@ -176,24 +121,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeships/find-standard/select?ffiid={childMptxInstance.InstanceId}&&standardOrFrameworkType=standard&standardCode=123&version=1");
+                $"apprenticeships/find-standard/select?ffiid={childMptxInstance.InstanceId}&standardCode=123&version=1");
 
             // Assert
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
             Assert.Equal("callback", response.Headers.Location.OriginalString);
 
-            Assert.True(parentMptxInstance.State.StandardOrFramework.IsStandard);
-            Assert.Equal(123, parentMptxInstance.State.StandardOrFramework.Standard.StandardCode);
-            Assert.Equal(1, parentMptxInstance.State.StandardOrFramework.Standard.Version);
-            Assert.Equal("Hairdressing", parentMptxInstance.State.StandardOrFramework.Standard.StandardName);
+            Assert.Equal(123, parentMptxInstance.State.Standard.StandardCode);
+            Assert.Equal(1, parentMptxInstance.State.Standard.Version);
+            Assert.Equal("Hairdressing", parentMptxInstance.State.Standard.StandardName);
         }
 
         private class ParentFlow : IFlowModelCallback
         {
-            public StandardOrFramework StandardOrFramework { get; set; }
+            public Standard Standard { get; set; }
 
-            public void ReceiveStandardOrFramework(StandardOrFramework standardOrFramework) =>
-                StandardOrFramework = standardOrFramework;
+            public void ReceiveStandard(Standard standard) =>
+                Standard = standard;
         }
     }
 }
