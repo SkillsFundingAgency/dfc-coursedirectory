@@ -203,9 +203,6 @@
     <Content Update="Views\BulkUpload\Complete\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\BulkUpload\PublishYourFile\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\BulkUpload\DeleteFileConfirmation\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
