@@ -1,7 +1,8 @@
-# editorconfig.org
-
+# https://editorconfig.org/
 root = true
 
-[*.cs]
+[*]
+insert_final_newline = true
 
+[*.cs]
 dotnet_sort_system_directives_first = true
