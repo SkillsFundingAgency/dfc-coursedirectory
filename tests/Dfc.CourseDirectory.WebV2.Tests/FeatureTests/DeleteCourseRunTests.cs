@@ -687,7 +687,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 { "courseRunId", courseRunId },
             };
 
-            return CreateFormFlowInstanceFromRouteParameters(
+            return CreateFormFlowInstanceForRouteParameters(
                 "DeleteCourseRun",
                 routeParameters,
                 flowModel ?? new FlowModel());

@@ -15,12 +15,13 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
             field
                 .NotEmpty()
                     .WithMessage("Enter telephone")
-                .PhoneNumber()
+                .Apply(Rules.PhoneNumber)
                     .WithMessage("Telephone must be a valid UK phone number");
 
         public static void ContactWebsite<T>(this IRuleBuilderInitial<T, string> field) =>
-            Validation.RuleBuilderExtensions.Website(field)
-                .WithMessage("Contact us page must be a real web page, like http://www.provider.com/apprenticeship");
+            field
+                .Apply(Rules.Website)
+                    .WithMessage("Contact us page must be a real web page, like http://www.provider.com/apprenticeship");
 
         public static void MarketingInformation<T>(this IRuleBuilderInitial<T, string> field) =>
             field
@@ -30,7 +31,8 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                     .WithMessage($"Apprenticeship information for employers must be {Constants.MarketingInformationStrippedMaxLength} characters or fewer");
 
         public static void Website<T>(this IRuleBuilderInitial<T, string> field) =>
-            Validation.RuleBuilderExtensions.Website(field)
-                .WithMessage("Website must be a real web page, like http://www.provider.com/apprenticeship");
+            field
+                .Apply(Rules.Website)
+                    .WithMessage("Website must be a real web page, like http://www.provider.com/apprenticeship");
     }
 }

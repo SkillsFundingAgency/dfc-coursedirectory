@@ -3,5 +3,6 @@
     public static class TempDataKeys
     {
         public const string ShowCourseUpdatedNotification = "ShowCourseUpdatedNotification";
+        public const string UpdatedVenueId = "UpdatedVenueId";
     }
 }

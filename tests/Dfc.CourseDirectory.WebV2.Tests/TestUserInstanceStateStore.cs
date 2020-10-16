@@ -20,6 +20,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Clear() => _data.Clear();
 
+        public void DeleteState(string key) => _data.Remove(key);
+
         public void SetState(string key, byte[] data) => _data[key] = data;
 
         public bool TryGetState(string key, out byte[] data) => _data.TryGetValue(key, out data);

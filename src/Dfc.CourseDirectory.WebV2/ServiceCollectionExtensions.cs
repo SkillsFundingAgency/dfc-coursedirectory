@@ -151,11 +151,20 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
             services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
             services.AddTransient<ProviderContextHelper>();
+            services.AddTransient<Features.EditVenue.EditVenueFlowModelFactory>();
 
-            services.AddAzureSearchClient<ProviderSearchQuery, Provider>(
-                new Uri(configuration["AzureSearchUrl"]),
-                configuration["AzureSearchQueryKey"],
-                configuration["ProviderAzureSearchIndexName"]);
+            if (!environment.IsTesting())
+            {
+				services.AddAzureSearchClient<ProviderSearchQuery, Provider>(
+	                new Uri(configuration["AzureSearchUrl"]),
+	                configuration["AzureSearchQueryKey"],
+	                configuration["ProviderAzureSearchIndexName"]);
+			
+                services.AddAzureSearchClient<OnspdSearchQuery, Onspd>(
+                    new Uri(configuration["AzureSearchUrl"]),
+                    configuration["AzureSearchQueryKey"],
+                    indexName: "onspd");
+            }
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow;
@@ -44,6 +46,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected MptxManager MptxManager => Factory.MptxManager;
 
+        protected Mock<ISearchClient<OnspdSearchQuery, Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
+
         protected SingletonSession Session => Factory.Session;
 
         protected SqlQuerySpy SqlQuerySpy => Factory.SqlQuerySpy;
@@ -56,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task InitializeAsync() => Factory.OnTestStartingAsync();
 
-        protected FormFlowInstance<TState> CreateFormFlowInstanceFromRouteParameters<TState>(
+        protected FormFlowInstance<TState> CreateFormFlowInstanceForRouteParameters<TState>(
             string key,
             IReadOnlyDictionary<string, object> routeParameters,
             TState state,
@@ -77,6 +81,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected MptxInstanceContext<TState> CreateMptxInstance<TState>(TState state)
             where TState : IMptxState =>
             MptxManager.CreateInstance(state);
+
+        protected FormFlowInstance<TState> GetFormFlowInstanceForRouteParameters<TState>(
+            string key,
+            IReadOnlyDictionary<string, object> routeParameters)
+        {
+            var instanceId = FormFlowInstanceId.GenerateForRouteValues(key, routeParameters);
+
+            var instanceStateProvider = Factory.Services.GetRequiredService<IUserInstanceStateProvider>();
+
+            return (FormFlowInstance<TState>)instanceStateProvider.GetInstance(instanceId);
+        }
 
         protected MptxInstanceContext<TState> GetMptxInstance<TState>(string instanceId)
             where TState : IMptxState =>

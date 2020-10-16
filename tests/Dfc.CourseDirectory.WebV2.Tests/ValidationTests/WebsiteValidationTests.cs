@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
         {
             public Validator()
             {
-                RuleFor(m => m.Website).Website();
+                RuleFor(m => m.Website).Apply(Rules.Website);
             }
         }
     }

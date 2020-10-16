@@ -13,7 +13,17 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 Id = request.VenueId,
                 Status = 1,
                 Ukprn = request.ProviderUkprn,
-                VenueName = request.VenueName
+                VenueName = request.VenueName,
+                Email = request.Email,
+                PHONE = request.Telephone,
+                Website = request.Website,
+                AddressLine1 = request.AddressLine1,
+                AddressLine2 = request.AddressLine2,
+                Town = request.Town,
+                County = request.County,
+                Postcode = request.Postcode,
+                Latitude = request.Latitude,
+                Longitude = request.Longitude
             };
             inMemoryDocumentStore.Venues.Save(venue);
 

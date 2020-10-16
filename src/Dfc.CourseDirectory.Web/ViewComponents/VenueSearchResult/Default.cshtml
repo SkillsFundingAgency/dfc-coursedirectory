@@ -186,8 +186,8 @@
                                         if (adminLogin.Succeeded || providerLogin.Succeeded)
                                         {
                                             <td class="govuk-table__cell">
-                                                <a id="edit-@venue.Id" asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id style="padding-right: 1em" class="govuk-link edit-venue-link">
-                                                    Edit
+                                                <a id="edit-@venue.Id" asp-controller="EditVenue" asp-action="Details" asp-route-venueId=@venue.Id style="padding-right: 1em" class="govuk-link edit-venue-link">
+                                                    View
                                                     <span class="govuk-visually-hidden">@venue.VenueName</span>
                                                 </a>
                                                 @*<a id="venue-delete-@venue.Id" class="govuk-button delete-button" asp-controller="Venues" asp-action="DeleteVenue"

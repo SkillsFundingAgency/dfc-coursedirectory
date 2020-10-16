@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -47,6 +49,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
+
+        public Mock<ISearchClient<OnspdSearchQuery, Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<OnspdSearchQuery, Onspd>>();
 
         public SingletonSession Session => ((SingletonSessionStore)Services.GetRequiredService<ISessionStore>()).Instance;
 
@@ -106,10 +110,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             .CreateDefaultBuilder()
             .UseEnvironment("Testing")
             .ConfigureAppConfiguration(builder => builder.AddTestConfigurationSources())
-            .UseStartup<Startup>();
+            .UseStartup<Startup>()
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<ISearchClient<OnspdSearchQuery, Onspd>>(OnspdSearchClient.Object);
+            });
 
         private void ResetMocks()
         {
+            OnspdSearchClient.Reset();
         }
     }
 }

@@ -23,19 +23,12 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
             {
-                // Cosmos document doesn't store ProviderID on the course but UKPRN
-                // so we need two lookups here :-/
-
                 var ukprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new GetProviderUkprnForCourse() { CourseId = courseId });
 
                 if (ukprn.HasValue)
                 {
-                    var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                        new GetProviderByUkprn() { Ukprn = ukprn.Value });
-
-                    providerId = provider.Id;
-
+                    providerId = await GetProviderIdByUkprn(ukprn);
                     _cache.Set(cacheKey, providerId);
                 }
                 else
@@ -53,19 +46,35 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
             {
-                // Cosmos document doesn't store ProviderID on the apprenticeship but UKPRN
-                // so we need two lookups here :-/
-
                 var ukprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new GetProviderUkprnForApprenticeship() { ApprenticeshipId = apprenticeshipId });
 
                 if (ukprn.HasValue)
                 {
-                    var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                        new GetProviderByUkprn() { Ukprn = ukprn.Value });
+                    providerId = await GetProviderIdByUkprn(ukprn);
+                    _cache.Set(cacheKey, providerId);
+                }
+                else
+                {
+                    providerId = null;
+                }
+            }
 
-                    providerId = provider.Id;
+            return providerId;
+        }
 
+        public async Task<Guid?> GetProviderForVenue(Guid venueId)
+        {
+            var cacheKey = GetVenueCacheKey(venueId);
+
+            if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
+            {
+                var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new GetVenueById() { VenueId = venueId });
+
+                if (venue != null)
+                {
+                    providerId = await GetProviderIdByUkprn(venue.Ukprn);
                     _cache.Set(cacheKey, providerId);
                 }
                 else
@@ -89,10 +98,22 @@ namespace Dfc.CourseDirectory.WebV2
             _cache.Remove(cacheKey);
         }
 
+        public void OnVenueDeleted(Guid venueId)
+        {
+            var cacheKey = GetVenueCacheKey(venueId);
+            _cache.Remove(cacheKey);
+        }
+
         private static string GetApprenticeshipCacheKey(Guid apprenticeshipId) =>
             $"apprenticeship-ukprns:{apprenticeshipId}";
 
         private static string GetCourseCacheKey(Guid courseId) =>
             $"course-ukprns:{courseId}";
+
+        private static string GetVenueCacheKey(Guid venueId) =>
+            $"venue-ukprns:{venueId}";
+
+        private async Task<Guid> GetProviderIdByUkprn(int? ukprn) =>
+            (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn.Value })).Id;
     }
 }

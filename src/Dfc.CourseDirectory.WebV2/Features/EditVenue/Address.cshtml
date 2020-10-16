@@ -1,0 +1,47 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.EditVenue.Address.Command
+@{
+    ViewContext.SetLayoutData(title: "Location address");
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="AddressLine1" />
+        <govuk-error-summary-item asp-for="AddressLine2" />
+        <govuk-error-summary-item asp-for="Town" />
+        <govuk-error-summary-item asp-for="County" />
+        <govuk-error-summary-item asp-for="Postcode" />
+    </govuk-error-summary>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Address" asp-route-venueId="@Model.VenueId">
+            <h1 class="govuk-heading-l">Location address</h1>
+
+            <govuk-input asp-for="AddressLine1">
+                <govuk-input-label>Address line 1</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="AddressLine2">
+                <govuk-input-label>Address line 2</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Town" input-class="govuk-input--width-20">
+                <govuk-input-label>Town or city</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="County" input-class="govuk-input--width-20">
+                <govuk-input-label>County</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Postcode" input-class="govuk-input--width-10">
+                <govuk-input-label>Postcode</govuk-input-label>
+            </govuk-input>
+
+            <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
+            <govuk-button asp-action="Details" asp-route-venueId="@Model.VenueId" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
+    </div>
+</div>
