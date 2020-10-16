@@ -22,23 +22,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload.CoursesPublishFile
     public class QueryHandler : IRequestHandler<Query, ViewModel>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IProviderInfoCache _providerInfoCache;
 
-        public QueryHandler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public QueryHandler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IProviderInfoCache providerInfoCache)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _providerInfoCache = providerInfoCache ?? throw new ArgumentNullException(nameof(providerInfoCache));
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var cosmosProvider = await _cosmosDbQueryDispatcher.ExecuteQuery(new CosmosQueries.GetProviderById()
-            {
-                ProviderId = request.ProviderId
-            });
+
+            var providerInfo = await _providerInfoCache.GetProviderInfo(request.ProviderId);
+
             var results = await _cosmosDbQueryDispatcher.ExecuteQuery(new CosmosQueries.GetAllCoursesForProvider
             {
-                ProviderUkprn = cosmosProvider.Ukprn,
+                ProviderUkprn = providerInfo.Ukprn,
                 CourseStatuses = CourseStatus.BulkUploadReadyToGoLive,
             });
+
             return new ViewModel {NumberOfCourses = results.SelectMany(c => c.CourseRuns).Count()};
         }
     }
