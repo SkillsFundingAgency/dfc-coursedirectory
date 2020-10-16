@@ -8,11 +8,11 @@ namespace Dfc.CourseDirectory.Testing
     public partial class TestData
     {
         public async Task<UserInfo> CreateUser(
-            string userId,
-            string email,
-            string firstName,
-            string lastName,
-            Guid? providerId)
+            string userId = "bobby-tables",
+            string email = "bobby.tables@example.org",
+            string firstName = "Bobby",
+            string lastName = "Tables",
+            Guid? providerId = default)
         {
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new Query()

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload
 {
@@ -6,6 +8,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload
     [Route("bulk-upload")]
     public class BulkUploadController : Controller
     {
+        private readonly IMediator _mediator;
+
+        public BulkUploadController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpGet("courses")]
         public IActionResult Courses()
         {
@@ -35,5 +44,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload
         {
             return View();
         }
+
+        [HttpGet("/BulkUpload/PublishYourFile")]
+        public async Task<IActionResult> CoursesPublishFile(ProviderContext providerContext) =>
+            await _mediator.SendAndMapResponse(new CoursesPublishFile.Query{ProviderId = providerContext.ProviderInfo.ProviderId}, vm => View(vm));
     }
 }

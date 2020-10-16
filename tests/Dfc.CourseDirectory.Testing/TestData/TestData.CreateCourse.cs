@@ -27,7 +27,8 @@ namespace Dfc.CourseDirectory.Testing
             bool adultEducationBudget = false,
             bool advancedLearnerLoan = false,
             DateTime? createdUtc = null,
-            Action<CreateCourseCourseRunBuilder> configureCourseRuns = null)
+            Action<CreateCourseCourseRunBuilder> configureCourseRuns = null,
+            CourseStatus courseStatus = CourseStatus.Live)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
@@ -96,7 +97,8 @@ namespace Dfc.CourseDirectory.Testing
                     AdvancedLearnerLoan = advancedLearnerLoan,
                     CourseRuns = courseRuns,
                     CreatedDate = createdUtc ?? _clock.UtcNow,
-                    CreatedByUser = createdBy
+                    CreatedByUser = createdBy,
+                    CourseStatus = courseStatus,
                 });
 
             return courseId;

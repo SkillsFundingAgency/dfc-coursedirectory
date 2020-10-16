@@ -391,17 +391,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        [HttpGet]
-        public IActionResult PublishYourFile(int NumberOfCourses)
-        {
-            var model = new PublishYourFileViewModel();
-
-            model.NumberOfCourses = NumberOfCourses;
-
-            return View("../Bulkupload/PublishYourFile/Index", model);
-        }
-
-        [Authorize]
         [HttpPost]
         public IActionResult PublishYourFile(PublishYourFileViewModel model)
         {
@@ -420,7 +409,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // Offload this long running activity to a background task.
             // @See:  https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-2.2&tabs=visual-studio
 
-            // Find the provider and flag it as "publish in progress" outside of the queue otherwise the time lag is too great and 
+            // Find the provider and flag it as "publish in progress" outside of the queue otherwise the time lag is too great and
             // the UI displays incorrect info
 
             // Flag the provider as "publish in progress".

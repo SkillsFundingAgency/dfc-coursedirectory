@@ -1,0 +1,17 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.BulkUpload.CoursesPublishFile.ViewModel
+@{ ViewBag.Title = "Publish your file"; }
+<div class="govuk-grid-row" data-sf-element="Row">
+    <div class="govuk-grid-column-two-thirds">
+        <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkuploadApprenticeships" asp-action="PublishYourFile" method="post">
+            <span class="govuk-caption-l">Course Directory</span>
+            <h1 class="govuk-heading-l">Publish your file</h1>
+            <p class="govuk-body govuk-!-padding-bottom-4">
+                Your file of <span data-testid="courseCount">@Model.NumberOfCourses @(Model.NumberOfCourses.Equals(1) ? "course" : "courses")</span> has no errors and is ready to be published to the Course directory.
+                <br/>
+                This will replace all of the courses you currently have listed.
+            </p>
+            <govuk-button type="submit" asp-route-NumberOfCourses="@Model.NumberOfCourses" class="govuk-!-margin-right-1">Publish</govuk-button>
+            <govuk-button asp-controller="Home" asp-action="Index" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
+    </div>
+</div>

@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public IEnumerable<CreateCourseCourseRun> CourseRuns { get; set; }
         public DateTime CreatedDate { get; set; }
         public UserInfo CreatedByUser { get; set; }
+        public CourseStatus CourseStatus { get; set; }
     }
 
     public class CreateCourseCourseRun
