@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Find apprenticeship";
 
-    var mptxInstanceId = Context.Features.Get<Dfc.CourseDirectory.WebV2.MultiPageTransaction.MptxInstanceFeature>().Instance.InstanceId;
+    var returnUrl = (string)ViewData["ReturnUrl"];
 }
 
 @if (!ViewContext.ModelState.IsValid)
@@ -13,8 +13,11 @@
     </govuk-error-summary>
 }
 
-<form asp-action="FindStandardSearch" method="get" append-mptx-id>
+<form asp-action="Search" method="get">
     <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
+
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    @ProviderContext.CreateHiddenInput()
 
     <pttcd-search-input asp-for="Search">
         <pttcd-search-input-label>
@@ -33,10 +36,9 @@
 
             @foreach (var result in Model.Results)
             {
-                var resultReturnUrl = new Flurl.Url(Url.Action("FindStandardSelect"))
+                var resultReturnUrl = new Flurl.Url(returnUrl)
                     .SetQueryParam("standardCode", result.StandardCode)
-                    .SetQueryParam("version", result.StandardVersion)
-                    .WithMptxInstanceId(mptxInstanceId);
+                    .SetQueryParam("version", result.StandardVersion);
 
                 <div class="pttcd-apprenticeships__find-standard-or-framework__search-result govuk-!-margin-bottom-4">
                     <h2 class="govuk-heading-m">
@@ -56,7 +58,7 @@
                         <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@result.NotionalNVQLevelv2</span></p>
                     }
 
-                    <a href="@resultReturnUrl" class="govuk-link">
+                    <a href="@resultReturnUrl" class="govuk-link" data-testid="choose-apprenticeship-link">
                         Choose this apprenticeship
                         <span class="govuk-visually-hidden">@result.ApprenticeshipTitle</span>
                     </a>
