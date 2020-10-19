@@ -41,6 +41,28 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Services.Tests", "tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{F734371F-3DE2-4B40-8654-5EBB167D7432}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{23778FCF-3F1D-4062-A037-B3FD18824762}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ArmTemplates", "ArmTemplates", "{2DEE956D-3D9A-4AC5-8843-858BA6A4A0EA}"
+ProjectSection(SolutionItems) = preProject
+	Resources\ArmTemplates\parameters.json = Resources\ArmTemplates\parameters.json
+	Resources\ArmTemplates\template.json = Resources\ArmTemplates\template.json
+	Resources\ArmTemplates\test-parameters.json = Resources\ArmTemplates\test-parameters.json
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureSearch", "AzureSearch", "{4FFCDDC3-50F9-446A-AB83-46B9D0B768EF}"
+ProjectSection(SolutionItems) = preProject
+	Resources\AzureSearch\SearchDatasource.json = Resources\AzureSearch\SearchDatasource.json
+	Resources\AzureSearch\SearchIndex.json = Resources\AzureSearch\SearchIndex.json
+	Resources\AzureSearch\SearchIndexer.json = Resources\AzureSearch\SearchIndexer.json
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureDevops", "AzureDevops", "{E6869582-EE08-46F2-8125-4E5C1E170A28}"
+ProjectSection(SolutionItems) = preProject
+	Resources\AzureDevops\azure-pipelines.yml = Resources\AzureDevops\azure-pipelines.yml
+	Resources\AzureDevops\GitVersion.yml = Resources\AzureDevops\GitVersion.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +132,10 @@ Global
 		{37C43756-89CC-46FC-A397-2A68740DD08C} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
 		{3E624726-E241-462A-9C07-4C0A3FCD41D6} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
 		{F734371F-3DE2-4B40-8654-5EBB167D7432} = {260DB60D-49B4-4B94-A6E8-53069B9FC1BB}
+		{23778FCF-3F1D-4062-A037-B3FD18824762} = {C1DB8226-C965-4846-A3F0-A597F8511A8A}
+		{2DEE956D-3D9A-4AC5-8843-858BA6A4A0EA} = {23778FCF-3F1D-4062-A037-B3FD18824762}
+		{4FFCDDC3-50F9-446A-AB83-46B9D0B768EF} = {23778FCF-3F1D-4062-A037-B3FD18824762}
+		{E6869582-EE08-46F2-8125-4E5C1E170A28} = {23778FCF-3F1D-4062-A037-B3FD18824762}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0079CB89-A4F8-4056-BBC0-FDFBF72BC50C}
