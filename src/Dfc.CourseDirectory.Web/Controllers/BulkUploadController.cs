@@ -461,16 +461,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             });
 
-            // @ToDo: we'll reach here before the above background task has completed, so need some UI work
-            var vm = new PublishCompleteViewModel()
-            {
-                NumberOfCoursesPublished = model.NumberOfCourses,
-                Mode = PublishMode.BulkUpload,
-                BackgroundPublishInProgress = provider.BulkUploadStatus.PublishInProgress
-            };
-            double totalmins = Math.Max(2, (model.NumberOfCourses * _bulkUploadService.BulkUploadSecondsPerRecord / 60));
-            vm.BackgroundPublishMinutes = (int)Math.Round(totalmins, 0, MidpointRounding.AwayFromZero);
-            return View("../PublishCourses/InProgress", vm);
+            return RedirectToAction("CoursesPublishingFile", "BulkUpload", new {model.NumberOfCourses});
         }
 
         [Authorize]
