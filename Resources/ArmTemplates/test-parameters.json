@@ -119,9 +119,6 @@
     "EnvironmentName": {
       "value": "Development"
     },
-    "BulkUploadSecondsPerRecord": {
-      "value": "1"
-    },
     "ProviderPortalSharedResourceGroupName": {
       "value": "dfc-dev-prov-rg"
     },

@@ -8,6 +8,5 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
     {
         string ApiUrl { get; set; }
         string ApiKey { get; set; }
-        int BulkUploadSecondsPerRecord { get; set; }
     }
 }

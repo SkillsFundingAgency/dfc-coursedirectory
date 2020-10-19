@@ -1,7 +1,4 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -9,6 +6,5 @@ namespace Dfc.CourseDirectory.Services.CourseService
     {
         public string ApiUrl { get; set; }
         public string ApiKey { get; set; }
-        public int BulkUploadSecondsPerRecord { get; set; }
     }
 }

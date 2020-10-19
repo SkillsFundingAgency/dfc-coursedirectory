@@ -64,15 +64,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             _courseService = courseService;
         }
 
-        public int BulkUploadSecondsPerRecord
-        {
-            get
-            {
-                int spr = Math.Max(1, _courseServiceSettings.BulkUploadSecondsPerRecord);
-                return spr;
-            }
-        }
-
         public int CountCsvLines(Stream stream)
         {
             int count = 0;
@@ -356,7 +347,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
         }
 
-      
+
 
         public List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors)
         {
@@ -381,7 +372,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     {
                         cachedQuals.Add(qual);
                     }
-                    
+
                 }
                 else
                 {

@@ -119,9 +119,6 @@
     "EnvironmentName": {
       "value": "__EnvironmentNameAppSetting__"
     },
-    "BulkUploadSecondsPerRecord": {
-      "value": "__BulkUploadSecondsPerRecord__"
-    },
     "ProviderPortalSharedResourceGroupName": {
       "value": "__providerPortalResourceGroup__"
     },

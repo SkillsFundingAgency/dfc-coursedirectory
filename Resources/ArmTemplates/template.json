@@ -240,12 +240,6 @@
         "description": "EnvironmentName to be used in the EnvironmentSetting__EnvironmentName config setting.  This may be different to the Azure DevOps environment"
       }
     },
-    "BulkUploadSecondsPerRecord": {
-      "type": "string",
-      "metadata": {
-        "description": "The CourseServiceSettings__BulkUploadSecondsPerRecord app setting"
-      }
-    },
     "ProviderPortalSharedResourceGroupName": {
       "type": "string"
     },
@@ -584,10 +578,6 @@
               {
                 "name": "ApprenticeshipSettings__SubRegionRadius",
                 "value": "10"
-              },
-              {
-                "name": "CourseServiceSettings__BulkUploadSecondsPerRecord",
-                "value": "[parameters('BulkUploadSecondsPerRecord')]"
               },
               {
                 "name": "BlobStorageSettings__ApprenticeshipsTemplatePath",
