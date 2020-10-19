@@ -34,9 +34,18 @@ namespace Dfc.CourseDirectory.Core.Search
 
         public (string SearchText, SearchOptions Options) GenerateSearchQuery()
         {
-            var searchText = SearchText
+            var searchTerms = SearchText.TransformSegments(s => s
+                .TransformWhen(s => s.EndsWith("'s"), s => s.Substring(0, s.Length - 2))
+                .TransformWhen(s => s.EndsWith("s'"), s => s.Substring(0, s.Length - 2))
+                .TransformWhen(s => s.EndsWith("s"), s => s.Substring(0, s.Length - 1))
                 .RemoveNonAlphanumericChars()
-                .ApplyWildcardsToAllSegments();
+                .AppendWildcardWhenLastCharIsAlphanumeric());
+
+            var searchText = searchTerms.Any()
+                ? $"\"{SearchText.Trim().EscapeSimpleQuerySearchOperators()}\" | ({searchTerms})"
+                : !string.IsNullOrWhiteSpace(SearchText)
+                    ? $"{SearchText.Trim().EscapeSimpleQuerySearchOperators()}*"
+                    : "*";
 
             var builder = new AzureSearchQueryBuilder(searchText)
                 .WithSearchMode(SearchMode.All)

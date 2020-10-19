@@ -1,4 +1,6 @@
-﻿using Dfc.CourseDirectory.Core.Search.AzureSearch;
+﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using FluentAssertions;
 using Xunit;
 
@@ -94,46 +96,82 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
             result.Should().Be("TestSearch Text");
         }
 
+        [Fact]
+        public void TransformWhen_WithNullPredicate_ThrowsException()
+        {
+            Func<string> action = () => "TestValue".TransformWhen(null, s => s);
+            action.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void TransformWhen_WithNullTransformation_ThrowsException()
+        {
+            Func<string> action = () => "TestValue".TransformWhen(_ => true, null);
+            action.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void TransformWhen_WithPredicateTrue_ReturnsTransformedValue()
+        {
+            var result = "TestValue".TransformWhen(v => v == "TestValue", v => $"{v}+Transform");
+            result.Should().Be("TestValue+Transform");
+        }
+
+        [Fact]
+        public void TransformWhen_WithPredicateFalse_ReturnsValue()
+        {
+            var result = "TestValue".TransformWhen(v => v != "TestValue", v => $"{v}+Transform");
+            result.Should().Be("TestValue");
+        }
+
+        [Fact]
+        public void TransformSegments_WithNullTransformation_ThrowsException()
+        {
+            Func<string> action = () => "TestValue".TransformSegments(null);
+            action.Should().ThrowExactly<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void TransformSegments_WithNullOrEmptySeparator_ThrowsException(string separator)
+        {
+            Func<string> action = () => "TestValue".TransformSegments(s => s, separator);
+            action.Should().ThrowExactly<ArgumentException>();
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        [InlineData("   ")]
-        public void ApplyWildcardsToAllSegments_WithNullOrEmptyOrWhiteSpaceSearchText_ReturnsWildcard(string searchText)
+        public void TransformSegments_WithNullOrEmptyValue_ReturnsEmptyString(string value)
         {
-            var result = searchText.ApplyWildcardsToAllSegments();
-
-            result.Should().Be("*");
+            var result = value.TransformSegments(s => s);
+            result.Should().BeEmpty();
         }
 
         [Fact]
-        public void ApplyWildcardsToAllSegments_WithSingleSegment_ReturnsSearchTextWithWildcard()
+        public void TransformSegments_WithSingleSegment_ReturnsTransformedSegemnt()
         {
-            var searchText = "TestSearchText";
+            var result = "testseg1".TransformSegments(s => $"{s}-transformed");
 
-            var result = searchText.ApplyWildcardsToAllSegments();
-
-            result.Should().Be("TestSearchText*");
+            result.Should().Be("testseg1-transformed");
         }
 
         [Fact]
-        public void ApplyWildcardsToAllSegments_WithMultipleSegments_ReturnsSearchTextWithWildcardsForEachSegments()
+        public void TransformSegments_WithMultipleSegments_ReturnsTransformedSegemnts()
         {
-            var searchText = "Test Search Text";
+            var result = "testseg1 testseg2 testseg3".TransformSegments(s => $"{s}-transformed");
 
-            var result = searchText.ApplyWildcardsToAllSegments();
-
-            result.Should().Be("Test* Search* Text*");
+            result.Should().Be("testseg1-transformed testseg2-transformed testseg3-transformed");
         }
 
         [Fact]
-        public void ApplyWildcardsToAllSegments_WithSegmentDelimiter_ReturnsSearchTextWithWildcardsForEachSegments()
+        public void TransformSegments_WithMultipleSegmentsAndWhiteSpace_ReturnsTransformedSegemnts()
         {
-            var searchText = "Test,Search,Text";
+            var result = "testseg1     testseg2         testseg3".TransformSegments(s => $"{s}-transformed");
 
-            var result = searchText.ApplyWildcardsToAllSegments(",");
-
-            result.Should().Be("Test*,Search*,Text*");
+            result.Should().Be("testseg1-transformed testseg2-transformed testseg3-transformed");
         }
     }
 }

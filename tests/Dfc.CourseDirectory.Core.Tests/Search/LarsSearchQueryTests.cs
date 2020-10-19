@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
 
             var result = query.GenerateSearchQuery();
 
-            result.SearchText.Should().Be("TestSearchTerm*");
+            result.SearchText.Should().Be("\"TestSearchTerm\" | (TestSearchTerm*)");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { "TestSearchField1", "TestSearchFeild2", "TestSearchFeild3" });
             result.Options.Filter.Should().Be($"search.in(NotionalNVQLevelv2, 'NotionalNVQLevelv2Filter1|NotionalNVQLevelv2Filter2|NotionalNVQLevelv2Filter3', '|') and search.in(AwardOrgCode, 'TestAwardOrgCodeFilter1|TestAwardOrgCodeFilter2|TestAwardOrgCodeFilter3', '|') and search.in(AwardOrgAimRef, 'TestAwardOrgAimRefFilter1|TestAwardOrgAimRefFilter2|TestAwardOrgAimRefFilter3', '|') and search.in(SectorSubjectAreaTier1, 'TestSectorSubjectAreaTier1Filter1|TestSectorSubjectAreaTier1Filter2|TestSectorSubjectAreaTier1Filter3', '|') and search.in(SectorSubjectAreaTier2, 'TestSectorSubjectAreaTier2Filter1|SectorSubjectAreaTier2Filter2|SectorSubjectAreaTier2Filter3', '|') and ({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null)");
@@ -30,14 +30,17 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
         [InlineData(null, "*")]
         [InlineData("", "*")]
         [InlineData(" ", "*")]
-        [InlineData("TestSearchText", "TestSearchText*")]
-        [InlineData(" TestSearchText", "TestSearchText*")]
-        [InlineData("TestSearchText ", "TestSearchText*")]
-        [InlineData("TestSearchText's", "TestSearchTexts*")]
-        [InlineData("Test Search Text", "Test* Search* Text*")]
-        [InlineData("Test Search Text ", "Test* Search* Text*")]
-        [InlineData("Test  Search Text", "Test* Search* Text*")]
-        [InlineData("T!e-s@t (Search) T?e%xt", "Test* Search* Text*")]
+        [InlineData("+++", "\\+\\+\\+*")]
+        [InlineData("TestSearchText", "\"TestSearchText\" | (TestSearchText*)")]
+        [InlineData(" TestSearchText", "\"TestSearchText\" | (TestSearchText*)")]
+        [InlineData("TestSearchText ", "\"TestSearchText\" | (TestSearchText*)")]
+        [InlineData("TestSearchTexts", "\"TestSearchTexts\" | (TestSearchText*)")]
+        [InlineData("TestSearchText's", "\"TestSearchText\\'s\" | (TestSearchText*)")]
+        [InlineData("TestSearchTexts'", "\"TestSearchTexts\\'\" | (TestSearchText*)")]
+        [InlineData("Test Search Text", "\"Test Search Text\" | (Test* Search* Text*)")]
+        [InlineData("Test Search Text ", "\"Test Search Text\" | (Test* Search* Text*)")]
+        [InlineData("Test  Search Text", "\"Test  Search Text\" | (Test* Search* Text*)")]
+        [InlineData("T!e-s@t (Search) T?e%xt", "\"T!e\\-s@t \\(Search\\) T\\?e%xt\" | (Test* Search* Text*)")]
         public void GenerateSearchQuery_WithSearchText_ReturnsQueryWithExpectedSearchText(string searchText, string expectedResult)
         {
             var query = BuildTestQuery();
@@ -63,7 +66,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
 
             var result = query.GenerateSearchQuery();
 
-            result.SearchText.Should().Be("TestSearchTerm*");
+            result.SearchText.Should().Be("\"TestSearchTerm\" | (TestSearchTerm*)");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { "TestSearchField1", "TestSearchFeild2", "TestSearchFeild3" });
             result.Options.Filter.Should().Be($"search.in(NotionalNVQLevelv2, 'NotionalNVQLevelv2Filter1|NotionalNVQLevelv2Filter2|NotionalNVQLevelv2Filter3', '|') and search.in(AwardOrgCode, 'TestAwardOrgCodeFilter1|TestAwardOrgCodeFilter2|TestAwardOrgCodeFilter3', '|') and search.in(AwardOrgAimRef, 'TestAwardOrgAimRefFilter1|TestAwardOrgAimRefFilter2|TestAwardOrgAimRefFilter3', '|') and search.in(SectorSubjectAreaTier1, 'TestSectorSubjectAreaTier1Filter1|TestSectorSubjectAreaTier1Filter2|TestSectorSubjectAreaTier1Filter3', '|') and search.in(SectorSubjectAreaTier2, 'TestSectorSubjectAreaTier2Filter1|SectorSubjectAreaTier2Filter2|SectorSubjectAreaTier2Filter3', '|')");
@@ -81,7 +84,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
 
             var result = query.GenerateSearchQuery();
 
-            result.SearchText.Should().Be("TestSearchTerm*");
+            result.SearchText.Should().Be("\"TestSearchTerm\" | (TestSearchTerm*)");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { "TestSearchField1", "TestSearchFeild2", "TestSearchFeild3" });
             result.Options.Filter.Should().Be($"search.in(NotionalNVQLevelv2, 'NotionalNVQLevelv2Filter1|NotionalNVQLevelv2Filter2|NotionalNVQLevelv2Filter3', '|') and search.in(AwardOrgCode, 'TestAwardOrgCodeFilter1|TestAwardOrgCodeFilter2|TestAwardOrgCodeFilter3', '|') and search.in(AwardOrgAimRef, 'TestAwardOrgAimRefFilter1|TestAwardOrgAimRefFilter2|TestAwardOrgAimRefFilter3', '|') and search.in(SectorSubjectAreaTier1, 'TestSectorSubjectAreaTier1Filter1|TestSectorSubjectAreaTier1Filter2|TestSectorSubjectAreaTier1Filter3', '|') and search.in(SectorSubjectAreaTier2, 'TestSectorSubjectAreaTier2Filter1|SectorSubjectAreaTier2Filter2|SectorSubjectAreaTier2Filter3', '|') and ({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null)");
