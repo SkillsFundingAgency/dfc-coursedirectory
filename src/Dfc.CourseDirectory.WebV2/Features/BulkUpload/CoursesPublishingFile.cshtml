@@ -7,13 +7,9 @@
     totalMinutes = Math.Max(2, totalMinutes);
     int displayMinutes = (int)Math.Round(totalMinutes, 0, MidpointRounding.AwayFromZero);
 }
-<div class="govuk-panel govuk-panel--confirmation">
-    <div class="govuk-panel__body">
-        <h1 class="govuk-panel__title">
-            Publish in progress
-        </h1>
-        You are publishing <span data-testid="courseCount">@Model.NumberOfCourses courses</span>.
-        <br/>
-        This could take up to <span data-testid="timeEstimate">@displayMinutes minutes</span>.
-    </div>
-</div>
+<govuk-panel>
+    <govuk-panel-title>Publish in progress</govuk-panel-title>
+    You are publishing <span data-testid="courseCount">@Model.NumberOfCourses courses</span>.
+    <br />
+    This could take up to <span data-testid="timeEstimate">@displayMinutes minutes</span>.
+</govuk-panel>
