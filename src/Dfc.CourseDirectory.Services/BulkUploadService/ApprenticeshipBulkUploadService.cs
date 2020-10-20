@@ -1180,6 +1180,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             foreach (var record in records)
             {
+                // Silently ignore records referring to frameworks (PTCD-694)
                 if (record.FRAMEWORK_CODE.HasValue ||
                     record.FRAMEWORK_PATHWAY_CODE.HasValue ||
                     record.FRAMEWORK_PROG_TYPE.HasValue)
@@ -1227,9 +1228,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         private Apprenticeship DoesApprenticeshipExist(List<Apprenticeship> apprenticeships, ApprenticeshipCsvRecord record)
         {
-            var existingApprenticeships = apprenticeships.Where(x =>
-                    x.StandardCode == record.STANDARD_CODE && x.Version == record.STANDARD_VERSION);
-            return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
+            return apprenticeships
+                .Where(x => x.StandardCode == record.STANDARD_CODE && x.Version == record.STANDARD_VERSION)
+                .FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
         }
 
         private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthUserDetails authUserDetails)
