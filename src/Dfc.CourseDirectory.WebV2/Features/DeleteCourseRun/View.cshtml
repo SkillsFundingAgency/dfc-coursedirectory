@@ -6,13 +6,9 @@
     var returnUrl = ViewData["ReturnUrl"] ?? "/";
 }
 
-@if (!ViewContext.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="Confirm" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Confirm" />
+</govuk-error-summary>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

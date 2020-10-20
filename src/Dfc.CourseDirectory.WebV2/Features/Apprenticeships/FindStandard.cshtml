@@ -5,13 +5,9 @@
     var returnUrl = (string)ViewData["ReturnUrl"];
 }
 
-@if (!ViewContext.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="Search" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Search" />
+</govuk-error-summary>
 
 <form asp-action="Search" method="get">
     <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
