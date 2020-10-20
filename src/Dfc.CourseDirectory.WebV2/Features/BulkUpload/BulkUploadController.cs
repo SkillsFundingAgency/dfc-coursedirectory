@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload
         public async Task<IActionResult> CoursesPublishFile(ProviderContext providerContext) =>
             await _mediator.SendAndMapResponse(new CoursesPublishFile.Query{ProviderId = providerContext.ProviderInfo.ProviderId}, vm => View(vm));
 
-        [HttpGet("publishing-your-file")]
+        [HttpGet("courses-publishing-your-file")]
         public IActionResult CoursesPublishingFile(int numberOfCourses)
         {
             return View(new CoursesPublishingFile.ViewModel

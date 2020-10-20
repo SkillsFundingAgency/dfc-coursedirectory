@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.BulkUpload
             await User.AsTestUser(TestUserType.ProviderUser, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync("/bulk-upload/publishing-your-file?NumberOfCourses=" + courseCount);
+            var response = await HttpClient.GetAsync("/bulk-upload/courses-publishing-your-file?NumberOfCourses=" + courseCount);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
