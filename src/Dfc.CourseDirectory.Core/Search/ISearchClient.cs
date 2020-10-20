@@ -2,8 +2,9 @@
 
 namespace Dfc.CourseDirectory.Core.Search
 {
-    public interface ISearchClient<TQuery, TResult>
+    public interface ISearchClient<TResult>
     {
-        Task<SearchResult<TResult>> Search(TQuery query);
+        Task<SearchResult<TResult>> Search<TQuery>(TQuery query)
+            where TQuery : ISearchQuery<TResult>;
     }
 }

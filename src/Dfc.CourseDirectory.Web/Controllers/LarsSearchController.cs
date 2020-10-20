@@ -1,120 +1,110 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Web.Configuration;
+using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
-
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class LarsSearchController : Controller
     {
-        private readonly ILogger<LarsSearchController> _logger;
-        private readonly ILarsSearchSettings _larsSearchSettings;
-        private readonly ILarsSearchService _larsSearchService;
-        private readonly ILarsSearchHelper _larsSearchHelper;
-        private readonly IPaginationHelper _paginationHelper;
+        private readonly ISearchClient<Lars> _searchClient;
+        private readonly LarsSearchSettings _larsSearchSettings;
 
         public LarsSearchController(
-            ILogger<LarsSearchController> logger,
-            IOptions<LarsSearchSettings> larsSearchSettings,
-            ILarsSearchService larsSearchService,
-            ILarsSearchHelper larsSearchHelper,
-            IPaginationHelper paginationHelper)
+            ISearchClient<Lars> searchClient,
+            IOptions<LarsSearchSettings> larsSearchSettings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(larsSearchSettings, nameof(larsSearchSettings));
-            Throw.IfNull(larsSearchService, nameof(larsSearchService));
-            Throw.IfNull(larsSearchHelper, nameof(larsSearchHelper));
-            Throw.IfNull(paginationHelper, nameof(paginationHelper));
-
-            _logger = logger;
-            _larsSearchSettings = larsSearchSettings.Value;
-            _larsSearchService = larsSearchService;
-            _larsSearchHelper = larsSearchHelper;
-            _paginationHelper = paginationHelper;
+            _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
+            _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
         }
+
         [Authorize]
-        public async Task<IActionResult> Index([FromQuery] LarsSearchRequestModel requestModel)
+        public async Task<IActionResult> Index([FromQuery] LarsSearchRequestModel request)
         {
-            LarsSearchResultModel model;
-
-            if (requestModel == null) {
-                model = new LarsSearchResultModel();
-
-            } else {
-                LarsSearchRequestModel requestModelAll = new LarsSearchRequestModel() { SearchTerm = requestModel.SearchTerm };
-                var criteriaAll = _larsSearchHelper.GetLarsSearchCriteria(
-                    requestModelAll, 1, 
-                    _larsSearchSettings.ItemsPerPage,
-                    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
-                var resultAll = await _larsSearchService.SearchAsync(criteriaAll);
-
-                var criteria = _larsSearchHelper.GetLarsSearchCriteria(
-                    requestModel,
-                    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
-                    _larsSearchSettings.ItemsPerPage,
-                    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
-
-                var result = await _larsSearchService.SearchAsync(criteria);
-                if (resultAll.IsSuccess && resultAll.HasValue && result.IsSuccess && result.HasValue)
-                {
-                    requestModelAll.NotionalNVQLevelv2Filter = requestModel.NotionalNVQLevelv2Filter;
-                    requestModelAll.AwardOrgCodeFilter = requestModel.AwardOrgCodeFilter;
-
-                    var filters = _larsSearchHelper.GetLarsSearchFilterModels(resultAll.Value.SearchFacets, requestModelAll);
-                    var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
-
-                    var sfSearch = result.Value.SearchFacets;
-                    LarsSearchFilterModel filter = filters.FirstOrDefault(f => f.Title == "Awarding organisation");
-                    foreach (SearchFacet sf in resultAll?.Value?.SearchFacets?.AwardOrgCode)
-                    {
-                        LarsSearchFilterItemModel fim = filter?.Items
-                                                              ?.FirstOrDefault(m => m.Value == sf.Value);
-                        if (fim != null) //&& filter != null)
-                            fim.Count = sfSearch.AwardOrgCode
-                                                .FirstOrDefault(f => f.Value == sf.Value)
-                                               ?.Count ?? 0;
-                    }
-
-                    filter = filters.FirstOrDefault(f => f.Title == "Qualification level");
-                    foreach (SearchFacet sf in resultAll?.Value?.SearchFacets?.NotionalNVQLevelv2)
-                    {
-                        LarsSearchFilterItemModel fim = filter?.Items
-                                                              ?.FirstOrDefault(m => m.Value == sf.Value);
-                        if (fim != null) //&& filter != null)
-                            fim.Count = sfSearch.NotionalNVQLevelv2
-                                                .FirstOrDefault(f => f.Value == sf.Value)
-                                               ?.Count ?? 0;
-                    }
-
-                    model = new LarsSearchResultModel(
-                        requestModel.SearchTerm,
-                        items,
-                        Request.GetDisplayUrl(),
-                        _larsSearchSettings.PageParamName,
-                        requestModel.PageNo,
-                        _larsSearchSettings.ItemsPerPage,
-                        result.Value.ODataCount ?? 0,
-                        filters);
-
-                } else {
-                    model = new LarsSearchResultModel(result.Error);
-                }
+            if (request == null)
+            {
+                return BadRequest();
             }
-            _logger.LogMethodExit();
-            return ViewComponent(nameof(ViewComponents.LarsSearchResult.LarsSearchResult), model);
+
+            var results = await Task.WhenAll(
+                // There's not currently support for multi-select faceted search, so we need to get all the results for the search term before filtering on facets.
+                _searchClient.Search(new LarsSearchQuery
+                {
+                    SearchText = request.SearchTerm,
+                    CertificationEndDateFilter = DateTimeOffset.UtcNow,
+                    Facets = new[] { nameof(Lars.AwardOrgCode), nameof(Lars.NotionalNVQLevelv2) },
+                    PageSize = 0
+                }),
+                _searchClient.Search(new LarsSearchQuery
+                {
+                    SearchText = request.SearchTerm,
+                    NotionalNVQLevelv2Filters = request.NotionalNVQLevelv2Filter,
+                    AwardOrgCodeFilters = request.AwardOrgCodeFilter,
+                    AwardOrgAimRefFilters = request.AwardOrgAimRefFilter,
+                    CertificationEndDateFilter = DateTimeOffset.UtcNow,
+                    Facets = new[] { nameof(Lars.AwardOrgCode), nameof(Lars.NotionalNVQLevelv2) },
+                    PageSize = _larsSearchSettings.ItemsPerPage,
+                    PageNumber = request.PageNo
+                }));
+
+            var unfilteredResult = results[0];
+            var result = results[1];
+
+            var viewModel = new LarsSearchResultModel
+            {
+                SearchTerm = request.SearchTerm,
+                Items = result.Results.Select(LarsSearchResultItemModel.FromLars),
+                Filters = new[]
+                {
+                    new LarsSearchFilterModel
+                    {
+                        Title = "Qualification level",
+                        Items = unfilteredResult.Facets[nameof(Lars.NotionalNVQLevelv2)]
+                            .Select((f, i) =>
+                                new LarsSearchFilterItemModel
+                                {
+                                    Id = $"{nameof(LarsSearchRequestModel.NotionalNVQLevelv2Filter)}-{i}",
+                                    Name = nameof(LarsSearchRequestModel.NotionalNVQLevelv2Filter),
+                                    Text = LarsSearchFilterItemModel.FormatAwardOrgCodeSearchFilterItemText(f.Key.ToString()),
+                                    Value = f.Key.ToString(),
+                                    Count = (int)(f.Value ?? 0),
+                                    IsSelected = request.NotionalNVQLevelv2Filter.Contains(f.Key.ToString())
+                                })
+                            .OrderBy(f => f.Text).ToArray()
+                    },
+                    new LarsSearchFilterModel
+                    {
+                        Title = "Awarding organisation",
+                        Items = unfilteredResult.Facets[nameof(Lars.AwardOrgCode)]
+                            .Select((f, i) =>
+                                new LarsSearchFilterItemModel
+                                {
+                                    Id = $"{nameof(LarsSearchRequestModel.AwardOrgCodeFilter)}-{i}",
+                                    Name = nameof(LarsSearchRequestModel.AwardOrgCodeFilter),
+                                    Text = f.Key.ToString(),
+                                    Value = f.Key.ToString(),
+                                    Count = (int)(f.Value ?? 0),
+                                    IsSelected = request.AwardOrgCodeFilter.Contains(f.Key.ToString())
+                                })
+                            .OrderBy(f => f.Text).ToArray()
+                    }
+                },
+                TotalCount = (int)(result.TotalCount ?? 0),
+                PageNumber = request.PageNo,
+                ItemsPerPage = _larsSearchSettings.ItemsPerPage,
+                PageParamName = _larsSearchSettings.PageParamName,
+                Url = Request.GetDisplayUrl()
+            };
+
+            return ViewComponent(nameof(LarsSearchResult), viewModel);
         }
     }
 }

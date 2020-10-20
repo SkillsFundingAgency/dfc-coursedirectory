@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected MptxManager MptxManager => Factory.MptxManager;
 
-        protected Mock<ISearchClient<OnspdSearchQuery, Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
+        protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
 
         protected SingletonSession Session => Factory.Session;
 

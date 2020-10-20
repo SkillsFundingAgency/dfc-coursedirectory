@@ -1,47 +1,26 @@
-﻿using Dfc.CourseDirectory.Common;
-using System.Collections.Generic;
-
-namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
+﻿namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
-    public class LarsSearchFilterItemModel : ValueObject<LarsSearchFilterItemModel>
+    public class LarsSearchFilterItemModel
     {
-        public string Id { get; }
-        public string Name { get; }
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
         public string Text { get; set; }
-        public string Value { get; }
+
+        public string Value { get; set; }
+
         public int Count { get; set; }
-        public bool IsSelected { get; }
 
-        public LarsSearchFilterItemModel(
-            string id,
-            string name,
-            string text,
-            string value,
-            int count,
-            bool isSelected)
+        public bool IsSelected { get; set; }
+
+        public static string FormatAwardOrgCodeSearchFilterItemText(string value) => value.ToUpper() switch
         {
-            Throw.IfNullOrWhiteSpace(id, nameof(id));
-            Throw.IfNullOrWhiteSpace(name, nameof(name));
-            Throw.IfNullOrWhiteSpace(text, nameof(text));
-            Throw.IfNullOrWhiteSpace(value, nameof(value));
-            Throw.IfLessThan(0, count, nameof(count));
-
-            Id = id;
-            Name = name;
-            Text = text;
-            Value = value;
-            Count = count;
-            IsSelected = isSelected;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Id;
-            yield return Name;
-            yield return Text;
-            yield return Value;
-            yield return Count;
-            yield return IsSelected;
-        }
+            "E" => "Entry level",
+            "X" => "Unknown or not applicable",
+            "H" => "Higher",
+            "M" => "Mixed",
+            _ => $"Level {value}"
+        };
     }
 }

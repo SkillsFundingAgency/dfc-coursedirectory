@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.UnregulatedProvision;
-using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.ZCodeFoundResult;
@@ -18,274 +16,200 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class UnregulatedCoursesController : Controller
     {
-        private readonly ILogger<UnregulatedCoursesController> _logger;
-        private readonly ILarsSearchSettings _larsSearchSettings;
-        private readonly ILarsSearchService _larsSearchService;
-        private readonly ILarsSearchHelper _larsSearchHelper;
-        private readonly IPaginationHelper _paginationHelper;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession Session => _contextAccessor.HttpContext.Session;
-
         private const string SessionAddCourseSection1 = "AddCourseSection1";
         private const string SessionAddCourseSection2 = "AddCourseSection2";
 
+        private readonly ISearchClient<Lars> _searchClient;
+        private readonly LarsSearchSettings _larsSearchSettings;
+        private readonly IHttpContextAccessor _contextAccessor;
+        
+        private ISession Session => _contextAccessor.HttpContext.Session;
+
         public UnregulatedCoursesController(
-            ILogger<UnregulatedCoursesController> logger,
+            ISearchClient<Lars> searchClient,
             IOptions<LarsSearchSettings> larsSearchSettings,
-            ILarsSearchService larsSearchService,
-            ILarsSearchHelper larsSearchHelper,
-            IPaginationHelper paginationHelper,
             IHttpContextAccessor contextAccessor)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(larsSearchSettings, nameof(larsSearchSettings));
-            Throw.IfNull(larsSearchService, nameof(larsSearchService));
-            Throw.IfNull(larsSearchHelper, nameof(larsSearchHelper));
-            Throw.IfNull(paginationHelper, nameof(paginationHelper));
-
-            _logger = logger;
-            _larsSearchSettings = larsSearchSettings.Value;
-            _larsSearchService = larsSearchService;
-            _larsSearchHelper = larsSearchHelper;
-            _paginationHelper = paginationHelper;
-            _contextAccessor = contextAccessor;
+            _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
+            _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
+            _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
         }
 
         [Authorize]
         public IActionResult Index(string NotificationTitle, string NotificationMessage)
         {
-            var model = new UnRegulatedSearchViewModel()
-            { NotificationTitle = NotificationTitle, NotificationMessage = NotificationMessage };
-            return View(model);
+            return View(new UnRegulatedSearchViewModel()
+            {
+                NotificationTitle = NotificationTitle,
+                NotificationMessage = NotificationMessage
+            });
         }
 
         [Authorize]
-        public async Task<IActionResult> FindNonRegulated(UnRegulatedSearchViewModel theModel)
+        public async Task<IActionResult> FindNonRegulated(UnRegulatedSearchViewModel request)
         {
-            // ZCodeSearchResultModel model = new ZCodeSearchResultModel();
-            ZCodeFoundResultModel model = new ZCodeFoundResultModel();
-            //if (theModel.Search.ToLower() == "z9999999")
-            //{
-            //    return RedirectToAction("Index", "UnregulatedCourses",
-            //        new
-            //        {
-            //            NotificationTitle = "Z code does not exist",
-            //            NotificationMessage = "Check the code you have entered and try again"
-            //        });
-            //}
-
-            LarsSearchRequestModel requestModel = new LarsSearchRequestModel
+            if (request == null)
             {
-                SearchTerm = theModel.Search
-            };
-
-            var criteria = _larsSearchHelper.GetLarsSearchCriteria(
-                requestModel,
-                _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
-                _larsSearchSettings.ItemsPerPage,
-                (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
-
-
-
-            var result = await _larsSearchService.SearchAsync(criteria);
-
-            if (result.IsSuccess && result.HasValue)
-            {
-                
-                if (result.Value.Value.Any())
-                {
-                    model = result.Value.Value.Select(x => new ZCodeFoundResultModel()
-                    {
-                        AwardOrgCode = x.AwardOrgCode,
-                        AwardOrgName = x.AwardOrgName,
-                        LearnAimRef = x.LearnAimRef,
-                        LearnAimRefTitle = x.LearnAimRefTitle,
-                        LearnAimRefTypeDesc = x.LearnAimRefTypeDesc,
-                        NotionalNVQLevelv2 = x.NotionalNVQLevelv2
-                    }).FirstOrDefault();
-
-
-
-                }
-
-
-
-            }
-            return ViewComponent(nameof(ViewComponents.ZCodeFoundResult.ZCodeFoundResult), model);
-
-
-
-
-        }
-
-        public List<SelectListItem> GetSSALevelTwo(string Level1Id)
-        {
-            List<SelectListItem> levelTwos = new List<SelectListItem>();
-
-            if (!string.IsNullOrEmpty(Level1Id))
-            {
-                SectorSubjectAreaTier s = new SectorSubjectAreaTier();
-                var ssaLevel2 = s.SectorSubjectAreaTierAll.Where(t => t.Id == Level1Id).Select(y => y.SectorSubjectAreaTier2);
-
-                var defaultItem = new SelectListItem { Text = "Choose SSA level 2", Value = "" };
-
-
-                foreach (var level2 in ssaLevel2)
-                {
-                    foreach (var level2Item in level2)
-                    {
-                        var item = new SelectListItem { Text = level2Item.Value, Value = level2Item.Key };
-                        levelTwos.Add(item);
-                    }
-
-
-                }
-
-                levelTwos.Insert(0, defaultItem);
-
+                return BadRequest();
             }
 
-            return levelTwos;
+            var result = await _searchClient.Search(new LarsLearnAimRefSearchQuery
+            {
+                LearnAimRef = request.Search,
+                CertificationEndDateFilter = DateTimeOffset.UtcNow
+            });
+
+            if (!result.Results.Any())
+            {
+                return ViewComponent(nameof(ZCodeFoundResult), new ZCodeFoundResultModel());
+            }
+
+            var foundResult = result.Results.First();
+
+            return ViewComponent(nameof(ZCodeFoundResult), new ZCodeFoundResultModel
+            {
+                AwardOrgCode = foundResult.AwardOrgCode,
+                AwardOrgName = foundResult.AwardOrgName,
+                LearnAimRef = foundResult.LearnAimRef,
+                LearnAimRefTitle = foundResult.LearnAimRefTitle,
+                LearnAimRefTypeDesc = foundResult.LearnAimRefTypeDesc,
+                NotionalNVQLevelv2 = foundResult.NotionalNVQLevelv2
+            });
         }
 
+        [Authorize]
+        public IActionResult GetSSALevelTwo(string Level1Id)
+        {
+            if (string.IsNullOrEmpty(Level1Id))
+            {
+                return Json(Enumerable.Empty<SelectListItem>());
+            }
+
+            var level2s = new SectorSubjectAreaTier().SectorSubjectAreaTierAll
+                .Where(t => t.Id == Level1Id)
+                .SelectMany(s => s.SectorSubjectAreaTier2
+                    .Select(s => new SelectListItem { Text = s.Value, Value = s.Key }));
+
+            return Json(new[] { new SelectListItem { Text = "Choose SSA level 2", Value = "" } }.Concat(level2s));
+        }
 
         [Authorize]
         public IActionResult UnknownZCode()
         {
             RemoveSessionVariables();
-            SectorSubjectAreaTier s = new SectorSubjectAreaTier();
-            var ssaLevel1 = s.SectorSubjectAreaTierAll.Select(y => new SSAOptions() { Id = y.Id, Description = y.Description }).ToList();
 
-            List<SelectListItem> levelOnes = new List<SelectListItem>();
-            List<SelectListItem> levelTwos = new List<SelectListItem>();
-            List<SelectListItem> levels = new List<SelectListItem>();
-            List<SelectListItem> categories = new List<SelectListItem>();
-
-
-            UnRegulatedNotFoundViewModel model = new UnRegulatedNotFoundViewModel();
-
-            model.ssaLevel1 = ssaLevel1;
-
-            if (ssaLevel1 != null && ssaLevel1.Count > 0)
-            {
-                var defaultItem = new SelectListItem { Text = "Choose SSA level 1", Value = "" };
-
-                foreach (var level1 in ssaLevel1)
+            var ssaLevel1 = new SectorSubjectAreaTier().SectorSubjectAreaTierAll
+                .Select(y => new SSAOptions()
                 {
-                    var item = new SelectListItem { Text = level1.Description, Value = level1.Id };
-                    levelOnes.Add(item);
-                };
+                    Id = y.Id,
+                    Description = y.Description
+                })
+                .ToList();
 
-                levelOnes.Insert(0, new SelectListItem { Text = "Choose SSA level 1", Value = "" });
-                levelTwos.Insert(0, new SelectListItem { Text = "Choose SSA level 2", Value = "" });
+            var model = new UnRegulatedNotFoundViewModel
+            {
+                ssaLevel1 = ssaLevel1
+            };
+
+            if (ssaLevel1 == null || !ssaLevel1.Any())
+            {
+                return View(model);
             }
 
-            model.Level1 = levelOnes;
-            model.Level2 = levelTwos;
-
+            model.Level1 = new[] { new SelectListItem { Text = "Choose SSA level 1", Value = "" } }
+                .Concat(ssaLevel1.Select(s => new SelectListItem { Text = s.Description, Value = s.Id }))
+                .ToList();
+            
+            model.Level2 = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Choose SSA level 2", Value = "" }
+            };
 
             return View(model);
         }
 
-
-
-
-
-
-
         [Authorize]
         public async Task<IActionResult> ZCodeNotKnown([FromQuery] ZCodeNotKnownRequestModel request)
         {
-            int resultpage = 0;
-            RemoveSessionVariables();
-            ZCodeSearchResultModel model = new ZCodeSearchResultModel();
-
-            LarsSearchRequestModel requestModel = new LarsSearchRequestModel();
-
-            requestModel.SectorSubjectAreaTier1Filter = new string[1];
-            requestModel.SectorSubjectAreaTier1Filter[0] = request.Level1Id;
-
-            requestModel.SectorSubjectAreaTier2Filter = new string[1];
-            requestModel.SectorSubjectAreaTier2Filter[0] = request.Level2Id;
-
-            requestModel.NotionalNVQLevelv2Filter = request.NotionalNVQLevelv2Filter;
-
-
-
-
-            requestModel.AwardOrgAimRefFilter = request.AwardOrgAimRefFilter;
-
-
-
-            var criteria = _larsSearchHelper.GetZCodeSearchCriteria(
-                requestModel,
-                _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
-                _larsSearchSettings.ItemsPerPage,
-                (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
-
-
-            var result = await _larsSearchService.SearchAsync(criteria);
-
-            if (result.IsSuccess && result.HasValue)
+            if (request == null)
             {
-
-                var filters = _larsSearchHelper.GetUnRegulatedSearchFilterModels(result.Value.SearchFacets, requestModel);
-
-                var zCodeResults = new List<ZCodeSearchResultItemModel>();
-
-                foreach (var item in result.Value.Value)
-                {                 
-                   
-                        zCodeResults.Add(new ZCodeSearchResultItemModel()
-                        {
-                            AwardOrgCode = item.AwardOrgCode,
-                            AwardOrgName = item.AwardOrgName,
-                            LearnAimRef = item.LearnAimRef,
-                            LearnAimRefTitle = item.LearnAimRefTitle,
-                            LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                            NotionalNVQLevelv2 = item.NotionalNVQLevelv2
-
-                        });
-                   
-                }
-                model.Items = zCodeResults.OrderByDescending(x => x.LearnAimRef);
-                model.Url = Request.GetDisplayUrl();
-                model.PageParamName = _larsSearchSettings.PageParamName;
-                model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
-                model.TotalCount = result.Value.ODataCount ?? 0;
-                model.Filters = filters.ToList();
-                model.Level1Id = request.Level1Id;
-                model.Level2Id = request.Level2Id;
-                //model.filter0Id = request.LevelId;
-                //model.filter1Id = request.CategoryId;                
-                var isPageNoSuccess = int.TryParse(HttpContext.Request.Query[_larsSearchSettings.PageParamName], out resultpage);
-
-                if (isPageNoSuccess)
-                {
-                    model.CurrentPage = resultpage;
-                }
-                else
-                {
-                    model.CurrentPage = 1;
-                }
-
+                return BadRequest();
             }
 
-            _logger.LogMethodExit();
+            RemoveSessionVariables();
 
-            return ViewComponent(nameof(ViewComponents.ZCodeSearchResult.ZCodeSearchResult), model);
+            var result = await _searchClient.Search(new LarsSearchQuery
+            {
+                SearchText = "Z", // Wildcard is applied automatically
+                SearchFields = new[] { nameof(Lars.LearnAimRef) },
+                NotionalNVQLevelv2Filters = request.NotionalNVQLevelv2Filter,
+                AwardOrgAimRefFilters = request.AwardOrgAimRefFilter,
+                SectorSubjectAreaTier1Filters = !string.IsNullOrWhiteSpace(request.Level1Id) ? new[] { request.Level1Id } : null,
+                SectorSubjectAreaTier2Filters = !string.IsNullOrWhiteSpace(request.Level2Id) ? new[] { request.Level2Id } : null,
+                CertificationEndDateFilter = DateTimeOffset.UtcNow,
+                Facets = new[] { nameof(Lars.NotionalNVQLevelv2), nameof(Lars.AwardOrgAimRef) },
+                PageSize = _larsSearchSettings.ItemsPerPage,
+                PageNumber = request.PageNo
+            });
 
+            var viewModel = new ZCodeSearchResultModel
+            {
+                Level1Id = request.Level1Id,
+                Level2Id = request.Level2Id,
+                Items = result.Results.Select(ZCodeSearchResultItemModel.FromLars),
+                Filters = new[]
+                {
+                    new LarsSearchFilterModel
+                    {
+                        Title = "Level",
+                        Items = result.Facets[nameof(Lars.NotionalNVQLevelv2)]
+                            .Select((f, i) =>
+                                new LarsSearchFilterItemModel
+                                {
+                                    Id = $"{nameof(LarsSearchRequestModel.NotionalNVQLevelv2Filter)}-{i}",
+                                    Name = nameof(LarsSearchRequestModel.NotionalNVQLevelv2Filter),
+                                    Text = LarsSearchFilterItemModel.FormatAwardOrgCodeSearchFilterItemText(f.Key.ToString()),
+                                    Value = f.Key.ToString(),
+                                    Count = (int)(f.Value ?? 0),
+                                    IsSelected = request.NotionalNVQLevelv2Filter.Contains(f.Key.ToString())
+                                })
+                            .OrderBy(f => f.Text).ToArray()
+                    },
+                    new LarsSearchFilterModel
+                    {
+                        Title = "Category",
+                        Items = result.Facets[nameof(Lars.AwardOrgAimRef)]
+                            .Where(f => Categories.AllCategories.ContainsKey(f.Key.ToString()))
+                            .Select((f, i) =>
+                                new LarsSearchFilterItemModel
+                                {
+                                    Id = $"{nameof(LarsSearchRequestModel.AwardOrgAimRefFilter)}-{i}",
+                                    Name = nameof(LarsSearchRequestModel.AwardOrgAimRefFilter),
+                                    Text = Categories.AllCategories[f.Key.ToString()],
+                                    Value = f.Key.ToString(),
+                                    Count = (int)(f.Value ?? 0),
+                                    IsSelected = request.AwardOrgAimRefFilter.Contains(f.Key.ToString())
+                                })
+                            .OrderBy(f => f.Text).ToArray()
+                    }
+                },
+                TotalCount = (int)(result.TotalCount ?? 0),
+                CurrentPage = request.PageNo,
+                ItemsPerPage = _larsSearchSettings.ItemsPerPage,
+                PageParamName = _larsSearchSettings.PageParamName,
+                Url = Request.GetDisplayUrl()
+            };
 
+            return ViewComponent(nameof(ZCodeSearchResult), viewModel);
         }
 
-        internal void RemoveSessionVariables()
+        private void RemoveSessionVariables()
         {
             Session.Remove(SessionAddCourseSection1);
             Session.Remove(SessionAddCourseSection2);

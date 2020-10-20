@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Web.ViewComponents.SearchProviderResults;
 using Dfc.CourseDirectory.Web.ViewModels.SearchProvider;
 using Microsoft.AspNetCore.Authorization;
@@ -12,14 +13,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.SearchProvider
 {
     public class SearchProviderController : Controller
     {
-        private readonly ISearchClient<ProviderSearchQuery, Core.Search.Models.Provider> _searchClient;
+        private readonly ISearchClient<Provider> _searchClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILogger<SearchProviderController> _logger;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public SearchProviderController(
-            ISearchClient<ProviderSearchQuery, Core.Search.Models.Provider> searchClient,
+            ISearchClient<Provider> searchClient,
             IHttpContextAccessor contextAccessor,
             ILogger<SearchProviderController> logger)
         {

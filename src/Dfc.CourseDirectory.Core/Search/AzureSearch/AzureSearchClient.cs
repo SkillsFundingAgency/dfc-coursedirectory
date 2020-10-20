@@ -6,8 +6,7 @@ using Azure.Search.Documents;
 
 namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 {
-    public class AzureSearchClient<TQuery, TResult> : ISearchClient<TQuery, TResult>
-        where TQuery : IAzureSearchQuery
+    public class AzureSearchClient<TResult> : ISearchClient<TResult>
     {
         private readonly SearchClient _client;
 
@@ -16,14 +15,20 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        public async Task<SearchResult<TResult>> Search(TQuery query)
+        public async Task<SearchResult<TResult>> Search<TQuery>(TQuery query)
+            where TQuery : ISearchQuery<TResult>
         {
             if (query == null)
             {
                 throw new ArgumentNullException(nameof(query));
             }
 
-            var generatedQuery = query.GenerateSearchQuery();
+            if (!(query is IAzureSearchQuery<TResult> azureQuery))
+            {
+                throw new ArgumentException($"{query.GetType().Name} does not implement {nameof(IAzureSearchQuery<TResult>)}.", nameof(query));
+            }
+
+            var generatedQuery = azureQuery.GenerateSearchQuery();
 
             var searchResults = await _client.SearchAsync<TResult>(generatedQuery.SearchText, generatedQuery.Options);
 

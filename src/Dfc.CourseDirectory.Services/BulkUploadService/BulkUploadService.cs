@@ -1,67 +1,48 @@
-﻿using CsvHelper;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using Dfc.CourseDirectory.Models.Enums;
 using System.ComponentModel;
 using System.Globalization;
-using Newtonsoft.Json;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using CsvHelper;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Models.Models.Regions;
+using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Models.Helpers.Attributes.AlternativeName;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
     public class BulkUploadService : IBulkUploadService
     {
-        private readonly ILogger<BulkUploadService> _logger;
-        private readonly ILarsSearchSettings _larsSearchSettings;
-        private readonly ILarsSearchService _larsSearchService;
-        private readonly IVenueServiceSettings _venueServiceSettings;
         private readonly IVenueService _venueService;
         private readonly ICourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
-        private List<LarsSearchResultItem> cachedQuals;
+        private readonly ISearchClient<Lars> _larsSearchClient;
+
         private List<Venue> cachedVenues;
 
         public BulkUploadService(
-            ILogger<BulkUploadService> logger,
-            IOptions<LarsSearchSettings> larsSearchSettings,
-            ILarsSearchService larsSearchService,
-            IOptions<VenueServiceSettings> venueServiceSettings,
             IVenueService venueService,
             IOptions<CourseServiceSettings> courseServiceSettings,
-            ICourseService courseService)
+            ICourseService courseService,
+            ISearchClient<Lars> larsSearchClient)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(larsSearchSettings, nameof(larsSearchSettings));
-            Throw.IfNull(larsSearchService, nameof(larsSearchService));
-            Throw.IfNull(venueServiceSettings, nameof(venueServiceSettings));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(courseServiceSettings, nameof(courseServiceSettings));
-            Throw.IfNull(courseService, nameof(courseService));
-
-            _logger = logger;
-            _larsSearchSettings = larsSearchSettings.Value;
-            _larsSearchService = larsSearchService;
-            _venueServiceSettings = venueServiceSettings.Value;
-            _venueService = venueService;
-            _courseServiceSettings = courseServiceSettings.Value;
-            _courseService = courseService;
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _courseServiceSettings = courseServiceSettings?.Value ?? throw new ArgumentNullException(nameof(courseServiceSettings));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
         }
 
         public int BulkUploadSecondsPerRecord
@@ -356,56 +337,41 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
         }
 
-      
-
         public List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors)
         {
             errors = new List<string>();
-            List<int> totalErrorList = new List<int>();
-            cachedQuals = new List<LarsSearchResultItem>();
+            var totalErrorList = new List<int>();
+            
+            var cachedQuals = new List<Lars>();
 
-            foreach (var bulkUploadcourse in bulkUploadcourses.Where(c => c.IsCourseHeader == true).ToList())
+            foreach (var bulkUploadcourse in bulkUploadcourses.Where(c => c.IsCourseHeader == true))
             {
-                LarsSearchCriteria criteria = new LarsSearchCriteria(bulkUploadcourse.LearnAimRef, 10, 0, string.Empty, null);
-                var qualifications = new List<LarsDataResultItem>();
+                var cachedResult = cachedQuals.FirstOrDefault(o => o.LearnAimRef == bulkUploadcourse.LearnAimRef);
+                
+                List<Lars> results = null;
 
-
-                var cachedResult = cachedQuals != null ? cachedQuals.FirstOrDefault(o => o.LearnAimRef == criteria.Search) : null;
-
-                List<LarsSearchResultItem> result = null;
                 if (cachedResult == null)
                 {
-                    result = Task.Run(async () => await _larsSearchService.SearchAsync(criteria)).Result.Value.Value.ToList();
-                    var qual = result.FirstOrDefault();
-                    if(qual != null)
+                    results = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery
+                    {
+                        LearnAimRef = bulkUploadcourse.LearnAimRef
+                    }).GetAwaiter().GetResult().Results.ToList();
+
+                    var qual = results.FirstOrDefault();
+                    
+                    if (qual != null)
                     {
                         cachedQuals.Add(qual);
                     }
-                    
                 }
                 else
                 {
-                    result = new List<LarsSearchResultItem> { cachedQuals.FirstOrDefault(o => o.LearnAimRef == criteria.Search) };
+                    results = new List<Lars> { cachedQuals.FirstOrDefault(o => o.LearnAimRef == bulkUploadcourse.LearnAimRef) };
                 }
 
-                if (result.Count > 0)
+                if (results.Count > 0)
                 {
-
-                    foreach (var item in result)
-                    {
-                        var larsDataResultItem = new LarsDataResultItem
-                        {
-                            LearnAimRef = item.LearnAimRef,
-                            LearnAimRefTitle = item.LearnAimRefTitle,
-                            NotionalNVQLevelv2 = item.NotionalNVQLevelv2,
-                            AwardOrgCode = item.AwardOrgCode,
-                            LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                            CertificationEndDate = item.CertificationEndDate
-                        };
-                        qualifications.Add(larsDataResultItem);
-                    }
-
-                    if (qualifications.Count.Equals(0))
+                    if (results.Count.Equals(0))
                     {
                         List<int> invalidLARSLineNumbers = bulkUploadcourses.Where(c => c.LearnAimRef == bulkUploadcourse.LearnAimRef).Select(l => l.BulkUploadLineNumber).ToList();
 
@@ -417,9 +383,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         }
 
                     }
-                    else if (qualifications.Count.Equals(1))
+                    else if (results.Count.Equals(1))
                     {
-                        if (qualifications[0].CertificationEndDate != null && qualifications[0].CertificationEndDate < DateTime.Now)
+                        if (results[0].CertificationEndDate != null && results[0].CertificationEndDate < DateTime.Now)
                         {
                             List<int> invalidLARSLineNumbers = bulkUploadcourses.Where(c => c.LearnAimRef == bulkUploadcourse.LearnAimRef).Select(l => l.BulkUploadLineNumber).ToList();
 
@@ -433,20 +399,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         }
                         else
                         {
-                            bulkUploadcourse.QualificationCourseTitle = qualifications[0].LearnAimRefTitle;
-                            bulkUploadcourse.NotionalNVQLevelv2 = qualifications[0].NotionalNVQLevelv2;
-                            bulkUploadcourse.AwardOrgCode = qualifications[0].AwardOrgCode;
-                            bulkUploadcourse.QualificationType = qualifications[0].LearnAimRefTypeDesc;
+                            bulkUploadcourse.QualificationCourseTitle = results[0].LearnAimRefTitle;
+                            bulkUploadcourse.NotionalNVQLevelv2 = results[0].NotionalNVQLevelv2;
+                            bulkUploadcourse.AwardOrgCode = results[0].AwardOrgCode;
+                            bulkUploadcourse.QualificationType = results[0].LearnAimRefTypeDesc;
                         }
                     }
                     else
                     {
                         string logMoreQualifications = string.Empty;
-                        foreach (var qualification in qualifications)
+                        foreach (var qualification in results)
                         {
                             logMoreQualifications += "( '" + qualification.LearnAimRefTitle + "' with Level " + qualification.NotionalNVQLevelv2 + " and AwardOrgCode " + qualification.AwardOrgCode + " ) ";
                         }
-                        errors.Add($"We retrieve multiple qualifications ( { qualifications.Count.ToString() } ) for the LARS { bulkUploadcourse.LearnAimRef }, which are { logMoreQualifications } ");
+                        errors.Add($"We retrieve multiple qualifications ( { results.Count } ) for the LARS { bulkUploadcourse.LearnAimRef }, which are { logMoreQualifications } ");
                     }
                 }
                 else

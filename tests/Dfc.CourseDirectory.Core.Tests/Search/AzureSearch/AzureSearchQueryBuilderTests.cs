@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(searchFields);
             result.Options.Facets.Should().Equal(facets);
-            result.Options.Filter.Should().Be("search.in(TestVariable1, 'TestValue1', '|') AND search.in(TestVariable2, 'TestValue2|TestValue3', '|') AND search.in(TestVariable3, 'TestValue4,TestValue5,TestValue6', ',')");
+            result.Options.Filter.Should().Be("search.in(TestVariable1, 'TestValue1', '|') and search.in(TestVariable2, 'TestValue2|TestValue3', '|') and search.in(TestVariable3, 'TestValue4,TestValue5,TestValue6', ',')");
             result.Options.OrderBy.Should().Equal(orderBy);
             result.Options.ScoringProfile.Should().Be("TestScoringProfile");
             result.Options.Size.Should().Be(12);
@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
 
             var result = builder.Build();
 
-            result.Options.Filter.Should().Be("search.in(TestVariable1, 'TestValue1', '|') AND search.in(TestVariable2, 'TestValue2|TestValue3', '|')");
+            result.Options.Filter.Should().Be("search.in(TestVariable1, 'TestValue1', '|') and search.in(TestVariable2, 'TestValue2|TestValue3', '|')");
         }
 
         [Fact]
@@ -255,6 +255,19 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
             action.Should().ThrowExactly<ArgumentNullException>();
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void WithSearchInFilter_WithValueNullOrWhiteSpaceValue_ThrowsException(string value)
+        {
+            var builder = new AzureSearchQueryBuilder("TestSearchText");
+
+            Func<AzureSearchQueryBuilder> action = () => builder.WithSearchInFilter("TestVariable1", new[] { "TestValue1", value, "TestValue3" });
+
+            action.Should().ThrowExactly<ArgumentException>();
+        }
+
         [Fact]
         public void WithSearchInFilter_WithValuesContainsDelimiter_ThrowsException()
         {
@@ -266,7 +279,6 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(-1)]
         public void WithSize_WithInvalidSize_ThrowsException(int? size)
         {
@@ -278,7 +290,6 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
         }
 
         [Theory]
-        [InlineData(0)]
         [InlineData(-1)]
         public void WithSize_WithInvalidSkip_ThrowsException(int? skip)
         {

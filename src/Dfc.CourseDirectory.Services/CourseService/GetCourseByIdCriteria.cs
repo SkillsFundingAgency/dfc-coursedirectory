@@ -1,8 +1,6 @@
 ﻿using System;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Services.CourseService

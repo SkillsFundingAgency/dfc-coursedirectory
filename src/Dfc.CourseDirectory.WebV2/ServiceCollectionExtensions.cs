@@ -155,12 +155,17 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
-				services.AddAzureSearchClient<ProviderSearchQuery, Provider>(
+				services.AddAzureSearchClient<Provider>(
 	                new Uri(configuration["AzureSearchUrl"]),
 	                configuration["AzureSearchQueryKey"],
 	                configuration["ProviderAzureSearchIndexName"]);
-			
-                services.AddAzureSearchClient<OnspdSearchQuery, Onspd>(
+
+                services.AddAzureSearchClient<Lars>(
+                    new Uri(configuration["AzureSearchUrl"]),
+                    configuration["AzureSearchQueryKey"],
+                    configuration["LarsAzureSearchIndexName"]);
+
+                services.AddAzureSearchClient<Onspd>(
                     new Uri(configuration["AzureSearchUrl"]),
                     configuration["AzureSearchQueryKey"],
                     indexName: "onspd");

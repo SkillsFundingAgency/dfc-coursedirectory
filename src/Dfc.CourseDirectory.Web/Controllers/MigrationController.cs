@@ -1,67 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     [SelectedProviderNeeded]
     public class MigrationController : Controller
     {
-        private readonly ILogger<MigrationController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IBulkUploadService _bulkUploadService;
-        private readonly IUserHelper _userHelper;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-        private readonly ILarsSearchSettings _larsSearchSettings;
-        private readonly ILarsSearchService _larsSearchService;
+        private readonly ISearchClient<Lars> _larsSearchClient;
 
-        private IWebHostEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public MigrationController(
-            ILogger<MigrationController> logger,
             IHttpContextAccessor contextAccessor,
-            IBulkUploadService bulkUploadService,
-            IWebHostEnvironment env, IUserHelper userHelper, ICourseService courseService, IVenueService venueService, ILarsSearchService larsSearchService, IOptions<LarsSearchSettings> larsSearchSettings)
+            ICourseService courseService,
+            IVenueService venueService,
+            ISearchClient<Lars> larsSearchClient)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
-            Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
-            Throw.IfNull(env, nameof(env));
-            Throw.IfNull(larsSearchSettings, nameof(larsSearchSettings));
-            Throw.IfNull(larsSearchService, nameof(larsSearchService));
-
-            _logger = logger;
-            _contextAccessor = contextAccessor;
-            _bulkUploadService = bulkUploadService;
-            _env = env;
-            _userHelper = userHelper;
-            _courseService = courseService;
-            _venueService = venueService;
-            _larsSearchSettings = larsSearchSettings.Value;
-            _larsSearchService = larsSearchService;
+            _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
         }
-
 
         [Authorize]
         public IActionResult Index()
@@ -216,11 +192,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Larsless()
         {
-            Dictionary<string, string> larlessErrors =
-                new Dictionary<string, string>();
-
+            var larlessErrors = new Dictionary<string, string>();
             var ukprn = _session.GetInt32("UKPRN");
             var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
+
             if (courseMigrationReport.IsFailure)
             {
                 throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
@@ -231,88 +206,49 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var model = new LarslessViewModel
             {
                 LarslessCourses = courseMigrationReport.Value
-                                                       .LarslessCourses
-                                                       .OrderBy(x => x.QualificationCourseTitle),
+                    .LarslessCourses
+                    .OrderBy(x => x.QualificationCourseTitle),
                 Venues = venues
             };
 
-
-
-
-
-
-
-
             var errors = new List<string>();
-            List<int> totalErrorList = new List<int>();
-            var cachedQuals = new List<LarsSearchResultItem>();
+            var totalErrorList = new List<int>();
 
-            foreach (var bulkUploadcourse in model.LarslessCourses.ToList())
+            var cachedQuals = new List<Lars>();
+
+            foreach (var bulkUploadcourse in model.LarslessCourses)
             {
                 if (!string.IsNullOrEmpty(bulkUploadcourse.LearnAimRef))
                 {
-                    LarsSearchCriteria criteria =
-                        new LarsSearchCriteria(bulkUploadcourse.LearnAimRef, 10, 0, string.Empty, null);
-                    var qualifications = new List<LarsDataResultItem>();
+                    var cachedResult = cachedQuals.FirstOrDefault(o => o.LearnAimRef == bulkUploadcourse.LearnAimRef);
 
+                    List<Lars> results = null;
 
-                    var cachedResult = cachedQuals != null
-                        ? cachedQuals.FirstOrDefault(o => o.LearnAimRef == criteria.Search)
-                        : null;
-
-                    List<LarsSearchResultItem> result = null;
                     if (cachedResult == null)
                     {
-                        result = Task.Run(async () => await _larsSearchService.SearchAsync(criteria)).Result.Value.Value
-                            .ToList();
-                        var qual = result.FirstOrDefault();
+                        results = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery
+                        {
+                            LearnAimRef = bulkUploadcourse.LearnAimRef
+                        }).GetAwaiter().GetResult().Results.ToList();
+
+                        var qual = results.FirstOrDefault();
+
                         if (qual != null)
                         {
                             cachedQuals.Add(qual);
                         }
-
                     }
                     else
                     {
-                        result = new List<LarsSearchResultItem>
-                            {cachedQuals.FirstOrDefault(o => o.LearnAimRef == criteria.Search)};
+                        results = new List<Lars> { cachedQuals.FirstOrDefault(o => o.LearnAimRef == bulkUploadcourse.LearnAimRef) };
                     }
 
-                    if (result.Count > 0)
+                    if (results.Count > 0)
                     {
-
-                        //foreach (var item in result)
-                        //{
-                        //    var larsDataResultItem = new LarsDataResultItem
-                        //    {
-                        //        LearnAimRef = item.LearnAimRef,
-                        //        LearnAimRefTitle = item.LearnAimRefTitle,
-                        //        NotionalNVQLevelv2 = item.NotionalNVQLevelv2,
-                        //        AwardOrgCode = item.AwardOrgCode,
-                        //        LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                        //        CertificationEndDate = item.CertificationEndDate
-                        //    };
-                        //    qualifications.Add(larsDataResultItem);
-                        //}
-
-
-
-                        if (result[0].CertificationEndDate != null && result[0].CertificationEndDate < DateTime.Now)
+                        if (results[0].CertificationEndDate != null && results[0].CertificationEndDate < DateTime.Now)
                         {
-                            //List<int> invalidLARSLineNumbers = model.LarslessCourses.Where(c => c.LearnAimRef == bulkUploadcourse.LearnAimRef).Select(l => l.BulkUploadLineNumber).ToList();
-
-                            //invalidLARSLineNumbers = CheckForErrorDuplicates(ref totalErrorList, invalidLARSLineNumbers);
-
-                            //if (invalidLARSLineNumbers.Count > 0)
-                            //{
-
-                            //errors.Add(bulkUploadcourse.LearnAimRef);
-                            // }
                             larlessErrors.Add(bulkUploadcourse.CourseId.Value.ToString(), "Expired LARS Code " + bulkUploadcourse.LearnAimRef);
                         }
-
-
-
                     }
                     else
                     {
@@ -323,11 +259,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     larlessErrors.Add(bulkUploadcourse.CourseId.Value.ToString(), "Missing LARS");
                 }
-
             }
-
-
-
 
             model.Errors = larlessErrors;
             return View("Report/larsless", model);

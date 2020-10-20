@@ -31,16 +31,43 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
             return new string(searchText?.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)).ToArray());
         }
 
-        public static string ApplyWildcardsToAllSegments(this string searchText, string segmentDelimiter = " ")
+        public static string TransformWhen(this string value, Func<string, bool> predicate, Func<string, string> transformation)
         {
-            var segments = searchText?.Split(segmentDelimiter, StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>();
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            if (transformation == null)
+            {
+                throw new ArgumentNullException(nameof(transformation));
+            }
+
+            return predicate(value)
+                ? transformation(value)
+                : value;
+        }
+
+        public static string TransformSegments(this string value, Func<string, string> transformation, string separator = " ")
+        {
+            if (transformation == null)
+            {
+                throw new ArgumentNullException(nameof(transformation));
+            }
+
+            if (string.IsNullOrEmpty(separator))
+            {
+                throw new ArgumentException($"{nameof(separator)} cannot be null or empty.", nameof(separator));
+            }
+
+            var segments = value?.Split(separator, StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>();
 
             if (!segments.Any())
             {
-                return "*";
+                return string.Empty;
             }
 
-            return string.Join(segmentDelimiter, segments.Select(s => $"{s.Trim()}*"));
+            return string.Join(separator, segments.Where(s => !string.IsNullOrWhiteSpace(s)).Select(transformation));
         }
     }
 }

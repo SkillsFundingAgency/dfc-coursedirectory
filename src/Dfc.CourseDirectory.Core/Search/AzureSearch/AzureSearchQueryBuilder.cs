@@ -36,6 +36,11 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 
         public AzureSearchQueryBuilder WithSearchFields(params string[] searchFields)
         {
+            if (searchFields == null)
+            {
+                return this;
+            }
+
             foreach (var searchField in searchFields)
             {
                 _searchFields.Add(searchField);
@@ -46,11 +51,31 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 
         public AzureSearchQueryBuilder WithFacets(params string[] facets)
         {
+            if (facets == null)
+            {
+                return this;
+            }
+
             foreach (var facet in facets)
             {
                 _facets.Add(facet);
             }
 
+            return this;
+        }
+
+        public AzureSearchQueryBuilder WithFilters(params string[] filters)
+        {
+            if (filters == null)
+            {
+                return this;
+            }
+
+            foreach (var filter in filters)
+            {
+                _filters.Add(filter);
+            }
+            
             return this;
         }
 
@@ -61,21 +86,33 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
                 throw new ArgumentNullException(nameof(variable));
             }
 
-            if (values?.Any() ?? false)
+            if (values == null || !values.Any())
             {
-                if (values.Any(v => v.Contains(delimiter)))
-                {
-                    throw new ArgumentException($"{nameof(values)} cannot contain {nameof(delimiter)} '{delimiter}'.", nameof(values));
-                }
-
-                _filters.Add($"search.in({variable}, '{string.Join(delimiter, values)}', '{delimiter}')");
+                return this;
             }
+
+            if (values.Any(v => string.IsNullOrWhiteSpace(v)))
+            {
+                throw new ArgumentException($"{nameof(values)} cannot contain null or whitespace value.");
+            }
+
+            if (values.Any(v => v.Contains(delimiter)))
+            {
+                throw new ArgumentException($"{nameof(values)} cannot contain {nameof(delimiter)} '{delimiter}'.", nameof(values));
+            }
+
+            _filters.Add($"search.in({variable}, '{string.Join(delimiter, values)}', '{delimiter}')");
 
             return this;
         }
 
         public AzureSearchQueryBuilder WithOrderBy(params string[] orderBys)
         {
+            if (orderBys == null)
+            {
+                return this;
+            }
+
             foreach (var orderBy in orderBys)
             {
                 _orderBy.Add(orderBy);
@@ -92,9 +129,9 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 
         public AzureSearchQueryBuilder WithSize(int? size)
         {
-            if (size <= 0)
+            if (size < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(size), size, $"{nameof(size)} must be greated than zero.");
+                throw new ArgumentOutOfRangeException(nameof(size), size, $"{nameof(size)} must be greater than or equal to zero.");
             }
 
             _size = size;
@@ -103,9 +140,9 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 
         public AzureSearchQueryBuilder WithSkip(int? skip)
         {
-            if (skip <= 0)
+            if (skip < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(skip), skip, $"{nameof(skip)} must be greated than zero.");
+                throw new ArgumentOutOfRangeException(nameof(skip), skip, $"{nameof(skip)} must be greater than or equal to zero.");
             }
 
             _skip = skip;
@@ -123,7 +160,7 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
             var options = new SearchOptions
             {
                 SearchMode = _searchMode,
-                Filter = string.Join(" AND ", _filters),
+                Filter = string.Join(" and ", _filters),
                 ScoringProfile = _scoringProfile,
                 Size = _size,
                 Skip = _skip,

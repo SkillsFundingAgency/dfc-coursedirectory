@@ -31,6 +31,7 @@ using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
+using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.WebV2;
@@ -109,13 +110,9 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IAuthService, AuthService>();
             services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
 
-
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
-            services.AddScoped<ILarsSearchService, LarsSearchService>();
 
-            services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
-
 
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
             services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));

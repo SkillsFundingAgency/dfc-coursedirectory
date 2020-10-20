@@ -1,87 +1,63 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
-    public class LarsSearchResultItemModel : ValueObject<LarsSearchResultItemModel>, IViewComponentModel
+    public class LarsSearchResultItemModel : IViewComponentModel
     {
-        public bool HasErrors => Errors.Count() > 0;
-        public IEnumerable<string> Errors { get; }
-        public decimal SearchScore { get; }
-        public string LearnAimRef { get; }
-        public string LearnAimRefTitle { get; }
-        public string NotionalNVQLevelv2 { get; }
-        public string AwardOrgCode { get; }
-        public string LearnDirectClassSystemCode1 { get; }
-        public string LearnDirectClassSystemCode2 { get; }
-        public string GuidedLearningHours { get; }
-        public string TotalQualificationTime { get; }
-        public string UnitType { get; }
-        public string AwardOrgName { get; }
-        public string LearnAimRefTypeDesc { get; }
-        public DateTime? CertificationEndDate { get; }
-
-        public LarsSearchResultItemModel(
-            decimal searchScore,
-            string learnAimRef,
-            string learnAimRefTitle,
-            string notionalNVQLevelv2,
-            string awardOrgCode,
-            string learnDirectClassSystemCode1,
-            string learnDirectClassSystemCode2,
-            string guidedLearningHours,
-            string totalQualificationTime,
-            string unitType,
-            string awardOrgName,
-            string learnAimRefTypeDesc,
-            DateTime? certificationEndDate)
-        {
-            Errors = new string[] { };
-            SearchScore = searchScore;
-            LearnAimRef = learnAimRef;
-            LearnAimRefTitle = learnAimRefTitle;
-            NotionalNVQLevelv2 = notionalNVQLevelv2;
-            AwardOrgCode = awardOrgCode;
-            LearnDirectClassSystemCode1 = learnDirectClassSystemCode1;
-            LearnDirectClassSystemCode2 = learnDirectClassSystemCode2;
-            GuidedLearningHours = guidedLearningHours;
-            TotalQualificationTime = totalQualificationTime;
-            UnitType = unitType;
-            AwardOrgName = awardOrgName;
-            LearnAimRefTypeDesc = learnAimRefTypeDesc;
-            CertificationEndDate = certificationEndDate;
-        }
-
         public LarsSearchResultItemModel()
         {
             Errors = new string[] { };
         }
 
-        public LarsSearchResultItemModel(string error)
-        {
-            Errors = new string[] { error };
-        }
+        public string LearnAimRef { get; set; }
+        
+        public string LearnAimRefTitle { get; set; }
+        
+        public string NotionalNVQLevelv2 { get; set; }
+        
+        public string AwardOrgCode { get; set; }
+        
+        public string LearnDirectClassSystemCode1 { get; set; }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        public string LearnDirectClassSystemCode2 { get; set; }
+
+        public string GuidedLearningHours { get; set; }
+
+        public string TotalQualificationTime { get; set; }
+
+        public string UnitType { get; set; }
+
+        public string AwardOrgName { get; set; }
+
+        public string LearnAimRefTypeDesc { get; set; }
+
+        public DateTime? CertificationEndDate { get; set; }
+
+        public IEnumerable<string> Errors { get; }
+
+        public bool HasErrors => Errors.Count() > 0;
+
+        public static LarsSearchResultItemModel FromLars(Lars lars)
         {
-            yield return HasErrors;
-            yield return Errors;
-            yield return SearchScore;
-            yield return LearnAimRef;
-            yield return LearnAimRefTitle;
-            yield return NotionalNVQLevelv2;
-            yield return AwardOrgCode;
-            yield return LearnDirectClassSystemCode1;
-            yield return LearnDirectClassSystemCode2;
-            yield return GuidedLearningHours;
-            yield return TotalQualificationTime;
-            yield return UnitType;
-            yield return AwardOrgName;
-            yield return LearnAimRefTypeDesc;
-            yield return CertificationEndDate;
+            return new LarsSearchResultItemModel
+            {
+                LearnAimRef = lars.LearnAimRef,
+                LearnAimRefTitle = lars.LearnAimRefTitle,
+                NotionalNVQLevelv2 = lars.NotionalNVQLevelv2,
+                AwardOrgCode = lars.AwardOrgCode,
+                LearnDirectClassSystemCode1 = lars.LearnDirectClassSystemCode1,
+                LearnDirectClassSystemCode2 = lars.LearnDirectClassSystemCode2,
+                GuidedLearningHours = lars.GuidedLearningHours,
+                TotalQualificationTime = lars.TotalQualificationTime,
+                UnitType = lars.UnitType,
+                AwardOrgName = lars.AwardOrgName,
+                LearnAimRefTypeDesc = lars.LearnAimRefTypeDesc,
+                CertificationEndDate = lars.CertificationEndDate
+            };
         }
     }
 }
