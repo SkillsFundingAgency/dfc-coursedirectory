@@ -2,66 +2,63 @@
 @{
     var currentController = (string)ViewContext.RouteData.Values["Controller"];
     var currentAction = (string)ViewContext.RouteData.Values["Action"];
-
-    var enableApprenticeshipBulkUpload = Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
-        Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed;
 }
 
 <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
 <nav>
     <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
         <li class="govuk-header__navigation-item@(currentController == "Home" && currentAction == "Index" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Index" asp-controller="Home" class="govuk-header__link">
+            <a asp-action="Index" asp-controller="Home" class="govuk-header__link" data-testid="topnav-home">
                 Home
             </a>
         </li>
-        <li class="govuk-header__navigation-item@(currentController == "Venues" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Index" asp-controller="Venues" class="govuk-header__link">
-                Your locations
-            </a>
-        </li>
-        @if (Model.ShowApprenticeshipsLink)
+        @if (Model.ShowCoursesLinks)
+        {
+            <li class="govuk-header__navigation-item@(currentController == "Qualifications" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="LandingOptions" asp-controller="Qualifications" class="govuk-header__link" data-testid="topnav-courses">
+                    Courses
+                </a>
+            </li>
+        }
+        @if (Model.ShowApprenticeshipsLinks)
         {
             <li class="govuk-header__navigation-item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="govuk-header__link" data-testid="topnav-apprenticeships">
-                    Your apprenticeships training
+                    Apprenticeships
                 </a>
             </li>
         }
-        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.FE))
-        {
-            <li class="govuk-header__navigation-item@(currentController == "Qualifications" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="LandingOptions" asp-controller="Qualifications" class="govuk-header__link">
-                    Your courses
-                </a>
-            </li>
-        }
-        @if (Model.ProviderContext.ProviderType == ProviderType.Both && enableApprenticeshipBulkUpload)
+        <li class="govuk-header__navigation-item@(currentController == "Venues" ? " govuk-header__navigation-item--active" : null)">
+            <a asp-action="Index" asp-controller="Venues" class="govuk-header__link" data-testid="topnav-locations">
+                Locations
+            </a>
+        </li>
+        @if (Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks)
         {
             <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link">
+                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link" data-testid="topnav-bulkupload">
                     Bulk upload
                 </a>
             </li>
         }
-        else if (enableApprenticeshipBulkUpload)
+        else if (Model.ShowApprenticeshipsLinks)
         {
             <li class="govuk-header__navigation-item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="govuk-header__link">
+                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="govuk-header__link" data-testid="topnav-bulkupload">
                     Bulk upload
                 </a>
             </li>
         }
-        else if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.FE))
+        else if (Model.ShowCoursesLinks)
         {
             <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="index" asp-controller="BulkUpload" class="govuk-header__link">
+                <a asp-action="index" asp-controller="BulkUpload" class="govuk-header__link" data-testid="topnav-bulkupload">
                     Bulk upload
                 </a>
             </li>
         }
         <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
-            <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link">
+            <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link" data-testid="topnav-signout">
                 Sign out
             </a>
         </li>

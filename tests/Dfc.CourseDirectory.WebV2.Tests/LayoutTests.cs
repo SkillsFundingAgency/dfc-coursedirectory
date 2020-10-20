@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core.Models;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -30,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            Assert.Equal(0, doc.QuerySelectorAll(".pttcd-sign-out-navigation-item").Length);
+            doc.QuerySelectorAll(".pttcd-sign-out-navigation-item").Length.Should().Be(0);
         }
 
         [Fact]
@@ -47,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            Assert.Equal(1, doc.QuerySelectorAll(".pttcd-sign-out-navigation-item").Length);
+            doc.QuerySelectorAll(".pttcd-sign-out-navigation-item").Length.Should().Be(1);
         }
 
         [Theory]
@@ -68,15 +69,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
-            Assert.Equal("Search providers", topLevelLinks[2].Label);
-            Assert.Equal("Manage users", topLevelLinks[3].Label);
-            Assert.Equal("Migration reports", topLevelLinks[4].Label);
-            Assert.Equal("Sign out", topLevelLinks[5].Label);
+            topLevelLinks.Count.Should().Be(6);
 
-            Assert.Equal(0, subNavLinks.Count);
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-qa");
+                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[4].TestId.Should().Be("topnav-migrationreports");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+            }
+
+            subNavLinks.Count.Should().Be(0);
         }
 
         [Theory]
@@ -101,20 +106,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
-            Assert.Equal("Search providers", topLevelLinks[2].Label);
-            Assert.Equal("Manage users", topLevelLinks[3].Label);
-            Assert.Equal("Migration reports", topLevelLinks[4].Label);
-            Assert.Equal("Sign out", topLevelLinks[5].Label);
+            topLevelLinks.Count.Should().Be(6);
+
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-qa");
+                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[4].TestId.Should().Be("topnav-migrationreports");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+            }
 
             Assert.Equal(4, subNavLinks.Count);
-            Assert.Equal("Home", subNavLinks[0].Label);
-            Assert.Equal("Your locations", subNavLinks[1].Label);
-            Assert.Equal("Your courses", subNavLinks[2].Label);
-            Assert.Equal("Bulk upload", subNavLinks[3].Label);
-            Assert.Equal("/BulkUpload", subNavLinks[3].Href);
+
+            using (new AssertionScope())
+            {
+                subNavLinks[0].TestId.Should().Be("adminsubnav-home");
+                subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
+                subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-bulkupload");
+                subNavLinks[3].Href.Should().Be("/BulkUpload");
+            }
         }
 
         [Theory]
@@ -139,20 +152,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
-            Assert.Equal("Search providers", topLevelLinks[2].Label);
-            Assert.Equal("Manage users", topLevelLinks[3].Label);
-            Assert.Equal("Migration reports", topLevelLinks[4].Label);
-            Assert.Equal("Sign out", topLevelLinks[5].Label);
+            topLevelLinks.Count.Should().Be(6);
+
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-qa");
+                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[4].TestId.Should().Be("topnav-migrationreports");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+            }
 
             Assert.Equal(4, subNavLinks.Count);
-            Assert.Equal("Home", subNavLinks[0].Label);
-            Assert.Equal("Your locations", subNavLinks[1].Label);
-            Assert.Equal("Your apprenticeships training", subNavLinks[2].Label);
-            Assert.Equal("Bulk upload", subNavLinks[3].Label);
-            Assert.Equal("/BulkUploadApprenticeships", subNavLinks[3].Href);
+
+            using (new AssertionScope())
+            {
+                subNavLinks[0].TestId.Should().Be("adminsubnav-home");
+                subNavLinks[1].TestId.Should().Be("adminsubnav-apprenticeships");
+                subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-bulkupload");
+                subNavLinks[3].Href.Should().Be("/BulkUploadApprenticeships");
+            }
         }
 
         [Theory]
@@ -177,21 +198,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Quality assurance", topLevelLinks[1].Label);
-            Assert.Equal("Search providers", topLevelLinks[2].Label);
-            Assert.Equal("Manage users", topLevelLinks[3].Label);
-            Assert.Equal("Migration reports", topLevelLinks[4].Label);
-            Assert.Equal("Sign out", topLevelLinks[5].Label);
+            topLevelLinks.Count.Should().Be(6);
+
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-qa");
+                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[4].TestId.Should().Be("topnav-migrationreports");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+            }
 
             Assert.Equal(5, subNavLinks.Count);
-            Assert.Equal("Home", subNavLinks[0].Label);
-            Assert.Equal("Your locations", subNavLinks[1].Label);
-            Assert.Equal("Your apprenticeships training", subNavLinks[2].Label);
-            Assert.Equal("Your courses", subNavLinks[3].Label);
-            Assert.Equal("Bulk upload", subNavLinks[4].Label);
-            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[4].Href);
+
+            using (new AssertionScope())
+            {
+                subNavLinks[0].TestId.Should().Be("adminsubnav-home");
+                subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
+                subNavLinks[2].TestId.Should().Be("adminsubnav-apprenticeships");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-locations");
+                subNavLinks[4].TestId.Should().Be("adminsubnav-bulkupload");
+                subNavLinks[4].Href.Should().Be("/BulkUpload/LandingOptions");
+            }
         }
 
         [Theory]
@@ -216,15 +245,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Your locations", topLevelLinks[1].Label);
-            Assert.Equal("Your courses", topLevelLinks[2].Label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].Label);
-            Assert.Equal("Sign out", topLevelLinks[4].Label);
-            Assert.Equal("/BulkUpload", topLevelLinks[3].Href);
-            
-            Assert.Equal(0, subNavLinks.Count);
+            topLevelLinks.Count.Should().Be(5);
+
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-courses");
+                topLevelLinks[2].TestId.Should().Be("topnav-locations");
+                topLevelLinks[3].TestId.Should().Be("topnav-bulkupload");
+                topLevelLinks[3].Href.Should().Be("/BulkUpload");
+                topLevelLinks[4].TestId.Should().Be("topnav-signout");
+            }
+
+            subNavLinks.Count.Should().Be(0);
         }
 
         [Theory]
@@ -249,15 +282,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(5, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Your locations", topLevelLinks[1].Label);
-            Assert.Equal("Your apprenticeships training", topLevelLinks[2].Label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].Label);
-            Assert.Equal("/BulkUploadApprenticeships", topLevelLinks[3].Href);
-            Assert.Equal("Sign out", topLevelLinks[4].Label);
+            topLevelLinks.Count.Should().Be(5);
 
-            Assert.Equal(0, subNavLinks.Count);
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-apprenticeships");
+                topLevelLinks[2].TestId.Should().Be("topnav-locations");
+                topLevelLinks[3].TestId.Should().Be("topnav-bulkupload");
+                topLevelLinks[3].Href.Should().Be("/BulkUploadApprenticeships");
+                topLevelLinks[4].TestId.Should().Be("topnav-signout");
+            }
+
+            subNavLinks.Count.Should().Be(0);
         }
 
         [Theory]
@@ -282,16 +319,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(6, topLevelLinks.Count);
-            Assert.Equal("Home", topLevelLinks[0].Label);
-            Assert.Equal("Your locations", topLevelLinks[1].Label);
-            Assert.Equal("Your apprenticeships training", topLevelLinks[2].Label);
-            Assert.Equal("Your courses", topLevelLinks[3].Label);
-            Assert.Equal("Bulk upload", topLevelLinks[4].Label);
-            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[4].Href);
-            Assert.Equal("Sign out", topLevelLinks[5].Label);
+            topLevelLinks.Count.Should().Be(6);
 
-            Assert.Equal(0, subNavLinks.Count);
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-courses");
+                topLevelLinks[2].TestId.Should().Be("topnav-apprenticeships");
+                topLevelLinks[3].TestId.Should().Be("topnav-locations");
+                topLevelLinks[4].TestId.Should().Be("topnav-bulkupload");
+                topLevelLinks[4].Href.Should().Be("/BulkUpload/LandingOptions");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+            }
+
+            subNavLinks.Count.Should().Be(0);
         }
 
         [Theory]
@@ -316,7 +357,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var doc = await response.GetDocument();
             var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
-            Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
+            bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
         }
 
         [Theory]
@@ -342,7 +383,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var doc = await response.GetDocument();
             var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
-            Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
+            bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
         }
 
         [Theory]
@@ -365,7 +406,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementByTestId("topnav-apprenticeships"));
+            doc.GetElementByTestId("topnav-apprenticeships").Should().BeNull();
         }
 
         [Theory]
@@ -388,7 +429,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementByTestId("adminsubnav-apprenticeships"));
+            doc.GetElementByTestId("adminsubnav-apprenticeships").Should().BeNull();
         }
 
         [Fact]
@@ -402,7 +443,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetAllElementsByTestId("cookie-banner"));
+            doc.GetAllElementsByTestId("cookie-banner").Should().NotBeNull();
         }
 
         [Theory]
@@ -421,7 +462,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementById("pttcd-cookie-banner"));
+            doc.GetElementByTestId("cookie-banner").Should().BeNull();
         }
 
         [Fact]
@@ -435,7 +476,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Assert
             var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetAllElementsByTestId("cookie-banner-confirmation"));
+            doc.GetAllElementsByTestId("cookie-banner-confirmation").Should().NotBeNull();
         }
 
         [Theory]
@@ -464,36 +505,36 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var gotGATags = doc.QuerySelectorAll("script")
                 .Where(s => s.GetAttribute("src")?.StartsWith("https://www.googletagmanager.com") == true)
                 .Any();
-            Assert.Equal(expectGATagsToBeRendered, gotGATags);
+            gotGATags.Should().Be(expectGATagsToBeRendered);
         }
 
-        private IReadOnlyList<(string Href, string Label)> GetTopLevelNavLinks(IHtmlDocument doc)
+        private IReadOnlyList<(string Href, string TestId)> GetTopLevelNavLinks(IHtmlDocument doc)
         {
-            var results = new List<(string href, string label)>();
+            var results = new List<(string Href, string TestId)>();
 
             foreach (var item in doc.GetElementsByClassName("govuk-header__navigation-item"))
             {
                 var anchor = item.GetElementsByTagName("a")[0];
                 var href = anchor.GetAttribute("href");
-                var label = anchor.TextContent.Trim();
+                var testId = anchor.GetAttribute("data-testid");
 
-                results.Add((href, label));
+                results.Add((href, testId));
             }
 
             return results;
         }
 
-        private IReadOnlyList<(string Href, string Label)> GetSubNavLinks(IHtmlDocument doc)
+        private IReadOnlyList<(string Href, string TestId)> GetSubNavLinks(IHtmlDocument doc)
         {
-            var results = new List<(string href, string label)>();
+            var results = new List<(string Href, string TestId)>();
 
             foreach (var item in doc.GetElementsByClassName("pttcd-subnav__item"))
             {
                 var anchor = item.GetElementsByTagName("a")[0];
                 var href = anchor.GetAttribute("href");
-                var label = anchor.TextContent.Trim();
+                var testId = anchor.GetAttribute("data-testid");
 
-                results.Add((href, label));
+                results.Add((href, testId));
             }
 
             return results;

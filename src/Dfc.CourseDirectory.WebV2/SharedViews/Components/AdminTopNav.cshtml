@@ -9,32 +9,32 @@
 <nav>
     <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
         <li class="govuk-header__navigation-item@(currentController == "HelpdeskDashboard" && currentAction == "Dashboard" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Dashboard" asp-controller="HelpdeskDashboard" class="govuk-header__link">
+            <a asp-action="Dashboard" asp-controller="HelpdeskDashboard" class="govuk-header__link" data-testid="topnav-home">
                 Home
             </a>
         </li>
         <li class="govuk-header__navigation-item@(currentController == "ApprenticeshipQA" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="ListProviders" asp-controller="ApprenticeshipQA" class="govuk-header__link">
+            <a asp-action="ListProviders" asp-controller="ApprenticeshipQA" class="govuk-header__link" data-testid="topnav-qa">
                 Quality assurance
             </a>
         </li>
         <li class="govuk-header__navigation-item@(currentController == "SearchProvider" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Index" asp-controller="SearchProvider" class="govuk-header__link">
+            <a asp-action="Index" asp-controller="SearchProvider" class="govuk-header__link" data-testid="topnav-searchproviders">
                 Search providers
             </a>
         </li>
         <li class="govuk-header__navigation-item">
-            <a href="@Settings.ManageUsersUrl" target="_blank" rel="noreferrer" class="govuk-header__link">
+            <a href="@Settings.ManageUsersUrl" target="_blank" rel="noreferrer" class="govuk-header__link" data-testid="topnav-manageusers">
                 Manage users
             </a>
         </li>
         <li class="govuk-header__navigation-item@(currentController == "Report" && currentAction == "Index" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Index" asp-controller="Report" class="govuk-header__link">
+            <a asp-action="Index" asp-controller="Report" class="govuk-header__link" data-testid="topnav-migrationreports">
                 Migration reports
             </a>
         </li>
         <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
-            <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link">
+            <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link" data-testid="topnav-signout">
                 Sign out
             </a>
         </li>

@@ -4,8 +4,21 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
 {
     public class ProviderNavViewModel
     {
-        public ProviderInfo ProviderContext { get; set; }
-        public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
-        public bool ShowApprenticeshipsLink { get; set; }
+        public ProviderInfo ProviderInfo { get; set; }
+        public bool ShowApprenticeshipsLinks { get; set; }
+        public bool ShowCoursesLinks { get; set; }
+
+        public static ProviderNavViewModel Create(
+            ProviderInfo providerInfo,
+            ApprenticeshipQAStatus? apprenticeshipQAStatus)
+        {
+            return new ProviderNavViewModel()
+            {
+                ProviderInfo = providerInfo,
+                ShowApprenticeshipsLinks = providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
+                    apprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
+                ShowCoursesLinks = providerInfo.ProviderType.HasFlag(ProviderType.FE)
+            };
+        }
     }
 }

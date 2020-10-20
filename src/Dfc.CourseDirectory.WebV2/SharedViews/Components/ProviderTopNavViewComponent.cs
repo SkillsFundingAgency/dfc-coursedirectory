@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
@@ -23,13 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
                     ProviderId = providerInfo.ProviderId
                 });
 
-            var vm = new ProviderNavViewModel()
-            {
-                ApprenticeshipQAStatus = qaStatus ?? ApprenticeshipQAStatus.NotStarted,
-                ProviderContext = providerInfo,
-                ShowApprenticeshipsLink = providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
-                    qaStatus == ApprenticeshipQAStatus.Passed
-            };
+            var vm = ProviderNavViewModel.Create(providerInfo, qaStatus);
 
             return View("~/SharedViews/Components/ProviderTopNav.cshtml", vm);
         }
