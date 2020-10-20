@@ -77,9 +77,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string SUB_REGION { get; set; }
 
             [Ignore]
-            public ApprenticeshipType ApprenticeshipType { get; set; }
-
-            [Ignore]
             public List<BulkUploadError> ErrorsList { get; set; }
 
             [Ignore]
@@ -87,9 +84,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             [Ignore]
             public IStandardsAndFrameworks Standard { get; set; }
-
-            [Ignore]
-            public IStandardsAndFrameworks Framework { get; set; }
 
             public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
@@ -119,10 +113,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
                 Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
-                Map(m => m.FRAMEWORK_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_CODE);
-                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PROG_TYPE);
-                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PATHWAY_CODE);
-                Map(m => m.Framework).ConvertUsing(Mandatory_Checks_GetFramework);
+                Map(m => m.FRAMEWORK_CODE);
+                Map(m => m.FRAMEWORK_PROG_TYPE);
+                Map(m => m.FRAMEWORK_PATHWAY_CODE);
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
@@ -136,16 +129,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
-                Map(m => m.ApprenticeshipType).ConvertUsing((row) =>
-                {
-                    row.TryGetField("STANDARD_CODE", out string standardCode);
-                    if (!string.IsNullOrWhiteSpace(standardCode))
-                    {
-                        return ApprenticeshipType.StandardCode;
-                    }
-
-                    return ApprenticeshipType.FrameworkCode;
-                });
                 Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
@@ -201,74 +184,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
                     row.TryGetField<int?>("STANDARD_CODE", out int? STANDARD_CODE);
-                }
-                return value;
-            }
-
-            private IStandardsAndFrameworks Mandatory_Checks_GetFramework(IReaderRow row)
-            {
-                var frameworkCode = Mandatory_Checks_FRAMEWORK_CODE(row);
-                var progType = Mandatory_Checks_FRAMEWORK_PROG_TYPE(row);
-                var pathwayCode = Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(row);
-                if (frameworkCode.HasValue)
-                {
-                    if (progType.HasValue)
-                    {
-                        if (pathwayCode.HasValue)
-                        {
-                            var result = GetFramework(frameworkCode.Value, progType.Value, pathwayCode.Value).GetAwaiter().GetResult();
-                            if (result == null)
-                            {
-                                throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Framework Code, Prog Type, or Pathway Code. Framework not found.");
-                            }
-
-                            return result;
-                        }
-                        else
-                        {
-                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Pathway Type.");
-                        }
-                    }
-                    else
-                    {
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Prog Type.");
-                    }
-                }
-
-                if (!frameworkCode.HasValue && (pathwayCode.HasValue || progType.HasValue))
-                {
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Framework Code.");
-                }
-
-                return null;
-            }
-
-            private int? Mandatory_Checks_FRAMEWORK_CODE(IReaderRow row)
-            {
-                int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_CODE");
-                if (value.HasValue)
-                {
-                    ValuesForBothStandardAndFrameworkCannotBePresent(row);
-                }
-                return value;
-            }
-
-            private int? Mandatory_Checks_FRAMEWORK_PROG_TYPE(IReaderRow row)
-            {
-                int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PROG_TYPE");
-                if (value.HasValue)
-                {
-                    ValuesForBothStandardAndFrameworkCannotBePresent(row);
-                }
-                return value;
-            }
-
-            private int? Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(IReaderRow row)
-            {
-                int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PATHWAY_CODE");
-                if (value.HasValue)
-                {
-                    ValuesForBothStandardAndFrameworkCannotBePresent(row);
                 }
                 return value;
             }
@@ -954,30 +869,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
             }
 
-            private async Task<IStandardsAndFrameworks> GetFramework(int frameworkCode, int progType, int pathwayCode)
-            {
-                var framework = await _standardsAndFrameworksCache.GetFramework(
-                        frameworkCode,
-                        progType,
-                        pathwayCode);
-
-                if (framework != null)
-                {
-                    return new StandardsAndFrameworks()
-                    {
-                        id = framework.CosmosId,
-                        FrameworkCode = framework.FrameworkCode,
-                        ProgType = framework.ProgType,
-                        PathwayCode = framework.PathwayCode,
-                        NasTitle = framework.NasTitle
-                    };
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
             private IEnumerable<string> ParseRegionData(string regions)
             {
                 var availableRegions = new SelectRegionModel();
@@ -1289,6 +1180,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             foreach (var record in records)
             {
+                if (record.FRAMEWORK_CODE.HasValue ||
+                    record.FRAMEWORK_PATHWAY_CODE.HasValue ||
+                    record.FRAMEWORK_PROG_TYPE.HasValue)
+                {
+                    continue;
+                }
                             
                 var alreadyExists = DoesApprenticeshipExist(apprenticeships, record);
             
@@ -1304,23 +1201,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         new Apprenticeship
                         {
                             id = Guid.NewGuid(),
-                            ApprenticeshipTitle = record.Framework == null
-                                ? record.Standard.StandardName
-                                : record.Framework.NasTitle,
+                            ApprenticeshipTitle = record.Standard.StandardName,
                             ProviderId = userDetails.ProviderID ?? Guid.Empty,
                             ProviderUKPRN = int.Parse(userDetails.UKPRN),
                             ApprenticeshipLocations = record.ApprenticeshipLocations,
-                            ApprenticeshipType = record.ApprenticeshipType,
-                            FrameworkId = record.Framework?.id,
-                            StandardId = record.Standard?.id,
-                            FrameworkCode = record.Framework?.FrameworkCode,
-                            ProgType = record.Framework?.ProgType,
-                            PathwayCode = record.Framework?.PathwayCode,
+                            ApprenticeshipType = ApprenticeshipType.StandardCode,
+                            StandardId = record.Standard.id,
                             StandardCode = record.Standard?.StandardCode,
                             Version = record.Standard?.Version,
-                            NotionalNVQLevelv2 = record.Framework == null
-                                ? record.Standard.NotionalEndLevel
-                                : record.Framework.NotionalEndLevel,
+                            NotionalNVQLevelv2 = record.Standard.NotionalEndLevel,
                             MarketingInformation = record.APPRENTICESHIP_INFORMATION,
                             Url = record.APPRENTICESHIP_WEBPAGE,
                             ContactTelephone = record.CONTACT_PHONE,
@@ -1338,21 +1227,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         private Apprenticeship DoesApprenticeshipExist(List<Apprenticeship> apprenticeships, ApprenticeshipCsvRecord record)
         {
-            if (record.ApprenticeshipType == ApprenticeshipType.StandardCode)
-            {
-                var existingApprenticeships = apprenticeships.Where(x =>
+            var existingApprenticeships = apprenticeships.Where(x =>
                     x.StandardCode == record.STANDARD_CODE && x.Version == record.STANDARD_VERSION);
-                return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
-            }
-            else
-            {
-                var existingApprenticeships = apprenticeships.Where(x =>
-                    x.FrameworkCode == record.FRAMEWORK_CODE &&
-                    x.ProgType == record.FRAMEWORK_PROG_TYPE &&
-                    x.PathwayCode == record.FRAMEWORK_PATHWAY_CODE);
-
-                return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
-            }
+            return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
         }
 
         private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthUserDetails authUserDetails)
