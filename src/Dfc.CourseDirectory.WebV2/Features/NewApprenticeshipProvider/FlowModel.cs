@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
-using FindStandardOrFramework = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
-    public class FlowModel : IMptxState, ClassroomLocation.IFlowModelCallback, FindStandardOrFramework.IFlowModelCallback
+    public class FlowModel : IMptxState, ClassroomLocation.IFlowModelCallback
     {
         public string ProviderMarketingInformation { get; private set; }
         public StandardOrFramework ApprenticeshipStandardOrFramework { get; private set; }
@@ -107,9 +105,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             int radius,
             IEnumerable<ApprenticeshipDeliveryMode> deliveryModes) =>
             SetClassroomLocationForVenue(venueId, originalVenueId, radius, deliveryModes);
-
-        void IFlowModelCallback.ReceiveStandardOrFramework(StandardOrFramework standardOrFramework) =>
-            SetApprenticeshipStandardOrFramework(standardOrFramework);
 
         public class ClassroomLocationEntry
         {

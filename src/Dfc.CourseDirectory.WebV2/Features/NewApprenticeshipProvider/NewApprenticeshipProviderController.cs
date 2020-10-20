@@ -7,7 +7,7 @@ using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
-using FindStandardOrFramework = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework;
+using FindStandard = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -224,27 +224,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("find-standard")]
-        public IActionResult FindStandardOrFramework(
-            [FromServices] MptxManager mptxManager,
-            ProviderContext providerContext)
+        public IActionResult FindStandard(ProviderContext providerContext) => RedirectToAction(
+            "Get",
+            "FindStandard",
+            new
+            {
+                returnUrl = new Url(Url.Action(nameof(StandardSelected)))
+                    .WithMptxInstanceId(Flow.InstanceId)
+                    .WithProviderContext(providerContext)
+            }).WithProviderContext(providerContext);
+
+        [MptxAction]
+        [HttpGet("standard-selected")]
+        public async Task<IActionResult> StandardSelected(Standard standard, ProviderContext providerContext)
         {
-            var childFlow = mptxManager.CreateInstance<FindStandardOrFramework.FlowModel, FindStandardOrFramework.IFlowModelCallback>(
-                Flow.InstanceId,
-                new FindStandardOrFramework.FlowModel()
-                {
-                    ProviderId = providerContext.ProviderInfo.ProviderId
-                },
-                contextItems: new Dictionary<string, object>()
-                {
-                    {
-                        "ReturnUrl",
-                        new Url(Url.Action(nameof(ApprenticeshipDetails)))
-                            .WithMptxInstanceId(Flow.InstanceId)
-                            .WithProviderContext(providerContext)
-                    }
-                });
-            return RedirectToAction("FindStandardOrFramework", "Apprenticeships")
-                .WithMptxInstanceId(childFlow.InstanceId);
+            await _mediator.Send(new StandardSelected.Command() { Standard = standard });
+
+            return RedirectToAction(nameof(ApprenticeshipDetails))
+                .WithMptxInstanceId(Flow.InstanceId)
+                .WithProviderContext(providerContext);
         }
 
         [StartsMptx]
@@ -306,7 +304,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     RedirectToAction(nameof(ApprenticeshipSummary))
                         .WithProviderContext(providerContext)
                         .WithMptxInstanceId(Flow) :
-                    RedirectToAction(nameof(FindStandardOrFramework))
+                    RedirectToAction(nameof(FindStandard))
                         .WithProviderContext(providerContext)
                         .WithMptxInstanceId(Flow));
         }

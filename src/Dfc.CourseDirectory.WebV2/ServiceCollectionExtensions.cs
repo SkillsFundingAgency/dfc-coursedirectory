@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ModelBinderProviders.Insert(0, new ProviderContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new StandardOrFrameworkModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new StandardModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>

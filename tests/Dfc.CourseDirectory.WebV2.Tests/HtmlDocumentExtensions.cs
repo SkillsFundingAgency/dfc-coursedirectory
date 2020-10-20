@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(expectedMessage, errorMessage);
         }
 
-        public static IReadOnlyCollection<IElement> GetAllElementsByTestId(this IHtmlDocument doc, string testId) =>
+        public static IReadOnlyList<IElement> GetAllElementsByTestId(this IHtmlDocument doc, string testId) =>
             doc.Body.GetAllElementsByTestId(testId);
 
         public static IElement GetElementByTestId(this IHtmlDocument doc, string testId) =>

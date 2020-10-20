@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    foreach (var item in result.Value)
+                    foreach (var item in result.Value.Where(r => r.ApprenticeshipType != ApprenticeshipType.FrameworkCode))
                     {
                         listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
                         {

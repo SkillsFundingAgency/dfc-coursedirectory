@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Flurl;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.WebV2.ViewHelpers
 {
@@ -34,6 +36,20 @@ namespace Dfc.CourseDirectory.WebV2.ViewHelpers
             }
 
             return new Url(url).WithProviderContext(this);
+        }
+
+        public IHtmlContent CreateHiddenInput()
+        {
+            if (ProviderContext == null)
+            {
+                throw new InvalidOperationException("No provider context set.");
+            }
+
+            var tagBuilder = new TagBuilder("input");
+            tagBuilder.Attributes.Add("type", "hidden");
+            tagBuilder.Attributes.Add("name", ProviderContextResourceFilter.RouteValueKey);
+            tagBuilder.Attributes.Add("value", ProviderInfo.ProviderId.ToString());
+            return tagBuilder;
         }
     }
 }

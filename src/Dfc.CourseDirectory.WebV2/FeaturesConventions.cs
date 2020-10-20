@@ -20,8 +20,6 @@ namespace Dfc.CourseDirectory.WebV2
                 var featureName = controllerFullName.Substring(featuresNamespace.Length + 1).Split('.')[0];
 
                 controller.Properties.Add("Feature", featureName);
-
-                controller.ControllerName = featureName;
             }
         }
     }
