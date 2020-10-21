@@ -56,3 +56,31 @@ Navigate to https://localhost:44345/ in a browser.
 #### Login
 
 Ask the team to make you a valid DfE Sign-in account with provider(s) associated with it.
+
+## Project architecture
+
+
+### Azure Function App Dependencies
+
+This project depends on multiple deployed Azure function app resources:
+
+* [dfc-providerportal-apprenticeships](https://github.com/skillsfundingagency/dfc-providerportal-apprenticeships)
+* [dfc-providerportal-courses](https://github.com/SkillsFundingAgency/dfc-providerportal-courses)
+* [dfc-providerportal-fileprocessor](https://github.com/SkillsFundingAgency/dfc-providerportal-fileprocessor)
+* [dfc-providerportal-findanapprenticeship](https://github.com/SkillsFundingAgency/dfc-providerportal-findanapprenticeship)
+* [dfc-providerportal-tribalexporter](https://github.com/SkillsFundingAgency/dfc-providerportal-tribalexporter)
+* [dfc-providerportal-ukrlp](https://github.com/SkillsFundingAgency/dfc-providerportal-ukrlp)
+
+### Project Structure
+
+#### Legacy
+
+The projects in the `Legacy` solution folder were inherited without good test coverage and are not in an easily testable state.
+
+#### WebV2
+
+New code is being written in the WebV2 project that is test-driven and uses modern patterns of development to achieve cleaner testable code.
+
+See the [WebV2 readme](src/Dfc.CourseDirectory.WebV2/README.md) for details of the patterns in use.
+
+The WebV2 controllers are made available under the legacy `Dfc.CourseDirectory.Web` project so that we can move routes across one at time. As such to run the WebV2 code you actually need to run the original "Web" project.
