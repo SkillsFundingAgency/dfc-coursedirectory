@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Helpers;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,101 +26,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         [HttpGet("{providerId}")]
         public async Task<IActionResult> ProviderSelected(ProviderSelected.Query query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
-
-        [StartsMptx]
-        [HttpGet("{providerId}/provider-assessment")]
-        public async Task<IActionResult> ProviderAssessmentStart(
-            Guid providerId,
-            [FromServices] MptxManager mptxManager,
-            [FromServices] ProviderAssessment.FlowModelInitializer flowModelInitializer)
-        {
-            var flowModel = await flowModelInitializer.Initialize(providerId);
-            var flow = mptxManager.CreateInstance(flowModel);
-            return RedirectToAction(nameof(ProviderAssessment))
-                .WithMptxInstanceId(flow);
-        }
-
-        [MptxAction]
-        [HttpGet("provider-assessment")]
-        public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query) =>
-            await _mediator.SendAndMapResponse(query, vm => View(vm));
-
-        [MptxAction]
-        [HttpPost("provider-assessment")]
-        public async Task<IActionResult> ProviderAssessment(
-            ProviderAssessment.Command command,
-            MptxInstanceContext<ProviderAssessment.FlowModel> flow)
-        {
-            return await _mediator.SendAndMapResponse(
-                command,
-                response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
-                    vm => RedirectToAction(nameof(ProviderAssessmentConfirmation))
-                        .WithMptxInstanceId(flow.InstanceId)));
-        }
-
-        [MptxAction]
-        [HttpGet("provider-assessment-confirmation")]
-        public async Task<IActionResult> ProviderAssessmentConfirmation(ProviderAssessment.ConfirmationQuery query) =>
-            await _mediator.SendAndMapResponse(query, vm => View(vm));
-
-        [MptxAction]
-        [HttpPost("provider-assessment-confirmation")]
-        public async Task<IActionResult> ProviderAssessmentConfirmation(
-            ProviderAssessment.ConfirmationCommand command,
-            MptxInstanceContext<ProviderAssessment.FlowModel> flow)
-        {
-            return await _mediator.SendAndMapResponse(
-                command,
-                success => RedirectToAction(nameof(ProviderSelected), new { providerId = flow.State.ProviderId }));
-        }
-
-        [HttpGet("{providerId}/apprenticeship-assessment/{apprenticeshipId}")]
-        public async Task<IActionResult> ApprenticeshipAssessmentStart(
-            [ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId,
-            [FromServices] MptxManager mptxManager,
-            [FromServices] ApprenticeshipAssessment.FlowModelInitializer flowModelInitializer)
-        {
-            var flowModel = await flowModelInitializer.Initialize(apprenticeshipId);
-            var flow = mptxManager.CreateInstance(flowModel);
-            return RedirectToAction(nameof(ApprenticeshipAssessment))
-                .WithMptxInstanceId(flow);
-        }
-
-        [MptxAction]
-        [HttpGet("apprenticeship-assessment")]
-        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query) =>
-            await _mediator.SendAndMapResponse(query, vm => View(vm));
-
-        [MptxAction]
-        [HttpPost("apprenticeship-assessment")]
-        public async Task<IActionResult> ApprenticeshipAssessment(
-            ApprenticeshipAssessment.Command command,
-            MptxInstanceContext<ApprenticeshipAssessment.FlowModel> flow)
-        {
-            return await _mediator.SendAndMapResponse(
-                command,
-                response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
-                    vm => RedirectToAction(nameof(ApprenticeshipAssessmentConfirmation))
-                        .WithMptxInstanceId(flow.InstanceId)));
-        }
-
-        [MptxAction]
-        [HttpGet("apprenticeship-assessment-confirmation")]
-        public async Task<IActionResult> ApprenticeshipAssessmentConfirmation(ApprenticeshipAssessment.ConfirmationQuery query) =>
-            await _mediator.SendAndMapResponse(query, vm => View(vm));
-
-        [MptxAction]
-        [HttpPost("apprenticeship-assessment-confirmation")]
-        public async Task<IActionResult> ApprenticeshipAssessmentConfirmation(
-            ApprenticeshipAssessment.ConfirmationCommand command,
-            MptxInstanceContext<ApprenticeshipAssessment.FlowModel> flow)
-        {
-            return await _mediator.SendAndMapResponse(
-                command,
-                success => RedirectToAction(nameof(ProviderSelected), new { providerId = flow.State.ProviderId }));
-        }
 
         [HttpPost("{providerId}/complete")]
         public async Task<IActionResult> Complete(Complete.Command command) =>

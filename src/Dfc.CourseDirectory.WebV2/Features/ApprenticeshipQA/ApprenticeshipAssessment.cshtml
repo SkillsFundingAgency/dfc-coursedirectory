@@ -18,7 +18,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ApprenticeshipAssessment" append-mptx-id>
+        <form asp-action="Post" asp-route-apprenticeshipId="@Model.ApprenticeshipId">
             <h1 class="govuk-heading-xl">@Model.ApprenticeshipTitle</h1>
             <div class="govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-l">Apprenticeship training course information</h2>
