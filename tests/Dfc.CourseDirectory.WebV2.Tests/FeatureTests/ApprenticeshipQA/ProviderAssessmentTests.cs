@@ -1369,7 +1369,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 return await initializer.Initialize(providerId);
             });
 
-            return CreateFormFlowInstanceFromRouteParameters(
+            return CreateFormFlowInstanceForRouteParameters(
                 key: "apprenticeship-qa/provider-assessment",
                 routeParameters: new Dictionary<string, object>()
                 {
