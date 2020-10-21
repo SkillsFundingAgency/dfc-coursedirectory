@@ -4,17 +4,13 @@
     ViewBag.Title = "Add apprenticeship training details";
 }
 
-@if (!ViewContext.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="MarketingInformation" />
-        <govuk-error-summary-item asp-for="Website" />
-        <govuk-error-summary-item asp-for="ContactEmail" />
-        <govuk-error-summary-item asp-for="ContactTelephone" />
-        <govuk-error-summary-item asp-for="ContactWebsite" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="MarketingInformation" />
+    <govuk-error-summary-item asp-for="Website" />
+    <govuk-error-summary-item asp-for="ContactEmail" />
+    <govuk-error-summary-item asp-for="ContactTelephone" />
+    <govuk-error-summary-item asp-for="ContactWebsite" />
+</govuk-error-summary>
 
 <form asp-action="ApprenticeshipDetails" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <span class="govuk-caption-l" id="pttcd-new-apprenticeship-provider__apprenticeship-details__standard-name">@Model.StandardOrFramework.StandardOrFrameworkTitle</span>

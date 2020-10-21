@@ -3,13 +3,9 @@
     ViewBag.Title = "Apprenticeship location type";
 }
 
-@if (!ViewContext.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="National" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="National" />
+</govuk-error-summary>
 
 <form asp-action="ApprenticeshipEmployerLocations" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <govuk-radios asp-for="National">

@@ -3,13 +3,9 @@
     ViewBag.Title = "Select the regions where you provide this training";
 }
 
-@if (!ViewContext.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="RegionIds" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="RegionIds" />
+</govuk-error-summary>
 
 <form asp-action="ApprenticeshipEmployerLocationsRegions" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <govuk-fieldset>

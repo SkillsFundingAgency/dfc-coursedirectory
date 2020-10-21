@@ -7,15 +7,11 @@
     var addVenueCallback = new Url(ViewContext.HttpContext.Request.GetEncodedPathAndQuery()).RemoveQueryParam("venueId");
 }
 
-@if (!ViewContext.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="VenueId" />
-        <govuk-error-summary-item asp-for="Radius" />
-        <govuk-error-summary-item asp-for="DeliveryModes" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="VenueId" />
+    <govuk-error-summary-item asp-for="Radius" />
+    <govuk-error-summary-item asp-for="DeliveryModes" />
+</govuk-error-summary>
 
 <form asp-action="ClassroomLocation" append-mptx-id class="pttcd-apprenticeships__classroom-location-form">
     <h1 class="govuk-heading-l">Select delivery options</h1>

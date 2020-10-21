@@ -3,17 +3,13 @@
     ViewContext.SetLayoutData(title: "Location address");
 }
 
-@if (!ViewData.ModelState.IsValid)
-{
-    <govuk-error-summary>
-        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
-        <govuk-error-summary-item asp-for="AddressLine1" />
-        <govuk-error-summary-item asp-for="AddressLine2" />
-        <govuk-error-summary-item asp-for="Town" />
-        <govuk-error-summary-item asp-for="County" />
-        <govuk-error-summary-item asp-for="Postcode" />
-    </govuk-error-summary>
-}
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="AddressLine1" />
+    <govuk-error-summary-item asp-for="AddressLine2" />
+    <govuk-error-summary-item asp-for="Town" />
+    <govuk-error-summary-item asp-for="County" />
+    <govuk-error-summary-item asp-for="Postcode" />
+</govuk-error-summary>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
