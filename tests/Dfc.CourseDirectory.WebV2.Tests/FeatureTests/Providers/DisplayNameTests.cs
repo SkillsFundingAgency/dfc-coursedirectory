@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Provider name",
                 alias: "Trading name");
 
@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 HttpMethod.Get,
                 $"providers/display-name?providerId={providerId}");
 
-            await User.AsProviderUser(providerId, ProviderType.Both);
+            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Provider name",
                 alias: "Trading name");
 
@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 Content = content
             };
 
-            await User.AsProviderUser(providerId, ProviderType.Both);
+            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.SendAsync(request);

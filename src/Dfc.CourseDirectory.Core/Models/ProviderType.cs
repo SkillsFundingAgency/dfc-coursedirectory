@@ -7,8 +7,7 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         Undefined = 0,
         FE = 1,
-        Apprenticeships = 2,
-        Both = FE | Apprenticeships,
+        Apprenticeships = 2
     }
 
     public static class ProviderTypeExtensions
@@ -19,7 +18,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 ProviderType.Undefined => "",
                 ProviderType.Apprenticeships => "Apprenticeships",
                 ProviderType.FE => "F.E.",
-                ProviderType.Both => "Both",
+                ProviderType.Apprenticeships | ProviderType.FE => "Both",
                 _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
             };
     }

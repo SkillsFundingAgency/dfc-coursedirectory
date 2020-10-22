@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task GetSearch_NotEnoughCharactersReturnsError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task GetSearch_RendersSearchResults()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE | ProviderType.Apprenticeships);
 
             await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
             await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task GetSelect_ValidRequest_UpdatesParentStateAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Both);
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE | ProviderType.Apprenticeships);
 
             await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
 

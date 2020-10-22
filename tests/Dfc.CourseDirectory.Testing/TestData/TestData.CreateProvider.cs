@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
@@ -16,7 +15,7 @@ namespace Dfc.CourseDirectory.Testing
         public async Task<Guid> CreateProvider(
             int ukprn = 12345,
             string providerName = "Test Provider",
-            ProviderType providerType = ProviderType.Both,
+            ProviderType providerType = ProviderType.FE | ProviderType.Apprenticeships,
             string providerStatus = "Active",
             ApprenticeshipQAStatus? apprenticeshipQAStatus = ApprenticeshipQAStatus.Passed,
             string marketingInformation = "",

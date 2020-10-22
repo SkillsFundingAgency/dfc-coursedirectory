@@ -146,7 +146,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
-        [InlineData(ProviderType.Both)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Get_ApprenticeshipProviderType_RendersMarketingInformation(ProviderType providerType)
         {
             // Arrange
@@ -295,14 +295,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "My Provider",
                 alias: "My Trading Name",
                 displayNameSource: displayNameSource);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
 
-            await User.AsProviderUser(providerId, ProviderType.Both);
+            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.SendAsync(request);

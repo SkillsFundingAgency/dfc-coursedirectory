@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
@@ -304,7 +304,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType, providerId);
@@ -337,7 +337,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         [Theory]
         [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
-        [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/BulkUpload/LandingOptions")]
         public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
              ProviderType providerType,
             string expectedHref)
@@ -363,7 +363,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(ProviderType.FE, "/BulkUpload")]
         [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
-        [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/BulkUpload/LandingOptions")]
         public async Task ProviderTopNavBulkUploadLinksAreCorrect(
             ProviderType providerType,
             string expectedHref)
@@ -393,7 +393,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Test Provider",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
@@ -416,7 +416,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Test Provider",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 

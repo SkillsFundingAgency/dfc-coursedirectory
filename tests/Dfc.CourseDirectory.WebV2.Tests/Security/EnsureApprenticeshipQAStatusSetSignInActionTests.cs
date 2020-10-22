@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
 
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
-        [InlineData(ProviderType.Both)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task NewApprenticeshipProvider_SetsApprenticeshipQAStatus(ProviderType providerType)
         {
             // Arrange
