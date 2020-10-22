@@ -59,9 +59,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             public int? STANDARD_CODE { get; set; }
             public int? STANDARD_VERSION { get; set; }
-            public int? FRAMEWORK_CODE { get; set; }
-            public int? FRAMEWORK_PROG_TYPE { get; set; }
-            public int? FRAMEWORK_PATHWAY_CODE { get; set; }
             public string APPRENTICESHIP_INFORMATION { get; set; }
             public string APPRENTICESHIP_WEBPAGE { get; set; }
             public string CONTACT_EMAIL { get; set; }
@@ -113,9 +110,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
                 Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
-                Map(m => m.FRAMEWORK_CODE);
-                Map(m => m.FRAMEWORK_PROG_TYPE);
-                Map(m => m.FRAMEWORK_PATHWAY_CODE);
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
@@ -1024,6 +1018,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         bool containsDuplicates = false;
                         while (csv.Read())
                         {
+                            // Silently ignore records referring to frameworks (PTCD-694)
+                            if (csv.GetField<int?>("FRAMEWORK_CODE").HasValue ||
+                                csv.GetField<int?>("FRAMEWORK_PATHWAY_CODE").HasValue ||
+                                csv.GetField<int?>("FRAMEWORK_PROG_TYPE").HasValue)
+                            {
+                                continue;
+                            }
+
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
 
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
@@ -1180,14 +1182,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             foreach (var record in records)
             {
-                // Silently ignore records referring to frameworks (PTCD-694)
-                if (record.FRAMEWORK_CODE.HasValue ||
-                    record.FRAMEWORK_PATHWAY_CODE.HasValue ||
-                    record.FRAMEWORK_PROG_TYPE.HasValue)
-                {
-                    continue;
-                }
-                            
                 var alreadyExists = DoesApprenticeshipExist(apprenticeships, record);
             
                 if (alreadyExists != null)

@@ -75,10 +75,10 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         [Fact]
         public async Task TestValidateAndUploadCSV_WithFrameworkCode_IsIgnored()
         {
-            await Run_SuccessTest(
+            await Run_ThrowsTest<Exception>(
                 builder => builder
                     .WithRow(row => row.WithFrameworkCode()),
-                apps => Assert.Empty(apps));
+                "The selected file is empty");
         }
 
         [Fact]
