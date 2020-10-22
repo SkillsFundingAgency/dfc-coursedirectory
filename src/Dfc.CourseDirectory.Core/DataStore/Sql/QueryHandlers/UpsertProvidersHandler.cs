@@ -29,7 +29,9 @@ CREATE TABLE #Providers (
     TradingName NVARCHAR(MAX),
     Alias NVARCHAR(MAX),
     UpdatedOn DATETIME,
-    UpdatedBy NVARCHAR(MAX)
+    UpdatedBy NVARCHAR(MAX),
+    NationalApprenticeshipProvider BIT,
+    TribalProviderId INT
 )";
 
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
@@ -48,7 +50,9 @@ CREATE TABLE #Providers (
                         r.TradingName,
                         r.Alias,
                         r.UpdatedOn,
-                        r.UpdatedBy
+                        r.UpdatedBy,
+                        r.NationalApprenticeshipProvider,
+                        r.TribalProviderId
                     }),
                     tableName: "#Providers",
                     transaction);
@@ -70,7 +74,9 @@ WHEN NOT MATCHED THEN
         TradingName,
         Alias,
         UpdatedOn,
-        UpdatedBy
+        UpdatedBy,
+        NationalApprenticeshipProvider,
+        TribalProviderId
     ) VALUES (
         source.ProviderId,
         source.Ukprn,
@@ -83,7 +89,9 @@ WHEN NOT MATCHED THEN
         source.TradingName,
         source.Alias,
         source.UpdatedOn,
-        source.UpdatedBy
+        source.UpdatedBy,
+        source.NationalApprenticeshipProvider,
+        source.TribalProviderId
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -97,7 +105,9 @@ WHEN MATCHED THEN
         TradingName = source.TradingName,
         Alias = source.Alias,
         UpdatedOn = source.UpdatedOn,
-        UpdatedBy = source.UpdatedBy;";
+        UpdatedBy = source.UpdatedBy,
+        NationalApprenticeshipProvider = source.NationalApprenticeshipProvider,
+        TribalProviderId = source.TribalProviderId;";
 
                 await transaction.Connection.ExecuteAsync(sql, transaction: transaction);
             }
@@ -119,7 +129,12 @@ CREATE TABLE #ProviderContacts (
 	AddressPostcode NVARCHAR(MAX),
 	PersonalDetailsPersonNameTitle NVARCHAR(MAX),
 	PersonalDetailsPersonNameGivenName NVARCHAR(MAX),
-	PersonalDetailsPersonNameFamilyName NVARCHAR(MAX)
+	PersonalDetailsPersonNameFamilyName NVARCHAR(MAX),
+	Telephone1 NVARCHAR(MAX),
+	Telephone2 NVARCHAR(MAX),
+	Fax NVARCHAR(MAX),
+	WebsiteAddress NVARCHAR(MAX),
+	Email NVARCHAR(MAX)
 )";
 
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
@@ -141,7 +156,12 @@ CREATE TABLE #ProviderContacts (
                             c.AddressPostcode,
                             c.PersonalDetailsPersonNameTitle,
                             c.PersonalDetailsPersonNameGivenName,
-                            c.PersonalDetailsPersonNameFamilyName
+                            c.PersonalDetailsPersonNameFamilyName,
+                            c.Telephone1,
+                            c.Telephone2,
+                            c.Fax,
+                            c.WebsiteAddress,
+                            c.Email
                         })),
                     tableName: "#ProviderContacts",
                     transaction);
@@ -165,7 +185,12 @@ WHEN NOT MATCHED THEN
         AddressPostcode,
         PersonalDetailsPersonNameTitle,
         PersonalDetailsPersonNameGivenName,
-        PersonalDetailsPersonNameFamilyName
+        PersonalDetailsPersonNameFamilyName,
+        Telephone1,
+        Telephone2,
+        Fax,
+        WebsiteAddress,
+        Email
     ) VALUES (
         source.ProviderId,
         source.ProviderContactIndex,
@@ -180,7 +205,12 @@ WHEN NOT MATCHED THEN
         source.AddressPostcode,
         source.PersonalDetailsPersonNameTitle,
         source.PersonalDetailsPersonNameGivenName,
-        source.PersonalDetailsPersonNameFamilyName
+        source.PersonalDetailsPersonNameFamilyName,
+        source.Telephone1,
+        source.Telephone2,
+        source.Fax,
+        source.WebsiteAddress,
+        source.Email
     )
 WHEN MATCHED THEN UPDATE SET
     ProviderContactIndex = source.ProviderContactIndex,
@@ -195,7 +225,12 @@ WHEN MATCHED THEN UPDATE SET
     AddressPostcode = source.AddressPostcode,
     PersonalDetailsPersonNameTitle = source.PersonalDetailsPersonNameTitle,
     PersonalDetailsPersonNameGivenName = source.PersonalDetailsPersonNameGivenName,
-    PersonalDetailsPersonNameFamilyName = source.PersonalDetailsPersonNameFamilyName
+    PersonalDetailsPersonNameFamilyName = source.PersonalDetailsPersonNameFamilyName,
+    Telephone1 = source.Telephone1,
+    Telephone2 = source.Telephone2,
+    Fax = source.Fax,
+    WebsiteAddress = source.WebsiteAddress,
+    Email = source.Email
 WHEN NOT MATCHED BY SOURCE AND target.ProviderId IN (SELECT ProviderId FROM #Providers) THEN DELETE;";
 
                 await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);

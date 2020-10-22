@@ -38,6 +38,8 @@ namespace Dfc.CourseDirectory.Core.Tests
                 Alias = "Alias",
                 DateUpdated = Clock.UtcNow,
                 UpdatedBy = "Tests",
+                NationalApprenticeshipProvider = true,
+                ProviderId = 123456,
                 ProviderContact = new[]
                 {
                     new ProviderContact()
@@ -61,6 +63,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                             PostCode = "AB1 2CD"
                         },
                         ContactTelephone1 = "01234 567890",
+                        ContactTelephone2 = "0345 678910",
                         ContactFax = "02345 678901",
                         ContactWebsiteAddress = "https://provider.com/contact",
                         ContactEmail = "person@provider.com",
@@ -90,7 +93,28 @@ namespace Dfc.CourseDirectory.Core.Tests
                     p.TradingName == "Trading name" &&
                     p.Alias == "Alias" &&
                     p.UpdatedOn == Clock.UtcNow &&
-                    p.UpdatedBy == "Tests"));
+                    p.UpdatedBy == "Tests" &&
+                    p.NationalApprenticeshipProvider == provider.NationalApprenticeshipProvider &&
+                    p.TribalProviderId == provider.ProviderId &&
+                    p.Contacts.Any(c =>
+                        c.ContactType == "P" &&
+                        c.ContactRole == "Hero" &&
+                        c.AddressSaonDescription == "SAON" &&
+                        c.AddressPaonDescription == "PAON" &&
+                        c.AddressStreetDescription == "Street" &&
+                        c.AddressLocality == "Locality" &&
+                        c.AddressItems == "Item1 Item2" &&
+                        c.AddressPostTown == "Town" &&
+                        c.AddressPostcode == "AB1 2CD" &&
+                        c.PersonalDetailsPersonNameTitle == "Mr" &&
+                        c.PersonalDetailsPersonNameGivenName == "Person" &&
+                        c.PersonalDetailsPersonNameFamilyName == "Smith" &&
+                        c.Telephone1 == "01234 567890" &&
+                        c.Telephone2 == "0345 678910" &&
+                        c.Fax == "02345 678901" &&
+                        c.WebsiteAddress == "https://provider.com/contact" &&
+                        c.Email == "person@provider.com"
+                    )));
         }
 
         [Fact]

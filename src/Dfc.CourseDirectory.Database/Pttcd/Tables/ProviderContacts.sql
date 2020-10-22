@@ -15,4 +15,9 @@
 	[PersonalDetailsPersonNameTitle] NVARCHAR(MAX),
 	[PersonalDetailsPersonNameGivenName] NVARCHAR(MAX),
 	[PersonalDetailsPersonNameFamilyName] NVARCHAR(MAX),
+	[Telephone1] NVARCHAR(MAX),
+	[Telephone2] NVARCHAR(MAX),
+	[Fax] NVARCHAR(MAX),
+	[WebsiteAddress] NVARCHAR(MAX),
+	[Email] NVARCHAR(MAX),
 )

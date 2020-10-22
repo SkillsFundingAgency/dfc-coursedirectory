@@ -202,6 +202,8 @@ namespace Dfc.CourseDirectory.Core
                     Alias = provider.Alias,
                     UpdatedOn = provider.DateUpdated != default ? (DateTime?)provider.DateUpdated : null,
                     UpdatedBy = provider.UpdatedBy,
+                    NationalApprenticeshipProvider = provider.NationalApprenticeshipProvider,
+                    TribalProviderId = provider.ProviderId,
                     Contacts = (provider.ProviderContact ?? Array.Empty<ProviderContact>()).Select(c => new UpsertProvidersRecordContact()
                     {
                         ContactType = c.ContactType,
@@ -215,7 +217,12 @@ namespace Dfc.CourseDirectory.Core
                         AddressPostcode = c.ContactAddress?.PostCode,
                         PersonalDetailsPersonNameTitle = string.Join(" ", c.ContactPersonalDetails?.PersonNameTitle ?? Array.Empty<string>()),
                         PersonalDetailsPersonNameGivenName = string.Join(" ", c.ContactPersonalDetails?.PersonGivenName ?? Array.Empty<string>()),
-                        PersonalDetailsPersonNameFamilyName = c.ContactPersonalDetails?.PersonFamilyName
+                        PersonalDetailsPersonNameFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
+                        Telephone1 = c.ContactTelephone1,
+                        Telephone2 = c.ContactTelephone2,
+                        Fax = c.ContactFax,
+                        WebsiteAddress = c.ContactWebsiteAddress,
+                        Email = c.ContactEmail
                     })
                 })
             }));
