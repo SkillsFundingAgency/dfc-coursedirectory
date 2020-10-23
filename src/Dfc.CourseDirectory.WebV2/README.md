@@ -22,6 +22,10 @@ For an intro to MediatR in controllers see:
 * https://jonhilton.net/2016/06/06/simplify-your-controllers-with-the-command-pattern-and-mediatr/
 * https://alexlindgren.com/posts/thin-controllers-using-mediatr-with-aspnet-mvc/
 
+### OneOf
+
+`OneOf<>` gives us better compile time checks for passing around one of multiple types. See the [OneOf readme](https://github.com/mcintyre321/OneOf/#readme) for further explanation.
+
 ### Tests
 
 There are no controller tests because the controller actions are very thin mappings.
