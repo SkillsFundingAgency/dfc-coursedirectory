@@ -73,12 +73,12 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         }
 
         [Fact]
-        public async Task TestValidateAndUploadCSV_WithFrameworkCode_Success()
+        public async Task TestValidateAndUploadCSV_WithFrameworkCode_IsIgnored()
         {
-            await Run_SuccessTest(
+            await Run_ThrowsTest<Exception>(
                 builder => builder
                     .WithRow(row => row.WithFrameworkCode()),
-                ValidateSingleApprenticeshipWithNoErrors);
+                "The selected file is empty");
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             await Run_SuccessTest(
                 builder => builder
                     .WithRow(row => row
-                        .WithFrameworkCode()
+                        .WithStandardCode()
                         .With("DELIVERY_METHOD", "Employer")
                         .With("NATIONAL_DELIVERY", "No")
                         .With("REGION", "North West;London")
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             var csvBuilder =
                 new Action<ApprenticeshipCsvBuilder>(builder => builder
                     .WithRow(row => row
-                        .WithFrameworkCode()
+                        .WithStandardCode()
                         .With("DELIVERY_METHOD", fact.DeliveryMethod)
                         .With("DELIVERY_MODE", fact.DeliveryMode)
                         .With("ACROSS_ENGLAND", fact.AcrossEngland)
@@ -279,66 +279,6 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         }
 
         [Fact]
-        public async Task TestValidateAndUploadCSV_FrameworkCode_Unknown_Throws()
-        {
-            const int code = 404404;
-            const int type = 44;
-            const int pathway = 4;
-            await Run_ThrowsTest<BadDataException>(
-                builder => builder
-                    .WithRow(row => row
-                        .With("FRAMEWORK_CODE", code.ToString())
-                        .With("FRAMEWORK_PROG_TYPE", type.ToString())
-                        .With("FRAMEWORK_PATHWAY_CODE", pathway.ToString())
-                    ),
-                expectedErrorMessage: "Validation error on row 2. Invalid Framework Code, Prog Type, or Pathway Code. Framework not found.",
-                additionalMockSetup: () =>
-                {
-                    _standardsAndFrameworksCacheMock.Setup(m => m.GetFramework(code, type, pathway))
-                        .ReturnsAsync((Framework)null);
-                });
-        }
-
-        [Fact]
-        public async Task TestValidateAndUploadCSV_FrameworkWithoutCode_Throws()
-        {
-            await Run_ThrowsTest<BadDataException>(
-                builder => builder
-                    .WithRow(row => row
-                        .With("FRAMEWORK_CODE", "")
-                        .With("FRAMEWORK_PROG_TYPE", "101")
-                        .With("FRAMEWORK_PATHWAY_CODE", "101")
-                    ),
-                "Validation error on row 2. Missing Framework Code.");
-        }
-
-        [Fact]
-        public async Task TestValidateAndUploadCSV_FrameworkWithoutType_Throws()
-        {
-            await Run_ThrowsTest<BadDataException>(
-                builder => builder
-                    .WithRow(row => row
-                        .With("FRAMEWORK_CODE", "101")
-                        .With("FRAMEWORK_PROG_TYPE", "")
-                        .With("FRAMEWORK_PATHWAY_CODE", "101")
-                    ),
-                "Validation error on row 2. Missing Prog Type.");
-        }
-
-        [Fact]
-        public async Task TestValidateAndUploadCSV_FrameworkWithoutPathway_Throws()
-        {
-            await Run_ThrowsTest<BadDataException>(
-                builder => builder
-                    .WithRow(row => row
-                        .With("FRAMEWORK_CODE", "101")
-                        .With("FRAMEWORK_PROG_TYPE", "101")
-                        .With("FRAMEWORK_PATHWAY_CODE", "")
-                    ),
-                "Validation error on row 2. Missing Pathway Type.");
-        }
-
-        [Fact]
         public async Task TestValidateAndUploadCSV_DeliveryMethod_Blank_Throws()
         {
             await Run_ThrowsTest<BadDataException>(
@@ -456,28 +396,6 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                     )
                     .WithRow(row => row
                         .WithStandardCode()
-                        .With("VENUE", mockVenue2.VenueName)
-                    ),
-                apprenticeships =>
-                {
-                    Assert.Equal(2, apprenticeships.Single().ApprenticeshipLocations.Count);
-                }
-            );
-        }
-
-        [Fact]
-        public async Task TestValidateAndUploadCSV_AggregatesMultipleLocations_WithFramework()
-        {
-            var mockVenue1 = AddMockVenue("mockVenueF1");
-            var mockVenue2 = AddMockVenue("mockVenueF2");
-            await Run_SuccessTest(
-                builder => builder
-                    .WithRow(row => row
-                        .WithFrameworkCode()
-                        .With("VENUE", mockVenue1.VenueName)
-                    )
-                    .WithRow(row => row
-                        .WithFrameworkCode()
                         .With("VENUE", mockVenue2.VenueName)
                     ),
                 apprenticeships =>
