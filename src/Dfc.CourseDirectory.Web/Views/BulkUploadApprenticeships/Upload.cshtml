@@ -65,6 +65,11 @@
 
         <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="BulkUploadApprenticeships" asp-action="Upload">
 
+            <div class="govuk-inset-text">
+                <p>Frameworks included in your CSV file will not be published on Find an apprenticeship training.</p>
+                <p>Read more about the <a href="https://www.gov.uk/government/publications/removal-of-apprenticeship-frameworks" target="_blank" class="govuk-link">withdrawal of apprenticeship frameworks (opens in a new window or tab)</a>.</p>
+            </div>
+
             <div id="groupServerSideError" class="govuk-form-group">
                 <span id="serverSideError" class="govuk-error-message" style="display: none">There is an error with the file. See above summary</span>
                 <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file" accept=".csv"
