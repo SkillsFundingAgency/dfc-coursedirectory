@@ -41,6 +41,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
             builder.Services.AddTransient<SqlDataSync>();
+            builder.Services.AddHttpClient<LarsDataImporter>();
 
             builder.Services.AddSingleton<Func<SearchClientSettings, SearchClient>>(settings =>
                 new SearchClient(new Uri(settings.Url), settings.IndexName, new AzureKeyCredential(settings.Key)));

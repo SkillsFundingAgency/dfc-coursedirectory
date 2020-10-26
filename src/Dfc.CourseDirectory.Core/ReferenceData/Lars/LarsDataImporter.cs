@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
@@ -17,17 +19,22 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
     public class LarsDataImporter
     {
+        private const string DownloadLocation = "https://findalearningaimbeta.fasst.org.uk/DownloadData/GetDownloadFileAsync?fileName=published%2F007%2FLearningDelivery_V007_CSV.Zip";
+
+        private readonly HttpClient _httpClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IClock _clock;
         private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
+            HttpClient httpClient,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IServiceScopeFactory serviceScopeFactory,
             IClock clock,
             ILogger<LarsDataImporter> logger)
         {
+            _httpClient = httpClient;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _serviceScopeFactory = serviceScopeFactory;
             _clock = clock;
@@ -36,6 +43,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
         public async Task ImportData()
         {
+            var extractDirectory = Path.Join(Path.GetTempPath(), "lars");
+            Directory.CreateDirectory(extractDirectory);
+
+            await DownloadFiles();
+
             await ImportFrameworksToCosmos();
             await ImportProgTypesToCosmos();
             await ImportSectorSubjectAreaTier1sToCosmos();
@@ -51,16 +63,31 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
 
-            static IEnumerable<T> ReadCsv<T>(string fileName)
+            IEnumerable<T> ReadCsv<T>(string fileName)
             {
                 var assm = typeof(LarsDataImporter).Assembly;
-                var resourcePath = $"{assm.GetName().Name}.ReferenceData.Lars.Data.{fileName}";
+                var filePath = Path.Join(extractDirectory, fileName);
 
-                using (var stream = assm.GetManifestResourceStream(resourcePath))
+                using (var stream = File.OpenRead(filePath))
                 using (var streamReader = new StreamReader(stream))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                 {
                     return csvReader.GetRecords<T>().ToList();
+                }
+            }
+
+            async Task DownloadFiles()
+            {
+                using var resultStream = await _httpClient.GetStreamAsync(DownloadLocation);
+                using var zip = new ZipArchive(resultStream);
+
+                foreach (var entry in zip.Entries)
+                {
+                    if (entry.Name.EndsWith(".csv"))
+                    {
+                        var destination = Path.Combine(extractDirectory, entry.Name);
+                        entry.ExtractToFile(destination, overwrite: true);
+                    }
                 }
             }
 
