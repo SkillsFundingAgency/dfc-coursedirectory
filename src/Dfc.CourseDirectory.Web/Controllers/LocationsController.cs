@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using System.Web;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
 
                 VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(
-                    HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2,
+                    HtmlEncoder.Default.Encode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2,
                     updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
 
                 return RedirectToAction("LocationConfirmationDelete", "Locations",new{VenueId = updatedVenue.ID });

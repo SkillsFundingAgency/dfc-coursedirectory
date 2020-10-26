@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using System.Web;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
@@ -17,8 +17,6 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress;
-using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -365,11 +363,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 venueID = addedVenue.Value.ID;
             }
             //Since we are updating or adding lets pass the model to the GetVenues method
-            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(requestModel.VenueName), requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
+            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(requestModel.VenueName), requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
 
             var addedVenueModel = new AddedVenueModel
             {
-                VenueName = HttpUtility.HtmlEncode(requestModel.VenueName),
+                VenueName = HtmlEncoder.Default.Encode(requestModel.VenueName),
                 AddressLine1 = requestModel.AddressLine1,
                 AddressLine2 = requestModel.AddressLine2,
                 County = requestModel.County,
@@ -528,7 +526,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
 
-            VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
+            VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
 
             return View("VenueSearchResults", await GetVenues(deletedVenue));
         }
