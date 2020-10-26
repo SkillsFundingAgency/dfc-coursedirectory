@@ -10,14 +10,11 @@ using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.BaseDataAccess;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
-using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -93,12 +90,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<WhereNextComponentSettings>(Configuration.GetSection("AppUISettings:WhereNextComponentSettings"));
 
             services.AddOptions();
-
-            services.Configure<BaseDataAccessSettings>(options =>
-            {
-                options.ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-            });
-            services.AddScoped<IBaseDataAccess, BaseDataAccess>();
 
             services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
             services.AddScoped<IProviderService, ProviderService>();
