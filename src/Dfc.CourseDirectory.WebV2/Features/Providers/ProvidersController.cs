@@ -2,7 +2,6 @@
 using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers
 {

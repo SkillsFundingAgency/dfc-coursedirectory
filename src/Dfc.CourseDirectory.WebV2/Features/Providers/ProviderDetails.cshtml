@@ -43,9 +43,8 @@
                 <govuk-summary-list-row-value>@Model.ProviderType.ToDescription()</govuk-summary-list-row-value>
                 @if (Model.CanChangeProviderType)
                 {
-                    <govuk-summary-list-row-action asp-controller="Provider" asp-action="AddOrEditProviderType" asp-route-updateProviderType="true" class="govuk-link" data-testid="ChangeProviderType">
+                    <govuk-summary-list-row-action asp-controller="EditProviderType" asp-action="Get" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="provider type" data-testid="ChangeProviderType">
                         Change
-                        <span class="govuk-visually-hidden">provider type</span>
                     </govuk-summary-list-row-action>
                 }
             </govuk-summary-list-row>
