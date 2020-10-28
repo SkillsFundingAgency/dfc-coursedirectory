@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
-    public class UpdateApprenticeshipHandler : ICosmosDbQueryHandler<UpdateApprenticeship, Success>
+    public class UpdateApprenticeshipHandler : ICosmosDbQueryHandler<UpdateApprenticeship, OneOf<NotFound, Success>>
     {
-        public async Task<Success> Execute(DocumentClient client,
+        public async Task<OneOf<NotFound, Success>> Execute(DocumentClient client,
             Configuration configuration, UpdateApprenticeship request)
         {
             var documentUri = UriFactory.CreateDocumentUri(
@@ -21,11 +23,20 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             var partitionKey = new PartitionKey(request.ProviderUkprn);
 
-            var query = await client.ReadDocumentAsync<Apprenticeship>(
-                documentUri,
-                new RequestOptions() { PartitionKey = partitionKey });
+            Apprenticeship apprenticeship;
 
-            var apprenticeship = query.Document;
+            try
+            {
+                var query = await client.ReadDocumentAsync<Apprenticeship>(
+                    documentUri,
+                    new RequestOptions() { PartitionKey = partitionKey });
+
+                apprenticeship = query.Document;
+            }
+            catch (DocumentClientException dex) when (dex.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new NotFound();
+            }
 
             apprenticeship.ApprenticeshipTitle = request.ApprenticeshipTitle;
             apprenticeship.ApprenticeshipType = request.ApprenticeshipType;

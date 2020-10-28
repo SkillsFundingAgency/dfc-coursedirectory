@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 {
-    public class UpdateProviderFromUkrlpData : ICosmosDbQuery<Success>
+    public class UpdateProviderFromUkrlpData : ICosmosDbQuery<OneOf<NotFound, Success>>
     {
         public Guid ProviderId { get; set; }
         public string ProviderName { get; set; }

@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Linq;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
-    public class UpdateApprenticeshipHandler : ICosmosDbQueryHandler<UpdateApprenticeship, Success>
+    public class UpdateApprenticeshipHandler : ICosmosDbQueryHandler<UpdateApprenticeship, OneOf<NotFound, Success>>
     {
-        public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, UpdateApprenticeship request)
+        public OneOf<NotFound, Success> Execute(
+            InMemoryDocumentStore inMemoryDocumentStore,
+            UpdateApprenticeship request)
         {
             var apprenticeship = inMemoryDocumentStore.Apprenticeships.All.SingleOrDefault(p => p.Id == request.Id);
+
+            if (apprenticeship == null)
+            {
+                return new NotFound();
+            }
 
             apprenticeship.ProviderUKPRN = request.ProviderUkprn;
             apprenticeship.ApprenticeshipTitle = request.ApprenticeshipTitle;
