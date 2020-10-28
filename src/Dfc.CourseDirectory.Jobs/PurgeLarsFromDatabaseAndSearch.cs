@@ -4,13 +4,13 @@ using Azure;
 using Azure.Search.Documents;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Functions.Config;
+using Dfc.CourseDirectory.Jobs.Config;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class PurgeLarsFromDatabaseAndSearch
     {

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.Host.Executors;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class FunctionInstanceServicesCatalog : IJobActivatorEx
     {

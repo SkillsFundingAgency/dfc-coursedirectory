@@ -9,7 +9,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class FixVenuesSchema
     {

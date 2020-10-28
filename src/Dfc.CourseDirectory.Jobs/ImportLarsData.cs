@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Microsoft.Azure.WebJobs;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class ImportLarsData
     {

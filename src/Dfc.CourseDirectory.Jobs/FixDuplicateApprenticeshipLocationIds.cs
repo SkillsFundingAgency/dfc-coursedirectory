@@ -9,7 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json.Serialization;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class FixDuplicateApprenticeshipLocationIds
     {

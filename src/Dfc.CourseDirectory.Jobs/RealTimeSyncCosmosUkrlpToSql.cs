@@ -7,7 +7,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class RealTimeSyncCosmosUkrlpToSql
     {

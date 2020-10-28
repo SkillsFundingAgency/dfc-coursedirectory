@@ -116,10 +116,10 @@ steps:
     zipAfterPublish: True
 
 - task: DotNetCoreCLI@2
-  displayName: Publish Dfc.CourseDirectory.Functions
+  displayName: Publish Dfc.CourseDirectory.Jobs
   inputs:
     command: publish
-    projects: 'src/$(SolutionBaseName).Functions/$(SolutionBaseName).Functions.csproj'
+    projects: 'src/$(SolutionBaseName).Jobs/$(SolutionBaseName).Jobs.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True

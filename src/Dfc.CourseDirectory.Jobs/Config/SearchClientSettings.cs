@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.Functions.Config
+namespace Dfc.CourseDirectory.Jobs.Config
 {
     public class SearchClientSettings
     {

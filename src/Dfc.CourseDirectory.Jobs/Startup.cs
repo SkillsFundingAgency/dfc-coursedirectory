@@ -6,8 +6,8 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Dfc.CourseDirectory.Functions;
-using Dfc.CourseDirectory.Functions.Config;
+using Dfc.CourseDirectory.Jobs;
+using Dfc.CourseDirectory.Jobs.Config;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Hosting;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class Startup : FunctionsStartup
     {

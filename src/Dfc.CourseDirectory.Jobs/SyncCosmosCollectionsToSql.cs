@@ -2,7 +2,7 @@
 using Dfc.CourseDirectory.Core;
 using Microsoft.Azure.WebJobs;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
     public class SyncCosmosCollectionsToSql
     {

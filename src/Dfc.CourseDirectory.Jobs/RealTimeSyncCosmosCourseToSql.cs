@@ -7,29 +7,29 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
-    public class RealTimeSyncCosmosVenueToSql
+    public class RealTimeSyncCosmosCourseToSql
     {
         private readonly SqlDataSync _sqlDataSync;
 
-        public RealTimeSyncCosmosVenueToSql(SqlDataSync sqlDataSync)
+        public RealTimeSyncCosmosCourseToSql(SqlDataSync sqlDataSync)
         {
             _sqlDataSync = sqlDataSync;
         }
 
-        [FunctionName(nameof(RealTimeSyncCosmosVenueToSql))]
+        [FunctionName(nameof(RealTimeSyncCosmosCourseToSql))]
         public async Task Run([CosmosDBTrigger(
             databaseName: "providerportal",
-            collectionName: "venues",
+            collectionName: "courses",
             ConnectionStringSetting = "CosmosDbSettings:ConnectionString",
-            LeaseCollectionName = "venues-lease",
-            LeaseCollectionPrefix = "SyncCosmosVenueToSql",
+            LeaseCollectionName = "courses-lease",
+            LeaseCollectionPrefix = "SyncCosmosCourseToSql",
             CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> documents)
         {
-            var venues = documents.Select(d => JsonConvert.DeserializeObject<Venue>(d.ToString()));
+            var courses = documents.Select(d => JsonConvert.DeserializeObject<Course>(d.ToString()));
 
-            await _sqlDataSync.SyncVenues(venues);
+            await _sqlDataSync.SyncCourses(courses);
         }
     }
 }

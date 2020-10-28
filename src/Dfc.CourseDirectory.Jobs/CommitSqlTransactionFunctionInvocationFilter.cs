@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.Functions
+namespace Dfc.CourseDirectory.Jobs
 {
 #pragma warning disable CS0618 // Type or member is obsolete
     // IFunctionInvocationFilter is not obsolete just not complete - https://github.com/Azure/azure-webjobs-sdk/issues/1284
