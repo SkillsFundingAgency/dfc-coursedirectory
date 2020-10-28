@@ -37,6 +37,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services.Tests", "tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{F734371F-3DE2-4B40-8654-5EBB167D7432}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.ProviderPortal.FindACourse.Tests", "tests\Dfc.ProviderPortal.FindACourse.Tests\Dfc.ProviderPortal.FindACourse.Tests.csproj", "{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.ProviderPortal.FindACourse", "src\Dfc.ProviderPortal.FindACourse\Dfc.ProviderPortal.FindACourse.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,14 @@ Global
 		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
