@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Extensions;
@@ -42,8 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IProviderService _providerService;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
-
-
+        
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService
@@ -67,9 +66,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerService = providerService;
         }
 
-
-
-
         [Authorize]
         public IActionResult Index()
         {
@@ -77,11 +73,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../ApprenticeShips/Search/Index");
         }
 
-
         [Authorize]
         public async Task<IActionResult> Search([FromQuery] SearchRequestModel requestModel)
         {
-
             int? UKPRN = _session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
@@ -94,8 +88,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (!string.IsNullOrEmpty(requestModel.SearchTerm))
             {
                 var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm, UKPRN.Value);
-
-
 
                 var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
 
@@ -141,7 +133,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return ViewComponent(nameof(ApprenticeshipSearchResult), model);
         }
 
-
         [Authorize]
         public IActionResult Details(DetailsRequestModel request)
         {
@@ -157,7 +148,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
             }
-
 
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
             if (apprenticeship != null)
@@ -250,7 +240,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-
         [Authorize]
         public IActionResult Delivery(DeliveryRequestModel requestModel)
         {
@@ -276,7 +265,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return View("../ApprenticeShips/Delivery/Index");
 
             }
-
         }
 
         [Authorize]
@@ -333,7 +321,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 default:
                     return View("../ApprenticeShips/Search/Index");
-
             }
         }
 
@@ -411,31 +398,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 model.Mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
             }
-            
-            var cachedLocations = new List<Venue>();
-            var locationsResult = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
-            if (locationsResult.IsSuccess && locationsResult.HasValue)
-            {
-                cachedLocations = locationsResult.Value.Value.ToList();
-            }
 
             var getApprenticehipByIdResult = await _apprenticeshipService.GetApprenticeshipByIdAsync(requestModel.Id);
 
-            if (getApprenticehipByIdResult.IsSuccess && getApprenticehipByIdResult.HasValue)
+            if (!getApprenticehipByIdResult.IsSuccess
+                || !getApprenticehipByIdResult.HasValue
+                || getApprenticehipByIdResult.Value.RecordStatus != RecordStatus.Live)
             {
-                var selectedApprenticeship = getApprenticehipByIdResult.Value;
-
-                model.Apprenticeship = selectedApprenticeship;
-
-                var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
-
-                model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
-                    ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
-
-                model.SummaryOnly = true;
-                _session.SetObject("selectedApprenticeship", selectedApprenticeship);
-
+                return NotFound();
             }
+
+            var selectedApprenticeship = getApprenticehipByIdResult.Value;
+
+            model.Apprenticeship = selectedApprenticeship;
+
+            var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
+
+            model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
+                ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions)
+                : null;
+
+            model.SummaryOnly = true;
+            _session.SetObject("selectedApprenticeship", selectedApprenticeship);
 
             return View("../Apprenticeships/Summary/Index", model);
         }
@@ -507,10 +491,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            var model = new SummaryViewModel();
             var mode =_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
-            
-
 
             if (mode == ApprenticeshipMode.EditYourApprenticeships)
             {
@@ -525,7 +506,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     //Action needs to be decided if failure
                     return RedirectToAction("Summary", "Apprenticeships");
                 }
-
             }
             else
             {
@@ -574,7 +554,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-
             return View("../Apprenticeships/Regions/Index", model);
         }
 
@@ -586,7 +565,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var employerBased = Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x =>
                  x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
-
 
             if (SelectedRegions.Any())
             {
@@ -607,7 +585,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetObject("selectedApprenticeship", Apprenticeship);
 
             return RedirectToAction("Summary", "Apprenticeships");
-
         }
 
         [HttpPost]
@@ -826,10 +803,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 default:
                     return RedirectToAction("Index", "Home");
             }
-
-
-
-
         }
 
         [Authorize]
@@ -841,7 +814,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../Apprenticeships/ConfirmationDelete/Index", model);
         }
-
 
         [Authorize]
         public IActionResult ConfirmationDelete(Guid ApprenticeshipId, string ApprenticeshipTitle, int level)
@@ -887,11 +859,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 default:
                     return RedirectToAction("Index", "Home");
             }
-
-
-
         }
-
 
         [Authorize]
         public IActionResult DeleteDeliveryOption(string LocationName, ApprenticeshipMode Mode, Guid Id)
@@ -909,8 +877,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.LocationName = LocationName;
 
             model.ApprenticeshipTitle = Location?.Name;
-
-            
 
             return View("../Apprenticeships/DeleteDeliveryOption/Index", model);
         }
@@ -933,7 +899,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-
         public IActionResult AddNewVenue(ApprenticeshipLocationType type)
         {
             _session.SetString("Option", type == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
@@ -942,7 +907,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return Json(Url.Action("AddVenue", "Venues"));
         }
         
-        internal Dictionary<string, List<string>> SubRegionCodesToDictionary(IEnumerable<string> subRegions)
+        private Dictionary<string, List<string>> SubRegionCodesToDictionary(IEnumerable<string> subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
             Dictionary<string, List<string>> regionsAndSubregions = new Dictionary<string, List<string>>();
@@ -975,8 +940,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if(alreadyExists == false)
                         regionsAndSubregions[regionName].Add(subRegionItem.SubRegionName);
                 }
-
             }
+
             return regionsAndSubregions;
         }
 
@@ -1053,10 +1018,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
                     }
-
-
                 }
-
             }
 
             if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased || apprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
@@ -1116,7 +1078,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 PathwayCode = apprenticeship.PathwayCode,
                 NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2,
                 Mode = mode
-
             };
         }
 
