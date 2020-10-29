@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             createCommand.DateUpdated.Should().Be(Clock.UtcNow);
             createCommand.ProviderName.Should().Be(ukrlpData.ProviderName);
             createCommand.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-            createCommand.ProviderType.Should().Be(ProviderType.Both);
+            createCommand.ProviderType.Should().Be(ProviderType.FE | ProviderType.Apprenticeships);
             createCommand.Status.Should().Be(ProviderStatus.Registered);
             createCommand.Ukprn.Should().Be(ukprn);
             var actualContact = createCommand.Contacts.Should().ContainSingle().Subject;
@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var providerId = await TestData.CreateProvider(
                 ukprn,
                 providerName: "Test Provider",
-                providerType: ProviderType.Both,
+                providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerStatus: "Provider deactivated, not verified",
                 contacts: new[]
                 {

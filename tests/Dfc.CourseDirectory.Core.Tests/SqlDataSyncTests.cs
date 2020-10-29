@@ -28,8 +28,8 @@ namespace Dfc.CourseDirectory.Core.Tests
             {
                 Id = Guid.NewGuid(),
                 UnitedKingdomProviderReferenceNumber = "12345",
-                Status = Models.ProviderStatus.Onboarded,
-                ProviderType = Models.ProviderType.Both,
+                Status = ProviderStatus.Onboarded,
+                ProviderType = ProviderType.FE | ProviderType.Apprenticeships,
                 ProviderName = "Test Provider",
                 ProviderStatus = "Active",
                 MarketingInformation = "Marketing information",
@@ -85,8 +85,8 @@ namespace Dfc.CourseDirectory.Core.Tests
                 q.Records.Any(p =>
                     p.ProviderId == provider.Id &&
                     p.Ukprn == provider.Ukprn &&
-                    p.ProviderStatus == Models.ProviderStatus.Onboarded &&
-                    p.ProviderType == Models.ProviderType.Both &&
+                    p.ProviderStatus == ProviderStatus.Onboarded &&
+                    p.ProviderType == (ProviderType.FE | ProviderType.Apprenticeships) &&
                     p.UkrlpProviderStatusDescription == "Active" &&
                     p.MarketingInformation == "Marketing information" &&
                     p.CourseDirectoryName == "Another name" &&

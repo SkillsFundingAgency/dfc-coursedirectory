@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 {
     public class UkrlpSyncHelper
     {
-        private const ProviderType NewProviderProviderType = ProviderType.Both;
+        private const ProviderType NewProviderProviderType = ProviderType.FE | ProviderType.Apprenticeships;
         private const ProviderStatus NewProviderProviderStatus = ProviderStatus.Registered;
         private const string UpdatedBy = nameof(UkrlpSyncHelper);
 

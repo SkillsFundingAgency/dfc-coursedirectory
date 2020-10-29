@@ -53,14 +53,13 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         Unregistered = 2
     }
 
+    [Flags]
     public enum ProviderType
     {
         Undefined = 0,
         [Description("F.E.")]
         FE = 1,
         [Description("Apprenticeships")]
-        Apprenticeship = 2,
-        [Description("Both")]
-        Both = FE | Apprenticeship
+        Apprenticeship = 2
     }
 }

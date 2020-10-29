@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            await User.AsProviderUser(providerId, ProviderType.Both, providerStatus);
+            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            await User.AsProviderUser(providerId, ProviderType.Both, providerStatus);
+            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            await User.AsProviderUser(providerId, ProviderType.Both, providerStatus);
+            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-allowed");

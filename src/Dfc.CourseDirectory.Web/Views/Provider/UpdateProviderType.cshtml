@@ -39,9 +39,9 @@
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(m => m.ProviderType, ProviderType.Both, new { @class = "govuk-radios__input", id = ProviderType.Both })
-                                <label class="govuk-label govuk-radios__label" for="@ProviderType.Both">
-                                    @WebHelper.GetEnumDescription(ProviderType.Both)
+                                @Html.RadioButtonFor(m => m.ProviderType, ProviderType.FE | ProviderType.Apprenticeship, new { @class = "govuk-radios__input", id = "Both" })
+                                <label class="govuk-label govuk-radios__label" for="Both">
+                                    Both
                                 </label>
                             </div>
 
