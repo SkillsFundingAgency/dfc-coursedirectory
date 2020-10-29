@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Models
         FlexibleStartDate = 2,
     }
 
-    public class CourseRun : ICourseRun
+    public class CourseRun
     {
         public Guid id { get; set; }
         public int? CourseInstanceId { get; set; }

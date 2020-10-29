@@ -8,7 +8,7 @@ using Dfc.CourseDirectory.FindACourseApi.Interfaces;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Models
 {
-    public class Provider : IProvider
+    public class Provider
     {
         public Guid id { get; set; }
         public string UnitedKingdomProviderReferenceNumber { get; set; }
