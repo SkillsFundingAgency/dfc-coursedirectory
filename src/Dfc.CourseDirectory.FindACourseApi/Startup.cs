@@ -1,11 +1,8 @@
 ﻿using System;
 using Dfc.CourseDirectory.FindACourseApi.Helpers;
-using Dfc.CourseDirectory.FindACourseApi.Helpers.Faoc;
 using Dfc.CourseDirectory.FindACourseApi.Interfaces;
-using Dfc.CourseDirectory.FindACourseApi.Interfaces.Faoc;
 using Dfc.CourseDirectory.FindACourseApi.Services;
 using Dfc.CourseDirectory.FindACourseApi.Settings;
-using Dfc.CourseDirectory.FindACourseApi.Settings.Faoc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -58,17 +55,13 @@ namespace Dfc.CourseDirectory.FindACourseApi
                     .Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)))
                     .Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)))
                     .Configure<SearchServiceSettings>(Configuration.GetSection(nameof(SearchServiceSettings)))
-                    .Configure<OnlineCourseSearchServiceSettings>(Configuration.GetSection(nameof(OnlineCourseSearchServiceSettings)))
                     .Configure<QualificationServiceSettings>(Configuration.GetSection(nameof(QualificationServiceSettings)))
                     .AddScoped<ICourseService, CoursesService>()
-                    .AddScoped<IOnlineCourseService, OnlineCoursesService>()
                     .AddScoped<ICosmosDbHelper, CosmosDbHelper>()
                     .AddScoped<IProviderServiceWrapper, ProviderServiceWrapper>()
                     .AddScoped<IVenueServiceWrapper, VenueServiceWrapper>()
                     .AddSingleton<SearchServiceWrapper>()
-                    .AddSingleton<OnlineCourseSearchServiceWrapper>()
-                    .AddTransient<ISearchServiceSettings>(sp => sp.GetRequiredService<IOptions<SearchServiceSettings>>().Value)
-                    .AddTransient<IOnlineCourseSearchServiceSettings>(sp => sp.GetRequiredService<IOptions<OnlineCourseSearchServiceSettings>>().Value);
+                    .AddTransient<ISearchServiceSettings>(sp => sp.GetRequiredService<IOptions<SearchServiceSettings>>().Value);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
