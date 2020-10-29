@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables()
+                .AddUserSecrets(typeof(Startup).Assembly)
                 .AddApplicationInsightsSettings()
                 .Build();
         }

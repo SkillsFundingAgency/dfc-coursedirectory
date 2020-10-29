@@ -33,15 +33,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Helpers
         private readonly ILogger _log;
         private readonly ISearchServiceSettings _settings;
         private readonly SearchServiceClient _queryService;
-        private readonly SearchServiceClient _adminService;
         private readonly ISearchIndexClient _queryIndex;
-        private readonly ISearchIndexClient _adminIndex;
         private readonly ISearchIndexClient _onspdIndex;
         private readonly HttpClient _httpClient;
-        private readonly Uri _uri;
-        private readonly Uri _providerUri;
-        private readonly Uri _larsUri;
-        private readonly Uri _onspdUri;
 
         public SearchServiceWrapper(ISearchServiceSettings settings, ILoggerFactory loggerFactory)
         {
@@ -52,20 +46,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Helpers
             _settings = settings;
 
             _queryService = new SearchServiceClient(settings.SearchService, new SearchCredentials(settings.QueryKey));
-            _adminService = new SearchServiceClient(settings.SearchService, new SearchCredentials(settings.AdminKey));
             _queryIndex = _queryService?.Indexes?.GetClient(settings.Index);
-            _adminIndex = _adminService?.Indexes?.GetClient(settings.Index);
             _onspdIndex = _queryService?.Indexes?.GetClient(settings.onspdIndex);
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("api-key", settings.QueryKey);
             _httpClient.DefaultRequestHeaders.Add("api-version", settings.ApiVersion);
             _httpClient.DefaultRequestHeaders.Add("indexes", settings.Index);
-
-            _uri = new Uri($"{settings.ApiUrl}?api-version={settings.ApiVersion}");
-            _providerUri = new Uri($"{settings.ProviderApiUrl}?api-version={settings.ApiVersion}");
-            _larsUri = new Uri($"{settings.LARSApiUrl}?api-version={settings.ApiVersion}");
-            _onspdUri = new Uri($"{settings.ONSPDApiUrl}?api-version={settings.ApiVersion}");
         }
 
         public async Task<FACSearchResult> SearchCourses(SearchCriteriaStructure criteria)
@@ -73,7 +60,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Helpers
             Throw.IfNull(criteria, nameof(criteria));
 
             _log.LogInformation("FAC search criteria.", criteria);
-            _log.LogInformation("FAC search uri.", _uri.ToString());
 
             var sortBy = criteria.SortBy ?? CourseSearchSortBy.Relevance;
 
