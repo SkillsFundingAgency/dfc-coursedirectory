@@ -10,19 +10,19 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "http://localhost:51615/swagger/swagger",
+      "launchBrowser": false,
+      "launchUrl": "http://localhost:51615/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Dfc.CourseDirectory.FindACourseApi": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:51615/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:51615/"
+      }
     }
   }
 }
