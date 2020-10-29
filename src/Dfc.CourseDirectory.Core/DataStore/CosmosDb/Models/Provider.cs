@@ -25,6 +25,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IList<ProviderAlias> ProviderAliases { get; set; } = new List<ProviderAlias>();
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
+        public bool NationalApprenticeshipProvider { get; set; }
+        public int? ProviderId { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
@@ -44,6 +46,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public ProviderContactPersonalDetails ContactPersonalDetails { get; set; }
         public ProviderContactAddress ContactAddress { get; set; }
         public string ContactTelephone1 { get; set; }
+        public string ContactTelephone2 { get; set; }
         public string ContactFax { get; set; }
         public string ContactWebsiteAddress { get; set; }
         public string ContactEmail { get; set; }

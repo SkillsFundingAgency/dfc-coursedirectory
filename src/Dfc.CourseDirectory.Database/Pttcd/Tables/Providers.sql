@@ -13,5 +13,7 @@
 	[Alias] NVARCHAR(MAX),
 	[UpdatedOn] DATETIME,
 	[UpdatedBy] NVARCHAR(MAX),
-	[DisplayNameSource] INT NOT NULL CONSTRAINT [DF_Providers_DisplayNameSource] DEFAULT (0)
+	[DisplayNameSource] INT NOT NULL CONSTRAINT [DF_Providers_DisplayNameSource] DEFAULT (0),
+	[NationalApprenticeshipProvider] BIT,
+	[TribalProviderId] INT,
 )
