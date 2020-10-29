@@ -37,9 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services.Tests", "tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{F734371F-3DE2-4B40-8654-5EBB167D7432}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.ProviderPortal.FindACourse.Tests", "tests\Dfc.ProviderPortal.FindACourse.Tests\Dfc.ProviderPortal.FindACourse.Tests.csproj", "{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi.Tests", "tests\Dfc.CourseDirectory.FindACourseApi.Tests\Dfc.CourseDirectory.FindACourseApi.Tests.csproj", "{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.ProviderPortal.FindACourse", "src\Dfc.ProviderPortal.FindACourse\Dfc.ProviderPortal.FindACourse.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi", "src\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.FindACourseApi.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
