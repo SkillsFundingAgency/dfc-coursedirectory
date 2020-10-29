@@ -474,22 +474,6 @@
                 "value": "500"
               },
               {
-                "name": "OnspdSearchSettings__SearchServiceName",
-                "value": "[parameters('searchDomain')]"
-              },
-              {
-                "name": "OnspdSearchSettings__SearchServiceAdminApiKey",
-                "value": "[parameters('searchAdminKey')]"
-              },
-              {
-                "name": "OnspdSearchSettings__SearchServiceQueryApiKey",
-                "value": "[parameters('searchQueryKey')]"
-              },
-              {
-                "name": "OnspdSearchSettings__IndexName",
-                "value": "onspd"
-              },
-              {
                 "name": "DFESignInSettings__ClientID",
                 "value": "[parameters('dfeClientID')]"
               },

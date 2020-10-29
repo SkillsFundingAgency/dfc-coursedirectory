@@ -1,16 +1,17 @@
-﻿using Dfc.CourseDirectory.Models.Models.Onspd;
-using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
-using Dfc.CourseDirectory.Services.OnspdService;
+﻿using System.Linq;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Models.Models.Onspd;
+using Mapster;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class OnspdSearchHelper : IOnspdSearchHelper
     {
-        private readonly IOnspdService _onspdService;
+        private readonly ISearchClient<Core.Search.Models.Onspd> _searchClient;
 
-        public OnspdSearchHelper(IOnspdService onspdService)
+        public OnspdSearchHelper(ISearchClient<Core.Search.Models.Onspd> searchClient)
         {
-            _onspdService = onspdService;
+            _searchClient = searchClient;
         }
 
         public Onspd GetOnsPostcodeData(string postcode)
@@ -18,11 +19,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var onspd = new Onspd();
             if (!string.IsNullOrWhiteSpace(postcode))
             {
-                var onspdSearchCriteria = new OnspdSearchCriteria(postcode);
-                var onspdResult = _onspdService.GetOnspdData(onspdSearchCriteria);
-                if (onspdResult.IsSuccess && onspdResult.HasValue)
+                var searchResult = _searchClient.Search(new OnspdSearchQuery() { Postcode = postcode })
+                    .GetAwaiter().GetResult();
+
+                if (searchResult.Results.Count > 0)
                 {
-                    onspd = onspdResult.Value.Value;
+                    return searchResult.Results.Single().Adapt<Onspd>();
                 }
             }
 
