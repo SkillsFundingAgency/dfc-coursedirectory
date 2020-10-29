@@ -19,10 +19,8 @@ using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
-using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
@@ -113,8 +111,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<CourseTextServiceSettings>(Configuration.GetSection(nameof(CourseTextServiceSettings)));
             services.AddScoped<ICourseTextService, CourseTextService>();
 
-            services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
-            services.AddScoped<IOnspdService, OnspdService>();
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICSVHelper, CSVHelper>();
