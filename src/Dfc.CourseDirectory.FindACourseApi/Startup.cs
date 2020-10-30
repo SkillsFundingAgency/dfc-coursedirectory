@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.FindACourseApi.Helpers;
 using Dfc.CourseDirectory.FindACourseApi.Interfaces;
 using Dfc.CourseDirectory.FindACourseApi.Services;
 using Dfc.CourseDirectory.FindACourseApi.Settings;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,8 @@ namespace Dfc.CourseDirectory.FindACourseApi
                 .Configure<SearchServiceSettings>(Configuration.GetSection(nameof(SearchServiceSettings)))
                 .AddScoped<ICourseService, CoursesService>()
                 .AddSingleton<SearchServiceWrapper>()
-                .AddTransient<ISearchServiceSettings>(sp => sp.GetRequiredService<IOptions<SearchServiceSettings>>().Value);
+                .AddTransient<ISearchServiceSettings>(sp => sp.GetRequiredService<IOptions<SearchServiceSettings>>().Value)
+                .AddMediatR(typeof(Startup).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
