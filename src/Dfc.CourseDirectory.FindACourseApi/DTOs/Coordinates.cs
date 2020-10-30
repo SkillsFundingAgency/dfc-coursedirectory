@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi.ApiModels
+﻿namespace Dfc.CourseDirectory.FindACourseApi.DTOs
 {
     public class Coordinates
     {

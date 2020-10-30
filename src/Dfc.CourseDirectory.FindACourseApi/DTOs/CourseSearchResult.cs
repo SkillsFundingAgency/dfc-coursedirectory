@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.FindACourseApi.Models;
 
-namespace Dfc.CourseDirectory.FindACourseApi.ApiModels
+namespace Dfc.CourseDirectory.FindACourseApi.DTOs
 {
-    public class CourseSearchResponse : IPagedResponse
-    {
-        public IDictionary<string, IEnumerable<FacetCountResult>> Facets { get; set; }
-        public IEnumerable<CourseSearchResponseItem> Results { get; set; }
-        public int Total { get; set; }
-        public int Limit { get; set; }
-        public int Start { get; set; }
-    }
-
-    public class CourseSearchResponseItem
+    public class CourseSearchResult
     {
         public double SearchScore { get; set; }
         public double? Distance { get; set; }
