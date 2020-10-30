@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
         {
             Factory = factory;
             HttpClient = factory.CreateClient();
+            Factory.OnTestStarting();
         }
 
         public HttpClient HttpClient { get; }
