@@ -25,7 +25,6 @@ namespace Dfc.CourseDirectory.Testing
 
             var apps = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipsByIds()
             {
-                Ukprn = provider.Ukprn,
                 ApprenticeshipIds = apprenticeshipIds
             });
 
