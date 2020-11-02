@@ -15,7 +15,6 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
         public Guid? RoleId { get; set; }
         public string RoleName { get; set; }
         public string UKPRN { get; set; }
-        public string ProviderType { get; set; }
         public Guid? ProviderID { get; set; }
 
         public AuthUserDetails(
@@ -26,7 +25,6 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
             Guid? roleId,
             string roleName,
             string ukPrn,
-            string providerType,
             Guid? providerId)
         {
             UserId = userId;
@@ -36,7 +34,6 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
             RoleId = roleId;
             RoleName = roleName;
             UKPRN = ukPrn;
-            ProviderType = providerType;
             ProviderID = providerId;
         }
 
@@ -51,7 +48,6 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
             yield return RoleId;
             yield return RoleName;
             yield return UKPRN;
-            yield return ProviderType;
             yield return ProviderID;
         }
     }

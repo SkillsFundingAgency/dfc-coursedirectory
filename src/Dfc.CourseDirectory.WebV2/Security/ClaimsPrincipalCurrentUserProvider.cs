@@ -31,18 +31,12 @@ namespace Dfc.CourseDirectory.WebV2.Security
             if (signInContext.Provider != null)
             {
                 claims.Add(new Claim("ProviderId", signInContext.Provider.Id.ToString()));
-                claims.Add(new Claim("ProviderType", signInContext.Provider.ProviderType.ToString()));
+                claims.Add(new Claim("ProviderType", ((int)signInContext.Provider.ProviderType).ToString()));
                 claims.Add(new Claim("provider_status", signInContext.Provider.ProviderStatus));
 
                 // This claim is kept around to keep the old UI bits working.
                 // New bits should use ProviderId instead
                 claims.Add(new Claim("UKPRN", signInContext.Provider.Ukprn.ToString()));
-            }
-            else
-            {
-                // TODO: Old UI uses this to figure out what UI to show so we need to keep it around for now.
-                // New UI shouldn't depend on this so we should omit this after we've migrated all the UI
-                claims.Add(new Claim("ProviderType", "Both"));
             }
 
             return new ClaimsPrincipal(new ClaimsIdentity(claims, "Dfe Sign In"));

@@ -63,7 +63,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 userId: Guid.TryParse(GetClaim(claims, "user_id"), out Guid userId) ? userId : Guid.Empty,
                 email : GetClaim(claims, "email"),
                 nameOfUser : $"{GetClaim(claims, "given_name")} {GetClaim(claims, "family_Name")}",
-                providerType : GetClaim(claims, "ProviderType"),
                 roleId : Guid.Empty,
                 roleName : string.Empty,
                 ukPrn : UKPRN.HasValue ? UKPRN.ToString() : GetClaim(claims, "UKPRN"),

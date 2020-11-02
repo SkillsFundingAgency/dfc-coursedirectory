@@ -52,9 +52,9 @@ namespace Dfc.CourseDirectory.Web
         public IConfiguration Configuration { get; }
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
-        //Undefined is only part of these policy until the batch import to update ProviderType is run
-        private readonly List<string> _feClaims = new List<string> {"Fe", "Both", "Undefined" };
-        private readonly List<string> _apprenticeshipClaims = new List<string> { "Apprenticeships", "Both", "Undefined" };
+        //Undefined (0) is only part of these policy until the batch import to update ProviderType is run
+        private readonly List<string> _feClaims = new List<string> {"1", "3", "0" };
+        private readonly List<string> _apprenticeshipClaims = new List<string> { "2", "3", "0" };
         public Startup(IWebHostEnvironment env, ILogger<Startup> logger, IConfiguration config)
         {
             _env = env;
