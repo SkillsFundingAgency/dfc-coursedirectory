@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
 
-
-namespace Dfc.CourseDirectory.Common
+namespace Dfc.CourseDirectory.Web.Validation
 {
     public static class Validate
     {
@@ -52,27 +48,21 @@ namespace Dfc.CourseDirectory.Common
 
             msData = msData.Trim();
             return (msData.Length % 4 == 0) && Regex.IsMatch(msData, RegexPattern.Base64Encoded, RegexOptions.None);
-
-
-                
         }
 
-        public static bool isBinaryStream(MemoryStream ms)
+        public static bool IsBinaryStream(MemoryStream ms)
         {
             var msArray = ms.ToArray();
-            return msArray.FirstOrDefault(x => isControlChar(x)) != 0;
-
+            return msArray.FirstOrDefault(x => IsControlChar(x)) != 0;
         }
 
-        static bool isControlChar(int ch)
+        private static bool IsControlChar(int ch)
         {
             return (ch > Chars.NUL && ch < Chars.BS)
                    || (ch > Chars.CR && ch < Chars.SUB);
         }
 
-        
-
-        public static class Chars
+        private static class Chars
         {
             public static char NUL = (char)0; // Null char
             public static char BS = (char)8; // Back Space

@@ -1,5 +1,5 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
-@using Dfc.CourseDirectory.Common
+@using Dfc.CourseDirectory.Web.Validation
 
 @model Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship.EditApprenticeshipViewModel
 
@@ -9,135 +9,135 @@
 }
 
 
-    <form asp-controller="EditApprenticeship" asp-action="Index" method="post" id="editApprenticeship">
-        @{
-            var regex = RegexPattern.AllowEverything;
-        }
-        @{ var emailRegEx = @"^.+(@).+$"; }
-        @{ var telephoneRegEx = @"^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}?$";}
-        @{ var websiteRegEx = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
+<form asp-controller="EditApprenticeship" asp-action="Index" method="post" id="editApprenticeship">
+    @{
+        var regex = RegexPattern.AllowEverything;
+    }
+    @{ var emailRegEx = @"^.+(@).+$"; }
+    @{ var telephoneRegEx = @"^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}?$";}
+    @{ var websiteRegEx = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
 
-        <span class="govuk-caption-l">@Model.ApprenticeshipTitle</span>
-        @Html.HiddenFor(x => x.ApprenticeshipId)
-        @Html.HiddenFor(x => x.StandardCode)
-        @Html.HiddenFor(x => x.FrameworkCode)
-        @Html.HiddenFor(x => x.ApprenticeshipTitle)
-        @Html.HiddenFor(x => x.ApprenticeshipType)
-        @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
-        @Html.HiddenFor(x => x.Mode)
-        @Html.HiddenFor(x => x.Cancelled)
-        @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-        @Html.HiddenFor(x => x.ShowCancelled)
-        @Html.HiddenFor(x => x.Version)
-        @Html.HiddenFor(x => x.PathwayCode)
-        @Html.HiddenFor(x => x.ProgType)
+    <span class="govuk-caption-l">@Model.ApprenticeshipTitle</span>
+    @Html.HiddenFor(x => x.ApprenticeshipId)
+    @Html.HiddenFor(x => x.StandardCode)
+    @Html.HiddenFor(x => x.FrameworkCode)
+    @Html.HiddenFor(x => x.ApprenticeshipTitle)
+    @Html.HiddenFor(x => x.ApprenticeshipType)
+    @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
+    @Html.HiddenFor(x => x.Mode)
+    @Html.HiddenFor(x => x.Cancelled)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+    @Html.HiddenFor(x => x.ShowCancelled)
+    @Html.HiddenFor(x => x.Version)
+    @Html.HiddenFor(x => x.PathwayCode)
+    @Html.HiddenFor(x => x.ProgType)
 
-        <h1 class="govuk-heading-l" style="padding-top: 20px;">
-            Edit Apprenticeship
-        </h1>
+    <h1 class="govuk-heading-l" style="padding-top: 20px;">
+        Edit Apprenticeship
+    </h1>
 
-        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is an issue with this apprenticeship
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list"></ul>
-            </div>
+    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is an issue with this apprenticeship
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list"></ul>
         </div>
+    </div>
 
-        <div class="section" id="sectionApprenticeshipInformationModel">
+    <div class="section" id="sectionApprenticeshipInformationModel">
 
-            <div class="govuk-character-count" id="InformationContainer">
-                <div class="govuk-form-group">
+        <div class="govuk-character-count" id="InformationContainer">
+            <div class="govuk-form-group">
 
-                    <span id="infoRequired" class="" style="display: none"
-                          val-required-message="Enter Apprenticeship information for employers">Enter Apprenticeship information for employers</span>
-                    <span id="infoMax" class="" style="display: none"
-                          val-max-length="750"
-                          val-max-length-message="Apprenticeship information for employers should be no more than 750 characters">Apprenticeship information for employers should be no more than 750 characters</span>
-                    <span id="infoInvalid" class="" style="display: none" val-regex="@regex"
-                          val-regex-message="Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation">Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation</span>
-                    <label id="govuk-label-Information" class="govuk-label" for="word-count">
-                        Apprenticeship information for employers
-                    </label>
-                    <span class="govuk-hint">
-                        Give information for employers about how you deliver this specific apprenticeship training. For useful advice on how to fill out this section go to the <a href="https://www.gov.uk/government/publications/find-apprenticeship-training-how-to-submit-data" target="_blank">guidance</a>
-                    </span>
-                    <textarea class="govuk-textarea" asp-for="@Model.Information" rows="5" id="info" aria-labelledby="govuk-label-Information"></textarea>
-                </div>
-            </div>
-        </div>
-        <div class="section" id="sectionWebSite">
-            <div id="WebsiteContainer" class="govuk-form-group">
-                <label id="govuk-label-Website" class="govuk-label">
-                    Website
+                <span id="infoRequired" class="" style="display: none"
+                      val-required-message="Enter Apprenticeship information for employers">Enter Apprenticeship information for employers</span>
+                <span id="infoMax" class="" style="display: none"
+                      val-max-length="750"
+                      val-max-length-message="Apprenticeship information for employers should be no more than 750 characters">Apprenticeship information for employers should be no more than 750 characters</span>
+                <span id="infoInvalid" class="" style="display: none" val-regex="@regex"
+                      val-regex-message="Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation">Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation</span>
+                <label id="govuk-label-Information" class="govuk-label" for="word-count">
+                    Apprenticeship information for employers
                 </label>
                 <span class="govuk-hint">
-                    Your web page for this apprenticeship. Include http://
+                    Give information for employers about how you deliver this specific apprenticeship training. For useful advice on how to fill out this section go to the <a href="https://www.gov.uk/government/publications/find-apprenticeship-training-how-to-submit-data" target="_blank">guidance</a>
                 </span>
-                <input class="govuk-input" asp-for="@Model.WebSite" type="text" aria-labelledby="govuk-label-Website"
-                       val-max-length="255"
-                       val-max-length-message="Apprenticeship web page should be no more than 255 characters"
-                       val-regex="@websiteRegEx"
-                       val-regex-message="Enter a real web page, like http://www.provider.com/apprenticeship">
+                <textarea class="govuk-textarea" asp-for="@Model.Information" rows="5" id="info" aria-labelledby="govuk-label-Information"></textarea>
             </div>
         </div>
-        <div class="section" id="sectionEmail">
-            <h2 class="">Contact details</h2>
-
-            <div id="EmailContainer" class="govuk-form-group">
-                <span class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
-
-                <label id="govuk-label-Email" class="govuk-label">
-                    Email
-                </label>
-                <input class="govuk-input" asp-for="@Model.Email" type="text" aria-labelledby="govuk-label-Email"
-                       val-required-message="Enter email"
-                       val-max-length="255"
-                       val-max-length-message="Email should be no more than 255 characters"
-                       val-regex="@emailRegEx"
-                       val-regex-message="Enter a valid email">
-            </div>
+    </div>
+    <div class="section" id="sectionWebSite">
+        <div id="WebsiteContainer" class="govuk-form-group">
+            <label id="govuk-label-Website" class="govuk-label">
+                Website
+            </label>
+            <span class="govuk-hint">
+                Your web page for this apprenticeship. Include http://
+            </span>
+            <input class="govuk-input" asp-for="@Model.WebSite" type="text" aria-labelledby="govuk-label-Website"
+                   val-max-length="255"
+                   val-max-length-message="Apprenticeship web page should be no more than 255 characters"
+                   val-regex="@websiteRegEx"
+                   val-regex-message="Enter a real web page, like http://www.provider.com/apprenticeship">
         </div>
-        <div class="section" id="sectionTelephone">
-            <div id="TelephoneContainer" class="govuk-form-group">
-                <label id="govuk-label-Telephone" class="govuk-label">
-                    Telephone
-                </label>
+    </div>
+    <div class="section" id="sectionEmail">
+        <h2 class="">Contact details</h2>
 
-                <input class="govuk-input govuk-!-width-one-half" asp-for="@Model.Telephone" type="text" aria-labelledby="govuk-label-Telephone"
-                       val-required-message="Enter telephone"
-                       val-min-length="11"
-                       val-min-length-message="Telephone should be minimum 11 characters"
-                       val-max-length="30"
-                       val-max-length-message="Telephone should be no more than 30 characters"
-                       val-regex="@telephoneRegEx"
-                       val-regex-message="Enter a valid telephone number">
-            </div>
+        <div id="EmailContainer" class="govuk-form-group">
+            <span class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
+
+            <label id="govuk-label-Email" class="govuk-label">
+                Email
+            </label>
+            <input class="govuk-input" asp-for="@Model.Email" type="text" aria-labelledby="govuk-label-Email"
+                   val-required-message="Enter email"
+                   val-max-length="255"
+                   val-max-length-message="Email should be no more than 255 characters"
+                   val-regex="@emailRegEx"
+                   val-regex-message="Enter a valid email">
         </div>
-        <div class="section" id="sectionContactUSPage">
+    </div>
+    <div class="section" id="sectionTelephone">
+        <div id="TelephoneContainer" class="govuk-form-group">
+            <label id="govuk-label-Telephone" class="govuk-label">
+                Telephone
+            </label>
 
-            <div id="ContactUsContainer" class="govuk-form-group">
-                <label id="govuk-label-ContactUsIUrl" class="govuk-label">
-                    Contact us page
-                </label>
-                <span class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
-
-                <input class="govuk-input" asp-for="@Model.ContactUsURL" type="text" aria-labelledby="govuk-label-ContactUsIUrl"
-                       val-max-length="255"
-                       val-regex="@websiteRegEx"
-                       val-max-length-message="Contact us page should be no more than 255 characters"
-                       val-regex-message="Enter a real web page, like http://www.provider.com/apprenticeship">
-            </div>
+            <input class="govuk-input govuk-!-width-one-half" asp-for="@Model.Telephone" type="text" aria-labelledby="govuk-label-Telephone"
+                   val-required-message="Enter telephone"
+                   val-min-length="11"
+                   val-min-length-message="Telephone should be minimum 11 characters"
+                   val-max-length="30"
+                   val-max-length-message="Telephone should be no more than 30 characters"
+                   val-regex="@telephoneRegEx"
+                   val-regex-message="Enter a valid telephone number">
         </div>
+    </div>
+    <div class="section" id="sectionContactUSPage">
 
-        <div class="cta-container">
-            <button type="submit" class="govuk-button" id="continue" value="continue">
-                Save
-            </button>
+        <div id="ContactUsContainer" class="govuk-form-group">
+            <label id="govuk-label-ContactUsIUrl" class="govuk-label">
+                Contact us page
+            </label>
+            <span class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
 
+            <input class="govuk-input" asp-for="@Model.ContactUsURL" type="text" aria-labelledby="govuk-label-ContactUsIUrl"
+                   val-max-length="255"
+                   val-regex="@websiteRegEx"
+                   val-max-length-message="Contact us page should be no more than 255 characters"
+                   val-regex-message="Enter a real web page, like http://www.provider.com/apprenticeship">
         </div>
-    </form>
+    </div>
+
+    <div class="cta-container">
+        <button type="submit" class="govuk-button" id="continue" value="continue">
+            Save
+        </button>
+
+    </div>
+</form>
 
 <script>
 

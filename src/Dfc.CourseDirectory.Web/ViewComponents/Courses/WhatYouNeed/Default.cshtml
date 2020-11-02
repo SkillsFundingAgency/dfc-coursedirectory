@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Common
+﻿@using Dfc.CourseDirectory.Web.Validation
 @using Dfc.CourseDirectory.Common.Settings
 @using Microsoft.Extensions.Options
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed.WhatYouNeedModel
@@ -7,7 +7,7 @@
 @inject IOptions<WhatYouNeedComponentSettings> whatYouNeedComponentSettings
 
 @{
-@*    var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+    @*    var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
     var regex = RegexPattern.AllowEverything;
     var whatYouNeedTextFieldMaxChars = whatYouNeedComponentSettings.Value.TextFieldMaxChars;
 }
@@ -26,10 +26,10 @@
             </div>
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhatYouNeed" rows="7"
-                   aria-describedby="@Model.AriaDescribedBy" aria-label="WhatYouNeed"
-                          val-max-length=@whatYouNeedTextFieldMaxChars val-max-length-message="What you’ll need to bring must be @whatYouNeedTextFieldMaxChars characters or less"
-                          val-regex="@regex"
-                          val-regex-message="What you’ll need to bring contains invalid characters"></textarea>
+                  aria-describedby="@Model.AriaDescribedBy" aria-label="WhatYouNeed"
+                  val-max-length=@whatYouNeedTextFieldMaxChars val-max-length-message="What you’ll need to bring must be @whatYouNeedTextFieldMaxChars characters or less"
+                  val-regex="@regex"
+                  val-regex-message="What you’ll need to bring contains invalid characters"></textarea>
 
     </div>
 </div>

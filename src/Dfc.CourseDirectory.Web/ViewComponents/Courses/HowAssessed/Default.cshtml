@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Common
+﻿@using Dfc.CourseDirectory.Web.Validation
 @using Dfc.CourseDirectory.Common.Settings
 @using Microsoft.Extensions.Options
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed.HowAssessedModel
@@ -9,7 +9,7 @@
 
 
 @{
-   @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+    @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
     var regex = RegexPattern.AllowEverything;
     var howAssessedTextFieldMaxChars = howAssessedComponentSettings.Value.TextFieldMaxChars;
 }
@@ -28,10 +28,10 @@
             </div>
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowAssessed" rows="7"
-                     aria-describedby="@Model.AriaDescribedBy" aria-label="HowAssessed"
-                          val-max-length=@howAssessedTextFieldMaxChars val-max-length-message="How you’ll be assessed must be @howAssessedTextFieldMaxChars characters or less"
-                          val-regex="@regex"
-                          val-regex-message="How you’ll be assessed contains invalid characters"></textarea>
+                  aria-describedby="@Model.AriaDescribedBy" aria-label="HowAssessed"
+                  val-max-length=@howAssessedTextFieldMaxChars val-max-length-message="How you’ll be assessed must be @howAssessedTextFieldMaxChars characters or less"
+                  val-regex="@regex"
+                  val-regex-message="How you’ll be assessed contains invalid characters"></textarea>
 
     </div>
 </div>

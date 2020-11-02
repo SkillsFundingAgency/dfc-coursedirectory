@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Common
+﻿namespace Dfc.CourseDirectory.Web.Validation
 {
     public static class RegexPattern
     {

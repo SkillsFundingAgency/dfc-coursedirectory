@@ -1,36 +1,36 @@
 ﻿@using System.Net
-@using Dfc.CourseDirectory.Common
+@using Dfc.CourseDirectory.Web.Validation
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost.CostModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-    <div id="costContainer" class="govuk-form-group">
-        <label id="govuk-label-Cost" class="govuk-label--m" asp-for="Cost">
-            @Model.CostLabelText
-        </label>
-        @if (!string.IsNullOrWhiteSpace(Model.CostHintText))
-        {
-            <span class="govuk-hint govuk-!-margin-top-3">
-                @Model.CostHintText
-            </span>
-        }
+<div id="costContainer" class="govuk-form-group">
+    <label id="govuk-label-Cost" class="govuk-label--m" asp-for="Cost">
+        @Model.CostLabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.CostHintText))
+    {
+        <span class="govuk-hint govuk-!-margin-top-3">
+            @Model.CostHintText
+        </span>
+    }
 
-        @{
-            @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
-            var regex = RegexPattern.AllowEverything;
+    @{
+        @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+        var regex = RegexPattern.AllowEverything;
 
-        }
+    }
 
-        <div class="govuk-currency-input">
-            <div class="govuk-currency-input__inner">
-                <span class="govuk-currency-input__inner__unit">£</span>
-                <input class="govuk-input govuk-input--width-10" aria-label="Enter amount in pounds" type="text" asp-for="@Model.Cost" val-required-message="Enter cost or cost description" style="padding-left:25px"
-                       val-max-length="8"
-                       val-max-length-message="Maximum allowed cost value is 999,999.99">
-            </div>
+    <div class="govuk-currency-input">
+        <div class="govuk-currency-input__inner">
+            <span class="govuk-currency-input__inner__unit">£</span>
+            <input class="govuk-input govuk-input--width-10" aria-label="Enter amount in pounds" type="text" asp-for="@Model.Cost" val-required-message="Enter cost or cost description" style="padding-left:25px"
+                   val-max-length="8"
+                   val-max-length-message="Maximum allowed cost value is 999,999.99">
         </div>
-
     </div>
+
+</div>
 
 <div id="sectionCostDescription" class="govuk-character-count" data-module="character-count" data-maxlength="255">
     <div class="govuk-form-group">
@@ -44,10 +44,10 @@
             </span>
         }
         @{
-            Model.CostDescription=@WebUtility.HtmlDecode(@Model.CostDescription);
+            Model.CostDescription = @WebUtility.HtmlDecode(@Model.CostDescription);
         }
 
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5" aria-label="CostDescription" 
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5" aria-label="CostDescription"
                   val-required-message="Enter cost or cost description"
                   val-max-length="255"
                   val-max-length-message="Cost description must be 255 characters or less"
@@ -157,7 +157,7 @@
                         }
                     }
 
-                   
+
                 }
 
                 if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
