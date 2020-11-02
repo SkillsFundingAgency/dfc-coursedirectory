@@ -39,13 +39,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="PrivateSetterContractResolver" Version="2.1.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
   </ItemGroup>

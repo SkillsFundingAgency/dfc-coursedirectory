@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
