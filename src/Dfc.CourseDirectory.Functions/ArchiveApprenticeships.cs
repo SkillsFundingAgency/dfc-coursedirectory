@@ -44,14 +44,10 @@ namespace Dfc.CourseDirectory.Functions
                 await Task.WhenAll(apprenticeshipIds
                     .Select((id, i) => new { ApprenticeshipId = id, Index = i })
                     .GroupBy(x => x.Index / 500)
-                    .Select(async x =>
-                    {
-                        var a = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                            new GetApprenticeshipsByIds { ApprenticeshipIds = x.Select(v => v.ApprenticeshipId) });
-
-                        return a.Values;
-                    })))
-                .SelectMany(a => a)
+                    .Select(async chunk =>
+                        await _cosmosDbQueryDispatcher.ExecuteQuery(
+                            new GetApprenticeshipsByIds { ApprenticeshipIds = chunk.Select(x => x.ApprenticeshipId) }))))
+                .SelectMany(a => a.Values)
                 .ToArray();
 
             var results = new List<OneOf<Success, NotFound, Error>>();
