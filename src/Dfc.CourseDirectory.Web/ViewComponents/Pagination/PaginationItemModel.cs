@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Services;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
 {

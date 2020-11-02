@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService

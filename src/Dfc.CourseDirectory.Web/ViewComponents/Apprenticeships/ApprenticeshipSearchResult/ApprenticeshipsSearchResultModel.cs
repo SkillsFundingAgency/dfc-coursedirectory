@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 using System.Collections.Generic;
 using System.Linq;

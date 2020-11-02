@@ -1,8 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Interfaces.Providers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Dfc.CourseDirectory.Models.Interfaces.Providers;
 
 namespace Dfc.CourseDirectory.Models.Models.Providers
 {
@@ -18,8 +14,5 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public object PostTown { get; set; }
         public string PostCode { get; set; }
         public object UniquePropertyReferenceNumber { get; set; }
-
     }
-
-
 }

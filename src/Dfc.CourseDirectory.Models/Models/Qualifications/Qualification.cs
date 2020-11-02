@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
 using Dfc.CourseDirectory.Models.Interfaces.Qualifications;
 
 namespace Dfc.CourseDirectory.Models.Models.Qualifications
@@ -28,16 +28,55 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
             string learnDirectClassSystemCode2,
             string guidedLearningHours)
         {
-            Throw.IfNullOrWhiteSpace(notionalNVQLevelv2, nameof(notionalNVQLevelv2));
-            Throw.IfNullOrWhiteSpace(awardOrgCode, nameof(awardOrgCode));
-            Throw.IfNullOrWhiteSpace(totalQualificationTime, nameof(totalQualificationTime));
-            Throw.IfNullOrWhiteSpace(unitType, nameof(unitType));
-            Throw.IfNullOrWhiteSpace(awardOrgName, nameof(awardOrgName));
-            Throw.IfNullOrWhiteSpace(learnAimRef, nameof(learnAimRef));
-            Throw.IfNullOrWhiteSpace(learnAimRefTitle, nameof(learnAimRefTitle));
-            Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode1, nameof(learnDirectClassSystemCode1));
-            Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode2, nameof(learnDirectClassSystemCode2));
-            Throw.IfNullOrWhiteSpace(guidedLearningHours, nameof(guidedLearningHours));
+            if (string.IsNullOrWhiteSpace(notionalNVQLevelv2))
+            {
+                throw new ArgumentException("message", nameof(notionalNVQLevelv2));
+            }
+
+            if (string.IsNullOrWhiteSpace(awardOrgCode))
+            {
+                throw new ArgumentException("message", nameof(awardOrgCode));
+            }
+
+            if (string.IsNullOrWhiteSpace(totalQualificationTime))
+            {
+                throw new ArgumentException("message", nameof(totalQualificationTime));
+            }
+
+            if (string.IsNullOrWhiteSpace(unitType))
+            {
+                throw new ArgumentException("message", nameof(unitType));
+            }
+
+            if (string.IsNullOrEmpty(awardOrgName))
+            {
+                throw new ArgumentException("message", nameof(awardOrgName));
+            }
+
+            if (string.IsNullOrWhiteSpace(learnAimRef))
+            {
+                throw new ArgumentException("message", nameof(learnAimRef));
+            }
+
+            if (string.IsNullOrWhiteSpace(learnAimRefTitle))
+            {
+                throw new ArgumentException("message", nameof(learnAimRefTitle));
+            }
+
+            if (string.IsNullOrWhiteSpace(learnDirectClassSystemCode1))
+            {
+                throw new ArgumentException("message", nameof(learnDirectClassSystemCode1));
+            }
+
+            if (string.IsNullOrWhiteSpace(learnDirectClassSystemCode2))
+            {
+                throw new ArgumentException("message", nameof(learnDirectClassSystemCode2));
+            }
+
+            if (string.IsNullOrWhiteSpace(guidedLearningHours))
+            {
+                throw new ArgumentException("message", nameof(guidedLearningHours));
+            }
 
             NotionalNVQLevelv2 = notionalNVQLevelv2;
             AwardOrgCode = awardOrgCode;

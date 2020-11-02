@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dfc.CourseDirectory.Common
+namespace Dfc.CourseDirectory.Services
 {
     public static class Throw
     {
@@ -11,12 +11,13 @@ namespace Dfc.CourseDirectory.Common
             if (argument == null)
                 throw new ArgumentNullException(name);
         }
+
         public static void IfNullGuid(Guid argument, string name)
         {
             if (argument == Guid.NewGuid())
                 throw new ArgumentException($"{name} cannot be null or empty", name);
-
         }
+
         public static void IfNullOrEmpty(string argument, string name)
         {
             if (string.IsNullOrEmpty(argument))
@@ -38,25 +39,25 @@ namespace Dfc.CourseDirectory.Common
         public static void IfLessThan(int limit, int argument, string name)
         {
             if (argument < limit)
-                throw new ArgumentOutOfRangeException($"{name} cannot be less than {limit}.", name);
+                throw new ArgumentOutOfRangeException(name, $"{name} cannot be less than {limit}.");
         }
 
         public static void IfGreaterThan(int limit, int argument, string name)
         {
             if (argument > limit)
-                throw new ArgumentOutOfRangeException($"{name} cannot be greater than {limit}.", name);
+                throw new ArgumentOutOfRangeException(name, $"{name} cannot be greater than {limit}.");
         }
 
         public static void IfLessThan(decimal limit, decimal argument, string name)
         {
             if (argument < limit)
-                throw new ArgumentOutOfRangeException($"{name} cannot be less than {limit}.", name);
+                throw new ArgumentOutOfRangeException(name, $"{name} cannot be less than {limit}.");
         }
 
         public static void IfGreaterThan(decimal limit, decimal argument, string name)
         {
             if (argument > limit)
-                throw new ArgumentOutOfRangeException($"{name} cannot be greater than {limit}.", name);
+                throw new ArgumentOutOfRangeException(name, $"{name} cannot be greater than {limit}.");
         }
     }
 }

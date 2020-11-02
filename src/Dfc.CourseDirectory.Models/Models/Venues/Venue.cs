@@ -1,5 +1,4 @@
 ﻿using System;
-using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Newtonsoft.Json;
 
@@ -81,12 +80,30 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             DateTime dateAdded,
             DateTime dateUpdated)
         {
-            //Throw.IfNullOrWhiteSpace(id, nameof(id));
-            Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
-            Throw.IfNullOrWhiteSpace(venueName, nameof(VenueName));
-            Throw.IfNullOrWhiteSpace(address1, nameof(address1));
-            Throw.IfNullOrWhiteSpace(town, nameof(town));
-            Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
+            if (ukPrn < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(ukPrn), $"{nameof(ukPrn)} cannot be less than 0.");
+            }
+
+            if (string.IsNullOrWhiteSpace(venueName))
+            {
+                throw new ArgumentException("message", nameof(venueName));
+            }
+
+            if (string.IsNullOrWhiteSpace(address1))
+            {
+                throw new ArgumentException("message", nameof(address1));
+            }
+
+            if (string.IsNullOrWhiteSpace(town))
+            {
+                throw new ArgumentException("message", nameof(town));
+            }
+
+            if (string.IsNullOrWhiteSpace(postcode))
+            {
+                throw new ArgumentException("message", nameof(postcode));
+            }
 
             ID = id;
             UKPRN = ukPrn;
@@ -133,15 +150,15 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             DateTime dateAdded,
             DateTime dateUpdated)
         {
-            Throw.IfNullOrWhiteSpace(id, nameof(id));
-            Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
-            //Throw.IfLessThan(0, providerID, nameof(providerID));
-            //Throw.IfLessThan(0, venueID, nameof(venueID));
-           //Throw.IfNullOrWhiteSpace(venueName, nameof(venueName));
-            //Throw.IfNullOrWhiteSpace(provVenueID, nameof(provVenueID));
-            ////Throw.IfNullOrWhiteSpace(address1, nameof(address1));
-            //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
-            //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentException("message", nameof(id));
+            }
+
+            if (ukPrn < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(ukPrn), $"{nameof(ukPrn)} cannot be less than 0.");
+            }
 
             ID = id;
             UKPRN = ukPrn;
@@ -183,18 +200,15 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string updatedBy,
             DateTime dateUpdated)
         {
-            Throw.IfNullOrWhiteSpace(id, nameof(id));
-            Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
-            //Throw.IfLessThan(0, providerID, nameof(providerID));
-            //Throw.IfLessThan(0, venueID, nameof(venueID));
-            //Throw.IfNullOrWhiteSpace(venueName, nameof(venueName));
-            //Throw.IfNullOrWhiteSpace(provVenueID, nameof(provVenueID));
-            //Throw.IfNullOrWhiteSpace(address1, nameof(address1));
-            //Throw.IfNullOrWhiteSpace(address1, nameof(address2));
-            //Throw.IfNullOrWhiteSpace(address1, nameof(address3));
-            //Throw.IfNullOrWhiteSpace(town, nameof(town));
-            //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
-            //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentException("message", nameof(id));
+            }
+
+            if (ukPrn < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(ukPrn), $"{nameof(ukPrn)} cannot be less than 0.");
+            }
 
             ID = id;
             UKPRN = ukPrn;
