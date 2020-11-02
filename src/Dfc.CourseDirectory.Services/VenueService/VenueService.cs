@@ -54,7 +54,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
         public async Task<IResult<IVenue>> UpdateAsync(IVenue venue)
         {
             Throw.IfNull(venue, nameof(venue));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -95,18 +94,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 return Result.Fail<IVenue>("Venue update service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
-
         }
-
 
         public async Task<IResult<IVenue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -149,16 +141,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 return Result.Fail<IVenue>("Get Venue By Id service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IVenue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -200,16 +187,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 return Result.Fail<IVenue>("Get Venue By VenueId service unknown error.");
 
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IVenue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -251,16 +233,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 return Result.Fail<IVenue>("Get Venue By LocationId service unknown error.");
 
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -304,16 +281,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service unknown error.");
 
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -369,17 +341,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 return Result.Fail<IVenueSearchResult>("Venue search service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
-
         }
 
         public async Task<IResult<IVenue>> AddAsync(IVenue venue)
         {
             Throw.IfNull(venue, nameof(venue));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -420,11 +386,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 return Result.Fail<IVenue>("Venue add service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
-
         }
     }
 

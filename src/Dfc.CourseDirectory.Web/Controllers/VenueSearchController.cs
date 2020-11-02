@@ -1,18 +1,16 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -61,7 +59,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             VenueSearchResultModel model;
 
-            _logger.LogMethodEnter();
             _logger.LogInformationObject("Model", requestModel);
 
             if (requestModel == null)
@@ -87,7 +84,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            _logger.LogMethodExit();
             return ViewComponent(nameof(ViewComponents.VenueSearchResult.VenueSearchResult), model);
             
         }

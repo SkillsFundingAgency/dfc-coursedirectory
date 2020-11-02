@@ -37,8 +37,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest)
         {
-            _logger.LogMethodEnter();
-            _logger.LogInformationObject("RequestModel", ajaxRequest);
             string ResultText = string.Empty;
             bool Success = true;
 
@@ -78,7 +76,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _logger.LogInformation("Success", Success);
             _logger.LogInformation("ResultText", ResultText);
-            _logger.LogMethodExit();
             _session.SetInt32("UKPRN", Convert.ToInt32(ajaxRequest.UKPRN));
             return Json(new { success = Success, resultText = ResultText });
         }

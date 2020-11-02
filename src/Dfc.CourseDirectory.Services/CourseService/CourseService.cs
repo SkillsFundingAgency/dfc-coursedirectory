@@ -134,7 +134,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public async Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -174,17 +173,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                 return Result.Fail<ICourse>("Get Course By Id service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
-            _logger.LogMethodEnter();
             HttpResponseMessage response = null;
 
             try
@@ -230,17 +224,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get your courses service unknown error.", e);
                 return Result.Fail<ICourseSearchResult>($"Get your courses service unknown error. {e.Message}");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -283,17 +272,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get your courses service unknown error.", e);
                 return Result.Fail<ICourseSearchResult>("Get your courses service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -335,17 +319,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get course counts service unknown error.", e);
                 return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -387,15 +366,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get recent course changes service unknown error.", e);
                 return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode)
         {
-            _logger.LogMethodEnter();
             Throw.IfNull(courses, nameof(courses));
 
             try
@@ -430,15 +404,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("PendingCourseValidationMessages error", ex);
                 return Result.Fail<IList<CourseValidationResult>>("Error compiling messages for items requiring attention on landing page");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<ICourse>> AddCourseAsync(ICourse course)
         {
-            _logger.LogMethodEnter();
             Throw.IfNull(course, nameof(course));
 
             try
@@ -484,15 +453,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                 return Result.Fail<ICourse>("Course add service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<ICourse>> UpdateCourseAsync(ICourse course)
         {
-            _logger.LogMethodEnter();
             Throw.IfNull(course, nameof(course));
 
             try
@@ -533,10 +497,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Course update service unknown error.", e);
 
                 return Result.Fail<ICourse>("Course update service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
             }
         }
 
@@ -948,7 +908,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public async Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -981,16 +940,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get course migration report service unknown error.", e);
                 return Result.Fail<CourseMigrationReport>("Get course migration report service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports()
         {
-            _logger.LogMethodEnter();
-
             try
             {
                 _logger.LogInformationObject("Get all dfc reports URI", _getAllDfcReports);
@@ -1021,10 +974,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 _logger.LogException("Get course migration report service unknown error.", e);
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
             }
         }
 

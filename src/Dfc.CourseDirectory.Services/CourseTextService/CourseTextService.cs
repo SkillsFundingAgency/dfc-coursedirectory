@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -74,10 +73,6 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             {
                 _logger.LogException("Get your courses service unknown error.", e);
                 return Result.Fail<ICourseText>("Get your courses service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
             }
         }
     }

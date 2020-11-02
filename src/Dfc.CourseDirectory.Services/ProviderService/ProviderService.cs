@@ -42,8 +42,6 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
         public async Task<IResult<IEnumerable<Provider>>> GetProviderByPRNAsync(string prn)
         {
-            _logger.LogMethodEnter();
-
             if (string.IsNullOrWhiteSpace(prn))
             {
                 throw new ArgumentException($"{prn} cannot be null or empty or whitespace.", nameof(prn));
@@ -90,16 +88,11 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
                 return Result.Fail<IEnumerable<Provider>>("Provider search service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IProvider>> AddProviderAsync(IProviderAdd provider)
         {
             Throw.IfNull(provider, nameof(provider));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -142,16 +135,11 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
                 return Result.Fail<IProvider>("Provider add service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult> UpdateProviderDetails(IProvider provider)
         {
             Throw.IfNull(provider, nameof(provider));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -197,10 +185,6 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 _logger.LogException("Provider update service unknown error.", e);
 
                 return Result.Fail("Provider update service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
             }
         }
 
