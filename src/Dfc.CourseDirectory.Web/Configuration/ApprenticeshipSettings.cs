@@ -1,8 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces;
-
-namespace Dfc.CourseDirectory.Services
+﻿namespace Dfc.CourseDirectory.Web.Configuration
 {
-    public class ApprenticeshipSettings : IApprenticeshipSettings
+    public class ApprenticeshipSettings
     {
         public int DefaultRadius { get; set; }
         public int NationalRadius { get; set; }
