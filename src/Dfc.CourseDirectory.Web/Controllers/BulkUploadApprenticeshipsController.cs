@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
@@ -150,7 +151,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
                 catch (HeaderValidationException he)
                 {
-                    var errors = new[] { he.Message.FirstSentence() };
+                    var errors = new[] { ApprenticeshipBulkUploadService.FirstSentence(he) };
                     return View(new BulkUploadViewModel {errors = errors});
                 }
                 catch (BadDataException be)
