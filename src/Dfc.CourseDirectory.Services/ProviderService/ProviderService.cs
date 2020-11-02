@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Providers;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;

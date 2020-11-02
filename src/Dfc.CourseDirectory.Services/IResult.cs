@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Common.Interfaces
+﻿namespace Dfc.CourseDirectory.Services
 {
     public interface IResult
     {

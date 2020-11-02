@@ -1,19 +1,17 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
+using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {

@@ -1,14 +1,13 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService
 {

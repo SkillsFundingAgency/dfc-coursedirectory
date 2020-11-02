@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;

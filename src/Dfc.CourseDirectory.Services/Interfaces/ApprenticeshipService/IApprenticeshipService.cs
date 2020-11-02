@@ -1,8 +1,6 @@
-﻿using System;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Courses;
 

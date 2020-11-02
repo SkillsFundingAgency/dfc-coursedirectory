@@ -6,8 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Models.Enums;

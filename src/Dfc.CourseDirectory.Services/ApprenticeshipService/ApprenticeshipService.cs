@@ -1,18 +1,17 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
@@ -24,7 +23,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports, _getTotalLiveCoursesUri;
-
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
