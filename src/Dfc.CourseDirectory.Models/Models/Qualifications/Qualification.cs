@@ -1,9 +1,8 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Interfaces.Qualifications;
 
 namespace Dfc.CourseDirectory.Models.Models.Qualifications
 {
-    public class Qualification : IQualification
+    public class Qualification
     {
         public string NotionalNVQLevelv2 { get; }
         public string AwardOrgCode { get; }

@@ -1,12 +1,8 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class CsvCourse : ICsvCourse
+    public class CsvCourse
     {
         [Display(Name = "LARS_QAN")]
         public string LearnAimRef { get; set; }

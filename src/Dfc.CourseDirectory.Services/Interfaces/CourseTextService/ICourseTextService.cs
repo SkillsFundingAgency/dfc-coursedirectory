@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseTextService
 {
     public interface ICourseTextService
     {
-        Task<IResult<ICourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria);
+        Task<IResult<CourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria);
     }
 }

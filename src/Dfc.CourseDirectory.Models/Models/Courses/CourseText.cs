@@ -1,9 +1,8 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using System;
+﻿using System;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class CourseText : ICourseText
+    public class CourseText
     {
         public Guid ID { get; set; }
         public string QualificationCourseTitle { get; set; }

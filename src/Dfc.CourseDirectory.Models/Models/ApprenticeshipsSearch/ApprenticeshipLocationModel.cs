@@ -1,11 +1,8 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.ApprenticeshipsSearch;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.ApprenticeshipsSearch
 {
-    public class ApprenticeshipLocationModel : IApprenticeshipLocationModel
+    public class ApprenticeshipLocationModel
     {
         public int id { get; set; }
         public List<string> deliveryModes { get; set; }

@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -35,7 +30,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         public IActionResult Index(Guid? courseId, Guid? courseRunId)
         {
-            ICourse course = null;
+            Course course = null;
             CourseRun courseRun = null;
             if (courseId.HasValue)
             {
@@ -159,5 +154,4 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectRegion;
         }
     }
-
 }

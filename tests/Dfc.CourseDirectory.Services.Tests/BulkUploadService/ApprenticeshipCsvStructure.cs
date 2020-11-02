@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
+namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
 {
     internal static class ApprenticeshipCsvStructure
     {

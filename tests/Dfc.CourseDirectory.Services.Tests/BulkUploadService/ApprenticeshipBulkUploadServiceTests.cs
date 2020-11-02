@@ -4,10 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.BulkUploadService;
@@ -26,7 +24,7 @@ using Xunit;
 using Options = Microsoft.Extensions.Options.Options;
 using VenueStatus = Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
 
-namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
+namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
 {
     public class ApprenticeshipBulkUploadServiceTests
     {
@@ -130,11 +128,11 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
 
             if (fact.ExpectedError == null)
             {
-                IApprenticeship output = null;
+                Apprenticeship output = null;
                 await Run_SuccessTest(
                     csvBuilder,
                     (f) => output = ValidateAndReturnSingleApprenticeshipWithNoErrors(f));
-                Assert.Equal(fact.ExpectedOutputDeliveryMode ?? default, (ApprenticeshipDeliveryMode?)output.ApprenticeshipLocations.SingleOrDefault()?.DeliveryModes?.SingleOrDefault());
+                Assert.Equal(fact.ExpectedOutputDeliveryMode ?? default, (Core.Models.ApprenticeshipDeliveryMode?)output.ApprenticeshipLocations.SingleOrDefault()?.DeliveryModes?.SingleOrDefault());
             }
             else
             {
@@ -274,7 +272,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 additionalMockSetup: () =>
                 {
                     _standardsAndFrameworksCacheMock.Setup(m => m.GetStandard(code,version))
-                        .ReturnsAsync((Standard)null);
+                        .ReturnsAsync((Core.Models.Standard)null);
                 });
         }
 
@@ -541,23 +539,23 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
                 .ReturnsAsync(Result.Ok<IVenueSearchResult>(new VenueSearchResult(_mockVenues)));
 
             _standardsAndFrameworksCacheMock.Setup(m => m.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync((int s, int v) => new Standard {StandardCode = s, Version = v});
+                .ReturnsAsync((int s, int v) => new Core.Models.Standard {StandardCode = s, Version = v});
 
             _standardsAndFrameworksCacheMock.Setup(m => m.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync((int c, int t, int p) => new Framework{FrameworkCode = c, ProgType = t, PathwayCode = p});
+                .ReturnsAsync((int c, int t, int p) => new Core.Models.Framework{FrameworkCode = c, ProgType = t, PathwayCode = p});
         }
 
         private async Task Run_SuccessTest(
             Action<ApprenticeshipCsvBuilder> configureCsv,
-            Action<IList<IApprenticeship>> validateDataPassedToApprenticeshipService,
+            Action<IList<Apprenticeship>> validateDataPassedToApprenticeshipService,
             string fileName = "mybulkupload.csv")
         {
             // arrange
             SetupDependencies();
-            IList<IApprenticeship> dataPassedToApprenticeshipService = null;
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
+            IList<Apprenticeship> dataPassedToApprenticeshipService = null;
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<Apprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok())
-                .Callback<IEnumerable<IApprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
+                .Callback<IEnumerable<Apprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
@@ -581,7 +579,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
         {
             // arrange
             SetupDependencies();
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<Apprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok());
             additionalMockSetup?.Invoke();
             SetupService();
@@ -601,16 +599,16 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             Assert.Equal(expectedErrorMessage, actualException.Message);
         }
 
-        private async Task<List<IApprenticeship>> Run_ReturnsErrorsTest(
+        private async Task<List<Apprenticeship>> Run_ReturnsErrorsTest(
             Action<ApprenticeshipCsvBuilder> configureCsv,
             string expectedError)
         {
             // arrange
             SetupDependencies();
-            List<IApprenticeship> dataPassedToApprenticeshipService = null;
-            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
+            List<Apprenticeship> dataPassedToApprenticeshipService = null;
+            _mockApprenticeshipService.Setup(m => m.AddApprenticeships(It.IsAny<IEnumerable<Apprenticeship>>(), It.IsAny<bool>()))
                 .ReturnsAsync(Result.Ok())
-                .Callback<IEnumerable<IApprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
+                .Callback<IEnumerable<Apprenticeship>, bool>((x, _) => dataPassedToApprenticeshipService = x.ToList());
             SetupService();
             var apprenticeshipCsvBuilder = new ApprenticeshipCsvBuilder();
             configureCsv?.Invoke(apprenticeshipCsvBuilder);
@@ -627,12 +625,12 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             return dataPassedToApprenticeshipService;
         }
 
-        private static void ValidateSingleApprenticeshipWithNoErrors(IList<IApprenticeship> apprenticeships)
+        private static void ValidateSingleApprenticeshipWithNoErrors(IList<Apprenticeship> apprenticeships)
         {
             ValidateAndReturnSingleApprenticeshipWithNoErrors(apprenticeships);
         }
 
-        private static IApprenticeship ValidateAndReturnSingleApprenticeshipWithNoErrors(IList<IApprenticeship> apprenticeships)
+        private static Apprenticeship ValidateAndReturnSingleApprenticeshipWithNoErrors(IList<Apprenticeship> apprenticeships)
         {
             Assert.Single(apprenticeships);
             Assert.Null(apprenticeships.Single().ValidationErrors);
@@ -640,7 +638,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
             return apprenticeships.Single();
         }
 
-        private static void ValidateBulkUploadError(IList<IApprenticeship> apprenticeships, string fieldName, string expectedError)
+        private static void ValidateBulkUploadError(IList<Apprenticeship> apprenticeships, string fieldName, string expectedError)
         {
             Assert.Single(apprenticeships);
             var apprenticeship = apprenticeships.Single();

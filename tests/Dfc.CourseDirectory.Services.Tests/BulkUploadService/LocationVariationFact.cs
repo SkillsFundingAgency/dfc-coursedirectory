@@ -1,6 +1,6 @@
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
+namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
 {
     public class LocationVariationFact
     {

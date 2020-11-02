@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
+﻿namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
     public class FrameworkSearchCriteria
     {

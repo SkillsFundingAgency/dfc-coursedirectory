@@ -1,11 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Providers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Models.Models.Providers
+﻿namespace Dfc.CourseDirectory.Models.Models.Providers
 {
-    public class Contactpersonaldetails : IContactpersonaldetails
+    public class Contactpersonaldetails
     {
         public string[] PersonNameTitle { get; set; }
         public string[] PersonGivenName { get; set; }

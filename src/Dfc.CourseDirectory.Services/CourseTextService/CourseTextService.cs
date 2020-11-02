@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Microsoft.Extensions.Logging;
@@ -33,7 +31,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             _getYourCourseTextUri = settings.Value.GetCourseTextUri();
         }
 
-        public async Task<IResult<ICourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
+        public async Task<IResult<CourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
@@ -44,7 +42,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                 _logger.LogInformationObject("Course Text URI", _getYourCourseTextUri);
 
                 if (criteria.LARSRef == "")
-                    return Result.Fail<ICourseText>("Blank LARS Ref");
+                    return Result.Fail<CourseText>("Blank LARS Ref");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "?LARS=" + criteria.LARSRef));
@@ -57,22 +55,22 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                     _logger.LogInformationObject("Get your courses service json response", json);
                     var courseText = JsonConvert.DeserializeObject<CourseText>(json);
 
-                    return Result.Ok<ICourseText>(courseText);
+                    return Result.Ok<CourseText>(courseText);
                 }
                 else
                 {
-                    return Result.Fail<ICourseText>("Get your courses service unsuccessful http response");
+                    return Result.Fail<CourseText>("Get your courses service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get your courses service http request error", hre);
-                return Result.Fail<ICourseText>("Get your courses service http request error.");
+                return Result.Fail<CourseText>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get your courses service unknown error.", e);
-                return Result.Fail<ICourseText>("Get your courses service unknown error.");
+                return Result.Fail<CourseText>("Get your courses service unknown error.");
             }
         }
     }

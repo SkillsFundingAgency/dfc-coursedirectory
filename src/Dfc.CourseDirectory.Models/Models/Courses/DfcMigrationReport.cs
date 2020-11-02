@@ -1,6 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Models.Providers;
+﻿using System;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using Newtonsoft.Json;
-using System;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -24,5 +24,4 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public DateTime CreatedOn { get; set; }
         public string CreatedBy { get; set; }
     }
-
 }

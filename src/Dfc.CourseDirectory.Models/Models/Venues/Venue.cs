@@ -1,5 +1,4 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Models.Models.Venues
@@ -13,7 +12,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         Uknown = 99
     }
 
-    public class Venue : IVenue
+    public class Venue
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ID { get; }
@@ -49,8 +48,6 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public DateTime DateAdded { get; }
         public DateTime DateUpdated { get; }
         public string UpdatedBy { get; }
-
-        // Apprenticeship related
         public int? LocationId { get; set; }
         public int? TribalLocationId { get; set; }
         [JsonProperty("PHONE")]
@@ -70,9 +67,6 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string town,
             string county,
             string postcode,
-            //string telephone,
-            //string email,
-            //string website,
             decimal latitude,
             decimal longitude,
             VenueStatus status,
@@ -114,9 +108,6 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             Town = town;
             County = county;
             PostCode = postcode;
-            //Telephone = telephone;
-            //Email = email;
-            //Website = website;
             Latitude = latitude;
             Longitude = longitude;
             Status = status;
@@ -226,6 +217,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             DateUpdated = dateUpdated;
         }
 
-        public Venue() { }
+        public Venue()
+        { }
     }
 }

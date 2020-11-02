@@ -1,7 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
@@ -21,6 +19,5 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string Phone { get; set; }
         public int UKPRN { get; set; }
         public string Website { get; set; }
-
     }
 }

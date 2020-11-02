@@ -1,11 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Models.Models.Courses
+﻿namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class BulkUploadCourseRun : IBulkUploadCourseRun
+    public class BulkUploadCourseRun
     {
         public string LearnAimRef { get; set; }
         public int TempCourseId { get; set; }

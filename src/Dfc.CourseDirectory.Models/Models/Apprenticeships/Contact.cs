@@ -1,11 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
+﻿namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class Contact : IContact
+    public class Contact
     {
         public string ContactUsUrl { get; set; }
 

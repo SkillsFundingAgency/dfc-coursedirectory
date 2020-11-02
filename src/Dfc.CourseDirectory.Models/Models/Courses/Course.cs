@@ -1,14 +1,12 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Helpers;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class Course : ICourse, ICloneable
+    public class Course : ICloneable
     {
         public Guid id { get; set; }
         public int? CourseId { get; set; }
@@ -17,9 +15,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string NotionalNVQLevelv2 { get; set; } 
         public string AwardOrgCode { get; set; } 
         public string QualificationType { get; set; } 
-
         public int ProviderUKPRN { get; set; }
-
         public string CourseDescription { get; set; }
         public string EntryRequirements { get; set; }
         public string WhatYoullLearn { get; set; }
@@ -27,29 +23,17 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string WhatYoullNeed { get; set; }
         public string HowYoullBeAssessed { get; set; }
         public string WhereNext { get; set; }
-
         public bool AdultEducationBudget { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
-
         public IEnumerable<CourseRun> CourseRuns { get; set; }
         public bool IsValid { get; set; }
-
         public IEnumerable<string> ValidationErrors { get; set; }
         public IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
-        public RecordStatus CourseStatus
-        {
-            get
-            {
-                return GetBitMaskState(CourseRuns);
-            }
-
-        }
-
+        public RecordStatus CourseStatus => GetBitMaskState(CourseRuns);
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
-
 
         public Course Clone() {
             return (Course)this.MemberwiseClone();
@@ -66,7 +50,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
             return empty;
         }
 
-        internal static RecordStatus GetBitMaskState(IEnumerable<CourseRun> courseRuns)
+        private static RecordStatus GetBitMaskState(IEnumerable<CourseRun> courseRuns)
         {
             RecordStatus courseStatus = RecordStatus.Undefined; // Default BitMaskState (handles undefined and no CourseRuns)
 
@@ -76,7 +60,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
                 {
                     if (courseRuns.Any(c => c.RecordStatus == recordStatus))
                     {
-                        BitmaskHelper.Set<RecordStatus>(ref courseStatus, recordStatus);
+                        BitmaskHelper.Set(ref courseStatus, recordStatus);
                     }
                 }
             }

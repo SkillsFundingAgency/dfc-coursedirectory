@@ -1,9 +1,8 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Interfaces.Onspd;
 
 namespace Dfc.CourseDirectory.Models.Models.Onspd
 {
-    public class Onspd : IOnspd
+    public class Onspd
     {
         public string pcd { get; set; }
         public string pcd2 { get; set; }

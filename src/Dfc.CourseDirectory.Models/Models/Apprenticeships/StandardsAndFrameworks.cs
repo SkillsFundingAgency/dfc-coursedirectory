@@ -1,12 +1,8 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class StandardsAndFrameworks : IStandardsAndFrameworks
+    public class StandardsAndFrameworks
     {
         public Guid id { get; set; }
         public int? StandardCode { get; set; }
@@ -16,16 +12,12 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string URLLink { get; set; }
         public string NotionalEndLevel { get; set; }
         public string OtherBodyApprovalRequired { get; set; }
-
-        //Generic
         public ApprenticeshipType ApprenticeshipType { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? CreatedDateTimeUtc { get; set; }
         public DateTime? ModifiedDateTimeUtc { get; set; }
         public int? RecordStatusId { get; set; }
         public bool AlreadyCreated { get; set; }
-
-        //Framework Model
         public int? FrameworkCode { get; set; }
         public int? ProgType { get; set; }
         public int? PathwayCode { get; set; }

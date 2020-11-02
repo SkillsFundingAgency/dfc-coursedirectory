@@ -6,11 +6,9 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
     public class SelectRegionModel
     {
         public IEnumerable<RegionItemModel> RegionItems { get; set; }
-
         public string LabelText { get; set; }
         public string HintText { get; set; }
         public string AriaDescribedBy { get; set; }
-        
 
         public SelectRegionModel()
         {
@@ -1720,6 +1718,5 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
             var regionItem = RegionItems.FirstOrDefault(x => x.SubRegion.Any(y => y.Id == subRegionCode));
             return regionItem != null ? regionItem.RegionName : string.Empty;
         }
-
     }
 }

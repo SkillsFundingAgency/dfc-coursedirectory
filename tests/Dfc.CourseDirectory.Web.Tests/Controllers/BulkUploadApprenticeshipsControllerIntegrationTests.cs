@@ -6,8 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services;
@@ -124,10 +123,10 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 .Returns(authUserDetails);
 
             _standardsAndFrameworksCache.Setup(s => s.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync<int, int, IStandardsAndFrameworksCache, Standard>((c, v) => new Standard { StandardCode = c, Version = v });
+                .ReturnsAsync<int, int, IStandardsAndFrameworksCache, Core.Models.Standard>((c, v) => new Core.Models.Standard { StandardCode = c, Version = v });
 
             _standardsAndFrameworksCache.Setup(s => s.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync<int, int, int, IStandardsAndFrameworksCache, Framework>((c, t, p) => new Framework { FrameworkCode = c, ProgType = t, PathwayCode = p });
+                .ReturnsAsync<int, int, int, IStandardsAndFrameworksCache, Core.Models.Framework>((c, t, p) => new Core.Models.Framework { FrameworkCode = c, ProgType = t, PathwayCode = p });
 
             _venueService.Setup(s => s.SearchAsync(It.IsAny<IVenueSearchCriteria>()))
                 .ReturnsAsync<IVenueSearchCriteria, IVenueService, IResult<IVenueSearchResult>>(c => Result.Ok<IVenueSearchResult>(new VenueSearchResult(new[] { new Venue { VenueName = "Fenestra Centre Scunthorpe", Status = VenueStatus.Live } })));
@@ -135,9 +134,9 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _apprenticeshipService.Setup(s => s.ChangeApprenticeshipStatusesForUKPRNSelection(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(Result.Ok());
 
-            var addedApprenticeships = new List<IApprenticeship>();
-            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<IApprenticeship>>(), It.IsAny<bool>()))
-                .Callback<IEnumerable<IApprenticeship>, bool>((a, _) => addedApprenticeships.AddRange(a))
+            var addedApprenticeships = new List<Apprenticeship>();
+            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<Apprenticeship>>(), It.IsAny<bool>()))
+                .Callback<IEnumerable<Apprenticeship>, bool>((a, _) => addedApprenticeships.AddRange(a))
                 .ReturnsAsync(Result.Ok());
 
             const string csv = "STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY,REGION,SUB_REGION\r\n" +

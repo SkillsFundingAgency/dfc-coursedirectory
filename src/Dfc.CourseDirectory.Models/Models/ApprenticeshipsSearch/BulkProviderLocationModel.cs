@@ -1,11 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.ApprenticeshipsSearch;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Models.Models.ApprenticeshipsSearch
+﻿namespace Dfc.CourseDirectory.Models.Models.ApprenticeshipsSearch
 {
-    public class BulkProviderLocationModel : IBulkProviderLocationModel
+    public class BulkProviderLocationModel
     {
         public int id { get; set; }
         public string name { get; set; }

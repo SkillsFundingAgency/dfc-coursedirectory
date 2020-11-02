@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class CsvApprenticeship : ICsvApprenticeship
+    public class CsvApprenticeship
     {
         [Display(Name = "STANDARD_CODE")]
         public string StandardCode { get; set; }

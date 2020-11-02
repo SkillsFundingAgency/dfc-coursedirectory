@@ -1,15 +1,13 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using static Dfc.CourseDirectory.Models.Helpers.Attributes.AlternativeName;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-
     public enum DeliveryMode
     {
         [Display(Name = "Undefined")]
@@ -25,6 +23,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Work based")]
         WorkBased = 3
     }
+
     public enum DurationUnit
     {
         [Description("Undefined")]
@@ -40,6 +39,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Hours")]
         Hours = 5
     }
+
     public enum StudyMode
     {
         [Display(Name = "Undefined")]
@@ -56,7 +56,6 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Display(Name = "Flexible")]
         [Description("Flexible")]
         Flexible = 3
-
     }
 
     public enum AttendancePatternMonToFri
@@ -67,7 +66,6 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Display(Name = "Monday to Friday")]
         [Description("Monday To Friday")]
         MondayToFriday = 1
-
     }
 
     public enum AttendancePattern
@@ -88,6 +86,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Day/Block Release")]
         DayOrBlockRelease = 4
     }
+
     public enum StartDateType
     {
         [Display(Name = "Defined Start Date")]
@@ -120,7 +119,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         DataQualityIndicator = 8
     }
 
-    public class CourseRun : ICourseRun 
+    public class CourseRun 
     {
         public Guid id { get; set; }
         public int? CourseInstanceId { get; set; }

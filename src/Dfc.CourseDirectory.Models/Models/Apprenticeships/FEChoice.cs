@@ -1,21 +1,15 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class FEChoice : IFEChoice
+    public class FEChoice
     {
-        public Guid id { get; set; } // Cosmos DB id
-
+        public Guid id { get; set; }
         public int UPIN { get; set; }
         public double? LearnerDestination { get; set; }
         public double? LearnerSatisfaction { get; set; }
         public double? EmployerSatisfaction { get; set; }
-
-        // Standard auditing properties 
         public RecordStatus RecordStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

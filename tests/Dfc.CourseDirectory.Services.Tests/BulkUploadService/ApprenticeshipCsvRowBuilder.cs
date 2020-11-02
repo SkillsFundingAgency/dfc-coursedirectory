@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
+namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
 {
     /// <summary>
     /// Builder Pattern implementation with fluent api for building arbitrary csv row data for bulk upload testing

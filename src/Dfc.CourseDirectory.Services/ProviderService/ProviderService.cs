@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Interfaces.Providers;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Microsoft.Extensions.Logging;
@@ -90,7 +88,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
         }
 
-        public async Task<IResult<IProvider>> AddProviderAsync(IProviderAdd provider)
+        public async Task<IResult<Provider>> AddProviderAsync(IProviderAdd provider)
         {
             Throw.IfNull(provider, nameof(provider));
 
@@ -117,27 +115,27 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                     var providerResult = JsonConvert.DeserializeObject<Provider>(json);
 
 
-                    return Result.Ok<IProvider>(providerResult);
+                    return Result.Ok(providerResult);
                 }
                 else
                 {
-                    return Result.Fail<IProvider>("Provider add service unsuccessful http response");
+                    return Result.Fail<Provider>("Provider add service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Provider add service http request error", hre);
-                return Result.Fail<IProvider>("Provider add service http request error.");
+                return Result.Fail<Provider>("Provider add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Provider add service unknown error.", e);
 
-                return Result.Fail<IProvider>("Provider add service unknown error.");
+                return Result.Fail<Provider>("Provider add service unknown error.");
             }
         }
 
-        public async Task<IResult> UpdateProviderDetails(IProvider provider)
+        public async Task<IResult> UpdateProviderDetails(Provider provider)
         {
             Throw.IfNull(provider, nameof(provider));
 

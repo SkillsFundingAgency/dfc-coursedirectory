@@ -6,9 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.Configuration;
@@ -131,7 +129,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return selectRegion;
         }
 
-        public async Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
+        public async Task<IResult<Course>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -155,23 +153,23 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     var course = JsonConvert.DeserializeObject<Course>(json);
 
-                    return Result.Ok<ICourse>(course);
+                    return Result.Ok(course);
                 }
                 else
                 {
-                    return Result.Fail<ICourse>("Get Course By Id service unsuccessful http response");
+                    return Result.Fail<Course>("Get Course By Id service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get Course By Id service http request error", hre);
-                return Result.Fail<ICourse>("Get Course By Id service http request error.");
+                return Result.Fail<Course>("Get Course By Id service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get Course By Id service unknown error.", e);
 
-                return Result.Fail<ICourse>("Get Course By Id service unknown error.");
+                return Result.Fail<Course>("Get Course By Id service unknown error.");
             }
         }
 
@@ -321,7 +319,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
+        public async Task<IResult<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -332,7 +330,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogInformationObject("Get recent course changes URI", _getRecentCourseChangesByUKPRNUri);
 
                 if (!criteria.UKPRN.HasValue)
-                    return Result.Fail<IEnumerable<ICourse>>("Get recent course changes unknown UKRLP");
+                    return Result.Fail<IEnumerable<Course>>("Get recent course changes unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
@@ -347,28 +345,28 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         json = "[" + json + "]";
 
                     _logger.LogInformationObject("Get recent course changes service json response", json);
-                    IEnumerable<ICourse> courses = JsonConvert.DeserializeObject<IEnumerable<Course>>(json);
+                    IEnumerable<Course> courses = JsonConvert.DeserializeObject<IEnumerable<Course>>(json);
 
-                    return Result.Ok<IEnumerable<ICourse>>(courses);
+                    return Result.Ok<IEnumerable<Course>>(courses);
                 }
                 else
                 {
-                    return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unsuccessful http response");
+                    return Result.Fail<IEnumerable<Course>>("Get recent course changes service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get recent course changes service http request error", hre);
-                return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service http request error.");
+                return Result.Fail<IEnumerable<Course>>("Get recent course changes service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get recent course changes service unknown error.", e);
-                return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unknown error.");
+                return Result.Fail<IEnumerable<Course>>("Get recent course changes service unknown error.");
             }
         }
 
-        public IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode)
+        public IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode)
         {
             Throw.IfNull(courses, nameof(courses));
 
@@ -376,7 +374,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 IList<CourseValidationResult> results = new List<CourseValidationResult>();
 
-                foreach (ICourse c in courses)
+                foreach (Course c in courses)
                 {
                     CourseValidationResult cvr = new CourseValidationResult()
                     {
@@ -393,7 +391,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     {
                         cvr.Issues = new List<string>();
                     }
-                    foreach (ICourseRun r in c.CourseRuns)
+                    foreach (CourseRun r in c.CourseRuns)
                         cvr.RunValidationResults.Add(new CourseRunValidationResult() { Run = r, Issues = ValidateCourseRun(r, mode).Select(x => x.Value) });
                     results.Add(cvr);
                 }
@@ -406,7 +404,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<ICourse>> AddCourseAsync(ICourse course)
+        public async Task<IResult<Course>> AddCourseAsync(Course course)
         {
             Throw.IfNull(course, nameof(course));
 
@@ -431,31 +429,31 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     var courseResult = JsonConvert.DeserializeObject<Course>(json);
 
-                    return Result.Ok<ICourse>(courseResult);
+                    return Result.Ok<Course>(courseResult);
                 }
                 else if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    return Result.Fail<ICourse>("Course add service unsuccessful http response - TooManyRequests");
+                    return Result.Fail<Course>("Course add service unsuccessful http response - TooManyRequests");
                 }
                 else
                 {
-                    return Result.Fail<ICourse>("Course add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
+                    return Result.Fail<Course>("Course add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Course add service http request error", hre);
-                return Result.Fail<ICourse>("Course add service http request error.");
+                return Result.Fail<Course>("Course add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Course add service unknown error.", e);
 
-                return Result.Fail<ICourse>("Course add service unknown error.");
+                return Result.Fail<Course>("Course add service unknown error.");
             }
         }
 
-        public async Task<IResult<ICourse>> UpdateCourseAsync(ICourse course)
+        public async Task<IResult<Course>> UpdateCourseAsync(Course course)
         {
             Throw.IfNull(course, nameof(course));
 
@@ -480,27 +478,27 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     var courseResult = JsonConvert.DeserializeObject<Course>(json);
 
-                    return Result.Ok<ICourse>(courseResult);
+                    return Result.Ok<Course>(courseResult);
                 }
                 else
                 {
-                    return Result.Fail<ICourse>("Course update service unsuccessful http response");
+                    return Result.Fail<Course>("Course update service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Course update service http request error", hre);
-                return Result.Fail<ICourse>("Course update service http request error.");
+                return Result.Fail<Course>("Course update service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Course update service unknown error.", e);
 
-                return Result.Fail<ICourse>("Course update service unknown error.");
+                return Result.Fail<Course>("Course update service unknown error.");
             }
         }
 
-        public IList<KeyValuePair<string, string>> ValidateCourse(ICourse course)
+        public IList<KeyValuePair<string, string>> ValidateCourse(Course course)
         {
             List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 
@@ -574,7 +572,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return validationMessages;
         }
 
-        public IList<KeyValuePair<string, string>> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode)
+        public IList<KeyValuePair<string, string>> ValidateCourseRun(CourseRun courseRun, ValidationMode validationMode)
         {
             IList<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 

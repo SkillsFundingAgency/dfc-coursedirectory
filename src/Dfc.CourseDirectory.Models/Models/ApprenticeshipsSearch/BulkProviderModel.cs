@@ -1,17 +1,14 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.ApprenticeshipsSearch;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.ApprenticeshipsSearch
 {
-    public class BulkProviderModel : IBulkProviderModel
+    public class BulkProviderModel
     {
         public int id { get; set; }
         public int ukprn { get; set; }
         public string name { get; set; }
         public string tradingName { get; set; }
-        public Boolean nationalProvider { get; set; }
+        public bool nationalProvider { get; set; }
         public string marketingInfo { get; set; }
         public string email { get; set; }
         public string website { get; set; }

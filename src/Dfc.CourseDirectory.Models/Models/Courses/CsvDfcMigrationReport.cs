@@ -1,7 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Models.Providers;
+﻿using System;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using Newtonsoft.Json;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -42,6 +41,5 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
         [JsonProperty(PropertyName = "Created_By")]
         public string CreatedBy { get; set; }
-
     }
 }

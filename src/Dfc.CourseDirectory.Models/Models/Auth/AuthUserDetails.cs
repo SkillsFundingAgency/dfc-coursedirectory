@@ -1,9 +1,8 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Interfaces.Auth;
 
 namespace Dfc.CourseDirectory.Models.Models.Auth
 {
-    public class AuthUserDetails : IAuthUserDetails
+    public class AuthUserDetails
     {
         public Guid? UserId { get; set; }
         public string Email { get; set; }

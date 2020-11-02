@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService.Apprenticeship
+namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
 {
     public class LocationVariationFacts : TheoryData<LocationVariationFact>
     {

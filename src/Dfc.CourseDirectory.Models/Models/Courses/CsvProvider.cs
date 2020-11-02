@@ -1,12 +1,8 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class CsvProvider : ICsvProvider
+    public class CsvProvider
     {
         [Display(Name = "Ukprn")]
         public string ProviderUKPRN { get; set; }
