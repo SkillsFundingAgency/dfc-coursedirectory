@@ -1,12 +1,9 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Qualifications;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Qualifications
 {
-    public class Qualification : ValueObject<Qualification>, IQualification
+    public class Qualification : IQualification
     {
         public string NotionalNVQLevelv2 { get; }
         public string AwardOrgCode { get; }
@@ -52,20 +49,6 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
             LearnDirectClassSystemCode1 = learnDirectClassSystemCode1;
             LearnDirectClassSystemCode2 = learnDirectClassSystemCode2;
             GuidedLearningHours = guidedLearningHours;
-    }
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return NotionalNVQLevelv2;
-            yield return AwardOrgCode;
-            yield return TotalQualificationTime;
-            yield return UnitType;
-            yield return AwardOrgName;
-            yield return LearnAimRef;
-            yield return LearnAimRefTitle;
-            yield return LearnDirectClassSystemCode1;
-            yield return LearnDirectClassSystemCode2;
-            yield return GuidedLearningHours;
         }
-
     }
 }

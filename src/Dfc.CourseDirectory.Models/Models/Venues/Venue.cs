@@ -1,10 +1,7 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
-using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Models.Models.Venues
 {
@@ -17,7 +14,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         Uknown = 99
     }
 
-    public class Venue : ValueObject<Venue>, IVenue
+    public class Venue : IVenue
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ID { get; }
@@ -216,30 +213,5 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         }
 
         public Venue() { }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return ID;
-            yield return UKPRN;
-            yield return ProviderID;
-            yield return VenueID;
-            yield return VenueName;
-            yield return ProvVenueID;
-            yield return Address1;
-            yield return Address2;
-            yield return Address3;
-            yield return Town;
-            yield return County;
-            yield return PostCode;
-            yield return Telephone;
-            yield return Email;
-            yield return Website;
-            yield return Latitude;
-            yield return Longitude;
-            yield return Status;
-            yield return UpdatedBy;
-            yield return DateAdded;
-            yield return DateUpdated;
-        }
     }
 }

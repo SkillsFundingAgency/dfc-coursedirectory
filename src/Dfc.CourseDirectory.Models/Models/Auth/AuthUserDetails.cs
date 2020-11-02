@@ -1,12 +1,9 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
 using Dfc.CourseDirectory.Models.Interfaces.Auth;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Auth
 {
-    public class AuthUserDetails : ValueObject<AuthUserDetails>, IAuthUserDetails
+    public class AuthUserDetails : IAuthUserDetails
     {
         public Guid? UserId { get; set; }
         public string Email { get; set; }
@@ -38,17 +35,5 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
         }
 
         public AuthUserDetails() { }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return UserId;
-            yield return Email;
-            yield return UserName;
-            yield return NameOfUser;
-            yield return RoleId;
-            yield return RoleName;
-            yield return UKPRN;
-            yield return ProviderID;
-        }
     }
 }

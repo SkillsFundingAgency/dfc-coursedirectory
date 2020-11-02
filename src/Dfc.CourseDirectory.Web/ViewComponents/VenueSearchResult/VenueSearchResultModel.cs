@@ -1,13 +1,11 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
 {
-    public class VenueSearchResultModel : ValueObject<VenueSearchResultModel>, IViewComponentModel
+    public class VenueSearchResultModel : IViewComponentModel
     {
         public bool HasErrors => Errors.Count() > 0;
         public IEnumerable<string> Errors { get; }
@@ -57,16 +55,5 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             Deleted = true;
             Items = items;
         }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return HasErrors;
-            yield return Errors;
-            yield return SearchTerm;
-            yield return Items;
-            yield return NewItem;
-            yield return Updated;
-        }
     }
-
 }

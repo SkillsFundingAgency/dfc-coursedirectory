@@ -1,9 +1,8 @@
 ﻿using Dfc.CourseDirectory.Common;
-using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
 {
-    public class PaginationItemModel : ValueObject<PaginationItemModel>
+    public class PaginationItemModel
     {
         public string Url { get; }
         public string Text { get; }
@@ -24,14 +23,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
             Text = text;
             AriaLabel = ariaLabel;
             IsCurrent = isCurrent;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Url;
-            yield return Text;
-            yield return AriaLabel;
-            yield return IsCurrent;
         }
     }
 }

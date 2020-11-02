@@ -1,11 +1,11 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
 {
-    public class PaginationModel : ValueObject<PaginationModel>, IViewComponentModel
+    public class PaginationModel : IViewComponentModel
     {
         public bool HasErrors => Errors.Count() > 0;
         public IEnumerable<string> Errors { get; }
@@ -33,13 +33,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
 
             Errors = new string[] { };
             Items = items;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return HasErrors;
-            yield return Errors;
-            yield return Items;
         }
     }
 }

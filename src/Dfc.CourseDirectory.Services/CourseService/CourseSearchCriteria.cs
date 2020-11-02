@@ -1,12 +1,9 @@
-﻿
-using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System.Collections.Generic;
-
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
-    public class CourseSearchCriteria : ValueObject<CourseSearchCriteria>, ICourseSearchCriteria
+    public class CourseSearchCriteria : ICourseSearchCriteria
     {
         public int? UKPRN { get; set; }
 
@@ -14,11 +11,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfNull(UKPRNvalue, nameof(UKPRNvalue));
             UKPRN = UKPRNvalue;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return UKPRN;
         }
     }
 }

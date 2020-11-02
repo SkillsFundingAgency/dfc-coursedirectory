@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class VenueSearchCriteria : ValueObject<VenueSearchCriteria>, IVenueSearchCriteria
+    public class VenueSearchCriteria : IVenueSearchCriteria
     {
         public string Search { get; }
         public string NewAddressId { get; }
@@ -17,11 +16,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             Search = search;
             NewAddressId = newAddressId;
-        }
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Search;
-            yield return NewAddressId;
         }
     }
 }

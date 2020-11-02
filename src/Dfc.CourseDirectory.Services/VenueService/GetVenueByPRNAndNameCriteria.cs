@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class GetVenuesByPRNAndNameCriteria : ValueObject<GetVenuesByPRNAndNameCriteria>, IGetVenuesByPRNAndNameCriteria
+    public class GetVenuesByPRNAndNameCriteria : IGetVenuesByPRNAndNameCriteria
     {
         public string PRN { get; }
         public string Name { get; }
@@ -18,12 +17,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             PRN = prn;
             Name = name;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return PRN;
-            yield return Name;
         }
     }
 }
