@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Text;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-
+﻿using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 
 namespace Dfc.CourseDirectory.Services.BlobStorageService
 {

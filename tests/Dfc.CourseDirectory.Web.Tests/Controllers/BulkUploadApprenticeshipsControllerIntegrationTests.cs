@@ -6,9 +6,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Auth;
-using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Auth;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces;
@@ -30,7 +30,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using VenueStatus = Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
+using VenueStatus = Dfc.CourseDirectory.Services.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Web.Tests.Controllers
 {

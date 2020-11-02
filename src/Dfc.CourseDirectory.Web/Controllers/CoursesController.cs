@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
+using CourseRun = Dfc.CourseDirectory.Services.Models.Courses.CourseRun;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {

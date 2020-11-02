@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+﻿using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipLocationList

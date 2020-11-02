@@ -1,7 +1,7 @@
 ﻿
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;

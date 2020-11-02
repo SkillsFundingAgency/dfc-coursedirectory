@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Models.Venues;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {

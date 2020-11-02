@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Models.Onspd;
+﻿using Dfc.CourseDirectory.Services.Models.Onspd;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {

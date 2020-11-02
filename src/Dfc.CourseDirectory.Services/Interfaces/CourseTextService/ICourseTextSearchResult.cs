@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Dfc.CourseDirectory.Models.Models.Courses;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseTextService
 {
-   public interface ICourseTextSearchResult
+    public interface ICourseTextSearchResult
     {
         IEnumerable<CourseText> Value { get; }
     }

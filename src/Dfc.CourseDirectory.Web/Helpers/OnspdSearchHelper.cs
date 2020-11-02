@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Models.Models.Onspd;
+using Dfc.CourseDirectory.Services.Models.Onspd;
 using Mapster;
 
 namespace Dfc.CourseDirectory.Web.Helpers

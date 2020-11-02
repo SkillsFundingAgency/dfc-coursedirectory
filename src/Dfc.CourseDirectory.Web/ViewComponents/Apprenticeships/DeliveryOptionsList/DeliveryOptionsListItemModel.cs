@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Models.Venues;
+﻿using Dfc.CourseDirectory.Services.Models.Venues;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {

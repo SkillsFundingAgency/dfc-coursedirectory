@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;

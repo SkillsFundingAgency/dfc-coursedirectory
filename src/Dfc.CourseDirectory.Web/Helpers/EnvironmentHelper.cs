@@ -1,5 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Environment;
+﻿using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Microsoft.Extensions.Options;
 

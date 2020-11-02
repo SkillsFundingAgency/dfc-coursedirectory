@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
+﻿using Dfc.CourseDirectory.Services.Enums;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {

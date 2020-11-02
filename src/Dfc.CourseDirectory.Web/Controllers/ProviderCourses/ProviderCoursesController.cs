@@ -4,24 +4,23 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
+using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
-using Dfc.CourseDirectory.Web.Extensions;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
@@ -172,7 +171,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         StartDate = cr.FlexibleStartDate
                                                         ? "Flexible start date"
                                                         : cr.StartDate?.ToString("dd MMM yyyy"),
-                        StudyMode = cr.StudyMode == Models.Models.Courses.StudyMode.Undefined
+                        StudyMode = cr.StudyMode == Services.Models.Courses.StudyMode.Undefined
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
                         Url = cr.CourseURL,

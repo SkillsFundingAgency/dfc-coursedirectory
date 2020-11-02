@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Models.Regions;
+﻿using Dfc.CourseDirectory.Services.Models.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

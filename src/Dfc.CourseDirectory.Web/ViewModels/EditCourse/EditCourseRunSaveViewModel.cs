@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models;
-using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse

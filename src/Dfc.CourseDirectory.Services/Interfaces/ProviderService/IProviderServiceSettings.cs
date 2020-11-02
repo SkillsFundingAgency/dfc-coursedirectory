@@ -1,5 +1,4 @@
-﻿
-namespace Dfc.CourseDirectory.Services.Interfaces.ProviderService
+﻿namespace Dfc.CourseDirectory.Services.Interfaces.ProviderService
 {
     public interface IProviderServiceSettings
     {

@@ -1,7 +1,4 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Services.Interfaces.CourseTextService
+﻿namespace Dfc.CourseDirectory.Services.Interfaces.CourseTextService
 {
     public interface ICourseTextServiceSettings
     {

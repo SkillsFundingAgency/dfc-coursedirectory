@@ -1,6 +1,6 @@
-﻿@using Dfc.CourseDirectory.Models.Enums
-@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Models.Models.Venues
+﻿@using Dfc.CourseDirectory.Services.Enums
+@using Dfc.CourseDirectory.Services.Models.Courses
+@using Dfc.CourseDirectory.Services.Models.Venues
 @using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
@@ -17,7 +17,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 @using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Http
-@using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
+@using StudyMode = Dfc.CourseDirectory.Services.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
 @{
     ViewData["Title"] = "Copy course";

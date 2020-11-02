@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -228,11 +228,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             switch (model.WhatDoYouWantToDoNext)
             {
-                case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
+                case Services.Enums.WhatDoYouWantToDoNext.OnScreen:
                     return RedirectToAction("Index", "PublishApprenticeships");
-                case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
+                case Services.Enums.WhatDoYouWantToDoNext.DownLoad:
                     return RedirectToAction("DownloadErrorFile", "BulkUploadApprenticeships");
-                case Models.Enums.WhatDoYouWantToDoNext.Delete:
+                case Services.Enums.WhatDoYouWantToDoNext.Delete:
                     return RedirectToAction("DeleteFile", "BulkUploadApprenticeships");
                 default:
                     return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships");

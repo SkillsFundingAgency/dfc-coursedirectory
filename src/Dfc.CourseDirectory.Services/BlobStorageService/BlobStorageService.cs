@@ -1,18 +1,16 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Auth;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using Dfc.CourseDirectory.Models.Models.Providers;
 
 namespace Dfc.CourseDirectory.Services.BlobStorageService
 {

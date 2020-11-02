@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Options;
-using static Dfc.CourseDirectory.Models.Helpers.Attributes.AlternativeName;
+using static Dfc.CourseDirectory.Services.Enums.AlternativeName;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {

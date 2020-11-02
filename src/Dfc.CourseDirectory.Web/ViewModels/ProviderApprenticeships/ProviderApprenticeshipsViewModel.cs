@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships
 {

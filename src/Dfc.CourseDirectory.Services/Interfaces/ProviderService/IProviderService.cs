@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Models.Providers;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.ProviderService
 {

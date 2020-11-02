@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships

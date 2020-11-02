@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
+﻿using Dfc.CourseDirectory.Services.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

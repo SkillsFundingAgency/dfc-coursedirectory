@@ -1,7 +1,7 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Models;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 

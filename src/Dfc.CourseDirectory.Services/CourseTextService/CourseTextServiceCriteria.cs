@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
+﻿using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService
 {
