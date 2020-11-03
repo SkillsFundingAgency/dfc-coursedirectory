@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
@@ -52,42 +51,34 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? apprenticeshipid, Apprenticeship request)
+        public async Task<IActionResult> Index(Guid? apprenticeshipId)
         {
-            int? UKPRN;
-
-            if (_session.GetInt32("UKPRN") != null)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-            }
-            else
+            if (!_session.GetInt32("UKPRN").HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            if (apprenticeshipid.HasValue)
+            if (!apprenticeshipId.HasValue)
             {
-                string apprenticeshipGuidId = apprenticeshipid.ToString();
-
-                var apprenticeship = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipGuidId);
-
-                var apprenticeshipLocations = apprenticeship.Value?.ApprenticeshipLocations;
-
-                if (apprenticeshipLocations != null)
-                {
-                    EditApprenticeshipViewModel vm = new EditApprenticeshipViewModel
-                    {
-                     
-                    locations = apprenticeship?.Value.ApprenticeshipLocations
-                    };
-                    return View("EditDeliveryMethod", vm);
-                }
-
-            
-
-
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
-            return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+            var result = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipId.ToString());
+
+            if (!result.IsSuccess)
+            {
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+
+            if (result.Value?.ApprenticeshipLocations == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+
+            return View("EditDeliveryMethod", new EditApprenticeshipViewModel
+            {
+                locations = result.Value.ApprenticeshipLocations
+            });
         }
 
         [HttpPost]

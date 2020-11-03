@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             _addVenueUri = settings.Value.ToAddVenueUri();
         }
 
-        public async Task<IResult<Venue>> UpdateAsync(Venue venue)
+        public async Task<Result<Venue>> UpdateAsync(Venue venue)
         {
             Throw.IfNull(venue, nameof(venue));
 
@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<Venue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
+        public async Task<Result<Venue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<Venue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
+        public async Task<Result<Venue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<Venue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria)
+        public async Task<Result<Venue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -233,7 +233,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria)
+        public async Task<Result<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -281,7 +281,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria)
+        public async Task<Result<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -341,7 +341,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<Venue>> AddAsync(Venue venue)
+        public async Task<Result<Venue>> AddAsync(Venue venue)
         {
             Throw.IfNull(venue, nameof(venue));
 

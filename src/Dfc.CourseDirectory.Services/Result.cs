@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.Services
 {
-    public struct Result : IResult
+    public struct Result
     {
         private static readonly Result OkResult = new Result(false, null);
 
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Services
         }
     }
 
-    public struct Result<T> : IResult<T>
+    public struct Result<T>
     {
         public T Value { get; }
         public bool HasValue => Value != null;

@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Venues;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
@@ -121,7 +121,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(UKPRN);
 
-               var larslessCoursesCount = courseMigrationReportResult?.Value==null?0:courseMigrationReportResult?.Value.LarslessCourses.Count();
+               var larslessCoursesCount = courseMigrationReportResult.IsSuccess
+                    ? courseMigrationReportResult.Value.LarslessCourses.Count()
+                    : 0;
                 
                 actualModel.DisplayMigrationButton = false;
                 //list.Any() to see if any bulkupload files exist. If they do we don't want to show migration error.

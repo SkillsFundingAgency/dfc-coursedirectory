@@ -739,7 +739,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return default(T);
         }
-        internal IEnumerable<BulkUploadError> ParseBulkUploadErrors(int lineNumber, IList<KeyValuePair<string,string>> errors)
+
+        private IEnumerable<BulkUploadError> ParseBulkUploadErrors(int lineNumber, IList<KeyValuePair<string,string>> errors)
         {
             List<BulkUploadError> errorList = new List<BulkUploadError>();
 
@@ -760,7 +761,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             return errorList;
         }
-        internal IResult<IEnumerable<string>> ParseRegionData(string regions, string subRegions)
+
+        private Result<IEnumerable<string>> ParseRegionData(string regions, string subRegions)
         {
             List<string> totalList = new List<string>();
 

@@ -9,25 +9,25 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
 {
     public interface ICourseService
     {
-        Task<IResult<Course>> AddCourseAsync(Course course);
-        Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
-        Task<IResult<Course>> UpdateCourseAsync(Course course);
-        Task<IResult<Course>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
-        Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
-        Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo);
-        Task<IResult> ArchiveCourseRunsByUKPRN(int UKPRN);
+        Task<Result<Course>> AddCourseAsync(Course course);
+        Task<Result<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
+        Task<Result<Course>> UpdateCourseAsync(Course course);
+        Task<Result<Course>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
+        Task<Result> ArchiveProviderLiveCourses(int? UKPRN);
+        Task<Result> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo);
+        Task<Result> ArchiveCourseRunsByUKPRN(int UKPRN);
         SelectRegionModel GetRegions();
-        Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
+        Task<Result<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
         IList<KeyValuePair<string, string>> ValidateCourse(Course course);
         IList<KeyValuePair<string, string>> ValidateCourseRun(CourseRun courseRun, ValidationMode validationMode);
-        Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
-        IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode);
-        Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
-        Task<IResult<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
-        Task<IResult> DeleteBulkUploadCourses(int UKPRN);
-        Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
-        Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
-        Task<IResult<int>> GetTotalLiveCourses();
-        Task<IResult> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN, int StatusToBeChangedTo);
+        Task<Result> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
+        Result<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode);
+        Task<Result<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
+        Task<Result<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
+        Task<Result> DeleteBulkUploadCourses(int UKPRN);
+        Task<Result<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
+        Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports();
+        Task<Result<int>> GetTotalLiveCourses();
+        Task<Result> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN, int StatusToBeChangedTo);
     }
 }

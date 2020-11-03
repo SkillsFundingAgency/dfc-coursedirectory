@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return selectRegion;
         }
 
-        public async Task<IResult<Course>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
+        public async Task<Result<Course>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -173,7 +173,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
+        public async Task<Result<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -224,7 +224,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria)
+        public async Task<Result<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -272,7 +272,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria)
+        public async Task<Result<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -319,7 +319,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
+        public async Task<Result<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -366,7 +366,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode)
+        public Result<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode)
         {
             Throw.IfNull(courses, nameof(courses));
 
@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<Course>> AddCourseAsync(Course course)
+        public async Task<Result<Course>> AddCourseAsync(Course course)
         {
             Throw.IfNull(course, nameof(course));
 
@@ -453,7 +453,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<Course>> UpdateCourseAsync(Course course)
+        public async Task<Result<Course>> UpdateCourseAsync(Course course)
         {
             Throw.IfNull(course, nameof(course));
 
@@ -789,7 +789,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 .Replace("�", "£");
         }
 
-        public async Task<IResult> ArchiveProviderLiveCourses(int? UKPRN)
+        public async Task<Result> ArchiveProviderLiveCourses(int? UKPRN)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
 
@@ -807,7 +807,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
+        public async Task<Result> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
             Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
@@ -831,7 +831,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult> ArchiveCourseRunsByUKPRN(int UKPRN)
+        public async Task<Result> ArchiveCourseRunsByUKPRN(int UKPRN)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
 
@@ -853,7 +853,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToUpdateTo)
+        public async Task<Result> UpdateStatus(Guid courseId, Guid courseRunId, int statusToUpdateTo)
         {
             Throw.IfNullGuid(courseId, nameof(courseId));
             Throw.IfLessThan(0, statusToUpdateTo, nameof(statusToUpdateTo));
@@ -876,7 +876,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult> DeleteBulkUploadCourses(int UKPRN)
+        public async Task<Result> DeleteBulkUploadCourses(int UKPRN)
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
@@ -903,7 +903,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN)
+        public async Task<Result<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
 
@@ -940,7 +940,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports()
+        public async Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports()
         {
             try
             {
@@ -975,7 +975,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult<int>> GetTotalLiveCourses()
+        public async Task<Result<int>> GetTotalLiveCourses()
         {
             using (var httpClient = new HttpClient())
             {
@@ -999,7 +999,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<IResult> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN,int StatusToBeChangedTo)
+        public async Task<Result> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN,int StatusToBeChangedTo)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));         
             Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));

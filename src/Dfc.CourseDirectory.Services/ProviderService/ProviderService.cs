@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             _updateProviderDetailsUri = ToUpdateProviderDetailsUri(settings.Value);
         }
 
-        public async Task<IResult<IEnumerable<Provider>>> GetProviderByPRNAsync(string prn)
+        public async Task<Result<IEnumerable<Provider>>> GetProviderByPRNAsync(string prn)
         {
             if (string.IsNullOrWhiteSpace(prn))
             {
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
         }
 
-        public async Task<IResult<Provider>> AddProviderAsync(IProviderAdd provider)
+        public async Task<Result<Provider>> AddProviderAsync(IProviderAdd provider)
         {
             Throw.IfNull(provider, nameof(provider));
 
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
         }
 
-        public async Task<IResult> UpdateProviderDetails(Provider provider)
+        public async Task<Result> UpdateProviderDetails(Provider provider)
         {
             Throw.IfNull(provider, nameof(provider));
 
@@ -165,8 +165,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                     // NOTE: deserialising the "providerJson" var set earlier to allow code down stream to run.
                     var providerResult = JsonConvert.DeserializeObject<Provider>(providerJson);
 
-
-                    return Result.Ok(providerResult);
+                    return Result.Ok();
                 }
                 else
                 {

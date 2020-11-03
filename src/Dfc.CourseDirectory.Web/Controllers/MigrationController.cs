@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -174,17 +174,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn));
 
-            if (courses.IsFailure)
+            if (!courses.IsSuccess)
             {
                 throw new Exception($"Unable to find courses for UKPRN: {ukprn}");
             }
 
-            var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(ukprn.Value);
+            var result = await _courseService.GetCourseMigrationReport(ukprn.Value);
 
-            var courseMigrationReport = courseMigrationReportResult?.Value;
-
-            var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value)
-                , courseMigrationReport);
+            var model = new ReportViewModel(
+                courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value),
+                result.Value);
 
             return View("Report/index", model);
         }

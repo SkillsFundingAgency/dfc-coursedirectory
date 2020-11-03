@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
         }
 
-        public async Task<IResult<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
+        public async Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
 
@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult> AddApprenticeship(Apprenticeship apprenticeship)
+        public async Task<Result> AddApprenticeship(Apprenticeship apprenticeship)
         {
             Throw.IfNull(apprenticeship, nameof(apprenticeship));
 
@@ -127,17 +127,17 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Apprenticeship add service http request error", hre);
-                return Result.Fail<Apprenticeship>("Apprenticeship add service http request error.");
+                return Result.Fail("Apprenticeship add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Apprenticeship add service unknown error.", e);
 
-                return Result.Fail<Apprenticeship>("Apprenticeship add service unknown error.");
+                return Result.Fail("Apprenticeship add service unknown error.");
             }
         }
 
-        public async Task<IResult> AddApprenticeships(
+        public async Task<Result> AddApprenticeships(
             IEnumerable<Apprenticeship> apprenticeships,
             bool addInParallel)
         {
@@ -179,17 +179,17 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Apprenticeship add service http request error", hre);
-                return Result.Fail<Apprenticeship>("Apprenticeship add service http request error.");
+                return Result.Fail("Apprenticeship add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Apprenticeship add service unknown error.", e);
 
-                return Result.Fail<Apprenticeship>("Apprenticeship add service unknown error.");
+                return Result.Fail("Apprenticeship add service unknown error.");
             }
         }
 
-        public async Task<IResult<Apprenticeship>> GetApprenticeshipByIdAsync(string Id)
+        public async Task<Result<Apprenticeship>> GetApprenticeshipByIdAsync(string Id)
         {
             Throw.IfNullOrWhiteSpace(Id, nameof(Id));
 
@@ -227,7 +227,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
+        public async Task<Result<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
 
@@ -265,7 +265,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
+        public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -303,7 +303,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
+        public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -340,7 +340,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service unknown error.");
             }
         }
-        public async Task<IResult<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship)
+        public async Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship)
         {
             Throw.IfNull(apprenticeship, nameof(apprenticeship));
 
@@ -384,7 +384,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 return Result.Fail<Apprenticeship>("Apprenticeship update service unknown error.");
             }
         }
-        public async Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN)
+        public async Task<Result> DeleteBulkUploadApprenticeships(int UKPRN)
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
@@ -409,7 +409,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 return Result.Fail("Delete Bulk Upload Apprenticeship http response");
             }
         }
-        public async Task<IResult> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
+        public async Task<Result> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
             Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
@@ -429,7 +429,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
             
         }
-        public async Task<IResult<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN)
+        public async Task<Result<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN)
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
@@ -462,7 +462,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports()
+        public async Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports()
         {
             try
             {
@@ -497,7 +497,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<int>> GetTotalLiveApprenticeships()
+        public async Task<Result<int>> GetTotalLiveApprenticeships()
         {
             using (var httpClient = new HttpClient())
             {
