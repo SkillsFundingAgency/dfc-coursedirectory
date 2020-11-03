@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
+namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
 {
-    public class ProviderContextResourceFilterTests : MvcTestBase
+    public class ProviderContextMiddlewareTests : MvcTestBase
     {
-        public ProviderContextResourceFilterTests(CourseDirectoryApplicationFactory factory)
+        public ProviderContextMiddlewareTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }

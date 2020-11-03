@@ -4,28 +4,36 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.WebV2.Middleware
 {
-    public class ProviderContextResourceFilter : IAsyncResourceFilter
+    public class ProviderContextMiddleware
     {
         public const string RouteValueKey = "providerId";
 
-        public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
+        private readonly RequestDelegate _next;
+
+        public ProviderContextMiddleware(RequestDelegate next)
         {
-            var providerInfoCache = context.HttpContext.RequestServices.GetRequiredService<IProviderInfoCache>();
-            var currentUserProvider = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserProvider>();
-            var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
+            _next = next;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            var providerInfoCache = context.RequestServices.GetRequiredService<IProviderInfoCache>();
+            var currentUserProvider = context.RequestServices.GetRequiredService<ICurrentUserProvider>();
+            var providerContextProvider = context.RequestServices.GetRequiredService<IProviderContextProvider>();
+
+            bool runNext = true;
 
             await TryAssignFeature();
 
-            if (context.Result == null)
+            if (runNext)
             {
-                await next();
+                await _next(context);
             }
 
             async Task TryAssignFeature()
@@ -76,7 +84,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     // Route param or session value, if specified, must match user's own org
                     if (requestProviderId.HasValue && requestProviderId.Value != usersOwnProviderId)
                     {
-                        context.Result = new ForbidResult();
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        runNext = false;
                         return;
                     }
 
@@ -95,11 +104,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             {
                 var routeValueProvider = new RouteValueProvider(
                     BindingSource.Path,
-                    context.RouteData.Values);
+                    context.GetRouteData().Values);
 
                 var queryStringValueProvider = new QueryStringValueProvider(
                     BindingSource.Query,
-                    context.HttpContext.Request.Query,
+                    context.Request.Query,
                     CultureInfo.InvariantCulture);
 
                 var matches = routeValueProvider.GetValue(RouteValueKey).Values
@@ -117,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             async Task<Guid?> TryGetProviderIdFromLegacyContext()
             {
-                var ukprn = context.HttpContext.Session.GetInt32("UKPRN");
+                var ukprn = context.Session.GetInt32("UKPRN");
 
                 return ukprn.HasValue ? await providerInfoCache.GetProviderIdForUkprn(ukprn.Value) : null;
             }

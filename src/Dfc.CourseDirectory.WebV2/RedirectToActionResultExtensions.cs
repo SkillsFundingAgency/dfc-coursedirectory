@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2
             ProviderContext providerContext)
         {
             var routeValues = (IDictionary<string, object>)result.RouteValues ?? new Dictionary<string, object>();
-            routeValues[ProviderContextResourceFilter.RouteValueKey] = providerContext.ProviderInfo.ProviderId;
+            routeValues[ProviderContextMiddleware.RouteValueKey] = providerContext.ProviderInfo.ProviderId;
 
             result.RouteValues = new RouteValueDictionary(routeValues);
 

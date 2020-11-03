@@ -28,6 +28,7 @@ using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -292,6 +293,8 @@ namespace Dfc.CourseDirectory.Web
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<ProviderContextMiddleware>();
 
             app.UseAuthorization();
 
