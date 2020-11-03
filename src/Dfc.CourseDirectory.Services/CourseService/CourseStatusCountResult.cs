@@ -1,8 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
-namespace Dfc.CourseDirectory.Services.CourseService
+﻿namespace Dfc.CourseDirectory.Services.CourseService
 {
-    public class CourseStatusCountResult : ICourseStatusCountResult
+    public class CourseStatusCountResult
     {
         public int Status { get; set; }
         public string Description { get; set; }

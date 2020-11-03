@@ -1,11 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;

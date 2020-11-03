@@ -1,9 +1,8 @@
 ﻿using System;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
-    public class GetApprenticeshipByIdCriteria : IGetApprenticeshipByIdCriteria
+    public class GetApprenticeshipByIdCriteria
     {
         public Guid Id { get; }
 

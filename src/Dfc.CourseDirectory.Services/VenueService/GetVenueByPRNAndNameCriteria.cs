@@ -1,8 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-
-namespace Dfc.CourseDirectory.Services.VenueService
+﻿namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class GetVenuesByPRNAndNameCriteria : IGetVenuesByPRNAndNameCriteria
+    public class GetVenuesByPRNAndNameCriteria
     {
         public string PRN { get; }
         public string Name { get; }

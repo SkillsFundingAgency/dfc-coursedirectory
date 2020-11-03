@@ -1,23 +1,17 @@
-﻿
-using System;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Generic;
-using System.Security.Claims;
+using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using Dfc.CourseDirectory.Web.Helpers;
-
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -92,7 +86,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                  .GroupBy(i => i)
                                                                  .Select(g => $"{ g.LongCount() } { g.Key }");
 
-            IEnumerable<ICourseStatusCountResult> counts = service.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
+            var counts = service.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
                                                                   .Result
                                                                   .Value;
             DashboardViewModel vm = new DashboardViewModel()
@@ -109,7 +103,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 MigrationPendingCount   = courses.SelectMany(c => c.CourseRuns)
                                                  .Where(x => x.RecordStatus == RecordStatus.MigrationPending)
                                                  .Count(),
-                PendingCourseCount = (from ICourseStatusCountResult c in counts
+                PendingCourseCount = (from CourseStatusCountResult c in counts
                                       join int p in pendingStatuses
                                       on c.Status equals p
                                       select c.Count).Sum(),

@@ -10,9 +10,6 @@ using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
@@ -25,7 +22,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
     public class BulkUploadService : IBulkUploadService
     {
         private readonly IVenueService _venueService;
-        private readonly ICourseServiceSettings _courseServiceSettings;
+        private readonly CourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
 

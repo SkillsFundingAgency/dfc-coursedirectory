@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,7 +30,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             _getYourCourseTextUri = settings.Value.GetCourseTextUri();
         }
 
-        public async Task<Result<CourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
+        public async Task<Result<CourseText>> GetCourseTextByLARS(CourseTextSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
@@ -72,16 +71,6 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                 _logger.LogException("Get your courses service unknown error.", e);
                 return Result.Fail<CourseText>("Get your courses service unknown error.");
             }
-        }
-    }
-
-    internal static class CourseServiceSettingsExtensions
-    {
-        internal static Uri GetCourseTextUri(this ICourseTextServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseTextByLARS");
         }
     }
 }

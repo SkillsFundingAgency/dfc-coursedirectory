@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Models.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,9 +32,9 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             _settings = settings.Value;
             _httpClient = httpClient;
 
-            _getProviderByPRNUri = ToGetProviderByPRNUri(settings.Value);
-            _updateProviderByIdUri = ToUpdateProviderByIdUri(settings.Value);
-            _updateProviderDetailsUri = ToUpdateProviderDetailsUri(settings.Value);
+            _getProviderByPRNUri = settings.Value.ToGetProviderByPRNUri();
+            _updateProviderByIdUri = settings.Value.ToUpdateProviderByIdUri();
+            _updateProviderDetailsUri = settings.Value.ToUpdateProviderDetailsUri();
         }
 
         public async Task<Result<IEnumerable<Provider>>> GetProviderByPRNAsync(string prn)
@@ -88,7 +87,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
         }
 
-        public async Task<Result<Provider>> AddProviderAsync(IProviderAdd provider)
+        public async Task<Result<Provider>> AddProviderAsync(ProviderAdd provider)
         {
             Throw.IfNull(provider, nameof(provider));
 
@@ -183,27 +182,6 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
                 return Result.Fail("Provider update service unknown error.");
             }
-        }
-
-        private static Uri ToGetProviderByPRNUri(IProviderServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetProviderByPRN");
-        }
-
-        internal static Uri ToUpdateProviderByIdUri(IProviderServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateProviderById");
-        }
-
-        internal static Uri ToUpdateProviderDetailsUri(IProviderServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateProviderDetails");
         }
     }
 }

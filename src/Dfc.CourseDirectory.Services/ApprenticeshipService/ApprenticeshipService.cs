@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.Extensions.Logging;
@@ -519,93 +518,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                     return Result.Fail<int>("GetTotalLiveApprenticeships service unsuccessful http response");
                 }
             }
-        }
-    }
-
-    internal static class ApprenticeshipServiceSettingsExtensions
-    {
-        internal static Uri GetStandardsAndFrameworksUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/StandardsAndFrameworksSearch");
-        }
-
-        internal static Uri AddApprenticeshipUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/AddApprenticeship");
-        }
-
-        internal static Uri AddApprenticeshipsUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/AddApprenticeships");
-        }
-
-        internal static Uri DeleteBulkUploadApprenticeshipsUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/DeleteBulkUploadApprenticeships");
-        }
-
-        internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetApprenticeshipByUKPRN");
-        }
-        internal static Uri ToGetAllDfcReports(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetAllDfcReports");
-        }
-        internal static Uri GetApprenticeshipByIdUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetApprenticeshipById");
-        }
-        internal static Uri GetStandardByCodeUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetStandardByCode");
-        }
-        internal static Uri GetFrameworkByCodeUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetFrameworkByCode");
-        }
-        internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateApprenticeship");
-        }        
-        internal static Uri ChangeApprenticeshipStatusesForUKPRNSelectionUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ChangeApprenticeshipStatusForUKPRNSelection");
-        }
-        internal static Uri GetApprenticeshipDashboardCountsUri(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetApprenticeshipDashboardCounts");
-        }
-
-        internal static Uri ToGetTotalLiveCourses(this IApprenticeshipServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetTotalLiveApprenticeships");
         }
     }
 }

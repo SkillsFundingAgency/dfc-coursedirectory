@@ -6,11 +6,9 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -94,57 +92,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 });
         }
 
-
-
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(CourseRunModel model)
         {
             var UKPRN = _session.GetInt32("UKPRN");
-            if (UKPRN.HasValue)
-            {
-                ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
-                    ? null
-                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                        .Result.Value);
 
-                var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-
-                var course = courses.SingleOrDefault(x => x.id == model.CourseId);
-
-                var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
-
-                if (courserun != null)
-                {
-                    courserun.DurationUnit = model.courseRun.DurationUnit;
-                    courserun.AttendancePattern = model.courseRun.AttendancePattern;
-                    courserun.DeliveryMode = model.courseRun.DeliveryMode;
-                    courserun.FlexibleStartDate = model.courseRun.FlexibleStartDate;
-                    courserun.StudyMode = model.courseRun.StudyMode;
-                    courserun.Cost = model.courseRun.Cost;
-                    courserun.CostDescription = model.courseRun.CostDescription;
-                    courserun.CourseName = model.courseRun.CourseName;
-                    courserun.CourseURL = model.courseRun.CourseURL;
-                    courserun.DurationValue = model.courseRun.DurationValue;
-                    courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
-                    // courserun.StartDate = model.courseRun.StartDate;
-                    courserun.VenueId = model.courseRun.VenueId;
-                    courserun.UpdatedDate = DateTime.Now;
-
-
-                    var updatedCourses = await _courseService.UpdateCourseAsync(course);
-
-                }
-                else
-                {
-                    return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
-                }
-            }
-            else
+            if (!UKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            var coursesByUKPRN = (await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
+
+            var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+            var course = courses.SingleOrDefault(x => x.id == model.CourseId);
+
+            var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
+
+            if (courserun == null)
+            {
+                return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
+            }
+
+            courserun.DurationUnit = model.courseRun.DurationUnit;
+            courserun.AttendancePattern = model.courseRun.AttendancePattern;
+            courserun.DeliveryMode = model.courseRun.DeliveryMode;
+            courserun.FlexibleStartDate = model.courseRun.FlexibleStartDate;
+            courserun.StudyMode = model.courseRun.StudyMode;
+            courserun.Cost = model.courseRun.Cost;
+            courserun.CostDescription = model.courseRun.CostDescription;
+            courserun.CourseName = model.courseRun.CourseName;
+            courserun.CourseURL = model.courseRun.CourseURL;
+            courserun.DurationValue = model.courseRun.DurationValue;
+            courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
+            // courserun.StartDate = model.courseRun.StartDate;
+            courserun.VenueId = model.courseRun.VenueId;
+            courserun.UpdatedDate = DateTime.Now;
+
+            var updatedCourses = await _courseService.UpdateCourseAsync(course);
 
             return RedirectToAction("Index", new { status = "update", learnAimRef = "", numberOfNewCourses = "", errmsg = "", updatedCourseId = model.CourseId });
         }
@@ -229,7 +216,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                defaultCourseText = _courseTextService.GetCourseTextByLARS(new CourseTextServiceCriteria(learnAimRef)).Result.Value;
+                defaultCourseText = _courseTextService.GetCourseTextByLARS(new CourseTextSearchCriteria(learnAimRef)).Result.Value;
             }
 
             AddCourseViewModel vm = new AddCourseViewModel

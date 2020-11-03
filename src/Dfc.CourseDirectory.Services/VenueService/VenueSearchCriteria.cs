@@ -1,8 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces;
-
-namespace Dfc.CourseDirectory.Services.VenueService
+﻿namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class VenueSearchCriteria : IVenueSearchCriteria
+    public class VenueSearchCriteria
     {
         public string Search { get; }
         public string NewAddressId { get; }

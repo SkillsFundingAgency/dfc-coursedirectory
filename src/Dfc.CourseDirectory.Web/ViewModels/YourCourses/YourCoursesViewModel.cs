@@ -1,12 +1,4 @@
-﻿
-using Dfc.CourseDirectory.Services.Models.Courses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
+﻿using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.YourCourses
 {
@@ -18,7 +10,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.YourCourses
         public IList<QualificationLevelFilterViewModel> LevelFilters { get; set; }
         public string NotificationTitle { get; set; }
         public string NotificationMessage { get; set; }
-
         public int? PendingCoursesCount { get; set; }
     }
 }

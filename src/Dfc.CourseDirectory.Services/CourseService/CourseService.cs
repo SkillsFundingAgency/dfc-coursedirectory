@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Configuration;
 using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Microsoft.Extensions.Logging;
@@ -129,7 +128,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return selectRegion;
         }
 
-        public async Task<Result<Course>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
+        public async Task<Result<Course>> GetCourseByIdAsync(GetCourseByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -138,7 +137,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogInformationObject("Get Course By Id criteria.", criteria);
                 _logger.LogInformationObject("Get Course By Id URI", _getCourseByIdUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                var content = new StringContent(ToJson(criteria), Encoding.UTF8, "application/json");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "?id=" + criteria.Id));
@@ -173,7 +172,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<Result<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
+        public async Task<Result<CourseSearchResult>> GetYourCoursesByUKPRNAsync(CourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -185,7 +184,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
 
                 if (!criteria.UKPRN.HasValue)
-                    return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
+                    return Result.Fail<CourseSearchResult>("Get your courses unknown UKRLP");
 
                 // use local version of httpclient as when we are called from the background worker thread we get socket exceptions
                 HttpClient httpClient = new HttpClient();
@@ -205,26 +204,26 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     IEnumerable<IEnumerable<IEnumerable<Course>>> courses = JsonConvert.DeserializeObject<IEnumerable<IEnumerable<IEnumerable<Course>>>>(json);
 
                     CourseSearchResult searchResult = new CourseSearchResult(courses);
-                    return Result.Ok<ICourseSearchResult>(searchResult);
+                    return Result.Ok<CourseSearchResult>(searchResult);
                 }
                 else
                 {
-                    return Result.Fail<ICourseSearchResult>("Get your courses service unsuccessful http response");
+                    return Result.Fail<CourseSearchResult>("Get your courses service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get your courses service http request error", hre);
-                return Result.Fail<ICourseSearchResult>("Get your courses service http request error.");
+                return Result.Fail<CourseSearchResult>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get your courses service unknown error.", e);
-                return Result.Fail<ICourseSearchResult>($"Get your courses service unknown error. {e.Message}");
+                return Result.Fail<CourseSearchResult>($"Get your courses service unknown error. {e.Message}");
             }
         }
 
-        public async Task<Result<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria)
+        public async Task<Result<CourseSearchResult>> GetCoursesByLevelForUKPRNAsync(CourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -235,7 +234,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
 
                 if (!criteria.UKPRN.HasValue)
-                    return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
+                    return Result.Fail<CourseSearchResult>("Get your courses unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
@@ -253,26 +252,26 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     IEnumerable<IEnumerable<IEnumerable<Course>>> courses = JsonConvert.DeserializeObject<IEnumerable<IEnumerable<IEnumerable<Course>>>>(json);
                     var searchResult = new CourseSearchResult(courses);
 
-                    return Result.Ok<ICourseSearchResult>(searchResult);
+                    return Result.Ok<CourseSearchResult>(searchResult);
                 }
                 else
                 {
-                    return Result.Fail<ICourseSearchResult>("Get your courses service unsuccessful http response");
+                    return Result.Fail<CourseSearchResult>("Get your courses service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get your courses service http request error", hre);
-                return Result.Fail<ICourseSearchResult>("Get your courses service http request error.");
+                return Result.Fail<CourseSearchResult>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get your courses service unknown error.", e);
-                return Result.Fail<ICourseSearchResult>("Get your courses service unknown error.");
+                return Result.Fail<CourseSearchResult>("Get your courses service unknown error.");
             }
         }
 
-        public async Task<Result<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria)
+        public async Task<Result<IEnumerable<CourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(CourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -283,7 +282,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogInformationObject("Get course counts URI", _getCourseCountsByStatusForUKPRNUri);
 
                 if (!criteria.UKPRN.HasValue)
-                    return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts unknown UKRLP");
+                    return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
@@ -298,28 +297,28 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         json = "[" + json + "]";
 
                     _logger.LogInformationObject("Get course counts service json response", json);
-                    IEnumerable<ICourseStatusCountResult> counts = JsonConvert.DeserializeObject<IEnumerable<CourseStatusCountResult>>(json);
+                    IEnumerable<CourseStatusCountResult> counts = JsonConvert.DeserializeObject<IEnumerable<CourseStatusCountResult>>(json);
 
-                    return Result.Ok<IEnumerable<ICourseStatusCountResult>>(counts);
+                    return Result.Ok<IEnumerable<CourseStatusCountResult>>(counts);
                 }
                 else
                 {
-                    return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unsuccessful http response");
+                    return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get course counts service http request error", hre);
-                return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service http request error.");
+                return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get course counts service unknown error.", e);
-                return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unknown error.");
+                return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts service unknown error.");
             }
         }
 
-        public async Task<Result<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
+        public async Task<Result<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(CourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
@@ -1019,149 +1018,20 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 return Result.Fail("ChangeCourseRunStatusesForUKPRNSelection service unsuccessful http response");
             }
         }
-    }
 
-    internal static class IGetCourseByIdCriteriaExtensions
-    {
-        internal static string ToJson(this IGetCourseByIdCriteria extendee)
+        private static string ToJson(GetCourseByIdCriteria criteria)
         {
             GetCourseByIdJson json = new GetCourseByIdJson
             {
-                id = extendee.Id.ToString()
+                id = criteria.Id.ToString()
             };
-            var result = JsonConvert.SerializeObject(json);
-
-            return result;
-        }
-    }
-
-    internal class GetCourseByIdJson
-    {
-        public string id { get; set; }
-    }
-
-    internal static class CourseServiceSettingsExtensions
-    {
-        internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/AddCourse");
+            
+            return JsonConvert.SerializeObject(json);
         }
 
-        internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
+        private class GetCourseByIdJson
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCoursesByLevelForUKPRN");
-        }
-
-        internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateCourse");
-        }
-
-        internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseById");
-        }
-
-        internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ArchiveProvidersLiveCourses");
-        }
-
-        internal static Uri ToUpdateStatusUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateStatus");
-        }
-
-        internal static Uri ToGetCourseCountsByStatusForUKPRNUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseCountsByStatusForUKPRN");
-        }
-
-        internal static Uri ToGetRecentCourseChangesByUKPRNUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetRecentCourseChangesByUKPRN");
-        }
-
-        internal static Uri ToChangeCourseRunStatusesForUKPRNSelectionUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ChangeCourseRunStatusesForUKPRNSelection");
-        }
-
-        internal static Uri ToArchiveCourseRunsByUKPRNUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ArchiveCourseRunsByUKPRN");
-        }
-
-        internal static Uri ToDeleteBulkUploadCoursesUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/DeleteBulkUploadCourses");
-        }
-
-        internal static Uri ToGetCourseMigrationReportByUKPRN(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseMigrationReportByUKPRN");
-        }
-
-        internal static Uri ToGetAllDfcReports(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetAllDfcReports");
-        }
-
-        internal static Uri ToGetTotalLiveCourses(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetTotalLiveCourses");
-        }
-
-        internal static Uri ToArchiveCoursesExceptBulkUploadReadytoGoLiveUri(this ICourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ArchiveCoursesExceptBulkUploadReadytoGoLive");
-        }
-    }
-
-    internal static class FindACourseServiceSettingsExtensions
-    {
-        internal static Uri ToFindACourseSearchUri(this IFindACourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/search");
-        }
-
-        internal static Uri ToProviderSearchUri(this IFindACourseServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/providersearch");
+            public string id { get; set; }
         }
     }
 }

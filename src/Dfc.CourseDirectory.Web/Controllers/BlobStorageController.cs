@@ -1,42 +1,25 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Collections.Generic;
 using System.Net.Mime;
-using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Providers;
+using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.BlobStorageService;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Services.ProviderService;
-using System.ComponentModel.DataAnnotations;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Services.Models.Providers;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-
     public class BlobStorageController : Controller
     {
         private readonly ILogger<BlobStorageController> _logger;
