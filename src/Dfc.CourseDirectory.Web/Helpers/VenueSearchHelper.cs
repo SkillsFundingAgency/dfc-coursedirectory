@@ -1,14 +1,11 @@
-﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Models.Venues;
+using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 
 [assembly: InternalsVisibleTo("Dfc.CourseDirectory.Services.Web.Tests")]
 
@@ -17,7 +14,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
     public class VenueSearchHelper : IVenueSearchHelper
     {
-        public IVenueSearchCriteria GetVenueSearchCriteria(
+        public VenueSearchCriteria GetVenueSearchCriteria(
             VenueSearchRequestModel venueSearchRequestModel)
         {
             Throw.IfNull(venueSearchRequestModel, nameof(venueSearchRequestModel));

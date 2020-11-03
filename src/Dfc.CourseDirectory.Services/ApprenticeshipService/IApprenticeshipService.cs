@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
-namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
+namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
     public interface IApprenticeshipService
     {

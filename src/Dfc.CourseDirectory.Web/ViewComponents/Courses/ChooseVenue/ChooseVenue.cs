@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -18,7 +17,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
     {
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        private readonly IVenueServiceSettings _venueServiceSettings;
+        private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
         public ChooseVenue(IVenueSearchHelper venueSearchHelper, IVenueService venueService, IOptions<VenueServiceSettings> venueServiceSettings, IHttpContextAccessor contextAccessor)

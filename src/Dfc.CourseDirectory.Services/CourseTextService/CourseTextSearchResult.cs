@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService
 {
-    public class CourseTextSearchResult : ICourseTextSearchResult
+    public class CourseTextSearchResult
     {
         public IEnumerable<CourseText> Value { get; set; }
 

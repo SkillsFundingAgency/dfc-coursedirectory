@@ -5,14 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
+using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.BulkUploadService;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2;
@@ -29,7 +26,7 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
     public class ApprenticeshipBulkUploadServiceTests
     {
         private const string DefaultVenue = ApprenticeshipCsvRowBuilder.DefaultTestVenueName;
-        private ApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
+        private ApprenticeshipBulkUploadService.ApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
 
         private readonly AuthUserDetails _authUserDetails = new AuthUserDetails { UKPRN = "666" };
         private readonly Mock<IApprenticeshipService> _mockApprenticeshipService = new Mock<IApprenticeshipService>();
@@ -522,8 +519,8 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
                 new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
                 onScheduled: () => _backgroundWorkScheduled = true);
 
-            _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
-                NullLogger<ApprenticeshipBulkUploadService>.Instance, _mockApprenticeshipService.Object,
+            _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService.ApprenticeshipBulkUploadService(
+                NullLogger<ApprenticeshipBulkUploadService.ApprenticeshipBulkUploadService>.Instance, _mockApprenticeshipService.Object,
                 _mockVenueService.Object, _standardsAndFrameworksCacheMock.Object, _mockBinaryStorageProvider.Object,
                 backgroundWorkScheduler,
                 _settings);
@@ -535,8 +532,8 @@ namespace Dfc.CourseDirectory.Services.Tests.BulkUploadService
                     m.ChangeApprenticeshipStatusesForUKPRNSelection(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(Result.Ok());
 
-            _mockVenueService.Setup(m => m.SearchAsync(It.IsAny<IVenueSearchCriteria>()))
-                .ReturnsAsync(Result.Ok<IVenueSearchResult>(new VenueSearchResult(_mockVenues)));
+            _mockVenueService.Setup(m => m.SearchAsync(It.IsAny<VenueSearchCriteria>()))
+                .ReturnsAsync(Result.Ok(new VenueSearchResult(_mockVenues)));
 
             _standardsAndFrameworksCacheMock.Setup(m => m.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync((int s, int v) => new Core.Models.Standard {StandardCode = s, Version = v});

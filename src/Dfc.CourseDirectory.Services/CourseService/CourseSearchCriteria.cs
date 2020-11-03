@@ -1,8 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
-namespace Dfc.CourseDirectory.Services.CourseService
+﻿namespace Dfc.CourseDirectory.Services.CourseService
 {
-    public class CourseSearchCriteria : ICourseSearchCriteria
+    public class CourseSearchCriteria
     {
         public int? UKPRN { get; set; }
 

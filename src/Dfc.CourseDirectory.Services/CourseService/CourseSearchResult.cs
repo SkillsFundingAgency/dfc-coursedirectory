@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
-    public class CourseSearchResult : ICourseSearchResult
+    public class CourseSearchResult
     {
-        public IEnumerable<ICourseSearchOuterGrouping> Value { get; set; }
+        public IEnumerable<CourseSearchOuterGrouping> Value { get; set; }
 
         public CourseSearchResult(
             IEnumerable<IEnumerable<IEnumerable<Course>>> courses)
@@ -18,7 +17,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         }
 
         public CourseSearchResult(
-            IEnumerable<ICourseSearchOuterGrouping> courses)
+            IEnumerable<CourseSearchOuterGrouping> courses)
         {
             Throw.IfNull(courses, nameof(courses));
 
@@ -26,41 +25,39 @@ namespace Dfc.CourseDirectory.Services.CourseService
         }
     }
 
-    public class CourseSearchOuterGrouping : ICourseSearchOuterGrouping
+    public class CourseSearchOuterGrouping
     {
         public string QualType { get; set; }
         public string Level { get; set; }
-        public IEnumerable<ICourseSearchInnerGrouping> Value { get; set; }
+        public IEnumerable<CourseSearchInnerGrouping> Value { get; set; }
 
         public CourseSearchOuterGrouping(
-            IEnumerable<ICourseSearchInnerGrouping> courses, 
+            IEnumerable<CourseSearchInnerGrouping> courses, 
             string level)
         {
             Throw.IfNullOrEmpty(level, nameof(level));
             Throw.IfNull(courses, nameof(courses));
 
-            //QualType = qualType;
             Level = level;
-            Value = courses.Select(c => new CourseSearchInnerResultGrouping(c.LARSRef));
+            Value = courses.Select(c => new CourseSearchInnerGrouping(c.LARSRef));
         }
 
         public CourseSearchOuterGrouping(
             IEnumerable<IEnumerable<Course>> courses)
-            //bool PopulateChildren = true)
         {
             Throw.IfNull(courses, nameof(courses));
 
             Level = courses?.FirstOrDefault()?.FirstOrDefault()?.NotionalNVQLevelv2;
-            Value = courses.Select(c => new CourseSearchInnerResultGrouping(c));
+            Value = courses.Select(c => new CourseSearchInnerGrouping(c));
         }
     }
 
-    public class CourseSearchInnerResultGrouping : ICourseSearchInnerGrouping
+    public class CourseSearchInnerGrouping
     {
         public string LARSRef { get; set; }
         public IEnumerable<Course> Value { get; set; }
 
-        public CourseSearchInnerResultGrouping(string larsRef)
+        public CourseSearchInnerGrouping(string larsRef)
         {
             Throw.IfNullOrEmpty(larsRef, nameof(larsRef));
 
@@ -68,7 +65,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Value = new List<Course>();
         }
 
-        public CourseSearchInnerResultGrouping(
+        public CourseSearchInnerGrouping(
             IEnumerable<Course> value)
         {
             Throw.IfNull(value, nameof(value));

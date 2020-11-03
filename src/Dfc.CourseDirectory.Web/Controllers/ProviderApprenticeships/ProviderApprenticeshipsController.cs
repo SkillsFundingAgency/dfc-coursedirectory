@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;
@@ -28,7 +28,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-
 
         public ProviderApprenticeshipsController(
             ILogger<ProviderApprenticeshipsController> logger,

@@ -1,8 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
-namespace Dfc.CourseDirectory.Services.CourseService
+﻿namespace Dfc.CourseDirectory.Services.CourseService
 {
-    public class FindACourseServiceSettings : IFindACourseServiceSettings
+    public class FindACourseServiceSettings
     {
         public string ApiUrl { get; set; }
         public string ApiKey { get; set; }

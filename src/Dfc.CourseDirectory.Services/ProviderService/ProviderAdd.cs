@@ -1,9 +1,8 @@
 ﻿using System;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 
 namespace Dfc.CourseDirectory.Services.ProviderService
 {
-    public class ProviderAdd : IProviderAdd
+    public class ProviderAdd
     {
         public Guid id { get; set; }
         public int Status { get; set;  }

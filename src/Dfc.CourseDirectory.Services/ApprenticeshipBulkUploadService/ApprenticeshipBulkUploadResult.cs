@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Models.Auth;
 
-namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
+namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
 {
     public class ApprenticeshipBulkUploadResult
     {
@@ -27,10 +24,5 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
             Errors = Array.Empty<string>(),
             ProcessedSynchronously = processedSynchronously
         };
-    }
-
-    public interface IApprenticeshipBulkUploadService
-    {
-        Task<ApprenticeshipBulkUploadResult> ValidateAndUploadCSV(string fileName, Stream stream, AuthUserDetails userDetails);
     }
 }

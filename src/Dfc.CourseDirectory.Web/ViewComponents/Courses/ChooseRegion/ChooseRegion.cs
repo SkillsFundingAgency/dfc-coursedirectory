@@ -1,22 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Web.Helpers;
+﻿using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.CourseService;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Regions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
-{ 
+{
     public class ChooseRegion : ViewComponent
     {
         private readonly ICourseService _courseService;

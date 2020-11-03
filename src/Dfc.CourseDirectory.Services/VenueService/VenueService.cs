@@ -4,8 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -94,7 +92,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<Result<Venue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
+        public async Task<Result<Venue>> GetVenueByIdAsync(GetVenueByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -141,99 +139,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<Result<Venue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
-        {
-            Throw.IfNull(criteria, nameof(criteria));
-
-            try
-            {
-                _logger.LogInformationObject("Get Venue By VenueId criteria.", criteria);
-                _logger.LogInformationObject("Get Venue By VenueId URI", _getVenueByVenueIdUri);
-
-                var response = await _httpClient.GetAsync(_getVenueByVenueIdUri + $"?venueId={criteria.venueId}");
-                _logger.LogHttpResponseMessage("Get Venue By VenueId service http response", response);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformationObject("Get Venue By VenueId service json response", json);
-
-                    var settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new VenueSearchResultContractResolver()
-                    };
-                    var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
-
-                    return Result.Ok<Venue>(venue);
-
-                }
-                else
-                {
-                    return Result.Fail<Venue>("Get Venue By VenueId service unsuccessful http response");
-                }
-
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogException("Get Venue By VenueId service http request error", hre);
-                return Result.Fail<Venue>("Get Venue By VenueId service http request error.");
-
-            }
-            catch (Exception e)
-            {
-                _logger.LogException("Get Venue By VenueId service unknown error.", e);
-                return Result.Fail<Venue>("Get Venue By VenueId service unknown error.");
-
-            }
-        }
-
-        public async Task<Result<Venue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria)
-        {
-            Throw.IfNull(criteria, nameof(criteria));
-
-            try
-            {
-                _logger.LogInformationObject("Get Venue By LocationId criteria.", criteria);
-                _logger.LogInformationObject("Get Venue By LocationId URI", _getVenueByLocationIdUri);
-
-                var response = await _httpClient.GetAsync(_getVenueByLocationIdUri + $"?LocationId={criteria.LocationId}");
-                _logger.LogHttpResponseMessage("Get Venue By LocationId service http response", response);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformationObject("Get Venue By LocationId service json response", json);
-
-                    var settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new VenueSearchResultContractResolver()
-                    };
-                    var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
-
-                    return Result.Ok<Venue>(venue);
-
-                }
-                else
-                {
-                    return Result.Fail<Venue>("Get Venue By LocationId service unsuccessful http response");
-                }
-
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogException("Get Venue By LocationId service http request error", hre);
-                return Result.Fail<Venue>("Get Venue By LocationId service http request error.");
-
-            }
-            catch (Exception e)
-            {
-                _logger.LogException("Get Venue By LocationId service unknown error.", e);
-                return Result.Fail<Venue>("Get Venue By LocationId service unknown error.");
-
-            }
-        }
-
-        public async Task<Result<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria)
+        public async Task<Result<VenueSearchResult>> GetVenuesByPRNAndNameAsync(GetVenuesByPRNAndNameCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -258,30 +164,30 @@ namespace Dfc.CourseDirectory.Services.VenueService
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
                     IEnumerable<Venue> venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings);
-                    return Result.Ok<IVenueSearchResult>(new VenueSearchResult(venues));
+                    return Result.Ok<VenueSearchResult>(new VenueSearchResult(venues));
 
                 }
                 else
                 {
-                    return Result.Fail<IVenueSearchResult>("Get Venue By PRN & Name service unsuccessful http response");
+                    return Result.Fail<VenueSearchResult>("Get Venue By PRN & Name service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get Venue By PRN and Name service http request error", hre);
-                return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service http request error.");
+                return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service http request error.");
 
             }
             catch (Exception e)
             {
                 _logger.LogException("Get Venue By PRN and Name service unknown error.", e);
-                return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service unknown error.");
+                return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service unknown error.");
 
             }
         }
 
-        public async Task<Result<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria)
+        public async Task<Result<VenueSearchResult>> SearchAsync(VenueSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -295,7 +201,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogHttpResponseMessage("Venue search service http response", response);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound || response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                    return Result.Ok<IVenueSearchResult>(new VenueSearchResult(new List<Venue>()));
+                    return Result.Ok<VenueSearchResult>(new VenueSearchResult(new List<Venue>()));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -319,25 +225,25 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     }
 
                     var searchResult = new VenueSearchResult(venues);
-                    return Result.Ok<IVenueSearchResult>(searchResult);
+                    return Result.Ok<VenueSearchResult>(searchResult);
 
                 }
                 else
                 {
-                    return Result.Fail<IVenueSearchResult>("Venue search service unsuccessful http response");
+                    return Result.Fail<VenueSearchResult>("Venue search service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Venue search service http request error", hre);
-                return Result.Fail<IVenueSearchResult>("Venue search service http request error.");
+                return Result.Fail<VenueSearchResult>("Venue search service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Venue search service unknown error.", e);
 
-                return Result.Fail<IVenueSearchResult>("Venue search service unknown error.");
+                return Result.Fail<VenueSearchResult>("Venue search service unknown error.");
             }
         }
 
@@ -385,154 +291,5 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 return Result.Fail<Venue>("Venue add service unknown error.");
             }
         }
-    }
-
-    internal static class VenueServiceSettingsExtensions
-    {
-        internal static Uri ToUpdateVenueUrl(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateVenueById");
-        }
-
-        internal static Uri ToGetVenueByIdUri(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenueById");
-        }
-
-        internal static Uri ToGetVenueByVenueIdUri(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenueByVenueId");
-        }
-
-        internal static Uri ToGetVenueByLocationIdUri(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenueByLocationId");
-        }
-
-        internal static Uri ToGetVenuesByPRNAndNameUri(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenuesByPRNAndName");
-        }
-
-        internal static Uri ToSearchVenueUri(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenuesByPRN");
-        }
-
-        internal static Uri ToAddVenueUri(this VenueServiceSettings extendee)
-        {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/AddVenue");
-        }
-    }
-
-    internal static class IGetVenueByIdCriteriaExtensions
-    {
-        internal static string ToJson(this IGetVenueByIdCriteria extendee)
-        {
-
-            GetVenueByIdJson json = new GetVenueByIdJson
-            {
-                id = extendee.Id
-            };
-            var result = JsonConvert.SerializeObject(json);
-
-            return result;
-        }
-    }
-
-    internal class GetVenueByIdJson
-    {
-        public string id { get; set; }
-    }
-
-    internal static class IGetVenueByPRNAndNameCriteriaExtensions
-    {
-        internal static string ToJson(this IGetVenuesByPRNAndNameCriteria extendee)
-        {
-            GetVenueByPRNAndNameJson json = new GetVenueByPRNAndNameJson
-            {
-                PRN = extendee.PRN,
-                Name = extendee.Name
-            };
-            return JsonConvert.SerializeObject(json);
-        }
-    }
-
-    internal class GetVenueByPRNAndNameJson
-    {
-        public string PRN { get; set; }
-        public string Name { get; set; }
-    }
-
-    internal static class IGetVenueByVenueIdCriteriaExtensions
-    {
-        internal static string ToJson(this IGetVenueByVenueIdCriteria extendee)
-        {
-
-            GetVenueByVenueIdJson json = new GetVenueByVenueIdJson
-            {
-                venueId = extendee.venueId
-            };
-            var result = JsonConvert.SerializeObject(json);
-
-            return result;
-        }
-    }
-
-    internal class GetVenueByVenueIdJson
-    {
-        public int venueId { get; set; }
-    }
-
-    internal static class GetVenueByLocationIdCriteriaExtensions
-    {
-        internal static string ToJson(this IGetVenueByLocationIdCriteria extendee)
-        {
-            GetVenueByLocationIdJson json = new GetVenueByLocationIdJson
-            {
-                LocationId = extendee.LocationId
-            };
-            return JsonConvert.SerializeObject(json);
-        }
-    }
-
-    internal class GetVenueByLocationIdJson
-    {
-        public int LocationId { get; set; }
-    }
-
-
-    internal static class VenueSearchCriteriaExtensions
-    {
-        internal static string ToJson(this IVenueSearchCriteria extendee)
-        {
-
-            VenueSearchJson json = new VenueSearchJson
-            {
-                PRN = extendee.Search
-            };
-            var result = JsonConvert.SerializeObject(json);
-
-            return result;
-        }
-    }
-
-    internal class VenueSearchJson
-    {
-        public string PRN { get; set; }
     }
 }

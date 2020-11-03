@@ -2,9 +2,8 @@
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -23,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class LocationsController : Controller
     {
         private readonly ILogger<LocationsController> _logger;
-        private readonly IVenueServiceSettings _venueServiceSettings;
+        private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;

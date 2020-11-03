@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -16,7 +15,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class VenueSearchController : Controller
     {
         private readonly ILogger<VenueSearchController> _logger;
-        private readonly IVenueServiceSettings _venueServiceSettings;
+        private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IVenueService _venueService;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
