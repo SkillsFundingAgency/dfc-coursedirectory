@@ -210,6 +210,12 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(40);
                     options.SlidingExpiration = true;
                     options.LogoutPath = "/auth/logout";
+
+                    options.Events.OnRedirectToAccessDenied = ctx =>
+                    {
+                        ctx.Response.StatusCode = 403;
+                        return Task.CompletedTask;
+                    };
                 })
                 .AddOpenIdConnect(options =>
                 {
