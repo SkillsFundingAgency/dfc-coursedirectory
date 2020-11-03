@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
@@ -56,98 +56,91 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid? courseRunId, bool fromBulkUpload, PublishMode mode)
         {
-
-            int? UKPRN;
-
-            if (_session.GetInt32("UKPRN") != null)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-            }
-            else
+            if (!_session.GetInt32("UKPRN").HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            if (courseId.HasValue)
+            if (!courseId.HasValue)
             {
-                var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
-
-                if (course != null)
-                {
-                    EditCourseViewModel vm = new EditCourseViewModel
-                    {
-                        CourseName = course.Value.QualificationCourseTitle,
-                        AwardOrgCode = awardOrgCode,
-                        LearnAimRef = learnAimRef,
-                        LearnAimRefTitle = learnAimRefTitle,
-                        NotionalNVQLevelv2 = notionalNVQLevelv2,
-                        CourseId = courseId,
-                        CourseRunId = courseRunId,
-                        Mode = mode,
-                        CourseFor = new CourseForModel()
-                        {
-                            LabelText = "Who this course is for",
-                            HintText = "Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.",
-                            AriaDescribedBy = "Please enter who this course is for.",
-                            CourseFor = course?.Value?.CourseDescription
-                        },
-
-                        EntryRequirements = new EntryRequirementsModel()
-                        {
-                            LabelText = "Entry requirements",
-                            HintText = "Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.",
-                            AriaDescribedBy = "Please list entry requirements.",
-                            EntryRequirements = course?.Value?.EntryRequirements
-                        },
-                        WhatWillLearn = new WhatWillLearnModel()
-                        {
-                            LabelText = "What you’ll learn",
-                            HintText = "The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.",
-                            AriaDescribedBy = "Please enter what will be learned.",
-                            WhatWillLearn = course?.Value?.WhatYoullLearn
-
-                        },
-                        HowYouWillLearn = new HowYouWillLearnModel()
-                        {
-                            LabelText = "How you’ll learn",
-                            HintText = "The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.",
-                            AriaDescribedBy = "Please enter how you’ll learn.",
-                            HowYouWillLearn = course?.Value?.HowYoullLearn
-                        },
-                        WhatYouNeed = new WhatYouNeedModel()
-                        {
-                            LabelText = "What you’ll need to bring",
-                            HintText = "What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.",
-                            AriaDescribedBy = "Please enter what you need.",
-                            WhatYouNeed = course?.Value?.WhatYoullNeed
-
-                        },
-                        HowAssessed = new HowAssessedModel()
-                        {
-                            LabelText = "How you’ll be assessed",
-                            HintText = "The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.",
-                            AriaDescribedBy = "Please enter how you’ll be assessed.",
-                            HowAssessed = course?.Value?.HowYoullBeAssessed
-                        },
-                        WhereNext = new WhereNextModel()
-                        {
-                            LabelText = "What you can do next",
-                            HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
-                            AriaDescribedBy = "Please enter what you can do next.",
-                            WhereNext = course?.Value?.WhereNext
-                        }
-                    };
-                    vm.QualificationType = course?.Value?.QualificationType;
-                    vm.AdultEducationBudget = course?.Value?.AdultEducationBudget;
-                    vm.AdvancedLearnerLoan = course?.Value?.AdvancedLearnerLoan;
-                    vm.NotionalNVQLevelv2 = course?.Value?.NotionalNVQLevelv2;
-
-                    return View("EditCourse", vm);
-                }
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            //error page
-            return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var result = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
+
+            if (!result.IsSuccess)
+            {
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+
+            var vm = new EditCourseViewModel
+            {
+                CourseName = result.Value.QualificationCourseTitle,
+                AwardOrgCode = awardOrgCode,
+                LearnAimRef = learnAimRef,
+                LearnAimRefTitle = learnAimRefTitle,
+                NotionalNVQLevelv2 = result.Value.NotionalNVQLevelv2,
+                CourseId = courseId,
+                CourseRunId = courseRunId,
+                Mode = mode,
+                CourseFor = new CourseForModel()
+                {
+                    LabelText = "Who this course is for",
+                    HintText = "Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.",
+                    AriaDescribedBy = "Please enter who this course is for.",
+                    CourseFor = result.Value.CourseDescription
+                },
+
+                EntryRequirements = new EntryRequirementsModel()
+                {
+                    LabelText = "Entry requirements",
+                    HintText = "Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.",
+                    AriaDescribedBy = "Please list entry requirements.",
+                    EntryRequirements = result.Value.EntryRequirements
+                },
+                WhatWillLearn = new WhatWillLearnModel()
+                {
+                    LabelText = "What you’ll learn",
+                    HintText = "The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.",
+                    AriaDescribedBy = "Please enter what will be learned.",
+                    WhatWillLearn = result.Value.WhatYoullLearn
+
+                },
+                HowYouWillLearn = new HowYouWillLearnModel()
+                {
+                    LabelText = "How you’ll learn",
+                    HintText = "The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.",
+                    AriaDescribedBy = "Please enter how you’ll learn.",
+                    HowYouWillLearn = result.Value.HowYoullLearn
+                },
+                WhatYouNeed = new WhatYouNeedModel()
+                {
+                    LabelText = "What you’ll need to bring",
+                    HintText = "What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.",
+                    AriaDescribedBy = "Please enter what you need.",
+                    WhatYouNeed = result.Value.WhatYoullNeed
+
+                },
+                HowAssessed = new HowAssessedModel()
+                {
+                    LabelText = "How you’ll be assessed",
+                    HintText = "The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.",
+                    AriaDescribedBy = "Please enter how you’ll be assessed.",
+                    HowAssessed = result.Value.HowYoullBeAssessed
+                },
+                WhereNext = new WhereNextModel()
+                {
+                    LabelText = "What you can do next",
+                    HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
+                    AriaDescribedBy = "Please enter what you can do next.",
+                    WhereNext = result.Value.WhereNext
+                },
+                QualificationType = result.Value.QualificationType,
+                AdultEducationBudget = result.Value.AdultEducationBudget,
+                AdvancedLearnerLoan = result.Value.AdvancedLearnerLoan
+            };
+
+            return View("EditCourse", vm);
         }
 
         [HttpPost]
@@ -158,7 +151,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 var courseForEdit = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
 
-                if (courseForEdit.IsSuccess && courseForEdit.HasValue)
+                if (courseForEdit.IsSuccess)
                 {
                     courseForEdit.Value.CourseDescription = model?.CourseFor;
                     courseForEdit.Value.EntryRequirements = model?.EntryRequirements;

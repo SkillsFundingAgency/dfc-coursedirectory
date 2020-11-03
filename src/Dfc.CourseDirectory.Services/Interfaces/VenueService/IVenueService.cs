@@ -5,12 +5,12 @@ namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 {
     public interface IVenueService
     {
-        Task<IResult<Venue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria);
-        Task<IResult<Venue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria);
-        Task<IResult<Venue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria);
-        Task<IResult<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria);
-        Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
-        Task<IResult<Venue>> AddAsync(Venue venue);
-        Task<IResult<Venue>> UpdateAsync(Venue venue);
+        Task<Result<Venue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria);
+        Task<Result<Venue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria);
+        Task<Result<Venue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria);
+        Task<Result<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria);
+        Task<Result<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
+        Task<Result<Venue>> AddAsync(Venue venue);
+        Task<Result<Venue>> UpdateAsync(Venue venue);
     }
 }

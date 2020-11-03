@@ -5,14 +5,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -93,7 +93,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
-            var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending && x.Count > 0 || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
+            var courseErrors = courseCounts.IsSuccess
+                ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending && x.Count > 0 || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count()
+                : 500;
 
             var model = new BulkUploadViewModel
             {
@@ -127,7 +129,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // COUR-1986 restoring delete for inline processing to fix issue with course errors accruing on the dashboard DQIs
             // NB: TEST WITH VOLUME!!! - this may cause time outs again
             var deleteResult = await _courseService.DeleteBulkUploadCourses(UKPRN.Value);
-            if (deleteResult.IsFailure)
+
+            if (!deleteResult.IsSuccess)
             {
                 vm.errors = new string[] { deleteResult.Error };
             }
@@ -419,7 +422,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (null == provider.BulkUploadStatus) provider.BulkUploadStatus = new BulkUploadStatus();
             provider.BulkUploadStatus.PublishInProgress = true;
             var flagProviderResult = _providerService.UpdateProviderDetails(provider).Result;
-            if (flagProviderResult.IsFailure) throw new Exception($"Failed to set the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+
+            if (!flagProviderResult.IsSuccess)
+            {
+                throw new Exception($"Failed to set the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+            }
 
             // Now queue the background work to publish the courses.
             _queue.QueueBackgroundWorkItem(async token =>
@@ -443,7 +450,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             // Clear the provider "publish in progress" flag.
                             provider.BulkUploadStatus.PublishInProgress = false;
                             var unflagProviderResult = await _providerService.UpdateProviderDetails(provider);
-                            if (unflagProviderResult.IsFailure) throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+                            
+                            if (!unflagProviderResult.IsSuccess)
+                            {
+                                throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+                            }
                         }
                         // @ToDo: ELSE failure here means we need a manual way to clear the flag
                     }

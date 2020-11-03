@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     // TODO - UpdatedBy will be updated with the name of logged person
                     ProviderAdd providerAdd = new ProviderAdd(new Guid(ajaxRequest.ProviderId), (int)Status.Onboarded, "ProviderPortal - Add Provider");
                     var result = await _providerService.AddProviderAsync(providerAdd);
-                    if (result.IsSuccess && result.HasValue)
+                    if (result.IsSuccess)
                     {
                         ResultText = "Provider added.";
                     }

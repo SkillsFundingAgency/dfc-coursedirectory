@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -876,7 +876,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             RemoveSessionVariables();
 
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 Session.SetObject(SessionPublishedCourse, new PublishedCourseViewModel
                 {
@@ -967,7 +967,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 var venueItems = new List<VenueItemModel>();

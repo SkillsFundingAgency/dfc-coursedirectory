@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                         if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
                         {
                             var result = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.ToString()));
-                            if (result.IsSuccess && result.HasValue)
+                            if (result.IsSuccess)
                             {
                                 Guid.TryParse(result.Value.ID, out Guid venueId);
                                 venueNames.Add(venueId, result.Value.VenueName);

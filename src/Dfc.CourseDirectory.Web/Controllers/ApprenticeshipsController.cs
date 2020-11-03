@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
 
-                if (result.IsSuccess && result.HasValue)
+                if (result.IsSuccess)
                 {
                     foreach (var item in result.Value.Where(r => r.ApprenticeshipType != ApprenticeshipType.FrameworkCode))
                     {
@@ -401,9 +401,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var getApprenticehipByIdResult = await _apprenticeshipService.GetApprenticeshipByIdAsync(requestModel.Id);
 
-            if (!getApprenticehipByIdResult.IsSuccess
-                || !getApprenticehipByIdResult.HasValue
-                || getApprenticehipByIdResult.Value.RecordStatus != RecordStatus.Live)
+            if (!getApprenticehipByIdResult.IsSuccess || getApprenticehipByIdResult.Value.RecordStatus != RecordStatus.Live)
             {
                 return NotFound();
             }
@@ -838,14 +836,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     //call delete service
                     var getApprenticehipByIdResult = await _apprenticeshipService.GetApprenticeshipByIdAsync(theModel.ApprenticeshipId.ToString());
 
-                    if (getApprenticehipByIdResult.IsSuccess && getApprenticehipByIdResult.HasValue)
+                    if (getApprenticehipByIdResult.IsSuccess)
                     {
                         getApprenticehipByIdResult.Value.RecordStatus = RecordStatus.Deleted;
 
                         var updateApprenticeshipResult =
                             await _apprenticeshipService.UpdateApprenticeshipAsync(getApprenticehipByIdResult.Value);
 
-                        if (updateApprenticeshipResult.IsSuccess && updateApprenticeshipResult.HasValue)
+                        if (updateApprenticeshipResult.IsSuccess)
                         {
 
                             return RedirectToAction("DeleteConfirm", "Apprenticeships", new { ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });

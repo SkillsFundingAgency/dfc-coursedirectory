@@ -612,11 +612,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                             courseRun.National = false;
                             var regionResult = ParseRegionData(bulkUploadCourse.Regions, bulkUploadCourse.SubRegions);
-                            if(regionResult.IsSuccess && regionResult.HasValue)
+                            if (regionResult.IsSuccess)
                             {
                                 courseRun.Regions = regionResult.Value;
                             }
-                            else if(regionResult.IsFailure)
+                            else if (!regionResult.IsSuccess)
                             {
                                 validationMessages.Add($"Unable to get regions/subregions, Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                             }
@@ -671,7 +671,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 var courseResult = Task.Run(async () => await _courseService.AddCourseAsync(course)).Result;
 
-                if (courseResult.IsSuccess && courseResult.HasValue)
+                if (courseResult.IsSuccess)
                 {
                     // Do nothing. Eventually we could have a count on successfully uploaded courses
                 }
@@ -739,7 +739,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return default(T);
         }
-        internal IEnumerable<BulkUploadError> ParseBulkUploadErrors(int lineNumber, IList<KeyValuePair<string,string>> errors)
+
+        private IEnumerable<BulkUploadError> ParseBulkUploadErrors(int lineNumber, IList<KeyValuePair<string,string>> errors)
         {
             List<BulkUploadError> errorList = new List<BulkUploadError>();
 
@@ -760,7 +761,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             return errorList;
         }
-        internal IResult<IEnumerable<string>> ParseRegionData(string regions, string subRegions)
+
+        private Result<IEnumerable<string>> ParseRegionData(string regions, string subRegions)
         {
             List<string> totalList = new List<string>();
 

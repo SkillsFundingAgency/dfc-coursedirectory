@@ -7,18 +7,18 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
 {
     public interface IApprenticeshipService
     {
-        Task<IResult<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN);
-        Task<IResult> AddApprenticeship(Apprenticeship apprenticeship);
-        Task<IResult> AddApprenticeships(IEnumerable<Apprenticeship> apprenticeships, bool addInParallel);
-        Task<IResult<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria);
-        Task<IResult<Apprenticeship>> GetApprenticeshipByIdAsync(string Id);
-        Task<IResult<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria);
-        Task<IResult<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria);
-        Task<IResult<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship);
-        Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN);
-        Task<IResult> ChangeApprenticeshipStatusesForUKPRNSelection(int ukprn, int currentStatus, int statusToBeChangedTo);
-        Task<IResult<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN);
-        Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
-        Task<IResult<int>> GetTotalLiveApprenticeships();
+        Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN);
+        Task<Result> AddApprenticeship(Apprenticeship apprenticeship);
+        Task<Result> AddApprenticeships(IEnumerable<Apprenticeship> apprenticeships, bool addInParallel);
+        Task<Result<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria);
+        Task<Result<Apprenticeship>> GetApprenticeshipByIdAsync(string Id);
+        Task<Result<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria);
+        Task<Result<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria);
+        Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship);
+        Task<Result> DeleteBulkUploadApprenticeships(int UKPRN);
+        Task<Result> ChangeApprenticeshipStatusesForUKPRNSelection(int ukprn, int currentStatus, int statusToBeChangedTo);
+        Task<Result<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN);
+        Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports();
+        Task<Result<int>> GetTotalLiveApprenticeships();
     }
 }

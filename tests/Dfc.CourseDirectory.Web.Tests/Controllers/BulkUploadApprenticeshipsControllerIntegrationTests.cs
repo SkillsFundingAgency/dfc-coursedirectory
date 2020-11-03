@@ -6,9 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Models.Auth;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces;
@@ -18,6 +15,9 @@ using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Auth;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.Controllers;
@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 .ReturnsAsync<int, int, int, IStandardsAndFrameworksCache, Core.Models.Framework>((c, t, p) => new Core.Models.Framework { FrameworkCode = c, ProgType = t, PathwayCode = p });
 
             _venueService.Setup(s => s.SearchAsync(It.IsAny<IVenueSearchCriteria>()))
-                .ReturnsAsync<IVenueSearchCriteria, IVenueService, IResult<IVenueSearchResult>>(c => Result.Ok<IVenueSearchResult>(new VenueSearchResult(new[] { new Venue { VenueName = "Fenestra Centre Scunthorpe", Status = VenueStatus.Live } })));
+                .ReturnsAsync<IVenueSearchCriteria, IVenueService, Result<IVenueSearchResult>>(c => Result.Ok<IVenueSearchResult>(new VenueSearchResult(new[] { new Venue { VenueName = "Fenestra Centre Scunthorpe", Status = VenueStatus.Live } })));
 
             _apprenticeshipService.Setup(s => s.ChangeApprenticeshipStatusesForUKPRNSelection(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(Result.Ok());

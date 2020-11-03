@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
@@ -69,18 +69,18 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
             {
                 string apprenticeshipGuidId = apprenticeshipid.ToString();
 
-                var apprenticeship = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipGuidId);
+                var result = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipGuidId);
 
-                if (apprenticeship != null)
+                if (result.IsSuccess)
                 {
                     EditApprenticeshipViewModel vm = new EditApprenticeshipViewModel
                     {
-                        ApprenticeshipTitle = apprenticeship?.Value.ApprenticeshipTitle,
-                        Information = apprenticeship?.Value.MarketingInformation,
-                        WebSite = apprenticeship?.Value.ContactWebsite,
-                        Email = apprenticeship?.Value.ContactEmail,
-                        Telephone = apprenticeship?.Value.ContactTelephone,
-                        ContactUsURL = apprenticeship?.Value.Url
+                        ApprenticeshipTitle = result.Value.ApprenticeshipTitle,
+                        Information = result.Value.MarketingInformation,
+                        WebSite = result.Value.ContactWebsite,
+                        Email = result.Value.ContactEmail,
+                        Telephone = result.Value.ContactTelephone,
+                        ContactUsURL = result.Value.Url
                     };
 
                     return View("EditApprenticeship", vm);
@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 
                 var apprenticeshipForEdit = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipGuidId);
 
-                if (apprenticeshipForEdit.IsSuccess && apprenticeshipForEdit.HasValue)
+                if (apprenticeshipForEdit.IsSuccess)
                 {
                     apprenticeshipForEdit.Value.MarketingInformation = model?.Information;
                     apprenticeshipForEdit.Value.ContactEmail = model?.Email;

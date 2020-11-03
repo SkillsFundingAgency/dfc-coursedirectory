@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;
@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
             ProviderApprenticeshipsViewModel model = new ProviderApprenticeshipsViewModel();
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 var allLiveProviderApprenticeships =
                     result.Value.Where(x => x.RecordStatus == RecordStatus.Live);
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
 
 
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 var liveApprenticeships = result.Value.Where(a => a.RecordStatus == RecordStatus.Live);
 

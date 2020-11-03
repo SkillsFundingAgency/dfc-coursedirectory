@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             _getYourCourseTextUri = settings.Value.GetCourseTextUri();
         }
 
-        public async Task<IResult<CourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
+        public async Task<Result<CourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
