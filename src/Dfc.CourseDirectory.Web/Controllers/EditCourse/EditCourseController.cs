@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;

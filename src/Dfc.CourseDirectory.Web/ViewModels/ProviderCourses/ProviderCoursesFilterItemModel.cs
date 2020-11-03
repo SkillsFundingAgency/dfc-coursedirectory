@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Services;
 using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses

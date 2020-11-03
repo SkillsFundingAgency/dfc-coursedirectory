@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;

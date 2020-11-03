@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
-    public class GetCourseByIdCriteria : ValueObject<GetCourseByIdCriteria>, IGetCourseByIdCriteria
+    public class GetCourseByIdCriteria : IGetCourseByIdCriteria
     {
         public Guid Id { get; }
 
@@ -17,10 +16,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNullGuid(id, nameof(id));
 
             Id = id;
-        }
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Id;
         }
     }
 }

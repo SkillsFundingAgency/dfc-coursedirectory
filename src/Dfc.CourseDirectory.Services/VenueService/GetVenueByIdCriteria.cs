@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class GetVenueByIdCriteria : ValueObject<GetVenueByIdCriteria>, IGetVenueByIdCriteria
+    public class GetVenueByIdCriteria : IGetVenueByIdCriteria
     {
         public string Id { get; }
-
 
         public GetVenueByIdCriteria(
             string id)
@@ -15,10 +13,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             Throw.IfNullOrWhiteSpace(id, nameof(id));
 
             Id = id;
-        }
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Id;
         }
     }
 }

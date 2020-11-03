@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Microsoft.AspNetCore.Authorization;

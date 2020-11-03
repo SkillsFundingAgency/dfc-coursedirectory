@@ -1,10 +1,10 @@
 ﻿
 @{
-    ViewData["Title"] = "Edit apprenticeship training details"; 
+    ViewData["Title"] = "Edit apprenticeship training details";
     Layout = "_Layout_Your_Courses";
 }
 
-@using Dfc.CourseDirectory.Common
+@using Dfc.CourseDirectory.Web.Validation
 @using Dfc.CourseDirectory.Models.Models.Apprenticeships
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DetailViewModel
 
@@ -72,7 +72,7 @@
                     <span id="infoInvalid" class="" style="display: none"
                           val-regex="@regex"
                           val-regex-message="Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation">Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation</span>
-                    <label id ="govuk-label-Information"class="govuk-label" for="word-count">
+                    <label id="govuk-label-Information" class="govuk-label" for="word-count">
                         Apprenticeship information for employers
                     </label>
                     <span class="govuk-hint">

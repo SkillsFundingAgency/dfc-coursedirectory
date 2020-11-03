@@ -1,5 +1,5 @@
-﻿@using Dfc.CourseDirectory.Common
-@using Dfc.CourseDirectory.Common.Settings
+﻿@using Dfc.CourseDirectory.Web.Validation
+@using Dfc.CourseDirectory.Services.Configuration
 @using Microsoft.Extensions.Options
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements.EntryRequirementsModel
 
@@ -25,8 +25,8 @@
                 @Model.HintText
             </div>
         }
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.EntryRequirements" rows="7"  aria-label="Entry-Requirements"
-                 aria-describedby="@Model.AriaDescribedBy"
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.EntryRequirements" rows="7" aria-label="Entry-Requirements"
+                  aria-describedby="@Model.AriaDescribedBy"
                   val-max-length=@entryRequirementsTextFieldMaxChars val-max-length-message="Entry requirements must be @entryRequirementsTextFieldMaxChars characters or less"
                   val-regex="@regex"
                   val-regex-message="Entry requirements contains invalid character"></textarea>

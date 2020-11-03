@@ -1,7 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
@@ -1097,7 +1097,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             catch (HeaderValidationException ex)
             {
-                string errmsg = $"Invalid header row. {ex.Message.FirstSentence()}";
+                string errmsg = $"Invalid header row. {FirstSentence(ex)}";
 
                 errors.Add(errmsg);
 
@@ -1122,6 +1122,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return errors.Count > 0 ?
                 ApprenticeshipBulkUploadResult.Failed(errors) :
                 ApprenticeshipBulkUploadResult.Success(processSynchronously);
+        }
+
+        public static string FirstSentence(HeaderValidationException ex)
+        {
+            string firstSentence = ex.Message;
+            int pos = ex.Message.IndexOf(".") + 1;
+            if (pos > 0)
+            {
+                firstSentence = ex.Message.Substring(0, pos);
+            }
+            return firstSentence;
         }
 
         private void ValidateHeader(CsvReader csv)

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Onspd;
 
 namespace Dfc.CourseDirectory.Models.Models.Onspd
 {
-    public class Onspd : ValueObject<Onspd>, IOnspd
+    public class Onspd : IOnspd
     {
         public string pcd { get; set; }
         public string pcd2 { get; set; }
@@ -26,28 +24,5 @@ namespace Dfc.CourseDirectory.Models.Models.Onspd
         public string County { get; set; }
         public string Country { get; set; }
         public DateTime updated { get; set; }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return pcd;
-            yield return pcd2;
-            yield return pcds;
-            yield return dointr;
-            yield return doterm;
-            yield return oscty;
-            yield return oslaua;
-            yield return osward;
-            yield return prsh;
-            yield return ctry;
-            yield return rgn;
-            yield return lat;
-            yield return @long;
-            yield return Parish;
-            yield return LocalAuthority;
-            yield return Region;
-            yield return County;
-            yield return Country;
-            yield return updated;
-        }
     }
 }

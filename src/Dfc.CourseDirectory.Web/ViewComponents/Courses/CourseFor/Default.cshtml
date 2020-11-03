@@ -1,5 +1,5 @@
-﻿@using Dfc.CourseDirectory.Common
-@using Dfc.CourseDirectory.Common.Settings
+﻿@using Dfc.CourseDirectory.Web.Validation
+@using Dfc.CourseDirectory.Services.Configuration
 @using Microsoft.Extensions.Options
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor.CourseForModel
 
@@ -7,7 +7,7 @@
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
 @{
-   //Allowing everything got test to open up the input fields.
+    //Allowing everything got test to open up the input fields.
     @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
     var regex = RegexPattern.AllowEverything;
 

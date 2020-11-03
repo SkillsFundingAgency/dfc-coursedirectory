@@ -1,9 +1,5 @@
-﻿
-using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common.Interfaces;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
-
 
 namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 {

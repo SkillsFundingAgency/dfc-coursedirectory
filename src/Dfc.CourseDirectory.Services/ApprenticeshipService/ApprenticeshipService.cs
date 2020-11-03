@@ -1,18 +1,17 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
@@ -24,7 +23,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports, _getTotalLiveCoursesUri;
-
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -61,7 +59,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -95,15 +92,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("Standards and Frameworks unknown error.", e);
                 return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("Standards and Frameworks service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult> AddApprenticeship(IApprenticeship apprenticeship)
         {
-            _logger.LogMethodEnter();
             Throw.IfNull(apprenticeship, nameof(apprenticeship));
 
             try
@@ -148,17 +140,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
                 return Result.Fail<IApprenticeship>("Apprenticeship add service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult> AddApprenticeships(
             IEnumerable<IApprenticeship> apprenticeships,
             bool addInParallel)
         {
-            _logger.LogMethodEnter();
             Throw.IfNull(apprenticeships, nameof(apprenticeships));
 
             try
@@ -205,16 +192,11 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
                 return Result.Fail<IApprenticeship>("Apprenticeship add service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id)
         {
             Throw.IfNullOrWhiteSpace(Id, nameof(Id));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -248,16 +230,11 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("Get apprenticeship unknown error.", e);
                 return Result.Fail<IApprenticeship>("Get Apprenticeship by Id service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -291,16 +268,11 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("Standards and Frameworks unknown error.", e);
                 return Result.Fail<IEnumerable<IApprenticeship>>("Search Apprenticeship by UKPRN service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -334,16 +306,11 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("GetStandardByCode unknown error.", e);
                 return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetStandardByCode service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
-            _logger.LogMethodEnter();
 
             try
             {
@@ -377,14 +344,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("GetStandardByCode unknown error.", e);
                 return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetFrameworkByCode service unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
         public async Task<IResult<IApprenticeship>> UpdateApprenticeshipAsync(IApprenticeship apprenticeship)
         {
-            _logger.LogMethodEnter();
             Throw.IfNull(apprenticeship, nameof(apprenticeship));
 
             try
@@ -425,10 +387,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("Apprenticeship update service unknown error.", e);
 
                 return Result.Fail<IApprenticeship>("Apprenticeship update service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
             }
         }
         public async Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN)
@@ -480,8 +438,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
-            _logger.LogMethodEnter();
-
             try
             {
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipDashboardCountsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
@@ -509,16 +465,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogException("Get apprenticeship unknown error.", e);
                 return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unknown error.");
             }
-            finally
-            {
-                _logger.LogMethodExit();
-            }
         }
 
         public async Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports()
         {
-            _logger.LogMethodEnter();
-
             try
             {
                 _logger.LogInformationObject("Get all dfc reports URI", _getAllDfcReports);
@@ -549,10 +499,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogException("Get course migration report service unknown error.", e);
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
-            }
-            finally
-            {
-                _logger.LogMethodExit();
             }
         }
 

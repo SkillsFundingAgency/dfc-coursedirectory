@@ -1,12 +1,10 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using System;
-using System.Collections.Generic;
-
 
 namespace Dfc.CourseDirectory.Services.ProviderService
 {
-    public class ProviderAdd : ValueObject<ProviderAdd>, IProviderAdd
+    public class ProviderAdd : IProviderAdd
     {
         public Guid id { get; set; }
         public int Status { get; set;  }
@@ -24,13 +22,6 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             id = _id;
             Status = status;
             UpdatedBy = updatedBy;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return id;
-            yield return Status;
-            yield return UpdatedBy;
         }
     }
 }

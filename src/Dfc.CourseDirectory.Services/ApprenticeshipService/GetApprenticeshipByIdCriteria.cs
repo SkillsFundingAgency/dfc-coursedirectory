@@ -1,11 +1,10 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using System;
-using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
-    public class GetApprenticeshipByIdCriteria : ValueObject<GetApprenticeshipByIdCriteria>, IGetApprenticeshipByIdCriteria
+    public class GetApprenticeshipByIdCriteria : IGetApprenticeshipByIdCriteria
     {
         public Guid Id { get; }
 
@@ -15,11 +14,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             Throw.IfNullGuid(id, nameof(id));
 
             Id = id;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Id;
         }
     }
 }

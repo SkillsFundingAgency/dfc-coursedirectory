@@ -1,13 +1,11 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Interfaces;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class VenueSearchResult : ValueObject<VenueSearchResult>, IVenueSearchResult
+    public class VenueSearchResult : IVenueSearchResult
     {
         
         public IEnumerable<Venue> Value { get; set; }
@@ -17,11 +15,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
         {
             Throw.IfNull(value, nameof(value));
             Value = value;
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Value;
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.Common
+namespace Dfc.CourseDirectory.Services
 {
     public static class LoggerExtensions
     {
@@ -34,24 +34,6 @@ namespace Dfc.CourseDirectory.Common
             if (exception == null) throw new ArgumentNullException(nameof(exception));
 
             logger.LogException(string.Empty + " {0}", exception);
-        }
-
-        public static void LogMethodEnter<TCategoryName>(this ILogger<TCategoryName> logger)
-        {
-            if (logger.IsEnabled(LogLevel.Debug))
-            {
-                var method = new StackFrame(1).GetMethod();
-                logger.LogDebug("Entering method. {0}", method.DeclaringType.ToString());
-            }
-        }
-
-        public static void LogMethodExit<TCategoryName>(this ILogger<TCategoryName> logger)
-        {
-            if (logger.IsEnabled(LogLevel.Debug))
-            {
-                var method = new StackFrame(1).GetMethod();
-                logger.LogDebug("Exiting method. {0}", method.DeclaringType.ToString());
-            }
         }
 
         public static void LogInformationObject<TCategoryName>(this ILogger<TCategoryName> logger, string message, object obj)

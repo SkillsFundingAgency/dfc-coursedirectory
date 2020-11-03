@@ -1,7 +1,6 @@
-﻿using Dfc.CourseDirectory.Common.Interfaces;
-using System;
+﻿using System;
 
-namespace Dfc.CourseDirectory.Common
+namespace Dfc.CourseDirectory.Services
 {
     public struct Result : IResult
     {

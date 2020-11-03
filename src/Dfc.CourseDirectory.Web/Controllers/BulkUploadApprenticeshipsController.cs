@@ -5,11 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
@@ -17,6 +18,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -132,7 +134,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 bulkUploadFile.CopyTo(ms);
 
                 ms.Position = 0;
-                if (Validate.isBinaryStream(ms))
+                if (Validate.IsBinaryStream(ms))
                 {
                     return View(new BulkUploadViewModel {errors = new[] {"Invalid file content."}});
                 }
@@ -149,7 +151,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
                 catch (HeaderValidationException he)
                 {
-                    var errors = new[] { he.Message.FirstSentence() };
+                    var errors = new[] { ApprenticeshipBulkUploadService.FirstSentence(he) };
                     return View(new BulkUploadViewModel {errors = errors});
                 }
                 catch (BadDataException be)

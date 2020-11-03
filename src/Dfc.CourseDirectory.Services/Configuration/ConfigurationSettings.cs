@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Common.Settings
+﻿namespace Dfc.CourseDirectory.Services.Configuration
 {
     public class VenueNameComponentSettings
     {
@@ -44,5 +40,3 @@ namespace Dfc.CourseDirectory.Common.Settings
         public int TextFieldMaxChars { get; set; }
     }
 }
-
-

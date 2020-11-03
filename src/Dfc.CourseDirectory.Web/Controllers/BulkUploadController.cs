@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
@@ -14,6 +14,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
+using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Authorization;
@@ -142,7 +143,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     MemoryStream ms = new MemoryStream();
                     bulkUploadFile.CopyTo(ms);
 
-                    if (!Validate.isBinaryStream(ms))
+                    if (!Validate.IsBinaryStream(ms))
                     {
                         int csvLineCount = _bulkUploadService.CountCsvLines(ms);
                         bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
