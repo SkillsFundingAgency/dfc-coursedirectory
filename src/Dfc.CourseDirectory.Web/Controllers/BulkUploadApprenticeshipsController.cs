@@ -96,7 +96,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courseCounts = await _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN));
 
-            var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
+            var courseErrors = courseCounts.IsSuccess
+                ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count()
+                : 500;
 
             var model = new BulkUploadViewModel
             {
@@ -346,7 +348,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var model = new ApprenticeshipsPublishYourFileViewModel();
 
             var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(sUKPRN.ToString());
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 numberOfApprenticeships =
                     result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive).Count();

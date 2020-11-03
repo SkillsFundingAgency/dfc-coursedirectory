@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -422,7 +422,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 var courseForEdit = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
 
-                if (courseForEdit.IsSuccess && courseForEdit.HasValue)
+                if (courseForEdit.IsSuccess)
                 {
                     var regions = new List<string>();
                     var courseRunForEdit = courseForEdit.Value.CourseRuns.SingleOrDefault(cr => cr.id == model.CourseRunId);
@@ -566,9 +566,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
-                    if (updatedCourse.IsSuccess && updatedCourse.HasValue)
+                    if (updatedCourse.IsSuccess)
                     {
-
                         switch (model.Mode)
                         {
                             case PublishMode.BulkUpload:
@@ -627,7 +626,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 var venueItems = new List<VenueItemModel>();

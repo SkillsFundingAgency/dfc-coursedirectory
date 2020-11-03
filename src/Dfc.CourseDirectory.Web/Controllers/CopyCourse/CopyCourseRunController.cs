@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -194,7 +193,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 var venueItems = new List<VenueItemModel>();
@@ -250,14 +249,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
 
-            var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
+            var result = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
 
-            if (!course.HasValue)
+            if (!result.IsSuccess)
             {
                 return NotFound();
             }
 
-            var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == courseRunId);
+            var courseRun = result.Value.CourseRuns.SingleOrDefault(cr => cr.id == courseRunId);
 
             if (courseRun == null)
             {
@@ -274,9 +273,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             var vm = new CopyCourseRunViewModel
             {
-                AwardOrgCode = course.Value.AwardOrgCode,
-                LearnAimRef = course.Value.LearnAimRef,
-                LearnAimRefTitle = course.Value.QualificationCourseTitle,
+                AwardOrgCode = result.Value.AwardOrgCode,
+                LearnAimRef = result.Value.LearnAimRef,
+                LearnAimRefTitle = result.Value.QualificationCourseTitle,
 
                 CourseId = courseId.Value,
                 CourseRunId = courseRunId.Value,
@@ -303,8 +302,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 Cost = courseRun.Cost?.ToString("F"),
                 CostDescription = courseRun.CostDescription,
                 AttendanceMode = courseRun.AttendancePattern,
-                QualificationType = course.Value.QualificationType,
-                NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2,
+                QualificationType = result.Value.QualificationType,
+                NotionalNVQLevelv2 = result.Value.NotionalNVQLevelv2,
                 PublishMode = PublishMode.Summary,
                 RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath
             };
@@ -446,7 +445,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
 
-            if (!course.IsSuccess || !course.HasValue)
+            if (!course.IsSuccess)
             {
                 return NotFound();
             }
@@ -525,7 +524,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             {
                 var result = await _courseService.UpdateCourseAsync(course.Value);
 
-                if (!result.IsSuccess || !result.HasValue)
+                if (!result.IsSuccess)
                 {
                     throw new Exception($"{nameof(_courseService.UpdateCourseAsync)} failed during CopyCourseRun: {result.Error}");
                 }

@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 
                 var apprenticeshipForEdit = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipGuidId);
 
-                if (apprenticeshipForEdit.IsSuccess && apprenticeshipForEdit.HasValue)
+                if (apprenticeshipForEdit.IsSuccess)
                 {
                     apprenticeshipForEdit.Value.MarketingInformation = model?.Information;
                     apprenticeshipForEdit.Value.ContactEmail = model?.Email;

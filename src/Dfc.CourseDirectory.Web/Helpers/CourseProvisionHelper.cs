@@ -5,13 +5,13 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -130,9 +130,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 };
                 if(firstCourseRun.VenueId.HasValue)
                 {
-                    var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
-                        (firstCourseRun.VenueId.Value.ToString())).Result;
-                    if(result.HasValue && !string.IsNullOrWhiteSpace(result.Value.VenueName))
+                    var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result;
+                    
+                    if (result.IsSuccess && !string.IsNullOrWhiteSpace(result.Value.VenueName))
                     {
                         csvCourse.VenueName = result.Value.VenueName;
                     }
@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                         var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
                         (courseRun.VenueId.Value.ToString())).Result;
 
-                        if (result.HasValue && !string.IsNullOrWhiteSpace(result.Value.VenueName))
+                        if (result.IsSuccess && !string.IsNullOrWhiteSpace(result.Value.VenueName))
                         {
                             csvCourseRun.VenueName = result.Value.VenueName;
                         }

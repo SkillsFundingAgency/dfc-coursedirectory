@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             VenueSearchResultModel model;
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
+            if (result.IsSuccess)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 model = new VenueSearchResultModel(

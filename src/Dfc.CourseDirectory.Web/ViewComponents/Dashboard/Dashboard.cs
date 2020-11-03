@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 var appResult = await _apprenticeshipService.GetApprenticeshipDashboardCounts(UKPRN);
 
-                if (appResult.IsSuccess && appResult.HasValue)
+                if (appResult.IsSuccess)
                 {
                     var counts = appResult.Value;
                     IEnumerable<Services.BlobStorageService.BlobFileInfo> appList = _blobStorageService.GetFileList(UKPRN + "/Apprenticeship Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();

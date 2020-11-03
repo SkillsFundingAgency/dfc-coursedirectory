@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var result = await _venueService.SearchAsync(criteria);
 
-                if(result.IsSuccess && result.HasValue)
+                if (result.IsSuccess)
                 {
                     var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                     model = new VenueSearchResultModel(

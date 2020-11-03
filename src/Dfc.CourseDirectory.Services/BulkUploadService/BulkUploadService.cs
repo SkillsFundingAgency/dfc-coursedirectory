@@ -612,7 +612,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                             courseRun.National = false;
                             var regionResult = ParseRegionData(bulkUploadCourse.Regions, bulkUploadCourse.SubRegions);
-                            if(regionResult.IsSuccess && regionResult.HasValue)
+                            if (regionResult.IsSuccess)
                             {
                                 courseRun.Regions = regionResult.Value;
                             }
@@ -671,7 +671,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 var courseResult = Task.Run(async () => await _courseService.AddCourseAsync(course)).Result;
 
-                if (courseResult.IsSuccess && courseResult.HasValue)
+                if (courseResult.IsSuccess)
                 {
                     // Do nothing. Eventually we could have a count on successfully uploaded courses
                 }

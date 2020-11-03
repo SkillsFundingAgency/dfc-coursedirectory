@@ -4,14 +4,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -123,7 +123,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             VenueSearchResultModel model;
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
+
+            if (result.IsSuccess)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 model = new VenueSearchResultModel(
@@ -168,7 +169,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             VenueSearchResultModel model;
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess && result.HasValue)
+
+            if (result.IsSuccess)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 model = new VenueSearchResultModel(
@@ -207,7 +209,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(Id);
 
                 var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
-                if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+                
+                if (getVenueByIdResult.IsSuccess)
                 {
                     viewModel.Id = Id;
                     viewModel.VenueName = getVenueByIdResult.Value.VenueName;
@@ -224,7 +227,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     viewModel.Error = getVenueByIdResult.Error;
                 }
-
             }
 
             viewModel.Id = Id;
@@ -266,7 +268,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     var criteria = new GetVenueByIdCriteria(requestModel.Id);
                     var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
-                    if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+
+                    if (getVenueByIdResult.IsSuccess)
                     {
                         var onspd = _onspdSearchHelper.GetOnsPostcodeData(getVenueByIdResult.Value.PostCode);
                         viewModel.Address = new AddressModel

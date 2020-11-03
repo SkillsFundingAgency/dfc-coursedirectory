@@ -45,7 +45,6 @@ namespace Dfc.CourseDirectory.Services
     {
         public bool IsSuccess { get; }
         public T Value { get; }
-        public bool HasValue => Value != null;
         public string Error { get; }
 
         private Result(bool isSuccess, T value, string error)

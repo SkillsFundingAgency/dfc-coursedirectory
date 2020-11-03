@@ -4,8 +4,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
@@ -75,11 +75,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
         internal Guid GetProviderDetails(int ukprn)
         {
             var result = _providerService.GetProviderByPRNAsync(ukprn.ToString()).Result;
-            if (result.IsSuccess && result.HasValue)
+            
+            if (result.IsSuccess)
             {
                 return result.Value.Select(x => x.id).FirstOrDefault();
             }
-            else return Guid.Empty;
+            
+            return Guid.Empty;
         }
         internal string GetClaim(IEnumerable<Claim> claims, string type)
         {

@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 var courseForEdit = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
 
-                if (courseForEdit.IsSuccess && courseForEdit.HasValue)
+                if (courseForEdit.IsSuccess)
                 {
                     courseForEdit.Value.CourseDescription = model?.CourseFor;
                     courseForEdit.Value.EntryRequirements = model?.EntryRequirements;
