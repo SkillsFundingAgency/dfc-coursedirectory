@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
 using Dfc.CourseDirectory.WebV2.ViewHelpers;
 using FormFlow;
@@ -23,6 +24,7 @@ using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -153,6 +155,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ProviderContextHelper>();
             services.AddTransient<Features.EditVenue.EditVenueFlowModelFactory>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
 
             if (!environment.IsTesting())
             {
