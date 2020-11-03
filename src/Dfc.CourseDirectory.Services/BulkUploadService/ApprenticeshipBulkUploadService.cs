@@ -1063,7 +1063,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     int.Parse(userDetails.UKPRN),
                     (int)(RecordStatus.BulkUploadPending | RecordStatus.BulkUploadReadyToGoLive),
                     (int)RecordStatus.Archived);
-                if (archiveResult.IsFailure)
+
+                if (!archiveResult.IsSuccess)
                 {
                     throw new Exception(archiveResult.Error);
                 }
@@ -1152,7 +1153,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             var result = await _apprenticeshipService.AddApprenticeships(apprenticeships, addInParallel);
 
-            if (result.IsFailure)
+            if (!result.IsSuccess)
             {
                 throw new Exception(result.Error);
             }

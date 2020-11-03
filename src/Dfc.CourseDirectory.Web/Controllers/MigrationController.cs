@@ -150,7 +150,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId));
 
-            if (course.IsFailure || !course.HasValue) throw new Exception($"Unable to find Course with id {courseId}");
+            if (!course.IsSuccess)
+            {
+                throw new Exception($"Unable to find Course with id {courseId}");
+            }
 
             var courseRun = course.Value.CourseRuns.SingleOrDefault(x => x.id == courseRunId);
 
@@ -158,7 +161,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Archived);
 
-            if (result.IsFailure) throw new Exception($"Unable to delete Course run with id {courseRunId}");
+            if (!result.IsSuccess)
+            {
+                throw new Exception($"Unable to delete Course run with id {courseRunId}");
+            }
 
             return View("CourseRunDeleted/index", new DeleteCourseRunViewModel() {  CourseName = courseRun.CourseName});
         }
@@ -195,7 +201,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var ukprn = _session.GetInt32("UKPRN");
             var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
 
-            if (courseMigrationReport.IsFailure)
+            if (!courseMigrationReport.IsSuccess)
             {
                 throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
             }

@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 var ApprenticeshipBulkUploadReadyToGoLive = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString()).Result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
 
-               actualModel.ApprenticeshipBulkUploadReadyToGoLiveCount = ApprenticeshipBulkUploadReadyToGoLive.Count();
+                actualModel.ApprenticeshipBulkUploadReadyToGoLiveCount = ApprenticeshipBulkUploadReadyToGoLive.Count();
 
                 actualModel.BulkUploadPendingCount = bulkUploadRunsPending.Count();
                 actualModel.BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count();
@@ -119,9 +119,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                 if (list.Any())
                     actualModel.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
 
-               var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(UKPRN);
+                var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(UKPRN);
 
-               var larslessCoursesCount = courseMigrationReportResult.IsSuccess
+                var larslessCoursesCount = courseMigrationReportResult.IsSuccess
                     ? courseMigrationReportResult.Value.LarslessCourses.Count()
                     : 0;
                 
@@ -189,8 +189,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                         actualModel.ApprenticeshipBulkUploadHasErrors = false;
                     }
                 }
+                
                 // provider has no apprenticeship but pending bulkupload 
-                if(appResult.IsFailure)
+                if(!appResult.IsSuccess)
                 {
                     var counts = appResult.Value;                 
 
@@ -205,30 +206,30 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                     }
                 }
 
-           
                 actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
 
-            Dfc.CourseDirectory.Services.Models.Providers.Provider provider = FindProvider(UKPRN);
-            if (null != provider)
-            {
-                if(null != provider.BulkUploadStatus)
+                var provider = FindProvider(UKPRN);
+
+                if (null != provider)
                 {
-                    actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
-                    actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
-                    actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
-                        actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
-                }
-                actualModel.ProviderType = provider.ProviderType;
-            }
-            actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
-
-                var providerId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId;
-
-                actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
-                    new GetProviderApprenticeshipQAStatus()
+                    if(null != provider.BulkUploadStatus)
                     {
-                        ProviderId = providerId
-                    }) ?? Core.Models.ApprenticeshipQAStatus.NotStarted;
+                        actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                        actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                        actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+                            actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
+                    }
+                    actualModel.ProviderType = provider.ProviderType;
+                }
+                actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
+
+                    var providerId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId;
+
+                    actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                        new GetProviderApprenticeshipQAStatus()
+                        {
+                            ProviderId = providerId
+                        }) ?? Core.Models.ApprenticeshipQAStatus.NotStarted;
 
             }
             catch (Exception)

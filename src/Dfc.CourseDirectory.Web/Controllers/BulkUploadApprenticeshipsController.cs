@@ -5,18 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Providers;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
@@ -374,7 +374,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN,
                 (int)(RecordStatus.Live | RecordStatus.MigrationPending | RecordStatus.Pending | RecordStatus.MigrationReadyToGoLive),
                 (int)RecordStatus.Archived);
-            if (resultArchivingApprenticeships.IsFailure)
+
+            if (!resultArchivingApprenticeships.IsSuccess)
             {
                 throw new Exception(resultArchivingApprenticeships.Error);
             }

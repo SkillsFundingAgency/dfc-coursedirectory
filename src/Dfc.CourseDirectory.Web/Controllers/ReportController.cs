@@ -4,19 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
+using Dfc.CourseDirectory.Web.ViewModels.Report;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Enums;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Web.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Dfc.CourseDirectory.Web.ViewModels.Report;
-using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
-using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
-using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -61,7 +60,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var courseReportResults = couresesReportResultsTask.Result;
             var appsReportResults = appsReportResultsTask.Result;
 
-            if (courseReportResults.IsFailure || appsReportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+            if (!courseReportResults.IsSuccess)
+            {
+                throw new Exception("Unable to generate migration reports");
+            }
 
             var courseReportData = courseReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
             var appReportData = appsReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
@@ -118,7 +120,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> ReportCSVCourses()
         {
             var reportResults = await _courseService.GetAllDfcReports();
-            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+            
+            if (!reportResults.IsSuccess)
+            {
+                throw new Exception("Unable to generate migration reports");
+            }
 
             var result = GetCSVData(reportResults.Value.ToList());
             DateTime d = DateTime.Now;
@@ -129,7 +135,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> ReportCSVApps()
         {
             var reportResults = await _apprenticeshipService.GetAllDfcReports();
-            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+            
+            if (!reportResults.IsSuccess)
+            {
+                throw new Exception("Unable to generate migration reports");
+            }
 
             var result = GetCSVData(reportResults.Value.ToList());
             DateTime d = DateTime.Now;
@@ -147,7 +157,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var courseReportResults = couresesReportResultsTask.Result;
             var appsReportResults = appsReportResultsTask.Result;
 
-            if (courseReportResults.IsFailure || appsReportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+            if (!courseReportResults.IsSuccess)
+            {
+                throw new Exception("Unable to generate migration reports");
+            }
 
             var courseReportData = courseReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
             var appReportData = appsReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator

@@ -4,18 +4,19 @@ namespace Dfc.CourseDirectory.Services
 {
     public struct Result
     {
-        private static readonly Result OkResult = new Result(false, null);
+        private static readonly Result OkResult = new Result(true, null);
 
+        public bool IsSuccess { get; }
         public string Error { get; }
-        public bool IsSuccess => !IsFailure;
-        public bool IsFailure { get; }
 
-        private Result(bool isFailure, string error)
+        private Result(bool isSuccess, string error)
         {
-            if (isFailure && string.IsNullOrWhiteSpace(error))
+            if (!isSuccess && string.IsNullOrWhiteSpace(error))
+            {
                 throw new ArgumentException($"For a failure {nameof(error)} cannot be null, empty or only whitespace.");
+            }
 
-            IsFailure = isFailure;
+            IsSuccess = isSuccess;
             Error = error;
         }
 
@@ -26,38 +27,52 @@ namespace Dfc.CourseDirectory.Services
 
         public static Result Fail(string error)
         {
-            return new Result(true, error);
+            return new Result(false, error);
         }
 
         public static Result<T> Ok<T>(T value)
         {
-            return new Result<T>(false, value, null);
+            return Result<T>.Ok(value);
         }
 
         public static Result<T> Fail<T>(string error)
         {
-            return new Result<T>(true, default(T), error);
+            return Result<T>.Fail(error);
         }
     }
 
     public struct Result<T>
     {
+        public bool IsSuccess { get; }
         public T Value { get; }
         public bool HasValue => Value != null;
         public string Error { get; }
-        public bool IsSuccess => !IsFailure;
-        public bool IsFailure { get; }
 
-        internal Result(bool isFailure, T value, string error)
+        private Result(bool isSuccess, T value, string error)
         {
-            if (isFailure && string.IsNullOrWhiteSpace(error))
+            if (!isSuccess && string.IsNullOrWhiteSpace(error))
+            {
                 throw new ArgumentException($"For a failure {nameof(error)} cannot be null, empty or only whitespace.");
-            if (!isFailure && value == null)
+            }
+                
+            if (isSuccess && value == null)
+            {
                 throw new ArgumentException($"No failure therefore {nameof(value)} cannot be null.");
+            }
 
-            IsFailure = isFailure;
-            Error = error;
+            IsSuccess = isSuccess;
             Value = value;
+            Error = error;
+        }
+
+        public static Result<T> Ok(T value)
+        {
+            return new Result<T>(true, value, null);
+        }
+
+        public static Result<T> Fail(string error)
+        {
+            return new Result<T>(false, default, error);
         }
     }
 }

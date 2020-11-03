@@ -616,7 +616,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             {
                                 courseRun.Regions = regionResult.Value;
                             }
-                            else if(regionResult.IsFailure)
+                            else if (!regionResult.IsSuccess)
                             {
                                 validationMessages.Add($"Unable to get regions/subregions, Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                             }
