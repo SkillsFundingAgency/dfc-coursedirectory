@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
+﻿namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
 {
     public interface IApprenticeshipServiceSettings
     {

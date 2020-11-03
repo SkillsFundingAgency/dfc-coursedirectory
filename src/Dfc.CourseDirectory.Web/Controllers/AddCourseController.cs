@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -90,8 +89,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetString("LearnAimRefTitle", learnAimRefTitle);
             Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            ICourse course = null;
-            ICourseText defaultCourseText = null;
+            Course course = null;
+            CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {

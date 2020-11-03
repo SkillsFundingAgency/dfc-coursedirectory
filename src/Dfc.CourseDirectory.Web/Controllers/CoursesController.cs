@@ -1,8 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -26,11 +29,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
+using CourseRun = Dfc.CourseDirectory.Services.Models.Courses.CourseRun;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -68,7 +67,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
             _courseTextService = courseTextService;
-
         }
 
         [Authorize]
@@ -162,7 +160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
             _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            ICourse course = new Course();
+            var course = new Course();
             if (courseId.HasValue)
             {
                 course = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value)).Result.Value;
@@ -222,8 +220,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
             _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            ICourse course = null;
-            ICourseText defaultCourseText = null;
+            Course course = null;
+            CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
@@ -397,7 +395,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
                 case CourseMode.EditCourse:
 
-                    ICourse courseForEdit = new Course();
+                    var courseForEdit = new Course();
                     if (model.CourseId.HasValue)
                     {
                         courseForEdit = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value)).Result.Value;
@@ -516,7 +514,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (addCourseSection2.CourseMode == CourseMode.Copy)
             {
-                ICourse courseForCopy = new Course();
+                var courseForCopy = new Course();
                 if (addCourseSection2.CourseId.HasValue)
                 {
                     courseForCopy = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(addCourseSection2.CourseId.Value))
@@ -590,7 +588,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (addCourseSection2.CourseMode == CourseMode.EditCourseRun)
             {
-                ICourse courseForEdit = new Course();
+                var courseForEdit = new Course();
                 if (addCourseSection2.CourseId.HasValue)
                 {
                     courseForEdit = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(addCourseSection2.CourseId.Value))
@@ -853,7 +851,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.CourseMode)
             {
                 case CourseMode.EditCourseRun:
-                    ICourse courseForEdit = new Course();
+                    var courseForEdit = new Course();
                     if (model.CourseId.HasValue)
                     {
                         courseForEdit = _courseService
@@ -917,7 +915,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     return View("Index", "Home");
                 case CourseMode.Copy:
-                    ICourse courseForCopy = new Course();
+                    var courseForCopy = new Course();
                     if (model.CourseId.HasValue)
                     {
                         courseForCopy = _courseService

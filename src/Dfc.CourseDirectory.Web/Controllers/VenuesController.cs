@@ -4,11 +4,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Venues;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -28,7 +27,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using static Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
+using static Dfc.CourseDirectory.Services.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -490,15 +489,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
-            var liveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.Live && x.VenueId == VenueId).ToList();
+            var liveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.Live && x.VenueId == VenueId).ToList();
 
-            var migrationPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
+            var migrationPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
 
-            var bulkUploadPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUploadPending && x.VenueId == VenueId).ToList();
+            var bulkUploadPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.BulkUploadPending && x.VenueId == VenueId).ToList();
 
-            var migrationReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
+            var migrationReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
 
-            var bulkUploadReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
+            var bulkUploadReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
 
             var model = new DeleteVenueCheckViewModel()
             {
@@ -521,7 +520,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            IVenue updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
+            var updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
             updatedVenue.Status = Deleted;
 
             updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;

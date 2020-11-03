@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
            
                 actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
 
-            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
+            Dfc.CourseDirectory.Services.Models.Providers.Provider provider = FindProvider(UKPRN);
             if (null != provider)
             {
                 if(null != provider.BulkUploadStatus)
@@ -238,9 +238,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
 
-        private Dfc.CourseDirectory.Models.Models.Providers.Provider FindProvider(int prn)
+        private Dfc.CourseDirectory.Services.Models.Providers.Provider FindProvider(int prn)
         {
-            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = null;
+            Dfc.CourseDirectory.Services.Models.Providers.Provider provider = null;
             try
             {
                 var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(prn.ToString())).Result;

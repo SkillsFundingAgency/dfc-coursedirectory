@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Services.Models.Auth;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 {

@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Models.Models;
-using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Services.Models.Regions;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 { 

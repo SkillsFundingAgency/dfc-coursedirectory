@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

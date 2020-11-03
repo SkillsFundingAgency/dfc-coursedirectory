@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+﻿using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;

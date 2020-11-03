@@ -1,19 +1,19 @@
-﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Courses;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
-using Dfc.CourseDirectory.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 {
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             }
         }
 
-        internal IEnumerable<IApprenticeship> GetErrorMessages(IEnumerable<IApprenticeship> apprenticeships)
+        internal IEnumerable<Apprenticeship> GetErrorMessages(IEnumerable<Apprenticeship> apprenticeships)
         {
             foreach (var apprentice in apprenticeships)
             {
@@ -113,14 +113,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 _apprenticeshipService.UpdateApprenticeshipAsync(apprentice);
             }
 
-
             return apprenticeships;
         }
 
-
-
-
-        public IList<KeyValuePair<string, string>> ValidateApprenticeships(IApprenticeship apprenticeship)
+        public IList<KeyValuePair<string, string>> ValidateApprenticeships(Apprenticeship apprenticeship)
         {
             List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 
@@ -187,7 +183,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             return validationMessages;
         }
 
-        public IList<KeyValuePair<string, string>> ValidateApprenticeshipLocations(IApprenticeship apprenticeship)
+        public IList<KeyValuePair<string, string>> ValidateApprenticeshipLocations(Apprenticeship apprenticeship)
         {
             List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 

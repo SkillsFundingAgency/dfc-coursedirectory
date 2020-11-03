@@ -4,11 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -75,7 +74,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return CsvApprenticeshipsToFileStream(csvApprenticeships, providerName);
         }
 
-        internal IEnumerable<CsvApprenticeship> ApprenticeshipsToCsvApprenticeships(IEnumerable<IApprenticeship> apprenticeships)
+        internal IEnumerable<CsvApprenticeship> ApprenticeshipsToCsvApprenticeships(IEnumerable<Apprenticeship> apprenticeships)
         {
             List<CsvApprenticeship> csvApprenticeships = new List<CsvApprenticeship>();
 
@@ -98,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return csvApprenticeships;
         }
 
-        internal CsvApprenticeship MapCsvApprenticeship(IApprenticeship apprenticeship, ApprenticeshipLocation location)
+        internal CsvApprenticeship MapCsvApprenticeship(Apprenticeship apprenticeship, ApprenticeshipLocation location)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
 

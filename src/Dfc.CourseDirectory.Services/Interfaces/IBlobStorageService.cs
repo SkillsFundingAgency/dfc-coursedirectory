@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Microsoft.Azure.Storage.Blob;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.BlobStorageService

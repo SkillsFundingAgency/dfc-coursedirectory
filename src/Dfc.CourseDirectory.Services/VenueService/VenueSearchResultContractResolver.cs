@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json.Serialization;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {

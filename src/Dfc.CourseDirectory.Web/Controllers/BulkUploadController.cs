@@ -5,8 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
@@ -245,11 +245,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             switch (model.WhatDoYouWantToDoNext)
             {
-                case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
+                case Services.Enums.WhatDoYouWantToDoNext.OnScreen:
                     return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload });
-                case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
+                case Services.Enums.WhatDoYouWantToDoNext.DownLoad:
                     return RedirectToAction("DownloadErrorFile", "BulkUpload");
-                case Models.Enums.WhatDoYouWantToDoNext.Delete:
+                case Services.Enums.WhatDoYouWantToDoNext.Delete:
                     return RedirectToAction("DeleteFile", "BulkUpload");
                 default:
                     return RedirectToAction("WhatDoYouWantToDoNext", "BulkUpload");

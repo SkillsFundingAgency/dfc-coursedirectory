@@ -1,34 +1,30 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.BackgroundWorkers;
-using Dfc.CourseDirectory.Core.BinaryStorageProvider;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using Dfc.CourseDirectory.Models.Interfaces.Auth;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Auth;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.WebV2;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
+using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Auth;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Services.Models.Venues;
+using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.WebV2;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -80,7 +76,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public List<string> RegionsList { get; set; }
 
             [Ignore]
-            public IStandardsAndFrameworks Standard { get; set; }
+            public StandardsAndFrameworks Standard { get; set; }
 
             public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
@@ -94,13 +90,13 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             private readonly IVenueService _venueService;
-            private readonly IAuthUserDetails _authUserDetails;
+            private readonly AuthUserDetails _authUserDetails;
             private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(
                 IVenueService venueService,
-                IAuthUserDetails userDetails,
+                AuthUserDetails userDetails,
                 IStandardsAndFrameworksCache standardsAndFrameworksCache)
             {
                 _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
@@ -131,7 +127,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             #region Mandatory Checks
 
-            private IStandardsAndFrameworks Mandatory_Checks_GetStandard(IReaderRow row)
+            private StandardsAndFrameworks Mandatory_Checks_GetStandard(IReaderRow row)
             {
                 var standardCode = Mandatory_Checks_STANDARD_CODE(row);
                 var standardVersion = Mandatory_Checks_STANDARD_VERSION(row);
@@ -841,7 +837,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
             }
 
-            private async Task<IStandardsAndFrameworks> GetStandard(int standardCode, int version)
+            private async Task<StandardsAndFrameworks> GetStandard(int standardCode, int version)
             {
                 var standard = await _standardsAndFrameworksCache.GetStandard(standardCode, version);
 

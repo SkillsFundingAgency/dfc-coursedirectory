@@ -1,8 +1,4 @@
-﻿
-using System;
-
-
-namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
+﻿namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
 {
     public interface IFindACourseServiceSettings
     {

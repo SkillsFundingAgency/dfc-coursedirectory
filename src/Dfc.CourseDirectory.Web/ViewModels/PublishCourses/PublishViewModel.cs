@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Regions;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
 {

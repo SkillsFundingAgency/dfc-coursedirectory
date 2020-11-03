@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.Encodings.Web;
-using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Services.Enums;
 using Microsoft.Extensions.WebEncoders.Testing;
 
 

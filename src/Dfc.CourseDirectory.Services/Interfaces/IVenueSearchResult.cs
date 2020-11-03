@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Dfc.CourseDirectory.Models.Models.Venues;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Services.Models.Venues;
 
 namespace Dfc.CourseDirectory.Services.Interfaces
 {

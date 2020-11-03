@@ -1,6 +1,6 @@
 ﻿
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using System;
 
 namespace Dfc.CourseDirectory.Web.RequestModels

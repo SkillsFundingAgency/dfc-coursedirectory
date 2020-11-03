@@ -1,20 +1,16 @@
-﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
-using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult
 {
     public class ProviderApprenticeshipsSearchResultModel
     {
-       
         public string SearchTerm { get; }
-        public List<IApprenticeship> Items { get; set; }
+        public List<Apprenticeship> Items { get; set; }
 
         public ProviderApprenticeshipsSearchResultModel()
         {
-            Items = new List<IApprenticeship>();
+            Items = new List<Apprenticeship>();
         }
     }
 }

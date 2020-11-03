@@ -1,5 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Providers;
+﻿using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Providers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

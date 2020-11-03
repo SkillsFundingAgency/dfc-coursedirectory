@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.UnregulatedProvision;
 using Microsoft.AspNetCore.Mvc.Rendering;
 

@@ -6,7 +6,7 @@ using System.Net.Http;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Dfc.CourseDirectory.Models.Models.Environment;
+using Dfc.CourseDirectory.Services.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;

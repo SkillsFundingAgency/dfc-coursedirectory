@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+﻿using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {

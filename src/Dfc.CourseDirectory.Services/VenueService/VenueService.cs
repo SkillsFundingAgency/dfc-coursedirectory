@@ -4,11 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Interfaces.Venues;
-using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -51,7 +49,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             _addVenueUri = settings.Value.ToAddVenueUri();
         }
 
-        public async Task<IResult<IVenue>> UpdateAsync(IVenue venue)
+        public async Task<IResult<Venue>> UpdateAsync(Venue venue)
         {
             Throw.IfNull(venue, nameof(venue));
 
@@ -75,28 +73,28 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                     var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<IVenue>(venueResult);
+                    return Result.Ok<Venue>(venueResult);
                 }
                 else
                 {
-                    return Result.Fail<IVenue>("Venue update service unsuccessful http response");
+                    return Result.Fail<Venue>("Venue update service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Venue update service http request error", hre);
-                return Result.Fail<IVenue>("Venue update service http request error.");
+                return Result.Fail<Venue>("Venue update service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Venue update service unknown error.", e);
 
-                return Result.Fail<IVenue>("Venue update service unknown error.");
+                return Result.Fail<Venue>("Venue update service unknown error.");
             }
         }
 
-        public async Task<IResult<IVenue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
+        public async Task<IResult<Venue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -122,28 +120,28 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
 
-                    return Result.Ok<IVenue>(venue);
+                    return Result.Ok<Venue>(venue);
                 }
                 else
                 {
-                    return Result.Fail<IVenue>("Get Venue ByI d service unsuccessful http response");
+                    return Result.Fail<Venue>("Get Venue ByI d service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get Venue By Id service http request error", hre);
-                return Result.Fail<IVenue>("Get Venue By Id service http request error.");
+                return Result.Fail<Venue>("Get Venue By Id service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Get Venue By Id service unknown error.", e);
 
-                return Result.Fail<IVenue>("Get Venue By Id service unknown error.");
+                return Result.Fail<Venue>("Get Venue By Id service unknown error.");
             }
         }
 
-        public async Task<IResult<IVenue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
+        public async Task<IResult<Venue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -166,30 +164,30 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     };
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
-                    return Result.Ok<IVenue>(venue);
+                    return Result.Ok<Venue>(venue);
 
                 }
                 else
                 {
-                    return Result.Fail<IVenue>("Get Venue By VenueId service unsuccessful http response");
+                    return Result.Fail<Venue>("Get Venue By VenueId service unsuccessful http response");
                 }
 
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get Venue By VenueId service http request error", hre);
-                return Result.Fail<IVenue>("Get Venue By VenueId service http request error.");
+                return Result.Fail<Venue>("Get Venue By VenueId service http request error.");
 
             }
             catch (Exception e)
             {
                 _logger.LogException("Get Venue By VenueId service unknown error.", e);
-                return Result.Fail<IVenue>("Get Venue By VenueId service unknown error.");
+                return Result.Fail<Venue>("Get Venue By VenueId service unknown error.");
 
             }
         }
 
-        public async Task<IResult<IVenue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria)
+        public async Task<IResult<Venue>> GetVenueByLocationIdAsync(IGetVenueByLocationIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
 
@@ -212,25 +210,25 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     };
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
-                    return Result.Ok<IVenue>(venue);
+                    return Result.Ok<Venue>(venue);
 
                 }
                 else
                 {
-                    return Result.Fail<IVenue>("Get Venue By LocationId service unsuccessful http response");
+                    return Result.Fail<Venue>("Get Venue By LocationId service unsuccessful http response");
                 }
 
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get Venue By LocationId service http request error", hre);
-                return Result.Fail<IVenue>("Get Venue By LocationId service http request error.");
+                return Result.Fail<Venue>("Get Venue By LocationId service http request error.");
 
             }
             catch (Exception e)
             {
                 _logger.LogException("Get Venue By LocationId service unknown error.", e);
-                return Result.Fail<IVenue>("Get Venue By LocationId service unknown error.");
+                return Result.Fail<Venue>("Get Venue By LocationId service unknown error.");
 
             }
         }
@@ -343,7 +341,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<IResult<IVenue>> AddAsync(IVenue venue)
+        public async Task<IResult<Venue>> AddAsync(Venue venue)
         {
             Throw.IfNull(venue, nameof(venue));
 
@@ -368,23 +366,23 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                     var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<IVenue>(venueResult);
+                    return Result.Ok<Venue>(venueResult);
                 }
                 else
                 {
-                    return Result.Fail<IVenue>("Venue add service unsuccessful http response");
+                    return Result.Fail<Venue>("Venue add service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Venue add service http request error", hre);
-                return Result.Fail<IVenue>("Venue add service http request error.");
+                return Result.Fail<Venue>("Venue add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Venue add service unknown error.", e);
 
-                return Result.Fail<IVenue>("Venue add service unknown error.");
+                return Result.Fail<Venue>("Venue add service unknown error.");
             }
         }
     }

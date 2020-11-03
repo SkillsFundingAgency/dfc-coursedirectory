@@ -1,5 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Models.Providers;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.SearchProvider
 {

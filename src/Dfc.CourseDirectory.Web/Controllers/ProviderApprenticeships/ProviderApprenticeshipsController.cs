@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var allLiveProviderApprenticeships =
                     result.Value.Where(x => x.RecordStatus == RecordStatus.Live);
 
-                model.Apprenticeships = new List<IApprenticeship>();
+                model.Apprenticeships = new List<Apprenticeship>();
                 foreach(var apprenticeship in allLiveProviderApprenticeships)
                 {
                     model.Apprenticeships.Add(apprenticeship);

@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Providers;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 StartDate = y.FlexibleStartDate
                                         ? "Flexible start date"
                                         : y.StartDate?.ToString("dd/MM/yyyy"),
-                                StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined
+                                StudyMode = y.StudyMode == Services.Models.Courses.StudyMode.Undefined
                                         ? string.Empty
                                         : y.StudyMode.ToDescription(),
                                 Url = y.CourseURL

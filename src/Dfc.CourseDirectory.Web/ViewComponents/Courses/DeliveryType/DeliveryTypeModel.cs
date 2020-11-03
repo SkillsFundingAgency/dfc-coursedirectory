@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Models.Courses;
+﻿using Dfc.CourseDirectory.Services.Models.Courses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

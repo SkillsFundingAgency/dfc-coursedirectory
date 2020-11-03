@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
         public bool Readonly { get; set; }
 
         public Guid CourseId { get; set; }
-        public Dfc.CourseDirectory.Models.Models.Courses.CourseRun courseRun { get; set; }
+        public Dfc.CourseDirectory.Services.Models.Courses.CourseRun courseRun { get; set; }
 
         public List<SelectListItem> deliveryModes { get; set; }
 

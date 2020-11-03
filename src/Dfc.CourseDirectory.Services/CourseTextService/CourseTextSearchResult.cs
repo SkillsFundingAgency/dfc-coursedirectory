@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
+using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService
 {

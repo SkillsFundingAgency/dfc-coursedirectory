@@ -1,9 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 {

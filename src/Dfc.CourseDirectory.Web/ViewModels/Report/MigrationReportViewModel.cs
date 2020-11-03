@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Models.Enums;
+﻿using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
 using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
 

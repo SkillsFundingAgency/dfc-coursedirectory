@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Venues;
-using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -33,8 +32,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
-
-
         public LocationsController(
             ILogger<LocationsController> logger,
             IOptions<VenueServiceSettings> venueSearchSettings,
@@ -59,7 +56,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
         }
 
-
         [Authorize]
         [HttpGet]
         public IActionResult DeleteLocation(Guid VenueId)
@@ -71,7 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            IVenue venueResult = _venueService
+            var venueResult = _venueService
                 .GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result
                 .Value;
 
@@ -83,7 +79,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../Venues/locationdelete/index", locationDeleteViewModel);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -98,7 +93,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
                 }
 
-                IVenue updatedVenue = _venueService
+                var updatedVenue = _venueService
                     .GetVenueByIdAsync(new GetVenueByIdCriteria(locationDeleteViewModel.VenueId.ToString())).Result
                     .Value;
                 updatedVenue.Status = VenueStatus.Deleted;
@@ -119,6 +114,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return await GetVenues(ukprn, null, false);
         }
+
         private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn, VenueSearchResultItemModel newVenue, bool updated)
         {
             VenueSearchRequestModel requestModel = new VenueSearchRequestModel
@@ -154,7 +150,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult LocationConfirmationDelete(Guid VenueId)
         {
-            IVenue venueResult = _venueService
+            var venueResult = _venueService
                 .GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result
                 .Value;
 
@@ -166,7 +162,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../Venues/LocationDeleteConfirmation/index", locationDeleteConfirmViewModel);
         }
-
 
         [Authorize]
         [HttpPost]

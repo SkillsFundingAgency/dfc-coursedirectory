@@ -1,7 +1,5 @@
-﻿
-using Dfc.CourseDirectory.Models.Models.Courses;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
 {

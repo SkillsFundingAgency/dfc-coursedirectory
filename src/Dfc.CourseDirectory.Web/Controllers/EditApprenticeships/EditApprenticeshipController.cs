@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                     apprenticeshipForEdit.Value.BulkUploadErrors = new List<BulkUploadError> { };
                     if (apprenticeshipForEdit.Value.BulkUploadErrors.Count() == 0)
                     {
-                        apprenticeshipForEdit.Value.RecordStatus = Models.Enums.RecordStatus.BulkUploadReadyToGoLive;
+                        apprenticeshipForEdit.Value.RecordStatus = Services.Enums.RecordStatus.BulkUploadReadyToGoLive;
                     }
                     var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit.Value);
                 }
