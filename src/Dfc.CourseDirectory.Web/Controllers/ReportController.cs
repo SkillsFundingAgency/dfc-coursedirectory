@@ -15,38 +15,33 @@ using Dfc.CourseDirectory.Web.ViewModels.Report;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     [Authorize("Admin")]
     public class ReportController : Controller
     {
-        private readonly ILogger<ReportController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private ICSVHelper _CSVHelper;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         readonly string appName = "MigrationReport";
 
-        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper,
-            IHttpContextAccessor contextAccessor, IApprenticeshipService apprenticeshipService)
+        public ReportController(ICourseService courseService, ICSVHelper csvHelper,
+            IApprenticeshipService apprenticeshipService)
         {
-            _logger = logger;
             _courseService = courseService;
             _CSVHelper = csvHelper;
-            _contextAccessor = contextAccessor;
             _apprenticeshipService = apprenticeshipService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var ukPRN = _session.GetInt32("UKPRN");
+            var ukPRN = Session.GetInt32("UKPRN");
             if (ukPRN != null)
             {
-                _session.Remove("UKPRN");
+                Session.Remove("UKPRN");
             }
 
             string dateLastUpdate;

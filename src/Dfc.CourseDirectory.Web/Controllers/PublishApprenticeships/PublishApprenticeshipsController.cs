@@ -13,25 +13,18 @@ using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 {
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class PublishApprenticeshipsController : Controller
     {
-        private readonly ILogger<PublishApprenticeshipsController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly IApprenticeshipService _apprenticeshipService;
 
-        public PublishApprenticeshipsController(ILogger<PublishApprenticeshipsController> logger,
-               IHttpContextAccessor contextAccessor, IApprenticeshipService apprenticeshipService)
+        public PublishApprenticeshipsController(IApprenticeshipService apprenticeshipService)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _apprenticeshipService = apprenticeshipService;
         }
 
@@ -40,7 +33,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
         public IActionResult Index()
         {
             PublishApprenticeshipsViewModel vm = new PublishApprenticeshipsViewModel();
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.Value.ToString()).Result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
@@ -68,7 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
         {
             PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel();
 
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = Session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });

@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Web.RequestModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
 {
@@ -17,27 +16,22 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
     {
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        private readonly VenueServiceSettings _venueServiceSettings;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession _session => _contextAccessor.HttpContext.Session;
-        public ChooseVenue(IVenueSearchHelper venueSearchHelper, IVenueService venueService, IOptions<VenueServiceSettings> venueServiceSettings, IHttpContextAccessor contextAccessor)
+        private ISession Session => HttpContext.Session;
+        public ChooseVenue(IVenueSearchHelper venueSearchHelper, IVenueService venueService)
         {
             Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(venueServiceSettings, nameof(venueServiceSettings));
 
-            _venueServiceSettings = venueServiceSettings.Value;
             _venueSearchHelper = venueSearchHelper;
             _venueService = venueService;
-            _contextAccessor = contextAccessor;
         }
         public async Task<IViewComponentResult> InvokeAsync(ChooseVenueModel model)
         {
             List<SelectListItem> venues = new List<SelectListItem>();
 
-            var UKPRN = _session.GetInt32("UKPRN");
+            var UKPRN = Session.GetInt32("UKPRN");
             if (UKPRN.HasValue)
             {
-                var requestModel = new VenueSearchRequestModel { SearchTerm = _session.GetInt32("UKPRN").Value.ToString() };
+                var requestModel = new VenueSearchRequestModel { SearchTerm = Session.GetInt32("UKPRN").Value.ToString() };
                 var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
                 var result = await _venueService.SearchAsync(criteria);
 

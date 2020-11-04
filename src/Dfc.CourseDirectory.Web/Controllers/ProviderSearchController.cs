@@ -15,21 +15,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<ProviderSearchController> _logger;
         private readonly IProviderService _providerService;
-        private readonly IHttpContextAccessor _contextAccessor;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public ProviderSearchController(
             ILogger<ProviderSearchController> logger,
-            IProviderService providerService,
-            IHttpContextAccessor contextAccessor)
+            IProviderService providerService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _providerService = providerService;
-            _contextAccessor = contextAccessor;
         }
 
         [Authorize(Policy = "ElevatedUserRole")]
@@ -75,7 +72,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _logger.LogInformation("Success", Success);
             _logger.LogInformation("ResultText", ResultText);
-            _session.SetInt32("UKPRN", Convert.ToInt32(ajaxRequest.UKPRN));
+            Session.SetInt32("UKPRN", Convert.ToInt32(ajaxRequest.UKPRN));
             return Json(new { success = Success, resultText = ResultText });
         }
 
@@ -89,7 +86,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var providerInfo = await providerInfoCache.GetProviderInfoForUkprn(UKPRN);
             providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
 
-            _session.SetInt32("UKPRN", UKPRN);
+            Session.SetInt32("UKPRN", UKPRN);
             return View("../Provider/Dashboard");
         }
     }

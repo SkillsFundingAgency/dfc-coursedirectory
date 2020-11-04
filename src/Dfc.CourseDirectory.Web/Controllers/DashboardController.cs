@@ -11,40 +11,28 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly ILogger<DashboardController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IEnvironmentHelper _environmentHelper;
-        private IWebHostEnvironment _env;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession _session => HttpContext.Session;
 
         public DashboardController(
-                ILogger<DashboardController> logger,
-                IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
                 IBlobStorageService blobStorageService,
                 IWebHostEnvironment env,
                 IEnvironmentHelper environmentHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
-            Throw.IfNull(env, nameof(env));
             Throw.IfNull(environmentHelper, nameof(environmentHelper));
 
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _blobStorageService = blobStorageService;
-            _env = env;
             _environmentHelper = environmentHelper;
         }
 

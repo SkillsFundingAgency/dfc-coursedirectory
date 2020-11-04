@@ -18,15 +18,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IVenueService _venueService;
         private readonly IVenueSearchHelper _venueSearchHelper;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public VenueSearchController(
             ILogger<VenueSearchController> logger,
             IOptions<VenueServiceSettings> venueServiceSettings,
             IVenueService venueService,
-            IVenueSearchHelper venueSearchHelper,
-            IHttpContextAccessor contextAccessor)
+            IVenueSearchHelper venueSearchHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(venueServiceSettings, nameof(venueServiceSettings));
@@ -36,15 +34,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueServiceSettings = venueServiceSettings.Value;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
-            _contextAccessor = contextAccessor;
         }
         [Authorize]
         public async Task<IActionResult> Index()
         {
             int UKPRN = 0;
-            if (_session.GetInt32("UKPRN").HasValue)
+            if (Session.GetInt32("UKPRN").HasValue)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
             }
             else
             {

@@ -26,18 +26,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class BulkUploadController : Controller
     {
         private readonly ILogger<BulkUploadController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
         private IWebHostEnvironment _env;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession _session => HttpContext.Session;
         private IBackgroundTaskQueue _queue;
 
         public BulkUploadController(
                 ILogger<BulkUploadController> logger,
-                IHttpContextAccessor contextAccessor,
                 IBulkUploadService bulkUploadService,
                 IBlobStorageService blobService,
                 ICourseService courseService,
@@ -46,7 +44,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IBackgroundTaskQueue queue)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
             Throw.IfNull(courseService, nameof(courseService));
@@ -56,7 +53,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(queue, nameof(queue));
 
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _bulkUploadService = bulkUploadService;
             _blobService = blobService;
             _courseService = courseService;

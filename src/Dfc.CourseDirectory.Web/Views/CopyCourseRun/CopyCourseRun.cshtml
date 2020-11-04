@@ -23,10 +23,9 @@
     ViewData["Title"] = "Copy course";
     Layout = "_Layout_Your_Courses";
 }
-@inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
+    var newVenueObject = Context.Session.GetObject<AddedVenueModel>("NewAddedVenue");
     if (newVenueObject != null)
     {
         string message = "";

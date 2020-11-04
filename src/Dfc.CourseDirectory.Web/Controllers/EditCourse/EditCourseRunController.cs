@@ -22,46 +22,33 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
     public class EditCourseRunController : Controller
     {
-        private readonly ILogger<EditCourseRunController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
-        private const string SessionAddCourseSection1 = "AddCourseSection1";
-        private const string SessionAddCourseSection2 = "AddCourseSection2";
-        private const string SessionLastAddCoursePage = "LastAddCoursePage";
-        private const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
 
         public EditCourseRunController(
-            ILogger<EditCourseRunController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
-            IHttpContextAccessor contextAccessor,
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
             IVenueService venueService,
             IVenueSearchHelper venueSearchHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
 
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _htmlEncoder = htmlEncoder;
             _venueService = venueService;
@@ -72,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
 
-            _session.SetString("Option", "AddNewVenueForEdit");
+            Session.SetString("Option", "AddNewVenueForEdit");
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
                 AwardOrgCode = model.AwardOrgCode,
@@ -105,7 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             };
 
           
-            _session.SetObject("EditCourseRunObject", vm);
+            Session.SetObject("EditCourseRunObject", vm);
 
 
             return Json(Url.Action("AddVenue", "Venues"));
@@ -119,9 +106,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
-            if (_session.GetInt32("UKPRN") != null)
+            if (Session.GetInt32("UKPRN") != null)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
             }
             else
             {
@@ -141,7 +128,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             var regions = _courseService.GetRegions();
 
 
-            var cachedData = _session.GetObject<EditCourseRunViewModel>("EditCourseRunObject");
+            var cachedData = Session.GetObject<EditCourseRunViewModel>("EditCourseRunObject");
 
 
             var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(cachedData.CourseId.Value));
@@ -245,13 +232,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid courseRunId, PublishMode mode)
         {
-            _session.SetString("Option", "AddNewVenueForEdit");
+            Session.SetString("Option", "AddNewVenueForEdit");
 
             int? UKPRN;
 
-            if (_session.GetInt32("UKPRN") != null)
+            if (Session.GetInt32("UKPRN") != null)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
             }
             else
             {
@@ -271,8 +258,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             var regions = _courseService.GetRegions();
 
-            _session.SetObject(SessionVenues, venues);
-            _session.SetObject(SessionRegions, regions);
+            Session.SetObject(SessionVenues, venues);
+            Session.SetObject(SessionRegions, regions);
 
             if (courseId.HasValue)
             {
@@ -408,9 +395,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
-            if (_session.GetInt32("UKPRN") != null)
+            if (Session.GetInt32("UKPRN") != null)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
             }
             else
             {
@@ -528,8 +515,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             break;
                     }
 
-                    _session.Remove("NewAddedVenue");
-                    _session.Remove("Option");
+                    Session.Remove("NewAddedVenue");
+                    Session.Remove("Option");
 
                     // Check if course has no errors
                     if (model.Mode == PublishMode.Migration)

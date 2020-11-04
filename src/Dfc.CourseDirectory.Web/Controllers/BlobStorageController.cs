@@ -16,40 +16,31 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class BlobStorageController : Controller
     {
-        private readonly ILogger<BlobStorageController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private ICourseProvisionHelper _courseProvisionHelper;
         private IApprenticeshipProvisionHelper _apprenticeshipProvisionHelper;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession _session => HttpContext.Session;
 
         public BlobStorageController(
-                ILogger<BlobStorageController> logger,
-                IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
                 IApprenticeshipService apprenticeshipService,
                 IBlobStorageService blobService,
                 ICourseProvisionHelper courseProvisionHelper,
                 IApprenticeshipProvisionHelper apprenticeshipProvisionHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(blobService, nameof(blobService));
             Throw.IfNull(apprenticeshipProvisionHelper, nameof(apprenticeshipProvisionHelper));
 
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _blobService = blobService;
             _courseProvisionHelper = courseProvisionHelper;

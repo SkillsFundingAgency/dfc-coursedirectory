@@ -17,14 +17,13 @@
 @using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Http
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
-@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Edit course details";
     Layout = "_Layout_Your_Courses";
 }
 
 @{
-    var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
+    var newVenueObject = Context.Session.GetObject<AddedVenueModel>("NewAddedVenue");
     if (newVenueObject != null)
     {
         string message = "";

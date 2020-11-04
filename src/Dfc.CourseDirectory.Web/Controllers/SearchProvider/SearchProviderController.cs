@@ -14,27 +14,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.SearchProvider
     public class SearchProviderController : Controller
     {
         private readonly ISearchClient<Provider> _searchClient;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILogger<SearchProviderController> _logger;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public SearchProviderController(
             ISearchClient<Provider> searchClient,
-            IHttpContextAccessor contextAccessor,
             ILogger<SearchProviderController> logger)
         {
             _searchClient = searchClient ?? throw new System.ArgumentNullException(nameof(searchClient));
-            _contextAccessor = contextAccessor ?? throw new System.ArgumentNullException(nameof(contextAccessor));
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
         }
 
         [Authorize]
         public async Task<IActionResult> Index([FromQuery] string keyword)
         {
-            if (_session.GetInt32("UKPRN").HasValue)
+            if (Session.GetInt32("UKPRN").HasValue)
             {
-                _session.Remove("UKPRN");
+                Session.Remove("UKPRN");
             }
 
             if (string.IsNullOrWhiteSpace(keyword))

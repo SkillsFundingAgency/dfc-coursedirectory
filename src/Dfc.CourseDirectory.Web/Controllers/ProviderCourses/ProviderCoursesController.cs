@@ -24,25 +24,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
     public class ProviderCoursesController : Controller
     {
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILogger<ProviderCoursesController> _logger;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
         public ProviderCoursesController(
             ILogger<ProviderCoursesController> logger,
-            IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
            
@@ -94,7 +90,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         [Authorize]
         public IActionResult MigratedCourses(string UKPRN)
         {
-            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            Session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
             return RedirectToAction("Index");
         }
 
@@ -104,8 +100,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             string notificationTitle,
             string notificationMessage)
         {
-            _session.SetString("Option", "Courses");
-            int? UKPRN = _session.GetInt32("UKPRN");
+            Session.SetString("Option", "Courses");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {
@@ -196,7 +192,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             }
 
-            _session.SetObject("ProviderCourses", model.ProviderCourseRuns);
+            Session.SetObject("ProviderCourses", model.ProviderCourseRuns);
 
             int s = 0;
             var textValue = string.Empty;
@@ -358,8 +354,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         public async Task<IActionResult> FilterCourses(ProviderCoursesRequestModel requestModel)
         {
 
-            _session.SetString("Option", "Courses");
-            int? UKPRN = _session.GetInt32("UKPRN");
+            Session.SetString("Option", "Courses");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {
@@ -367,7 +363,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             }
 
             var model = new ProviderCoursesViewModel();
-            model.ProviderCourseRuns = _session.GetObject<List<ProviderCourseRunViewModel>>("ProviderCourses");
+            model.ProviderCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>("ProviderCourses");
 
             //var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
             var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;

@@ -27,14 +27,13 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IBlobStorageService _blobStorageService;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IProviderService _providerService;
         private readonly IEnvironmentHelper _environmentHelper;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
 
-        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
+        public Dashboard(ICourseService courseService, IVenueService venueService, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
             IEnvironmentHelper environmentHelper, ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
@@ -49,7 +48,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;
             _venueService = venueService;
-            _contextAccessor = contextAccessor;
             _blobStorageService = blobStorageService;
             _providerService = providerService;
             _environmentHelper = environmentHelper;
@@ -62,9 +60,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             var actualModel = model ?? new DashboardModel();
 
             int UKPRN = 0;
-            if (_session.GetInt32("UKPRN").HasValue)
+            if (Session.GetInt32("UKPRN").HasValue)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
             }
 
             var allVenues = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));

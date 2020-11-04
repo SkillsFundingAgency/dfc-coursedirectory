@@ -8,44 +8,24 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 {
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class EditApprenticeshipController : Controller
     {
-        private readonly ILogger<EditApprenticeshipController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-
         private readonly IApprenticeshipService _apprenticeshipService;
-        private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
-        public EditApprenticeshipController(
-           ILogger<EditApprenticeshipController> logger,
-          IHttpContextAccessor contextAccessor,
-           IApprenticeshipService apprenticeshipService,
-           IOptions<ApprenticeshipSettings> apprenticeshipSettings)
+        public EditApprenticeshipController(IApprenticeshipService apprenticeshipService)
         {
-            Throw.IfNull(logger, nameof(logger));
-
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-
-            Throw.IfNull(apprenticeshipSettings, nameof(apprenticeshipSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
-
-            _apprenticeshipSettings = apprenticeshipSettings;
-            _logger = logger;
-            _contextAccessor = contextAccessor;
 
             _apprenticeshipService = apprenticeshipService;
         }
@@ -56,9 +36,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
         {
             int? UKPRN;
 
-            if (_session.GetInt32("UKPRN") != null)
+            if (Session.GetInt32("UKPRN") != null)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
             }
             else
             {
