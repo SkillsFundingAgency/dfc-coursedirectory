@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
@@ -11,7 +12,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public CourseSearchResult(
             IEnumerable<IEnumerable<IEnumerable<Course>>> courses)
         {
-            Throw.IfNull(courses, nameof(courses));
+            if (courses == null)
+            {
+                throw new ArgumentNullException(nameof(courses));
+            }
 
             Value = courses.Select(c => new CourseSearchOuterGrouping(c));
         }
@@ -19,7 +23,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public CourseSearchResult(
             IEnumerable<CourseSearchOuterGrouping> courses)
         {
-            Throw.IfNull(courses, nameof(courses));
+            if (courses == null)
+            {
+                throw new ArgumentNullException(nameof(courses));
+            }
 
             Value = courses.Select(c => new CourseSearchOuterGrouping(c.Value, c.Level));
         }
@@ -35,8 +42,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
             IEnumerable<CourseSearchInnerGrouping> courses, 
             string level)
         {
-            Throw.IfNullOrEmpty(level, nameof(level));
-            Throw.IfNull(courses, nameof(courses));
+            if (string.IsNullOrEmpty(level))
+            {
+                throw new ArgumentException($"{nameof(level)} cannot be null or empty.");
+            }
+
+            if (courses == null)
+            {
+                throw new ArgumentNullException(nameof(courses));
+            }
 
             Level = level;
             Value = courses.Select(c => new CourseSearchInnerGrouping(c.LARSRef));
@@ -45,7 +59,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public CourseSearchOuterGrouping(
             IEnumerable<IEnumerable<Course>> courses)
         {
-            Throw.IfNull(courses, nameof(courses));
+            if (courses == null)
+            {
+                throw new ArgumentNullException(nameof(courses));
+            }
 
             Level = courses?.FirstOrDefault()?.FirstOrDefault()?.NotionalNVQLevelv2;
             Value = courses.Select(c => new CourseSearchInnerGrouping(c));
@@ -59,7 +76,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         public CourseSearchInnerGrouping(string larsRef)
         {
-            Throw.IfNullOrEmpty(larsRef, nameof(larsRef));
+            if (string.IsNullOrEmpty(larsRef))
+            {
+                throw new ArgumentException($"{nameof(larsRef)} cannot be null or empty.");
+            }
 
             LARSRef = larsRef;
             Value = new List<Course>();
@@ -68,7 +88,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public CourseSearchInnerGrouping(
             IEnumerable<Course> value)
         {
-            Throw.IfNull(value, nameof(value));
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
 
             Value = value;
             LARSRef = value?.FirstOrDefault()?.LearnAimRef;

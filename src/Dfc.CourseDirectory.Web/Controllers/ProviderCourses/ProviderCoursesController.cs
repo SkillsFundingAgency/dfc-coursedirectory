@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models;
@@ -34,9 +33,20 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             ICourseService courseService,
             IVenueService venueService)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
 
             _logger = logger;
             _courseService = courseService;

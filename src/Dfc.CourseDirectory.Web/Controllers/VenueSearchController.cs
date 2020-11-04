@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
+﻿using System;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -26,9 +26,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueService venueService,
             IVenueSearchHelper venueSearchHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(venueServiceSettings, nameof(venueServiceSettings));
-            Throw.IfNull(venueService, nameof(venueService));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (venueServiceSettings == null)
+            {
+                throw new ArgumentNullException(nameof(venueServiceSettings));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
 
             _logger = logger;
             _venueServiceSettings = venueServiceSettings.Value;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.WebV2;
@@ -22,8 +21,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILogger<ProviderSearchController> logger,
             IProviderService providerService)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(providerService, nameof(providerService));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
 
             _logger = logger;
             _providerService = providerService;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Enums;
@@ -27,7 +26,6 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -55,10 +53,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
             HtmlEncoder htmlEncoder,
             ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService, ICourseTextService courseTextService)
         {
-            Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(courseTextService, nameof(courseTextService));
+            if (courseSearchSettings == null)
+            {
+                throw new ArgumentNullException(nameof(courseSearchSettings));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
+
+            if (courseTextService == null)
+            {
+                throw new ArgumentNullException(nameof(courseTextService));
+            }
 
             _htmlEncoder = htmlEncoder;
             _courseService = courseService;

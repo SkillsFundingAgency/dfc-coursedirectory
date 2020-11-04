@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.Configuration;
@@ -33,11 +32,20 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
            IApprenticeshipService apprenticeshipService,
            IOptions<ApprenticeshipSettings> apprenticeshipSettings)
         {
-            Throw.IfNull(logger, nameof(logger));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
 
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+            if (apprenticeshipService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipService));
+            }
 
-            Throw.IfNull(apprenticeshipSettings, nameof(apprenticeshipSettings));
+            if (apprenticeshipSettings == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipSettings));
+            }
 
             _apprenticeshipSettings = apprenticeshipSettings;
             _logger = logger;

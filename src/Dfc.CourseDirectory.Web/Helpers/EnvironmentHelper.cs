@@ -1,6 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Enums;
+﻿using System;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models.Environment;
-using Dfc.CourseDirectory.Services;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Helpers
@@ -11,7 +11,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
         public EnvironmentHelper(IOptions<EnvironmentSettings> environmentSettings)
         {
-            Throw.IfNull(environmentSettings, nameof(environmentSettings));
+            if (environmentSettings == null)
+            {
+                throw new ArgumentNullException(nameof(environmentSettings));
+            }
+
             _environmentSettings = environmentSettings.Value;
         }
 

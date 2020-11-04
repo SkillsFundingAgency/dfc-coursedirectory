@@ -24,9 +24,21 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             HttpClient httpClient,
             IOptions<ProviderServiceSettings> settings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(httpClient, nameof(httpClient));
-            Throw.IfNull(settings, nameof(settings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
 
             _logger = logger;
             _settings = settings.Value;
@@ -81,7 +93,11 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
         public async Task<Result<Provider>> AddProviderAsync(ProviderAdd provider)
         {
-            Throw.IfNull(provider, nameof(provider));
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
 
             try
             {
@@ -118,7 +134,11 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
         public async Task<Result> UpdateProviderDetails(Provider provider)
         {
-            Throw.IfNull(provider, nameof(provider));
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
 
             try
             {

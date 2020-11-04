@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -43,14 +42,45 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IProviderService providerService,
                 IBackgroundTaskQueue queue)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
-            Throw.IfNull(blobService, nameof(blobService));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(env, nameof(env));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(providerService, nameof(providerService));
-            Throw.IfNull(queue, nameof(queue));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (bulkUploadService == null)
+            {
+                throw new ArgumentNullException(nameof(bulkUploadService));
+            }
+
+            if (blobService == null)
+            {
+                throw new ArgumentNullException(nameof(blobService));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (env == null)
+            {
+                throw new ArgumentNullException(nameof(env));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
+
+            if (queue == null)
+            {
+                throw new ArgumentNullException(nameof(queue));
+            }
 
             _logger = logger;
             _bulkUploadService = bulkUploadService;

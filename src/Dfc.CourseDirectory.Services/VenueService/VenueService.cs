@@ -27,9 +27,21 @@ namespace Dfc.CourseDirectory.Services.VenueService
             HttpClient httpClient,
             IOptions<VenueServiceSettings> settings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(httpClient, nameof(httpClient));
-            Throw.IfNull(settings, nameof(settings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
 
             _logger = logger;
             _settings = settings.Value;
@@ -45,7 +57,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         public async Task<Result<Venue>> UpdateAsync(Venue venue)
         {
-            Throw.IfNull(venue, nameof(venue));
+            if (venue == null)
+            {
+                throw new ArgumentNullException(nameof(venue));
+            }
+
 
             try
             {
@@ -83,7 +99,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         public async Task<Result<Venue>> GetVenueByIdAsync(GetVenueByIdCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
+
 
             try
             {
@@ -123,7 +143,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         public async Task<Result<VenueSearchResult>> GetVenuesByPRNAndNameAsync(GetVenuesByPRNAndNameCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
+
 
             try
             {
@@ -164,7 +188,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         public async Task<Result<VenueSearchResult>> SearchAsync(VenueSearchCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
+
 
             try
             {
@@ -216,7 +244,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         public async Task<Result<Venue>> AddAsync(Venue venue)
         {
-            Throw.IfNull(venue, nameof(venue));
+            if (venue == null)
+            {
+                throw new ArgumentNullException(nameof(venue));
+            }
+
 
             try
             {

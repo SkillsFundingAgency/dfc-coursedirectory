@@ -8,8 +8,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         public GetCourseByIdCriteria(Guid id)
         {
-            Throw.IfNullGuid(id, nameof(id));
-
             Id = id;
         }
     }

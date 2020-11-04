@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
@@ -27,9 +27,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IWebHostEnvironment env,
                 IEnvironmentHelper environmentHelper)
         {
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(blobStorageService, nameof(blobStorageService));
-            Throw.IfNull(environmentHelper, nameof(environmentHelper));
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (blobStorageService == null)
+            {
+                throw new ArgumentNullException(nameof(blobStorageService));
+            }
+
+            if (environmentHelper == null)
+            {
+                throw new ArgumentNullException(nameof(environmentHelper));
+            }
 
             _courseService = courseService;
             _blobStorageService = blobStorageService;

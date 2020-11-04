@@ -968,8 +968,15 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             Stream stream,
             AuthUserDetails userDetails)
         {
-            Throw.IfNull(stream, nameof(stream));
-            Throw.IfNull(userDetails, nameof(userDetails));
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            if (userDetails == null)
+            {
+                throw new ArgumentNullException(nameof(userDetails));
+            }
 
             if (!stream.CanSeek)
             {

@@ -39,9 +39,20 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
             HttpClient httpClient,
             IOptions<BlobStorageSettings> settings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(httpClient, nameof(httpClient));
-            Throw.IfNull(settings, nameof(settings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
 
             _log = logger;
             _accountName = settings.Value.AccountName;

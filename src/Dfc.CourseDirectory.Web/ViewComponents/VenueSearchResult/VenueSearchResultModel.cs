@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
@@ -35,8 +35,15 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             VenueSearchResultItemModel newItem,
             bool updated)
         {
-            Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));
-            Throw.IfNull(items, nameof(items));
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                throw new ArgumentNullException($"{nameof(searchTerm)} cannot be null or empty or whitespace.", nameof(searchTerm));
+            }
+
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             Errors = new string[] { };
             SearchTerm = searchTerm;
@@ -48,7 +55,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
            IEnumerable<VenueSearchResultItemModel> items,
            VenueSearchResultItemModel deletedItem)
         {
-            Throw.IfNull(items, nameof(items));
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             Errors = new string[] { };
             NewItem = deletedItem;

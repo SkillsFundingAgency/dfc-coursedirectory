@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.Services.VenueService
+﻿using System;
+
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class VenueSearchCriteria
     {
@@ -9,7 +11,10 @@
             string search,
             string newAddressId)
         {
-            Throw.IfNullOrWhiteSpace(search, nameof(search));
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                throw new ArgumentNullException($"{nameof(search)} cannot be null or empty or whitespace.", nameof(search));
+            }
 
             Search = search;
             NewAddressId = newAddressId;

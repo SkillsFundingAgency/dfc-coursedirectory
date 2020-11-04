@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +21,16 @@ namespace Dfc.CourseDirectory.Web.Helpers
             IHttpContextAccessor contextAccessor,
             IProviderService providerService)
         {
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
-            Throw.IfNull(providerService, nameof(providerService));
+            if (contextAccessor == null)
+            {
+                throw new ArgumentNullException(nameof(contextAccessor));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
+
             _contextAccessor = contextAccessor;
             _authorizationService = authorizationService;
             _providerService = providerService;

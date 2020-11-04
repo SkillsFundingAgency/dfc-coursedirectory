@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.Services.VenueService
+﻿using System;
+
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class GetVenueByIdCriteria
     {
@@ -6,7 +8,10 @@
 
         public GetVenueByIdCriteria(string id)
         {
-            Throw.IfNullOrWhiteSpace(id, nameof(id));
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentNullException($"{nameof(id)} cannot be null or empty or whitespace.", nameof(id));
+            }
 
             Id = id;
         }

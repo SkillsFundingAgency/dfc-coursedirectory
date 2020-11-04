@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
@@ -50,11 +49,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICourseService courseService, 
             IApprenticeshipService apprenticeshipService)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(addressSearchService, nameof(addressSearchService));
-            Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(courseService, nameof(courseService));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (addressSearchService == null)
+            {
+                throw new ArgumentNullException(nameof(addressSearchService));
+            }
+
+            if (venueSearchSettings == null)
+            {
+                throw new ArgumentNullException(nameof(venueSearchSettings));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
 
             _logger = logger;
             _addressSearchService = addressSearchService;

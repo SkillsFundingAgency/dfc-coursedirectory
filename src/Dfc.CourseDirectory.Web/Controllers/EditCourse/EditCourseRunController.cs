@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -45,9 +44,20 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IVenueService venueService,
             IVenueSearchHelper venueSearchHelper)
         {
-            Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
+            if (courseSearchSettings == null)
+            {
+                throw new ArgumentNullException(nameof(courseSearchSettings));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
 
             _courseService = courseService;
             _htmlEncoder = htmlEncoder;

@@ -26,9 +26,20 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             HttpClient httpClient,
             IOptions<ApprenticeshipServiceSettings> settings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(httpClient, nameof(httpClient));
-            Throw.IfNull(settings, nameof(settings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
 
             _logger = logger;
             _settings = settings.Value;
@@ -52,7 +63,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
         {
-            Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
+            if (string.IsNullOrWhiteSpace(criteria))
+            {
+                throw new ArgumentNullException($"{nameof(criteria)} cannot be null or empty or whitespace.", nameof(criteria));
+            }
 
             try
             {
@@ -85,7 +99,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result> AddApprenticeship(Apprenticeship apprenticeship)
         {
-            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+            if (apprenticeship == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeship));
+            }
 
             try
             {
@@ -127,7 +144,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             IEnumerable<Apprenticeship> apprenticeships,
             bool addInParallel)
         {
-            Throw.IfNull(apprenticeships, nameof(apprenticeships));
+            if (apprenticeships == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeships));
+            }
 
             try
             {
@@ -168,7 +188,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<Apprenticeship>> GetApprenticeshipByIdAsync(string Id)
         {
-            Throw.IfNullOrWhiteSpace(Id, nameof(Id));
+            if (string.IsNullOrWhiteSpace(Id))
+            {
+                throw new ArgumentNullException($"{nameof(Id)} cannot be null or empty or whitespace.", nameof(Id));
+            }
 
             try
             {
@@ -201,7 +224,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
         {
-            Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
+            if (string.IsNullOrWhiteSpace(criteria))
+            {
+                throw new ArgumentNullException($"{nameof(criteria)} cannot be null or empty or whitespace.", nameof(criteria));
+            }
 
             try
             {
@@ -234,7 +260,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
 
             try
             {
@@ -267,7 +296,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
 
             try
             {
@@ -300,7 +332,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship)
         {
-            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+            if (apprenticeship == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeship));
+            }
 
             try
             {
@@ -337,7 +372,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result> DeleteBulkUploadApprenticeships(int UKPRN)
         {
-            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+            if (UKPRN < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(UKPRN), $"{nameof(UKPRN)} cannot be less than 0.");
+            }
 
             try
             {
@@ -360,10 +398,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
         {
-            Throw.IfNull(UKPRN, nameof(UKPRN));
-            Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
-            Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
-            
             var response = await _httpClient.GetAsync(new Uri(_changeApprenticeshipStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
 
             if (response.IsSuccessStatusCode)
@@ -376,7 +410,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN)
         {
-            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+            if (UKPRN < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(UKPRN), $"{nameof(UKPRN)} cannot be less than 0.");
+            }
 
             try
             {
