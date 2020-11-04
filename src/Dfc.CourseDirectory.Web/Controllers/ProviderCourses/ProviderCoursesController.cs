@@ -519,17 +519,5 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             return ViewComponent(nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults), model);
         }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult CourseConfirmationDelete(Guid CourseRunId, string CourseName)
-        {
-            CourseDeleteConfirmViewModel courseDeleteConfirmViewModel = new CourseDeleteConfirmViewModel();
-            courseDeleteConfirmViewModel.CourseRunId = CourseRunId;
-            courseDeleteConfirmViewModel.CourseName = CourseName;
-
-
-            return View("../ProviderCourses/CourseDeleteConfirmation/index", courseDeleteConfirmViewModel);
-        }
     }
 }
