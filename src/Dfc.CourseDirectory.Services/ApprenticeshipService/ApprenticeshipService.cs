@@ -73,12 +73,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your Standards and Frameworks service http request error", hre);
+                _logger.LogError(hre, "Get your Standards and Frameworks service http request error");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Standards and Frameworks unknown error.", e);
+                _logger.LogError(e, "Standards and Frameworks unknown error.");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service unknown error.");
             }
         }
@@ -112,12 +112,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship add service http request error", hre);
+                _logger.LogError(hre, "Apprenticeship add service http request error");
                 return Result.Fail("Apprenticeship add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship add service unknown error.", e);
+                _logger.LogError(e, "Apprenticeship add service unknown error.");
 
                 return Result.Fail("Apprenticeship add service unknown error.");
             }
@@ -156,13 +156,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship add service http request error", hre);
+                _logger.LogError(hre, "Apprenticeship add service http request error");
                 return Result.Fail("Apprenticeship add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship add service unknown error.", e);
-
+                _logger.LogError(e, "Apprenticeship add service unknown error.");
                 return Result.Fail("Apprenticeship add service unknown error.");
             }
         }
@@ -190,12 +189,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Apprenticeship by Id service http request error", hre);
+                _logger.LogError(hre, "Get Apprenticeship by Id service http request error");
                 return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get apprenticeship unknown error.", e);
+                _logger.LogError(e, "Get apprenticeship unknown error.");
                 return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service unknown error.");
             }
         }
@@ -223,12 +222,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Search Apprenticeship by UKPRN service http request error", hre);
+                _logger.LogError(hre, "Search Apprenticeship by UKPRN service http request error");
                 return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Standards and Frameworks unknown error.", e);
+                _logger.LogError(e, "Standards and Frameworks unknown error.");
                 return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service unknown error.");
             }
         }
@@ -256,12 +255,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("GetStandardByCode service http request error", hre);
+                _logger.LogError(hre, "GetStandardByCode service http request error");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("GetStandardByCode unknown error.", e);
+                _logger.LogError(e, "GetStandardByCode unknown error.");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service unknown error.");
             }
         }
@@ -289,12 +288,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("GetFrameworkByCode service http request error", hre);
+                _logger.LogError(hre, "GetFrameworkByCode service http request error");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("GetStandardByCode unknown error.", e);
+                _logger.LogError(e, "GetStandardByCode unknown error.");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service unknown error.");
             }
         }
@@ -326,13 +325,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship update service http request error", hre);
+                _logger.LogError(hre, "Apprenticeship update service http request error");
                 return Result.Fail<Apprenticeship>("Apprenticeship update service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship update service unknown error.", e);
-
+                _logger.LogError(e, "Apprenticeship update service unknown error.");
                 return Result.Fail<Apprenticeship>("Apprenticeship update service unknown error.");
             }
         }
@@ -399,12 +397,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Apprenticeship by Id service http request error", hre);
+                _logger.LogError(hre, "Get Apprenticeship by Id service http request error");
                 return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get apprenticeship unknown error.", e);
+                _logger.LogError(e, "Get apprenticeship unknown error.");
                 return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unknown error.");
             }
         }
@@ -430,12 +428,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get course migration report service http request error", hre);
+                _logger.LogError(hre, "Get course migration report service http request error");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get course migration report service unknown error.", e);
+                _logger.LogError(e, "Get course migration report service unknown error.");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
             }
         }

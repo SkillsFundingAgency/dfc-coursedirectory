@@ -58,12 +58,12 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your courses service http request error", hre);
+                _logger.LogError(hre, "Get your courses service http request error");
                 return Result.Fail<CourseText>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get your courses service unknown error.", e);
+                _logger.LogError(e, "Get your courses service unknown error.");
                 return Result.Fail<CourseText>("Get your courses service unknown error.");
             }
         }

@@ -154,12 +154,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Course By Id service http request error", hre);
+                _logger.LogError(hre, "Get Course By Id service http request error");
                 return Result.Fail<Course>("Get Course By Id service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get Course By Id service unknown error.", e);
+                _logger.LogError(e, "Get Course By Id service unknown error.");
 
                 return Result.Fail<Course>("Get Course By Id service unknown error.");
             }
@@ -169,7 +169,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
-            HttpResponseMessage response = null;
 
             try
             {
@@ -180,7 +179,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 HttpClient httpClient = new HttpClient();
                 httpClient.Timeout = new TimeSpan(0, 10, 0);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
+                var response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -201,12 +200,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your courses service http request error", hre);
+                _logger.LogError(hre, "Get your courses service http request error");
                 return Result.Fail<CourseSearchResult>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get your courses service unknown error.", e);
+                _logger.LogError(e, "Get your courses service unknown error.");
                 return Result.Fail<CourseSearchResult>($"Get your courses service unknown error. {e.Message}");
             }
         }
@@ -243,12 +242,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your courses service http request error", hre);
+                _logger.LogError(hre, "Get your courses service http request error");
                 return Result.Fail<CourseSearchResult>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get your courses service unknown error.", e);
+                _logger.LogError(e, "Get your courses service unknown error.");
                 return Result.Fail<CourseSearchResult>("Get your courses service unknown error.");
             }
         }
@@ -286,12 +285,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get course counts service http request error", hre);
+                _logger.LogError(hre, "Get course counts service http request error");
                 return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get course counts service unknown error.", e);
+                _logger.LogError(e, "Get course counts service unknown error.");
                 return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts service unknown error.");
             }
         }
@@ -327,12 +326,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get recent course changes service http request error", hre);
+                _logger.LogError(hre, "Get recent course changes service http request error");
                 return Result.Fail<IEnumerable<Course>>("Get recent course changes service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get recent course changes service unknown error.", e);
+                _logger.LogError(e, "Get recent course changes service unknown error.");
                 return Result.Fail<IEnumerable<Course>>("Get recent course changes service unknown error.");
             }
         }
@@ -370,7 +369,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (Exception ex)
             {
-                _logger.LogException("PendingCourseValidationMessages error", ex);
+                _logger.LogError(ex, "PendingCourseValidationMessages error");
                 return Result.Fail<IList<CourseValidationResult>>("Error compiling messages for items requiring attention on landing page");
             }
         }
@@ -406,13 +405,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Course add service http request error", hre);
+                _logger.LogError(hre, "Course add service http request error");
                 return Result.Fail<Course>("Course add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Course add service unknown error.", e);
-
+                _logger.LogError(e, "Course add service unknown error.");
                 return Result.Fail<Course>("Course add service unknown error.");
             }
         }
@@ -444,12 +442,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Course update service http request error", hre);
+                _logger.LogError(hre, "Course update service http request error");
                 return Result.Fail<Course>("Course update service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Course update service unknown error.", e);
+                _logger.LogError(e, "Course update service unknown error.");
 
                 return Result.Fail<Course>("Course update service unknown error.");
             }
@@ -877,12 +875,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get course migration report service http request error", hre);
+                _logger.LogError(hre, "Get course migration report service http request error");
                 return Result.Fail<CourseMigrationReport>("Get course migration report service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get course migration report service unknown error.", e);
+                _logger.LogError(e, "Get course migration report service unknown error.");
                 return Result.Fail<CourseMigrationReport>("Get course migration report service unknown error.");
             }
         }
@@ -908,12 +906,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get course migration report service http request error", hre);
+                _logger.LogError(hre, "Get course migration report service http request error");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get course migration report service unknown error.", e);
+                _logger.LogError(e, "Get course migration report service unknown error.");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
             }
         }

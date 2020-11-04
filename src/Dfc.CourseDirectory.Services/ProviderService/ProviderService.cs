@@ -69,13 +69,12 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Provider search service http request error", hre);
+                _logger.LogError(hre, "Provider search service http request error");
                 return Result.Fail<IEnumerable<Provider>>("Provider search service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Provider search service unknown error.", e);
-
+                _logger.LogError(e, "Provider search service unknown error.");
                 return Result.Fail<IEnumerable<Provider>>("Provider search service unknown error.");
             }
         }
@@ -107,13 +106,12 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Provider add service http request error", hre);
+                _logger.LogError(hre, "Provider add service http request error");
                 return Result.Fail<Provider>("Provider add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Provider add service unknown error.", e);
-
+                _logger.LogError(e, "Provider add service unknown error.");
                 return Result.Fail<Provider>("Provider add service unknown error.");
             }
         }
@@ -145,13 +143,12 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Provider update service http request error", hre);
+                _logger.LogError(hre, "Provider update service http request error");
                 return Result.Fail("Provider adupdated service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Provider update service unknown error.", e);
-
+                _logger.LogError(e, "Provider update service unknown error.");
                 return Result.Fail("Provider update service unknown error.");
             }
         }

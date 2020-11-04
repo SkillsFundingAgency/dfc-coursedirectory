@@ -70,12 +70,12 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Venue update service http request error", hre);
+                _logger.LogError(hre, "Venue update service http request error");
                 return Result.Fail<Venue>("Venue update service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Venue update service unknown error.", e);
+                _logger.LogError(e, "Venue update service unknown error.");
 
                 return Result.Fail<Venue>("Venue update service unknown error.");
             }
@@ -110,12 +110,12 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Venue By Id service http request error", hre);
+                _logger.LogError(hre, "Get Venue By Id service http request error");
                 return Result.Fail<Venue>("Get Venue By Id service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get Venue By Id service unknown error.", e);
+                _logger.LogError(e, "Get Venue By Id service unknown error.");
 
                 return Result.Fail<Venue>("Get Venue By Id service unknown error.");
             }
@@ -152,12 +152,12 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Venue By PRN and Name service http request error", hre);
+                _logger.LogError(hre, "Get Venue By PRN and Name service http request error");
                 return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get Venue By PRN and Name service unknown error.", e);
+                _logger.LogError(e, "Get Venue By PRN and Name service unknown error.");
                 return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service unknown error.");
             }
         }
@@ -204,13 +204,12 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Venue search service http request error", hre);
+                _logger.LogError(hre, "Venue search service http request error");
                 return Result.Fail<VenueSearchResult>("Venue search service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Venue search service unknown error.", e);
-
+                _logger.LogError(e, "Venue search service unknown error.");
                 return Result.Fail<VenueSearchResult>("Venue search service unknown error.");
             }
         }
@@ -242,13 +241,12 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Venue add service http request error", hre);
+                _logger.LogError(hre, "Venue add service http request error");
                 return Result.Fail<Venue>("Venue add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Venue add service unknown error.", e);
-
+                _logger.LogError(e, "Venue add service unknown error.");
                 return Result.Fail<Venue>("Venue add service unknown error.");
             }
         }
