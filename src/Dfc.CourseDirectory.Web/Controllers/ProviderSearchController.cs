@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
 
             Session.SetInt32("UKPRN", UKPRN);
-            return View("../Provider/Dashboard");
+            return RedirectToAction("Dashboard", "Provider");
         }
     }
 }

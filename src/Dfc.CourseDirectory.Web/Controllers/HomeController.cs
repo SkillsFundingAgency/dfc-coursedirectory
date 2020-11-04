@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Dashboard", "HelpdeskDashboard");
             }
 
-            return View("../Provider/Dashboard");
+            return RedirectToAction("Dashboard", "Provider");
         }
 
         [AllowDeactivatedProvider]

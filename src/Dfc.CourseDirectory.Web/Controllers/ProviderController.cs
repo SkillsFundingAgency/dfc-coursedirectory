@@ -113,6 +113,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        [HttpGet("dashboard")]
         public IActionResult Dashboard()
         {
             return View();
