@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
+namespace Dfc.CourseDirectory.WebV2.AddressSearch
 {
     public interface IAddressSearchService
     {

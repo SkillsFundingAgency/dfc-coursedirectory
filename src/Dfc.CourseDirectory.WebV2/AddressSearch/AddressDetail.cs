@@ -1,6 +1,6 @@
 ﻿using System.Security.Policy;
 
-namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
+namespace Dfc.CourseDirectory.WebV2.AddressSearch
 {
     public class AddressDetail
     {

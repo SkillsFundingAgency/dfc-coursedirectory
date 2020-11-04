@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
+namespace Dfc.CourseDirectory.WebV2.AddressSearch
 {
     public class LoqateErrorException : Exception
     {
