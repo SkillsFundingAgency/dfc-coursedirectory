@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -41,7 +42,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             {
                 throw new ArgumentNullException(nameof(settings));
             }
-
 
             _logger = logger;
             _settings = settings.Value;
