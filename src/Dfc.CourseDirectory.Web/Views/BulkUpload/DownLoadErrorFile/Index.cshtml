@@ -1,34 +1,16 @@
-﻿
-@using Dfc.CourseDirectory.Services.Enums
-@using Dfc.CourseDirectory.Web.Helpers
+﻿@addTagHelper *, GovUk.Frontend.AspNetCore
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.DownloadErrorFileViewModel
 @{
-    ViewData["Title"] = "Download error file";
-    Layout = "_Layout_Your_Courses";
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Download error file";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.DownloadErrorFileViewModel
+<form asp-controller="BulkUpload" asp-action="DownloadErrorFile">
+    <h1 class="govuk-heading-l">Resolve issues using a file</h1>
 
+    <p class="govuk-body govuk-!-padding-bottom-4">
+        This file contains the issues with course information in your bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy").
+    </p>
 
-<div class="content-container">
-
-
-    <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkUpload" asp-action="DownloadErrorFile" method="post">
-
-        <h1 class="govuk-heading-l">Resolve issues using a file</h1>
-
-        <p class="govuk-body govuk-!-padding-bottom-4">This file contains the issues with course information in your bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy").</p>
-        <br />
-
-        @*<button type="submit" class="govuk-button" id="next">Download</button>*@
-        <button class="govuk-button" onclick="location.href = '@Url.Action("GetBulkUploadErrors", "BlobStorage", new { UKPRN = Model.UKPRN })';return false;">Download file (CSV)</button>
-    </form>
-</div>
-
-
-<script>
-    (function ($) {
-        $(function () {
-
-        });
-    })(jQuery);
-</script>
+    <govuk-button asp-controller="BlobStorage" asp-action="GetBulkUploadErrors" asp-route-UKPRN="@Model.UKPRN">Download file (CSV)</govuk-button>
+</form>
