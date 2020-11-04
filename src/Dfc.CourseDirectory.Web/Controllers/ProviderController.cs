@@ -34,17 +34,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
 
         public ProviderController(
-            IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService,
             IProviderService providerService)
         {
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(providerService, nameof(providerService));
 
-            _session = contextAccessor.HttpContext.Session;
+            _session = HttpContext.Session;
             _courseService = courseService;
             _venueService = venueService;
             _providerService = providerService;

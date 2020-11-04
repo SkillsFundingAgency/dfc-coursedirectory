@@ -34,12 +34,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class AddCourseController : Controller
     {
-        private readonly ILogger<CoursesController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
 
-        private ISession Session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
         private readonly ICourseTextService _courseTextService;
@@ -53,21 +51,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string SessionPublishedCourse = "PublishedCourse";
 
         public AddCourseController(
-            ILogger<CoursesController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
-            IHttpContextAccessor contextAccessor,
             HtmlEncoder htmlEncoder,
             ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService, ICourseTextService courseTextService)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(courseTextService, nameof(courseTextService));
 
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _htmlEncoder = htmlEncoder;
             _courseService = courseService;
             _venueService = venueService;

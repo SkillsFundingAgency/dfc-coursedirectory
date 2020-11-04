@@ -19,20 +19,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
     [SelectedProviderNeeded]
     public class MigrationController : Controller
     {
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly ISearchClient<Lars> _larsSearchClient;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public MigrationController(
-            IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService,
             ISearchClient<Lars> larsSearchClient)
         {
-            _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
@@ -41,7 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            _session.SetString("Option", "Migration");
+            Session.SetString("Option", "Migration");
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
         }
 
@@ -101,7 +98,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize("Admin")]
         public async Task<IActionResult> Delete()
         {
-            var ukprn = _session.GetInt32("UKPRN").Value;
+            var ukprn = Session.GetInt32("UKPRN").Value;
             var courseCounts = await _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(ukprn));
             var courseErrors = courseCounts.Value.SingleOrDefault(x => x.Status == (int)RecordStatus.MigrationPending);
             var model = new DeleteViewModel { CourseErrors = courseErrors?.Count };
@@ -114,7 +111,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> Delete(DeleteViewModel model)
         {
 
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = Session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
             {
@@ -141,7 +138,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize("Admin")]
         public async Task<IActionResult> DeleteCourseRun(Guid courseId, Guid courseRunId)
         {
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = Session.GetInt32("UKPRN");
             if (!sUKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
@@ -171,7 +168,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Report()
         {
-            var ukprn = _session.GetInt32("UKPRN");
+            var ukprn = Session.GetInt32("UKPRN");
             if (ukprn == null)
             {
                 throw new Exception("UKPRN is null");
@@ -197,7 +194,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> Larsless()
         {
             var larlessErrors = new Dictionary<string, string>();
-            var ukprn = _session.GetInt32("UKPRN");
+            var ukprn = Session.GetInt32("UKPRN");
             var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
 
             if (!courseMigrationReport.IsSuccess)
@@ -273,7 +270,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult MigrationReportFoProvider(string UKPRN)
         {
-            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            Session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
             return RedirectToAction("Report", "Migration");
         }
     }

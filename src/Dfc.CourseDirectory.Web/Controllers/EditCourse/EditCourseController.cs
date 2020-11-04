@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
@@ -19,43 +18,31 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
     public class EditCourseController : Controller
     {
-        private readonly ILogger<EditCourseController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
-        private readonly ICourseTextService _courseTextService;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public EditCourseController(
-            ILogger<EditCourseController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
-            IHttpContextAccessor contextAccessor,
-            ICourseService courseService, ICourseTextService courseTextService)
+            ICourseService courseService)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(courseTextService, nameof(courseTextService));
 
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
-            _courseTextService = courseTextService;
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid? courseRunId, bool fromBulkUpload, PublishMode mode)
         {
-            if (!_session.GetInt32("UKPRN").HasValue)
+            if (!Session.GetInt32("UKPRN").HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }

@@ -33,20 +33,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IAddressSearchService _addressSearchService;
         private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IVenueSearchHelper _venueSearchHelper;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;
         private readonly IOnspdSearchHelper _onspdSearchHelper;
         private readonly ICourseService _courseService;
         private readonly IApprenticeshipService _apprenticeshipService;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public VenuesController(
             ILogger<VenuesController> logger,
             IAddressSearchService addressSearchService,
             IOptions<VenueServiceSettings> venueSearchSettings,
             IVenueSearchHelper venueSearchHelper,
-            IHttpContextAccessor contextAccessor,
             IVenueService venueService,
             IOnspdSearchHelper onspdSearchHelper,
             ICourseService courseService, 
@@ -55,7 +53,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(addressSearchService, nameof(addressSearchService));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(courseService, nameof(courseService));
 
@@ -63,7 +60,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _addressSearchService = addressSearchService;
             _venueServiceSettings = venueSearchSettings.Value;
             _venueSearchHelper = venueSearchHelper;
-            _contextAccessor = contextAccessor;
             _venueService = venueService;
             _onspdSearchHelper = onspdSearchHelper;
             _courseService = courseService;
@@ -80,17 +76,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            _session.SetString("Option", "Venues");
+            Session.SetString("Option", "Venues");
             Claim providerUKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
             if (!String.IsNullOrEmpty(providerUKPRN?.Value))
             {
-                _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
+                Session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
             }
 
             int UKPRN = 0;
-            if (_session.GetInt32("UKPRN").HasValue)
+            if (Session.GetInt32("UKPRN").HasValue)
             {
-                UKPRN = _session.GetInt32("UKPRN").Value;
+                UKPRN = Session.GetInt32("UKPRN").Value;
                 return View(await GetVenues(UKPRN));
             }
             else
@@ -149,7 +145,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private async Task<VenueSearchResultsViewModel> GetVenues(VenueSearchResultItemModel deletedVenue)
         {
-            var UKPRN = _session.GetInt32("UKPRN");
+            var UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {
@@ -187,7 +183,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (!string.IsNullOrEmpty(returnUrl))
             {
-                _contextAccessor.HttpContext.Session.SetString("ADDNEWVENUERETURNURL", returnUrl);
+                Session.SetString("ADDNEWVENUERETURNURL", returnUrl);
             }
 
             //_session.SetString("IsEdit", "false");
@@ -297,7 +293,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddVenueSelectionConfirmation(AddVenueSelectionConfirmationRequestModel requestModel)
         {
-            var UKPRN = _session.GetInt32("UKPRN");
+            var UKPRN = Session.GetInt32("UKPRN");
 
             bool updated = false;
             string venueID = string.Empty;
@@ -373,35 +369,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
 
-            var returnUrl = _contextAccessor.HttpContext.Session.GetString("ADDNEWVENUERETURNURL");
+            var returnUrl = Session.GetString("ADDNEWVENUERETURNURL");
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(new Url(returnUrl).SetQueryParam("venueId", venueID));
             }
 
 
-            string option = _contextAccessor.HttpContext.Session.GetString("Option");
+            string option = Session.GetString("Option");
 
             if (option.ToUpper() == "ADDNEWVENUEFOREDIT")
             {
-                _session.SetObject("NewAddedVenue", addedVenueModel);
+                Session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("Reload", "EditCourseRun");
             }
 
             if (option.ToUpper() == "ADDNEWVENUEFORCOPY")
             {
-                _session.SetObject("NewAddedVenue", addedVenueModel);
+                Session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("Reload", "CopyCourseRun");
             }
 
             if (option.ToUpper() == "ADDNEWVENUE")
             {
-                _session.SetObject("NewAddedVenue", addedVenueModel);
+                Session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("SummaryToAddCourseRun", "AddCourse");
             }
             if(option.ToUpper() == "ADDNEWVENUEFORAPPRENTICESHIPS")
             {
-                _session.SetObject("NewAddedVenue", addedVenueModel);
+                Session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("DeliveryOptions", "Apprenticeships", new
                 {
                     message = "",
@@ -410,7 +406,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             if (option.ToUpper() == "ADDNEWVENUEFORAPPRENTICESHIPSCOMBINED")
             {
-                _session.SetObject("NewAddedVenue", addedVenueModel);
+                Session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new
                 {
                     message = "",
@@ -451,7 +447,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult CheckForVenue(string VenueName)
         {
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = Session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
@@ -468,7 +464,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> CheckForCoursesOrApprenticeships(Guid VenueId)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
             
             if (!UKPRN.HasValue)
             {
@@ -507,7 +503,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteVenue(Guid VenueId)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {

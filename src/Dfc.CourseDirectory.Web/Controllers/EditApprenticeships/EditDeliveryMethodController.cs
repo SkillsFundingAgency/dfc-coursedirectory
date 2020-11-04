@@ -22,16 +22,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
     public class EditDeliveryMethodController : Controller
     {
         private readonly ILogger<EditDeliveryMethodController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
 
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public EditDeliveryMethodController(
            ILogger<EditDeliveryMethodController> logger,
-          IHttpContextAccessor contextAccessor,
            IApprenticeshipService apprenticeshipService,
            IOptions<ApprenticeshipSettings> apprenticeshipSettings)
         {
@@ -40,11 +38,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
             Throw.IfNull(apprenticeshipSettings, nameof(apprenticeshipSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
 
             _apprenticeshipSettings = apprenticeshipSettings;
             _logger = logger;
-            _contextAccessor = contextAccessor;
 
             _apprenticeshipService = apprenticeshipService;
         }
@@ -53,7 +49,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
         [Authorize]
         public async Task<IActionResult> Index(Guid? apprenticeshipId)
         {
-            if (!_session.GetInt32("UKPRN").HasValue)
+            if (!Session.GetInt32("UKPRN").HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }

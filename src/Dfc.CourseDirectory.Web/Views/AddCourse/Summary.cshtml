@@ -5,12 +5,10 @@
 @using Dfc.CourseDirectory.Web.Views.Shared
 @using Microsoft.AspNetCore.Http
 
-@inject IHttpContextAccessor HttpContextAccessor
-
 @model AddCourseSummaryViewModel
 
 @{
-    HttpContextAccessor.HttpContext.Session.SetObject("SummaryLoadedAtLeastOnce", true);
+    Context.Session.SetObject("SummaryLoadedAtLeastOnce", true);
     ViewData["Title"] = "Check and publish to the Course directory";
     Layout = "_Layout_Your_Courses";
 

@@ -27,18 +27,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private readonly ISearchClient<Lars> _searchClient;
         private readonly LarsSearchSettings _larsSearchSettings;
-        private readonly IHttpContextAccessor _contextAccessor;
         
-        private ISession Session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public UnregulatedCoursesController(
             ISearchClient<Lars> searchClient,
-            IOptions<LarsSearchSettings> larsSearchSettings,
-            IHttpContextAccessor contextAccessor)
+            IOptions<LarsSearchSettings> larsSearchSettings)
         {
             _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
             _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
-            _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
         }
 
         [Authorize]

@@ -13,30 +13,23 @@ using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class YourCoursesController : Controller
     {
-        private readonly ILogger<YourCoursesController> _logger;
         private readonly ISession _session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
         public YourCoursesController(
-            ILogger<YourCoursesController> logger,
-            IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
 
-            _logger = logger;
-            _session = contextAccessor.HttpContext.Session;
+            _session = HttpContext.Session;
             _courseService = courseService;
             _venueService = venueService;
         }

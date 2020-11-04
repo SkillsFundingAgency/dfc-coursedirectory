@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Services.ProviderService
-@inject IHttpContextAccessor HttpContextAccessor
 @inject IAuthorizationService Authorization
 @inject IProviderService providerService
 
@@ -22,7 +21,7 @@
                     ViewContext.RouteData.Values.Add("Action", "");
                     ViewContext.RouteData.Values.Add("Controller", "");
                 }
-                var Option = HttpContextAccessor.HttpContext.Session.GetString("Option");
+                var Option = Context.Session.GetString("Option");
             }
 
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
@@ -41,7 +40,7 @@
                             var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
 
                             var providerName = "";
-                            var ukPRN = HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN");
+                            var ukPRN = Context.Session.GetInt32("UKPRN");
                             if (ukPRN != null)
                             {
                                 var providerSearchResult = await providerService.GetProviderByPRNAsync(ukPRN.ToString());
@@ -99,7 +98,7 @@
                                 </a>
 
                             }
-                            var pendingCourses = HttpContextAccessor.HttpContext.Session.GetString("PendingCourses");
+                            var pendingCourses = Context.Session.GetString("PendingCourses");
 
                             if (pendingCourses == "true")
                             {

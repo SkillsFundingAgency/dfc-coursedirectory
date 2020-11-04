@@ -23,25 +23,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ProviderApprenticeshipsController : Controller
     {
         private readonly ILogger<ProviderApprenticeshipsController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
         public ProviderApprenticeshipsController(
             ILogger<ProviderApprenticeshipsController> logger,
-            IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService,
+            ICourseService courseService, IVenueService venueService,
             IApprenticeshipService apprenticeshipService)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
             _apprenticeshipService = apprenticeshipService;
@@ -50,7 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Index(Guid? apprenticeshipId, string message)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {
@@ -88,7 +85,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             ProviderApprenticeshipsSearchResultModel model = new ProviderApprenticeshipsSearchResultModel();
             
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
             var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
 
 

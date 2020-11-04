@@ -31,14 +31,13 @@
         BackLink = false,
     });
 }
-@inject IHttpContextAccessor HttpContextAccessor
 
 @model AddCourseDetailsViewModel
 
 
 
 @{
-    var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
+    var newVenueObject = Context.Session.GetObject<AddedVenueModel>("NewAddedVenue");
     if (newVenueObject != null)
     {
         string message = "";

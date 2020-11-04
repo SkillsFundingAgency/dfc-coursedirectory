@@ -7,7 +7,6 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @inject IAuthorizationService Authorization
-@inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
 @{
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel

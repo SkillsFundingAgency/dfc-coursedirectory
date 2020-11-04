@@ -13,30 +13,22 @@ using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 {
     public class PublishCoursesController : Controller
     {
-        private readonly ILogger<PublishCoursesController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
         public PublishCoursesController(
-            ILogger<PublishCoursesController> logger,
-            IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService)
         {
-            Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             
-            _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
         }
@@ -45,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         [HttpGet]
         public async Task<IActionResult> Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId, bool fromBulkUpload)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
             
             if (!UKPRN.HasValue)
             {
@@ -166,7 +158,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel();
 
-            int? sUKPRN = _session.GetInt32("UKPRN");
+            int? sUKPRN = Session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });

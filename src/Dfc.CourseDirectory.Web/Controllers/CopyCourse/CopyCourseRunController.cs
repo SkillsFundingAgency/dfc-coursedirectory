@@ -31,18 +31,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private const string CopyCourseRunPublishedCourseSessionKey = "CopyCourseRunPublishedCourse";
 
         private readonly ILogger<CopyCourseRunController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession _session => HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
 
         public CopyCourseRunController(
             ILogger<CopyCourseRunController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
-            IHttpContextAccessor contextAccessor,
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
             IVenueService venueService,
@@ -50,12 +48,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _htmlEncoder = htmlEncoder;
             _courseService = courseService;
             _venueService = venueService;

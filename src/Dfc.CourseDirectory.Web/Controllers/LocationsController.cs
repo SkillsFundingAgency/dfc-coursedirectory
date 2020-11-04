@@ -2,7 +2,6 @@
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -14,52 +13,31 @@ using Dfc.CourseDirectory.Web.ViewModels.Locations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class LocationsController : Controller
     {
-        private readonly ILogger<LocationsController> _logger;
-        private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IVenueSearchHelper _venueSearchHelper;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;
-        private readonly IOnspdSearchHelper _onspdSearchHelper;
-        private readonly ICourseService _courseService;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession Session => HttpContext.Session;
 
         public LocationsController(
-            ILogger<LocationsController> logger,
-            IOptions<VenueServiceSettings> venueSearchSettings,
             IVenueSearchHelper venueSearchHelper,
-            IHttpContextAccessor contextAccessor,
-            IVenueService venueService,
-            IOnspdSearchHelper onspdSearchHelper,
-            ICourseService courseService)
+            IVenueService venueService)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(courseService, nameof(courseService));
 
-            _logger = logger;
-            _venueServiceSettings = venueSearchSettings.Value;
             _venueSearchHelper = venueSearchHelper;
-            _contextAccessor = contextAccessor;
             _venueService = venueService;
-            _onspdSearchHelper = onspdSearchHelper;
-            _courseService = courseService;
         }
 
         [Authorize]
         [HttpGet]
         public IActionResult DeleteLocation(Guid VenueId)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {
@@ -85,7 +63,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (locationDeleteViewModel.LocationDelete == LocationDelete.Delete)
             {
-                int? UKPRN = _session.GetInt32("UKPRN");
+                int? UKPRN = Session.GetInt32("UKPRN");
 
                 if (!UKPRN.HasValue)
                 {

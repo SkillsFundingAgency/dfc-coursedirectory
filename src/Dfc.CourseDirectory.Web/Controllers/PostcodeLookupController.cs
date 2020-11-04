@@ -16,18 +16,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<PostcodeLookupController> _logger;
         private readonly IAddressSearchService _addressSearchService;
         private readonly IVenueService _venueService;
-        private readonly ISession _session;
+        private ISession Session => HttpContext.Session;
 
         public PostcodeLookupController(
             ILogger<PostcodeLookupController> logger,
             IAddressSearchService addressSearchService,
-            IVenueService venueService,
-            IHttpContextAccessor contextAccessor)
+            IVenueService venueService)
         {
             _logger = logger;
             _addressSearchService = addressSearchService;
             _venueService = venueService;
-            _session = contextAccessor.HttpContext.Session;
         }
         [Authorize]
         public async Task<IActionResult> Index(string postcode, string venuename, string id)

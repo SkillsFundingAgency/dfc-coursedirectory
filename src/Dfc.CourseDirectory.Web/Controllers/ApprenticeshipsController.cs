@@ -34,8 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ApprenticeshipsController : Controller
     {
         private readonly ILogger<ApprenticeshipsController> _logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private ISession _session => _contextAccessor.HttpContext.Session;
+        private ISession _session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IApprenticeshipService _apprenticeshipService;
@@ -44,12 +43,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
-            IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService
+            ICourseService courseService, IVenueService venueService
             , IApprenticeshipService apprenticeshipService,
             IProviderService providerService, IOptions<ApprenticeshipSettings> apprenticeshipSettings)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
@@ -58,7 +56,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _apprenticeshipSettings = apprenticeshipSettings;
             _logger = logger;
-            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
             _apprenticeshipService = apprenticeshipService;
