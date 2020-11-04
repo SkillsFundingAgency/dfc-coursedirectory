@@ -37,24 +37,19 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
 
             try
             {
-                _logger.LogInformationObject("Course Text Criteria", criteria);
-                _logger.LogInformationObject("Course Text URI", _getYourCourseTextUri);
-
                 if (criteria.LARSRef == "")
                     return Result.Fail<CourseText>("Blank LARS Ref");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "?LARS=" + criteria.LARSRef));
-                _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get your courses service json response", json);
                     var courseText = JsonConvert.DeserializeObject<CourseText>(json);
 
-                    return Result.Ok<CourseText>(courseText);
+                    return Result.Ok(courseText);
                 }
                 else
                 {

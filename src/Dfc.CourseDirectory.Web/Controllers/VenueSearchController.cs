@@ -54,8 +54,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             VenueSearchResultModel model;
 
-            _logger.LogInformationObject("Model", requestModel);
-
             if (requestModel == null)
             {
                 model = new VenueSearchResultModel();

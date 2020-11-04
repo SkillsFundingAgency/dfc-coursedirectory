@@ -46,15 +46,10 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
             try
             {
-                _logger.LogInformationObject("Provider search criteria.", prn);
-                _logger.LogInformationObject("Provider search URI", _getProviderByPRNUri);
-
                 // dependency injection not working for _httpClient when this is called from async code so use our own local version
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await httpClient.GetAsync($"{_getProviderByPRNUri}?PRN={prn}");
-
-                _logger.LogHttpResponseMessage("Provider search service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -62,8 +57,6 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
                     if (!json.StartsWith("["))
                         json = "[" + json + "]";
-
-                    _logger.LogInformationObject("Provider search service json response", json);
 
                     var providers = JsonConvert.DeserializeObject<IEnumerable<Provider>>(json);
 
@@ -93,26 +86,17 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
             try
             {
-                _logger.LogInformationObject("Provider add object.", provider);
-                _logger.LogInformationObject("Provider add URI", _updateProviderByIdUri);
-
                 var providerJson = JsonConvert.SerializeObject(provider);
 
                 var content = new StringContent(providerJson, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateProviderByIdUri, content);
 
-                _logger.LogHttpResponseMessage("Provider add service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Provider add service json response", json);
-
-
                     var providerResult = JsonConvert.DeserializeObject<Provider>(json);
-
 
                     return Result.Ok(providerResult);
                 }
@@ -140,28 +124,16 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
             try
             {
-                _logger.LogInformationObject("Provider add object.", provider);
-                _logger.LogInformationObject("Provider add URI", _updateProviderDetailsUri);
-
                 var providerJson = JsonConvert.SerializeObject(provider);
 
                 var content = new StringContent(providerJson, Encoding.UTF8, "application/json");
-                // threading vs DI issues
+
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await httpClient.PostAsync(_updateProviderDetailsUri, content);
 
-                _logger.LogHttpResponseMessage("Provider update service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
-                    // NOTE: There is no response content payload returned from this api - why? - don't know.
-                    // Therefore commenting this bit out as it will/does cause an exception down stream.
-                    //var json = await response.Content.ReadAsStringAsync();
-
-                    //_logger.LogInformationObject("Provider update service json response", json);
-
-                    // NOTE: deserialising the "providerJson" var set earlier to allow code down stream to run.
                     var providerResult = JsonConvert.DeserializeObject<Provider>(providerJson);
 
                     return Result.Ok();

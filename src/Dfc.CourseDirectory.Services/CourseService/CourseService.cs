@@ -134,21 +134,14 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Get Course By Id criteria.", criteria);
-                _logger.LogInformationObject("Get Course By Id URI", _getCourseByIdUri);
-
                 var content = new StringContent(ToJson(criteria), Encoding.UTF8, "application/json");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "?id=" + criteria.Id));
 
-                _logger.LogHttpResponseMessage("Get Course By Id service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Get Course By Id service json response", json);
 
                     var course = JsonConvert.DeserializeObject<Course>(json);
 
@@ -180,9 +173,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Get your courses criteria", criteria);
-                _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
-
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<CourseSearchResult>("Get your courses unknown UKRLP");
 
@@ -191,7 +181,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 httpClient.Timeout = new TimeSpan(0, 10, 0);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-                _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -200,11 +189,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     if (!json.StartsWith("["))
                         json = "[" + json + "]";
 
-                    _logger.LogInformationObject("Get your courses service json response", json);
-                    IEnumerable<IEnumerable<IEnumerable<Course>>> courses = JsonConvert.DeserializeObject<IEnumerable<IEnumerable<IEnumerable<Course>>>>(json);
+                    var courses = JsonConvert.DeserializeObject<IEnumerable<IEnumerable<IEnumerable<Course>>>>(json);
 
                     CourseSearchResult searchResult = new CourseSearchResult(courses);
-                    return Result.Ok<CourseSearchResult>(searchResult);
+                    return Result.Ok(searchResult);
                 }
                 else
                 {
@@ -230,16 +218,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Get your courses criteria", criteria);
-                _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
-
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<CourseSearchResult>("Get your courses unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
-                _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -248,11 +231,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     if (!json.StartsWith("["))
                         json = "[" + json + "]";
 
-                    _logger.LogInformationObject("Get your courses service json response", json);
-                    IEnumerable<IEnumerable<IEnumerable<Course>>> courses = JsonConvert.DeserializeObject<IEnumerable<IEnumerable<IEnumerable<Course>>>>(json);
+                    var courses = JsonConvert.DeserializeObject<IEnumerable<IEnumerable<IEnumerable<Course>>>>(json);
                     var searchResult = new CourseSearchResult(courses);
 
-                    return Result.Ok<CourseSearchResult>(searchResult);
+                    return Result.Ok(searchResult);
                 }
                 else
                 {
@@ -278,16 +260,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Get course counts criteria", criteria);
-                _logger.LogInformationObject("Get course counts URI", _getCourseCountsByStatusForUKPRNUri);
-
                 if (!criteria.UKPRN.HasValue)
+                {
                     return Result.Fail<IEnumerable<CourseStatusCountResult>>("Get course counts unknown UKRLP");
+                }
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
-                _logger.LogHttpResponseMessage("Get course counts service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -296,10 +275,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     if (!json.StartsWith("["))
                         json = "[" + json + "]";
 
-                    _logger.LogInformationObject("Get course counts service json response", json);
-                    IEnumerable<CourseStatusCountResult> counts = JsonConvert.DeserializeObject<IEnumerable<CourseStatusCountResult>>(json);
+                    var counts = JsonConvert.DeserializeObject<IEnumerable<CourseStatusCountResult>>(json);
 
-                    return Result.Ok<IEnumerable<CourseStatusCountResult>>(counts);
+                    return Result.Ok(counts);
                 }
                 else
                 {
@@ -325,16 +303,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Get recent course changes criteria", criteria);
-                _logger.LogInformationObject("Get recent course changes URI", _getRecentCourseChangesByUKPRNUri);
-
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<IEnumerable<Course>>("Get recent course changes unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
-                _logger.LogHttpResponseMessage("Get recent course changes service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -343,10 +316,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     if (!json.StartsWith("["))
                         json = "[" + json + "]";
 
-                    _logger.LogInformationObject("Get recent course changes service json response", json);
-                    IEnumerable<Course> courses = JsonConvert.DeserializeObject<IEnumerable<Course>>(json);
+                    var courses = JsonConvert.DeserializeObject<IEnumerable<Course>>(json);
 
-                    return Result.Ok<IEnumerable<Course>>(courses);
+                    return Result.Ok(courses);
                 }
                 else
                 {
@@ -409,26 +381,19 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Course add object.", course);
-                _logger.LogInformationObject("Course add URI", _addCourseUri);
-
                 var courseJson = JsonConvert.SerializeObject(course);
 
                 var content = new StringContent(courseJson, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_addCourseUri, content);
 
-                _logger.LogHttpResponseMessage("Course add service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Course add service json response", json);
-
                     var courseResult = JsonConvert.DeserializeObject<Course>(json);
 
-                    return Result.Ok<Course>(courseResult);
+                    return Result.Ok(courseResult);
                 }
                 else if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
@@ -458,26 +423,19 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Course update object.", course);
-                _logger.LogInformationObject("Course update URI", _updateCourseUri);
-
                 var courseJson = JsonConvert.SerializeObject(course);
 
                 var content = new StringContent(courseJson, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateCourseUri, content);
 
-                _logger.LogHttpResponseMessage("Course update service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Course update service json response", json);
-
                     var courseResult = JsonConvert.DeserializeObject<Course>(json);
 
-                    return Result.Ok<Course>(courseResult);
+                    return Result.Ok(courseResult);
                 }
                 else
                 {
@@ -794,7 +752,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "?UKPRN=" + UKPRN));
-            _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -816,9 +773,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
 
-            //_httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await httpClient.GetAsync(new Uri(_changeCourseRunStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
-            _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -838,9 +793,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
 
-            //_httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await httpClient.GetAsync(new Uri(_archiveCourseRunsByUKPRNUri.AbsoluteUri + "?UKPRN=" + UKPRN));
-            _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -859,11 +812,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfGreaterThan(Enum.GetValues(typeof(RecordStatus)).Cast<int>().Max(), statusToUpdateTo, nameof(statusToUpdateTo));
 
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
             var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
                 + "?CourseId=" + courseId
                 + "&CourseRunId=" + courseRunId
                 + "&Status=" + statusToUpdateTo));
-            _logger.LogHttpResponseMessage("Update Status http response", response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -885,7 +838,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
                     + "?UKPRN=" + UKPRN));
-                _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -908,19 +860,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             try
             {
-                _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
-
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "?UKPRN=" + UKPRN));
-                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get course migration report service json response", json);
-                    CourseMigrationReport courseMigrationReport = JsonConvert.DeserializeObject<CourseMigrationReport>(json);
-                    return Result.Ok<CourseMigrationReport>(courseMigrationReport);
+                    var courseMigrationReport = JsonConvert.DeserializeObject<CourseMigrationReport>(json);
+                    return Result.Ok(courseMigrationReport);
                 }
                 else
                 {
@@ -943,19 +891,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             try
             {
-                _logger.LogInformationObject("Get all dfc reports URI", _getAllDfcReports);
-
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getAllDfcReports.AbsoluteUri));
-                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get All Dfc migration reports service json response", json);
                     IList<DfcMigrationReport> dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
-                    return Result.Ok<IList<DfcMigrationReport>>(dfcReports);
+                    return Result.Ok(dfcReports);
                 }
                 else
                 {
@@ -981,7 +925,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
 
                 var response = await httpClient.GetAsync(_getTotalLiveCoursesUri);
-                _logger.LogHttpResponseMessage("GetTotalLiveCourses service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -1007,7 +950,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
          
             var response = await httpClient.GetAsync(new Uri(_archiveCoursesExceptBulkUploadReadytoGoLiveUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
-            _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
             {

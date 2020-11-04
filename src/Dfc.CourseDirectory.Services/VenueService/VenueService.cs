@@ -17,8 +17,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
         private readonly VenueServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getVenueByIdUri;
-        private readonly Uri _getVenueByVenueIdUri;
-        private readonly Uri _getVenueByLocationIdUri;
         private readonly Uri _getVenueByPRNAndNameUri;
         private readonly Uri _updateVenueUri;
         private readonly Uri _searchVenueUri;
@@ -39,8 +37,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
 
             _getVenueByIdUri = settings.Value.ToGetVenueByIdUri();
-            _getVenueByVenueIdUri = settings.Value.ToGetVenueByVenueIdUri();
-            _getVenueByLocationIdUri = settings.Value.ToGetVenueByLocationIdUri();
             _getVenueByPRNAndNameUri = settings.Value.ToGetVenuesByPRNAndNameUri();
             _updateVenueUri = settings.Value.ToUpdateVenueUrl();
             _searchVenueUri = settings.Value.ToSearchVenueUri();
@@ -53,25 +49,18 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             try
             {
-                _logger.LogInformationObject("Venue update object.", venue);
-                _logger.LogInformationObject("Venue update URI", _updateVenueUri);
-
                 var venueJson = JsonConvert.SerializeObject(venue);
 
                 var content = new StringContent(venueJson, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(_updateVenueUri, content);
 
-                _logger.LogHttpResponseMessage("Venue add service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Venue update service json response", json);
-
                     var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<Venue>(venueResult);
+                    return Result.Ok(venueResult);
                 }
                 else
                 {
@@ -98,18 +87,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             try
             {
-                _logger.LogInformationObject("Get Venue By Id criteria.", criteria);
-                _logger.LogInformationObject("Get Venue By Id URI", _getVenueByIdUri);
-
                 var response = await _httpClient.GetAsync(_getVenueByIdUri.AbsoluteUri + $"?id={criteria.Id}");
-
-                _logger.LogHttpResponseMessage("Get Venue By Id service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Get Venue By Id service json response", json);
 
                     var settings = new JsonSerializerSettings
                     {
@@ -118,7 +100,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
 
-                    return Result.Ok<Venue>(venue);
+                    return Result.Ok(venue);
                 }
                 else
                 {
@@ -145,16 +127,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             try
             {
-                _logger.LogInformationObject("Get Venue By PRN & Name criteria.", criteria);
-                _logger.LogInformationObject("Get Venue By PRN & Name URI", _getVenueByPRNAndNameUri);
+                var response = await _httpClient.GetAsync(_getVenueByPRNAndNameUri + $"?prn={criteria.PRN}&name={criteria.Name}");
 
-                HttpResponseMessage response = await _httpClient.GetAsync(_getVenueByPRNAndNameUri + $"?prn={criteria.PRN}&name={criteria.Name}");
-
-                _logger.LogHttpResponseMessage("Get Venue By PRN and Name service http response", response);
                 if (response.IsSuccessStatusCode)
                 {
                     string json = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformationObject("Venue search service json response", json);
 
                     if (string.IsNullOrEmpty(json))
                         json = "[]";
@@ -164,7 +141,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
                     IEnumerable<Venue> venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings);
-                    return Result.Ok<VenueSearchResult>(new VenueSearchResult(venues));
+                    return Result.Ok(new VenueSearchResult(venues));
 
                 }
                 else
@@ -177,13 +154,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
             {
                 _logger.LogException("Get Venue By PRN and Name service http request error", hre);
                 return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service http request error.");
-
             }
             catch (Exception e)
             {
                 _logger.LogException("Get Venue By PRN and Name service unknown error.", e);
                 return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service unknown error.");
-
             }
         }
 
@@ -193,21 +168,16 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             try
             {
-                _logger.LogInformationObject("Venue search criteria.", criteria);
-                _logger.LogInformationObject("Venue search URI", _searchVenueUri);
-
                 var response = await _httpClient.GetAsync(_searchVenueUri + $"?prn={criteria.Search}");
 
-                _logger.LogHttpResponseMessage("Venue search service http response", response);
-
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound || response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                    return Result.Ok<VenueSearchResult>(new VenueSearchResult(new List<Venue>()));
+                {
+                    return Result.Ok(new VenueSearchResult(new List<Venue>()));
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Venue search service json response", json);
 
                     var settings = new JsonSerializerSettings
                     {
@@ -215,7 +185,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     };
                     var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
 
-                    if (!String.IsNullOrEmpty(criteria.NewAddressId))
+                    if (!string.IsNullOrEmpty(criteria.NewAddressId))
                     {
                         var newVenueIndex = venues.FindIndex(x => x.ID == criteria.NewAddressId);
                         var newVenueItem = venues[newVenueIndex];
@@ -224,9 +194,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                         venues.Insert(0, newVenueItem);
                     }
 
-                    var searchResult = new VenueSearchResult(venues);
-                    return Result.Ok<VenueSearchResult>(searchResult);
-
+                    return Result.Ok(new VenueSearchResult(venues));
                 }
                 else
                 {
@@ -253,26 +221,19 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             try
             {
-                _logger.LogInformationObject("Venue add object.", venue);
-                _logger.LogInformationObject("Venue search URI", _addVenueUri);
-
                 var venueJson = JsonConvert.SerializeObject(venue);
 
                 var content = new StringContent(venueJson, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync(_addVenueUri, content);
 
-                _logger.LogHttpResponseMessage("Venue add service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Venue add service json response", json);
-
                     var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<Venue>(venueResult);
+                    return Result.Ok(venueResult);
                 }
                 else
                 {
