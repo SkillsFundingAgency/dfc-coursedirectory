@@ -1,14 +1,14 @@
-﻿@{
-    ViewData["Title"] = "Contact the help desk"; 
-    Layout = "_Layout_Your_Courses";
+﻿@addTagHelper *, GovUk.Frontend.AspNetCore
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Contact the help desk";
 }
-<div class="content-container">
-    <div class="govuk-grid-row" data-sf-element="Row">
-        <span class="govuk-caption-xl">Course directory</span>
-        <h1 class="govuk-heading-l">Contact the help desk</h1>
-        <br />
-        <h3 class="govuk-heading-m">Please call the Help Desk </h3>
-        
-        <button class="govuk-button" onclick="location.href = '@Url.Action("Index", "Home")';return false;">Continue</button>
-    </div>
+
+<div class="govuk-grid-row">
+    <span class="govuk-caption-xl">Course directory</span>
+    <h1 class="govuk-heading-l">Contact the help desk</h1>
+    
+    <h3 class="govuk-heading-m">Please call the Help Desk </h3>
+
+    <govuk-button asp-controller="Home" asp-action="Index">Continue</govuk-button>
 </div>
