@@ -1,47 +1,23 @@
-﻿@using Dfc.CourseDirectory.Services.Enums
-@using Dfc.CourseDirectory.Web.Helpers
+﻿@addTagHelper *, GovUk.Frontend.AspNetCore
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.DeleteFileViewModel
 @{
-    ViewData["Title"] = "Delete this file"; 
-    Layout = "_Layout_Your_Courses";
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Delete this file";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.DeleteFileViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-controller="BulkUpload" asp-action="DeleteFile">
+            <span class="govuk-caption-xl">Course Directory</span>
+            <h1 class="govuk-heading-l">Delete this file</h1>
 
+            <p class="govuk-body govuk-!-margin-bottom-4">
+                The courses in this file will not be published to the Course directory.<br />
+                You can upload another file at any time.
+            </p>
 
-<div class="content-container">
-    <div class="govuk-grid-row" data-sf-element="Row">
-        <div class="govuk-grid-column-two-thirds">
-
-            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkUpload" asp-action="DeleteFile" method="post">
-                <span class="govuk-caption-xl">Course Directory</span>
-                <h1 class="govuk-heading-l">Delete this file</h1>
-
-                <p class="govuk-body govuk-!-padding-bottom-4">
-                    The courses in this file will not be published to the Course directory.<br />You can upload another file at any time.
-                </p>
-
-                <ul class="flex-container">
-                    <li class="flex-item">
-                        <button type="submit" class="govuk-button" id="next">Continue</button>
-                    </li>
-                    <li class="flex-item" style="padding-top: 15px">
-                        <a class="govuk-link" asp-controller="BulkUpload" asp-action="WhatDoYouWantToDoNext">Cancel</a>
-                    </li>
-                </ul>
-             
-            </form>
-        </div>
+            <govuk-button type="submit">Continue</govuk-button>
+            <govuk-button asp-controller="BulkUpload" asp-action="WhatDoYouWantToDoNext" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
     </div>
 </div>
-
-<script>
-    (function ($) {
-        $(function () {
-           
-
-        });
-    })(jQuery);
-</script>
-
-
-
