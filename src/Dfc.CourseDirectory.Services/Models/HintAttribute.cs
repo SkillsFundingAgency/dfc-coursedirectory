@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.Services.Enums
+namespace Dfc.CourseDirectory.Services.Models
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class HintAttribute : Attribute

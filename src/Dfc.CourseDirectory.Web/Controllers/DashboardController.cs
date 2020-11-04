@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;

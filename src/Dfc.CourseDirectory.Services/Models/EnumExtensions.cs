@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.Services.Enums
+namespace Dfc.CourseDirectory.Services.Models
 {
     public static class EnumExtensions
     {

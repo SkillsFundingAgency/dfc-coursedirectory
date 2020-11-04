@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;

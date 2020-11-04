@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Dfc.CourseDirectory.Services.Enums
+namespace Dfc.CourseDirectory.Services.Models
 {
     public enum ApprenticeShipPreviousPage
     {

@@ -9,14 +9,13 @@ using CsvHelper;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Options;
-using static Dfc.CourseDirectory.Services.Enums.AlternativeName;
+using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {

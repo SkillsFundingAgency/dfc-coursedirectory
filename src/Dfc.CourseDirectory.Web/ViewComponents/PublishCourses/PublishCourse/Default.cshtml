@@ -1,5 +1,5 @@
 ﻿@using System.Text.RegularExpressions
-@using Dfc.CourseDirectory.Services.Enums
+@using Dfc.CourseDirectory.Services.Models
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Services.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
@@ -149,7 +149,7 @@
 
                         @if (adminLogin.Succeeded)
                         {
-                            @if (Model.PublishMode == Dfc.CourseDirectory.Services.Enums.PublishMode.Migration)
+                            @if (Model.PublishMode == Dfc.CourseDirectory.Services.Models.PublishMode.Migration)
                             {
                                 <a asp-action="DeleteCourseRun" asp-controller="Migration"
                                    asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>

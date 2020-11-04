@@ -12,7 +12,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Models.Courses;

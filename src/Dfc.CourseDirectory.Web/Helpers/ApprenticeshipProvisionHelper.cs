@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.ProviderService;

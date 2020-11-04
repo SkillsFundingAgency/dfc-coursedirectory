@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using static Dfc.CourseDirectory.Services.Enums.AlternativeName;
+using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 
 namespace Dfc.CourseDirectory.Services.Models.Courses
 {

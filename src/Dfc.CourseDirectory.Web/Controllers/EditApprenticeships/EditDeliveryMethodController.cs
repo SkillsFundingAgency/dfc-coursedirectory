@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                     apprenticeshipForEdit.Value.BulkUploadErrors = new List<BulkUploadError> { };
                     if (apprenticeshipForEdit.Value.BulkUploadErrors.Count() == 0)
                     {
-                        apprenticeshipForEdit.Value.RecordStatus = Services.Enums.RecordStatus.BulkUploadReadyToGoLive;
+                        apprenticeshipForEdit.Value.RecordStatus = Services.Models.RecordStatus.BulkUploadReadyToGoLive;
                     }
                     var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit.Value);
                 }

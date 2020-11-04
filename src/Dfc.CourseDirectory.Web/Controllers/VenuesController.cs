@@ -5,7 +5,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
@@ -497,15 +497,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
-            var liveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.Live && x.VenueId == VenueId).ToList();
+            var liveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.Live && x.VenueId == VenueId).ToList();
 
-            var migrationPendingCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
+            var migrationPendingCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
 
-            var bulkUploadPendingCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.BulkUploadPending && x.VenueId == VenueId).ToList();
+            var bulkUploadPendingCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.BulkUploadPending && x.VenueId == VenueId).ToList();
 
-            var migrationReadyForLiveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
+            var migrationReadyForLiveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
 
-            var bulkUploadReadyForLiveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Enums.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
+            var bulkUploadReadyForLiveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
 
             var model = new DeleteVenueCheckViewModel()
             {

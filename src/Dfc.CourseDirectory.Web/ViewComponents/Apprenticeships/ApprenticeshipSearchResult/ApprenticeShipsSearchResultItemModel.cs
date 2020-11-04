@@ -1,5 +1,5 @@
 ﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 using System;

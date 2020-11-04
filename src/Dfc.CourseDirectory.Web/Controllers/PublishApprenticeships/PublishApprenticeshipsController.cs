@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;

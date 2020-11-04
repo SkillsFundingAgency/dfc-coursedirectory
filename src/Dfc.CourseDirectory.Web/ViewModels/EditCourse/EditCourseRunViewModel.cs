@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -11,7 +9,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 {
     public class EditCourseRunViewModel
     {
-
         public string LearnAimRef { get; set; }
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTitle { get; set; }
@@ -35,17 +32,11 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public AttendancePattern AttendanceMode { get; set; }
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-
         public string QualificationType { get; set; }
-
         public bool FlexibleStartDate { get; set; }
-
         public PublishMode Mode { get; set; }
-
         public string NotionalNVQLevelv2 { get; set; }
-
         public DateTime? CurrentCourseRunDate { get; set; }
-
         public DateTime ValPastDateRef { get; set; }
         public string ValPastDateMessage { get; set; }
     }

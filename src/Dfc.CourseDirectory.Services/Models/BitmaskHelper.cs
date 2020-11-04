@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Services.Models
+﻿namespace Dfc.CourseDirectory.Services.Models
 {
     public class BitmaskHelper
     {

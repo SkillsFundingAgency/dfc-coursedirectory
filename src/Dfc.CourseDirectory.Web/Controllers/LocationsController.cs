@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
