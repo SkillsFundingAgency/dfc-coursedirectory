@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class YourCoursesController : Controller
     {
-        private readonly ISession _session;
+        private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
@@ -29,7 +29,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
 
-            _session = HttpContext.Session;
             _courseService = courseService;
             _venueService = venueService;
         }
@@ -106,7 +105,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string notificationTitle, 
             string notificationMessage)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
             {
