@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class ProviderController : Controller
     {
-        private readonly ISession _session;
+        private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IProviderService _providerService;
@@ -42,7 +42,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(providerService, nameof(providerService));
 
-            _session = HttpContext.Session;
             _courseService = courseService;
             _venueService = venueService;
             _providerService = providerService;
@@ -54,7 +53,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new ProviderTypeAddOrEditViewModel();
 
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
 
@@ -75,7 +74,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             [FromServices] IProviderInfoCache providerInfoCache,
             [FromServices] ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
 
@@ -128,8 +127,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string notificationMessage)
         {
 
-            _session.SetString("Option", "Courses");
-            int? UKPRN = _session.GetInt32("UKPRN");
+            Session.SetString("Option", "Courses");
+            int? UKPRN = Session.GetInt32("UKPRN");
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
             var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
