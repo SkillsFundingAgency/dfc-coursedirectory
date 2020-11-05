@@ -15,7 +15,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

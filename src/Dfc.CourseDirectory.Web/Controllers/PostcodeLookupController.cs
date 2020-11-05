@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
-using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

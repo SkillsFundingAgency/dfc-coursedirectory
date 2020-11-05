@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
 using JustEat.HttpClientInterception;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
 {
     public class LoqateAddressSearchServiceTests
     {
@@ -36,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var httpClient = options.CreateHttpClient();
 
-            var service = new AddressSearchService(httpClient, new Options() { Key = "key" });
+            var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
             // Act
             var result = await service.SearchByPostcode("CV1 2AA");
@@ -87,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var httpClient = options.CreateHttpClient();
 
-            var service = new AddressSearchService(httpClient, new Options() { Key = "key" });
+            var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
             // Act & Assert
             var ex = await Assert.ThrowsAsync<LoqateErrorException>(() => service.SearchByPostcode("CV1 2AA"));
@@ -153,7 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var httpClient = options.CreateHttpClient();
 
-            var service = new AddressSearchService(httpClient, new Options() { Key = "key" });
+            var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
             // Act
             var result = await service.GetById("123456.0");
@@ -200,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var httpClient = options.CreateHttpClient();
 
-            var service = new AddressSearchService(httpClient, new Options() { Key = "key" });
+            var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
             // Act
             var result = await service.GetById("123456.0");
@@ -239,7 +237,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var httpClient = options.CreateHttpClient();
 
-            var service = new AddressSearchService(httpClient, new Options() { Key = "key" });
+            var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
             // Act & Assert
             var ex = await Assert.ThrowsAsync<LoqateErrorException>(() => service.GetById("123546.0"));

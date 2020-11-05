@@ -7,9 +7,9 @@ using Flurl;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
+namespace Dfc.CourseDirectory.WebV2.AddressSearch
 {
-    public class AddressSearchService : IAddressSearchService
+    public class LoqateAddressSearchService : IAddressSearchService
     {
         private const string FindByPostcodeBaseUrl = "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws";
         private const string RetrieveByIdBaseUrl = "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/RetrieveById/v1.30/json3.ws";
@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.LoqateAddressSearch
         private readonly HttpClient _httpClient;
         private readonly Options _options;
 
-        public AddressSearchService(HttpClient httpClient, Options options)
+        public LoqateAddressSearchService(HttpClient httpClient, Options options)
         {
             _httpClient = httpClient;
             _options = options;
