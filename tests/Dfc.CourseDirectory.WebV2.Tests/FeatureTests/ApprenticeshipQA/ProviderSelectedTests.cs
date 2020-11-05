@@ -99,7 +99,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA - Course Directory", doc.Title);
             Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
 
             var firstApp = doc.GetAllElementsByTestId("apprenticeship-assessment").First();
