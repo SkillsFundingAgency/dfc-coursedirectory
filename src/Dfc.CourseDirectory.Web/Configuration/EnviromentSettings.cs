@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Services.Models.Environment
+﻿namespace Dfc.CourseDirectory.Web.Configuration
 {
     public class EnvironmentSettings
     {
