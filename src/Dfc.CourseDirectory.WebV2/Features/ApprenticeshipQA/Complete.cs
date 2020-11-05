@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -60,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
 
             if (provider == null)
             {
-                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
+                throw new InvalidStateException(InvalidStateReason.ProviderDoesNotExist);
             }
 
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
@@ -72,14 +71,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             if (maybeLatestSubmission.Value is None)
             {
                 // Belt & braces - should never happen
-                throw new ErrorException<InvalidSubmission>(new InvalidSubmission());
+                throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission);
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
 
             if (!latestSubmission.Passed.HasValue)
             {
-                throw new ErrorException<InvalidSubmission>(new InvalidSubmission());
+                throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission);
             }
 
             var newStatus = latestSubmission.Passed.Value ?

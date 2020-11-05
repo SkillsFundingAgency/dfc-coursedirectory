@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using FormFlow;
@@ -91,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             if (maybeLatestSubmission.Value is None)
             {
-                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
+                throw new InvalidStateException(InvalidStateReason.NoValidApprenticeshipQASubmission);
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
@@ -241,7 +240,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         {
             if (!_formFlowInstance.State.GotAssessmentOutcome)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var vm = new ConfirmationViewModel()
@@ -263,7 +262,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         {
             if (!_formFlowInstance.State.GotAssessmentOutcome)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var currentUserId = _currentUserProvider.GetCurrentUser().UserId;

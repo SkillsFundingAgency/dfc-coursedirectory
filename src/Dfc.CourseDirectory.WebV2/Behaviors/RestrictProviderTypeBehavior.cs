@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors
@@ -28,12 +27,12 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
 
             if (providerInfo == null)
             {
-                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
+                throw new InvalidStateException(InvalidStateReason.ProviderDoesNotExist);
             }
 
             if (!providerInfo.ProviderType.HasFlag(_descriptor.ProviderType))
             {
-                throw new ErrorException<InvalidProviderType>(new InvalidProviderType());
+                throw new InvalidStateException(InvalidStateReason.InvalidProviderType);
             }
 
             return await next();

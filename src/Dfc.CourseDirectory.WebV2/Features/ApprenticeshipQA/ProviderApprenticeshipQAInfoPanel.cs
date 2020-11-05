@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -59,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
 
             if (provider == null)
             {
-                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
+                throw new InvalidStateException(InvalidStateReason.ProviderDoesNotExist);
             }
 
             var lastSubmission = await _sqlQueryDispatcher.ExecuteQuery(

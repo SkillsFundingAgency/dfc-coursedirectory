@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -87,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (!maybeProviderId.HasValue)
             {
-                throw new ErrorException<ApprenticeshipDoesNotExist>(new ApprenticeshipDoesNotExist());
+                throw new InvalidStateException(InvalidStateReason.ApprenticeshipDoesNotExist);
             }
 
             var providerId = maybeProviderId.Value;
@@ -106,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (maybeLatestSubmission.Value is None)
             {
-                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
+                throw new InvalidStateException(InvalidStateReason.NoValidApprenticeshipQASubmission);
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
@@ -116,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (submissionApprenticeship == null)
             {
-                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
+                throw new InvalidStateException(InvalidStateReason.NoValidApprenticeshipQASubmission);
             }
 
             var latestAssessment = await _sqlQueryDispatcher.ExecuteQuery(
@@ -282,7 +281,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         {
             if (!_formFlowInstance.State.GotAssessmentOutcome)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var apprenticeshipId = _formFlowInstance.State.ApprenticeshipId;
@@ -311,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         {
             if (!_formFlowInstance.State.GotAssessmentOutcome)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var apprenticeshipId = _formFlowInstance.State.ApprenticeshipId;

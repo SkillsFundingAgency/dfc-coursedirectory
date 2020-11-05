@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using OneOf.Types;
@@ -84,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
         {
             if (!provider.HaveAlias)
             {
-                throw new ErrorException<NoAliasDefined>(new NoAliasDefined());
+                throw new InvalidStateException();
             }
         }
 

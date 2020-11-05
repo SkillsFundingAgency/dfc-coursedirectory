@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -64,7 +62,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (provider == null)
             {
-                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
+                throw new InvalidStateException(InvalidStateReason.ProviderDoesNotExist);
             }
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(

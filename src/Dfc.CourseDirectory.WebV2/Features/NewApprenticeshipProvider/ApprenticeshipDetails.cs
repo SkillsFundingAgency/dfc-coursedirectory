@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -54,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         {
             if (_flow.State.ApprenticeshipStandardOrFramework == null)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var vm = new ViewModel()
@@ -74,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         {
             if (_flow.State.ApprenticeshipStandardOrFramework == null)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var validator = new CommandValidator();

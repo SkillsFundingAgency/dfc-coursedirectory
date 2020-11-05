@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetail
 {
@@ -110,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         {
             if (!_flow.State.GotProviderDetails)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
@@ -135,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         {
             if (!_flow.State.GotProviderDetails)
             {
-                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+                throw new InvalidStateException();
             }
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
