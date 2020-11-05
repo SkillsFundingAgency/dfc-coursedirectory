@@ -4,7 +4,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.StubControllers
 {
     public class ProviderController : Controller
     {
-        [HttpGet("Provider/Dashboard")]
+        [HttpGet("dashboard")]
         public IActionResult Dashboard() => Ok();
 		
         [HttpGet("provider/provider-type")]
