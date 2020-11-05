@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
-    public class ErrorExceptionFilter : IExceptionFilter
+    public class InvalidStateExceptionFilter : IExceptionFilter
     {
         public void OnException(ExceptionContext context)
         {
-            var exceptionType = context.Exception.GetType();
-            if (exceptionType.IsGenericType && exceptionType.GetGenericTypeDefinition() == typeof(ErrorException<>))
+            if (context.Exception.GetType() == typeof(InvalidStateException))
             {
                 context.Result = new BadRequestResult();
                 context.ExceptionHandled = true;

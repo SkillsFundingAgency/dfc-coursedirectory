@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new DeactivatedProviderErrorActionFilter());
                     options.Filters.Add(new NotAuthorizedExceptionFilter());
-                    options.Filters.Add(new ErrorExceptionFilter());
+                    options.Filters.Add(new InvalidStateExceptionFilter());
                     options.Filters.Add(new LocalUrlActionFilter());
                     options.Filters.Add(new MptxResourceFilter());
                     options.Filters.Add(new ContentSecurityPolicyActionFilter());

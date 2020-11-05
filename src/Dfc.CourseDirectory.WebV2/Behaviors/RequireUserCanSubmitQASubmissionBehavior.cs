@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -63,7 +62,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
 
             if (!qaStatusIsValid || !providerTypeIsValid)
             {
-                throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());
+                throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQAStatus);
             }
 
             return await next();

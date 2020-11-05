@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
-using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using OneOf;
 using OneOf.Types;
@@ -59,19 +58,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                 });
 
             var submission = maybeSubmission.Match(
-                notfound => throw new ErrorException<InvalidQASubmission>(new InvalidQASubmission()),
+                notfound => throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission),
                 found => found);
 
             // Cannot hide passed notification if qa status is not passed
             if (submission.Passed != true)
             {
-                throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());
+                throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQAStatus);
             }
 
             // Cannot hide notification if it has already been hidden
             if (submission.HidePassedNotification)
             {
-                throw new ErrorException<PassedNotificationAlreadyHidden>(new PassedNotificationAlreadyHidden());
+                throw new InvalidStateException();
             }
 
             // Hide notification
@@ -83,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                 });
 
             return hideDialog.Match(
-                notfound => throw new ErrorException<InvalidQASubmission>(new InvalidQASubmission()),
+                notfound => throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission),
                 success => success);
         }
 
