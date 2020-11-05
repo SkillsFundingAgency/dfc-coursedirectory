@@ -32,5 +32,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Home
         [HttpGet("Home/Help", Order = 99)]
         [AllowDeactivatedProvider]
         public IActionResult Help() => View();
+
+        [HttpGet("privacy")]
+        [HttpGet("Home/Privacy", Order = 99)]
+        [AllowDeactivatedProvider]
+        public IActionResult Privacy() => View();
     }
 }
