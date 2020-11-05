@@ -174,7 +174,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
             Assert.Equal("Test Standard", doc.QuerySelector("h1").TextContent);
             Assert.Equal(
                 "Marketing info",
@@ -996,7 +995,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
             Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Compliance"));
             Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Style"));
             Assert.Equal(
@@ -1048,7 +1046,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
             Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Compliance"));
             Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Style"));
             Assert.Equal(
@@ -1100,7 +1097,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
             Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Compliance"));
             Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Style"));
             Assert.Equal(
@@ -1152,7 +1148,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
             Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Compliance"));
             Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Style"));
             Assert.Equal(
