@@ -2,9 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
@@ -32,8 +31,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IOptions<CourseServiceSettings> courseSearchSettings,
             ICourseService courseService)
         {
-            Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(courseService, nameof(courseService));
+            if (courseSearchSettings == null)
+            {
+                throw new ArgumentNullException(nameof(courseSearchSettings));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
 
             _courseService = courseService;
         }

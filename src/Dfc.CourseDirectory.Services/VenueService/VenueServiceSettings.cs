@@ -21,20 +21,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             return new Uri($"{trimmed}/GetVenueById");
         }
 
-        public Uri ToGetVenueByVenueIdUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenueByVenueId");
-        }
-
-        public Uri ToGetVenueByLocationIdUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetVenueByLocationId");
-        }
-
         public Uri ToGetVenuesByPRNAndNameUri()
         {
             var uri = new Uri(ApiUrl);

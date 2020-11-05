@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Services;
+﻿using System;
 using Dfc.CourseDirectory.Services.CourseService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +10,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 
         public ChooseRegion(ICourseService courseService)
         {
-            Throw.IfNull(courseService, nameof(courseService));
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
 
             _courseService = courseService;
         }

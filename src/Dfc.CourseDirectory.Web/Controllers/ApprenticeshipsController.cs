@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
@@ -47,12 +46,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
             , IApprenticeshipService apprenticeshipService,
             IProviderService providerService, IOptions<ApprenticeshipSettings> apprenticeshipSettings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-            Throw.IfNull(providerService, nameof(providerService));
-            Throw.IfNull(apprenticeshipSettings, nameof(apprenticeshipSettings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
+
+            if (apprenticeshipService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipService));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
+
+            if (apprenticeshipSettings == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipSettings));
+            }
 
             _apprenticeshipSettings = apprenticeshipSettings;
             _logger = logger;

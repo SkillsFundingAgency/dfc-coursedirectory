@@ -1,10 +1,10 @@
-﻿using Dfc.CourseDirectory.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
@@ -15,9 +15,20 @@ namespace Dfc.CourseDirectory.Web.Helpers
             string pageParamName,
             int defaultPageNo = 1)
         {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, defaultPageNo, nameof(defaultPageNo));
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentNullException($"{nameof(url)} cannot be null or empty or whitespace.", nameof(url));
+            }
+
+            if (string.IsNullOrWhiteSpace(pageParamName))
+            {
+                throw new ArgumentNullException($"{nameof(pageParamName)} cannot be null or empty or whitespace.", nameof(pageParamName));
+            }
+
+            if (defaultPageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(defaultPageNo), $"{nameof(defaultPageNo)} cannot be less than 1.");
+            }
 
             var ub = new UriBuilder(url);
             var query = QueryHelpers.ParseQuery(ub.Query);
@@ -43,11 +54,30 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int startAt,
             int endAt)
         {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
-            Throw.IfLessThan(1, startAt, nameof(startAt));
-            Throw.IfLessThan(1, endAt, nameof(endAt));
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentNullException($"{nameof(url)} cannot be null or empty or whitespace.", nameof(url));
+            }
+
+            if (string.IsNullOrWhiteSpace(pageParamName))
+            {
+                throw new ArgumentNullException($"{nameof(pageParamName)} cannot be null or empty or whitespace.", nameof(pageParamName));
+            }
+
+            if (currentPageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(currentPageNo), $"{nameof(currentPageNo)} cannot be less than 1.");
+            }
+
+            if (startAt < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(startAt), $"{nameof(startAt)} cannot be less than 1.");
+            }
+
+            if (endAt < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(endAt), $"{nameof(endAt)} cannot be less than 1.");
+            }
 
             var pages = new List<PaginationItemModel>();
 
@@ -70,9 +100,20 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int currentPageNo,
             bool isSliding)
         {
-            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
-            Throw.IfLessThan(1, noOfPagesToDisplay, nameof(noOfPagesToDisplay));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            if (totalNoOfPages < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(totalNoOfPages), $"{nameof(totalNoOfPages)} cannot be less than 1.");
+            }
+
+            if (noOfPagesToDisplay < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(noOfPagesToDisplay), $"{nameof(noOfPagesToDisplay)} cannot be less than 1.");
+            }
+
+            if (currentPageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(currentPageNo), $"{nameof(currentPageNo)} cannot be less than 1.");
+            }
 
             var startAt = 1;
             var endAt = totalNoOfPages < noOfPagesToDisplay
@@ -97,11 +138,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return (startAt, endAt);
         }
 
-        public int GetTotalNoOfPages(
-                                    int totalNoOfItems,
-            int itemsPerPage)
+        public int GetTotalNoOfPages(int totalNoOfItems, int itemsPerPage)
         {
-            if (totalNoOfItems <= itemsPerPage || totalNoOfItems == 0 || itemsPerPage == 0) return 1;
+            if (totalNoOfItems <= itemsPerPage || totalNoOfItems == 0 || itemsPerPage == 0)
+            {
+                return 1;
+            }
 
             return (int)Math.Ceiling((decimal)totalNoOfItems / itemsPerPage);
         }
@@ -113,10 +155,25 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int totalNoOfPages,
             out PaginationItemModel paginationItemModel)
         {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
-            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentNullException($"{nameof(url)} cannot be null or empty or whitespace.", nameof(url));
+            }
+
+            if (string.IsNullOrWhiteSpace(pageParamName))
+            {
+                throw new ArgumentNullException($"{nameof(pageParamName)} cannot be null or empty or whitespace.", nameof(pageParamName));
+            }
+
+            if (currentPageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(currentPageNo), $"{nameof(currentPageNo)} cannot be less than 1.");
+            }
+
+            if (totalNoOfPages < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(totalNoOfPages), $"{nameof(totalNoOfPages)} cannot be less than 1.");
+            }
 
             paginationItemModel = null;
             if (currentPageNo >= totalNoOfPages) return false;
@@ -139,9 +196,20 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int currentPageNo,
             out PaginationItemModel paginationItemModel)
         {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentNullException($"{nameof(url)} cannot be null or empty or whitespace.", nameof(url));
+            }
+
+            if (string.IsNullOrWhiteSpace(pageParamName))
+            {
+                throw new ArgumentNullException($"{nameof(pageParamName)} cannot be null or empty or whitespace.", nameof(pageParamName));
+            }
+
+            if (currentPageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(currentPageNo), $"{nameof(currentPageNo)} cannot be less than 1.");
+            }
 
             paginationItemModel = null;
             if (currentPageNo == 1) return false;
@@ -161,8 +229,15 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int currentPageNo,
             int pageNo)
         {
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
-            Throw.IfLessThan(1, pageNo, nameof(pageNo));
+            if (currentPageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(currentPageNo), $"{nameof(currentPageNo)} cannot be less than 1.");
+            }
+
+            if (pageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageNo), $"{nameof(pageNo)} cannot be less than 1.");
+            }
 
             if (pageNo == currentPageNo)
             {
@@ -177,9 +252,20 @@ namespace Dfc.CourseDirectory.Web.Helpers
             string pageParamName,
             int pageNo)
         {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, pageNo, nameof(pageNo));
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentNullException($"{nameof(url)} cannot be null or empty or whitespace.", nameof(url));
+            }
+
+            if (string.IsNullOrWhiteSpace(pageParamName))
+            {
+                throw new ArgumentNullException($"{nameof(pageParamName)} cannot be null or empty or whitespace.", nameof(pageParamName));
+            }
+
+            if (pageNo < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageNo), $"{nameof(pageNo)} cannot be less than 1.");
+            }
 
             var ub = new UriBuilder(url);
             var query = QueryHelpers.ParseQuery(ub.Query);

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -11,13 +11,15 @@ using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
-
     public class VenueSearchHelper : IVenueSearchHelper
     {
         public VenueSearchCriteria GetVenueSearchCriteria(
             VenueSearchRequestModel venueSearchRequestModel)
         {
-            Throw.IfNull(venueSearchRequestModel, nameof(venueSearchRequestModel));
+            if (venueSearchRequestModel == null)
+            {
+                throw new ArgumentNullException(nameof(venueSearchRequestModel));
+            }
 
             var criteria = new VenueSearchCriteria(venueSearchRequestModel.SearchTerm, venueSearchRequestModel.NewAddressId);
             return criteria;
@@ -25,7 +27,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
         public IEnumerable<VenueSearchResultItemModel> GetVenueSearchResultItemModels(
            IEnumerable<Venue> venueSearchResult)
         {
-            Throw.IfNull(venueSearchResult, nameof(venueSearchResult));
+            if (venueSearchResult == null)
+            {
+                throw new ArgumentNullException(nameof(venueSearchResult));
+            }
 
             var items = new List<VenueSearchResultItemModel>();
 
@@ -44,7 +49,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
         }
         internal static string FormatSearchTerm(string searchTerm)
         {
-            Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                throw new ArgumentNullException($"{nameof(searchTerm)} cannot be null or empty or whitespace.", nameof(searchTerm));
+            }
 
             var split = searchTerm
                 .Split(' ')

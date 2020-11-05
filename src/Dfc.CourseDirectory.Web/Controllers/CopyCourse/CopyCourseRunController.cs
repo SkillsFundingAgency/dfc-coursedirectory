@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -46,10 +45,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             IVenueService venueService,
             IVenueSearchHelper venueSearchHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (courseSearchSettings == null)
+            {
+                throw new ArgumentNullException(nameof(courseSearchSettings));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
 
             _logger = logger;
             _htmlEncoder = htmlEncoder;

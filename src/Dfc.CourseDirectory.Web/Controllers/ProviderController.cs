@@ -5,9 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Providers;
@@ -38,9 +36,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueService venueService,
             IProviderService providerService)
         {
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(providerService, nameof(providerService));
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
 
             _courseService = courseService;
             _venueService = venueService;

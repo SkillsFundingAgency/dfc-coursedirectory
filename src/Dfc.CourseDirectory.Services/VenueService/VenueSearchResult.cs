@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dfc.CourseDirectory.Services.Models.Venues;
 
 namespace Dfc.CourseDirectory.Services.VenueService
@@ -10,7 +11,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
         public VenueSearchResult(
             IEnumerable<Venue> value)
         {
-            Throw.IfNull(value, nameof(value));
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             Value = value;
         }
     }

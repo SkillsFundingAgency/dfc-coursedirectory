@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -25,7 +24,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 
         public EditApprenticeshipController(IApprenticeshipService apprenticeshipService)
         {
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+            if (apprenticeshipService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipService));
+            }
 
             _apprenticeshipService = apprenticeshipService;
         }
@@ -91,7 +93,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                     apprenticeshipForEdit.Value.BulkUploadErrors = new List<BulkUploadError> { };
                     if (apprenticeshipForEdit.Value.BulkUploadErrors.Count() == 0)
                     {
-                        apprenticeshipForEdit.Value.RecordStatus = Services.Enums.RecordStatus.BulkUploadReadyToGoLive;
+                        apprenticeshipForEdit.Value.RecordStatus = Services.Models.RecordStatus.BulkUploadReadyToGoLive;
                     }
                     var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit.Value);
                 }

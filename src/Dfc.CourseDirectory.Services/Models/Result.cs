@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.Services
+namespace Dfc.CourseDirectory.Services.Models
 {
     public struct Result
     {

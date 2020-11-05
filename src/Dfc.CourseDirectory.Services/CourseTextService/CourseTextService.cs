@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,9 +21,20 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             HttpClient httpClient,
             IOptions<CourseTextServiceSettings> settings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(httpClient, nameof(httpClient));
-            Throw.IfNull(settings, nameof(settings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
 
             _logger = logger;
             _settings = settings.Value;
@@ -32,29 +44,31 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
 
         public async Task<Result<CourseText>> GetCourseTextByLARS(CourseTextSearchCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
-            Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
+
+            if (string.IsNullOrWhiteSpace(criteria.LARSRef))
+            {
+                throw new ArgumentNullException($"{nameof(criteria.LARSRef)} cannot be null or empty or whitespace.", nameof(criteria.LARSRef));
+            }
 
             try
             {
-                _logger.LogInformationObject("Course Text Criteria", criteria);
-                _logger.LogInformationObject("Course Text URI", _getYourCourseTextUri);
-
                 if (criteria.LARSRef == "")
                     return Result.Fail<CourseText>("Blank LARS Ref");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "?LARS=" + criteria.LARSRef));
-                _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get your courses service json response", json);
                     var courseText = JsonConvert.DeserializeObject<CourseText>(json);
 
-                    return Result.Ok<CourseText>(courseText);
+                    return Result.Ok(courseText);
                 }
                 else
                 {
@@ -63,12 +77,12 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your courses service http request error", hre);
+                _logger.LogError(hre, "Get your courses service http request error");
                 return Result.Fail<CourseText>("Get your courses service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get your courses service unknown error.", e);
+                _logger.LogError(e, "Get your courses service unknown error.");
                 return Result.Fail<CourseText>("Get your courses service unknown error.");
             }
         }

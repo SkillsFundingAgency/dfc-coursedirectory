@@ -6,12 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -42,13 +41,40 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IProviderService providerService,
             IUserHelper userHelper)
         {
-            Throw.IfNull(apprenticeshipBulkUploadService, nameof(apprenticeshipBulkUploadService));
-            Throw.IfNull(blobService, nameof(blobService));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(providerService, nameof(providerService));
-            Throw.IfNull(userHelper, nameof(userHelper));
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+            if (apprenticeshipBulkUploadService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
+            }
+
+            if (blobService == null)
+            {
+                throw new ArgumentNullException(nameof(blobService));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
+
+            if (userHelper == null)
+            {
+                throw new ArgumentNullException(nameof(userHelper));
+            }
+
+            if (apprenticeshipService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipService));
+            }
 
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService;
             _blobService = blobService;
@@ -227,11 +253,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             switch (model.WhatDoYouWantToDoNext)
             {
-                case Services.Enums.WhatDoYouWantToDoNext.OnScreen:
+                case Services.Models.WhatDoYouWantToDoNext.OnScreen:
                     return RedirectToAction("Index", "PublishApprenticeships");
-                case Services.Enums.WhatDoYouWantToDoNext.DownLoad:
+                case Services.Models.WhatDoYouWantToDoNext.DownLoad:
                     return RedirectToAction("DownloadErrorFile", "BulkUploadApprenticeships");
-                case Services.Enums.WhatDoYouWantToDoNext.Delete:
+                case Services.Models.WhatDoYouWantToDoNext.Delete:
                     return RedirectToAction("DeleteFile", "BulkUploadApprenticeships");
                 default:
                     return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships");

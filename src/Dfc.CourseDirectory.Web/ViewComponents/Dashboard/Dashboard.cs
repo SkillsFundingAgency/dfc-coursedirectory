@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Venues;
@@ -37,13 +36,35 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             IEnvironmentHelper environmentHelper, ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(blobStorageService, nameof(blobStorageService));
-            Throw.IfNull(providerService, nameof(providerService));
-            Throw.IfNull(environmentHelper, nameof(environmentHelper));
-       
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (apprenticeshipService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
+
+            if (blobStorageService == null)
+            {
+                throw new ArgumentNullException(nameof(blobStorageService));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
+
+            if (environmentHelper == null)
+            {
+                throw new ArgumentNullException(nameof(environmentHelper));
+            }
 
             _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;

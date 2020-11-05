@@ -5,11 +5,10 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -36,10 +35,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ICourseProvisionHelper courseProvisionHelper,
                 IApprenticeshipProvisionHelper apprenticeshipProvisionHelper)
         {
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
-            Throw.IfNull(blobService, nameof(blobService));
-            Throw.IfNull(apprenticeshipProvisionHelper, nameof(apprenticeshipProvisionHelper));
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (apprenticeshipService == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipService));
+            }
+
+            if (blobService == null)
+            {
+                throw new ArgumentNullException(nameof(blobService));
+            }
+
+            if (apprenticeshipProvisionHelper == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeshipProvisionHelper));
+            }
 
             _courseService = courseService;
             _blobService = blobService;

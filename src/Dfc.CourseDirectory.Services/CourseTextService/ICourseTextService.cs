@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService

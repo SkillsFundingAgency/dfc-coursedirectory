@@ -6,11 +6,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         public Guid Id { get; }
 
-        public GetApprenticeshipByIdCriteria(
-            Guid id)
+        public GetApprenticeshipByIdCriteria(Guid id)
         {
-            Throw.IfNullGuid(id, nameof(id));
-
             Id = id;
         }
     }

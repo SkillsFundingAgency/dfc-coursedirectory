@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Services.Enums;
+﻿using Dfc.CourseDirectory.Services.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

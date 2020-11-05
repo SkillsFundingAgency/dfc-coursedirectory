@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Services;
+﻿using System;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
 {
@@ -15,9 +15,20 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
             string ariaLabel,
             bool isCurrent = false)
         {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(text, nameof(text));
-            Throw.IfNullOrWhiteSpace(ariaLabel, nameof(ariaLabel));
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentNullException($"{nameof(url)} cannot be null or empty or whitespace.", nameof(url));
+            }
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                throw new ArgumentNullException($"{nameof(text)} cannot be null or empty or whitespace.", nameof(text));
+            }
+
+            if (string.IsNullOrWhiteSpace(ariaLabel))
+            {
+                throw new ArgumentNullException($"{nameof(ariaLabel)} cannot be null or empty or whitespace.", nameof(ariaLabel));
+            }
 
             Url = url;
             Text = text;

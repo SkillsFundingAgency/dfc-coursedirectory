@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Microsoft.AspNetCore.Mvc.Rendering;
 

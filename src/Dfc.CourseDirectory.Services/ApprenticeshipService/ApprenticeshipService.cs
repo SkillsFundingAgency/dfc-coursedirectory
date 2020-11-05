@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.Extensions.Logging;
@@ -26,9 +27,20 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             HttpClient httpClient,
             IOptions<ApprenticeshipServiceSettings> settings)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(httpClient, nameof(httpClient));
-            Throw.IfNull(settings, nameof(settings));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
 
             _logger = logger;
             _settings = settings.Value;
@@ -52,22 +64,20 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
         {
-            Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
+            if (string.IsNullOrWhiteSpace(criteria))
+            {
+                throw new ArgumentNullException($"{nameof(criteria)} cannot be null or empty or whitespace.", nameof(criteria));
+            }
 
             try
             {
-                _logger.LogInformationObject("Standards and Frameworks Criteria", criteria);
-
-                
                 var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria + "&UKPRN=" + UKPRN));
-                _logger.LogHttpResponseMessage("Standards and Frameworks service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get your apprenticeship service json response", json);
-                    IEnumerable<StandardsAndFrameworks> results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
+                    var results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
 
                     return Result.Ok<IEnumerable<StandardsAndFrameworks>>(results);
                 }
@@ -78,39 +88,34 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your Standards and Frameworks service http request error", hre);
+                _logger.LogError(hre, "Get your Standards and Frameworks service http request error");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Standards and Frameworks unknown error.", e);
+                _logger.LogError(e, "Standards and Frameworks unknown error.");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service unknown error.");
             }
         }
 
         public async Task<Result> AddApprenticeship(Apprenticeship apprenticeship)
         {
-            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+            if (apprenticeship == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeship));
+            }
 
             try
             {
-                _logger.LogInformationObject("Apprenticeship add object.", apprenticeship);
-                _logger.LogInformationObject("Apprenticeship  add URI", _addApprenticeshipUri);
-
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
 
-                _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Apprenticeship add service json response", json);
-
 
                     return Result.Ok();
                 }
@@ -125,12 +130,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship add service http request error", hre);
+                _logger.LogError(hre, "Apprenticeship add service http request error");
                 return Result.Fail("Apprenticeship add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship add service unknown error.", e);
+                _logger.LogError(e, "Apprenticeship add service unknown error.");
 
                 return Result.Fail("Apprenticeship add service unknown error.");
             }
@@ -140,13 +145,13 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             IEnumerable<Apprenticeship> apprenticeships,
             bool addInParallel)
         {
-            Throw.IfNull(apprenticeships, nameof(apprenticeships));
+            if (apprenticeships == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeships));
+            }
 
             try
             {
-                _logger.LogInformationObject("Apprenticeship add object.", apprenticeships);
-                _logger.LogInformationObject("Apprenticeship  add URI", _addApprenticeshipUri);
-
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeships);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
@@ -155,14 +160,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                     _addApprenticeshipsUri + $"?parallel={addInParallel}",
                     content);
 
-                _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Apprenticeship add service json response", json);
-
 
                     return Result.Ok();
                 }
@@ -177,35 +177,32 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship add service http request error", hre);
+                _logger.LogError(hre, "Apprenticeship add service http request error");
                 return Result.Fail("Apprenticeship add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship add service unknown error.", e);
-
+                _logger.LogError(e, "Apprenticeship add service unknown error.");
                 return Result.Fail("Apprenticeship add service unknown error.");
             }
         }
 
         public async Task<Result<Apprenticeship>> GetApprenticeshipByIdAsync(string Id)
         {
-            Throw.IfNullOrWhiteSpace(Id, nameof(Id));
+            if (string.IsNullOrWhiteSpace(Id))
+            {
+                throw new ArgumentNullException($"{nameof(Id)} cannot be null or empty or whitespace.", nameof(Id));
+            }
 
             try
             {
-                _logger.LogInformationObject("Get Apprenticeship by Id", Id);
-
-                
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "?id=" + Id));
-                _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get Apprenticeship by Id json response", json);
-                    Apprenticeship results = JsonConvert.DeserializeObject<Apprenticeship>(json);
+                    var results = JsonConvert.DeserializeObject<Apprenticeship>(json);
 
                     return Result.Ok<Apprenticeship>(results);
                 }
@@ -216,34 +213,32 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Apprenticeship by Id service http request error", hre);
+                _logger.LogError(hre, "Get Apprenticeship by Id service http request error");
                 return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get apprenticeship unknown error.", e);
+                _logger.LogError(e, "Get apprenticeship unknown error.");
                 return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service unknown error.");
             }
         }
 
         public async Task<Result<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
         {
-            Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
+            if (string.IsNullOrWhiteSpace(criteria))
+            {
+                throw new ArgumentNullException($"{nameof(criteria)} cannot be null or empty or whitespace.", nameof(criteria));
+            }
 
             try
             {
-                _logger.LogInformationObject("Search Apprenticeship by UKPRN Criteria", criteria);
-
-                
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria));
-                _logger.LogHttpResponseMessage("Search Apprenticeship by UKPRN service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Search Apprenticeship by UKPRN json response", json);
-                    IEnumerable<Apprenticeship> results = JsonConvert.DeserializeObject<IEnumerable<Apprenticeship>>(json);
+                    var results = JsonConvert.DeserializeObject<IEnumerable<Apprenticeship>>(json);
 
                     return Result.Ok<IEnumerable<Apprenticeship>>(results);
                 }
@@ -254,34 +249,32 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Search Apprenticeship by UKPRN service http request error", hre);
+                _logger.LogError(hre, "Search Apprenticeship by UKPRN service http request error");
                 return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Standards and Frameworks unknown error.", e);
+                _logger.LogError(e, "Standards and Frameworks unknown error.");
                 return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service unknown error.");
             }
         }
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
 
             try
             {
-                _logger.LogInformationObject("StandardSearchCriteria Criteria", criteria);
-
-                
                 var response = await _httpClient.GetAsync(new Uri(_getStandardByCodeUri.AbsoluteUri + "?StandardCode=" + criteria.StandardCode + "&Version=" + criteria.Version));
-                _logger.LogHttpResponseMessage("GetStandardByCode service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("GetStandardByCode service json response", json);
-                    IEnumerable<StandardsAndFrameworks> results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
+                    var results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
 
                     return Result.Ok<IEnumerable<StandardsAndFrameworks>>(results);
                 }
@@ -292,34 +285,32 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("GetStandardByCode service http request error", hre);
+                _logger.LogError(hre, "GetStandardByCode service http request error");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("GetStandardByCode unknown error.", e);
+                _logger.LogError(e, "GetStandardByCode unknown error.");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service unknown error.");
             }
         }
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
         {
-            Throw.IfNull(criteria, nameof(criteria));
+            if (criteria == null)
+            {
+                throw new ArgumentNullException(nameof(criteria));
+            }
 
             try
             {
-                _logger.LogInformationObject("FrameworkSearchCriteria Criteria", criteria);
-
-                
                 var response = await _httpClient.GetAsync(new Uri(_getFrameworkByCodeUri.AbsoluteUri + "?FrameworkCode=" + criteria.FrameworkCode + "&ProgType=" + criteria.ProgType + "&PathwayCode=" + criteria.PathwayCode));
-                _logger.LogHttpResponseMessage("GetFrameworkByCode service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("GetFrameworkByCode service json response", json);
-                    IEnumerable<StandardsAndFrameworks> results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
+                    var results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
 
                     return Result.Ok<IEnumerable<StandardsAndFrameworks>>(results);
                 }
@@ -330,37 +321,34 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("GetFrameworkByCode service http request error", hre);
+                _logger.LogError(hre, "GetFrameworkByCode service http request error");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("GetStandardByCode unknown error.", e);
+                _logger.LogError(e, "GetStandardByCode unknown error.");
                 return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service unknown error.");
             }
         }
+
         public async Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship)
         {
-            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+            if (apprenticeship == null)
+            {
+                throw new ArgumentNullException(nameof(apprenticeship));
+            }
 
             try
             {
-                _logger.LogInformationObject("apprenticeship update object.", apprenticeship);
-                _logger.LogInformationObject("apprenticeship update URI", _updateApprenticshipUri);
-
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync(_updateApprenticshipUri, content);
 
-                _logger.LogHttpResponseMessage("Apprenticeship update service http response", response);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    _logger.LogInformationObject("Apprenticeship update service json response", json);
 
                     var apprenticeshipResult = JsonConvert.DeserializeObject<Apprenticeship>(json);
 
@@ -373,26 +361,26 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship update service http request error", hre);
+                _logger.LogError(hre, "Apprenticeship update service http request error");
                 return Result.Fail<Apprenticeship>("Apprenticeship update service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship update service unknown error.", e);
-
+                _logger.LogError(e, "Apprenticeship update service unknown error.");
                 return Result.Fail<Apprenticeship>("Apprenticeship update service unknown error.");
             }
         }
+
         public async Task<Result> DeleteBulkUploadApprenticeships(int UKPRN)
         {
-            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+            if (UKPRN < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(UKPRN), $"{nameof(UKPRN)} cannot be less than 0.");
+            }
 
             try
             {
-               
-                
                 var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
-                _logger.LogHttpResponseMessage("Delete Bulk Upload Apprenticeship Status http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -408,17 +396,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 return Result.Fail("Delete Bulk Upload Apprenticeship http response");
             }
         }
+
         public async Task<Result> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
         {
-            Throw.IfNull(UKPRN, nameof(UKPRN));
-            Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
-            Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
-
-            
-            
-            
             var response = await _httpClient.GetAsync(new Uri(_changeApprenticeshipStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
-            _logger.LogHttpResponseMessage("ChangeApprenticeshipStatusesForUKPRNSelection service http response", response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -426,11 +407,14 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
 
             return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
-            
         }
+
         public async Task<Result<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN)
         {
-            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+            if (UKPRN < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(UKPRN), $"{nameof(UKPRN)} cannot be less than 0.");
+            }
 
             try
             {
@@ -451,12 +435,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get Apprenticeship by Id service http request error", hre);
+                _logger.LogError(hre, "Get Apprenticeship by Id service http request error");
                 return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get apprenticeship unknown error.", e);
+                _logger.LogError(e, "Get apprenticeship unknown error.");
                 return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unknown error.");
             }
         }
@@ -465,19 +449,15 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         {
             try
             {
-                _logger.LogInformationObject("Get all dfc reports URI", _getAllDfcReports);
-
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getAllDfcReports.AbsoluteUri));
-                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get All Dfc migration reports service json response", json);
-                    IList<DfcMigrationReport> dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
-                    return Result.Ok<IList<DfcMigrationReport>>(dfcReports);
+                    var dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
+                    return Result.Ok(dfcReports);
                 }
                 else
                 {
@@ -486,12 +466,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get course migration report service http request error", hre);
+                _logger.LogError(hre, "Get course migration report service http request error");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Get course migration report service unknown error.", e);
+                _logger.LogError(e, "Get course migration report service unknown error.");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
             }
         }
@@ -503,7 +483,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
 
                 var response = await httpClient.GetAsync(_getTotalLiveCoursesUri);
-                _logger.LogHttpResponseMessage("GetTotalLiveApprenticeships service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {

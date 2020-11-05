@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 {
@@ -18,7 +15,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string DurationLength { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
-
         public Guid  VenueId { get; set; }
         public bool National { get; set; }
         public string[] SelectedRegions { get; set; }
@@ -30,13 +26,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public AttendancePattern AttendanceMode { get; set; }
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-
         public string QualificationType { get; set; }
-
         public bool FlexibleStartDate { get; set; }
-
         public PublishMode Mode { get; set; }
-
     }
-
 }

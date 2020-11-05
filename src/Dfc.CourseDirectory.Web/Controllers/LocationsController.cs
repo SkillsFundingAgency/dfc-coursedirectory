@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -27,7 +26,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueSearchHelper venueSearchHelper,
             IVenueService venueService)
         {
-            Throw.IfNull(venueService, nameof(venueService));
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
 
             _venueSearchHelper = venueSearchHelper;
             _venueService = venueService;

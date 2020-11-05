@@ -4,9 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.ProviderService;
@@ -35,11 +34,30 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 IProviderService providerService,
                 ICSVHelper CSVHelper)
         {
-            Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(contextAccessor, nameof(contextAccessor));
-            Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(providerService, nameof(providerService));
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (contextAccessor == null)
+            {
+                throw new ArgumentNullException(nameof(contextAccessor));
+            }
+
+            if (courseService == null)
+            {
+                throw new ArgumentNullException(nameof(courseService));
+            }
+
+            if (venueService == null)
+            {
+                throw new ArgumentNullException(nameof(venueService));
+            }
+
+            if (providerService == null)
+            {
+                throw new ArgumentNullException(nameof(providerService));
+            }
 
             _logger = logger;
             _contextAccessor = contextAccessor;

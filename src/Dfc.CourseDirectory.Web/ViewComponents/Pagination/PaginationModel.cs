@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
@@ -29,7 +29,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
         public PaginationModel(
             IEnumerable<PaginationItemModel> items)
         {
-            Throw.IfNull(items, nameof(items));
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             Errors = new string[] { };
             Items = items;

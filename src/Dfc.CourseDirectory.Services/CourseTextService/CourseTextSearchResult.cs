@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService
@@ -10,7 +11,11 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
         public CourseTextSearchResult(
         IEnumerable<CourseText> value)
         {
-            Throw.IfNull(value, nameof(value));
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             Value = value;
         }
     }

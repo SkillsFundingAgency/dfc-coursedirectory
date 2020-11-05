@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Enums;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship

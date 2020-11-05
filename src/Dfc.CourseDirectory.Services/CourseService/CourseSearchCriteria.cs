@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.Services.CourseService
+﻿using System;
+
+namespace Dfc.CourseDirectory.Services.CourseService
 {
     public class CourseSearchCriteria
     {
@@ -6,7 +8,11 @@
 
         public CourseSearchCriteria(int? UKPRNvalue)
         {
-            Throw.IfNull(UKPRNvalue, nameof(UKPRNvalue));
+            if (UKPRNvalue == null)
+            {
+                throw new ArgumentNullException(nameof(UKPRNvalue));
+            }
+
             UKPRN = UKPRNvalue;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Venues;
 
 namespace Dfc.CourseDirectory.Services.VenueService
