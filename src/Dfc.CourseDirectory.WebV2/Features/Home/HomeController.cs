@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Home
 
         [HttpGet("Home/Help")]
         [AllowDeactivatedProvider]
-        public IActionResult Help() => View();
+        public IActionResult Help() => RedirectToAction("Index", "Contact");
 
         [HttpGet("privacy")]
         [HttpGet("Home/Privacy", Order = 99)]
