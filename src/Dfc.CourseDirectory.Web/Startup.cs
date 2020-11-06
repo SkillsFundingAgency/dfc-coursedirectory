@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
@@ -19,7 +17,9 @@ using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -43,9 +43,7 @@ namespace Dfc.CourseDirectory.Web
         public IConfiguration Configuration { get; }
         private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
-        //Undefined (0) is only part of these policy until the batch import to update ProviderType is run
-        private readonly List<string> _feClaims = new List<string> {"1", "3", "0" };
-        private readonly List<string> _apprenticeshipClaims = new List<string> { "2", "3", "0" };
+
         public Startup(IWebHostEnvironment env, ILogger<Startup> logger, IConfiguration config)
         {
             _env = env;
@@ -151,14 +149,14 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
                 options.AddPolicy("ProviderSuperUser", policy => policy.RequireRole("Provider Superuser"));
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
-                options.AddPolicy("Apprenticeship", policy =>
-                    policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
-                                                 x.User.Claims.Any(c => c.Type == "ProviderType" &&
-                                                                        _apprenticeshipClaims.Contains(c.Value))));
-                options.AddPolicy("Fe", policy =>
-                    policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
-                                                                             x.User.Claims.Any(c => c.Type == "ProviderType" &&
-                                                                                                    _feClaims.Contains(c.Value, StringComparer.OrdinalIgnoreCase))));
+
+                options.AddPolicy(
+                    "Apprenticeship",
+                    policy => policy.AddRequirements(new ProviderTypeRequirement(Core.Models.ProviderType.Apprenticeships)));
+
+                options.AddPolicy(
+                    "Fe",
+                    policy => policy.AddRequirements(new ProviderTypeRequirement(Core.Models.ProviderType.FE)));
             });
 
             if (_env.IsProduction())
@@ -282,6 +280,8 @@ namespace Dfc.CourseDirectory.Web
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<ProviderContextMiddleware>();
 
             app.UseAuthorization();
 

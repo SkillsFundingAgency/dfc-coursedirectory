@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Filters;
+﻿using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 
@@ -14,6 +14,6 @@ namespace Dfc.CourseDirectory.WebV2
             url.SetQueryParam(Constants.InstanceIdQueryParameter, instanceId);
 
         public static Url WithProviderContext(this Url url, ProviderContext providerContext) =>
-            url.SetQueryParam(ProviderContextResourceFilter.RouteValueKey, providerContext.ProviderInfo.ProviderId);
+            url.SetQueryParam(ProviderContextMiddleware.RouteValueKey, providerContext.ProviderInfo.ProviderId);
     }
 }

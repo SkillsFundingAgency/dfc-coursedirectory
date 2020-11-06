@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
 using Dfc.CourseDirectory.WebV2.ViewHelpers;
 using FormFlow;
@@ -23,6 +24,7 @@ using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -53,7 +55,6 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
                     options.Conventions.Add(new V2ActionModelConvention());
 
-                    options.Filters.Add(new ProviderContextResourceFilter());
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new DeactivatedProviderErrorActionFilter());
@@ -154,6 +155,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ProviderContextHelper>();
             services.AddTransient<Features.EditVenue.EditVenueFlowModelFactory>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
 
             if (!environment.IsTesting())
             {
@@ -208,6 +210,12 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(40);
                     options.SlidingExpiration = true;
                     options.LogoutPath = "/auth/logout";
+
+                    options.Events.OnRedirectToAccessDenied = ctx =>
+                    {
+                        ctx.Response.StatusCode = 403;
+                        return Task.CompletedTask;
+                    };
                 })
                 .AddOpenIdConnect(options =>
                 {

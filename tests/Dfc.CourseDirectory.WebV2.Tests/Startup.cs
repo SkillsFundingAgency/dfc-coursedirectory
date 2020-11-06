@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
+using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.ValidationTests;
 using FormFlow.State;
@@ -39,6 +40,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<ProviderContextMiddleware>();
 
             app.UseAuthorization();
 

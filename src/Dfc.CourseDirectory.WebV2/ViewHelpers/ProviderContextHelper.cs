@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Middleware;
 using Flurl;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewHelpers
 
         public IDictionary<string, string> RouteValues => new Dictionary<string, string>()
         {
-            { ProviderContextResourceFilter.RouteValueKey, ProviderInfo?.ProviderId.ToString() }
+            { ProviderContextMiddleware.RouteValueKey, ProviderInfo?.ProviderId.ToString() }
         };
 
         private ProviderContext ProviderContext => _providerContextProvider.GetProviderContext();
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewHelpers
 
             var tagBuilder = new TagBuilder("input");
             tagBuilder.Attributes.Add("type", "hidden");
-            tagBuilder.Attributes.Add("name", ProviderContextResourceFilter.RouteValueKey);
+            tagBuilder.Attributes.Add("name", ProviderContextMiddleware.RouteValueKey);
             tagBuilder.Attributes.Add("value", ProviderInfo.ProviderId.ToString());
             return tagBuilder;
         }
