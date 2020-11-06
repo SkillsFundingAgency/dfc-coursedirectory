@@ -394,7 +394,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            string option = Session.GetString("Option");
+            string option = Session.GetString("Option") ?? string.Empty;
 
             if (option.ToUpper() == "ADDNEWVENUEFOREDIT")
             {
