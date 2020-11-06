@@ -54,6 +54,11 @@ steps:
     ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
     SolutionBaseName: '${{ variables.SolutionBaseName }}'
 
+- template: AzureDevOpsTemplates\Build\StepTemplates\dfc-arm-build.yml@dfc-devops
+  parameters:
+    ArmTemplateRoot: '$(Build.SourcesDirectory)\FindACourse\Resources\ArmTemplates'
+    SolutionBaseName: 'Dfc.FindACourse'
+
 - task: CopyFiles@2
   displayName: 'Copy Files: AzureSearch'
   inputs:

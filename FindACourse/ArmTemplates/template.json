@@ -1,0 +1,425 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix for the function app resources, in the form dfc-env-proj-fnapp"
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "metadata": {
+        "description": "App service plan to run the function app under"
+      }
+    },
+    "appServicePlanResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource group the app service plan is in"
+      }
+    },
+    "storageConnectionString": {
+      "type": "string",
+      "metadata": {
+        "description": "Connection string for the storage account to store function app files"
+      }
+    },
+    "cosmosDBfqdn": {
+      "type": "string",
+      "metadata": {
+        "description": "Cosmos DB account name in the format https://dfc-xxx-xxx-cdb.documents.azure.com/ for app settings"
+      }
+    },
+    "cosmosDBkey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Cosmos DB access key for app settings"
+      }
+    },
+    "cosmosDBdatabase": {
+      "type": "string",
+      "metadata": {
+        "description": "Cosmos DB database name for app settings"
+      }
+    },
+    "cosmosDBcollection": {
+      "type": "string",
+      "metadata": {
+        "description": "Cosmos DB collection name for app settings"
+      }
+    },
+    "venueApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the venue search"
+      }
+    },
+    "venueApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Subscription key for accessing the venues API via APIM"
+      }
+    },
+    "providerApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the provider (ukrlp) search"
+      }
+    },
+    "providerApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Subscription key for accessing the providers API via APIM"
+      }
+    },
+    "searchName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of search resource"
+      }
+    },
+    "qualIndex": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of qualification index"
+      }
+    },
+    "searchIndex": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of search index"
+      }
+    },
+    "providerIndex": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of provider (search) index"
+      }
+    },
+    "onspdIndex": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of ONS postcode index"
+      }
+    },
+    "larsIndex": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of LARS index"
+      }
+    },
+    "searchAdminKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin key for updating search"
+      }
+    },
+    "searchQueryKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Query key for accessing search"
+      }
+    },
+    "apiPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password to be used for the APIUser account (temp until auth in place)"
+      }
+    },
+    "boostScoringProfile": {
+      "type": "string",
+      "defaultValue": "region-boost",
+      "metadata": {
+        "description": "Boost Scoring Profile to be used in on Azure search"
+      }
+    },
+    "courseApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "URL to the Courses API"
+      }
+    },
+    "courseApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Subscription key for accessing the courses API via APIM"
+      }
+    },
+    "searchDefaultReturnCount": {
+      "type": "int",
+      "metadata": {
+        "description": "The default number of items returned from the azure search service"
+      }
+    },
+    "searchMaxReturnCount": {
+      "type": "int",
+      "metadata": {
+        "description": "The maximum number of items returned from the azure search service"
+      }
+    },
+    "onlineCourseSearchName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of online course search resource"
+      }
+    },
+    "onlineCourseSearchIndex": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of online course search index"
+      }
+    },
+    "onlineCourseSearchQueryKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Query key for accessing online course search"
+      }
+    },
+    "providerPortalApplicationInsights": {
+      "type": "string",
+      "metadata": {
+        "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
+      }
+    }
+  },
+  "variables": {
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+    "webAppName": "[concat(parameters('webAppPrefix'),'-as')]",
+    "appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "ppfindcourseAppInsights",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('appInsightName')]"
+          },
+          "attachedService": {
+            "value": "[variables('webAppName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ppfindcourseAppService",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "dependsOn": [
+        "ppfindcourseAppInsights"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[variables('webAppName')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('appServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[parameters('appServicePlanResourceGroup')]"
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[parameters('storageConnectionString')]"
+              },
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
+              },
+              {
+                "name": "CosmosDbSettings__EndpointUri",
+                "value": "[parameters('cosmosDBfqdn')]"
+              },
+              {
+                "name": "CosmosDbSettings__PrimaryKey",
+                "value": "[parameters('cosmosDBkey')]"
+              },
+              {
+                "name": "CosmosDbSettings__DatabaseId",
+                "value": "[parameters('cosmosDBdatabase')]"
+              },
+              {
+                "name": "CosmosDbCollectionSettings__CoursesCollectionId",
+                "value": "[parameters('cosmosDBcollection')]"
+              },
+              {
+                "name": "VenueServiceSettings__ApiUrl",
+                "value": "[parameters('venueApiUrl')]"
+              },
+              {
+                "name": "VenueServiceSettings__ApiKey",
+                "value": "[parameters('venueApiKey')]"
+              },
+              {
+                "name": "ProviderServiceSettings__ApiUrl",
+                "value": "[parameters('providerApiUrl')]"
+              },
+              {
+                "name": "ProviderServiceSettings__ApiKey",
+                "value": "[parameters('providerApiKey')]"
+              },
+              {
+                "name": "QualificationServiceSettings__SearchService",
+                "value": "[parameters('searchName')]"
+              },
+              {
+                "name": "QualificationServiceSettings__QueryKey",
+                "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "QualificationServiceSettings__Index",
+                "value": "[parameters('qualIndex')]"
+              },
+              {
+                "name": "QualificationServiceSettings__DefaultTop",
+                "value": "10"
+              },
+              {
+                "name": "SearchServiceSettings__SearchService",
+                "value": "[parameters('searchName')]"
+              },
+              {
+                "name": "SearchServiceSettings__ApiUrl",
+                "value": "[concat('https://', parameters('searchName'), '.search.windows.net/indexes/', parameters('searchIndex'), '/docs/search')]"
+              },
+              {
+                "name": "SearchServiceSettings__ProviderApiUrl",
+                "value": "[concat('https://', parameters('searchName'), '.search.windows.net/indexes/', parameters('providerIndex'), '/docs/search')]"
+              },
+              {
+                "name": "SearchServiceSettings__LARSApiUrl",
+                "value": "[concat('https://', parameters('searchName'), '.search.windows.net/indexes/', parameters('larsIndex'), '/docs/search')]"
+              },
+              {
+                "name": "SearchServiceSettings__ONSPDApiUrl",
+                "value": "[concat('https://', parameters('searchName'), '.search.windows.net/indexes/', parameters('onspdIndex'), '/docs/search')]"
+              },
+              {
+                "name": "SearchServiceSettings__ApiVersion",
+                "value": "2017-11-11"
+              },
+              {
+                "name": "SearchServiceSettings__QueryKey",
+                "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "SearchServiceSettings__AdminKey",
+                "value": "[parameters('searchAdminKey')]"
+              },
+              {
+                "name": "SearchServiceSettings__Index",
+                "value": "[parameters('searchIndex')]"
+              },
+              {
+                "name": "SearchServiceSettings__onspdIndex",
+                "value": "[parameters('onspdIndex')]"
+              },
+              {
+                "name": "SearchServiceSettings__DefaultTop",
+                "value": "[parameters('searchDefaultReturnCount')]"
+              },
+              {
+                "name": "SearchServiceSettings__CoursesConnectionString",
+                "value": "[concat('AccountEndpoint=', parameters('cosmosDBfqdn'), ';AccountKey=', parameters('cosmosDBkey'), ';Database=', parameters('cosmosDBdatabase'), ';')]"
+              },
+              {
+                "name": "SearchServiceSettings__ThresholdVenueCount",
+                "value": "100"
+              },
+              {
+                "name": "SearchServiceSettings__RegionBoostScoringProfile",
+                "value": "[parameters('boostScoringProfile')]"
+              },
+              {
+                "name": "SearchServiceSettings__MaxTop",
+                "value": "[parameters('searchMaxReturnCount')]"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__SearchService",
+                "value": "[parameters('onlineCourseSearchName')]"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__ApiUrl",
+                "value": "[concat('https://', parameters('onlineCourseSearchName'), '.search.windows.net/indexes/', parameters('onlineCourseSearchIndex'), '/docs/search')]"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__ApiVersion",
+                "value": "2017-11-11"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__QueryKey",
+                "value": "[parameters('onlineCourseSearchQueryKey')]"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__Index",
+                "value": "[parameters('onlineCourseSearchIndex')]"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__DefaultTop",
+                "value": "[parameters('searchDefaultReturnCount')]"
+              },
+              {
+                "name": "OnlineCourseSearchServiceSettings__MaxTop",
+                "value": "[parameters('searchMaxReturnCount')]"
+              },
+              {
+                "name": "CourseServiceSettings__ApiUrl",
+                "value": "[parameters('courseApiUrl')]"
+              },
+              {
+                "name": "CourseServiceSettings__ApiKey",
+                "value": "[parameters('courseApiKey')]"
+              },
+              {
+                "name": "FACAuthenticationSettings__UserName",
+                "value": "APIUser"
+              },
+              {
+                "name": "FACAuthenticationSettings__Password",
+                "value": "[parameters('apiPassword')]"
+              }
+            ]
+          },
+          "deployStagingSlot": {
+            "value": true
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "webAppName": {
+      "type": "string",
+      "value": "[variables('webAppName')]"
+    },
+    "appInsightName": {
+      "type": "string",
+      "value": "[variables('appInsightName')]"
+    },
+    "appInsightInstrumentationKey": {
+      "type": "string",
+      "value": "[reference('ppfindcourseAppInsights').outputs.InstrumentationKey.value]"
+    }
+  }
+}
