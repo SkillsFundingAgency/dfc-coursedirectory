@@ -1,6 +1,6 @@
 ﻿using System;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Environment;
+using Dfc.CourseDirectory.Web.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Helpers
