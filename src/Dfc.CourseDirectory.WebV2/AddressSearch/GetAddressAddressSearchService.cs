@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 {
     public class GetAddressAddressSearchService : IAddressSearchService
     {
-        private const string IdDelimiter = "::";
+        private const string CompositeIdDelimiter = "::";
 
         private readonly HttpClient _httpClient;
         private readonly GetAddressAddressSearchServiceOptions _options;
@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
                 throw new ArgumentException($"{nameof(compositeId)} cannot be null or whitespace.");
             }
 
-            var idSegments = compositeId.Split(IdDelimiter);
+            var idSegments = compositeId.Split(CompositeIdDelimiter);
             var postcode = idSegments.First();
             var id = idSegments.Skip(1).FirstOrDefault();
 
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
             {
                 return new PostcodeSearchResult
                 {
-                    Id = $"{postcode}{IdDelimiter}{a.Id}",
+                    Id = $"{postcode}{CompositeIdDelimiter}{a.Id}",
                     StreetAddress = string.Join(" ", a.AddressLines.Where(l => !string.IsNullOrWhiteSpace(l))).Trim(),
                     Place = a.TownOrCity
                 };
@@ -121,9 +121,9 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
             public IEnumerable<FindAddressResultItem> Addresses { get; set; }
         }
 
-        public class FindAddressResultItem
+        private class FindAddressResultItem
         {
-            public string Id => string.Join(" ", AddressLines).Trim();
+            public string Id => string.Join(" ", AddressLines).Trim().GetHashCode().ToString("X");
 
             public IEnumerable<string> AddressLines => new[] { Line1, Line2, Line3, Line4, Locality };
 
