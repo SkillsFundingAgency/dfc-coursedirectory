@@ -377,11 +377,11 @@
 
             }
 
-            if ($national.find("input[type='radio']:checked").val()==="True") {
-                $("#regions-section").hide();
+            if ($national.find("input[type='radio']:checked").val() === "False") {
+                $regionSection.show();
             }
             else {
-               $("#regions-section").show();
+                $regionSection.hide();
             }
 
 
@@ -855,6 +855,11 @@
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
 
+                            if ($national.find("input[type='radio']:checked").val() === "False") {
+                                $regionSection.show();
+                            } else {
+                                $regionSection.hide();
+                            }
 
                             $("#govuk-label-start_date").hide();
 
