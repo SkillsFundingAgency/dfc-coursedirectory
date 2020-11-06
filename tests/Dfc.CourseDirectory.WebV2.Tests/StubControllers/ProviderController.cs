@@ -6,8 +6,5 @@ namespace Dfc.CourseDirectory.WebV2.Tests.StubControllers
     {
         [HttpGet("dashboard")]
         public IActionResult Dashboard() => Ok();
-		
-        [HttpGet("provider/provider-type")]
-        public IActionResult AddOrEditProviderType([FromQuery] bool updateProviderType) => Ok();
     }
 }
