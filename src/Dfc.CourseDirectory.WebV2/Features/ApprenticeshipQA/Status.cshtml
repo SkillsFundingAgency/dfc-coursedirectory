@@ -28,7 +28,7 @@
                 <govuk-radios-item value="@(true)" id="UnableToComplete-true">
                     Unable to complete
                     <govuk-radios-item-conditional>
-                        <govuk-checkboxes asp-for="UnableToCompleteReasons" class="govuk-checkboxes--small pttcd-checkboxes-!-no-float">
+                        <govuk-checkboxes asp-for="UnableToCompleteReasons" class="govuk-checkboxes--small pttcd-checkboxes-!-no-float" id="UnableToCompleteReasons">
                             <govuk-checkboxes-hint>Select all options that are relevant to you.</govuk-checkboxes-hint>
                             <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision}")" value="@(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision))">
                                 Provider developing provision
