@@ -1,24 +1,23 @@
 ﻿@inject IFeatureFlagProvider FeatureFlagProvider
 @inject Settings Settings 
 @{
-    var currentController = (string)ViewContext.RouteData.Values["Controller"];
-    var currentAction = (string)ViewContext.RouteData.Values["Action"];
+    var activeSection = ViewData["ActiveAdminTopNavSection"] as AdminTopNavSection?;
 }
 
 <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
 <nav>
     <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
-        <li class="govuk-header__navigation-item@(currentController == "HelpdeskDashboard" && currentAction == "Dashboard" ? " govuk-header__navigation-item--active" : null)">
+        <li class="govuk-header__navigation-item@(activeSection == AdminTopNavSection.HelpdeskDashboard ? " govuk-header__navigation-item--active" : null)">
             <a asp-action="Dashboard" asp-controller="HelpdeskDashboard" class="govuk-header__link" data-testid="topnav-helpdeskdashboard">
                 Helpdesk dashboard
             </a>
         </li>
-        <li class="govuk-header__navigation-item@(currentController == "ApprenticeshipQA" ? " govuk-header__navigation-item--active" : null)">
+        <li class="govuk-header__navigation-item@(activeSection == AdminTopNavSection.QualityAssurance ? " govuk-header__navigation-item--active" : null)">
             <a asp-action="ListProviders" asp-controller="ApprenticeshipQA" class="govuk-header__link" data-testid="topnav-qa">
                 Quality assurance
             </a>
         </li>
-        <li class="govuk-header__navigation-item@(currentController == "SearchProvider" ? " govuk-header__navigation-item--active" : null)">
+        <li class="govuk-header__navigation-item@(activeSection == AdminTopNavSection.SearchProviders ? " govuk-header__navigation-item--active" : null)">
             <a asp-action="Index" asp-controller="SearchProvider" class="govuk-header__link" data-testid="topnav-searchproviders">
                 Search providers
             </a>
@@ -28,7 +27,7 @@
                 Manage users
             </a>
         </li>
-        <li class="govuk-header__navigation-item@(currentController == "Report" && currentAction == "Index" ? " govuk-header__navigation-item--active" : null)">
+        <li class="govuk-header__navigation-item@(activeSection == AdminTopNavSection.MigrationReports ? " govuk-header__navigation-item--active" : null)">
             <a asp-action="Index" asp-controller="Report" class="govuk-header__link" data-testid="topnav-migrationreports">
                 Migration reports
             </a>
