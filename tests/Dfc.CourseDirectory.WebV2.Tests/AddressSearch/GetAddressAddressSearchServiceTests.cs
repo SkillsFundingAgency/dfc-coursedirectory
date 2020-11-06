@@ -103,15 +103,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             // Assert
             Assert.Equal(3, result.Count);
 
-            Assert.Equal("XX2 00X::658 Mitcham Road", result.First().Id);
+            Assert.Equal($"XX2 00X::{"658 Mitcham Road".GetHashCode():X}", result.First().Id);
             Assert.Equal("658 Mitcham Road", result.First().StreetAddress);
             Assert.Equal("Croydon", result.First().Place);
 
-            Assert.Equal("XX2 00X::660 Mitcham Road", result.Skip(1).First().Id);
+            Assert.Equal($"XX2 00X::{"660 Mitcham Road".GetHashCode():X}", result.Skip(1).First().Id);
             Assert.Equal("660 Mitcham Road", result.Skip(1).First().StreetAddress);
             Assert.Equal("Croydon", result.Skip(1).First().Place);
 
-            Assert.Equal("XX2 00X::Lanfranc School House Mitcham Road", result.Skip(2).First().Id);
+            Assert.Equal($"XX2 00X::{"Lanfranc School House Mitcham Road".GetHashCode():X}", result.Skip(2).First().Id);
             Assert.Equal("Lanfranc School House Mitcham Road", result.Skip(2).First().StreetAddress);
             Assert.Equal("Croydon", result.Skip(2).First().Place);
         }
@@ -289,7 +289,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
             // Act
-            var result = await service.GetById("XX2 00X::660 Mitcham Road");
+            var result = await service.GetById($"XX2 00X::{"660 Mitcham Road".GetHashCode():X}");
 
             // Assert
             Assert.NotNull(result);
