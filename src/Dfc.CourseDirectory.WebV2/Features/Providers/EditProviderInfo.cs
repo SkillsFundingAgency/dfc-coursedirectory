@@ -29,10 +29,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
     }
 
     public class Handler :
-        IRequireUserIsAdmin<Query>,
         IRestrictProviderType<Query>,
         IRequestHandler<Query, Command>,
-        IRequireUserIsAdmin<Command>,
         IRestrictProviderType<Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {

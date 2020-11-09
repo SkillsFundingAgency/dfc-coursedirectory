@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         }
 
         [HttpGet("info")]
+        [AuthorizeAdmin]
         public async Task<IActionResult> EditProviderInfo(ProviderContext providerContext)
         {
             var query = new EditProviderInfo.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -43,6 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         }
 
         [HttpPost("info")]
+        [AuthorizeAdmin]
         public async Task<IActionResult> EditProviderInfo(
             EditProviderInfo.Command command,
             ProviderContext providerContext)

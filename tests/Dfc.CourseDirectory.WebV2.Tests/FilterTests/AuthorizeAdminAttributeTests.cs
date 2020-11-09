@@ -1,18 +1,16 @@
 ﻿using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
-using MediatR;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
+namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class RequireUserIsAdminTests : MvcTestBase
+    public class AuthorizeAdminAttributeTests : MvcTestBase
     {
-        public RequireUserIsAdminTests(CourseDirectoryApplicationFactory factory)
+        public AuthorizeAdminAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -23,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
         public async Task AdminUsers_AreNotBlocked(TestUserType userType)
         {
             // Arrange
-            var request = new HttpRequestMessage(HttpMethod.Get, "/RequireUserIsAdminTests");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/AuthorizeAdminAttributeTests");
 
             await User.AsTestUser(userType);
 
@@ -42,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "/RequireUserIsAdminTests");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/AuthorizeAdminAttributeTests");
 
             await User.AsTestUser(userType, providerId);
 
@@ -54,29 +52,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.BehaviorTests
         }
     }
 
-    [Route("RequireUserIsAdminTests")]
+    [Route("AuthorizeAdminAttributeTests")]
     public class RequireUserIsAdminTestsController : Controller
     {
         [HttpGet("")]
         [AllowAnonymous]  // Disable the up-front authentication check so our behavior gets executed
-        public async Task<IActionResult> Get([FromServices] IMediator mediator)
-        {
-            await mediator.Send(new RequireUserIsAdminTestsRequest());
-            return Ok();
-        }
-    }
-
-    public class RequireUserIsAdminTestsRequest : IRequest
-    {
-    }
-
-    public class RequireUserIsAdminTestsHandler :
-        IRequestHandler<RequireUserIsAdminTestsRequest>,
-        IRequireUserIsAdmin<RequireUserIsAdminTestsRequest>
-    {
-        public Task<Unit> Handle(RequireUserIsAdminTestsRequest request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new Unit());
-        }
+        [AuthorizeAdmin]
+        public IActionResult Get() => Ok();
     }
 }
