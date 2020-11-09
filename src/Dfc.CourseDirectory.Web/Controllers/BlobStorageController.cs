@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            return View();;
+            return View();
         }
 
         public async Task<FileStreamResult> GetBulkUploadTemplateFile()

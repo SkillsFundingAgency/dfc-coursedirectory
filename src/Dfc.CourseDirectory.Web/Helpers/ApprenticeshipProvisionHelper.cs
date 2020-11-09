@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
@@ -12,86 +13,53 @@ using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class ApprenticeshipProvisionHelper : IApprenticeshipProvisionHelper
     {
-        private readonly ILogger<ApprenticeshipProvisionHelper> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IProviderService _providerService;
-
         private ICSVHelper _CSVHelper;
+
         private ISession _session => _contextAccessor.HttpContext.Session;
+
         public ApprenticeshipProvisionHelper(
-            ILogger<ApprenticeshipProvisionHelper> logger,
-                IHttpContextAccessor contextAccessor,
-                IApprenticeshipService apprenticeshipService,
-                IVenueService venueService,
-                IProviderService providerService,
-                ICSVHelper CSVHelper)
+            IHttpContextAccessor contextAccessor,
+            IApprenticeshipService apprenticeshipService,
+            IVenueService venueService,
+            IProviderService providerService,
+            ICSVHelper CSVHelper)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (contextAccessor == null)
-            {
-                throw new ArgumentNullException(nameof(contextAccessor));
-            }
-
-            if (apprenticeshipService == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipService));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (providerService == null)
-            {
-                throw new ArgumentNullException(nameof(providerService));
-            }
-
-            _logger = logger;
-            _contextAccessor = contextAccessor;
-            _apprenticeshipService = apprenticeshipService;
-            _venueService = venueService;
-            _providerService = providerService;
-            _CSVHelper = CSVHelper;
+            _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
+            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _providerService = providerService ?? throw new ArgumentNullException(nameof(providerService));
+            _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
         }
-        public FileStreamResult DownloadCurrentApprenticeshipProvisions()
+
+        public async Task<FileStreamResult> DownloadCurrentApprenticeshipProvisions()
         {
-            int? UKPRN;
-            string providerName = String.Empty;
-            if (_session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-                var providerSearchResult = _providerService.GetProviderByPRNAsync(UKPRN.Value.ToString()).Result.Value;
-                providerName = providerSearchResult.FirstOrDefault()?.ProviderName.Replace(" ", "");
-            }
-            else
+            var UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
             {
                 return null;
             }
 
-            var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString())
-                                      .Result
-                                      .Value
-                                      .Where((y => (int)y.RecordStatus == (int)RecordStatus.Live));
-
-            var csvApprenticeships = ApprenticeshipsToCsvApprenticeships(apprenticeships);
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
+            var providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName.Replace(" ", "");
+            var apprenticeships = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
+                                      
+            var csvApprenticeships = ApprenticeshipsToCsvApprenticeships(
+                apprenticeships.Value.Where(y => y.RecordStatus == RecordStatus.Live));
 
             return CsvApprenticeshipsToFileStream(csvApprenticeships, providerName);
         }
 
-        internal IEnumerable<CsvApprenticeship> ApprenticeshipsToCsvApprenticeships(IEnumerable<Apprenticeship> apprenticeships)
+        private IEnumerable<CsvApprenticeship> ApprenticeshipsToCsvApprenticeships(IEnumerable<Apprenticeship> apprenticeships)
         {
             List<CsvApprenticeship> csvApprenticeships = new List<CsvApprenticeship>();
 
@@ -114,7 +82,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return csvApprenticeships;
         }
 
-        internal CsvApprenticeship MapCsvApprenticeship(Apprenticeship apprenticeship, ApprenticeshipLocation location)
+        private CsvApprenticeship MapCsvApprenticeship(Apprenticeship apprenticeship, ApprenticeshipLocation location)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
 
@@ -122,9 +90,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             {
                 StandardCode = apprenticeship.StandardCode?.ToString(),
                 Version = apprenticeship.Version?.ToString(),
-                FrameworkCode = apprenticeship.FrameworkCode?.ToString(),
-                ProgType =  apprenticeship.ProgType?.ToString(),
-                PathwayCode = apprenticeship.PathwayCode?.ToString(),
                 ApprenticeshipInformation = _CSVHelper.SanitiseTextForCSVOutput(apprenticeship.MarketingInformation),
                 ApprenticeshipWebpage = apprenticeship.Url,
                 ContactEmail = apprenticeship.ContactEmail,
@@ -151,86 +116,64 @@ namespace Dfc.CourseDirectory.Web.Helpers
                                                                                 z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",", "")).ToList())) : string.Empty,
             };
         }
-        internal FileStreamResult CsvApprenticeshipsToFileStream(IEnumerable<CsvApprenticeship> csvApprenticeships, string providerName)
+
+        private FileStreamResult CsvApprenticeshipsToFileStream(IEnumerable<CsvApprenticeship> csvApprenticeships, string providerName)
         {
-            List<string> csvLines = new List<string>();
-            foreach (var line in _CSVHelper.ToCsv(csvApprenticeships))
-            {
-                csvLines.Add(line);
-            }
-            string report = string.Join(Environment.NewLine, csvLines);
-            byte[] data = Encoding.ASCII.GetBytes(report);
-            MemoryStream ms = new MemoryStream(data)
+            var report = string.Join(Environment.NewLine, _CSVHelper.ToCsv(csvApprenticeships));
+
+            var ms = new MemoryStream(Encoding.ASCII.GetBytes(report))
             {
                 Position = 0
             };
-            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
-            DateTime d = DateTime.Now;
-            result.FileDownloadName = $"{providerName}_Apprenticeships_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
-            return result;
-        }
 
-        internal string BoolConvert(bool? input)
-        {
-            switch (input)
+            var now = DateTime.Now;
+            return new FileStreamResult(ms, MediaTypeNames.Text.Plain)
             {
-                case true:
-                    return "Yes";
-                case false:
-                    return "No";
-                default:
-                    return String.Empty;
-            }
+                FileDownloadName = $"{providerName}_Apprenticeships_{now.Day.TwoChars()}_{now.Month.TwoChars()}_{now.Year}_{now.Hour.TwoChars()}_{now.Minute.TwoChars()}.csv"
+            };
         }
 
-        internal string DeliveryMethodConvert(ApprenticeshipLocationType input)
+        private string BoolConvert(bool? input) => input switch
         {
-            switch (input)
-            {
-                case ApprenticeshipLocationType.ClassroomBased:
-                    return "Classroom";
-                case ApprenticeshipLocationType.ClassroomBasedAndEmployerBased:
-                    return "Both";
-                case ApprenticeshipLocationType.EmployerBased:
-                    return "Employer";
-                default:
-                    return string.Empty;
-            }
-        }
+            true => "Yes",
+            false => "No",
+            _ => string.Empty,
+        };
 
-        internal string DeliveryModeConvert(List<int> modes)
+        private string DeliveryMethodConvert(ApprenticeshipLocationType input) => input switch
         {
-            List<string> modeNames = new List<string>();
-            foreach (var mode in modes)
-            {
-                switch (mode)
-                {
-                    case (int)ApprenticeShipDeliveryLocation.DayRelease:
-                        modeNames.Add("Day");
-                        break;
-                    case (int)ApprenticeShipDeliveryLocation.BlockRelease:
-                        modeNames.Add("Block");
-                        break;
-                    case (int)ApprenticeShipDeliveryLocation.EmployerAddress:
-                        modeNames.Add("Employer");
-                        break;
-                }
-            }
+            ApprenticeshipLocationType.ClassroomBased => "Classroom",
+            ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Both",
+            ApprenticeshipLocationType.EmployerBased => "Employer",
+            _ => string.Empty,
+        };
 
-            return string.Join(";", modeNames);
+        private string DeliveryModeConvert(List<int> modes)
+        {
+            return string.Join(";", modes.Select(m => m switch
+            {
+                (int)ApprenticeShipDeliveryLocation.DayRelease => "Day",
+                (int)ApprenticeShipDeliveryLocation.BlockRelease => "Block",
+                (int)ApprenticeShipDeliveryLocation.EmployerAddress => "Employer",
+                _ => null,
+            }).Where(m => m != null));
         }
-        internal string AcrossEnglandConvert(int? radius, bool? national)
+
+        private string AcrossEnglandConvert(int? radius, bool? national)
         {
             if (!radius.HasValue)
+            {
                 return string.Empty;
+            }
 
             if (!national.HasValue)
-                return string.Empty;
-
-            if (radius.Value == 600)
             {
-                if (national.Value)
-                    return BoolConvert(true);
+                return string.Empty;
+            }
+
+            if (radius.Value == 600 && national.Value)
+            {
+                return BoolConvert(true);
             }
 
             return string.Empty;

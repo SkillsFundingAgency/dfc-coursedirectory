@@ -574,10 +574,6 @@
                 "value": "[parameters('BulkUploadSecondsPerRecord')]"
               },
               {
-                "name": "BlobStorageSettings__ApprenticeshipsTemplatePath",
-                "value": "apprenticeshipsbulkuploadtemplate.csv"
-              },
-              {
                 "name": "CosmosDbSettings__EndpointUri",
                 "value": "[parameters('CosmosAccountEndpoint')]"
               },
