@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
-using FindStandard = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -50,6 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("apprenticeship-details")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipDetails(ProviderContext providerContext)
         {
             var query = new ApprenticeshipDetails.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -58,6 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("apprenticeship-details")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipDetails(
             ApprenticeshipDetails.Command command,
             ProviderContext providerContext)
@@ -78,6 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("apprenticeship-employer-locations")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocations(ProviderContext providerContext)
         {
             var query = new ApprenticeshipEmployerLocations.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -88,6 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("apprenticeship-employer-locations")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocations(
             ApprenticeshipEmployerLocations.Command command,
             ProviderContext providerContext)
@@ -109,6 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("apprenticeship-employer-locations-regions")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions(ProviderContext providerContext)
         {
             var query = new ApprenticeshipEmployerLocationsRegions.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -117,6 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("apprenticeship-employer-locations-regions")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions(
             ApprenticeshipEmployerLocationsRegions.Command command,
             ProviderContext providerContext)
@@ -137,6 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("apprenticeship-locations")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipLocations(ProviderContext providerContext)
         {
             var query = new ApprenticeshipLocations.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -147,6 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("apprenticeship-locations")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipLocations(
             ApprenticeshipLocations.Command command,
             ProviderContext providerContext)
@@ -165,6 +173,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         }
         [MptxAction]
         [HttpGet("apprenticeship-confirmation")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipSummary(ProviderContext providerContext)
         {
             var query = new ApprenticeshipSummary.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -177,6 +186,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("apprenticeship-confirmation")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipSummaryConfirmation(ProviderContext providerContext)
         {
             var command = new ApprenticeshipSummary.CompleteCommand() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -247,6 +257,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [StartsMptx]
         [HttpGet("provider-detail")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetail(
             [FromServices] MptxManager mptxManager,
             [FromServices] FlowModelInitializer initializer,
@@ -261,6 +272,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("provider-detail")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetail(ProviderContext providerContext)
         {
             var query = new ProviderDetail.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -269,6 +281,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("provider-detail")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetail(
             ProviderDetail.Command command,
             ProviderContext providerContext)
@@ -285,6 +298,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpGet("provider-detail-confirmation")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetailConfirmation(ProviderContext providerContext)
         {
             var query = new ProviderDetail.ConfirmationQuery() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -293,6 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction]
         [HttpPost("provider-detail-confirmation")]
+        [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetailConfirmation(
             ProviderContext providerContext,
             ProviderDetail.ConfirmationCommand command)

@@ -14,38 +14,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
         {
             foreach (var type in handlersAssembly.GetTypes())
             {
-                RegisterRequireUserCanSubmitQASubmissionBehavior(type);
                 RegisterRestrictProviderTypeBehavior(type);
                 RegisterRestrictQAStatusBehavior(type);
             }
 
             return services;
-
-            void RegisterRequireUserCanSubmitQASubmissionBehavior(Type type)
-            {
-                // For any type implementing IRequireUserCanSubmitQASubmission<TRequest, TResponse>
-                // add a RequireUserCanSubmitQASubmissionBehavior behavior for its request & response types
-
-                var requireCanSubmitQASubmissionType = typeof(IRequireUserCanSubmitQASubmission<>);
-
-                var restrictTypes = type.GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == requireCanSubmitQASubmissionType)
-                    .ToList();
-
-                foreach (var t in restrictTypes)
-                {
-                    var requestType = t.GenericTypeArguments[0];
-                    var responseType = GetResponseTypeFromRequestType(requestType);
-
-                    var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
-                    var behaviourType = typeof(RequireUserCanSubmitQASubmissionBehavior<,>).MakeGenericType(requestType, responseType);
-                    services.AddScoped(pipelineBehaviorType, behaviourType);
-
-                    // Register the handler as an IRequestHandler<TRequest, TResponse>
-                    var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
-                    services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
-                }
-            }
 
             void RegisterRestrictProviderTypeBehavior(Type type)
             {
