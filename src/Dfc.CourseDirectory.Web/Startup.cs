@@ -99,7 +99,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<CourseTextServiceSettings>(Configuration.GetSection(nameof(CourseTextServiceSettings)));
             services.AddScoped<ICourseTextService, CourseTextService>();
 
-            services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICSVHelper, CSVHelper>();
             services.AddScoped<ICourseProvisionHelper, CourseProvisionHelper>();

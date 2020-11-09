@@ -3,9 +3,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Services.Models.Onspd;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
@@ -17,6 +19,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Flurl;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,64 +31,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class VenuesController : Controller
     {
-        private readonly ILogger<VenuesController> _logger;
         private readonly IAddressSearchService _addressSearchService;
-        private readonly VenueServiceSettings _venueServiceSettings;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        private readonly IOnspdSearchHelper _onspdSearchHelper;
         private readonly ICourseService _courseService;
         private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly ISearchClient<Core.Search.Models.Onspd> _searchClient;
 
         private ISession Session => HttpContext.Session;
 
         public VenuesController(
-            ILogger<VenuesController> logger,
             IAddressSearchService addressSearchService,
-            IOptions<VenueServiceSettings> venueSearchSettings,
             IVenueSearchHelper venueSearchHelper,
             IVenueService venueService,
-            IOnspdSearchHelper onspdSearchHelper,
             ICourseService courseService, 
-            IApprenticeshipService apprenticeshipService)
+            IApprenticeshipService apprenticeshipService,
+            ISearchClient<Core.Search.Models.Onspd> searchClient)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (addressSearchService == null)
-            {
-                throw new ArgumentNullException(nameof(addressSearchService));
-            }
-
-            if (venueSearchSettings == null)
-            {
-                throw new ArgumentNullException(nameof(venueSearchSettings));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            _logger = logger;
-            _addressSearchService = addressSearchService;
-            _venueServiceSettings = venueSearchSettings.Value;
-            _venueSearchHelper = venueSearchHelper;
-            _venueService = venueService;
-            _onspdSearchHelper = onspdSearchHelper;
-            _courseService = courseService;
-            _apprenticeshipService = apprenticeshipService;
+            _addressSearchService = addressSearchService ?? throw new ArgumentNullException(nameof(addressSearchService));
+            _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
+            _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
         }
 
-
-       
         /// <summary>
         /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
         /// </summary>
@@ -96,104 +66,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             Session.SetString("Option", "Venues");
             Claim providerUKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-            if (!String.IsNullOrEmpty(providerUKPRN?.Value))
+            if (!string.IsNullOrEmpty(providerUKPRN?.Value))
             {
-                Session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
+                Session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value));
             }
 
             int UKPRN = 0;
             if (Session.GetInt32("UKPRN").HasValue)
             {
                 UKPRN = Session.GetInt32("UKPRN").Value;
-                return View(await GetVenues(UKPRN));
+                return View(await GetVenues(UKPRN, null, false));
             }
             else
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
-
-
-
-        }
-        private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn)
-        {
-            return await GetVenues(ukprn, null, false);
-        }
-        private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn, VenueSearchResultItemModel newVenue, bool updated)
-        {
-            VenueSearchRequestModel requestModel = new VenueSearchRequestModel
-            {
-                SearchTerm = ukprn.ToString()
-            };
-            if (null != newVenue) requestModel.NewAddressId = newVenue.Id;
-
-
-            VenueSearchResultModel model;
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-
-            if (result.IsSuccess)
-            {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                model = new VenueSearchResultModel(
-                    requestModel.SearchTerm,
-                    items, newVenue, updated);
-            }
-            else
-            {
-                model = new VenueSearchResultModel(result.Error);
-            }
-
-            // The v2 EditVenue journey sets a TempData entry after venue has been updated
-            if (TempData.ContainsKey(TempDataKeys.UpdatedVenueId))
-            {
-                model = new VenueSearchResultModel(
-                    model.SearchTerm,
-                    model.Items,
-                    newItem: model.Items.Single(v => v.Id == TempData[TempDataKeys.UpdatedVenueId].ToString()),
-                    updated: true);
-            }
-
-            var viewModel = new VenueSearchResultsViewModel
-            {
-                Result = model
-            };
-            return viewModel;
-        }
-
-        private async Task<VenueSearchResultsViewModel> GetVenues(VenueSearchResultItemModel deletedVenue)
-        {
-            var UKPRN = Session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return null;
-            }
-            VenueSearchRequestModel requestModel = new VenueSearchRequestModel
-            {
-                SearchTerm = UKPRN.ToString()
-            };
-
-            VenueSearchResultModel model;
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-
-            if (result.IsSuccess)
-            {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                model = new VenueSearchResultModel(
-                    items, deletedVenue);
-            }
-            else
-            {
-                model = new VenueSearchResultModel(result.Error);
-            }
-
-            var viewModel = new VenueSearchResultsViewModel
-            {
-                Result = model
-            };
-            return viewModel;
         }
 
         [Authorize]
@@ -207,6 +94,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //_session.SetString("IsEdit", "false");
             return View();
         }
+
         [Authorize]
         public async Task<IActionResult> AddVenueManualAddress(string Id)
         {
@@ -248,7 +136,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel, string VenueName)
         {
-
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
 
             if (!string.IsNullOrEmpty(requestModel.PostcodeId))
@@ -279,7 +166,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     if (getVenueByIdResult.IsSuccess)
                     {
-                        var onspd = _onspdSearchHelper.GetOnsPostcodeData(getVenueByIdResult.Value.PostCode);
+                        var onspd = await GetOnsPostcodeData(getVenueByIdResult.Value.PostCode);
+
                         viewModel.Address = new AddressModel
                         {
                             //Id = getVenueByIdResult.Value.ID,
@@ -297,16 +185,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             if (!string.IsNullOrEmpty(requestModel.PostcodeId))
-                {
+            {
                 viewModel.PostCodeId = requestModel.PostcodeId;
             }
-              
-            
 
             viewModel.VenueName = requestModel.VenueName;
 
             return View(viewModel);
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddVenueSelectionConfirmation(AddVenueSelectionConfirmationRequestModel requestModel)
@@ -321,7 +208,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            var onspd = _onspdSearchHelper.GetOnsPostcodeData(requestModel.Postcode);
+            var onspd = await GetOnsPostcodeData(requestModel.Postcode);
             var latitude = onspd.lat;
             var longitude = onspd.@long;
 
@@ -432,18 +319,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 });
             }
 
-            
-
             return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
-
-
-
         }
+
         [Authorize]
         [HttpPost]
-        public IActionResult VenueAddressManualConfirmation(AddVenueSelectionConfirmationRequestModel model)
+        public async Task<IActionResult> VenueAddressManualConfirmation(AddVenueSelectionConfirmationRequestModel model)
         {
-            var onspd = _onspdSearchHelper.GetOnsPostcodeData(model.Postcode);
+            var onspd = await GetOnsPostcodeData(model.Postcode);
+
             var viewModel = new VenueAddressSelectionConfirmationViewModel
             {
                 Id = model.Id,
@@ -463,7 +347,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult CheckForVenue(string VenueName)
+        public async Task<IActionResult> CheckForVenue(string VenueName)
         {
             int? sUKPRN = Session.GetInt32("UKPRN");
             int UKPRN;
@@ -472,7 +356,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
                 UKPRN = sUKPRN ?? 0;
 
-            var result = _venueService.GetVenuesByPRNAndNameAsync(new GetVenuesByPRNAndNameCriteria(UKPRN.ToString(), VenueName)).Result;
+            var result = await _venueService.GetVenuesByPRNAndNameAsync(new GetVenuesByPRNAndNameCriteria(UKPRN.ToString(), VenueName));
 
             if (result.IsSuccess && result.Value.Value.Any(x => x.Status == Live))// && result.Value.Value.FirstOrDefault()?.Status == VenueStatus.Live)
                 return Ok(true);
@@ -528,12 +412,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
-            updatedVenue.Status = Deleted;
+            var updatedVenue = await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString()));
+            updatedVenue.Value.Status = Deleted;
 
-            updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
+            updatedVenue = await _venueService.UpdateAsync(updatedVenue.Value);
 
-            VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
+            var deletedVenue = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(updatedVenue.Value.VenueName), updatedVenue.Value.Address1, updatedVenue.Value.Address2, updatedVenue.Value.Town, updatedVenue.Value.County, updatedVenue.Value.PostCode, updatedVenue.Value.ID);
 
             return View("VenueSearchResults", await GetVenues(deletedVenue));
         }
@@ -558,6 +442,100 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("LandingOptions", "Venues");
             }
 
+        }
+
+        private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn, VenueSearchResultItemModel newVenue, bool updated)
+        {
+            VenueSearchRequestModel requestModel = new VenueSearchRequestModel
+            {
+                SearchTerm = ukprn.ToString()
+            };
+            if (null != newVenue) requestModel.NewAddressId = newVenue.Id;
+
+
+            VenueSearchResultModel model;
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+
+            if (result.IsSuccess)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                model = new VenueSearchResultModel(
+                    requestModel.SearchTerm,
+                    items, newVenue, updated);
+            }
+            else
+            {
+                model = new VenueSearchResultModel(result.Error);
+            }
+
+            // The v2 EditVenue journey sets a TempData entry after venue has been updated
+            if (TempData.ContainsKey(TempDataKeys.UpdatedVenueId))
+            {
+                model = new VenueSearchResultModel(
+                    model.SearchTerm,
+                    model.Items,
+                    newItem: model.Items.Single(v => v.Id == TempData[TempDataKeys.UpdatedVenueId].ToString()),
+                    updated: true);
+            }
+
+            var viewModel = new VenueSearchResultsViewModel
+            {
+                Result = model
+            };
+            return viewModel;
+        }
+
+        private async Task<VenueSearchResultsViewModel> GetVenues(VenueSearchResultItemModel deletedVenue)
+        {
+            var UKPRN = Session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return null;
+            }
+            VenueSearchRequestModel requestModel = new VenueSearchRequestModel
+            {
+                SearchTerm = UKPRN.ToString()
+            };
+
+            VenueSearchResultModel model;
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+
+            if (result.IsSuccess)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                model = new VenueSearchResultModel(
+                    items, deletedVenue);
+            }
+            else
+            {
+                model = new VenueSearchResultModel(result.Error);
+            }
+
+            var viewModel = new VenueSearchResultsViewModel
+            {
+                Result = model
+            };
+            return viewModel;
+        }
+
+        private async Task<Onspd> GetOnsPostcodeData(string postcode)
+        {
+            if (string.IsNullOrWhiteSpace(postcode))
+            {
+                return new Onspd();
+            }
+
+            var searchResult = await _searchClient.Search(new OnspdSearchQuery
+            {
+                Postcode = postcode
+            });
+
+            return searchResult.Results.Count > 0
+                ? searchResult.Results.Single().Adapt<Onspd>()
+                : new Onspd();
         }
     }
 }
