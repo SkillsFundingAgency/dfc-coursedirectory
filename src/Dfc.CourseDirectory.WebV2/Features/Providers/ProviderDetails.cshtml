@@ -40,7 +40,22 @@
             }
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>@Model.ProviderType.ToDescription()</govuk-summary-list-row-value>
+                <govuk-summary-list-row-value>
+                    <ul class="govuk-list">
+                        @if (Model.ProviderType == ProviderType.None)
+                        {
+                            <li>@ProviderType.None.ToDescription()</li>
+                        }
+                        @if (Model.ProviderType.HasFlag(ProviderType.FE))
+                        {
+                            <li>@ProviderType.FE.ToDescription()</li>
+                        }
+                        @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
+                        {
+                            <li>@ProviderType.Apprenticeships.ToDescription()</li>
+                        }
+                    </ul>
+                </govuk-summary-list-row-value>
                 @if (Model.CanChangeProviderType)
                 {
                     <govuk-summary-list-row-action asp-controller="EditProviderType" asp-action="Get" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="provider type" data-testid="ChangeProviderType">
