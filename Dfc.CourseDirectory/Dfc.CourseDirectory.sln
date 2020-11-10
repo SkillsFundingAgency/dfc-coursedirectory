@@ -3,43 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web", "src\Dfc.CourseDirectory.Web\Dfc.CourseDirectory.Web.csproj", "{4DBAC9AD-D836-4E81-8FFA-40D71A02C996}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web", "..\src\Dfc.CourseDirectory.Web\Dfc.CourseDirectory.Web.csproj", "{4DBAC9AD-D836-4E81-8FFA-40D71A02C996}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services", "src\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj", "{E12E0977-5EDE-4358-8ECA-5D7B346A0226}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services", "..\src\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj", "{E12E0977-5EDE-4358-8ECA-5D7B346A0226}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2", "src\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj", "{A2BD0AC2-271B-463C-87F0-B358B546DDDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2", "..\src\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj", "{A2BD0AC2-271B-463C-87F0-B358B546DDDA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2.Tests", "tests\Dfc.CourseDirectory.WebV2.Tests\Dfc.CourseDirectory.WebV2.Tests.csproj", "{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2.Tests", "..\tests\Dfc.CourseDirectory.WebV2.Tests\Dfc.CourseDirectory.WebV2.Tests.csproj", "{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1DB8226-C965-4846-A3F0-A597F8511A8A}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.gitignore = .gitignore
-		.tool-versions = .tool-versions
-		Directory.Build.props = Directory.Build.props
-		LICENSE = LICENSE
-		README.md = README.md
-	EndProjectSection
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dfc.CourseDirectory.Database", "..\src\Dfc.CourseDirectory.Database\Dfc.CourseDirectory.Database.sqlproj", "{08458BC6-E51F-4320-9663-225509D4B11A}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dfc.CourseDirectory.Database", "src\Dfc.CourseDirectory.Database\Dfc.CourseDirectory.Database.sqlproj", "{08458BC6-E51F-4320-9663-225509D4B11A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core", "src\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj", "{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core", "..\src\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj", "{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{260DB60D-49B4-4B94-A6E8-53069B9FC1BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "..\tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Functions", "src\Dfc.CourseDirectory.Functions\Dfc.CourseDirectory.Functions.csproj", "{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Functions", "..\src\Dfc.CourseDirectory.Functions\Dfc.CourseDirectory.Functions.csproj", "{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core.Tests", "tests\Dfc.CourseDirectory.Core.Tests\Dfc.CourseDirectory.Core.Tests.csproj", "{67E0AA98-8C6C-4E3D-A686-CAB41AA9B6F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core.Tests", "..\tests\Dfc.CourseDirectory.Core.Tests\Dfc.CourseDirectory.Core.Tests.csproj", "{67E0AA98-8C6C-4E3D-A686-CAB41AA9B6F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tests", "tests\Dfc.CourseDirectory.Web.Tests\Dfc.CourseDirectory.Web.Tests.csproj", "{3E624726-E241-462A-9C07-4C0A3FCD41D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tests", "..\tests\Dfc.CourseDirectory.Web.Tests\Dfc.CourseDirectory.Web.Tests.csproj", "{3E624726-E241-462A-9C07-4C0A3FCD41D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services.Tests", "tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{F734371F-3DE2-4B40-8654-5EBB167D7432}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi.Tests", "tests\Dfc.CourseDirectory.FindACourseApi.Tests\Dfc.CourseDirectory.FindACourseApi.Tests.csproj", "{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi", "src\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.FindACourseApi.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services.Tests", "..\tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{F734371F-3DE2-4B40-8654-5EBB167D7432}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,14 +77,6 @@ Global
 		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F734371F-3DE2-4B40-8654-5EBB167D7432}.Release|Any CPU.Build.0 = Release|Any CPU
-		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

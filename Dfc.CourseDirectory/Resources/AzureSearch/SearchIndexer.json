@@ -1,0 +1,17 @@
+[
+    {
+        "name":  "onspdquarterly",
+        "description":  "Run manually each quarter",
+        "dataSourceName":  "sql-coursedirectory-onspd",
+        "targetIndexName":  "onspd",
+        "fieldMappings":  [
+            {
+                "sourceFieldName":  "pcd",
+                "targetFieldName":  "pcd",
+                "mappingFunction" : {
+                    "name" : "base64Encode"
+                }
+            }
+        ]
+    }
+]

@@ -6,11 +6,11 @@ pool:
   - node.js
 
 variables:
-  ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates'
+  ArmTemplateRoot: '$(Build.SourcesDirectory)\Dfc.CourseDirectory\Resources\ArmTemplates'
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
   SolutionBaseName: 'Dfc.CourseDirectory'
-  GitVersionConfigFilePath: Resources/AzureDevOps/GitVersion.yml
+  GitVersionConfigFilePath: Dfc.CourseDirectory/Resources/AzureDevOps/GitVersion.yml
   group: dfc-findacourse-build
 
 resources:
@@ -57,7 +57,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy Files: AzureSearch'
   inputs:
-    Contents: 'Resources/AzureSearch/*'
+    Contents: 'Dfc.CourseDirectory/Resources/AzureSearch/*'
     TargetFolder: '$(build.artifactstagingdirectory)'
 
 # restore symlink
@@ -89,12 +89,12 @@ steps:
 
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.sln` explodes
 - powershell: |
-    dotnet sln $(SolutionBaseName).sln remove src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
+    dotnet sln Dfc.CourseDirectory/$(SolutionBaseName).sln remove src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    projects: '$(SolutionBaseName).sln'
+    projects: 'Dfc.CourseDirectory/$(SolutionBaseName).sln'
     arguments: '--configuration ${{ variables.BuildConfiguration }}'
   displayName: Build
 
@@ -113,6 +113,7 @@ steps:
     command: publish
     projects: 'src/$(SolutionBaseName).Web/$(SolutionBaseName).Web.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    publishWebProjects: false
     zipAfterPublish: True
 
 - task: DotNetCoreCLI@2
