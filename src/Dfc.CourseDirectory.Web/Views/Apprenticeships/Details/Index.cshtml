@@ -119,8 +119,8 @@
 
                 <input class="govuk-input govuk-!-width-one-half" asp-for="@Model.Telephone" type="text" aria-labelledby="govuk-label-Telephone"
                        val-required-message="Enter telephone"
-                       val-min-length="11"
-                       val-min-length-message="Telephone should be minimum 11 characters"
+                       val-min-length="10"
+                       val-min-length-message="Telephone should be minimum 10 characters"
                        val-max-length="30"
                        val-max-length-message="Telephone should be no more than 30 characters"
                        val-regex="@telephoneRegEx"
