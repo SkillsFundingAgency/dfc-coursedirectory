@@ -98,14 +98,33 @@ steps:
     arguments: '--configuration ${{ variables.BuildConfiguration }}'
   displayName: Build
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: 'tests/**/*.Tests.csproj'
-    arguments: '--configuration ${{ variables.BuildConfiguration }} --filter SkipOnCI!=true'
+- powershell: |
+    $projects = (dotnet sln Dfc.CourseDirectory.sln list | findstr Tests.csproj)
+
+    $success = $True
+    foreach ($proj in $projects) {
+      dotnet test $proj --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+
+      if ($LASTEXITCODE -ne 0) {
+        $success = $False
+      }
+    }
+
+    if ($success -eq $False) {
+      Exit 1
+    }
   env:
     ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)
+  workingDirectory: $(SolutionBaseName)
   displayName: Test
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: "**/*.trx"
+    searchFolder: "$(Agent.TempDirectory)"
+  condition: succeededOrFailed()
 
 - task: DotNetCoreCLI@2
   displayName: Publish Dfc.CourseDirectory.Web
