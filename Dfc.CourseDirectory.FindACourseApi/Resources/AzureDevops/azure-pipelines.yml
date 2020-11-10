@@ -1,0 +1,80 @@
+pool:
+  name: NCS - CI and CD
+  demands:
+  - azureps
+
+variables:
+  ArmTemplateRoot: '$(Build.SourcesDirectory)\Dfc.CourseDirectory.FindACourseApi\Resources\ArmTemplates'
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
+  SolutionBaseName: 'Dfc.CourseDirectory.FindACourseApi'
+  GitVersionConfigFilePath: Dfc.CourseDirectory.FindACourseApi/Resources/AzureDevOps/GitVersion.yml
+  group: dfc-findacourse-build
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    endpoint: 'GitHub (ESFA)'
+    ref: refs/tags/v1.11.2
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - release/*
+    - main
+
+pr:
+  branches:
+    include:
+    - release/*
+    - main
+
+workspace:
+  clean: all
+
+steps:
+
+- task: UseGitVersion@5
+  displayName: GitVersion
+  inputs:
+    useConfigFile: true
+    configFilePath: ${{ variables.GitVersionConfigFilePath }}
+    versionSpec: '5.3.x'
+
+# ARM template
+- template: AzureDevOpsTemplates\Build\StepTemplates\dfc-arm-build.yml@dfc-devops
+  parameters:
+    ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
+    SolutionBaseName: '${{ variables.SolutionBaseName }}'
+
+# Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.FindACourseApi.sln` explodes
+- powershell: |
+    dotnet sln Dfc.CourseDirectory.FindACourseApi/$(SolutionBaseName).sln remove src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'Dfc.CourseDirectory.FindACourseApi/$(SolutionBaseName).sln'
+    arguments: '--configuration ${{ variables.BuildConfiguration }}'
+  displayName: Build
+
+# TODO test
+
+- task: DotNetCoreCLI@2
+  displayName: Publish Dfc.CourseDirectory.FindACourseApi
+  inputs:
+    command: publish
+    projects: 'src/Dfc.CourseDirectory.FindACourseApi/Dfc.CourseDirectory.FindACourseApi.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    publishWebProjects: false
+    zipAfterPublish: True
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+    pathtoPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: '${{ variables.SolutionBaseName }}'
