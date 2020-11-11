@@ -132,7 +132,6 @@
     <Folder Include="dbo\Views\" />
     <Folder Include="Security\" />
     <Folder Include="dbo\Functions\" />
-    <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="Restore" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Jobs" />
@@ -321,46 +320,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\dfc_CourseTransferAdd.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_CourseTransferCourseAuditAdd.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_CourseTransferProviderAuditAdd.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_CourseTransferUpdate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_GetCourseInstancesByCourseId.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_GetCoursesByProviderUKPRN.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_GetProviderUKPRNs.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\dfc_GetUserAuthorisationDetailsByEmail.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\up_UKRLP_Course_Directory_Migration.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\up_VenueListForCsvExport.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="Security\Identity.sql" />
     <Build Include="Security\LARS.sql" />
     <Build Include="Security\ONSPD.sql" />
@@ -372,9 +331,6 @@
     <None Include="Restore\Credentials_v1.0.sql" />
     <None Include="Restore\DropDatabase_v1.0.sql" />
     <None Include="Restore\Restore_v1.0.sql" />
-    <Build Include="dbo\Stored Procedures\dfc_GetApprenticeshipLocationsDetailsByApprenticeshipId.sql" />
-    <Build Include="dbo\Stored Procedures\dfc_GetApprenticeshipLocationsByApprenticeshipId.sql" />
-    <Build Include="dbo\Stored Procedures\dfc_GetApprenticeshipsByProviderId.sql" />
     <Build Include="Tribal\Tables\ApprenticeshipQACompliance.sql" />
     <Build Include="Tribal\Tables\ApprenticeshipQAComplianceFailureReason.sql" />
     <Build Include="Tribal\Tables\ApprenticeshipQAStyle.sql" />
@@ -388,8 +344,6 @@
     <Build Include="Tribal\Tables\ApprenticeshipLocation.sql" />
     <Build Include="Tribal\Tables\Apprenticeship.sql" />
     <Build Include="Tribal\Tables\Address.sql" />
-    <Build Include="dbo\Stored Procedures\dfc_GetApprenticeshipQaDetailslViaApprenticeshipId.sql" />
-    <Build Include="dbo\Stored Procedures\dfc_GetApprenticeshipQaStyleDetails.sql" />
     <Build Include="Security\Pttcd.sql" />
     <Build Include="Pttcd\Tables\Users.sql" />
     <Build Include="Pttcd\Tables\UserSignIns.sql" />
