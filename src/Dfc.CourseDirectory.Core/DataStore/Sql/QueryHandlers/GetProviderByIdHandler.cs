@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public Task<Provider> Execute(SqlTransaction transaction, GetProviderById query)
         {
             var sql = @"
-SELECT ProviderId, Ukprn, ProviderName, Alias, DisplayNameSource
+SELECT ProviderId, Ukprn, ProviderName, ProviderType, Alias, DisplayNameSource, ApprenticeshipQAStatus
 FROM Pttcd.Providers
 WHERE ProviderId = @ProviderId";
 

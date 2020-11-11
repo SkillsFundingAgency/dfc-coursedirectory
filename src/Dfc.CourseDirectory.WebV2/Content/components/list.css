@@ -1,0 +1,11 @@
+﻿.pttcd-list--small {
+    font-size: 16px;
+}
+
+.pttcd-list--small > li {
+    margin-bottom: 15px;
+}
+
+.pttcd-list--small > li:last-child {
+    margin-bottom: 0px;
+}

@@ -8,8 +8,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public Guid ProviderId { get; set; }
         public int Ukprn { get; set; }
         public string ProviderName { get; set; }
+        public ProviderType ProviderType { get; set; }
         public string Alias { get; set; }
         public ProviderDisplayNameSource DisplayNameSource { get; set; }
+        public ApprenticeshipQAStatus? ApprenticeshipQAStatus { get; set; }
 
         public string DisplayName => DisplayNameSource switch
         {
