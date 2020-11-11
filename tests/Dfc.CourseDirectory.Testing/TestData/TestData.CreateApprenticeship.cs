@@ -53,6 +53,10 @@ namespace Dfc.CourseDirectory.Testing
                 CreatedByUser = createdBy
             });
 
+            var apprenticeship = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetApprenticeshipsByIds() { ApprenticeshipIds = new[] { apprenticeshipId } });
+            await _sqlDataSync.SyncApprenticeship(apprenticeship[apprenticeshipId]);
+
             return apprenticeshipId;
         }
     }

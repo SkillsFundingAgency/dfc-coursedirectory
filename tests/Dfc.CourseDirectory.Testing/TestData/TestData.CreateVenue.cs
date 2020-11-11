@@ -50,6 +50,9 @@ namespace Dfc.CourseDirectory.Testing
                 Longitude = longitude
             });
 
+            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = venueId });
+            await _sqlDataSync.SyncVenue(venue);
+
             return venueId;
         }
     }
