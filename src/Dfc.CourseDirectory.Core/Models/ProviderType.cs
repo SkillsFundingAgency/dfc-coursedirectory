@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.Models
         public static string ToDescription(this ProviderType providerType) =>
             providerType switch
             {
-                ProviderType.None => "",
+                ProviderType.None => "None",
                 ProviderType.Apprenticeships => "Apprenticeships",
                 ProviderType.FE => "F.E.",
                 ProviderType.Apprenticeships | ProviderType.FE => "Both",
