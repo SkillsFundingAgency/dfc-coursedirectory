@@ -34,10 +34,15 @@ namespace Dfc.CourseDirectory.Core.Validation
                         return true;
                     }
 
-                    var withPrefix = !url.Contains("://") ? $"http://{url}" : url;
+                    var withPrefix = !url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                        ? $"https://{url}"
+                        : url;
 
-                    return Uri.TryCreate(withPrefix, UriKind.Absolute, out var uri) &&
-                        (uri.Scheme == "http" || uri.Scheme == "https");
+                    return Uri.TryCreate(withPrefix, UriKind.Absolute, out var uri)
+                        && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+                        && uri.Host.Contains('.')
+                        && !uri.Host.StartsWith('.')
+                        && !uri.Host.EndsWith('.');
                 });
     }
 }
