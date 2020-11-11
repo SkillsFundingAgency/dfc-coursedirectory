@@ -18,15 +18,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 return;
             }
 
-            if (configuration.SendTimeout != null)
-            {
-                client.ChannelFactory.Endpoint.Binding.SendTimeout = configuration.SendTimeout;
-            }
-
-            if (configuration.ReceiveTimeout != null)
-            {
-                client.ChannelFactory.Endpoint.Binding.ReceiveTimeout = configuration.ReceiveTimeout;
-            }
+            client.ChannelFactory.Endpoint.Binding.SendTimeout = configuration.SendTimeout;
+            client.ChannelFactory.Endpoint.Binding.ReceiveTimeout = configuration.ReceiveTimeout;
         }
     }
 }
