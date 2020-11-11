@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             createCommand.DateUpdated.Should().Be(Clock.UtcNow);
             createCommand.ProviderName.Should().Be(ukrlpData.ProviderName);
             createCommand.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-            createCommand.ProviderType.Should().Be(ProviderType.FE | ProviderType.Apprenticeships);
+            createCommand.ProviderType.Should().Be(ProviderType.None);
             createCommand.Status.Should().Be(ProviderStatus.Registered);
             createCommand.Ukprn.Should().Be(ukprn);
             var actualContact = createCommand.Contacts.Should().ContainSingle().Subject;
