@@ -127,9 +127,6 @@
     <Folder Include="ONSPD\Tables\" />
     <Folder Include="dbo\Views\" />
     <Folder Include="Security\" />
-    <Folder Include="Restore" />
-    <Folder Include="Scripts" />
-    <Folder Include="Scripts\Jobs" />
     <Folder Include="Pttcd" />
     <Folder Include="Pttcd\Tables" />
     <Folder Include="Pttcd\Indexes" />
@@ -249,9 +246,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <None Include="Restore\Credentials_v1.0.sql" />
-    <None Include="Restore\DropDatabase_v1.0.sql" />
-    <None Include="Restore\Restore_v1.0.sql" />
     <Build Include="Security\Pttcd.sql" />
     <Build Include="Pttcd\Tables\Users.sql" />
     <Build Include="Pttcd\Tables\UserSignIns.sql" />
@@ -274,11 +268,6 @@
     <Build Include="Pttcd\Tables\ApprenticeshipLocations.sql" />
     <Build Include="Pttcd\Tables\ApprenticeshipLocationRegions.sql" />
     <Build Include="Pttcd\Tables\CourseRunRegions.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Restore\Notes.txt" />
-    <None Include="Restore\SQL Steps.png" />
-    <None Include="Scripts\Jobs\TribalDatabaseRestore_job.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
