@@ -129,7 +129,6 @@
     <Folder Include="Tribal\Tables\" />
     <Folder Include="dbo\Views\" />
     <Folder Include="Security\" />
-    <Folder Include="dbo\Functions\" />
     <Folder Include="Restore" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Jobs" />
@@ -283,10 +282,6 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Views\vwLARS_1.6.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Functions\GetCsvDateTimeString.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
