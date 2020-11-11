@@ -54,10 +54,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Fact]
-        public async Task Get_ValidRequestUndefinedProviderType_RendersExpectedOutput()
+        public async Task Get_ValidRequestNoneProviderType_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Undefined);
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={providerId}");
 
@@ -149,7 +149,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_NoProviderTypeSelected_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Undefined);
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var content = new FormUrlEncodedContentBuilder()
                 .ToContent();
@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ValidRequest_UpdatesProviderTypeAndRedirects(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Undefined);
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var content = new FormUrlEncodedContentBuilder()
                 .Add("ProviderType", (int)providerType)

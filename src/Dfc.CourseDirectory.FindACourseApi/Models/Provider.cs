@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Models
 
     public enum ProviderType
     {
-        Undefined = 0,
+        None = 0,
         [Description("F.E.")]
         FE = 1,
         [Description("Apprenticeships")]
