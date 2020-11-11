@@ -125,8 +125,6 @@
     <Folder Include="LARS\Tables\" />
     <Folder Include="ONSPD\" />
     <Folder Include="ONSPD\Tables\" />
-    <Folder Include="Tribal\" />
-    <Folder Include="Tribal\Tables\" />
     <Folder Include="dbo\Views\" />
     <Folder Include="Security\" />
     <Folder Include="Restore" />
@@ -225,46 +223,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="Tribal\Tables\Course.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseInstance.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseInstanceStartDate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseInstanceVenue.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseMigration.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseTransfer.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseTransfer_CourseAudit.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\CourseTransfer_ProviderAudit.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Tribal\Tables\Provider.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <None Include="Tribal\Tables\ProviderUser.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </None>
     <Build Include="dbo\Views\ONSPD.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -287,7 +245,6 @@
     </Build>
     <Build Include="Security\LARS.sql" />
     <Build Include="Security\ONSPD.sql" />
-    <Build Include="Security\Tribal.sql" />
     <Build Include="dbo\Views\LARS.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -295,19 +252,6 @@
     <None Include="Restore\Credentials_v1.0.sql" />
     <None Include="Restore\DropDatabase_v1.0.sql" />
     <None Include="Restore\Restore_v1.0.sql" />
-    <Build Include="Tribal\Tables\ApprenticeshipQACompliance.sql" />
-    <Build Include="Tribal\Tables\ApprenticeshipQAComplianceFailureReason.sql" />
-    <Build Include="Tribal\Tables\ApprenticeshipQAStyle.sql" />
-    <Build Include="Tribal\Tables\ApprenticeshipQAStyleFailureReason.sql" />
-    <Build Include="Tribal\Tables\Venue.sql" />
-    <Build Include="Tribal\Tables\Subregion.sql" />
-    <Build Include="Tribal\Tables\RecordStatus.sql" />
-    <Build Include="Tribal\Tables\Location.sql" />
-    <Build Include="Tribal\Tables\GeoLocation.sql" />
-    <Build Include="Tribal\Tables\ApprenticeshipLocationDeliveryMode.sql" />
-    <Build Include="Tribal\Tables\ApprenticeshipLocation.sql" />
-    <Build Include="Tribal\Tables\Apprenticeship.sql" />
-    <Build Include="Tribal\Tables\Address.sql" />
     <Build Include="Security\Pttcd.sql" />
     <Build Include="Pttcd\Tables\Users.sql" />
     <Build Include="Pttcd\Tables\UserSignIns.sql" />
