@@ -86,7 +86,7 @@ steps:
     solution: 'src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
-    msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
+    msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/ -p:LangVersion=8.0'
 
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.FindACourseApi.sln` explodes
 - powershell: |
