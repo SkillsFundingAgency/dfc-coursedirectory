@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Models.Providers;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Auth;
 using Microsoft.Azure.Storage.Blob;
@@ -27,7 +26,6 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         private readonly string _accountName;
         private readonly string _accountKey;
         private readonly string _templatePath;
-        private readonly string _apprenticeshipsTemplatePath;
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobContainer _container;
         private readonly int _inlineProcessingThreshold;
@@ -58,7 +56,6 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
             _accountName = settings.Value.AccountName;
             _accountKey = settings.Value.AccountKey;
             _templatePath = settings.Value.TemplatePath;
-            _apprenticeshipsTemplatePath = settings.Value.ApprenticeshipsTemplatePath;
 
             _account = new CloudStorageAccount(new StorageCredentials(_accountName, _accountKey), true);
             _container = _account.CreateCloudBlobClient().GetContainerReference(settings.Value.Container);
@@ -158,12 +155,7 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
 
         public Task GetBulkUploadTemplateFileAsync(Stream stream)
         {
-            return GetBulkUploadTemplateFileAsync(stream, ProviderType.FE);
-        }
-
-        public Task GetBulkUploadTemplateFileAsync(Stream stream, ProviderType providerType )
-        {            
-            return DownloadFileAsync(providerType==ProviderType.Apprenticeship?_apprenticeshipsTemplatePath:_templatePath, stream);
+            return DownloadFileAsync(_templatePath, stream);
         }
     }
 }

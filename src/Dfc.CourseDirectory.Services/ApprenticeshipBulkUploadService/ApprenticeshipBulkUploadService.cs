@@ -1020,9 +1020,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                         while (csv.Read())
                         {
                             // Silently ignore records referring to frameworks (PTCD-694)
-                            if (csv.GetField<int?>("FRAMEWORK_CODE").HasValue ||
-                                csv.GetField<int?>("FRAMEWORK_PATHWAY_CODE").HasValue ||
-                                csv.GetField<int?>("FRAMEWORK_PROG_TYPE").HasValue)
+                            if ((csv.TryGetField<int?>("FRAMEWORK_CODE", out var frameworkCode) && frameworkCode.HasValue) ||
+                                (csv.TryGetField<int?>("FRAMEWORK_PATHWAY_CODE", out var pathwayCode) && pathwayCode.HasValue) ||
+                                (csv.TryGetField<int?>("FRAMEWORK_PROG_TYPE", out var progType) && progType.HasValue))
                             {
                                 continue;
                             }
