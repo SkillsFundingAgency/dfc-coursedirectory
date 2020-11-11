@@ -1,3 +1,0 @@
-﻿CREATE SCHEMA [Tribal]
-    AUTHORIZATION [dbo];
-
