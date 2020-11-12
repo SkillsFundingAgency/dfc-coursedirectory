@@ -29,12 +29,40 @@ trigger:
     include:
     - release/*
     - main
+  paths:
+    include:
+    - Dfc.CourseDirectory/*
+    - src/Dfc.CourseDirectory.Core/*
+    - src/Dfc.CourseDirectory.Database/*
+    - src/Dfc.CourseDirectory.Functions/*
+    - src/Dfc.CourseDirectory.Services/*
+    - src/Dfc.CourseDirectory.Web/*
+    - src/Dfc.CourseDirectory.WebV2/*
+    - tests/Dfc.CourseDirectory.Core.Tests/*
+    - tests/Dfc.CourseDirectory.Services.Tests/*
+    - tests/Dfc.CourseDirectory.Testing/*
+    - tests/Dfc.CourseDirectory.Web.Tests/*
+    - tests/Dfc.CourseDirectory.WebV2.Tests/*
 
 pr:
   branches:
     include:
     - release/*
     - main
+  paths:
+    include:
+    - Dfc.CourseDirectory/*
+    - src/Dfc.CourseDirectory.Core/*
+    - src/Dfc.CourseDirectory.Database/*
+    - src/Dfc.CourseDirectory.Functions/*
+    - src/Dfc.CourseDirectory.Services/*
+    - src/Dfc.CourseDirectory.Web/*
+    - src/Dfc.CourseDirectory.WebV2/*
+    - tests/Dfc.CourseDirectory.Core.Tests/*
+    - tests/Dfc.CourseDirectory.Services.Tests/*
+    - tests/Dfc.CourseDirectory.Testing/*
+    - tests/Dfc.CourseDirectory.Web.Tests/*
+    - tests/Dfc.CourseDirectory.WebV2.Tests/*
 
 workspace:
   clean: all
