@@ -51,6 +51,14 @@ steps:
     ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
     SolutionBaseName: '${{ variables.SolutionBaseName }}'
 
+- task: MSBuild@1
+  displayName: Build database
+  inputs:
+    solution: 'src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
+
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.FindACourseApi.sln` explodes
 - powershell: |
     dotnet sln Dfc.CourseDirectory.FindACourseApi/$(SolutionBaseName).sln remove src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
@@ -62,7 +70,33 @@ steps:
     arguments: '--configuration ${{ variables.BuildConfiguration }}'
   displayName: Build
 
-# TODO test
+- powershell: |
+    $projects = (dotnet sln Dfc.CourseDirectory.FindACourseApi.sln list | findstr Tests.csproj)
+
+    $success = $True
+    foreach ($proj in $projects) {
+      dotnet test $proj --configuration $(BuildConfiguration) --filter SkipOnCI!=true --logger trx --results-directory $(Agent.TempDirectory)
+
+      if ($LASTEXITCODE -ne 0) {
+        $success = $False
+      }
+    }
+
+    if ($success -eq $False) {
+      Exit 1
+    }
+  env:
+    ConnectionStrings__DefaultConnection: $(IntegrationSQLDB)
+  workingDirectory: $(SolutionBaseName)
+  displayName: Test
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: "**/*.trx"
+    searchFolder: "$(Agent.TempDirectory)"
+  condition: succeededOrFailed()
 
 - task: DotNetCoreCLI@2
   displayName: Publish Dfc.CourseDirectory.FindACourseApi
