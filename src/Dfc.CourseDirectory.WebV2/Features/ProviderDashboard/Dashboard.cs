@@ -44,14 +44,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 throw new ResourceDoesNotExistException(ResourceType.Provider, request.ProviderId);
             }
 
-            var counts = await _sqlQueryDispatcher.ExecuteQuery(
+            var (courseCount, apprenticeshipCount, venueCount) = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderDashboardCounts() { ProviderId = request.ProviderId });
 
             var vm = new ViewModel()
             {
-                ApprenticeshipCount = counts.ApprenticeshipCount,
-                CourseCount = counts.CourseCount,
-                VenueCount = counts.VenueCount,
+                ApprenticeshipCount = apprenticeshipCount,
+                CourseCount = courseCount,
+                VenueCount = venueCount,
                 ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
                     provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
