@@ -164,8 +164,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                     validationMessages.Add(new KeyValuePair<string, string>("Telephone", "Enter a valid Telephone"));
                 if (apprenticeship.ContactTelephone.Length > 30)
                     validationMessages.Add(new KeyValuePair<string, string>("Telephone", $"Telephone should be no more than 30 characters"));
-                if (apprenticeship.ContactTelephone.Length < 11)
-                    validationMessages.Add(new KeyValuePair<string, string>("Telephone", $"Telephone should not be less than 11 characters"));
+                if (apprenticeship.ContactTelephone.Length < 10)
+                    validationMessages.Add(new KeyValuePair<string, string>("Telephone", $"Telephone should not be less than 10 characters"));
             }
             //contactUsPage
             if (!string.IsNullOrEmpty(apprenticeship.Url))
