@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int Ukprn { get; set; }
         public bool ShowCourses { get; set; }
         public bool ShowApprenticeships { get; set; }
-        public int CourseCount { get; set; }
+        public int CourseRunCount { get; set; }
         public int ApprenticeshipCount { get; set; }
         public int VenueCount { get; set; }
     }
@@ -44,13 +44,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 throw new ResourceDoesNotExistException(ResourceType.Provider, request.ProviderId);
             }
 
-            var (courseCount, apprenticeshipCount, venueCount) = await _sqlQueryDispatcher.ExecuteQuery(
+            var (courseRunCount, apprenticeshipCount, venueCount) = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderDashboardCounts() { ProviderId = request.ProviderId });
 
             var vm = new ViewModel()
             {
                 ApprenticeshipCount = apprenticeshipCount,
-                CourseCount = courseCount,
+                CourseRunCount = courseRunCount,
                 VenueCount = venueCount,
                 ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
                     provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,

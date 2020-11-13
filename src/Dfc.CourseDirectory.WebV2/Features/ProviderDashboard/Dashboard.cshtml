@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-one-third">
             <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
                 <h2 class="govuk-heading-s">Published courses</h2>
-                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseCount</p>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseRunCount</p>
             </div>
         </div>
 
@@ -42,7 +42,7 @@
                         <li>
                             <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
                         </li>
-                        @if (Model.CourseCount > 0)
+                        @if (Model.CourseRunCount > 0)
                         {
                             <li>
                                 <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="courses-view-edit-link">View and edit courses</a>
