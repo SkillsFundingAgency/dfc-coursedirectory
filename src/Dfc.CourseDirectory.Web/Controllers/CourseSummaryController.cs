@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -33,7 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _venueService = venueService;
         }
-        public IActionResult Index(Guid? courseId, Guid? courseRunId)
+        public async Task<IActionResult> Index(Guid? courseId, Guid? courseRunId)
         {
             Course course = null;
             CourseRun courseRun = null;
@@ -99,10 +100,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (vm.VenueId != Guid.Empty)
                 {
-                    vm.VenueName = _venueService
-                        .GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value
-                        .VenueName;
-
+                    var result = await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString()));
+                    vm.VenueName = result.Value?.VenueName;
                 }
             }
 
