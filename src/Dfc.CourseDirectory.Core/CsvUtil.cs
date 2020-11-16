@@ -6,6 +6,7 @@ namespace Dfc.CourseDirectory.Core
     {
         public static int CountLines(Stream stream)
         {
+            System.Console.WriteLine("Test2");
             var reader = new StreamReader(stream, leaveOpen: true);
 
             int count = 0;
