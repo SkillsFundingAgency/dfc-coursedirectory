@@ -13,18 +13,19 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             GetProviderDashboardCounts query)
         {
             var sql = @"
+DECLARE @ProviderUkprn INT
+
+SELECT TOP 1 @ProviderUkprn = Ukprn FROM Pttcd.Providers WHERE ProviderId = @ProviderId
+
 SELECT COUNT(*) FROM Pttcd.Courses c
 JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-WHERE p.ProviderId = @ProviderId AND cr.CourseRunStatus = 1
+WHERE c.ProviderUkprn = @ProviderUkprn AND cr.CourseRunStatus = 1
 
 SELECT COUNT(*) FROM Pttcd.Apprenticeships a
-JOIN Pttcd.Providers p ON a.ProviderUkprn = p.Ukprn
-WHERE p.ProviderId = @ProviderId AND a.ApprenticeshipStatus & 1 <> 0
+WHERE a.ProviderUkprn = @ProviderUkprn AND a.ApprenticeshipStatus & 1 <> 0
 
 SELECT COUNT(*) FROM Pttcd.Venues v
-JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
-WHERE p.ProviderId = @ProviderId AND v.VenueStatus & 1 <> 0";
+WHERE v.ProviderUkprn = @ProviderUkprn AND v.VenueStatus = 1";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
             {
