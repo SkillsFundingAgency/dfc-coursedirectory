@@ -32,6 +32,7 @@ trigger:
     - src/Dfc.CourseDirectory.Core/*
     - src/Dfc.CourseDirectory.Database/*
     - src/Dfc.CourseDirectory.FindACourseApi/*
+    - tests/Dfc.CourseDirectory.Core.Tests/*
     - tests/Dfc.CourseDirectory.Testing/*
     - tests/Dfc.CourseDirectory.FindACourseApi.Tests/*
 
@@ -46,6 +47,7 @@ pr:
     - src/Dfc.CourseDirectory.Core/*
     - src/Dfc.CourseDirectory.Database/*
     - src/Dfc.CourseDirectory.FindACourseApi/*
+    - tests/Dfc.CourseDirectory.Core.Tests/*
     - tests/Dfc.CourseDirectory.Testing/*
     - tests/Dfc.CourseDirectory.FindACourseApi.Tests/*
 
