@@ -32,10 +32,9 @@ trigger:
     - src/Dfc.CourseDirectory.Core/*
     - src/Dfc.CourseDirectory.Database/*
     - src/Dfc.CourseDirectory.FindACourseApi/*
-    - src/Dfc.CourseDirectory.Web/*
-    - src/Dfc.CourseDirectory.WebV2/*
-    - tests/Dfc.CourseDirectory.Testing/*
+    - tests/Dfc.CourseDirectory.Core.Tests/*
     - tests/Dfc.CourseDirectory.FindACourseApi.Tests/*
+    - tests/Dfc.CourseDirectory.Testing/*
 
 pr:
   branches:
@@ -48,10 +47,9 @@ pr:
     - src/Dfc.CourseDirectory.Core/*
     - src/Dfc.CourseDirectory.Database/*
     - src/Dfc.CourseDirectory.FindACourseApi/*
-    - src/Dfc.CourseDirectory.Web/*
-    - src/Dfc.CourseDirectory.WebV2/*
-    - tests/Dfc.CourseDirectory.Testing/*
+    - tests/Dfc.CourseDirectory.Core.Tests/*
     - tests/Dfc.CourseDirectory.FindACourseApi.Tests/*
+    - tests/Dfc.CourseDirectory.Testing/*
 
 workspace:
   clean: all
