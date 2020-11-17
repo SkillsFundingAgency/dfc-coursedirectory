@@ -5,11 +5,12 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
-        private readonly IProviderService _providerService;
-        private ICSVHelper _CSVHelper;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ICSVHelper _CSVHelper;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -30,13 +31,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
             IHttpContextAccessor contextAccessor,
             IApprenticeshipService apprenticeshipService,
             IVenueService venueService,
-            IProviderService providerService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICSVHelper CSVHelper)
         {
             _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
             _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-            _providerService = providerService ?? throw new ArgumentNullException(nameof(providerService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
         }
 
@@ -49,17 +50,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 return null;
             }
 
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
-            var providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName.Replace(" ", "");
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
+            var providerName = provider?.ProviderName.Replace(" ", "");
+
             var apprenticeships = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
-                                      
-            var csvApprenticeships = ApprenticeshipsToCsvApprenticeships(
+            var csvApprenticeships = await ApprenticeshipsToCsvApprenticeships(
                 apprenticeships.Value.Where(y => y.RecordStatus == RecordStatus.Live));
 
             return CsvApprenticeshipsToFileStream(csvApprenticeships, providerName);
         }
 
-        private IEnumerable<CsvApprenticeship> ApprenticeshipsToCsvApprenticeships(IEnumerable<Apprenticeship> apprenticeships)
+        private async Task<IEnumerable<CsvApprenticeship>> ApprenticeshipsToCsvApprenticeships(IEnumerable<Apprenticeship> apprenticeships)
         {
             List<CsvApprenticeship> csvApprenticeships = new List<CsvApprenticeship>();
 
@@ -74,7 +75,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                             apprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(apprenticeshipLocation.Regions);
                     }
                         
-                    var csvApprenticeshipLocation = MapCsvApprenticeship(apprenticeship, apprenticeshipLocation);
+                    var csvApprenticeshipLocation = await MapCsvApprenticeship(apprenticeship, apprenticeshipLocation);
 
                     csvApprenticeships.Add(csvApprenticeshipLocation);
                 }
@@ -82,9 +83,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return csvApprenticeships;
         }
 
-        private CsvApprenticeship MapCsvApprenticeship(Apprenticeship apprenticeship, ApprenticeshipLocation location)
+        private async Task<CsvApprenticeship> MapCsvApprenticeship(Apprenticeship apprenticeship, ApprenticeshipLocation location)
         {
-            SelectRegionModel selectRegionModel = new SelectRegionModel();
+            var selectRegionModel = new SelectRegionModel();
 
             return new CsvApprenticeship
             {
@@ -96,8 +97,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 ContactPhone = apprenticeship.ContactTelephone,
                 ContactURL = apprenticeship.ContactWebsite,
                 DeliveryMethod = DeliveryMethodConvert(location.ApprenticeshipLocationType),
-                Venue = location.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
-                    (location.VenueId.Value.ToString())).Result.Value?.VenueName : String.Empty,
+                Venue = location.VenueId.HasValue ? (await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(location.VenueId.ToString()))).Value.VenueName : string.Empty,
                 Radius = location.Radius?.ToString(),
                 DeliveryMode = DeliveryModeConvert(location.DeliveryModes),
                 AcrossEngland = location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
