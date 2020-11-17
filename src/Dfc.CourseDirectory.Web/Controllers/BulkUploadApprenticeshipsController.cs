@@ -5,14 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Providers;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
@@ -25,64 +25,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class BulkUploadApprenticeshipsController : Controller
     {
+        private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
+
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
-        private readonly IProviderService _providerService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IUserHelper _userHelper;
-        private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
 
         public BulkUploadApprenticeshipsController(
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IApprenticeshipService apprenticeshipService,
             IBlobStorageService blobService,
             ICourseService courseService,
-            IProviderService providerService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IUserHelper userHelper)
         {
-            if (apprenticeshipBulkUploadService == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
-            }
-
-            if (blobService == null)
-            {
-                throw new ArgumentNullException(nameof(blobService));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (providerService == null)
-            {
-                throw new ArgumentNullException(nameof(providerService));
-            }
-
-            if (userHelper == null)
-            {
-                throw new ArgumentNullException(nameof(userHelper));
-            }
-
-            if (apprenticeshipService == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipService));
-            }
-
-            _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService;
-            _blobService = blobService;
-            _courseService = courseService;
-            _courseService = courseService;
-            _providerService = providerService;
-            _userHelper = userHelper;
-            _apprenticeshipService = apprenticeshipService;
+            _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService ?? throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
+            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
+            _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _userHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
         }
 
         [Authorize]
@@ -110,8 +75,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            Provider provider = await FindProvider(UKPRN.Value);
-            
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
+
             if (provider == null)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
@@ -409,24 +374,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //to publish stuff
             return View("../BulkUploadApprenticeships/Complete/Index", new ApprenticeshipsPublishCompleteViewModel() { NumberOfApprenticeshipsPublished = model.NumberOfApprenticeships, Mode = PublishMode.ApprenticeshipBulkUpload });
-        }
-
-        private async Task<Provider> FindProvider(int prn)
-        {
-            Provider provider = null;
-            try
-            {
-                var providerSearchResult = await _providerService.GetProviderByPRNAsync(prn.ToString());
-                if (providerSearchResult.IsSuccess)
-                {
-                    provider = providerSearchResult.Value.FirstOrDefault();
-                }
-            }
-            catch (Exception)
-            {
-                // @ToDo: decide how to handle this
-            }
-            return provider;
         }
     }
 }
