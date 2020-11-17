@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 .Any();
 
             var requiresProviderContext = hasProviderContextParameter ||
-                context.ActionDescriptor.Properties.ContainsKey(typeof(RequiresProviderContextMarker));
+                context.ActionDescriptor.Properties.ContainsKey(typeof(RequireProviderContextMarker));
 
             if (requiresProviderContext)
             {

@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public IActionResult Get(ProviderContext providerContext) => Ok("Yay");
 
         [HttpGet("RedirectToProviderSelectionActionFilterTest/without-parameter")]
-        [RequiresProviderContext]
+        [RequireProviderContext]
         public IActionResult GetWithoutParameter() => Ok("Yay");
     }
 }
