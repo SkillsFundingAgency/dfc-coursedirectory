@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.BulkUpload
 {
-    [RequiresProviderContext]
+    [RequireProviderContext]
     [Route("bulk-upload")]
     public class BulkUploadController : Controller
     {

@@ -12,7 +12,7 @@ using FindStandard = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStan
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
     [Route("new-apprenticeship-provider")]
-    [RequiresProviderContext]
+    [RequireProviderContext]
     public class NewApprenticeshipProviderController : Controller, IMptxController<FlowModel>
     {
         private readonly IMediator _mediator;
