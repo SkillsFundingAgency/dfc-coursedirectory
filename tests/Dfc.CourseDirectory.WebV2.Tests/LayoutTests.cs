@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             using (new AssertionScope())
             {
-                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-qa");
                 topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             using (new AssertionScope())
             {
-                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-qa");
                 topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             using (new AssertionScope())
             {
-                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-qa");
                 topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             using (new AssertionScope())
             {
-                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-qa");
                 topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[3].TestId.Should().Be("topnav-manageusers");

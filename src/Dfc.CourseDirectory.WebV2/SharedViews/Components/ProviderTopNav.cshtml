@@ -8,7 +8,7 @@
 <nav>
     <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
         <li class="govuk-header__navigation-item@(currentController == "Home" && currentAction == "Index" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Index" asp-controller="Home" class="govuk-header__link" data-testid="topnav-home">
+            <a asp-action="Dashboard" asp-controller="Provider" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-home">
                 Home
             </a>
         </li>
