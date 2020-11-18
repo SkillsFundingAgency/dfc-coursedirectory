@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Services.Models.Providers;
+using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

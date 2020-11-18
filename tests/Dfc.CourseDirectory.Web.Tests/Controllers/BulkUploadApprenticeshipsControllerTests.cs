@@ -12,7 +12,6 @@ using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Auth;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
