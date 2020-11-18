@@ -13,6 +13,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     public class GetProviderApprenticeshipQAInfoByStatusResult
     {
         public Guid ProviderId { get; set; }
+        public ProviderType ProviderType { get; set; }
+        public int Ukprn { get; set; }
+        public string ProviderName { get; set; }
         public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
         public DateTime? SubmittedOn { get; set; }
         public UserInfo LastAssessedBy { get; set; }

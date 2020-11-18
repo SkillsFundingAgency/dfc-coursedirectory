@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -38,12 +36,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
     public class QueryHandler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public QueryHandler(ISqlQueryDispatcher sqlQueryDispatcher, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public QueryHandler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -60,25 +56,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                 }
             });
 
-            var providers = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProvidersByIds()
-            {
-                ProviderIds = results.Select(r => r.ProviderId)
-            });
-
-            var infos = (from r in results
-                         let provider = providers[r.ProviderId]
-                         where provider.ProviderType.HasFlag(ProviderType.Apprenticeships)
-                         select new ViewModelResult()
-                         {
-                             ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
-                             LastAssessedBy = r.LastAssessedBy,
-                             ProviderId = r.ProviderId,
-                             ProviderName = provider.ProviderName,
-                             ProviderUkprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
-                             SubmittedOn = r.SubmittedOn,
-                             AddedOn = r.AddedOn,
-                             UnableToCompleteReasons = r.UnableToCompleteReasons
-                         }).ToList();
+            var infos = results
+                .Where(r => r.ProviderType.HasFlag(ProviderType.Apprenticeships))
+                .Select(r => new ViewModelResult()
+                {
+                    ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
+                    LastAssessedBy = r.LastAssessedBy,
+                    ProviderId = r.ProviderId,
+                    ProviderName = r.ProviderName,
+                    ProviderUkprn = r.Ukprn,
+                    SubmittedOn = r.SubmittedOn,
+                    AddedOn = r.AddedOn,
+                    UnableToCompleteReasons = r.UnableToCompleteReasons
+                })
+                .ToList();
 
             var unableToComplete = infos
                 .Where(i => i.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete))

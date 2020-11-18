@@ -19,6 +19,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var sql = @"
 SELECT
     p.ProviderId,
+    p.ProviderType,
+    p.Ukprn,
+    p.ProviderName,
     p.ApprenticeshipQAStatus,
     s.SubmittedOn,
     FirstSignIn.SignedInUtc AddedOn,
@@ -63,7 +66,10 @@ WHERE p.ApprenticeshipQAStatus & @StatusMask != 0";
                     ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
                     LastAssessedBy = u,
                     ProviderId = r.ProviderId,
+                    ProviderType = r.ProviderType,
+                    ProviderName = r.ProviderName,
                     SubmittedOn = r.SubmittedOn,
+                    Ukprn = r.Ukprn,
                     AddedOn = r.AddedOn,
                     UnableToCompleteReasons = utcr
                 },
@@ -75,6 +81,9 @@ WHERE p.ApprenticeshipQAStatus & @StatusMask != 0";
         private class QASubmissionResult
         {
             public Guid ProviderId { get; set; }
+            public ProviderType ProviderType { get; set; }
+            public int Ukprn { get; set; }
+            public string ProviderName { get; set; }
             public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
             public DateTime? SubmittedOn { get; set; }
             public DateTime AddedOn { get; set; }
