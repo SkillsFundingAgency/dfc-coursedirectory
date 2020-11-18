@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using MediatR;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
 {
@@ -51,8 +50,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             Command request,
             CancellationToken cancellationToken)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetProviderById()
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(
+                new Core.DataStore.Sql.Queries.GetProviderById()
                 {
                     ProviderId = request.ProviderId
                 });

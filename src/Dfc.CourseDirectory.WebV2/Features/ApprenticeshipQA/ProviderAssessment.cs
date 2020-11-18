@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -172,20 +171,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         };
 
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly FormFlowInstance<FlowModel> _formFlowInstance;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             FormFlowInstance<FlowModel> formFlowInstance)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _formFlowInstance = formFlowInstance;
@@ -316,8 +312,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         {
             var providerId = _formFlowInstance.State.ProviderId;
 
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                 new Core.DataStore.CosmosDb.Queries.GetProviderById()
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(
+                 new GetProviderById()
                  {
                      ProviderId = providerId
                  });
