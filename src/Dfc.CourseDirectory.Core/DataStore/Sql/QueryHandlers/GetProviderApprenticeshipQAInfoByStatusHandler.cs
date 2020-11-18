@@ -51,7 +51,8 @@ LEFT JOIN (
 ) LatestUnableToComplete ON p.ProviderId = LatestUnableToComplete.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo utci ON LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId = utci.ApprenticeshipQAUnableToCompleteId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
-WHERE p.ApprenticeshipQAStatus & @StatusMask != 0";
+WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
+AND p.ProviderType & 2 != 0  -- apprenticeship providers only";
 
             var statusMask = query.Statuses.Aggregate(
                 (ApprenticeshipQAStatus)0,

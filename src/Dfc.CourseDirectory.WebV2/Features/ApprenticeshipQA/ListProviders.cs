@@ -57,7 +57,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
             });
 
             var infos = results
-                .Where(r => r.ProviderType.HasFlag(ProviderType.Apprenticeships))
                 .Select(r => new ViewModelResult()
                 {
                     ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
