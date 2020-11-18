@@ -48,9 +48,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 ProviderId = providerId
             });
 
-            if (!(submission.Value is None))
+            if (submission != null)
             {
-                var apprenticeshipId = submission.AsT1.Apprenticeships.First().ApprenticeshipId;
+                var apprenticeshipId = submission.Apprenticeships.First().ApprenticeshipId;
                 var apprenticeship = (await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new GetApprenticeshipsByIds() { ApprenticeshipIds = new Guid[] { apprenticeshipId } }))[apprenticeshipId];
 

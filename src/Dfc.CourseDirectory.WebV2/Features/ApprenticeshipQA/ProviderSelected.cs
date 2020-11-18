@@ -71,15 +71,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                     ProviderId = request.ProviderId
                 });
 
-            var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
+            var latestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = request.ProviderId
                 });
 
-            var latestSubmission = maybeLatestSubmission.Value as ApprenticeshipQASubmission;
-
-            var canComplete = qaStatus == ApprenticeshipQAStatus.InProgress && latestSubmission.Passed != null;
+            var canComplete = qaStatus == ApprenticeshipQAStatus.InProgress && latestSubmission?.Passed != null;
 
             return new ViewModel()
             {
@@ -88,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                     {
                         ApprenticeshipId = a.ApprenticeshipId,
                         ApprenticeshipTitle = a.ApprenticeshipTitle,
-                        AssessmentCompleted = latestSubmission.ApprenticeshipAssessmentsPassed != null
+                        AssessmentCompleted = latestSubmission?.ApprenticeshipAssessmentsPassed != null
                     })
                     .ToList(),
                 ApprenticeshipQAStatus = qaStatus.ValueOrDefault(),

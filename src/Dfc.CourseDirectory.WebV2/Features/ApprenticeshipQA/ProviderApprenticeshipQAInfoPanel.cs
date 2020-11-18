@@ -5,11 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprenticeshipQAInfoPanel
@@ -67,8 +65,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
                     ProviderId = request.ProviderId
                 });
 
-            var lastAssessedBy = (lastSubmission.Value as ApprenticeshipQASubmission)?.LastAssessedBy;
-            var lastAssessedOn = (lastSubmission.Value as ApprenticeshipQASubmission)?.LastAssessedOn;
+            var lastAssessedBy = lastSubmission?.LastAssessedBy;
+            var lastAssessedOn = lastSubmission?.LastAssessedOn;
 
             var contact = provider.ProviderContact
                 .OrderByDescending(c => c.LastUpdated)
@@ -94,8 +92,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
                 Email = contact?.ContactEmail,
                 LastAssessedBy = lastAssessedBy,
                 LastAssessedOn = lastAssessedOn,
-                LastSignedIn = latestSignIn.Match(_ => null, signIn => signIn.User),
-                LastSignedInDate = latestSignIn.Match(_ => (DateTime?)null, signIn => signIn.SignedInUtc),
+                LastSignedIn = latestSignIn?.User,
+                LastSignedInDate = latestSignIn?.SignedInUtc,
                 ProviderId = provider.Id,
                 ProviderName = provider.ProviderName,
                 Telephone = contact?.ContactTelephone1,

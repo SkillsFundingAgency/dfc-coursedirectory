@@ -4,15 +4,13 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetLatestApprenticeshipQAApprenticeshipAssessmentForSubmissionHandler
-        : ISqlQueryHandler<GetLatestApprenticeshipQAApprenticeshipAssessmentForSubmission, OneOf<None, ApprenticeshipQAApprenticeshipAssessment>>
+    public class GetLatestApprenticeshipQAApprenticeshipAssessmentForSubmissionHandler :
+        ISqlQueryHandler<GetLatestApprenticeshipQAApprenticeshipAssessmentForSubmission, ApprenticeshipQAApprenticeshipAssessment>
     {
-        public async Task<OneOf<None, ApprenticeshipQAApprenticeshipAssessment>> Execute(
+        public async Task<ApprenticeshipQAApprenticeshipAssessment> Execute(
             SqlTransaction transaction,
             GetLatestApprenticeshipQAApprenticeshipAssessmentForSubmission query)
         {
@@ -44,7 +42,7 @@ ORDER BY s.AssessedOn DESC";
                 query.ApprenticeshipId
             };
 
-            var result = (await transaction.Connection.QueryAsync<ApprenticeshipQAApprenticeshipAssessment, UserInfo, ApprenticeshipQAApprenticeshipAssessment>(
+            return (await transaction.Connection.QueryAsync<ApprenticeshipQAApprenticeshipAssessment, UserInfo, ApprenticeshipQAApprenticeshipAssessment>(
                 sql,
                 (r, assessedBy) =>
                 {
@@ -54,15 +52,6 @@ ORDER BY s.AssessedOn DESC";
                 paramz,
                 transaction,
                 splitOn: "UserId")).SingleOrDefault();
-
-            if (result != null)
-            {
-                return result;
-            }
-            else
-            {
-                return new None();
-            }
         }
     }
 }

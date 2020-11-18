@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
+using FormFlow;
 using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core;
-using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment
 {
@@ -97,18 +97,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     ProviderId = providerId
                 });
 
-            var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
+            var latestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = providerId
                 });
 
-            if (maybeLatestSubmission.Value is None)
+            if (latestSubmission == null)
             {
                 throw new InvalidStateException(InvalidStateReason.NoValidApprenticeshipQASubmission);
             }
-
-            var latestSubmission = maybeLatestSubmission.AsT1;
 
             var submissionApprenticeship = latestSubmission.Apprenticeships
                 .SingleOrDefault(a => a.ApprenticeshipId == apprenticeshipId);
@@ -129,12 +127,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             {
                 ApprenticeshipId = apprenticeshipId,
                 ProviderId = providerId,
-                ComplianceComments = latestAssessment.Match(_ => string.Empty, v => v.ComplianceComments),
-                ComplianceFailedReasons = latestAssessment.Match(_ => ApprenticeshipQAApprenticeshipComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
-                CompliancePassed = latestAssessment.Match(_ => null, v => v.CompliancePassed),
-                StyleComments = latestAssessment.Match(_ => string.Empty, v => v.StyleComments),
-                StyleFailedReasons = latestAssessment.Match(_ => ApprenticeshipQAApprenticeshipStyleFailedReasons.None, v => v.StyleFailedReasons),
-                StylePassed = latestAssessment.Match(_ => null, v => v.StylePassed),
+                ComplianceComments = latestAssessment?.ComplianceComments,
+                ComplianceFailedReasons = latestAssessment?.ComplianceFailedReasons,
+                CompliancePassed = latestAssessment?.CompliancePassed,
+                StyleComments = latestAssessment?.StyleComments,
+                StyleFailedReasons = latestAssessment?.StyleFailedReasons,
+                StylePassed = latestAssessment?.StylePassed,
                 IsReadOnly = !(qaStatus == ApprenticeshipQAStatus.Submitted || qaStatus == ApprenticeshipQAStatus.InProgress),
             };
         }
@@ -425,11 +423,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         }
 
         private async Task<ApprenticeshipQASubmission> GetSubmission() =>
-            (await _sqlQueryDispatcher.ExecuteQuery(
+            await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = _formFlowInstance.State.ProviderId
-                })).AsT1;
+                });
 
         Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => _formFlowInstance.State.ProviderId;
 

@@ -1335,7 +1335,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 {
                     ProviderId = providerId
                 }));
-            Assert.Equal(expectedSubmissionPassed, submissionStatus.AsT1.Passed);
+            Assert.Equal(expectedSubmissionPassed, submissionStatus.Passed);
         }
 
         private void AssertFormFieldsDisabledState(IHtmlDocument doc, bool expectDisabled)

@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetLatestApprenticeshipQASubmissionForProviderHandler
-        : ISqlQueryHandler<GetLatestApprenticeshipQASubmissionForProvider, OneOf<None, ApprenticeshipQASubmission>>
+    public class GetLatestApprenticeshipQASubmissionForProviderHandler :
+        ISqlQueryHandler<GetLatestApprenticeshipQASubmissionForProvider, ApprenticeshipQASubmission>
     {
-        public async Task<OneOf<None, ApprenticeshipQASubmission>> Execute(
+        public async Task<ApprenticeshipQASubmission> Execute(
             SqlTransaction transaction,
             GetLatestApprenticeshipQASubmissionForProvider query)
         {
@@ -93,7 +91,7 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
 
                 if (submission == null)
                 {
-                    return new None();
+                    return null;
                 }
 
                 var apps = reader.Read<ApprenticeshipQASubmissionApprenticeship>();
