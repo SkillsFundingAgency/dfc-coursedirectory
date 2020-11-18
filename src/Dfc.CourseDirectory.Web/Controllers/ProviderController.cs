@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
@@ -23,39 +23,26 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class ProviderController : Controller
     {
-        private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-        private readonly IProviderService _providerService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+
+        private ISession Session => HttpContext.Session;
 
         public ProviderController(
             ICourseService courseService,
             IVenueService venueService,
-            IProviderService providerService)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (providerService == null)
-            {
-                throw new ArgumentNullException(nameof(providerService));
-            }
-
-            _courseService = courseService;
-            _venueService = venueService;
-            _providerService = providerService;
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
         [Authorize("Admin")]
@@ -64,15 +51,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new ProviderTypeAddOrEditViewModel();
 
-            int? UKPRN = Session.GetInt32("UKPRN");
+            var UKPRN = Session.GetInt32("UKPRN");
 
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
 
-            if (providerSearchResult.IsSuccess)
-            {
-                model = new ProviderTypeAddOrEditViewModel();
-                model.ProviderType = providerSearchResult.Value.FirstOrDefault()?.ProviderType ?? ProviderType.None;
-            }
+            model.ProviderType = provider?.ProviderType ?? ProviderType.None;
 
             return View("UpdateProviderType", model);
         }
@@ -87,39 +70,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             int? UKPRN = Session.GetInt32("UKPRN");
 
-            var providerSearchResult = await _providerService.GetProviderByPRNAsync(UKPRN.ToString());
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
 
-            Provider provider;
-            if (providerSearchResult.IsSuccess)
+            if (provider == null)
             {
-                provider = providerSearchResult.Value.FirstOrDefault();
-
-                var oldProviderType = provider.ProviderType;
-                if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeships))
-                {
-                    await sqlQueryDispatcher.ExecuteQuery(
-                        new EnsureApprenticeshipQAStatusSetForProvider()
-                        {
-                            ProviderId = provider.id
-                        });
-                }
-
-                provider.ProviderType = model.ProviderType;
-
-                var result = await _providerService.UpdateProviderDetails(provider);
-                if (!result.IsSuccess)
-                {
-                    throw new Exception(result.Error);
-                }
-
-                await providerInfoCache.Remove(provider.id);
-            }
-            else
-            {
-                throw new Exception(providerSearchResult.Error);
+                throw new Exception($"{nameof(GetProviderByUkprn)} failed for {nameof(UKPRN)} {UKPRN}.");
             }
 
-            return RedirectToAction("ProviderDetails", "Providers", new { providerId = provider.id });
+            var oldProviderType = provider.ProviderType;
+            if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeships))
+            {
+                await sqlQueryDispatcher.ExecuteQuery(
+                    new EnsureApprenticeshipQAStatusSetForProvider()
+                    {
+                        ProviderId = provider.Id
+                    });
+            }
+
+            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType { ProviderId = provider.Id, ProviderType = model.ProviderType });
+
+            if (!(result.Value is Success))
+            {
+                throw new Exception($"{nameof(UpdateProviderType)} returned {nameof(OneOf.Types.NotFound)} for {nameof(UpdateProviderType.ProviderId)} {provider.Id}.");
+            }
+
+            await providerInfoCache.Remove(provider.Id);
+            return RedirectToAction("ProviderDetails", "Providers", new { providerId = provider.Id });
         }
 
         [Authorize]
