@@ -13,14 +13,15 @@
     <div class="govuk-grid-row" data-sf-element="Row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkUploadApprenticeships" asp-action="DownloadErrorFile" method="post">
+            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadErrors" method="get">
+                <input name="UKPRN" type="hidden" value="@Model.UKPRN" />
                 <span class="govuk-caption-xl">Course Directory</span>
                 <h1 class="govuk-heading-l">Download error file</h1>
 
                 <p class="govuk-body govuk-!-padding-bottom-4">Your error file was created at your last bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy HH:mm")</p>
                 <br />
 
-                <button class="govuk-button" onclick="location.href = '@Url.Action("GetApprenticeshipBulkUploadErrors", "BlobStorage", new { UKPRN = Model.UKPRN })';return false;">Download</button>
+                <button type="submit" class="govuk-button">Download</button>
                 <br />
                 <a class="govuk-link" asp-controller="BulkUploadApprenticeships" asp-action="Index">Upload new template</a>
             </form>
