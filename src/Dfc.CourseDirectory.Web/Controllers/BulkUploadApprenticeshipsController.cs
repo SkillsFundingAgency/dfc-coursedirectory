@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
                         bulkUploadFile.FileName,
                         ms,
-                        _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN));
+                        await _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN));
                 }
                 catch (HeaderValidationException he)
                 {

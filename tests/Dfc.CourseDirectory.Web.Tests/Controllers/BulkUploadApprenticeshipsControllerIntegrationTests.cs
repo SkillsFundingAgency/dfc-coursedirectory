@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _blobStorageService.SetupGet(s => s.InlineProcessingThreshold).Returns(400);
 
             _userHelper.Setup(s => s.GetUserDetailsFromClaims(It.IsAny<IEnumerable<Claim>>(), It.IsAny<int?>()))
-                .Returns(authUserDetails);
+                .ReturnsAsync(authUserDetails);
 
             _standardsAndFrameworksCache.Setup(s => s.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync<int, int, IStandardsAndFrameworksCache, Core.Models.Standard>((c, v) => new Core.Models.Standard { StandardCode = c, Version = v });
