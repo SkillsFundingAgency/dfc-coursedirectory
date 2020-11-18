@@ -1,5 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.Services.Models.Providers;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.SearchProvider
 {
@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.SearchProvider
 
         public string UKPRN { get; set; }
 
-        public Status? Status { get; set; }
+        public ProviderStatus? Status { get; set; }
 
         public string ProviderStatus { get; set; }
 
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.SearchProvider
                 Town = provider.Town,
                 Region = provider.Region,
                 UKPRN = provider.UKPRN,
-                Status = (Status)provider.Status,
+                Status = (ProviderStatus)provider.Status,
                 ProviderStatus = provider.ProviderStatus,
                 CourseDirectoryName = provider.CourseDirectoryName,
                 TradingName = provider.TradingName,

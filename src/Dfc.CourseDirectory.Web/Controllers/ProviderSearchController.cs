@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Providers;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.WebV2;
@@ -57,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 try
                 {
                     // TODO - UpdatedBy will be updated with the name of logged person
-                    ProviderAdd providerAdd = new ProviderAdd(new Guid(ajaxRequest.ProviderId), (int)Status.Onboarded, "ProviderPortal - Add Provider");
+                    ProviderAdd providerAdd = new ProviderAdd(new Guid(ajaxRequest.ProviderId), (int)ProviderStatus.Onboarded, "ProviderPortal - Add Provider");
                     var result = await _providerService.AddProviderAsync(providerAdd);
                     if (result.IsSuccess)
                     {

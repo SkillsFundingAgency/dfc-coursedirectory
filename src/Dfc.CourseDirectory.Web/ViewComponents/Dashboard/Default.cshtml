@@ -2,11 +2,9 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Http
-@using Dfc.CourseDirectory.Services.Models.Providers
 @using Microsoft.AspNetCore.Hosting
 @using Dfc.CourseDirectory.Services.Models
-@using ProviderType = Dfc.CourseDirectory.Services.Models.Providers.ProviderType
+@using ProviderType = Dfc.CourseDirectory.Core.Models.ProviderType
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -118,7 +116,7 @@ else
                         @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
                     </div>
                 }
-                @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship) &&
+                @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
                     Model.ProviderQACurrentStatus == Dfc.CourseDirectory.Core.Models.ApprenticeshipQAStatus.Passed)
                 {
                     <div class="govuk-grid-column-one-half homepage-item disabled ">

@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Services.Models.Providers;
+﻿using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
 {
@@ -42,6 +42,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string UnitedKingdomProviderReferenceNumber { get; set; }
 
         public ProviderType ProviderType { get; set; }
-
     }
 }

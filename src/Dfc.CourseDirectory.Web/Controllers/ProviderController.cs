@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -94,7 +95,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 provider = providerSearchResult.Value.FirstOrDefault();
 
                 var oldProviderType = provider.ProviderType;
-                if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeship))
+                if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeships))
                 {
                     await sqlQueryDispatcher.ExecuteQuery(
                         new EnsureApprenticeshipQAStatusSetForProvider()

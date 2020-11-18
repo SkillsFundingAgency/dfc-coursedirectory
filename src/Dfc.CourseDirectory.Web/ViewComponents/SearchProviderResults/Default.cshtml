@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Services.Models.Providers;
+﻿@using Dfc.CourseDirectory.Core.Models
 @using Dfc.CourseDirectory.Web.ViewModels.SearchProvider
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model SearchProviderResultsViewModel
@@ -30,11 +30,11 @@
                         <td class="govuk-table__cell">@p.ProviderStatus</td>
                         <td class="govuk-table__cell">@p.Status</td>
                         <td class="govuk-table__cell">
-                            @if (p.Status == Status.Onboarded && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                            @if (p.Status == ProviderStatus.Onboarded && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 @Html.ActionLink("View Dashboard", "SearchProvider", "ProviderSearch", new { UKPRN = p.UKPRN })
                             }
-                            else if (p.Status == Status.Registered && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                            else if (p.Status == ProviderStatus.Registered && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                             {
                             <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.Id'); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span> <span class="govuk-visually-hidden">@p.CourseDirectoryName</span></a>
                             }                           

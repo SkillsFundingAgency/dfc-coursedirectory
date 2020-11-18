@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Services.Models.Providers
 {
@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Services.Models.Providers
         public object ProviderAssociations { get; set; }
         public Provideralias[] ProviderAliases { get; set; }
         public Verificationdetail[] VerificationDetails { get; set; }
-        public Status Status { get; set; }
+        public ProviderStatus Status { get; set; }
         public int? ProviderId { get; set; }
         public int? UPIN { get; set; }
         public string TradingName { get; set; }
@@ -33,7 +33,6 @@ namespace Dfc.CourseDirectory.Services.Models.Providers
             ProviderContact = providercontact;
             ProviderAliases = provideraliases;
             VerificationDetails = verificationdetails;
-
         }
     }
 
@@ -47,7 +46,7 @@ namespace Dfc.CourseDirectory.Services.Models.Providers
     [Flags]
     public enum ProviderType
     {
-        None = 0,
+        Undefined = 0,
         [Description("F.E.")]
         FE = 1,
         [Description("Apprenticeships")]

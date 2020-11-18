@@ -1,10 +1,7 @@
-﻿using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Providers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Services.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
@@ -45,6 +42,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public EnvironmentType EnvironmentType { get; set; }
         public bool ApprenticeshipBulkUploadHasErrors { get; set; }
         public int ApprenticeshipBulkUploadReadyToGoLiveCount { get; set; }
-        public Core.Models.ApprenticeshipQAStatus ProviderQACurrentStatus { get; set; }
+        public ApprenticeshipQAStatus ProviderQACurrentStatus { get; set; }
     }
 }

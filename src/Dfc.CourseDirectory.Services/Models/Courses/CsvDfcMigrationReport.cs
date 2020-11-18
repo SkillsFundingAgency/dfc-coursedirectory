@@ -1,5 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.Services.Models.Providers;
+using Dfc.CourseDirectory.Core.Models;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Services.Models.Courses
