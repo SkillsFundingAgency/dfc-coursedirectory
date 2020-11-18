@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -42,20 +41,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
     public class QueryHandler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public QueryHandler(
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public QueryHandler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetProviderById()
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetProviderById()
                 {
                     ProviderId = request.ProviderId
                 });
