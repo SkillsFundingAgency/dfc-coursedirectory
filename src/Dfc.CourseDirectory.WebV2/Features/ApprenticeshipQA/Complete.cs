@@ -62,19 +62,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
                 throw new InvalidStateException(InvalidStateReason.ProviderDoesNotExist);
             }
 
-            var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
+            var latestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = request.ProviderId
                 });
 
-            if (maybeLatestSubmission.Value is None)
+            if (latestSubmission == null)
             {
                 // Belt & braces - should never happen
                 throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission);
             }
-
-            var latestSubmission = maybeLatestSubmission.AsT1;
 
             if (!latestSubmission.Passed.HasValue)
             {

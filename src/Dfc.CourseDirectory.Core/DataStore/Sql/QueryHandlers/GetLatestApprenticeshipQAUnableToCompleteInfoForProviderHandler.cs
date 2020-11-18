@@ -4,15 +4,13 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetLatestApprenticeshipQAUnableToCompleteInfoForProviderHandler
-        : ISqlQueryHandler<GetLatestApprenticeshipQAUnableToCompleteInfoForProvider, OneOf<None, ApprenticeshipQAUnableToCompleteInfo>>
+    public class GetLatestApprenticeshipQAUnableToCompleteInfoForProviderHandler :
+        ISqlQueryHandler<GetLatestApprenticeshipQAUnableToCompleteInfoForProvider, ApprenticeshipQAUnableToCompleteInfo>
     {
-        public async Task<OneOf<None, ApprenticeshipQAUnableToCompleteInfo>> Execute(
+        public async Task<ApprenticeshipQAUnableToCompleteInfo> Execute(
             SqlTransaction transaction,
             GetLatestApprenticeshipQAUnableToCompleteInfoForProvider query)
         {
@@ -31,7 +29,7 @@ JOIN Pttcd.Users u ON r.AddedByUserId = u.UserId
 WHERE r.ProviderId = @ProviderId
 ORDER BY r.AddedOn DESC";
 
-            var result = (await transaction.Connection.QueryAsync<ApprenticeshipQAUnableToCompleteInfo, UserInfo, ApprenticeshipQAUnableToCompleteInfo>(
+            return (await transaction.Connection.QueryAsync<ApprenticeshipQAUnableToCompleteInfo, UserInfo, ApprenticeshipQAUnableToCompleteInfo>(
                 sql,
                 (r, u) =>
                 {
@@ -41,15 +39,6 @@ ORDER BY r.AddedOn DESC";
                 query,
                 transaction,
                 splitOn: "UserId")).SingleOrDefault();
-
-            if (result == null)
-            {
-                return new None();
-            }
-            else
-            {
-                return result;
-            }
         }
     }
 }

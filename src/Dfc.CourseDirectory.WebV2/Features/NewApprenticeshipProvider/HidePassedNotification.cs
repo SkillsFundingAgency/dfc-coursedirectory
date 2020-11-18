@@ -51,39 +51,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                 throw new NotAuthorizedException();
             }
 
-            var maybeSubmission = await _sqlQueryDispatcher.ExecuteQuery(
+            var latestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = request.ProviderId
                 });
 
-            var submission = maybeSubmission.Match(
-                notfound => throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission),
-                found => found);
+            if (latestSubmission == null)
+            {
+                throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission);
+            }
 
             // Cannot hide passed notification if qa status is not passed
-            if (submission.Passed != true)
+            if (latestSubmission.Passed != true)
             {
                 throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQAStatus);
             }
 
             // Cannot hide notification if it has already been hidden
-            if (submission.HidePassedNotification)
+            if (latestSubmission.HidePassedNotification)
             {
                 throw new InvalidStateException();
             }
 
             // Hide notification
-            var hideDialog = await _sqlQueryDispatcher.ExecuteQuery(
+            await _sqlQueryDispatcher.ExecuteQuery(
                 new UpdateHidePassedNotification()
                 {
-                    ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
+                    ApprenticeshipQASubmissionId = latestSubmission.ApprenticeshipQASubmissionId,
                     HidePassedNotification = true
                 });
 
-            return hideDialog.Match(
-                notfound => throw new InvalidStateException(InvalidStateReason.InvalidApprenticeshipQASubmission),
-                success => success);
+            return new Success();
         }
 
         Guid IRestrictProviderType<Command>.GetProviderId(Command request) => request.ProviderId;

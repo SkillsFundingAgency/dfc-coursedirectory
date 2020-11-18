@@ -92,8 +92,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             {
                 ProviderId = request.ProviderId,
                 UnableToComplete = unableToComplete,
-                Comments = unableToComplete ? info.AsT1.Comments : null,
-                UnableToCompleteReasons = unableToComplete ? info.AsT1.UnableToCompleteReasons : ApprenticeshipQAUnableToCompleteReasons.None,
+                Comments = unableToComplete ? info.Comments : null,
+                UnableToCompleteReasons = unableToComplete ? info.UnableToCompleteReasons : ApprenticeshipQAUnableToCompleteReasons.None,
             };
         }
 

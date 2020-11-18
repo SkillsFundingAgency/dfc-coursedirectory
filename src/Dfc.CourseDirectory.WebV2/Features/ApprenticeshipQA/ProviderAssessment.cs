@@ -82,18 +82,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                     ProviderId = providerId
                 });
 
-            var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
+            var latestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = providerId
                 });
 
-            if (maybeLatestSubmission.Value is None)
+            if (latestSubmission == null)
             {
                 throw new InvalidStateException(InvalidStateReason.NoValidApprenticeshipQASubmission);
             }
-
-            var latestSubmission = maybeLatestSubmission.AsT1;
 
             var latestAssessment = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQAProviderAssessmentForSubmission()
@@ -104,12 +102,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             return new FlowModel()
             {
                 ProviderId = providerId,
-                ComplianceComments = latestAssessment.Match(_ => string.Empty, v => v.ComplianceComments),
-                ComplianceFailedReasons = latestAssessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
-                CompliancePassed = latestAssessment.Match(_ => null, v => v.CompliancePassed),
-                StyleComments = latestAssessment.Match(_ => string.Empty, v => v.StyleComments),
-                StyleFailedReasons = latestAssessment.Match(_ => ApprenticeshipQAProviderStyleFailedReasons.None, v => v.StyleFailedReasons),
-                StylePassed = latestAssessment.Match(_ => null, v => v.StylePassed),
+                ComplianceComments = latestAssessment?.ComplianceComments,
+                ComplianceFailedReasons = latestAssessment?.ComplianceFailedReasons,
+                CompliancePassed = latestAssessment?.CompliancePassed,
+                StyleComments = latestAssessment?.StyleComments,
+                StyleFailedReasons = latestAssessment?.StyleFailedReasons,
+                StylePassed = latestAssessment?.StylePassed,
                 IsReadOnly = !(qaStatus == ApprenticeshipQAStatus.Submitted || qaStatus == ApprenticeshipQAStatus.InProgress),
             };
         }
@@ -342,11 +340,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         }
 
         private async Task<ApprenticeshipQASubmission> GetSubmission() =>
-            (await _sqlQueryDispatcher.ExecuteQuery(
+            await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = _formFlowInstance.State.ProviderId
-                })).AsT1;
+                });
 
         Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => _formFlowInstance.State.ProviderId;
 

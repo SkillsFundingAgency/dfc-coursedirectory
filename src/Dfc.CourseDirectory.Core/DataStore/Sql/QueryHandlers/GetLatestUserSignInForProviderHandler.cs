@@ -5,15 +5,13 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetLatestUserSignInForProviderHandler
-        : ISqlQueryHandler<GetLatestUserSignInForProvider, OneOf<None, LatestUserSignInForProviderResult>>
+    public class GetLatestUserSignInForProviderHandler :
+        ISqlQueryHandler<GetLatestUserSignInForProvider, LatestUserSignInForProviderResult>
     {
-        public async Task<OneOf<None, LatestUserSignInForProviderResult>> Execute(
+        public async Task<LatestUserSignInForProviderResult> Execute(
             SqlTransaction transaction,
             GetLatestUserSignInForProvider query)
         {
@@ -30,7 +28,7 @@ JOIN Pttcd.UserProviders up ON u.UserId = up.UserId
 WHERE up.ProviderId = @ProviderId
 ORDER BY s.SignedInUtc DESC";
 
-            var result = (await transaction.Connection.QueryAsync<DateTime, UserInfo, LatestUserSignInForProviderResult>(
+            return (await transaction.Connection.QueryAsync<DateTime, UserInfo, LatestUserSignInForProviderResult>(
                 sql,
                 (t, user) => new LatestUserSignInForProviderResult()
                 {
@@ -40,15 +38,6 @@ ORDER BY s.SignedInUtc DESC";
                 query,
                 transaction,
                 splitOn: "UserId")).SingleOrDefault();
-
-            if (result == null)
-            {
-                return new None();
-            }
-            else
-            {
-                return result;
-            }
         }
     }
 }
