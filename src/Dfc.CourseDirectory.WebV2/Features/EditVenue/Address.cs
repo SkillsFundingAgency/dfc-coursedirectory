@@ -70,9 +70,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            var onspdSearchResults = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = request.Postcode });
+            var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = request.Postcode });
 
-            if (onspdSearchResults.Results.Count == 0)
+            if (onspdSearchResult.Items.Count == 0)
             {
                 validationResult = new ValidationResult(new[]
                 {
@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            var onspdPostcodeRecord = onspdSearchResults.Results.Single();
+            var onspdPostcodeRecord = onspdSearchResult.Items.Single();
 
             _formFlowInstance.UpdateState(state =>
             {
@@ -91,9 +91,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
                 state.Town = request.Town;
                 state.County = request.County;
                 state.Postcode = request.Postcode;
-                state.Latitude = onspdPostcodeRecord.lat;
-                state.Longitude = onspdPostcodeRecord.@long;
-                state.NewAddressIsOutsideOfEngland = onspdPostcodeRecord.Country != "England";
+                state.Latitude = onspdPostcodeRecord.Record.lat;
+                state.Longitude = onspdPostcodeRecord.Record.@long;
+                state.NewAddressIsOutsideOfEngland = onspdPostcodeRecord.Record.Country != "England";
             });
 
             return new Success();

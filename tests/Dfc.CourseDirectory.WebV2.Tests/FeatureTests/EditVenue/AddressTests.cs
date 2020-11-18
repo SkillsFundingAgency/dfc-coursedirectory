@@ -107,14 +107,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
                 .ReturnsAsync(new SearchResult<Onspd>()
                 {
-                    Results = new[]
+                    Items = new[]
                     {
-                        new Onspd()
+                        new SearchResultItem<Onspd>()
                         {
-                            pcds = "CV1 2AA",
-                            Country = "England",
-                            lat = 42M,
-                            @long = 43M
+                            Record = new Onspd()
+                            {
+                                pcds = "CV1 2AA",
+                                Country = "England",
+                                lat = 42M,
+                                @long = 43M
+                            }
                         }
                     }
                 });
@@ -151,14 +154,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
                 .ReturnsAsync(new SearchResult<Onspd>()
                 {
-                    Results = new[]
+                    Items = new[]
                     {
-                        new Onspd()
+                        new SearchResultItem<Onspd>()
                         {
-                            pcds = "CV1 2AA",
-                            Country = "England",
-                            lat = 42M,
-                            @long = 43M
+                            Record = new Onspd()
+                            {
+                                pcds = "CV1 2AA",
+                                Country = "England",
+                                lat = 42M,
+                                @long = 43M
+                            }
                         }
                     }
                 });
@@ -202,14 +208,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
                 .ReturnsAsync(new SearchResult<Onspd>()
                 {
-                    Results = new[]
+                    Items = new[]
                     {
-                        new Onspd()
+                        new SearchResultItem<Onspd>()
                         {
-                            pcds = postcode,
-                            Country = "England",
-                            lat = 42M,
-                            @long = 43M
+                            Record = new Onspd()
+                            {
+                                pcds = postcode,
+                                Country = "England",
+                                lat = 42M,
+                                @long = 43M
+                            }
                         }
                     }
                 });
@@ -252,14 +261,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
                 .ReturnsAsync(new SearchResult<Onspd>()
                 {
-                    Results = new[]
+                    Items = new[]
                     {
-                        new Onspd()
+                        new SearchResultItem<Onspd>()
                         {
-                            pcds = "CV1 2AA",
-                            Country = onspdRecordPostcode,
-                            lat = 42M,
-                            @long = 43M
+                            Record = new Onspd()
+                            {
+                                pcds = "CV1 2AA",
+                                Country = onspdRecordPostcode,
+                                lat = 42M,
+                                @long = 43M
+                            }
                         }
                     }
                 });

@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var viewModel = new LarsSearchResultModel
             {
                 SearchTerm = request.SearchTerm,
-                Items = result.Results.Select(LarsSearchResultItemModel.FromLars),
+                Items = result.Items.Select(r => r.Record).Select(LarsSearchResultItemModel.FromLars),
                 Filters = new[]
                 {
                     new LarsSearchFilterModel

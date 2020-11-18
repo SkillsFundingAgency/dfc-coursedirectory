@@ -4,7 +4,7 @@ namespace Dfc.CourseDirectory.Core.Search
 {
     public class SearchResult<TResult>
     {
-        public IReadOnlyCollection<TResult> Results { get; set; }
+        public IReadOnlyCollection<SearchResultItem<TResult>> Items { get; set; }
 
         public IReadOnlyDictionary<string, IReadOnlyDictionary<object, long?>> Facets { get; set; }
 

@@ -62,12 +62,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CertificationEndDateFilter = DateTimeOffset.UtcNow
             });
 
-            if (!result.Results.Any())
+            if (!result.Items.Any())
             {
                 return ViewComponent(nameof(ZCodeFoundResult), new ZCodeFoundResultModel());
             }
 
-            var foundResult = result.Results.First();
+            var foundResult = result.Items.Select(r => r.Record).First();
 
             return ViewComponent(nameof(ZCodeFoundResult), new ZCodeFoundResultModel
             {
@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 Level1Id = request.Level1Id,
                 Level2Id = request.Level2Id,
-                Items = result.Results.Select(ZCodeSearchResultItemModel.FromLars),
+                Items = result.Items.Select(r => r.Record).Select(ZCodeSearchResultItemModel.FromLars),
                 Filters = new[]
                 {
                     new LarsSearchFilterModel

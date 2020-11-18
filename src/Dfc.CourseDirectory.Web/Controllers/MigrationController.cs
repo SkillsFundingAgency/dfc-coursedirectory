@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         results = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery
                         {
                             LearnAimRef = bulkUploadcourse.LearnAimRef
-                        }).GetAwaiter().GetResult().Results.ToList();
+                        }).GetAwaiter().GetResult().Items.Select(r => r.Record).ToList();
 
                         var qual = results.FirstOrDefault();
 
