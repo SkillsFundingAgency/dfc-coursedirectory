@@ -19,6 +19,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var sql = @"
 SELECT
     p.ProviderId,
+    p.ProviderType,
+    p.Ukprn,
+    p.ProviderName,
     p.ApprenticeshipQAStatus,
     s.SubmittedOn,
     FirstSignIn.SignedInUtc AddedOn,
@@ -48,7 +51,8 @@ LEFT JOIN (
 ) LatestUnableToComplete ON p.ProviderId = LatestUnableToComplete.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo utci ON LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId = utci.ApprenticeshipQAUnableToCompleteId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
-WHERE p.ApprenticeshipQAStatus & @StatusMask != 0";
+WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
+AND p.ProviderType & 2 != 0  -- apprenticeship providers only";
 
             var statusMask = query.Statuses.Aggregate(
                 (ApprenticeshipQAStatus)0,
@@ -63,7 +67,10 @@ WHERE p.ApprenticeshipQAStatus & @StatusMask != 0";
                     ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
                     LastAssessedBy = u,
                     ProviderId = r.ProviderId,
+                    ProviderType = r.ProviderType,
+                    ProviderName = r.ProviderName,
                     SubmittedOn = r.SubmittedOn,
+                    Ukprn = r.Ukprn,
                     AddedOn = r.AddedOn,
                     UnableToCompleteReasons = utcr
                 },
@@ -75,6 +82,9 @@ WHERE p.ApprenticeshipQAStatus & @StatusMask != 0";
         private class QASubmissionResult
         {
             public Guid ProviderId { get; set; }
+            public ProviderType ProviderType { get; set; }
+            public int Ukprn { get; set; }
+            public string ProviderName { get; set; }
             public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
             public DateTime? SubmittedOn { get; set; }
             public DateTime AddedOn { get; set; }
