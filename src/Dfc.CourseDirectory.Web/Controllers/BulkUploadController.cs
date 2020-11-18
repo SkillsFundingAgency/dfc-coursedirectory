@@ -4,92 +4,49 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Providers;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class BulkUploadController : Controller
     {
-        private readonly ILogger<BulkUploadController> _logger;
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
-        private readonly IProviderService _providerService;
-        private IWebHostEnvironment _env;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IBackgroundTaskQueue _queue;
+        private readonly ILogger<BulkUploadController> _logger;
+
         private ISession _session => HttpContext.Session;
-        private IBackgroundTaskQueue _queue;
 
         public BulkUploadController(
-                ILogger<BulkUploadController> logger,
-                IBulkUploadService bulkUploadService,
-                IBlobStorageService blobService,
-                ICourseService courseService,
-                IWebHostEnvironment env,
-                IProviderService providerService,
-                IBackgroundTaskQueue queue)
+            IBulkUploadService bulkUploadService,
+            IBlobStorageService blobService,
+            ICourseService courseService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IBackgroundTaskQueue queue,
+            ILogger<BulkUploadController> logger)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (bulkUploadService == null)
-            {
-                throw new ArgumentNullException(nameof(bulkUploadService));
-            }
-
-            if (blobService == null)
-            {
-                throw new ArgumentNullException(nameof(blobService));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (env == null)
-            {
-                throw new ArgumentNullException(nameof(env));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (providerService == null)
-            {
-                throw new ArgumentNullException(nameof(providerService));
-            }
-
-            if (queue == null)
-            {
-                throw new ArgumentNullException(nameof(queue));
-            }
-
-            _logger = logger;
-            _bulkUploadService = bulkUploadService;
-            _blobService = blobService;
-            _courseService = courseService;
-            _env = env;
-            _courseService = courseService;
-            _providerService = providerService;
-            _queue = queue;
+            _bulkUploadService = bulkUploadService ?? throw new ArgumentNullException(nameof(bulkUploadService));
+            _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _queue = queue ?? throw new ArgumentNullException(nameof(queue));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [Authorize]
@@ -101,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet("/bulk-upload/courses/upload")]
-        public IActionResult Upload()
+        public async Task<IActionResult> Upload()
         {
             _session.SetString("Option", "BulkUpload");
             int? UKPRN;
@@ -110,7 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            Provider provider = FindProvider(UKPRN.Value);
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
             if (null == provider)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
@@ -208,7 +165,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 return RedirectToAction("Pending");
                             }
                         }
-
                     }
                     else
                     {
@@ -265,11 +221,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
         {
             var fromBulkUpload = false;
+            
             if (!string.IsNullOrEmpty(model.Message))
             {
                 fromBulkUpload = true;
-
             }
+
             switch (model.WhatDoYouWantToDoNext)
             {
                 case Services.Models.WhatDoYouWantToDoNext.OnScreen:
@@ -280,7 +237,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("DeleteFile", "BulkUpload");
                 default:
                     return RedirectToAction("WhatDoYouWantToDoNext", "BulkUpload");
-
             }
         }
 
@@ -298,13 +254,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
                 DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
                 DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
                 model.ErrorFileCreatedDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));
-
             }
 
             return View("../Bulkupload/DownloadErrorFile/Index", model);
@@ -314,7 +268,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult DownloadErrorFile(DownloadErrorFileViewModel model)
         {
-            // where to go????
             return View("../Bulkupload/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
         }
 
@@ -322,15 +275,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult DeleteFile()
         {
-            var model = new DeleteFileViewModel();
-
-
-            return View("../Bulkupload/DeleteFile/Index", model);
+            return View("../Bulkupload/DeleteFile/Index", new DeleteFileViewModel());
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult DeleteFile(DeleteFileViewModel model)
+        public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
             DateTimeOffset fileUploadDate = new DateTimeOffset();
             int? sUKPRN = _session.GetInt32("UKPRN");
@@ -344,7 +294,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = sUKPRN ?? 0;
             }
 
-            var provider = FindProvider(UKPRN);
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN });
             if (null == provider)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to find Provider data to delete bulk upload." });
@@ -420,7 +370,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult PublishYourFile(PublishYourFileViewModel model)
+        public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
         {
             int? sUKPRN = _session.GetInt32("UKPRN");
             int UKPRN;
@@ -441,13 +391,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // the UI displays incorrect info
 
             // Flag the provider as "publish in progress".
-            var provider = FindProvider(UKPRN);
-            if (null == provider) throw new Exception($"Failed to find provider with UK PRN {UKPRN}");
-            if (null == provider.BulkUploadStatus) provider.BulkUploadStatus = new BulkUploadStatus();
-            provider.BulkUploadStatus.PublishInProgress = true;
-            var flagProviderResult = _providerService.UpdateProviderDetails(provider).Result;
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN });
 
-            if (!flagProviderResult.IsSuccess)
+            if (provider == null)
+            {
+                throw new Exception($"Failed to find provider with UK PRN {UKPRN}");
+            }
+
+            var flagProviderResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderBulkUploadStatus { ProviderId = provider.Id, PublishInProgress = true });
+
+            if (!(flagProviderResult.Value is Success))
             {
                 throw new Exception($"Failed to set the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
             }
@@ -472,10 +425,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         if (resultGoingLive.IsSuccess)
                         {
                             // Clear the provider "publish in progress" flag.
-                            provider.BulkUploadStatus.PublishInProgress = false;
-                            var unflagProviderResult = await _providerService.UpdateProviderDetails(provider);
-                            
-                            if (!unflagProviderResult.IsSuccess)
+                            var unflagProviderResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderBulkUploadStatus { ProviderId = provider.Id, PublishInProgress = false });
+
+                            if (!(unflagProviderResult.Value is Success))
                             {
                                 throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
                             }
@@ -493,8 +445,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
 
                 _logger.LogInformation($"Queued Background Task {guid} is complete.");
-
-
             });
 
             // @ToDo: we'll reach here before the above background task has completed, so need some UI work
@@ -529,25 +479,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 default:
                     return RedirectToAction("LandingOptions", "BulkUpload");
             }
-
-        }
-
-        private Provider FindProvider(int prn)
-        {
-            Provider provider = null;
-            try
-            {
-                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(prn.ToString())).Result;
-                if (providerSearchResult.IsSuccess)
-                {
-                    provider = providerSearchResult.Value.FirstOrDefault();
-                }
-            }
-            catch (Exception)
-            {
-                // @ToDo: decide how to handle this
-            }
-            return provider;
         }
     }
 }
