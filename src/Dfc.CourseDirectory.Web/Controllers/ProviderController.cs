@@ -14,7 +14,6 @@ using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Provider;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using Dfc.CourseDirectory.WebV2;
@@ -57,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize("Admin")]
-        [SelectedProviderNeeded]
+        [RequireProviderContext]
         public async Task<IActionResult> AddOrEditProviderType()
         {
             var model = new ProviderTypeAddOrEditViewModel();
@@ -77,7 +76,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize("Admin")]
         [HttpPost]
-        [SelectedProviderNeeded]
+        [RequireProviderContext]
         public async Task<IActionResult> AddOrEditProviderType(
             ProviderTypeAddOrEditViewModel model,
             [FromServices] IProviderInfoCache providerInfoCache,
@@ -128,7 +127,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        [SelectedProviderNeeded]
+        [RequireProviderContext]
         public async Task<IActionResult> Courses(
             string level,
             Guid? courseId,
