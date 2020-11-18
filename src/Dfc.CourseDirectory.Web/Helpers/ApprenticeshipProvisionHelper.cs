@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var now = DateTime.Now;
             return new FileStreamResult(ms, MediaTypeNames.Text.Plain)
             {
-                FileDownloadName = $"{providerName}_Apprenticeships_{now.Day.TwoChars()}_{now.Month.TwoChars()}_{now.Year}_{now.Hour.TwoChars()}_{now.Minute.TwoChars()}.csv"
+                FileDownloadName = $"{providerName}_Apprenticeships_{now.Day:00}_{now.Month:00}_{now.Year}_{now.Hour:00}_{now.Minute:00}.csv"
             };
         }
 
