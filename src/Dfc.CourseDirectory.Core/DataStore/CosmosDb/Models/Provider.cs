@@ -24,6 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IList<ProviderContact> ProviderContact { get; set; } = new List<ProviderContact>();
         public IList<ProviderAlias> ProviderAliases { get; set; } = new List<ProviderAlias>();
         public DateTime DateUpdated { get; set; }
+        public DateTime? DateOnboarded { get; set; }
         public string UpdatedBy { get; set; }
         public bool NationalApprenticeshipProvider { get; set; }
         public int? ProviderId { get; set; }
