@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure;
@@ -100,7 +101,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search.AzureSearch
             capturedSearchOptions.Should().Be(searchOptions);
 
             result.Should().NotBeNull();
-            result.Results.Should().BeEquivalentTo(new[] { "TestResult1", "TestResult2", "TestResult3" });
+            result.Items.Select(r => r.Record).Should().BeEquivalentTo(new[] { "TestResult1", "TestResult2", "TestResult3" });
             result.Facets.Should().BeEquivalentTo(new Dictionary<string, Dictionary<string, long?>>
             {
                 {

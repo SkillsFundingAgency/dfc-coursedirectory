@@ -533,8 +533,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Postcode = postcode
             });
 
-            return searchResult.Results.Count > 0
-                ? searchResult.Results.Single().Adapt<Onspd>()
+            return searchResult.Items.Count > 0
+                ? searchResult.Items.Single().Adapt<Onspd>()
                 : new Onspd();
         }
     }

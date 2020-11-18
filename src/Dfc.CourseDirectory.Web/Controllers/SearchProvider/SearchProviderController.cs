@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.SearchProvider
             return View(new SearchProviderResultsViewModel
             {
                 Search = keyword,
-                Providers = result.Results.Select(SearchProviderResultViewModel.FromProvider)
+                Providers = result.Items.Select(r => r.Record).Select(SearchProviderResultViewModel.FromProvider)
             });
         }
 
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.SearchProvider
             return ViewComponent(nameof(SearchProviderResults), new SearchProviderResultsViewModel
             {
                 Search = keyword,
-                Providers = result.Results.Select(SearchProviderResultViewModel.FromProvider)
+                Providers = result.Items.Select(r => r.Record).Select(SearchProviderResultViewModel.FromProvider)
             });
         }
     }

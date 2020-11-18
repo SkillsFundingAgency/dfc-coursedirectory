@@ -34,7 +34,13 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 
             return new SearchResult<TResult>
             {
-                Results = searchResults.Value.GetResults().Select(r => r.Document).ToArray(),
+                Items = searchResults.Value.GetResults()
+                    .Select(r => new SearchResultItem<TResult>()
+                    {
+                        Record = r.Document,
+                        Score = r.Score
+                    })
+                    .ToArray(),
                 Facets = searchResults.Value.Facets?.ToDictionary(f => f.Key, f => (IReadOnlyDictionary<object, long?>)f.Value.ToDictionary(ff => ff.Value, ff => ff.Count)),
                 TotalCount = searchResults.Value.TotalCount
             };
