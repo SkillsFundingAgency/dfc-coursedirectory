@@ -56,7 +56,15 @@ namespace Dfc.CourseDirectory.FindACourseApi
                 services.AddAzureSearchClient<Course>(
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],
-                    indexName: "course");
+                    indexName: "course",
+                    options =>
+                    {
+                        // The default options yield DateTime's with type Local;
+                        // we need them to be Utc to maintain the behaviour with when the API was built upon
+                        // the old SDK.
+                        // Overriding the serializer here is sufficient to get Utc DateTimes.
+                        options.Serializer = new Azure.Core.Serialization.JsonObjectSerializer();
+                    });
             }
         }
 
