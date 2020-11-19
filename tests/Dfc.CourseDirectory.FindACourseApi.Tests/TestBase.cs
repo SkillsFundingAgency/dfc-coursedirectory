@@ -1,5 +1,8 @@
 ﻿using System.Net.Http;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests
@@ -17,5 +20,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
         public HttpClient HttpClient { get; }
 
         public FindACourseApiApplicationFactory Factory { get; }
+
+        protected Mock<ISearchClient<Course>> CourseSearchClient => Factory.CourseSearchClient;
+
+        protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
     }
 }

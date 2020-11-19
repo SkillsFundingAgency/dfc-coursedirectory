@@ -1,5 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.FindACourseApi.Models;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.FindACourseApi.DTOs
 {
@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.DTOs
         public string CourseDescription { get; set; }
         public string CourseName { get; set; }
         public bool? FlexibleStartDate { get; set; }
-        public DurationUnit DurationUnit { get; set; }
+        public CourseDurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
         public bool? National { get; set; }
     }
