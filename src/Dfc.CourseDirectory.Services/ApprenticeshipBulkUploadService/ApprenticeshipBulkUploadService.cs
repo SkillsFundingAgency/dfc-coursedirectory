@@ -1283,16 +1283,20 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             };
         }
 
-        internal bool? NationalOrAcrossEngland(bool? national, bool? acrossEngland)
+        private bool NationalOrAcrossEngland(bool? national, bool? acrossEngland)
         {
             if (acrossEngland.HasValue)
-                return acrossEngland;
+            {
+                return acrossEngland.Value;
+            }
 
             if (national.HasValue)
-                return national;
-            return null;
+            {
+                return national.Value;
+            }
+                
+            return false;
         }
-
          
         public List<string> ValidateApprenticeships(List<Apprenticeship> apprenticeships)
         {
