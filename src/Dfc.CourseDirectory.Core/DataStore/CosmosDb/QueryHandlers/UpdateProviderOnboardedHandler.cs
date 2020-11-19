@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -20,29 +19,25 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.ProviderCollectionName,
                 request.ProviderId.ToString());
 
-            Provider provider;
-
             try
             {
                 var response = await client.ReadDocumentAsync<Provider>(documentUri);
 
-                provider = response.Document;
+                var provider = response.Document;
+
+                provider.Status = ProviderStatus.Onboarded;
+                provider.DateOnboarded = request.UpdatedDateTime;
+                provider.DateUpdated = request.UpdatedDateTime;
+                provider.UpdatedBy = request.UpdatedBy.Email;
+
+                await client.ReplaceDocumentAsync(documentUri, provider);
+
+                return new Success();
             }
             catch (DocumentClientException dex) when (dex.StatusCode == HttpStatusCode.NotFound)
             {
                 return new NotFound();
             }
-
-            var now = DateTime.Now;
-
-            provider.Status = ProviderStatus.Onboarded;
-            provider.DateOnboarded = now;
-            provider.DateUpdated = now;
-            provider.UpdatedBy = request.UpdatedBy;
-
-            await client.ReplaceDocumentAsync(documentUri, provider);
-
-            return new Success();
         }
     }
 }

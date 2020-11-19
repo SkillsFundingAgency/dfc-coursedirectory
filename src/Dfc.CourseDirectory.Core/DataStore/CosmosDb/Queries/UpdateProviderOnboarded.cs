@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 using OneOf;
 using OneOf.Types;
 
@@ -8,6 +9,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
     {
         public Guid ProviderId { get; set; }
 
-        public string UpdatedBy { get; set; }
+        public UserInfo UpdatedBy { get; set; }
+
+        public DateTime UpdatedDateTime { get; set; }
     }
 }

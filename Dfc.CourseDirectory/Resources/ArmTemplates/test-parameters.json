@@ -26,12 +26,6 @@
     "larsApiKey": {
       "value": "not-a-real-key"
     },
-    "providerApiUrl": {
-      "value": "https://my.api.net/api/provider/"
-    },
-    "providerApiKey": {
-      "value": "not-a-real-key"
-    },
     "courseApiUrl": {
       "value": "https://my.api.net/api/course/"
     },

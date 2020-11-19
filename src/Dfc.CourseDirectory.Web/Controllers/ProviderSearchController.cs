@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +15,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ProviderSearchController : Controller
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         private ISession Session => HttpContext.Session;
 
-        public ProviderSearchController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public ProviderSearchController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, ICurrentUserProvider currentUserProvider, IClock clock)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         [Authorize(Policy = "ElevatedUserRole")]
@@ -37,11 +43,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             try
             {
-                // TODO - UpdatedBy will be updated with the name of logged person
                 await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderOnboarded
                 {
                     ProviderId = providerId,
-                    UpdatedBy = "ProviderPortal - Add Provider"
+                    UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                    UpdatedDateTime = _clock.UtcNow.ToLocalTime()
                 });
 
                 Session.SetInt32("UKPRN", Convert.ToInt32(ajaxRequest.UKPRN));

@@ -24,10 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
                 var provider = response.Document;
 
-                if (provider.BulkUploadStatus == null)
-                {
-                    provider.BulkUploadStatus = new ProviderBulkUploadStatus();
-                }
+                provider.BulkUploadStatus ??= new ProviderBulkUploadStatus();
 
                 provider.BulkUploadStatus.PublishInProgress = request.PublishInProgress;
 

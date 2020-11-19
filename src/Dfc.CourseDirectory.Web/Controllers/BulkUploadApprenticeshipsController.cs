@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class BulkUploadApprenticeshipsController : Controller
     {
-        private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
+        private const string BlobContainerPath = "/Apprenticeship Bulk Upload/Files/";
 
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private readonly IApprenticeshipService _apprenticeshipService;
@@ -242,7 +242,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
             var model = new DownloadErrorFileViewModel() { ErrorFileCreatedDate = DateTime.Now, UKPRN = UKPRN };
-            IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
+            IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + BlobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
 
@@ -286,7 +286,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = sUKPRN ?? 0;
             }
 
-            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
+            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + BlobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
                 TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
@@ -294,7 +294,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
                 fileUploadDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));;
-                var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{_blobContainerPath}");
+                var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{BlobContainerPath}");
             }
 
             var deleteBulkuploadResults = await _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);

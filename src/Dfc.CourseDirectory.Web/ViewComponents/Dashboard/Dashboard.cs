@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             try
             {
-                var getCoursesResult = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result;
+                var getCoursesResult = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN));
                 IEnumerable<Course> courses = getCoursesResult
                                                    .Value
                                                    .Value

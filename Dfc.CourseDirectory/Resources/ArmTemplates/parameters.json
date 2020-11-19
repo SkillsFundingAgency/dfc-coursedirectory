@@ -26,12 +26,6 @@
     "larsApiKey": {
       "value": "__azureSearchQueryKey__"
     },
-    "providerApiUrl": {
-      "value": "__providerApiUrl__"
-    },
-    "providerApiKey": {
-      "value": "__ApimPublishCourseDirectoryKey__"
-    },
     "courseApiUrl": {
       "value": "__courseApiUrl__"
     },
