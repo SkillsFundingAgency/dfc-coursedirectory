@@ -27,14 +27,17 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         [JsonConverter(typeof(Azure.Core.Serialization.MicrosoftSpatialGeoJsonConverter))]
         public GeographyPoint VenueLocation { get; set; }
         public string VenueAttendancePattern { get; set; }
+        [Obsolete("Can be computed from VenueAttendancePattern")]
         public string VenueAttendancePatternDescription { get; set; }
         public string ProviderName { get; set; }
         public string Region { get; set; }
         public decimal ScoreBoost { get; set; }
         public int? Status { get; set; }
         public string VenueStudyMode { get; set; }
+        [Obsolete("Can be computed from VenueStudyMode")]
         public string VenueStudyModeDescription { get; set; }
         public string DeliveryMode { get; set; }
+        [Obsolete("Can be computed from DeliveryMode")]
         public string DeliveryModeDescription { get; set; }
         public DateTime? StartDate { get; set; }
         public string VenueTown { get; set; }

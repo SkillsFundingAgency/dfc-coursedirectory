@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -221,7 +222,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     CourseRunId = i.Record.CourseRunId,
                     CourseText = i.Record.CourseText,
                     DeliveryMode = i.Record.DeliveryMode,
-                    DeliveryModeDescription = i.Record.DeliveryModeDescription,
+                    DeliveryModeDescription = Enum.Parse<CourseDeliveryMode>(i.Record.DeliveryMode).ToDescription(),
                     Distance = GetDistanceFromPostcodeForResult(i),
                     DurationUnit = i.Record.DurationUnit ?? 0,
                     DurationValue = i.Record.DurationValue,
@@ -239,7 +240,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     UpdatedOn = i.Record.UpdatedOn,
                     VenueAddress = i.Record.VenueAddress,
                     VenueAttendancePattern = i.Record.VenueAttendancePattern,
-                    VenueAttendancePatternDescription = i.Record.VenueAttendancePatternDescription,
+                    VenueAttendancePatternDescription = Enum.Parse<CourseDeliveryMode>(i.Record.DeliveryMode) == CourseDeliveryMode.ClassroomBased ?
+                        Enum.Parse<CourseAttendancePattern>(i.Record.VenueAttendancePattern).ToDescription() :
+                        null,
                     VenueLocation = i.Record.VenueLocation != null ?
                         new CoordinatesViewModel()
                         {
@@ -249,7 +252,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         null,
                     VenueName = i.Record.VenueName,
                     VenueStudyMode = i.Record.VenueStudyMode,
-                    VenueStudyModeDescription = i.Record.VenueStudyModeDescription,
+                    VenueStudyModeDescription = Enum.Parse<CourseStudyMode>(i.Record.VenueStudyMode).ToDescription(),
                     VenueTown = i.Record.VenueTown
                 }).ToList()
             };

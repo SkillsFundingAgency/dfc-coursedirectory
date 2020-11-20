@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         public static string ToDescription(this CourseDeliveryMode deliveryMode) => deliveryMode switch
         {
+            0 => "Undefined",
             CourseDeliveryMode.ClassroomBased => "Classroom based",
             CourseDeliveryMode.Online => "Online",
             CourseDeliveryMode.WorkBased => "Work based",
