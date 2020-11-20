@@ -8,7 +8,7 @@
     <div class="pttcd-subnav__provider-name">@Model.ProviderInfo.ProviderName</div>
     <ul class="pttcd-subnav__items">
         <li class="pttcd-subnav__item">
-            <a asp-action="SearchProvider" asp-controller="ProviderSearch" asp-route-UKPRN="@Model.ProviderInfo.Ukprn" class="pttcd-subnav__item__link" data-testid="adminsubnav-home">
+            <a asp-action="Dashboard" asp-controller="Provider" asp-all-route-data="@ProviderContext.RouteValues" class="pttcd-subnav__item__link" data-testid="adminsubnav-home">
                 Home
             </a>
         </li>

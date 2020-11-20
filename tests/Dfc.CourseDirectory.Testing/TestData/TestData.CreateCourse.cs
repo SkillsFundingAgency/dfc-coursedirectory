@@ -101,6 +101,9 @@ namespace Dfc.CourseDirectory.Testing
                     CourseStatus = courseStatus,
                 });
 
+            var course = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseById() { CourseId = courseId });
+            await _sqlDataSync.SyncCourse(course);
+
             return courseId;
         }
 
