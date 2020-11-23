@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.FindACourseApi.ApiModels;
 using Dfc.CourseDirectory.FindACourseApi.Interfaces;
 using Dfc.CourseDirectory.FindACourseApi.Models;
@@ -254,7 +255,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
                             } :
                             null
                     }).ToList(),
-                    SubRegions = (from region in RegionInfo.All
+                    SubRegions = (from region in Region.All
                                  from subRegion in region.SubRegions
                                  let sr = new { subRegion, region }
                                  join r in (courseRun.Regions ?? Enumerable.Empty<string>()) on sr.subRegion.Id equals r
