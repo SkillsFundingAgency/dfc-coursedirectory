@@ -153,7 +153,8 @@ namespace Dfc.CourseDirectory.Testing
 
         private Checkpoint CreateCheckpoint() => new Checkpoint()
         {
-            SchemasToInclude = new[] { "Pttcd", "LARS" }
+            SchemasToInclude = new[] { "Pttcd", "LARS" },
+            TablesToIgnore = new[] { "Regions" }
         };
 
         private void DeploySqlDb()
