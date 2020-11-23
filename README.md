@@ -84,3 +84,17 @@ New code is being written in the WebV2 project that is test-driven and uses mode
 See the [WebV2 readme](src/Dfc.CourseDirectory.WebV2/README.md) for details of the patterns in use.
 
 The WebV2 controllers are made available under the legacy `Dfc.CourseDirectory.Web` project so that we can move routes across one at time. As such to run the WebV2 code you actually need to run the original "Web" project.
+
+## Configurability
+
+### Bypass Apprenticeship QA process
+
+For development with a local SQL Database that doesn't have providers
+configured with their apprenticeship status. (Debug builds only)
+
+```
+src/Dfc.CourseDirectory.Web> CD_BYPASS_QA=true dotnet run
+```
+
+Alternatively for an individual provider set the `ApprenticeshipQAStatus` for
+the provider you're looking at to `16` (Passed) in `Pttcd.Providers` SQL table.

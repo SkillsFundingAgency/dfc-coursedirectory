@@ -19,6 +19,12 @@ WHERE ProviderId = @ProviderId";
 
             var paramz = new { query.ProviderId };
 
+#if DEBUG
+            if (bool.TryParse(System.Environment.GetEnvironmentVariable("CD_BYPASS_QA"), out var bypassQA) && bypassQA)
+            {
+                return ApprenticeshipQAStatus.Passed;
+            }
+#endif
             return await transaction.Connection.QuerySingleOrDefaultAsync<ApprenticeshipQAStatus?>(sql, paramz, transaction);
         }
     }
