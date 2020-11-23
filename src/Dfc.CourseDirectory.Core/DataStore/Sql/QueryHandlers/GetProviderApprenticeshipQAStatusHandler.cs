@@ -20,7 +20,7 @@ WHERE ProviderId = @ProviderId";
             var paramz = new { query.ProviderId };
 
 #if DEBUG
-            if (System.Environment.GetEnvironmentVariable("BYPASS_QA")!=null && bool.Parse((System.Environment.GetEnvironmentVariable("BYPASS_QA"))))
+            if (bool.TryParse(System.Environment.GetEnvironmentVariable("BYPASS_QA"), out var bypassQA) && bypassQA)
             {
                 return ApprenticeshipQAStatus.Passed;
             }
