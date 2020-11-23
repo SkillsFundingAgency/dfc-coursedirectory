@@ -93,7 +93,7 @@ For development with a local SQL Database that doesn't have providers
 configured with their apprenticeship status. (Debug builds only)
 
 ```
-src/Dfc.CourseDirectory.Web> BYPASS_QA=true dotnet run
+src/Dfc.CourseDirectory.Web> CD_BYPASS_QA=true dotnet run
 ```
 
 Alternatively for an individual provider set the `ApprenticeshipQAStatus` for
