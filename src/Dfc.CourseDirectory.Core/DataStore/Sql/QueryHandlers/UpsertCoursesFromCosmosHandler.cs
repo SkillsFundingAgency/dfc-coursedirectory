@@ -7,9 +7,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpsertCoursesHandler : ISqlQueryHandler<UpsertCourses, None>
+    public class UpsertCoursesFromCosmosHandler : ISqlQueryHandler<UpsertCoursesFromCosmos, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, UpsertCourses query)
+        public async Task<None> Execute(SqlTransaction transaction, UpsertCoursesFromCosmos query)
         {
             await UpsertCourses();
             await UpsertCourseRuns();
@@ -88,6 +88,7 @@ ON target.CourseId = source.CourseId
 WHEN NOT MATCHED THEN
     INSERT (
         CourseId,
+        LastSyncedFromCosmos,
         CourseStatus,
         CreatedOn,
         CreatedBy,
@@ -105,6 +106,7 @@ WHEN NOT MATCHED THEN
         WhereNext
     ) VALUES (
         source.CourseId,
+        @LastSyncedFromCosmos,
         source.CourseStatus,
         source.CreatedOn,
         source.CreatedBy,
@@ -124,6 +126,7 @@ WHEN NOT MATCHED THEN
 WHEN MATCHED THEN
     UPDATE SET
         CourseStatus = source.CourseStatus,
+        LastSyncedFromCosmos = @LastSyncedFromCosmos,
         CreatedOn = source.CreatedOn,
         CreatedBy = source.CreatedBy,
         UpdatedOn = source.UpdatedOn,
@@ -139,7 +142,10 @@ WHEN MATCHED THEN
         HowYoullBeAssessed = source.HowYoullBeAssessed,
         WhereNext = source.WhereNext;";
 
-                await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
+                await transaction.Connection.ExecuteAsync(
+                    mergeSql,
+                    param: new { query.LastSyncedFromCosmos },
+                    transaction: transaction);
             }
 
             async Task UpsertCourseRuns()

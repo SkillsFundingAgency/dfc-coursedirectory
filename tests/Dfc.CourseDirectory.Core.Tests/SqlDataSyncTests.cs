@@ -75,13 +75,15 @@ namespace Dfc.CourseDirectory.Core.Tests
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
                 CosmosDbQueryDispatcher.Object,
+                Clock,
                 new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncProvider(provider);
 
             // Assert
-            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertProviders, None>(q =>
+            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertProvidersFromCosmos, None>(q =>
+                q.LastSyncedFromCosmos == Clock.UtcNow &&
                 q.Records.Any(p =>
                     p.ProviderId == provider.Id &&
                     p.Ukprn == provider.Ukprn &&
@@ -148,13 +150,15 @@ namespace Dfc.CourseDirectory.Core.Tests
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
                 CosmosDbQueryDispatcher.Object,
+                Clock,
                 new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncVenue(venue);
 
             // Assert
-            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertVenues, None>(q =>
+            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertVenuesFromCosmos, None>(q =>
+                q.LastSyncedFromCosmos == Clock.UtcNow &&
                 q.Records.Any(v =>
                     v.VenueId == venue.Id &&
                     v.ProviderUkprn == 12345 &&
@@ -240,14 +244,20 @@ namespace Dfc.CourseDirectory.Core.Tests
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
                 CosmosDbQueryDispatcher.Object,
+                Clock,
                 new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncCourse(course);
 
             // Assert
-            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertCourses, None>(q =>
+            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertCoursesFromCosmos, None>(q =>
             {
+                if (q.LastSyncedFromCosmos != Clock.UtcNow)
+                {
+                    return false;
+                }
+
                 var record = q.Records.SingleOrDefault();
                 if (record == default)
                 {
@@ -353,14 +363,20 @@ namespace Dfc.CourseDirectory.Core.Tests
             var sqlDataSync = new SqlDataSync(
                 Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
                 CosmosDbQueryDispatcher.Object,
+                Clock,
                 new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncApprenticeship(apprenticeship);
 
             // Assert
-            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertApprenticeships, None>(q =>
+            Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertApprenticeshipsFromCosmos, None>(q =>
             {
+                if (q.LastSyncedFromCosmos != Clock.UtcNow)
+                {
+                    return false;
+                }
+
                 var record = q.Records.SingleOrDefault();
                 if (record == default)
                 {

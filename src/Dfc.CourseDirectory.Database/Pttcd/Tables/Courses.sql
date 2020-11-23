@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [Pttcd].[Courses]
 (
 	[CourseId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Courses] PRIMARY KEY,
+	[LastSyncedFromCosmos] DATETIME,
 	[CourseStatus] INT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),

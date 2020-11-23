@@ -10,9 +10,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpsertApprenticeshipsHandler : ISqlQueryHandler<UpsertApprenticeships, None>
+    public class UpsertApprenticeshipsFromCosmosHandler : ISqlQueryHandler<UpsertApprenticeshipsFromCosmos, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, UpsertApprenticeships query)
+        public async Task<None> Execute(SqlTransaction transaction, UpsertApprenticeshipsFromCosmos query)
         {
             await UpsertApprenticeships();
             await UpsertApprenticeshipLocations();
@@ -83,6 +83,7 @@ ON target.ApprenticeshipId = source.ApprenticeshipId
 WHEN NOT MATCHED THEN
     INSERT (
         ApprenticeshipId,
+        LastSyncedFromCosmos,
         ApprenticeshipStatus,
         CreatedOn,
         CreatedBy,
@@ -105,6 +106,7 @@ WHEN NOT MATCHED THEN
         ContactWebsite
     ) VALUES (
         source.ApprenticeshipId,
+        @LastSyncedFromCosmos,
         source.ApprenticeshipStatus,
         source.CreatedOn,
         source.CreatedBy,
@@ -129,6 +131,7 @@ WHEN NOT MATCHED THEN
 WHEN MATCHED THEN
     UPDATE SET
         ApprenticeshipId = source.ApprenticeshipId,
+        LastSyncedFromCosmos = @LastSyncedFromCosmos,
         ApprenticeshipStatus = source.ApprenticeshipStatus,
         CreatedOn = source.CreatedOn,
         CreatedBy = source.CreatedBy,
@@ -150,7 +153,10 @@ WHEN MATCHED THEN
         ContactEmail = source.ContactEmail,
         ContactWebsite = source.ContactWebsite;";
 
-                await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
+                await transaction.Connection.ExecuteAsync(
+                    mergeSql,
+                    param: new { query.LastSyncedFromCosmos },
+                    transaction: transaction);
             }
 
             async Task UpsertApprenticeshipLocations()

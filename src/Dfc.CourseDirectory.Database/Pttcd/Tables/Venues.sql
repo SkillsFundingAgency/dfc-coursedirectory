@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [Pttcd].[Venues]
 (
 	[VenueId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Venues] PRIMARY KEY,
+	[LastSyncedFromCosmos] DATETIME,
 	[VenueStatus] TINYINT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),

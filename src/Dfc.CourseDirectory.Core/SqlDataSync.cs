@@ -21,15 +21,18 @@ namespace Dfc.CourseDirectory.Core
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IClock _clock;
         private readonly ILogger _logger;
 
         public SqlDataSync(
             IServiceScopeFactory serviceScopeFactory,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IClock clock,
             ILogger<SqlDataSync> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _clock = clock;
             _logger = logger;
         }
 
@@ -85,7 +88,7 @@ namespace Dfc.CourseDirectory.Core
         public Task SyncApprenticeship(Apprenticeship apprenticeship) => SyncApprenticeships(new[] { apprenticeship });
 
         public Task SyncApprenticeships(IEnumerable<Apprenticeship> apprenticeships) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertApprenticeships()
+            dispatcher.ExecuteQuery(new UpsertApprenticeshipsFromCosmos()
             {
                 Records = apprenticeships.Select(apprenticeship => new UpsertApprenticeshipRecord()
                 {
@@ -130,13 +133,14 @@ namespace Dfc.CourseDirectory.Core
                         Regions = location.Regions ?? Array.Empty<string>(),
                         LocationGuidId = location.LocationGuidId
                     })
-                })
+                }),
+                LastSyncedFromCosmos = _clock.UtcNow
             }));
 			
         public Task SyncCourse(Course course) => SyncCourses(new[] { course });
 
         public Task SyncCourses(IEnumerable<Course> courses) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertCourses()
+            dispatcher.ExecuteQuery(new UpsertCoursesFromCosmos()
             {
                 Records = courses.Select(course => new UpsertCoursesRecord()
                 {
@@ -180,13 +184,14 @@ namespace Dfc.CourseDirectory.Core
                         National = courseRun.National,
                         Regions = courseRun.Regions ?? Array.Empty<string>()
                     })
-                })
+                }),
+                LastSyncedFromCosmos = _clock.UtcNow
             }));
 
         public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
 
         public Task SyncProviders(IEnumerable<Provider> providers) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertProviders()
+            dispatcher.ExecuteQuery(new UpsertProvidersFromCosmos()
             {
                 Records = providers.Select(provider => new UpsertProvidersRecord()
                 {
@@ -224,13 +229,14 @@ namespace Dfc.CourseDirectory.Core
                         WebsiteAddress = c.ContactWebsiteAddress,
                         Email = c.ContactEmail
                     })
-                })
+                }),
+                LastSyncedFromCosmos = _clock.UtcNow
             }));
 
         public Task SyncVenue(Venue venue) => SyncVenues(new[] { venue });
 
         public Task SyncVenues(IEnumerable<Venue> venues) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertVenues()
+            dispatcher.ExecuteQuery(new UpsertVenuesFromCosmos()
             {
                 Records = venues.Select(venue => new UpsertVenuesRecord()
                 {
@@ -253,7 +259,8 @@ namespace Dfc.CourseDirectory.Core
                     Telephone = venue.PHONE,
                     Email = venue.Email,
                     Website = venue.Website
-                })
+                }),
+                LastSyncedFromCosmos = _clock.UtcNow
             }));
 
         private async Task WithExclusiveSqlLock(string lockName, Func<Task> action)
