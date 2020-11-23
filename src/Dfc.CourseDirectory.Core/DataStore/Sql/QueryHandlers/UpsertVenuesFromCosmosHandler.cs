@@ -7,9 +7,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpsertVenuesHandler : ISqlQueryHandler<UpsertVenues, None>
+    public class UpsertVenuesFromCosmosHandler : ISqlQueryHandler<UpsertVenuesFromCosmos, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, UpsertVenues query)
+        public async Task<None> Execute(SqlTransaction transaction, UpsertVenuesFromCosmos query)
         {
             var createTableSql = @"
 CREATE TABLE #Venues (
@@ -94,6 +94,7 @@ ON target.VenueId = source.VenueId
 WHEN NOT MATCHED THEN
     INSERT (
         VenueId,
+        LastSyncedFromCosmos,
         VenueStatus,
         CreatedOn,
         CreatedBy,
@@ -114,6 +115,7 @@ WHEN NOT MATCHED THEN
         Website
     ) VALUES (
         source.VenueId,
+        @LastSyncedFromCosmos,
         source.VenueStatus,
         source.CreatedOn,
         source.CreatedBy,
@@ -136,6 +138,7 @@ WHEN NOT MATCHED THEN
 WHEN MATCHED THEN
     UPDATE SET
         VenueStatus = source.VenueStatus,
+        LastSyncedFromCosmos = @LastSyncedFromCosmos,
         CreatedOn = source.CreatedOn,
         CreatedBy = source.CreatedBy,
         UpdatedOn = source.UpdatedOn,
@@ -154,7 +157,10 @@ WHEN MATCHED THEN
         Email = source.Email,
         Website = source.Website;";
 
-            await transaction.Connection.ExecuteAsync(sql, transaction: transaction);
+            await transaction.Connection.ExecuteAsync(
+                sql,
+                param: new { query.LastSyncedFromCosmos },
+                transaction: transaction);
 
             return new None();
         }

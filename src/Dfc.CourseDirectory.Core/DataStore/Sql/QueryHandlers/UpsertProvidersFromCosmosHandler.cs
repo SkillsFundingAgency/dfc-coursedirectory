@@ -7,9 +7,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpsertProvidersHandler : ISqlQueryHandler<UpsertProviders, None>
+    public class UpsertProvidersFromCosmosHandler : ISqlQueryHandler<UpsertProvidersFromCosmos, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, UpsertProviders query)
+        public async Task<None> Execute(SqlTransaction transaction, UpsertProvidersFromCosmos query)
         {
             await UpsertProvider();
             await UpsertProviderContacts();
@@ -64,6 +64,7 @@ ON target.ProviderId = source.ProviderId
 WHEN NOT MATCHED THEN
     INSERT (
         ProviderId,
+        LastSyncedFromCosmos,
         Ukprn,
         ProviderStatus,
         ProviderType,
@@ -79,6 +80,7 @@ WHEN NOT MATCHED THEN
         TribalProviderId
     ) VALUES (
         source.ProviderId,
+        @LastSyncedFromCosmos,
         source.Ukprn,
         source.ProviderStatus,
         source.ProviderType,
@@ -96,6 +98,7 @@ WHEN NOT MATCHED THEN
 WHEN MATCHED THEN
     UPDATE SET
         Ukprn = source.Ukprn,
+        LastSyncedFromCosmos = @LastSyncedFromCosmos,
         ProviderStatus = source.ProviderStatus,
         ProviderType = source.ProviderType,
         ProviderName = source.ProviderName,
@@ -109,7 +112,10 @@ WHEN MATCHED THEN
         NationalApprenticeshipProvider = source.NationalApprenticeshipProvider,
         TribalProviderId = source.TribalProviderId;";
 
-                await transaction.Connection.ExecuteAsync(sql, transaction: transaction);
+                await transaction.Connection.ExecuteAsync(
+                    sql,
+                    param: new { query.LastSyncedFromCosmos },
+                    transaction: transaction);
             }
 
             async Task UpsertProviderContacts()

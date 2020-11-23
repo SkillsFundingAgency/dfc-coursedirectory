@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [Pttcd].[Apprenticeships]
 (
 	[ApprenticeshipId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Apprenticeships] PRIMARY KEY,
+	[LastSyncedFromCosmos] DATETIME,
 	[ApprenticeshipStatus] INT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),

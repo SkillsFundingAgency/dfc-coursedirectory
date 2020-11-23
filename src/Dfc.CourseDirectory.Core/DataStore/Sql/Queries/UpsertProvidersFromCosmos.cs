@@ -5,9 +5,10 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpsertProviders : ISqlQuery<None>
+    public class UpsertProvidersFromCosmos : ISqlQuery<None>
     {
         public IEnumerable<UpsertProvidersRecord> Records { get; set; }
+        public DateTime LastSyncedFromCosmos { get; set; }
     }
 
     public class UpsertProvidersRecord
