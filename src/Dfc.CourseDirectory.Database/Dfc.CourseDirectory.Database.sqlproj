@@ -416,6 +416,7 @@
     <Build Include="Pttcd\Indexes\IX_Venues_ProviderUkprn.sql" />
     <Build Include="Pttcd\Indexes\IX_Apprenticeships_ProviderUkprn.sql" />
     <Build Include="Pttcd\Indexes\IX_Courses_ProviderUkprn.sql" />
+    <Build Include="Pttcd\Tables\Regions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Restore\Notes.txt" />
@@ -424,5 +425,8 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.Regions.sql" />
   </ItemGroup>
 </Project>
