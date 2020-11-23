@@ -18,6 +18,7 @@ using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Provider;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -122,6 +123,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet("dashboard")]
+        [AssignLegacyProviderContext]
         public IActionResult Dashboard()
         {
             return View();
