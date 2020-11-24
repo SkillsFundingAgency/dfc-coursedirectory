@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 
@@ -30,7 +29,7 @@ namespace Dfc.CourseDirectory.Testing
             Action<CreateCourseCourseRunBuilder> configureCourseRuns = null,
             CourseStatus courseStatus = CourseStatus.Live)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
             {
                 ProviderId = providerId
             });

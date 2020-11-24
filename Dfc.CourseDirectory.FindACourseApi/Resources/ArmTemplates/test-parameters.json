@@ -11,6 +11,12 @@
     "appServicePlanResourceGroup": {
       "value": "dfc-dev-prov-rg"
     },
+    "cosmosAccountEndpoint": {
+      "value": "https://not-a-real-account.documents.azure.com/"
+    },
+    "cosmosAccountAccessKey": {
+      "value": "not-a-real-access-key"
+    },
     "searchName": {
       "value": "dev-dev-prov-sch"
     },
@@ -20,13 +26,7 @@
     "searchQueryKey": {
       "value": "not-a-real-key"
     },
-    "courseApiUrl": {
-      "value": "https://my.api.net/api/courses/"
-    },
-    "courseApiKey": {
-      "value": "not-a-real-api-key"
-    },
-    "providerPortalApplicationInsights":{
+    "providerPortalApplicationInsights": {
       "value": "dfc-dev-prov-as-ai"
     }
   }

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
-using Dfc.CourseDirectory.FindACourseApi.Interfaces;
-using Dfc.CourseDirectory.FindACourseApi.Services;
-using Dfc.CourseDirectory.FindACourseApi.Settings;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
@@ -42,12 +41,14 @@ namespace Dfc.CourseDirectory.FindACourseApi
             });
 
             services
-                .Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)))
-                .AddScoped<ICourseService, CoursesService>()
                 .AddMediatR(typeof(Startup).Assembly);
 
             if (Environment.EnvironmentName != "Testing")
             {
+                services.AddCosmosDbDataStore(
+                    endpoint: new Uri(Configuration["CosmosDbSettings:EndpointUri"]),
+                    key: Configuration["CosmosDbSettings:PrimaryKey"]);
+
                 services.AddAzureSearchClient<Onspd>(
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],
@@ -65,12 +66,24 @@ namespace Dfc.CourseDirectory.FindACourseApi
                         // Overriding the serializer here is sufficient to get Utc DateTimes.
                         options.Serializer = new Azure.Core.Serialization.JsonObjectSerializer();
                     });
+
+                services.AddAzureSearchClient<Lars>(
+                    new Uri(Configuration["AzureSearchUrl"]),
+                    Configuration["AzureSearchQueryKey"],
+                    "lars");
             }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
             app.UseRouting();
 
             app.UseSwagger(c =>
