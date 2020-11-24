@@ -13,5 +13,6 @@
         public string StandardSectorCodesCollectionName { get; set; } = "standardsectorcodes";
         public string SectorSubjectAreaTier1sCollectionName { get; set; } = "sectorsubjectareatier1s";
         public string SectorSubjectAreaTier2sCollectionName { get; set; } = "sectorsubjectareatier2s";
+        public string FeChoicesCollectionName { get; set; } = "fechoices";
     }
 }
