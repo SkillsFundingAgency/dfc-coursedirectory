@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     {
     }
 
-    public class CourseDirectoryApplicationFactory : WebApplicationFactory<Startup>
+    public class CourseDirectoryApplicationFactory : WebApplicationFactory<Startup>, IAsyncLifetime
     {
         public CourseDirectoryApplicationFactory(IMessageSink messageSink)
         {
@@ -62,13 +62,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                DatabaseFixture.Dispose();
-            }
-        }
+        public Task InitializeAsync() => DatabaseFixture.InitializeAsync();
+
+        public Task DisposeAsync() => DatabaseFixture.DisposeAsync();
 
         public void OnTestStarting()
         {

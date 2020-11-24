@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Dfc.CourseDirectory.Testing
 {
-    public class DatabaseTestBaseFixture : IDisposable
+    public class DatabaseTestBaseFixture : IAsyncLifetime
     {
         public DatabaseTestBaseFixture(IMessageSink messageSink)
         {
@@ -23,7 +23,9 @@ namespace Dfc.CourseDirectory.Testing
 
         public IServiceProvider Services { get; }
 
-        public void Dispose() => DatabaseFixture.Dispose();
+        public Task InitializeAsync() => DatabaseFixture.InitializeAsync();
+
+        public Task DisposeAsync() => DatabaseFixture.DisposeAsync();
 
         public void OnTestStarting()
         {
