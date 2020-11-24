@@ -99,7 +99,15 @@ namespace Dfc.CourseDirectory.Core
                         upgradeExisting: true,
                         options: new DacDeployOptions()
                         {
-                            BlockOnPossibleDataLoss = false
+                            BlockOnPossibleDataLoss = false,
+                            DropObjectsNotInSource = true,
+                            DoNotDropObjectTypes = new[]
+                            {
+                                ObjectType.Logins,
+                                ObjectType.Users,
+                                ObjectType.Permissions,
+                                ObjectType.RoleMembership
+                            }
                         });
                 }
                 finally
