@@ -40,7 +40,17 @@ namespace Dfc.CourseDirectory.Testing
 
             AcquireLock();
 
-            DeploySqlDb();
+            try
+            {
+                DeploySqlDb();
+            }
+            catch (Exception)
+            {
+                _lockConnection.Dispose();
+
+                throw;
+            }
+
             _sqlCheckpoint = CreateCheckpoint();
         }
 
