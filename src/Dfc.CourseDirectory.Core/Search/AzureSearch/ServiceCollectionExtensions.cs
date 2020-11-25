@@ -7,13 +7,19 @@ namespace Dfc.CourseDirectory.Core.Search.AzureSearch
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddAzureSearchClient<TResult>(this IServiceCollection services, Uri endpoint, string key, string indexName)
+        public static IServiceCollection AddAzureSearchClient<TResult>(
+            this IServiceCollection services,
+            Uri endpoint,
+            string key,
+            string indexName,
+            Action<SearchClientOptions> configureOptions = null)
         {
-            services.AddSingleton<ISearchClient<TResult>>(s =>
-                new AzureSearchClient<TResult>(
-                    new SearchClient(endpoint, indexName, new AzureKeyCredential(key))));
+            var options = new SearchClientOptions();
+            configureOptions?.Invoke(options);
 
-            return services;
+            return services.AddSingleton<ISearchClient<TResult>>(s =>
+                new AzureSearchClient<TResult>(
+                    new SearchClient(endpoint, indexName, new AzureKeyCredential(key), options)));
         }
     }
 }

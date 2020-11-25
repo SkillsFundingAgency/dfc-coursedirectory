@@ -1,8 +1,8 @@
 using System;
 
-namespace Dfc.GeoCoordinate
+namespace Dfc.CourseDirectory.Core
 {
-    public class GeoHelper
+    public static class GeoHelper
     {
         // Adapted from https://github.com/microsoft/referencesource/blob/bf498ea2b1a6270a2fe5cb122acf4b1c5b45c21d/System.Device/GeoCoordinate.cs#L190-L239
         public static double GetDistanceTo((double lat, double lng) from, (double lat, double lng) to)

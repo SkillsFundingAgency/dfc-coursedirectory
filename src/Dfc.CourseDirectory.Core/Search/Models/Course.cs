@@ -1,35 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.FindACourseApi.Models;
+using System.Text.Json.Serialization;
+using Dfc.CourseDirectory.Core.Models;
+using Microsoft.Spatial;
 
-namespace Dfc.CourseDirectory.FindACourseApi.ApiModels
+namespace Dfc.CourseDirectory.Core.Search.Models
 {
-    public class CourseSearchResponse : IPagedResponse
+    public class Course
     {
-        public IDictionary<string, IEnumerable<FacetCountResult>> Facets { get; set; }
-        public IEnumerable<CourseSearchResponseItem> Results { get; set; }
-        public int Total { get; set; }
-        public int Limit { get; set; }
-        public int Start { get; set; }
-    }
-
-    public class CourseSearchResponseItem
-    {
-        public double SearchScore { get; set; }
-        public double? Distance { get; set; }
-        public Coordinates VenueLocation { get; set; }
-        public Guid? CourseId { get; set; }
-        public Guid? CourseRunId { get; set; }
+        public string id { get; set; }
+        public Guid CourseId { get; set; }
+        public Guid CourseRunId { get; set; }
         public string QualificationCourseTitle { get; set; }
         public string LearnAimRef { get; set; }
-        public string QualificationLevel { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public string VenueName { get; set; }
         public string VenueAddress { get; set; }
+        [JsonConverter(typeof(Azure.Core.Serialization.MicrosoftSpatialGeoJsonConverter))]
+        public GeographyPoint VenueLocation { get; set; }
         public string VenueAttendancePattern { get; set; }
         public string VenueAttendancePatternDescription { get; set; }
         public string ProviderName { get; set; }
         public string Region { get; set; }
+        public decimal ScoreBoost { get; set; }
+        public int? Status { get; set; }
         public string VenueStudyMode { get; set; }
         public string VenueStudyModeDescription { get; set; }
         public string DeliveryMode { get; set; }
@@ -43,7 +37,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.ApiModels
         public string CourseDescription { get; set; }
         public string CourseName { get; set; }
         public bool? FlexibleStartDate { get; set; }
-        public DurationUnit DurationUnit { get; set; }
+        public CourseDurationUnit? DurationUnit { get; set; }
         public int? DurationValue { get; set; }
         public bool? National { get; set; }
     }

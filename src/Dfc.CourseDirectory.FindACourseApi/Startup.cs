@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.FindACourseApi.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Search.AzureSearch;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.FindACourseApi.Interfaces;
 using Dfc.CourseDirectory.FindACourseApi.Services;
 using Dfc.CourseDirectory.FindACourseApi.Settings;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
@@ -14,12 +17,15 @@ namespace Dfc.CourseDirectory.FindACourseApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -37,10 +43,29 @@ namespace Dfc.CourseDirectory.FindACourseApi
 
             services
                 .Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)))
-                .Configure<SearchServiceSettings>(Configuration.GetSection(nameof(SearchServiceSettings)))
                 .AddScoped<ICourseService, CoursesService>()
-                .AddSingleton<SearchServiceWrapper>()
-                .AddTransient<ISearchServiceSettings>(sp => sp.GetRequiredService<IOptions<SearchServiceSettings>>().Value);
+                .AddMediatR(typeof(Startup).Assembly);
+
+            if (Environment.EnvironmentName != "Testing")
+            {
+                services.AddAzureSearchClient<Onspd>(
+                    new Uri(Configuration["AzureSearchUrl"]),
+                    Configuration["AzureSearchQueryKey"],
+                    indexName: "onspd");
+
+                services.AddAzureSearchClient<Course>(
+                    new Uri(Configuration["AzureSearchUrl"]),
+                    Configuration["AzureSearchQueryKey"],
+                    indexName: "course",
+                    options =>
+                    {
+                        // The default options yield DateTime's with type Local;
+                        // we need them to be Utc to maintain the behaviour with when the API was built upon
+                        // the old SDK.
+                        // Overriding the serializer here is sufficient to get Utc DateTimes.
+                        options.Serializer = new Azure.Core.Serialization.JsonObjectSerializer();
+                    });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

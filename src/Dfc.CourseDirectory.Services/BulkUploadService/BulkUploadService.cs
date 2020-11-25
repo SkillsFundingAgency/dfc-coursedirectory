@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.AlternativeName;
+using Course = Dfc.CourseDirectory.Services.Models.Courses.Course;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {

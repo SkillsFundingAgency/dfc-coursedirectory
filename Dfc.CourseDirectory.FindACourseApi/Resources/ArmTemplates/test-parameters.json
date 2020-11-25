@@ -11,50 +11,8 @@
     "appServicePlanResourceGroup": {
       "value": "dfc-dev-prov-rg"
     },
-    "storageConnectionString": {
-      "value": "DefaultEndpointsProtocol=https;AccountName=dfcfooprovstr;AccountKey=this_is_not_a_real_account==;EndpointSuffix=core.windows.net"
-    },
-    "cosmosDBfqdn": {
-      "value": "https://dfc-foo-prov-cdb.documents.azure.com/"
-    },
-    "cosmosDBkey": {
-      "value": "not-a-real-key"
-    },
-    "cosmosDBdatabase": {
-      "value": "mydb"
-    },
-    "cosmosDBcollection": {
-      "value": "mycoll"
-    },
-    "venueApiUrl": {
-      "value": "https://my.api.net/api/venue/"
-    },
-    "venueApiKey": {
-      "value": "not-a-real-api-key"
-    },
-    "providerApiUrl": {
-      "value": "https://my.api.net/api/provider"
-    },
-    "providerApiKey": {
-      "value": "not-a-real-api-key"
-    },
     "searchName": {
-      "value": "dfc-foo-prov-sch"
-    },
-    "qualIndex": {
-      "value": "lars"
-    },
-    "searchIndex": {
-      "value": "course"
-    },
-    "providerIndex": {
-      "value": "provider"
-    },
-    "onspdIndex": {
-      "value": "onspd"
-    },
-    "larsIndex": {
-      "value": "lars"
+      "value": "dev-dev-prov-sch"
     },
     "searchAdminKey": {
       "value": "not-a-real-key"
@@ -62,29 +20,11 @@
     "searchQueryKey": {
       "value": "not-a-real-key"
     },
-    "apiPassword": {
-      "value": "not-a-real-key"
-    },
     "courseApiUrl": {
       "value": "https://my.api.net/api/courses/"
     },
     "courseApiKey": {
       "value": "not-a-real-api-key"
-    },
-    "searchDefaultReturnCount": {
-      "value": 100
-    },
-    "searchMaxReturnCount": {
-      "value": 200
-    },
-    "onlineCourseSearchName": {
-      "value": "dfc-foo-online-course-sch"
-    },
-    "onlineCourseSearchIndex": {
-      "value": "online-course"
-    },
-    "onlineCourseSearchQueryKey": {
-      "value": "not-a-real-key"
     },
     "providerPortalApplicationInsights":{
       "value": "dfc-dev-prov-as-ai"
