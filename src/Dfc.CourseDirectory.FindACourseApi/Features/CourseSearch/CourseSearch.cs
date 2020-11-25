@@ -9,15 +9,13 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.FindACourseApi.DTOs;
-using Dfc.CourseDirectory.FindACourseApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Course = Dfc.CourseDirectory.Core.Search.Models.Course;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 {
-    public class Query : IRequest<ViewModel>
+    public class Query : IRequest<CourseSearchViewModel>
     {
         public string SubjectKeyword { get; set; }
         public float? Distance { get; set; }
@@ -35,16 +33,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
         public int? Start { get; set; }
     }
 
-    public class ViewModel
-    {
-        public IReadOnlyDictionary<string, IEnumerable<FacetCountResult>> Facets { get; set; }
-        public IReadOnlyCollection<CourseSearchResult> Results { get; set; }
-        public int Total { get; set; }
-        public int Limit { get; set; }
-        public int Start { get; set; }
-    }
-
-    public class Handler : IRequestHandler<Query, ViewModel>
+    public class Handler : IRequestHandler<Query, CourseSearchViewModel>
     {
         private const int DefaultSize = 20;
         private const int MaxSize = 50;
@@ -69,7 +58,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
             _onspdSearchClient = onspdSearchClient;
         }
 
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<CourseSearchViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var filters = new List<string>();
 
@@ -206,19 +195,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 
             var result = await _courseSearchClient.Search(query);
 
-            return new ViewModel()
+            return new CourseSearchViewModel()
             {
                 Limit = size,
                 Start = skip,
                 Total = Convert.ToInt32(result.TotalCount.Value),
                 Facets = result.Facets.ToDictionary(
                     f => _courseSearchFacetMapping.GetValueOrDefault(f.Key, f.Key),
-                    f => f.Value.Select(v => new FacetCountResult()
+                    f => f.Value.Select(v => new FacetCountResultViewModel()
                     {
                         Value = v.Key,
                         Count = v.Value.Value
                     })),
-                Results = result.Items.Select(i => new CourseSearchResult()
+                Results = result.Items.Select(i => new CourseSearchResultViewModel()
                 {
                     Cost = i.Record.Cost,
                     CostDescription = i.Record.CostDescription,
@@ -247,7 +236,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                     VenueAttendancePattern = i.Record.VenueAttendancePattern,
                     VenueAttendancePatternDescription = i.Record.VenueAttendancePatternDescription,
                     VenueLocation = i.Record.VenueLocation != null ?
-                        new Coordinates()
+                        new CoordinatesViewModel()
                         {
                             Latitude = i.Record.VenueLocation.Latitude,
                             Longitude = i.Record.VenueLocation.Longitude

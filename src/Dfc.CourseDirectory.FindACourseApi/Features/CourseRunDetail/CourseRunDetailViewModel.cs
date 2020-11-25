@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.FindACourseApi.ViewModels
+namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 {
-    public class AlternativeCourseRunViewModel
+    public class CourseRunDetailViewModel
     {
+        public ProviderViewModel Provider { get; set; }
+        public CourseViewModel Course { get; set; }
+        public VenueViewModel Venue { get; set; }
+        public QualificationViewModel Qualification { get; set; }
+        public IEnumerable<AlternativeCourseRunViewModel> AlternativeCourseRuns { get; set; }
         public Guid CourseRunId { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public decimal? Cost { get; set; }
@@ -15,9 +21,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.ViewModels
         public CourseDeliveryMode DeliveryMode { get; set; }
         public CourseDurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
+        public bool? National { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
         public CourseStudyMode StudyMode { get; set; }
-        public VenueViewModel Venue { get; set; }
+        public IEnumerable<SubRegionViewModel> SubRegions { get; set; }
     }
 }

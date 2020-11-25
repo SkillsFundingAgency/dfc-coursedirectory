@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.FindACourseApi.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +23,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
 
         [Route("~/coursesearch")]
         [HttpPost]
-        [ProducesResponseType(typeof(Features.CourseSearch.ViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Features.CourseSearch.CourseSearchViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -35,7 +34,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         }
 
         [HttpGet("~/courserundetail")]
-        [ProducesResponseType(typeof(CourseRunDetailViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Features.CourseRunDetail.CourseRunDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

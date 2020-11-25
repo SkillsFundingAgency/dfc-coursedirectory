@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.FindACourseApi.ViewModels;
 using MediatR;
 using OneOf;
 using OneOf.Types;

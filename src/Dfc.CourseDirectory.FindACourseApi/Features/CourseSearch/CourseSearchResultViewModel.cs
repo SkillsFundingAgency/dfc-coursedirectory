@@ -1,13 +1,13 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.FindACourseApi.DTOs
+namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 {
-    public class CourseSearchResult
+    public class CourseSearchResultViewModel
     {
         public double SearchScore { get; set; }
         public double? Distance { get; set; }
-        public Coordinates VenueLocation { get; set; }
+        public CoordinatesViewModel VenueLocation { get; set; }
         public Guid? CourseId { get; set; }
         public Guid? CourseRunId { get; set; }
         public string QualificationCourseTitle { get; set; }
