@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
@@ -17,6 +20,7 @@ using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
@@ -29,6 +33,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IBackgroundTaskQueue _queue;
+        private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ILogger<BulkUploadController> _logger;
 
         private ISession _session => HttpContext.Session;
@@ -39,6 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IBackgroundTaskQueue queue,
+            IBackgroundWorkScheduler backgroundWorkScheduler,
             ILogger<BulkUploadController> logger)
         {
             _bulkUploadService = bulkUploadService ?? throw new ArgumentNullException(nameof(bulkUploadService));
@@ -46,6 +52,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _queue = queue ?? throw new ArgumentNullException(nameof(queue));
+            _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -405,31 +412,39 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 throw new Exception($"Failed to set the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
             }
 
-            // Now queue the background work to publish the courses.
-            _queue.QueueBackgroundWorkItem(async token =>
+            static async Task PublishCoursesWorker(object state, IServiceProvider services, CancellationToken ct)
             {
+                if (!(state is (Provider provider, PublishYourFileViewModel model)))
+                {
+                    throw new ArgumentException($"{nameof(state)} must be of type {nameof(ValueTuple<Provider, PublishYourFileViewModel>)} and cannot be null.", nameof(state));
+                }
+
+                var logger = services.GetRequiredService<ILogger<BulkUploadController>>();
+                var courseService = services.GetRequiredService<ICourseService>();
+                var cosmosDbQueryDispatcher = services.GetRequiredService<ICosmosDbQueryDispatcher>();
+
                 var guid = Guid.NewGuid().ToString();
-                var tag = $"bulk upload publish for provider {UKPRN} for {model.NumberOfCourses} courses.";
+                var tag = $"bulk upload publish for provider {provider.Ukprn} for {model.NumberOfCourses} courses.";
                 var startTimestamp = DateTime.UtcNow;
 
                 try
                 {
-                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+                    logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
 
                     // Publish the bulk-uploaded courses.
 
-                    var resultArchivingCourses = await _courseService.ArchiveCoursesExceptBulkUploadReadytoGoLive(UKPRN, (int)RecordStatus.Archived);
+                    var resultArchivingCourses = await courseService.ArchiveCoursesExceptBulkUploadReadytoGoLive(provider.Ukprn, (int)RecordStatus.Archived);
                     if (resultArchivingCourses.IsSuccess)
                     {
-                        var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        var resultGoingLive = await courseService.ChangeCourseRunStatusesForUKPRNSelection(provider.Ukprn, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
                         if (resultGoingLive.IsSuccess)
                         {
                             // Clear the provider "publish in progress" flag.
-                            var unflagProviderResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderBulkUploadStatus { ProviderId = provider.Id, PublishInProgress = false });
+                            var unflagProviderResult = await cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderBulkUploadStatus { ProviderId = provider.Id, PublishInProgress = false });
 
                             if (!(unflagProviderResult.Value is Success))
                             {
-                                throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+                                throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {provider.Ukprn}.");
                             }
                         }
                         // @ToDo: ELSE failure here means we need a manual way to clear the flag
@@ -437,15 +452,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     // @ToDo: ELSE failure here means we need a manual way to clear the flag
 
                     var finishTimestamp = DateTime.UtcNow;
-                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
+                    logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Failed to publish courses from the background worker {guid} for {tag}", ex);
+                    logger.LogError(ex, $"Failed to publish courses from the background worker {guid} for {tag}");
                 }
 
-                _logger.LogInformation($"Queued Background Task {guid} is complete.");
-            });
+                logger.LogInformation($"Queued Background Task {guid} is complete.");
+            }
+
+            // Now queue the background work to publish the courses.
+            await _backgroundWorkScheduler.Schedule(PublishCoursesWorker, (provider, model));
 
             // @ToDo: we'll reach here before the above background task has completed, so need some UI work
             var vm = new PublishCompleteViewModel()
