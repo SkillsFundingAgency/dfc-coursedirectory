@@ -4,97 +4,68 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class CourseProvisionHelper : ICourseProvisionHelper
     {
-        private readonly ILogger<CourseProvisionHelper> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-        private readonly IProviderService _providerService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ICSVHelper _CSVHelper;
 
-        private ICSVHelper _CSVHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
+
         public CourseProvisionHelper(
-            ILogger<CourseProvisionHelper> logger,
-                IHttpContextAccessor contextAccessor,
-                ICourseService courseService,
-                IVenueService venueService,
-                IProviderService providerService,
-                ICSVHelper CSVHelper)
+            IHttpContextAccessor contextAccessor,
+            ICourseService courseService,
+            IVenueService venueService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ICSVHelper CSVHelper)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (contextAccessor == null)
-            {
-                throw new ArgumentNullException(nameof(contextAccessor));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (providerService == null)
-            {
-                throw new ArgumentNullException(nameof(providerService));
-            }
-
-            _logger = logger;
-            _contextAccessor = contextAccessor;
-            _courseService = courseService;
-            _venueService = venueService;
-            _providerService = providerService;
-            _CSVHelper = CSVHelper;
+            _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
         }
-        public FileStreamResult DownloadCurrentCourseProvisions()
+
+        public async Task<FileStreamResult> DownloadCurrentCourseProvisions()
         {
-            int? UKPRN;
-            string providerName = String.Empty;
-            if (_session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-                var providerSearchResult = _providerService.GetProviderByPRNAsync(UKPRN.Value.ToString()).Result.Value;
-                providerName = providerSearchResult.FirstOrDefault()?.ProviderName.Replace(" ", "");
-            }
-            else
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (!UKPRN.HasValue)
             {
                 return null;
             }
 
-            IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                .Result
-                                .Value
-                                .Value
-                                .SelectMany(o => o.Value)
-                                .SelectMany(i => i.Value)
-                                .Where((y => (int)y.CourseStatus == (int)RecordStatus.Live));
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
+
+            var getCoursesResult = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN));
+
+            var courses = getCoursesResult
+                .Value
+                .Value
+                .SelectMany(o => o.Value)
+                .SelectMany(i => i.Value)
+                .Where(y => (int)y.CourseStatus == (int)RecordStatus.Live);
 
             var csvCourses = CoursesToCsvCourses(courses);
 
-            return CsvCoursesToFileStream(csvCourses, providerName);
+            return CsvCoursesToFileStream(csvCourses, provider?.ProviderName.Replace(" ", ""));
         }
 
-        internal IEnumerable<CsvCourse> CoursesToCsvCourses(IEnumerable<Course> courses)
+        private IEnumerable<CsvCourse> CoursesToCsvCourses(IEnumerable<Course> courses)
         {
             List<CsvCourse> csvCourses = new List<CsvCourse>();
 
@@ -210,7 +181,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return csvCourses;
         }
 
-        internal FileStreamResult CsvCoursesToFileStream(IEnumerable<CsvCourse> csvCourses, string providerName)
+        private FileStreamResult CsvCoursesToFileStream(IEnumerable<CsvCourse> csvCourses, string providerName)
         {
             List<string> csvLines = new List<string>();
             foreach (var line in _CSVHelper.ToCsv(csvCourses))
@@ -225,16 +196,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
             };
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
             DateTime d = DateTime.Now;
-            result.FileDownloadName = $"{providerName}_Courses_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            result.FileDownloadName = $"{providerName}_Courses_{d.Day:00}_{d.Month:00}_{d.Year}_{d.Hour:00}_{d.Minute:00}.csv";
             return result;
-        }
-
-    }
-    internal static class TwoCharsClass
-    {
-        internal static string TwoChars(this int extendee)
-        {
-            return extendee.ToString().Length < 2 ? $"0{extendee.ToString()}" : extendee.ToString();
         }
     }
 }

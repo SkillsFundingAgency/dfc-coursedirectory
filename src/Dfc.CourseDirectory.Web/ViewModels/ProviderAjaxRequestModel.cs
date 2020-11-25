@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Services.Models.Providers
+﻿namespace Dfc.CourseDirectory.Web.ViewModels
 {
     public class ProviderAjaxRequestModel
     {

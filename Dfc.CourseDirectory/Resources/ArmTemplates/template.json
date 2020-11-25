@@ -50,18 +50,6 @@
         "description": "API URL for the provider search"
       }
     },
-    "providerApiUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "API URL for the provider services"
-      }
-    },
-    "providerApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the provider seach function app (REST API)"
-      }
-    },
     "courseApiUrl": {
       "type": "string",
       "metadata": {
@@ -416,14 +404,6 @@
               {
                 "name": "VenueServiceSettings__ApiVersion",
                 "value": ""
-              },
-              {
-                "name": "ProviderServiceSettings__ApiUrl",
-                "value": "[parameters('providerApiUrl')]"
-              },
-              {
-                "name": "ProviderServiceSettings__ApiKey",
-                "value": "[parameters('providerApiKey')]"
               },
               {
                 "name": "CourseServiceSettings__ApiUrl",

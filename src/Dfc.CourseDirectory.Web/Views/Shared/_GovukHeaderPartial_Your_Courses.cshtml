@@ -1,14 +1,8 @@
-@using Dfc.CourseDirectory.Services.Models.Providers
-@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Authorization;
-@using Microsoft.AspNetCore.Http
-@using Dfc.CourseDirectory.Services.ProviderService
-@using Dfc.CourseDirectory.Web.ViewComponents.BackLink
 
 @addTagHelper *, GovUk.Frontend.AspNetCore
 
 @inject IAuthorizationService Authorization
-@inject IProviderService providerService
 @inject Dfc.CourseDirectory.WebV2.Security.ICurrentUserProvider CurrentUserProvider
 @inject Dfc.CourseDirectory.WebV2.IProviderContextProvider ProviderContextProvider
 

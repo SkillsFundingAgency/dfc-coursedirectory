@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Configuration;
@@ -76,9 +75,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<WhereNextComponentSettings>(Configuration.GetSection("AppUISettings:WhereNextComponentSettings"));
 
             services.AddOptions();
-
-            services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
-            services.AddScoped<IProviderService, ProviderService>();
 
             services.AddTransient((provider) => new HttpClient());
 

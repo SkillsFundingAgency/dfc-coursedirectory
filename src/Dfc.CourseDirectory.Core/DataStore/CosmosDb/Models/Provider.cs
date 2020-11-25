@@ -24,9 +24,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public IList<ProviderContact> ProviderContact { get; set; } = new List<ProviderContact>();
         public IList<ProviderAlias> ProviderAliases { get; set; } = new List<ProviderAlias>();
         public DateTime DateUpdated { get; set; }
+        public DateTime? DateOnboarded { get; set; }
         public string UpdatedBy { get; set; }
         public bool NationalApprenticeshipProvider { get; set; }
         public int? ProviderId { get; set; }
+        public ProviderBulkUploadStatus BulkUploadStatus { get; set; }
+        public ProviderBulkUploadStatus ApprenticeshipBulkUploadStatus { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }
@@ -93,5 +96,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
     public class ProviderContactAddressPAON
     {
         public string Description { get; set; }
+    }
+
+    public class ProviderBulkUploadStatus
+    {
+        public bool InProgress { get; set; }
+        public DateTime? StartedTimestamp { get; set; }
+        public int? TotalRowCount { get; set; }
+        public bool PublishInProgress { get; set; }
     }
 }

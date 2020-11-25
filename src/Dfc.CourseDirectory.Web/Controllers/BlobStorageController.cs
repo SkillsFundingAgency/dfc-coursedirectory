@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
         }
 
-        public FileStreamResult GetCurrentCoursesTemplateFile()
+        public Task<FileStreamResult> GetCurrentCoursesTemplateFile()
         {
             if (!_session.GetInt32("UKPRN").HasValue)
             {

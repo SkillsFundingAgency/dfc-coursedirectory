@@ -9,8 +9,6 @@
   <ItemGroup>
     <Compile Remove="ProviderSearchResultContractResolver.cs" />
     <Compile Remove="ProviderSearchResultItem.cs" />
-    <Compile Remove="ProviderService\ProviderAddService.cs" />
-    <Compile Remove="ProviderService\ProviderAddSettings.cs" />
     <Compile Remove="VenueAdd.cs" />
     <Compile Remove="VenueAddResultItem.cs" />
     <Compile Remove="VenueAddService.cs" />

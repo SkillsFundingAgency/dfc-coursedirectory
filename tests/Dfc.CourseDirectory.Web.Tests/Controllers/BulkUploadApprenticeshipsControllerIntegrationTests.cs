@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
@@ -14,7 +15,6 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.Controllers;
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private Mock<IApprenticeshipService> _apprenticeshipService;
         private Mock<IBlobStorageService> _blobStorageService;
         private Mock<ICourseService> _courseService;
-        private Mock<IProviderService> _providerService;
+        private Mock<ICosmosDbQueryDispatcher> _cosmosDbQueryDispatcher;
         private Mock<IBinaryStorageProvider> _binaryStorageProvider;
         private ISession _session;
         private ClaimsPrincipal _claimsPrincipal;
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _apprenticeshipService = new Mock<IApprenticeshipService>();
             _blobStorageService = new Mock<IBlobStorageService>();
             _courseService = new Mock<ICourseService>();
-            _providerService = new Mock<IProviderService>();
+            _cosmosDbQueryDispatcher = new Mock<ICosmosDbQueryDispatcher>();
             _binaryStorageProvider = new Mock<IBinaryStorageProvider>();
             _session = new FakeSession();
             _claimsPrincipal = new ClaimsPrincipal();
@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 _apprenticeshipService.Object,
                 _blobStorageService.Object,
                 _courseService.Object,
-                _providerService.Object,
+                _cosmosDbQueryDispatcher.Object,
                 _userHelper.Object)
             {
                 ControllerContext = new ControllerContext()
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _blobStorageService.SetupGet(s => s.InlineProcessingThreshold).Returns(400);
 
             _userHelper.Setup(s => s.GetUserDetailsFromClaims(It.IsAny<IEnumerable<Claim>>(), It.IsAny<int?>()))
-                .Returns(authUserDetails);
+                .ReturnsAsync(authUserDetails);
 
             _standardsAndFrameworksCache.Setup(s => s.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync<int, int, IStandardsAndFrameworksCache, Core.Models.Standard>((c, v) => new Core.Models.Standard { StandardCode = c, Version = v });

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
@@ -11,7 +13,6 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
@@ -26,54 +27,31 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IBlobStorageService _blobStorageService;
-        private readonly IProviderService _providerService;
         private readonly IEnvironmentHelper _environmentHelper;
-        private ISession Session => HttpContext.Session;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
 
-        public Dashboard(ICourseService courseService, IVenueService venueService, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
-            IEnvironmentHelper environmentHelper, ISqlQueryDispatcher sqlQueryDispatcher,
+        private ISession Session => HttpContext.Session;
+
+        public Dashboard(
+            ICourseService courseService,
+            IApprenticeshipService apprenticeshipService,
+            IVenueService venueService,
+            IBlobStorageService blobStorageService,
+            IEnvironmentHelper environmentHelper,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (apprenticeshipService == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipService));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (blobStorageService == null)
-            {
-                throw new ArgumentNullException(nameof(blobStorageService));
-            }
-
-            if (providerService == null)
-            {
-                throw new ArgumentNullException(nameof(providerService));
-            }
-
-            if (environmentHelper == null)
-            {
-                throw new ArgumentNullException(nameof(environmentHelper));
-            }
-
-            _apprenticeshipService = apprenticeshipService;
-            _courseService = courseService;
-            _venueService = venueService;
-            _blobStorageService = blobStorageService;
-            _providerService = providerService;
-            _environmentHelper = environmentHelper;
-            _sqlQueryDispatcher = sqlQueryDispatcher;
-            _providerContextProvider = providerContextProvider;
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+            _environmentHelper = environmentHelper ?? throw new ArgumentNullException(nameof(environmentHelper));
+            _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _providerContextProvider = providerContextProvider ?? throw new ArgumentNullException(nameof(providerContextProvider));
         }
 
         public async Task<IViewComponentResult> InvokeAsync(DashboardModel model)
@@ -90,7 +68,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             try
             {
-                var getCoursesResult = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result;
+                var getCoursesResult = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN));
                 IEnumerable<Course> courses = getCoursesResult
                                                    .Value
                                                    .Value
@@ -225,7 +203,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
 
-                var provider = FindProvider(UKPRN);
+                var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN });
 
                 if (null != provider)
                 {
@@ -258,28 +236,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
 
-        private Dfc.CourseDirectory.Services.Models.Providers.Provider FindProvider(int prn)
-        {
-            Dfc.CourseDirectory.Services.Models.Providers.Provider provider = null;
-            try
-            {
-                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(prn.ToString())).Result;
-                if (providerSearchResult.IsSuccess)
-                {
-                    provider = providerSearchResult.Value.FirstOrDefault();
-                }
-            }
-            catch (Exception)
-            {
-                // @ToDo: decide how to handle this
-            }
-            return provider;
-        }
-
         private string GenerateApprenticeshipDQIMessages(ApprenticeshipDashboardCounts counts)
         {
-            var messages = new List<string>();
-            
             int totalAppCount = 0;
             if (counts.BulkUploadPendingCount.HasValue) totalAppCount += counts.BulkUploadPendingCount.Value;
             if (counts.BulkUploadReadyToGoLiveCount.HasValue) totalAppCount += counts.BulkUploadReadyToGoLiveCount.Value;

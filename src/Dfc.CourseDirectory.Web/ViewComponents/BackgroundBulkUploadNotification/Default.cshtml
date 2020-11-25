@@ -1,13 +1,10 @@
-﻿@using Dfc.CourseDirectory.Services.ProviderService
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Http
 @model Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification.BackgroundBulkUploadNotificationModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @inject IAuthorizationService Authorization
-@inject IProviderService providerService
 @{
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
