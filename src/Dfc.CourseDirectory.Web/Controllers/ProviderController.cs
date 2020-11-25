@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -16,14 +12,11 @@ using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
-using Dfc.CourseDirectory.Web.ViewModels.Provider;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
-using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -31,71 +24,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
         public ProviderController(
             ICourseService courseService,
-            IVenueService venueService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            IVenueService venueService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
-        }
-
-        [Authorize("Admin")]
-        [SelectedProviderNeeded]
-        public async Task<IActionResult> AddOrEditProviderType()
-        {
-            var model = new ProviderTypeAddOrEditViewModel();
-
-            var UKPRN = Session.GetInt32("UKPRN");
-
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
-
-            model.ProviderType = provider?.ProviderType ?? ProviderType.None;
-
-            return View("UpdateProviderType", model);
-        }
-
-        [Authorize("Admin")]
-        [HttpPost]
-        [SelectedProviderNeeded]
-        public async Task<IActionResult> AddOrEditProviderType(
-            ProviderTypeAddOrEditViewModel model,
-            [FromServices] IProviderInfoCache providerInfoCache,
-            [FromServices] ISqlQueryDispatcher sqlQueryDispatcher)
-        {
-            int? UKPRN = Session.GetInt32("UKPRN");
-
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
-
-            if (provider == null)
-            {
-                throw new Exception($"{nameof(GetProviderByUkprn)} failed for {nameof(UKPRN)} {UKPRN}.");
-            }
-
-            var oldProviderType = provider.ProviderType;
-            if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeships))
-            {
-                await sqlQueryDispatcher.ExecuteQuery(
-                    new EnsureApprenticeshipQAStatusSetForProvider()
-                    {
-                        ProviderId = provider.Id
-                    });
-            }
-
-            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType { ProviderId = provider.Id, ProviderType = model.ProviderType });
-
-            if (!(result.Value is Success))
-            {
-                throw new Exception($"{nameof(UpdateProviderType)} returned {nameof(OneOf.Types.NotFound)} for {nameof(UpdateProviderType.ProviderId)} {provider.Id}.");
-            }
-
-            await providerInfoCache.Remove(provider.Id);
-            return RedirectToAction("ProviderDetails", "Providers", new { providerId = provider.Id });
         }
 
         [Authorize]
