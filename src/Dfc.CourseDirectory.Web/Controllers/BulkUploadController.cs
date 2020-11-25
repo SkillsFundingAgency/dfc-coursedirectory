@@ -13,7 +13,6 @@ using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
@@ -32,7 +31,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IBackgroundTaskQueue _queue;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ILogger<BulkUploadController> _logger;
 
@@ -43,7 +41,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IBlobStorageService blobService,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IBackgroundTaskQueue queue,
             IBackgroundWorkScheduler backgroundWorkScheduler,
             ILogger<BulkUploadController> logger)
         {
@@ -51,7 +48,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
-            _queue = queue ?? throw new ArgumentNullException(nameof(queue));
             _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -289,70 +285,71 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
-            DateTimeOffset fileUploadDate = new DateTimeOffset();
-            int? sUKPRN = _session.GetInt32("UKPRN");
-            int UKPRN;
-            if (!sUKPRN.HasValue)
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (!UKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
-            else
-            {
-                UKPRN = sUKPRN ?? 0;
-            }
 
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN });
-            if (null == provider)
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
+
+            if (provider == null)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to find Provider data to delete bulk upload." });
             }
 
-            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
-            if (list.Any())
+            var blobFiles = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+            
+            if (blobFiles.Any())
             {
-                fileUploadDate = list.FirstOrDefault().DateUploaded.Value;
-                var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}/Bulk Upload/Files/");
+                _blobService.ArchiveFiles($"{UKPRN}/Bulk Upload/Files/");
             }
 
-
             // COUR-1927 move the delete to a background worker because it's timing out for large files.
-            bool deleteSuccess = false;
-            _queue.QueueBackgroundWorkItem(async token =>
+            static async Task DeleteBulkUploadCoursesWorker(object state, IServiceProvider services, CancellationToken ct)
             {
+                if (!(state is int UKPRN))
+                {
+                    throw new ArgumentException($"{nameof(state)} must be of type {nameof(Int32)} and cannot be null.", nameof(state));
+                }
+
+                var courseService = services.GetRequiredService<ICourseService>();
+                var logger = services.GetRequiredService<ILogger<BulkUploadController>>();
+
                 var guid = Guid.NewGuid().ToString();
                 var tag = $"delete bulk upload for provider {UKPRN}.";
-                var startTimestamp = DateTime.UtcNow;
 
                 try
                 {
-                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+                    logger.LogInformation($"{DateTime.UtcNow:yyyyMMddHHmmss} Starting background worker {guid} for {tag}");
 
-                    var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
-                    deleteSuccess = deleteBulkuploadResults.IsSuccess;
+                    var deleteBulkuploadResults = await courseService.DeleteBulkUploadCourses(UKPRN);
 
-                    var finishTimestamp = DateTime.UtcNow;
-                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
+                    if (!deleteBulkuploadResults.IsSuccess)
+                    {
+                        throw new Exception($"{nameof(DeleteBulkUploadCoursesWorker)} failed with error {deleteBulkuploadResults.Error}");
+                    }
+
+                    logger.LogInformation($"{DateTime.UtcNow:yyyyMMddHHmmss} background worker {guid} finished successfully for {tag}");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Error whilst deleting bulk upload file on background worker {guid} for {tag}", ex);
-                }
-
-                _logger.LogInformation($"Queued Background Task {guid} is complete.");
-            });
-
-            // COUR-1972 make sure we get a date on the Delete Confirmation page even if the physical delete above didn't find any files to delete.
-            if (null != provider.BulkUploadStatus)
-            {
-                if (provider.BulkUploadStatus.StartedTimestamp.HasValue)
-                {
-                    fileUploadDate = provider.BulkUploadStatus.StartedTimestamp.Value.ToLocalTime();
+                    logger.LogError(ex, $"Error whilst deleting bulk upload file on background worker {guid} for {tag}");
+                    throw;
                 }
             }
 
-            if (deleteSuccess)
+            var workerCompleted = await _backgroundWorkScheduler.ScheduleAndWait(DeleteBulkUploadCoursesWorker, TimeSpan.FromSeconds(5), UKPRN);
+
+            if (workerCompleted)
             {
-                return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new { fileUploadDate = fileUploadDate });
+                return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new
+                {
+                    // COUR-1972 make sure we get a date on the Delete Confirmation page even if the physical delete above didn't find any files to delete.
+                    fileUploadDate = blobFiles.FirstOrDefault()?.DateUploaded
+                        ?? provider.BulkUploadStatus?.StartedTimestamp?.ToLocalTime()
+                        ?? new DateTimeOffset()
+                });
             }
             else
             {
@@ -419,9 +416,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     throw new ArgumentException($"{nameof(state)} must be of type {nameof(ValueTuple<Provider, PublishYourFileViewModel>)} and cannot be null.", nameof(state));
                 }
 
-                var logger = services.GetRequiredService<ILogger<BulkUploadController>>();
                 var courseService = services.GetRequiredService<ICourseService>();
                 var cosmosDbQueryDispatcher = services.GetRequiredService<ICosmosDbQueryDispatcher>();
+                var logger = services.GetRequiredService<ILogger<BulkUploadController>>();
 
                 var guid = Guid.NewGuid().ToString();
                 var tag = $"bulk upload publish for provider {provider.Ukprn} for {model.NumberOfCourses} courses.";
