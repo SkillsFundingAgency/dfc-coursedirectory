@@ -444,7 +444,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             await AssertHaveError(
                 response,
                 title: "InvalidPagingParameters",
-                detail: "start parameter is invalid.");
+                detail: "Start parameter is invalid.");
         }
 
         [Fact]

@@ -2,13 +2,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Controllers
 {
     [ApiController]
-    public class CoursesController : ControllerBase, IActionFilter
+    public class CoursesController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly ILogger _log;
@@ -21,16 +22,30 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             _log = logger;
         }
 
-        [Route("~/coursesearch")]
-        [HttpPost]
+        [HttpPost("~/coursesearch")]
         [ProducesResponseType(typeof(Features.CourseSearch.CourseSearchViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> CourseSearch([FromBody] Features.CourseSearch.Query request)
+        public async Task<IActionResult> CourseSearch([FromBody] Features.CourseSearch.Query request)
         {
-            var response = await _mediator.Send(request);
-            return new OkObjectResult(response);
+            var result = await _mediator.Send(request);
+
+            return result.Match<IActionResult>(
+                p =>
+                {
+                    _log.LogWarning($"{nameof(CourseSearch)} failed. {nameof(p.Title)}: {{{nameof(p.Title)}}}, {nameof(p.Detail)}: {{{nameof(p.Detail)}}}.", p.Title, p.Detail);
+
+                    return new ObjectResult(p)
+                    {
+                        ContentTypes = new MediaTypeCollection()
+                        {
+                            new MediaTypeHeaderValue("application/problem+json")
+                        },
+                        StatusCode = p.Status ?? StatusCodes.Status400BadRequest
+                    };
+                },
+                r => Ok(r));
         }
 
         [HttpGet("~/courserundetail")]
@@ -42,38 +57,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         {
             var result = await _mediator.Send(request);
 
-            if (result.Value is OneOf.Types.NotFound)
-            {
-                return NotFound();
-            }
-
-            return Ok(result.Value);
-        }
-
-        [NonAction]
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-            if (context.Exception is ProblemDetailsException pde)
-            {
-                _log.LogInformation(
-                    $"Request error on {context.ActionDescriptor.DisplayName}\nTitle: {pde.ProblemDetails.Title}\nDetail: {pde.ProblemDetails.Detail}");
-
-                context.Result = new ObjectResult(pde.ProblemDetails)
-                {
-                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection()
-                    {
-                        new Microsoft.Net.Http.Headers.MediaTypeHeaderValue("application/problem+json")
-                    },
-                    StatusCode = pde.ProblemDetails.Status ?? 400
-                };
-
-                context.ExceptionHandled = true;
-            }
-        }
-
-        [NonAction]
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
+            return result.Match<IActionResult>(
+                _ => NotFound(),
+                r => Ok(r));
         }
     }
 }
