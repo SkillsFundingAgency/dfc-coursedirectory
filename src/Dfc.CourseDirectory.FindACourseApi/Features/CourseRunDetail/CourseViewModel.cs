@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.FindACourseApi.ViewModels
+namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 {
     public class CourseViewModel
     {

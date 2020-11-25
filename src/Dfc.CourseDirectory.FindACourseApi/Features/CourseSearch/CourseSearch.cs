@@ -9,15 +9,14 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.FindACourseApi.DTOs;
-using Dfc.CourseDirectory.FindACourseApi.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OneOf;
 using Course = Dfc.CourseDirectory.Core.Search.Models.Course;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 {
-    public class Query : IRequest<ViewModel>
+    public class Query : IRequest<OneOf<ProblemDetails, CourseSearchViewModel>>
     {
         public string SubjectKeyword { get; set; }
         public float? Distance { get; set; }
@@ -35,16 +34,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
         public int? Start { get; set; }
     }
 
-    public class ViewModel
-    {
-        public IReadOnlyDictionary<string, IEnumerable<FacetCountResult>> Facets { get; set; }
-        public IReadOnlyCollection<CourseSearchResult> Results { get; set; }
-        public int Total { get; set; }
-        public int Limit { get; set; }
-        public int Start { get; set; }
-    }
-
-    public class Handler : IRequestHandler<Query, ViewModel>
+    public class Handler : IRequestHandler<Query, OneOf<ProblemDetails, CourseSearchViewModel>>
     {
         private const int DefaultSize = 20;
         private const int MaxSize = 50;
@@ -69,18 +59,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
             _onspdSearchClient = onspdSearchClient;
         }
 
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<OneOf<ProblemDetails, CourseSearchViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
             var filters = new List<string>();
 
             if (request.SortBy == CourseSearchSortBy.Distance && string.IsNullOrWhiteSpace(request.Postcode))
             {
-                throw new ProblemDetailsException(new ProblemDetails()
+                return new ProblemDetails()
                 {
                     Detail = "Postcode is required to sort by Distance.",
                     Status = 400,
                     Title = "PostcodeRequired"
-                });
+                };
             }
 
             var gotPostcode = !string.IsNullOrWhiteSpace(request.Postcode);
@@ -89,12 +79,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
             {
                 if (!Rules.UkPostcodePattern.IsMatch(request.Postcode))
                 {
-                    throw new ProblemDetailsException(new ProblemDetails()
+                    return new ProblemDetails()
                     {
                         Detail = "Postcode is not valid.",
                         Status = 400,
                         Title = "InvalidPostcode"
-                    });
+                    };
                 }
             }
 
@@ -110,12 +100,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 
                 if (!coords.HasValue)
                 {
-                    throw new ProblemDetailsException(new ProblemDetails()
+                    return new ProblemDetails()
                     {
                         Detail = "Specified postcode cannot be found.",
                         Status = 400,
                         Title = "PostcodeNotFound"
-                    });
+                    };
                 }
 
                 latitude = coords.Value.lat;
@@ -182,7 +172,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                 $"geo.distance(VenueLocation, geography'POINT({longitude.Value} {latitude.Value})')" :
                 "search.score() desc";
 
-            var (size, skip) = ResolvePagingParams(request.Limit, request.Start);
+            if (!TryResolvePagingParams(request.Limit, request.Start, out var size, out var skip, out var problem))
+            {
+                return problem;
+            }
 
             var searchText = TranslateCourseSearchSubjectText(request.SubjectKeyword);
 
@@ -206,19 +199,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 
             var result = await _courseSearchClient.Search(query);
 
-            return new ViewModel()
+            return new CourseSearchViewModel()
             {
                 Limit = size,
                 Start = skip,
                 Total = Convert.ToInt32(result.TotalCount.Value),
                 Facets = result.Facets.ToDictionary(
                     f => _courseSearchFacetMapping.GetValueOrDefault(f.Key, f.Key),
-                    f => f.Value.Select(v => new FacetCountResult()
+                    f => f.Value.Select(v => new FacetCountResultViewModel()
                     {
                         Value = v.Key,
                         Count = v.Value.Value
                     })),
-                Results = result.Items.Select(i => new CourseSearchResult()
+                Results = result.Items.Select(i => new CourseSearchResultViewModel()
                 {
                     Cost = i.Record.Cost,
                     CostDescription = i.Record.CostDescription,
@@ -247,7 +240,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                     VenueAttendancePattern = i.Record.VenueAttendancePattern,
                     VenueAttendancePatternDescription = i.Record.VenueAttendancePatternDescription,
                     VenueLocation = i.Record.VenueLocation != null ?
-                        new Coordinates()
+                        new CoordinatesViewModel()
                         {
                             Latitude = i.Record.VenueLocation.Latitude,
                             Longitude = i.Record.VenueLocation.Longitude
@@ -273,47 +266,42 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 
         private static string EscapeFilterValue(string v) => v.Replace("'", "''");
 
-        private static (int Size, int Skip) ResolvePagingParams(int? limit, int? start)
+        private static bool TryResolvePagingParams(int? limit, int? start, out int size, out int skip, out ProblemDetails problem)
         {
             if (limit.HasValue)
             {
                 if (limit.Value <= 0)
                 {
-                    throw new ProblemDetailsException(
-                        new ProblemDetails()
-                        {
-                            Detail = "limit parameter is invalid.",
-                            Status = 400,
-                            Title = "InvalidPagingParameters"
-                        });
+                    return Problem(out size, out skip, out problem, "InvalidPagingParameters", "limit parameter is invalid.");
                 }
                 else if (limit.Value > MaxSize)
                 {
-                    throw new ProblemDetailsException(
-                        new ProblemDetails()
-                        {
-                            Detail = $"limit parameter cannot be greater than {MaxSize}.",
-                            Status = 400,
-                            Title = "InvalidPagingParameters"
-                        });
+                    return Problem(out size, out skip, out problem, "InvalidPagingParameters", $"limit parameter cannot be greater than {MaxSize}.");
                 }
             }
 
             if (start.HasValue && start.Value < 0)
             {
-                throw new ProblemDetailsException(
-                    new ProblemDetails()
-                    {
-                        Detail = "start parameter is invalid.",
-                        Status = 400,
-                        Title = "InvalidPagingParameters"
-                    });
+                return Problem(out size, out skip, out problem, "InvalidPagingParameters", "Start parameter is invalid.");
             }
 
-            var size = limit ?? DefaultSize;
-            var skip = start ?? 0;
+            size = limit ?? DefaultSize;
+            skip = start ?? 0;
+            problem = null;
+            return true;
 
-            return (size, skip);
+            bool Problem(out int size, out int skip, out ProblemDetails problem, string title, string detail)
+            {
+                size = 0;
+                skip = 0;
+                problem = new ProblemDetails
+                {
+                    Title = title,
+                    Detail = detail,
+                    Status = 400
+                };
+                return false;
+            }
         }
 
         private static string TranslateCourseSearchSubjectText(string subjectText)

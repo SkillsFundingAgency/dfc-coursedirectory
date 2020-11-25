@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi.Models
+﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 {
     public enum CourseSearchSortBy
     {
