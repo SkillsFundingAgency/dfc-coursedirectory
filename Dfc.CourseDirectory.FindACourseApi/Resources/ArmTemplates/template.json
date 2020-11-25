@@ -20,16 +20,16 @@
         "description": "Resource group the app service plan is in"
       }
     },
-    "courseApiUrl": {
+    "cosmosAccountEndpoint": {
       "type": "string",
       "metadata": {
-        "description": "URL to the Courses API"
+        "description": "URL to the cosmos db account"
       }
     },
-    "courseApiKey": {
+    "cosmosAccountAccessKey": {
       "type": "securestring",
       "metadata": {
-        "description": "Subscription key for accessing the courses API via APIM"
+        "description": "Access key for the cosmos db account"
       }
     },
     "searchName": {
@@ -55,7 +55,7 @@
       "metadata": {
         "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
       }
-    } 
+    }
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
@@ -112,9 +112,17 @@
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                 "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
               },
-              { 
-                "name": "WEBSITE_RUN_FROM_PACKAGE", 
-                "value": "1" 
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
+              },
+              {
+                "name": "CosmosDbSettings__EndpointUri",
+                "value": "[parameters('cosmosAccountEndpoint')]"
+              },
+              {
+                "name": "CosmosDbSettings__PrimaryKey",
+                "value": "[parameters('cosmosAccountAccessKey')]"
               },
               {
                 "name": "AzureSearchUrl",
@@ -123,14 +131,6 @@
               {
                 "name": "AzureSearchQueryKey",
                 "value": "[parameters('searchQueryKey')]"
-              },
-              {
-                "name": "CourseServiceSettings__ApiUrl",
-                "value": "[parameters('courseApiUrl')]"
-              },
-              {
-                "name": "CourseServiceSettings__ApiKey",
-                "value": "[parameters('courseApiKey')]"
               }
             ]
           },

@@ -11,6 +11,12 @@
     "appServicePlanResourceGroup": {
       "value": "__providerPortalResourceGroup__"
     },
+    "cosmosAccountEndpoint": {
+      "value": "__providerPortalCosmosDbFqdn__"
+    },
+    "cosmosAccountAccessKey": {
+      "value": "__providerPortalCosmosDBPrimaryKey__"
+    },
     "searchName": {
       "value": "__searchName__"
     },
@@ -19,12 +25,6 @@
     },
     "searchQueryKey": {
       "value": "__searchQueryKey__"
-    },
-    "courseApiUrl": {
-      "value": "__courseApiUrl__"
-    },
-    "courseApiKey": {
-      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"

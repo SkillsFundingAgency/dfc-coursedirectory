@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Core.Search;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -20,6 +21,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
         public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
 
+        public Mock<ISearchClient<Lars>> LarsSearchClient { get; } = new Mock<ISearchClient<Lars>>();
+
+        public Mock<ICosmosDbQueryDispatcher> CosmosDbQueryDispatcher { get; } = new Mock<ICosmosDbQueryDispatcher>();
+
         public void OnTestStarting()
         {
             ResetMocks();
@@ -29,14 +34,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
             .UseEnvironment("Testing")
             .ConfigureServices(services =>
             {
-                services.AddSingleton<ISearchClient<Course>>(CourseSearchClient.Object);
-                services.AddSingleton<ISearchClient<Onspd>>(OnspdSearchClient.Object);
+                services.AddSingleton(CourseSearchClient.Object);
+                services.AddSingleton(OnspdSearchClient.Object);
+                services.AddSingleton(LarsSearchClient.Object);
+                services.AddSingleton(CosmosDbQueryDispatcher.Object);
             });
 
         private void ResetMocks()
         {
             CourseSearchClient.Reset();
             OnspdSearchClient.Reset();
+            LarsSearchClient.Reset();
+            CosmosDbQueryDispatcher.Reset();
         }
     }
 }

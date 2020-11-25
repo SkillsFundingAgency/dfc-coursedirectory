@@ -30,7 +30,11 @@ namespace Dfc.CourseDirectory.Core.Search.Models
 
         public string SectorSubjectAreaTier1 { get; set; }
 
+        public string SectorSubjectAreaTier1Desc { get; set; }
+
         public string SectorSubjectAreaTier2 { get; set; }
+
+        public string SectorSubjectAreaTier2Desc { get; set; }
 
         public string AwardOrgAimRef { get; set; }
     }

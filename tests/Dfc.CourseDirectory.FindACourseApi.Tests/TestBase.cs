@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -24,5 +25,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
         protected Mock<ISearchClient<Course>> CourseSearchClient => Factory.CourseSearchClient;
 
         protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
+
+        protected Mock<ISearchClient<Lars>> LarsSearchClient => Factory.LarsSearchClient;
+
+        protected Mock<ICosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
     }
 }
