@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Functions
 
         [FunctionName("ImportLarsData")]
         [NoAutomaticTrigger]
+        [Singleton]
         public Task Run(string input) => _dataImporter.ImportData();
     }
 }
