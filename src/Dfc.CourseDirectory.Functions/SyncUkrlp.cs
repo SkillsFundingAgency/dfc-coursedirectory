@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName("SyncUkrlpChanges")]
+        [Singleton]
         public async Task RunNightly([TimerTrigger("0 0 5 * * *")] TimerInfo timer)
         {
             // Only get records updated in the past week.

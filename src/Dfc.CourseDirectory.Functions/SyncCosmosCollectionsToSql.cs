@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 
 namespace Dfc.CourseDirectory.Functions
 {
+    [Singleton]
     public class SyncCosmosCollectionsToSql
     {
         private readonly SqlDataSync _sqlDataSync;
