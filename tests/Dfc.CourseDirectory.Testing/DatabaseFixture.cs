@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
@@ -10,48 +11,30 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Respawn;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.Testing
 {
-    public class DatabaseFixture : IDisposable
+    public class DatabaseFixture : IAsyncLifetime
     {
         private const string LockName = "Tests";
         private const int LockTimeoutSeconds = 15 * 60;
 
-        private readonly Checkpoint _sqlCheckpoint;
+        private Checkpoint _sqlCheckpoint;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _services;
         private readonly IMessageSink _messageSink;
-        private readonly SqlConnection _lockConnection;
-        private readonly SqlTransaction _lockTransaction;
+        private DbConnection _lockConnection;
+        private DbTransaction _lockTransaction;
 
         public DatabaseFixture(IConfiguration configuration, IServiceProvider services, IMessageSink messageSink)
         {
             _configuration = configuration;
             _services = services;
             _messageSink = messageSink;
-
-            _lockConnection = new SqlConnection(ConnectionString);
-            _lockConnection.Open();
-            _lockTransaction = _lockConnection.BeginTransaction();
-
-            AcquireLock();
-
-            try
-            {
-                DeploySqlDb();
-            }
-            catch (Exception)
-            {
-                _lockConnection.Dispose();
-
-                throw;
-            }
-
-            _sqlCheckpoint = CreateCheckpoint();
         }
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
@@ -79,10 +62,30 @@ namespace Dfc.CourseDirectory.Testing
             services.AddLogging();
         }
 
-        public void Dispose()
+        public async Task DisposeAsync()
         {
-            _lockTransaction.Dispose();
-            _lockConnection.Dispose();
+            await _lockTransaction.DisposeAsync();
+            await _lockConnection.DisposeAsync();
+        }
+
+        public async Task InitializeAsync()
+        {
+            _lockConnection = new SqlConnection(ConnectionString);
+            await _lockConnection.OpenAsync();
+            _lockTransaction = await _lockConnection.BeginTransactionAsync();
+
+            await AcquireLock();
+
+            try
+            {
+                DeploySqlDb();
+                _sqlCheckpoint = CreateCheckpoint();
+            }
+            catch (Exception)
+            {
+                await _lockTransaction.DisposeAsync();
+                await _lockConnection.DisposeAsync();
+            }
         }
 
         public void OnTestStarting()
@@ -127,7 +130,7 @@ namespace Dfc.CourseDirectory.Testing
             }
         }
 
-        private void AcquireLock()
+        private async Task AcquireLock()
         {
             using var cmd = _lockConnection.CreateCommand();
             cmd.Transaction = _lockTransaction;
@@ -143,7 +146,7 @@ namespace Dfc.CourseDirectory.Testing
             };
             cmd.Parameters.Add(returnValueParameter);
 
-            cmd.ExecuteNonQuery();
+            await cmd.ExecuteNonQueryAsync();
 
             if ((int)returnValueParameter.Value < 0)
             {
