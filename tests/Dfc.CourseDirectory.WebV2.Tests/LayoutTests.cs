@@ -503,7 +503,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var doc = await response.GetDocument();
 
             var gotGATags = doc.QuerySelectorAll("script")
-                .Where(s => s.GetAttribute("src")?.StartsWith("https://www.googletagmanager.com") == true)
+                .Where(s => s.GetAttribute("src")?.StartsWith("https://www.google-analytics.com") == true)
                 .Any();
             gotGATags.Should().Be(expectGATagsToBeRendered);
         }
