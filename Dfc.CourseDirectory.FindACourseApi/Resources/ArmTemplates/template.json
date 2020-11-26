@@ -32,6 +32,12 @@
         "description": "Access key for the cosmos db account"
       }
     },
+    "sqlCourseDirectoryConnectionString": {
+      "type": "string",
+      "metadata": {
+        "description": "ADO.NET connection string for the course directory database"
+      }
+    },
     "searchName": {
       "type": "string",
       "metadata": {
@@ -131,6 +137,15 @@
               {
                 "name": "AzureSearchQueryKey",
                 "value": "[parameters('searchQueryKey')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "DefaultConnection",
+                "type": "SQLServer",
+                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
               }
             ]
           },

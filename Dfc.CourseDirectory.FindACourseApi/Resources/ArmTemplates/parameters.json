@@ -17,6 +17,9 @@
     "cosmosAccountAccessKey": {
       "value": "__providerPortalCosmosDBPrimaryKey__"
     },
+    "sqlCourseDirectoryConnectionString": {
+      "value": "__sqlCourseDirectoryConnectionString__"
+    },
     "searchName": {
       "value": "__searchName__"
     },
