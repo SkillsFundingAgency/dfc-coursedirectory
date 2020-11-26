@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core
 {
     public class SqlDataSync
     {
-        private const int ApprenticeshipBatchSize = 300;
+        private const int BatchSize = 300;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -49,16 +49,7 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllApprenticeships()
                 {
-                    ProcessChunk = async chunk =>
-                    {
-                        foreach (var c in chunk.Buffer(ApprenticeshipBatchSize))
-                        {
-                            await Policy
-                                .Handle<SqlException>()
-                                .Retry(3)
-                                .Execute(() => SyncApprenticeships(c));
-                        }
-                    }
+                    ProcessChunk = GetSyncWithBatchingHandler<Apprenticeship>(SyncApprenticeships)
                 }));
 			
         public Task SyncAllCourses() => WithExclusiveSqlLock(
@@ -66,7 +57,7 @@ namespace Dfc.CourseDirectory.Core
             () =>_cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllCourses()
                 {
-                    ProcessChunk = SyncCourses
+                    ProcessChunk = GetSyncWithBatchingHandler<Course>(SyncCourses)
                 }));
 
         public Task SyncAllProviders() => WithExclusiveSqlLock(
@@ -74,7 +65,7 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllProviders()
                 {
-                    ProcessChunk = SyncProviders
+                    ProcessChunk = GetSyncWithBatchingHandler<Provider>(SyncProviders)
                 }));
 
         public Task SyncAllVenues() => WithExclusiveSqlLock(
@@ -82,7 +73,7 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllVenues()
                 {
-                    ProcessChunk = SyncVenues
+                    ProcessChunk = GetSyncWithBatchingHandler<Venue>(SyncVenues)
                 }));
 
         public Task SyncApprenticeship(Apprenticeship apprenticeship) => SyncApprenticeships(new[] { apprenticeship });
@@ -262,6 +253,18 @@ namespace Dfc.CourseDirectory.Core
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
+
+        private static Func<IReadOnlyCollection<T>, Task> GetSyncWithBatchingHandler<T>(
+            Func<IReadOnlyCollection<T>, Task> processChunk) => async records =>
+            {
+                foreach (IReadOnlyCollection<T> c in records.Buffer(BatchSize))
+                {
+                    await Policy
+                        .Handle<SqlException>()
+                        .Retry(3)
+                        .Execute(() => processChunk(c));
+                }
+            };
 
         private async Task WithExclusiveSqlLock(string lockName, Func<Task> action)
         {
