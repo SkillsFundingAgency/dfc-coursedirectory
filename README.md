@@ -59,6 +59,7 @@ Ask the team to make you a valid DfE Sign-in account with provider(s) associated
 
 ## Project architecture
 
+[Architecture Decision Records (ADRs)](docs/adr/)
 
 ### Azure Function App Dependencies
 
