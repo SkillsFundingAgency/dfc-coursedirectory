@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
                         .WithFormFlowInstanceId(instance)));
 
         [HttpGet("confirmed")]
-        [AssignLegacyProviderContext]
         public async Task<IActionResult> Confirmed(
             [FromServices] IProviderContextProvider providerContextProvider,
             [FromServices] IProviderInfoCache providerInfoCache,

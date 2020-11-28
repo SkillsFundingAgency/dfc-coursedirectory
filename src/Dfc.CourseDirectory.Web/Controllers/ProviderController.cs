@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet("dashboard")]
-        [AssignLegacyProviderContext]
         public IActionResult Dashboard()
         {
             return View();
