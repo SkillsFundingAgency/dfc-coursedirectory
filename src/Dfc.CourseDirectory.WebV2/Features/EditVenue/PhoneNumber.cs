@@ -26,11 +26,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
         IRequestHandler<Query, Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
-        private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
+        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
 
-        public Handler(FormFlowInstance<EditVenueFlowModel> formFlowInstance)
+        public Handler(JourneyInstance<EditVenueJourneyModel> journeyInstance)
         {
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
             return Task.FromResult(new Command()
             {
                 VenueId = request.VenueId,
-                PhoneNumber = _formFlowInstance.State.PhoneNumber
+                PhoneNumber = _journeyInstance.State.PhoneNumber
             });
         }
 
@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _formFlowInstance.UpdateState(state => state.PhoneNumber = request.PhoneNumber ?? string.Empty);
+            _journeyInstance.UpdateState(state => state.PhoneNumber = request.PhoneNumber ?? string.Empty);
 
             return new Success();
         }

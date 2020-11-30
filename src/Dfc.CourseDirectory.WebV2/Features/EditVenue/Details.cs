@@ -27,16 +27,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Details
 
     public class Handler : IRequestHandler<Query, ViewModel>
     {
-        private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
+        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
 
-        public Handler(FormFlowInstance<EditVenueFlowModel> formFlowInstance)
+        public Handler(JourneyInstance<EditVenueJourneyModel> journeyInstance)
         {
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var state = _formFlowInstance.State;
+            var state = _journeyInstance.State;
 
             var addressParts = new[]
             {

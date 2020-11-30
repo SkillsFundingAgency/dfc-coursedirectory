@@ -34,14 +34,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
         IRequestHandler<Query, Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
-        private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
+        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
         private readonly ISearchClient<Onspd> _onspdSearchClient;
 
         public Handler(
-            FormFlowInstance<EditVenueFlowModel> formFlowInstance,
+            JourneyInstance<EditVenueJourneyModel> journeyInstance,
             ISearchClient<Onspd> onspdSearchClient)
         {
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
             _onspdSearchClient = onspdSearchClient;
         }
 
@@ -50,11 +50,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
             return Task.FromResult(new Command()
             {
                 VenueId = request.VenueId,
-                AddressLine1 = _formFlowInstance.State.AddressLine1,
-                AddressLine2 = _formFlowInstance.State.AddressLine2,
-                Town = _formFlowInstance.State.Town,
-                County = _formFlowInstance.State.County,
-                Postcode = _formFlowInstance.State.Postcode
+                AddressLine1 = _journeyInstance.State.AddressLine1,
+                AddressLine2 = _journeyInstance.State.AddressLine2,
+                Town = _journeyInstance.State.Town,
+                County = _journeyInstance.State.County,
+                Postcode = _journeyInstance.State.Postcode
             });
         }
 
@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Address
 
             var onspdPostcodeRecord = onspdSearchResult.Items.Single();
 
-            _formFlowInstance.UpdateState(state =>
+            _journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = request.AddressLine1;
                 state.AddressLine2 = request.AddressLine2;

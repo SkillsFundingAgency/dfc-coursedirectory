@@ -27,18 +27,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
         IRequestHandler<Query, Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
-        private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
+        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         public Handler(
-            FormFlowInstance<EditVenueFlowModel> formFlowInstance,
+            JourneyInstance<EditVenueJourneyModel> journeyInstance,
             IProviderOwnershipCache providerOwnershipCache,
             IProviderInfoCache providerInfoCache,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
             _providerOwnershipCache = providerOwnershipCache;
             _providerInfoCache = providerInfoCache;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
             return Task.FromResult(new Command()
             {
                 VenueId = request.VenueId,
-                Name = _formFlowInstance.State.Name
+                Name = _journeyInstance.State.Name
             });
         }
 
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _formFlowInstance.UpdateState(state => state.Name = request.Name);
+            _journeyInstance.UpdateState(state => state.Name = request.Name);
 
             return new Success();
         }

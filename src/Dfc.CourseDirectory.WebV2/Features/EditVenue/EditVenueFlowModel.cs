@@ -7,8 +7,8 @@ using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
 {
-    [FormFlowState]
-    public class EditVenueFlowModel
+    [JourneyState]
+    public class EditVenueJourneyModel
     {
         public string Name { get; set; }
         public string Email { get; set; }
@@ -24,16 +24,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         public bool NewAddressIsOutsideOfEngland { get; set; }
     }
 
-    public class EditVenueFlowModelFactory
+    public class EditVenueJourneyModelFactory
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public EditVenueFlowModelFactory(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public EditVenueJourneyModelFactory(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public async Task<EditVenueFlowModel> CreateModel(Guid venueId)
+        public async Task<EditVenueJourneyModel> CreateModel(Guid venueId)
         {
             var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = venueId });
 
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
                 throw new ResourceDoesNotExistException(ResourceType.Venue, venueId);
             }
 
-            return new EditVenueFlowModel()
+            return new EditVenueJourneyModel()
             {
                 Email = venue.Email,
                 Name = venue.VenueName,

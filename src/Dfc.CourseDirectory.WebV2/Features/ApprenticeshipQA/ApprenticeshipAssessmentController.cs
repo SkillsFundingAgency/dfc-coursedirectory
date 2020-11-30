@@ -11,51 +11,62 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
     [Route("apprenticeship-qa/apprenticeship-assessment/{apprenticeshipId}")]
     [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
-    [FormFlowAction(key: "apprenticeship-qa/apprenticeship-assessment", stateType: typeof(FlowModel), idRouteParameterNames: "apprenticeshipId")]
+    [JourneyMetadata(
+        journeyName: "apprenticeship-qa/apprenticeship-assessment",
+        stateType: typeof(JourneyModel),
+        appendUniqueKey: false,
+        requestDataKeys: "apprenticeshipId")]
     public class ApprenticeshipAssessmentController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private JourneyInstance<JourneyModel> _journeyInstance;
 
-        public ApprenticeshipAssessmentController(IMediator mediator)
+        public ApprenticeshipAssessmentController(
+            IMediator mediator,
+            JourneyInstanceProvider journeyInstanceProvider)
         {
             _mediator = mediator;
+            _journeyInstanceProvider = journeyInstanceProvider;
+            _journeyInstance = _journeyInstanceProvider.GetInstance<JourneyModel>();
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Get(
             Guid apprenticeshipId,
             Query query,
-            FormFlowInstanceFactory formFlowInstanceFactory,
-            [FromServices] FlowModelInitializer flowModelInitializer)
+            [FromServices] JourneyModelInitializer journeyModelInitializer)
         {
-            await formFlowInstanceFactory.GetOrCreateInstanceAsync(
-                () => flowModelInitializer.Initialize(apprenticeshipId));
+            _journeyInstance = await _journeyInstanceProvider.GetOrCreateInstanceAsync(
+                () => journeyModelInitializer.Initialize(apprenticeshipId));
 
             return await _mediator.SendAndMapResponse(query, vm => View("ApprenticeshipAssessment", vm));
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Post(Command command, FormFlowInstance formFlowInstance) =>
+        [RequireJourneyInstance]
+        public async Task<IActionResult> Post(Guid apprenticeshipId, Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors("ApprenticeshipAssessment", errors),
-                    vm => RedirectToAction(nameof(GetConfirmation))
-                        .WithFormFlowInstanceId(formFlowInstance)));
+                    vm => RedirectToAction(
+                        nameof(GetConfirmation),
+                        new { apprenticeshipId })));
 
         [HttpGet("confirmation")]
+        [RequireJourneyInstance]
         public async Task<IActionResult> GetConfirmation(ConfirmationQuery query) =>
             await _mediator.SendAndMapResponse(query, vm => View("ApprenticeshipAssessmentConfirmation", vm));
 
         [HttpPost("confirmation")]
-        public async Task<IActionResult> PostConfirmation(
-            ConfirmationCommand command,
-            FormFlowInstance<FlowModel> formFlowInstance) =>
+        [RequireJourneyInstance]
+        public async Task<IActionResult> PostConfirmation(ConfirmationCommand command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 success => RedirectToAction(
                     nameof(ApprenticeshipQAController.ProviderSelected),
                     "ApprenticeshipQA",
-                    new { providerId = formFlowInstance.State.ProviderId }));
+                    new { providerId = _journeyInstance.State.ProviderId }));
     }
 }

@@ -25,8 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
     {
     }
 
-    [FormFlowState]
-    public class FlowModel
+    [JourneyState]
+    public class JourneyModel
     {
         public Guid ProviderId { get; set; }
         public bool IsReadOnly { get; set; }
@@ -64,16 +64,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         }
     }
 
-    public class FlowModelInitializer
+    public class JourneyModelInitializer
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public FlowModelInitializer(ISqlQueryDispatcher sqlQueryDispatcher)
+        public JourneyModelInitializer(ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        public async Task<FlowModel> Initialize(Guid providerId)
+        public async Task<JourneyModel> Initialize(Guid providerId)
         {
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                     ApprenticeshipQASubmissionId = latestSubmission.ApprenticeshipQASubmissionId
                 });
 
-            return new FlowModel()
+            return new JourneyModel()
             {
                 ProviderId = providerId,
                 ComplianceComments = latestAssessment?.ComplianceComments,
@@ -173,18 +173,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly FormFlowInstance<FlowModel> _formFlowInstance;
+        private readonly JourneyInstance<JourneyModel> _journeyInstance;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            FormFlowInstance<FlowModel> formFlowInstance)
+            JourneyInstance<JourneyModel> journeyInstance)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
         }
 
         IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses => _submittableStatuses;
@@ -219,7 +219,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            _formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            _journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 request.CompliancePassed.Value,
                 request.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
                 request.ComplianceComments,
@@ -232,21 +232,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
         public Task<ConfirmationViewModel> Handle(ConfirmationQuery request, CancellationToken cancellationToken)
         {
-            if (!_formFlowInstance.State.GotAssessmentOutcome)
+            if (!_journeyInstance.State.GotAssessmentOutcome)
             {
                 throw new InvalidStateException();
             }
 
             var vm = new ConfirmationViewModel()
             {
-                ProviderId = _formFlowInstance.State.ProviderId,
-                ComplianceComments = _formFlowInstance.State.ComplianceComments,
-                ComplianceFailedReasons = _formFlowInstance.State.ComplianceFailedReasons.Value,
-                CompliancePassed = _formFlowInstance.State.CompliancePassed.Value,
-                Passed = _formFlowInstance.State.IsProviderAssessmentPassed(),
-                StyleComments = _formFlowInstance.State.StyleComments,
-                StyleFailedReasons = _formFlowInstance.State.StyleFailedReasons.Value,
-                StylePassed = _formFlowInstance.State.StylePassed.Value
+                ProviderId = _journeyInstance.State.ProviderId,
+                ComplianceComments = _journeyInstance.State.ComplianceComments,
+                ComplianceFailedReasons = _journeyInstance.State.ComplianceFailedReasons.Value,
+                CompliancePassed = _journeyInstance.State.CompliancePassed.Value,
+                Passed = _journeyInstance.State.IsProviderAssessmentPassed(),
+                StyleComments = _journeyInstance.State.StyleComments,
+                StyleFailedReasons = _journeyInstance.State.StyleFailedReasons.Value,
+                StylePassed = _journeyInstance.State.StylePassed.Value
             };
 
             return Task.FromResult(vm);
@@ -254,7 +254,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
         public async Task<Success> Handle(ConfirmationCommand request, CancellationToken cancellationToken)
         {
-            if (!_formFlowInstance.State.GotAssessmentOutcome)
+            if (!_journeyInstance.State.GotAssessmentOutcome)
             {
                 throw new InvalidStateException();
             }
@@ -263,12 +263,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             var submission = await GetSubmission();
 
-            var overallPassed = _formFlowInstance.State.IsSubmissionPassed(submission.ApprenticeshipAssessmentsPassed);
+            var overallPassed = _journeyInstance.State.IsSubmissionPassed(submission.ApprenticeshipAssessmentsPassed);
 
             await _sqlQueryDispatcher.ExecuteQuery(
                 new SetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = _formFlowInstance.State.ProviderId,
+                    ProviderId = _journeyInstance.State.ProviderId,
                     ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
                 });
 
@@ -278,13 +278,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                     ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
                     AssessedByUserId = currentUserId,
                     AssessedOn = _clock.UtcNow,
-                    ComplianceComments = _formFlowInstance.State.ComplianceComments,
-                    ComplianceFailedReasons = _formFlowInstance.State.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
-                    CompliancePassed = _formFlowInstance.State.CompliancePassed.Value,
-                    Passed = _formFlowInstance.State.IsProviderAssessmentPassed(),
-                    StyleComments = _formFlowInstance.State.StyleComments,
-                    StyleFailedReasons = _formFlowInstance.State.StyleFailedReasons ?? ApprenticeshipQAProviderStyleFailedReasons.None,
-                    StylePassed = _formFlowInstance.State.StylePassed
+                    ComplianceComments = _journeyInstance.State.ComplianceComments,
+                    ComplianceFailedReasons = _journeyInstance.State.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
+                    CompliancePassed = _journeyInstance.State.CompliancePassed.Value,
+                    Passed = _journeyInstance.State.IsProviderAssessmentPassed(),
+                    StyleComments = _journeyInstance.State.StyleComments,
+                    StyleFailedReasons = _journeyInstance.State.StyleFailedReasons ?? ApprenticeshipQAProviderStyleFailedReasons.None,
+                    StylePassed = _journeyInstance.State.StylePassed
                 });
 
             await _sqlQueryDispatcher.ExecuteQuery(
@@ -294,14 +294,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                     Passed = overallPassed,
                     LastAssessedByUserId = currentUserId,
                     LastAssessedOn = _clock.UtcNow,
-                    ProviderAssessmentPassed = _formFlowInstance.State.IsProviderAssessmentPassed(),
+                    ProviderAssessmentPassed = _journeyInstance.State.IsProviderAssessmentPassed(),
                     ApprenticeshipAssessmentsPassed = submission.ApprenticeshipAssessmentsPassed
                 });
 
             await _sqlQueryDispatcher.ExecuteQuery(
                 new SetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = _formFlowInstance.State.ProviderId,
+                    ProviderId = _journeyInstance.State.ProviderId,
                     ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
                 });
 
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
         private async Task<ViewModel> CreateViewModel()
         {
-            var providerId = _formFlowInstance.State.ProviderId;
+            var providerId = _journeyInstance.State.ProviderId;
 
             var provider = await _sqlQueryDispatcher.ExecuteQuery(
                  new GetProviderById()
@@ -325,13 +325,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                 ProviderId = providerId,
                 MarketingInformation = Html.SanitizeHtml(submission.ProviderMarketingInformation),
                 ProviderName = provider.ProviderName,
-                ComplianceComments = _formFlowInstance.State.ComplianceComments,
-                ComplianceFailedReasons = _formFlowInstance.State.ComplianceFailedReasons,
-                CompliancePassed = _formFlowInstance.State.CompliancePassed,
-                StyleComments = _formFlowInstance.State.StyleComments,
-                StyleFailedReasons = _formFlowInstance.State.StyleFailedReasons,
-                StylePassed = _formFlowInstance.State.StylePassed,
-                IsReadOnly = _formFlowInstance.State.IsReadOnly
+                ComplianceComments = _journeyInstance.State.ComplianceComments,
+                ComplianceFailedReasons = _journeyInstance.State.ComplianceFailedReasons,
+                CompliancePassed = _journeyInstance.State.CompliancePassed,
+                StyleComments = _journeyInstance.State.StyleComments,
+                StyleFailedReasons = _journeyInstance.State.StyleFailedReasons,
+                StylePassed = _journeyInstance.State.StylePassed,
+                IsReadOnly = _journeyInstance.State.IsReadOnly
             };
         }
 
@@ -339,16 +339,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
-                    ProviderId = _formFlowInstance.State.ProviderId
+                    ProviderId = _journeyInstance.State.ProviderId
                 });
 
-        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => _formFlowInstance.State.ProviderId;
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => _journeyInstance.State.ProviderId;
 
-        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => _formFlowInstance.State.ProviderId;
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => _journeyInstance.State.ProviderId;
 
-        Guid IRestrictQAStatus<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => _formFlowInstance.State.ProviderId;
+        Guid IRestrictQAStatus<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => _journeyInstance.State.ProviderId;
 
-        Guid IRestrictQAStatus<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => _formFlowInstance.State.ProviderId;
+        Guid IRestrictQAStatus<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => _journeyInstance.State.ProviderId;
 
         private class Data
         {

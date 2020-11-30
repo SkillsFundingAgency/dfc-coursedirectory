@@ -10,21 +10,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
 {
     [Route("venues/{venueId:guid}")]
     [AuthorizeVenue(venueIdRouteParameterName: "venueId")]
-    [FormFlowAction(key: "EditVenue", stateType: typeof(EditVenueFlowModel), idRouteParameterNames: "venueId")]
+    [JourneyMetadata(
+        journeyName: "EditVenue",
+        stateType: typeof(EditVenueJourneyModel),
+        appendUniqueKey: false,
+        requestDataKeys: "venueId")]
     public class EditVenueController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly FormFlowInstanceFactory _formFlowInstanceFactory;
-        private readonly EditVenueFlowModelFactory _editVenueFlowModelFactory;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private JourneyInstance<EditVenueJourneyModel> _journeyInstance;
+        private readonly EditVenueJourneyModelFactory _editVenueJourneyModelFactory;
 
         public EditVenueController(
             IMediator mediator,
-            FormFlowInstanceFactory formFlowInstanceFactory,
-            EditVenueFlowModelFactory editVenueFlowModelFactory)
+            JourneyInstanceProvider journeyInstanceProvider,
+            EditVenueJourneyModelFactory editVenueJourneyModelFactory)
         {
             _mediator = mediator;
-            _formFlowInstanceFactory = formFlowInstanceFactory;
-            _editVenueFlowModelFactory = editVenueFlowModelFactory;
+            _journeyInstanceProvider = journeyInstanceProvider;
+            _editVenueJourneyModelFactory = editVenueJourneyModelFactory;
         }
 
         [HttpGet("")]
@@ -121,19 +126,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         }
 
         [HttpPost("cancel")]
-        public IActionResult Cancel(FormFlowInstance formFlowInstance)
+        public IActionResult Cancel()
         {
-            formFlowInstance.Delete();
+            _journeyInstance.Delete();
 
             return RedirectToAction("Index", "Venues");
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            await _formFlowInstanceFactory.GetOrCreateInstanceAsync(() =>
+            _journeyInstance = await _journeyInstanceProvider.GetOrCreateInstanceAsync(() =>
             {
                 var venueId = Guid.Parse((string)context.RouteData.Values["venueId"]);
-                return _editVenueFlowModelFactory.CreateModel(venueId);
+                return _editVenueJourneyModelFactory.CreateModel(venueId);
             });
 
             await base.OnActionExecutionAsync(context, next);

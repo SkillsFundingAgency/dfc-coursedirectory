@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -41,14 +40,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         [Theory]
         [InlineData("another_person@provider.com")]
         [InlineData("")]
-        public async Task Get_NewEmailAlreadySetInFormFlowInstance_RendersExpectedOutput(string existingValue)
+        public async Task Get_NewEmailAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
             var venueId = await TestData.CreateVenue(providerId, email: "person@provider.com");
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state => state.Email = existingValue);
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state => state.Email = existingValue);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/email");
 
@@ -142,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         [Theory]
         [InlineData("user@provider.com")]
         [InlineData("")]
-        public async Task Post_ValidRequest_UpdatesFormFlowInstanceAndRedirects(string email)
+        public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(string email)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
@@ -164,30 +163,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/venues/{venueId}");
 
-            var formFlowInstance = GetFormFlowInstance(venueId);
-            formFlowInstance.State.Email.Should().Be(email);
+            var journeyInstance = GetJourneyInstance(venueId);
+            journeyInstance.State.Email.Should().Be(email);
         }
 
-        private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)
+        private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueFlowModelFactory>()
+            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
                 .CreateModel(venueId);
 
-            return CreateFormFlowInstanceForRouteParameters(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                },
+            return CreateJourneyInstance(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId),
                 state);
         }
 
-        private FormFlowInstance<EditVenueFlowModel> GetFormFlowInstance(Guid venueId) =>
-            GetFormFlowInstanceForRouteParameters<EditVenueFlowModel>(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                });
+        private JourneyInstance<EditVenueJourneyModel> GetJourneyInstance(Guid venueId) =>
+            GetJourneyInstance<EditVenueJourneyModel>(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId));
     }
 }

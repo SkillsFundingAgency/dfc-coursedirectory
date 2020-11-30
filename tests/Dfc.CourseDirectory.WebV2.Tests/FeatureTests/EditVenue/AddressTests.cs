@@ -57,14 +57,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         }
 
         [Fact]
-        public async Task Get_NewAddressAlreadySetInFormFlowInstance_RendersExpectedOutput()
+        public async Task Get_NewAddressAlreadySetInJourneyInstance_RendersExpectedOutput()
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
             var venueId = await TestData.CreateVenue(providerId);
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state =>
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = "Updated line 1";
                 state.AddressLine2 = "Updated line 2";
@@ -249,7 +249,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         [Theory]
         [InlineData("England", false)]
         [InlineData("Scotland", true)]
-        public async Task Post_ValidRequest_UpdatesFormFlowInstanceAndRedirects(
+        public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(
             string onspdRecordPostcode,
             bool expectedNewAddressIsOutsideOfEnglandValue)
         {
@@ -298,15 +298,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
 
             using (new AssertionScope())
             {
-                var formFlowInstance = GetFormFlowInstance(venueId);
-                formFlowInstance.State.AddressLine1.Should().Be("Updated address line 1");
-                formFlowInstance.State.AddressLine2.Should().Be("Updated address line 2");
-                formFlowInstance.State.Town.Should().Be("Updated town");
-                formFlowInstance.State.County.Should().Be("Updated county");
-                formFlowInstance.State.Postcode.Should().Be("CV1 2AA");
-                formFlowInstance.State.Latitude.Should().Be(42M);
-                formFlowInstance.State.Longitude.Should().Be(43M);
-                formFlowInstance.State.NewAddressIsOutsideOfEngland.Should().Be(expectedNewAddressIsOutsideOfEnglandValue);
+                var journeyInstance = GetJourneyInstance(venueId);
+                journeyInstance.State.AddressLine1.Should().Be("Updated address line 1");
+                journeyInstance.State.AddressLine2.Should().Be("Updated address line 2");
+                journeyInstance.State.Town.Should().Be("Updated town");
+                journeyInstance.State.County.Should().Be("Updated county");
+                journeyInstance.State.Postcode.Should().Be("CV1 2AA");
+                journeyInstance.State.Latitude.Should().Be(42M);
+                journeyInstance.State.Longitude.Should().Be(43M);
+                journeyInstance.State.NewAddressIsOutsideOfEngland.Should().Be(expectedNewAddressIsOutsideOfEnglandValue);
             }
         }
 
@@ -407,26 +407,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             .Select(t => new object[] { t.AddressLine1, t.AddressLine2, t.Town, t.County, t.Postcode, t.ExpectedErrorInputId, t.ExpectedErrorMessage })
             .ToArray();
 
-        private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)
+        private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueFlowModelFactory>()
+            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
                 .CreateModel(venueId);
 
-            return CreateFormFlowInstanceForRouteParameters(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                },
+            return CreateJourneyInstance(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId),
                 state);
         }
 
-        private FormFlowInstance<EditVenueFlowModel> GetFormFlowInstance(Guid venueId) =>
-            GetFormFlowInstanceForRouteParameters<EditVenueFlowModel>(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                });
+        private JourneyInstance<EditVenueJourneyModel> GetJourneyInstance(Guid venueId) =>
+            GetJourneyInstance<EditVenueJourneyModel>(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId));
     }
 }
