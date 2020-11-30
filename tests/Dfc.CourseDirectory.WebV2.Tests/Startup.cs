@@ -33,8 +33,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             app.UseCourseDirectoryErrorHandling();
 
-            app.UseGdsFrontEnd();
-
             app.UseSession();
 
             app.UseRouting();

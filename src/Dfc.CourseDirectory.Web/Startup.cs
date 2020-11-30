@@ -247,7 +247,6 @@ namespace Dfc.CourseDirectory.Web
             app.UseCommitSqlTransaction();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseGdsFrontEnd();
             app.UseSession();
 
             //Preventing ClickJacking Attacks
