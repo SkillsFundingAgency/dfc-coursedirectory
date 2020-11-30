@@ -54,6 +54,10 @@
                         {
                             <li>@ProviderType.Apprenticeships.ToDescription()</li>
                         }
+                        @if (Model.ProviderType.HasFlag(ProviderType.TLevels))
+                        {
+                            <li>@ProviderType.TLevels.ToDescription()</li>
+                        }
                     </ul>
                 </govuk-summary-list-row-value>
                 @if (Model.CanChangeProviderType)

@@ -19,6 +19,9 @@
                 <govuk-checkboxes-item value="@((int)ProviderType.Apprenticeships)" checked="@(Model.ProviderType.HasFlag(ProviderType.Apprenticeships))" input-data-testid="apprenticeships">
                     Apprenticeships
                 </govuk-checkboxes-item>
+                <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels">
+                    T Levels
+                </govuk-checkboxes-item>
             </govuk-checkboxes>
 
             <govuk-button type="submit" class="govuk-!-margin-right-5">Save</govuk-button>
