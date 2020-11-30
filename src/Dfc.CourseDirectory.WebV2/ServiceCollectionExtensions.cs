@@ -150,12 +150,14 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<Settings>(configuration);
             services.AddSingleton<Settings>(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
             services.AddScoped<ICookieSettingsProvider, CookieSettingsProvider>();
-            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
+            services.AddTransient<ITagHelperComponent, AnalyticsTagHelperComponent>();
             services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
             services.AddTransient<ProviderContextHelper>();
             services.AddTransient<Features.EditVenue.EditVenueFlowModelFactory>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
+            services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));
+            services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
 
             if (!environment.IsTesting())
             {
