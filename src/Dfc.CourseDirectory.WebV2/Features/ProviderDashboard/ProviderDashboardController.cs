@@ -15,7 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard
         }
 
         [HttpGet("dashboard-beta")]
-        [AssignLegacyProviderContext]
         public async Task<IActionResult> Index(ProviderContext providerContext)
         {
             var query = new Dashboard.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };

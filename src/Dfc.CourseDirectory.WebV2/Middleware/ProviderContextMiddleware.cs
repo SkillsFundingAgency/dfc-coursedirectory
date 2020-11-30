@@ -36,6 +36,12 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
                 await _next(context);
             }
 
+            // As the layout includes links to pages that require the legacy context we need to always set this
+            if (providerContextProvider.GetProviderContext() != null)
+            {
+                providerContextProvider.AssignLegacyProviderContext();
+            }
+
             async Task TryAssignFeature()
             {
                 // For Provider {Super}Users the provider comes from their identity token.

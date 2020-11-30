@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.Providers
 {
     [Route("providers")]
-    [AssignLegacyProviderContext]
     public class ProvidersController : Controller
     {
         private readonly IMediator _mediator;

@@ -107,7 +107,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         }
 
         [HttpPost("")]
-        [AssignLegacyProviderContext]
         public async Task<IActionResult> Save(Guid venueId, Save.Command command)
         {
             command.VenueId = venueId;
@@ -122,7 +121,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         }
 
         [HttpPost("cancel")]
-        [AssignLegacyProviderContext]
         public IActionResult Cancel(FormFlowInstance formFlowInstance)
         {
             formFlowInstance.Delete();
