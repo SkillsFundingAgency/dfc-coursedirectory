@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [LARS].[LearningDelivery] (
-    [LearnAimRef]                 NVARCHAR (10)  NULL,
+    [LearnAimRef]                 NVARCHAR (10)  NOT NULL CONSTRAINT [PK_LearningDelivery] PRIMARY KEY,
     [EffectiveFrom]               NVARCHAR (MAX) NOT NULL,
     [LearnAimRefTitle]            NVARCHAR (MAX) NOT NULL,
     [LearnAimRefType]             NVARCHAR (MAX) NOT NULL,
@@ -64,9 +64,3 @@
 GO
 CREATE NONCLUSTERED INDEX [IDX_AwardOrgCode]
     ON [LARS].[LearningDelivery]([AwardOrgCode] ASC);
-
-
-GO
-CREATE UNIQUE NONCLUSTERED INDEX [IDX_LearnAimRef]
-    ON [LARS].[LearningDelivery]([LearnAimRef] ASC);
-
