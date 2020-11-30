@@ -129,6 +129,7 @@
     <Folder Include="Pttcd" />
     <Folder Include="Pttcd\Tables" />
     <Folder Include="Pttcd\Indexes" />
+    <Folder Include="Pttcd\Views" />
     <Folder Include="Scripts\" />
     <Folder Include="Pttcd\Types" />
   </ItemGroup>
@@ -254,6 +255,7 @@
     </Build>
     <Build Include="Pttcd\Indexes\IX_TLevelLocations_TLevelVenue.sql" />
     <Build Include="Pttcd\Types\GuidIdTable.sql" />
+    <Build Include="Pttcd\Views\FindACourseIndex.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
