@@ -27,14 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Content\components\checkboxes.css" />
     <None Remove="Content\components\cookie-banner.css" />
     <None Remove="Content\components\cookie-banner.js" />
     <None Remove="Content\components\inset-text.css" />
     <None Remove="Content\components\link-button.css" />
     <None Remove="Content\components\list.css" />
     <None Remove="Content\components\pager.css" />
-    <None Remove="Content\components\radios.css" />
     <None Remove="Content\components\related-content.css" />
     <None Remove="Content\components\search-input.css" />
     <None Remove="Content\components\summary-list.css" />
