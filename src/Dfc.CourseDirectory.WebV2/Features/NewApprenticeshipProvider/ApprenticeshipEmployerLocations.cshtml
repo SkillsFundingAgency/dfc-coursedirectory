@@ -9,8 +9,8 @@
 
 <form asp-action="ApprenticeshipEmployerLocations" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
     <govuk-radios asp-for="National">
-        <govuk-radios-fieldset is-page-heading="true">
-            <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">
+        <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--xl">
                 <h1 class="govuk-heading-l">Can you deliver this training at employers’ locations anywhere in England?</h1>
             </govuk-radios-fieldset-legend>
         </govuk-radios-fieldset>
