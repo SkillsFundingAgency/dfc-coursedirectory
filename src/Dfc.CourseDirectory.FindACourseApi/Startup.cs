@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
                 services.AddAzureSearchClient<FindACourseOffering>(
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],
-                    indexName: "course",
+                    indexName: "findacourse",
                     options =>
                     {
                         // The default options yield DateTime's with type Local;
