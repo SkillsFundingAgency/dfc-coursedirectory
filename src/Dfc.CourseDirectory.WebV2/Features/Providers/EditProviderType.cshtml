@@ -9,23 +9,19 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-xl">Course Directory</span>
-        <h1 class="govuk-heading-l">Provider type settings</h1>
+        <h1 class="govuk-heading-l">Provider type</h1>
 
         <form asp-action="Post" asp-all-route-data="@ProviderContext.RouteValues">
-            <govuk-radios asp-for="ProviderType">
-                <govuk-radios-item value="@ProviderType.Apprenticeships" input-data-testid="apprenticeships">
-                    Apprenticeships
-                </govuk-radios-item>
-                <govuk-radios-item value="@ProviderType.FE" input-data-testid="fe">
+            <govuk-checkboxes asp-for="ProviderType">
+                <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
                     F.E.
-                </govuk-radios-item>
-                <govuk-radios-item value="@(ProviderType.Apprenticeships | ProviderType.FE)" input-data-testid="fe+apprenticeships">
-                    Both
-                </govuk-radios-item>
-            </govuk-radios>
+                </govuk-checkboxes-item>
+                <govuk-checkboxes-item value="@((int)ProviderType.Apprenticeships)" checked="@(Model.ProviderType.HasFlag(ProviderType.Apprenticeships))" input-data-testid="apprenticeships">
+                    Apprenticeships
+                </govuk-checkboxes-item>
+            </govuk-checkboxes>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-1">Save</govuk-button>
+            <govuk-button type="submit" class="govuk-!-margin-right-5">Save</govuk-button>
             <govuk-button asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
         </form>
     </div>

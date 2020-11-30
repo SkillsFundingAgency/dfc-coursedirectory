@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -70,16 +72,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
             doc.GetElementByTestId("apprenticeships").GetAttribute("checked").Should().NotBe("checked");
             doc.GetElementByTestId("fe").GetAttribute("checked").Should().NotBe("checked");
-            doc.GetElementByTestId("fe+apprenticeships").GetAttribute("checked").Should().NotBe("checked");
         }
 
         [Theory]
-        [InlineData(ProviderType.Apprenticeships, "apprenticeships")]
-        [InlineData(ProviderType.FE, "fe")]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE, "fe+apprenticeships")]
+        [InlineData(ProviderType.Apprenticeships, new[] { "apprenticeships" })]
+        [InlineData(ProviderType.FE, new[] { "fe" })]
+        [InlineData(ProviderType.Apprenticeships | ProviderType.FE, new[] { "fe", "apprenticeships" })]
         public async Task Get_ValidRequest_RendersExpectedOutput(
             ProviderType providerType,
-            string expectedCheckedTestId)
+            IEnumerable<string> expectedCheckedTestIds)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(providerType: providerType);
@@ -93,8 +94,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            var option = doc.GetElementByTestId(expectedCheckedTestId);
-            option.GetAttribute("checked").Should().Be("checked");
+
+            AssertElementWithTestIdHasExpectedCheckedValue("fe");
+            AssertElementWithTestIdHasExpectedCheckedValue("apprenticeships");
+
+            void AssertElementWithTestIdHasExpectedCheckedValue(string testId)
+            {
+                var option = doc.GetElementByTestId(testId);
+                var checkedAttr = option.GetAttribute("checked");
+
+                var expectChecked = expectedCheckedTestIds.Contains(testId);
+
+                if (expectChecked)
+                {
+                    checkedAttr.Should().Be("checked");
+                }
+                else
+                {
+                    checkedAttr.Should().NotBe("checked");
+                }
+            }
         }
 
         [Theory]
@@ -143,30 +162,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-        }
-
-        [Fact]
-        public async Task Post_NoProviderTypeSelected_RendersError()
-        {
-            // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
-
-            var content = new FormUrlEncodedContentBuilder()
-                .ToContent();
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
-            {
-                Content = content
-            };
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var doc = await response.GetDocument();
-            doc.AssertHasError("ProviderType", "Select the provider type");
         }
 
         [Theory]

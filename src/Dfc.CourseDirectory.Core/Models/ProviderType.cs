@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Core.Models
 {
@@ -12,14 +13,23 @@ namespace Dfc.CourseDirectory.Core.Models
 
     public static class ProviderTypeExtensions
     {
-        public static string ToDescription(this ProviderType providerType) =>
-            providerType switch
+        public static string ToDescription(this ProviderType providerType)
+        {
+            if (providerType == ProviderType.None)
             {
-                ProviderType.None => "None",
-                ProviderType.Apprenticeships => "Apprenticeships",
-                ProviderType.FE => "F.E.",
-                ProviderType.Apprenticeships | ProviderType.FE => "Both",
-                _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
-            };
+                return "None";
+            }
+
+            var parts = providerType.SplitFlags()
+                .Select(part => part switch
+                {
+                    ProviderType.Apprenticeships => "Apprenticeships",
+                    ProviderType.FE => "F.E.",
+                    _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
+                })
+                .ToArray();
+
+            return string.Join(", ", parts.SkipLast(2).Append(string.Join(" & ", parts.TakeLast(2))));
+        }
     }
 }

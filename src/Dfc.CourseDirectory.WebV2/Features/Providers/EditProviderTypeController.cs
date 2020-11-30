@@ -33,9 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             command.ProviderId = providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
-                response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors("EditProviderType", errors),
-                    success => RedirectToAction("ProviderDetails", "Providers").WithProviderContext(providerContext)));
+                success => RedirectToAction("ProviderDetails", "Providers").WithProviderContext(providerContext));
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
