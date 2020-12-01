@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
     [Route("new-apprenticeship-provider")]
     [RequireProviderContext]
+    [RestrictProviderTypes(ProviderType.Apprenticeships)]
     public class NewApprenticeshipProviderController : Controller, IMptxController<FlowModel>
     {
         private readonly IMediator _mediator;

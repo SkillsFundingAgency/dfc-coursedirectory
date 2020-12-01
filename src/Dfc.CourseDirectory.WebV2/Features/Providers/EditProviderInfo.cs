@@ -5,7 +5,6 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
 using Dfc.CourseDirectory.WebV2.Behaviors;
@@ -29,9 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
     }
 
     public class Handler :
-        IRestrictProviderType<Query>,
         IRequestHandler<Query, Command>,
-        IRestrictProviderType<Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -47,10 +44,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
-
-        ProviderType IRestrictProviderType<Query>.ProviderType => ProviderType.Apprenticeships;
-
-        ProviderType IRestrictProviderType<Command>.ProviderType => ProviderType.Apprenticeships;
 
         public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -101,10 +94,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
 
             return result;
         }
-
-        Guid IRestrictProviderType<Query>.GetProviderId(Query request) => request.ProviderId;
-
-        Guid IRestrictProviderType<Command>.GetProviderId(Command request) => request.ProviderId;
 
         private class CommandValidator : AbstractValidator<Command>
         {

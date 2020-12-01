@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
         [Theory]
         [InlineData(ProviderType.FE)]
-        public async Task Get_NotApprenticeshipProvider_ReturnsBadRequest(ProviderType providerType)
+        public async Task Get_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.GetAsync($"/providers/info?providerId={providerId}");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Theory]
@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
         [Theory]
         [InlineData(ProviderType.FE)]
-        public async Task Post_NotApprenticeshipProvider_ReturnsBadRequest(ProviderType providerType)
+        public async Task Post_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(providerType: providerType);
@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.PostAsync($"/providers/info?providerId={providerId}", requestContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Theory]

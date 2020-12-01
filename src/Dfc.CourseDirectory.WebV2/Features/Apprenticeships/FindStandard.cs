@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -45,9 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard
 
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRestrictProviderType<Query>,
-        IRequestHandler<SearchQuery, QueryResponse>,
-        IRestrictProviderType<SearchQuery>
+        IRequestHandler<SearchQuery, QueryResponse>
     {
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
 
@@ -55,10 +51,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard
         {
             _standardsAndFrameworksCache = standardsAndFrameworksCache;
         }
-
-        ProviderType IRestrictProviderType<SearchQuery>.ProviderType => ProviderType.Apprenticeships;
-
-        ProviderType IRestrictProviderType<Query>.ProviderType => ProviderType.Apprenticeships;
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -98,10 +90,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard
                     .ToList()
             };
         }
-
-        Guid IRestrictProviderType<Query>.GetProviderId(Query request) => request.ProviderId;
-
-        Guid IRestrictProviderType<SearchQuery>.GetProviderId(SearchQuery request) => request.ProviderId;
 
         private class QueryValidator : AbstractValidator<SearchQuery>
         {

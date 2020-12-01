@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Get_NotApprenticeshipProvider_ReturnsBadRequest()
+        public async Task Get_NotApprenticeshipProvider_ReturnsForbidden()
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 $"new-apprenticeship-provider/apprenticeship-confirmation?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]
@@ -296,7 +296,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Post_NotApprenticeshipProvider_ReturnsBadRequest()
+        public async Task Post_NotApprenticeshipProvider_ReturnsForbidden()
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
@@ -330,7 +330,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 requestContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]

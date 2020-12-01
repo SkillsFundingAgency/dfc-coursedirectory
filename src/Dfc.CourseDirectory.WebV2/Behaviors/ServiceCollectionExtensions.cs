@@ -14,37 +14,10 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
         {
             foreach (var type in handlersAssembly.GetTypes())
             {
-                RegisterRestrictProviderTypeBehavior(type);
                 RegisterRestrictQAStatusBehavior(type);
             }
 
             return services;
-
-            void RegisterRestrictProviderTypeBehavior(Type type)
-            {
-                // For any type implementing IRestrictProviderType<TRequest, TResponse>
-                // add a RestrictQAStatusBehavior behavior for its request & response types
-
-                var restrictProviderTypeType = typeof(IRestrictProviderType<>);
-
-                var restrictTypes = type.GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == restrictProviderTypeType)
-                    .ToList();
-
-                foreach (var t in restrictTypes)
-                {
-                    var requestType = t.GenericTypeArguments[0];
-                    var responseType = GetResponseTypeFromRequestType(requestType);
-
-                    var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
-                    var behaviourType = typeof(RestrictProviderTypeBehavior<,>).MakeGenericType(requestType, responseType);
-                    services.AddScoped(pipelineBehaviorType, behaviourType);
-
-                    // Register the handler as an IRestrictProviderType<TRequest, TResponse>
-                    var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
-                    services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
-                }
-            }
 
             void RegisterRestrictQAStatusBehavior(Type type)
             { 

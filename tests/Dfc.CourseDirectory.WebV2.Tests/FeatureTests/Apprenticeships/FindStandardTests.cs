@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         }
 
         [Fact]
-        public async Task Get_ProviderIsFEOnlyReturnsBadRequest()
+        public async Task Get_ProviderIsFEOnlyReturnsForbidden()
         {
             // Arrange
             var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 $"apprenticeships/find-standard?providerId={providerId}&returnUrl=%2Fcallback");
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact]

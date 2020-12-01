@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
 
         [HttpGet("info")]
         [AuthorizeAdmin]
+        [RestrictProviderTypes(ProviderType.Apprenticeships)]
         public async Task<IActionResult> EditProviderInfo(ProviderContext providerContext)
         {
             var query = new EditProviderInfo.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
@@ -45,6 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
 
         [HttpPost("info")]
         [AuthorizeAdmin]
+        [RestrictProviderTypes(ProviderType.Apprenticeships)]
         public async Task<IActionResult> EditProviderInfo(
             EditProviderInfo.Command command,
             ProviderContext providerContext)

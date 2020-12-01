@@ -11,6 +11,12 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 {
     public class AuthorizeApprenticeshipQASubmissionAttribute : ActionFilterAttribute
     {
+        public AuthorizeApprenticeshipQASubmissionAttribute()
+        {
+            // Run after filters that check provider type
+            Order = 1000;
+        }
+
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var services = context.HttpContext.RequestServices;
