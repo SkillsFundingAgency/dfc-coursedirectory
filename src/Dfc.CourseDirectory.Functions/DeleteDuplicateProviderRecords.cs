@@ -54,9 +54,11 @@ namespace Dfc.CourseDirectory.Functions
         private async Task<IActionResult> FindAndRemoveDuplicateProviderRecords(bool dryRun)
         {
             using var scope = _serviceScopeFactory.CreateScope();
-            using var sqlConnection = scope.ServiceProvider.GetRequiredService<SqlConnection>();
+            using var sqlTransaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
 
             var sql = @"
+set xact_abort on
+
 select
 	Ukprn,
 	0 AS ProviderType  -- This value gets fixed up next
@@ -146,11 +148,16 @@ drop table #DeletingProviderIds";
             IList<UpdatedProviderInfo> updatedProviders;
             IList<DeletedProviderInfo> deletedProviders;
 
-            using (var reader = await sqlConnection.QueryMultipleAsync(sql, new { DryRun = dryRun }))
+            using (var reader = await sqlTransaction.Connection.QueryMultipleAsync(
+                sql,
+                new { DryRun = dryRun },
+                transaction: sqlTransaction))
             {
                 updatedProviders = (await reader.ReadAsync<UpdatedProviderInfo>()).AsList();
                 deletedProviders = (await reader.ReadAsync<DeletedProviderInfo>()).AsList();
             }
+
+            sqlTransaction.Commit();
 
             if (!dryRun)
             {
