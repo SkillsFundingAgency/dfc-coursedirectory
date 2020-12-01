@@ -44,19 +44,31 @@
                     <ul class="govuk-list">
                         @if (Model.ProviderType == ProviderType.None)
                         {
-                            <li>@ProviderType.None.ToDescription()</li>
+                            <li data-testid="providerType">@ProviderType.None.ToDescription()</li>
                         }
                         @if (Model.ProviderType.HasFlag(ProviderType.FE))
                         {
-                            <li>@ProviderType.FE.ToDescription()</li>
+                            <li data-testid="providerType">@ProviderType.FE.ToDescription()</li>
                         }
                         @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
                         {
-                            <li>@ProviderType.Apprenticeships.ToDescription()</li>
+                            <li data-testid="providerType">@ProviderType.Apprenticeships.ToDescription()</li>
                         }
-                        @if (Model.ProviderType.HasFlag(ProviderType.TLevels))
+                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ProviderType.HasFlag(ProviderType.TLevels))
                         {
-                            <li>@ProviderType.TLevels.ToDescription()</li>
+                            <li>
+                                <govuk-details class="govuk-!-margin-bottom-0">
+                                    <govuk-details-summary data-testid="providerType">@ProviderType.TLevels.ToDescription()</govuk-details-summary>
+                                    <govuk-details-text>
+                                        <ul class="govuk-list">
+                                            @foreach (var tLevelDefinition in Model.ProviderTLevelDefinitions)
+                                            {
+                                                <li data-testid="tLevelName">@tLevelDefinition.Name</li>
+                                            }
+                                        </ul>
+                                    </govuk-details-text>
+                                </govuk-details>
+                            </li>
                         }
                     </ul>
                 </govuk-summary-list-row-value>

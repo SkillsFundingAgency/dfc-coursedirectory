@@ -40,7 +40,7 @@ WHEN NOT MATCHED THEN
         @ProviderId,
         source.TLevelDefinitionId
     )
-WHEN NOT MATCHED BY SOURCE THEN
+WHEN NOT MATCHED BY SOURCE AND target.ProviderId = @ProviderId THEN
     DELETE;";
 
             await transaction.Connection.ExecuteAsync(

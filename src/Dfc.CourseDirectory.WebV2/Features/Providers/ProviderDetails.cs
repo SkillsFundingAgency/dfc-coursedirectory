@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
@@ -9,6 +11,7 @@ using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using CosmosQueries = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
@@ -32,6 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
         public string MarketingInformation { get; set; }
         public bool ShowMarketingInformation { get; set; }
         public bool CanUpdateMarketingInformation { get; set; }
+        public IEnumerable<TLevelDefinitionViewModel> ProviderTLevelDefinitions { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -69,6 +73,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
 
             var currentUser = _currentUserProvider.GetCurrentUser();
 
+            var providerTLevelDefinitions = cosmosProvider.ProviderType.HasFlag(ProviderType.TLevels)
+                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
+                : Enumerable.Empty<SqlModels.TLevelDefinition>();
+
             return new ViewModel()
             {
                 ProviderId = request.ProviderId,
@@ -84,7 +92,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                     Html.SanitizeHtml(cosmosProvider.MarketingInformation) :
                     null,
                 ShowMarketingInformation = cosmosProvider.ProviderType.HasFlag(ProviderType.Apprenticeships),
-                CanUpdateMarketingInformation = AuthorizationRules.CanUpdateProviderMarketingInformation(currentUser)
+                CanUpdateMarketingInformation = AuthorizationRules.CanUpdateProviderMarketingInformation(currentUser),
+                ProviderTLevelDefinitions = providerTLevelDefinitions.Select(d => new TLevelDefinitionViewModel
+                {
+                    TLevelDefinitionId = d.TLevelDefinitionId,
+                    Name = d.Name
+                })
             };
         }
     }

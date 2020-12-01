@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using FluentAssertions;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
@@ -93,6 +95,47 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task Get_ValidRequestWithTLevelsProviderWithSelectedTLevelsDefinitions_RendersExpectedContent(TestUserType userType)
+        {
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.TLevels);
+
+            var tLevelDefinitionIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => Guid.NewGuid()).Select(id => TestData.CreateTLevelDefinition(tLevelDefinitionId: id, name: $"Name-{id}")));
+            var selectedTLevelDefinitionIds = tLevelDefinitionIds.OrderBy(_ => Guid.NewGuid()).Take(2).ToArray();
+            await TestData.SetProviderTLevelDefinitions(providerId, selectedTLevelDefinitionIds);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+
+            await User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var providerTypeValue = doc.GetSummaryListValueWithKey("Provider type");
+
+            doc.GetAllElementsByTestId("providerType").Select(e => e.TextContent.Trim()).Should().OnlyContain(p => p == "T Levels" );
+
+            var tLevelNames = doc.GetAllElementsByTestId("tLevelName").Select(e => e.TextContent.Trim());
+
+            foreach (var selectedTLevelDefinitionId in selectedTLevelDefinitionIds)
+            {
+                tLevelNames.Should().Contain($"Name-{selectedTLevelDefinitionId}");
+            }
+
+            foreach (var selectedTLevelDefinitionId in tLevelDefinitionIds.Except(selectedTLevelDefinitionIds))
+            {
+                tLevelNames.Should().NotContain($"Name-{selectedTLevelDefinitionId}");
+            }
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
         public async Task Get_UserIsAdmin_DoesRenderChangeProviderTypeLink(TestUserType userType)
         {
             // Arrange
@@ -147,6 +190,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.TLevels | ProviderType.Apprenticeships)]
         public async Task Get_ApprenticeshipProviderType_RendersMarketingInformation(ProviderType providerType)
         {
             // Arrange
@@ -170,6 +214,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
         [Theory]
         [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.TLevels)]
         public async Task Get_NotApprenticeshipProviderType_DoesNotRenderMarketingInformation(ProviderType providerType)
         {
             // Arrange
