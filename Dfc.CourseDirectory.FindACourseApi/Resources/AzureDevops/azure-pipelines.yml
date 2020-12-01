@@ -69,6 +69,12 @@ steps:
     ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
     SolutionBaseName: '${{ variables.SolutionBaseName }}'
 
+- task: PublishBuildArtifacts@1
+  displayName: Publish AzureSearch files
+  inputs:
+     pathtoPublish: 'Dfc.CourseDirectory.FindACourseApi/Resources/AzureSearch'
+     artifactName: '$(SolutionBaseName).Resources.AzureSearch'
+
 - task: MSBuild@1
   displayName: Build database
   inputs:
