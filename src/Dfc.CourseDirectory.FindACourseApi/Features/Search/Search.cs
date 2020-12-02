@@ -12,11 +12,11 @@ using Dfc.CourseDirectory.Core.Validation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OneOf;
-using Course = Dfc.CourseDirectory.Core.Search.Models.Course;
+using FindACourseOffering = Dfc.CourseDirectory.Core.Search.Models.FindACourseOffering;
 
-namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
+namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 {
-    public class Query : IRequest<OneOf<ProblemDetails, CourseSearchViewModel>>
+    public class Query : IRequest<OneOf<ProblemDetails, SearchViewModel>>
     {
         public string SubjectKeyword { get; set; }
         public float? Distance { get; set; }
@@ -27,14 +27,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
         public IEnumerable<int> DeliveryModes { get; set; }
         public string Town { get; set; }
         public string Postcode { get; set; }
-        public CourseSearchSortBy? SortBy { get; set; }
+        public SearchSortBy? SortBy { get; set; }
         public DateTime? StartDateFrom { get; set; }
         public DateTime? StartDateTo { get; set; }
         public int? Limit { get; set; }
         public int? Start { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, OneOf<ProblemDetails, CourseSearchViewModel>>
+    public class Handler : IRequestHandler<Query, OneOf<ProblemDetails, SearchViewModel>>
     {
         private const int DefaultSize = 20;
         private const int MaxSize = 50;
@@ -48,22 +48,22 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 
         private static readonly HashSet<char> _luceneSyntaxEscapeChars = new HashSet<char>("+-&|!(){}[]^\"~*?:\\/");
 
-        private readonly ISearchClient<Course> _courseSearchClient;
+        private readonly ISearchClient<FindACourseOffering> _courseSearchClient;
         private readonly ISearchClient<Onspd> _onspdSearchClient;
 
         public Handler(
-            ISearchClient<Course> courseSearchClient,
+            ISearchClient<FindACourseOffering> courseSearchClient,
             ISearchClient<Onspd> onspdSearchClient)
         {
             _courseSearchClient = courseSearchClient;
             _onspdSearchClient = onspdSearchClient;
         }
 
-        public async Task<OneOf<ProblemDetails, CourseSearchViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<OneOf<ProblemDetails, SearchViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
             var filters = new List<string>();
 
-            if (request.SortBy == CourseSearchSortBy.Distance && string.IsNullOrWhiteSpace(request.Postcode))
+            if (request.SortBy == SearchSortBy.Distance && string.IsNullOrWhiteSpace(request.Postcode))
             {
                 return new ProblemDetails()
                 {
@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
             var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 && gotPostcode;
 
             // lat/lng required if Distance filter is specified *or* sorting by Distance
-            var getPostcodeCoords = geoFilterRequired || request.SortBy == CourseSearchSortBy.Distance;
+            var getPostcodeCoords = geoFilterRequired || request.SortBy == SearchSortBy.Distance;
             float? latitude = null;
             float? longitude = null;
             if (getPostcodeCoords)
@@ -126,14 +126,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
             {
                 // TODO Validate AttendancePatterns? Consider using enum instead of int
 
-                filters.Add($"search.in({nameof(Course.VenueAttendancePattern)}, '{string.Join("|", request.AttendancePatterns)}', '|')");
+                filters.Add($"search.in({nameof(FindACourseOffering.VenueAttendancePattern)}, '{string.Join("|", request.AttendancePatterns)}', '|')");
             }
 
             if (request.QualificationLevels?.Any() ?? false)
             {
                 // TODO Validate QualificationLevels?
 
-                filters.Add($"search.in({nameof(Course.NotionalNVQLevelv2)}, '{string.Join("|", request.QualificationLevels.Select(EscapeFilterValue))}', '|')");
+                filters.Add($"search.in({nameof(FindACourseOffering.NotionalNVQLevelv2)}, '{string.Join("|", request.QualificationLevels.Select(EscapeFilterValue))}', '|')");
             }
 
             if (geoFilterRequired)
@@ -141,24 +141,24 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                 var distanceInKm = GeoHelper.MilesToKilometers(request.Distance.Value);
 
                 filters.Add(
-                    $"(geo.distance({nameof(Course.VenueLocation)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
-                    $" or {nameof(Course.National)} eq true" +
-                    $" or {nameof(Course.DeliveryMode)} eq '2')");
+                    $"(geo.distance({nameof(FindACourseOffering.VenueLocation)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
+                    $" or {nameof(FindACourseOffering.National)} eq true" +
+                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq '2')");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Town))
             {
-                filters.Add($"search.ismatch('{EscapeFilterValue(request.Town)}', '{nameof(Course.VenueTown)}')");
+                filters.Add($"search.ismatch('{EscapeFilterValue(request.Town)}', '{nameof(FindACourseOffering.VenueTown)}')");
             }
 
             if (request.StudyModes?.Any() ?? false)
             {
-                filters.Add($"search.in({nameof(Course.VenueStudyMode)}, '{string.Join("|", request.StudyModes)}', '|')");
+                filters.Add($"search.in({nameof(FindACourseOffering.VenueStudyMode)}, '{string.Join("|", request.StudyModes)}', '|')");
             }
 
             if (request.DeliveryModes?.Any() ?? false)
             {
-                filters.Add($"search.in({nameof(Course.DeliveryMode)}, '{string.Join("|", request.DeliveryModes)}', '|')");
+                filters.Add($"search.in({nameof(FindACourseOffering.DeliveryMode)}, '{string.Join("|", request.DeliveryModes)}', '|')");
             }
 
             if (!string.IsNullOrWhiteSpace(request.ProviderName))
@@ -166,9 +166,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                 filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', 'ProviderName', 'simple', 'any')");
             }
 
-            var orderBy = request.SortBy == CourseSearchSortBy.StartDateDescending ?
-                "StartDate desc" : request.SortBy == CourseSearchSortBy.StartDateAscending ?
-                "StartDate asc" : request.SortBy == CourseSearchSortBy.Distance ?
+            var orderBy = request.SortBy == SearchSortBy.StartDateDescending ?
+                "StartDate desc" : request.SortBy == SearchSortBy.StartDateAscending ?
+                "StartDate asc" : request.SortBy == SearchSortBy.Distance ?
                 $"geo.distance(VenueLocation, geography'POINT({longitude.Value} {latitude.Value})')" :
                 "search.score() desc";
 
@@ -199,7 +199,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
 
             var result = await _courseSearchClient.Search(query);
 
-            return new CourseSearchViewModel()
+            return new SearchViewModel()
             {
                 Limit = size,
                 Start = skip,
@@ -211,7 +211,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                         Value = v.Key,
                         Count = v.Value.Value
                     })),
-                Results = result.Items.Select(i => new CourseSearchResultViewModel()
+                Results = result.Items.Select(i => new SearchResultViewModel()
                 {
                     Cost = i.Record.Cost,
                     CostDescription = i.Record.CostDescription,
@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                     Region = i.Record.Region,
                     SearchScore = i.Score.Value,
                     StartDate = !i.Record.FlexibleStartDate.GetValueOrDefault() ? i.Record.StartDate : null,
-                    UKPRN = i.Record.UKPRN,
+                    Ukprn = i.Record.UKPRN.ToString(),
                     UpdatedOn = i.Record.UpdatedOn,
                     VenueAddress = i.Record.VenueAddress,
                     VenueAttendancePattern = i.Record.VenueAttendancePattern,
@@ -253,7 +253,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
                 }).ToList()
             };
 
-            double? GetDistanceFromPostcodeForResult(SearchResultItem<Course> item) =>
+            double? GetDistanceFromPostcodeForResult(SearchResultItem<FindACourseOffering> item) =>
                 getPostcodeCoords && item.Record.VenueLocation != null && item.Record.National != true ?
                     Math.Round(
                         GeoHelper.KilometersToMiles(

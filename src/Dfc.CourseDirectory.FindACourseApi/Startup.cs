@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
                     Configuration["AzureSearchQueryKey"],
                     indexName: "onspd");
 
-                services.AddAzureSearchClient<Course>(
+                services.AddAzureSearchClient<FindACourseOffering>(
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],
                     indexName: "course",

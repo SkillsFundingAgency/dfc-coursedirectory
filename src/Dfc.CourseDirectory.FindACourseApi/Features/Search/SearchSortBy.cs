@@ -1,6 +1,6 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
+﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 {
-    public enum CourseSearchSortBy
+    public enum SearchSortBy
     {
         Relevance = 1,
         StartDateDescending = 2,

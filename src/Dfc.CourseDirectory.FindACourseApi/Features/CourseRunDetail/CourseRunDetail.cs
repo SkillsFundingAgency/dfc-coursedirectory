@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     TradingName = provider.TradingName,
                     CourseDirectoryName = provider.CourseDirectoryName,
                     Alias = provider.Alias,
-                    UKPRN = provider.UnitedKingdomProviderReferenceNumber,
+                    Ukprn = provider.UnitedKingdomProviderReferenceNumber,
                     AddressLine1 = providerContact?.ContactAddress?.SAON?.Description,
                     AddressLine2 = providerContact?.ContactAddress?.PAON?.Description,
                     Town = providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString(),

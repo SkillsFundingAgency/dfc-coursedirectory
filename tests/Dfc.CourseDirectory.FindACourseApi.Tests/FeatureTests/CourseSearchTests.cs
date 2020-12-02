@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             CourseSearchClient
                 .Setup(c => c.Search(It.IsAny<CourseSearchQuery>()))
                 .Callback<CourseSearchQuery>(q => CapturedQuery = q)
-                .ReturnsAsync(new SearchResult<Course>()
+                .ReturnsAsync(new SearchResult<FindACourseOffering>()
                 {
                     Facets = new Dictionary<string, IReadOnlyDictionary<object, long?>>()
                     {
@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                         { "ProviderName", new Dictionary<object, long?>() },
                         { "Region", new Dictionary<object, long?>() },
                     },
-                    Items = Array.Empty<SearchResultItem<Course>>(),
+                    Items = Array.Empty<SearchResultItem<FindACourseOffering>>(),
                     TotalCount = 0
                 });
         }

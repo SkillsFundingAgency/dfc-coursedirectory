@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
     public class FindACourseApiApplicationFactory : WebApplicationFactory<Startup>
     {
-        public Mock<ISearchClient<Course>> CourseSearchClient { get; } = new Mock<ISearchClient<Course>>();
+        public Mock<ISearchClient<FindACourseOffering>> CourseSearchClient { get; } = new Mock<ISearchClient<FindACourseOffering>>();
 
         public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
 
