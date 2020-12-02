@@ -244,6 +244,14 @@
     <Build Include="Pttcd\Tables\CourseRunSubRegions.sql" />
     <Build Include="Pttcd\Tables\ProviderTLevelDefinitions.sql" />
     <Build Include="Pttcd\Tables\TLevelDefinitions.sql" />
+    <Build Include="Pttcd\Tables\TLevels.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="Pttcd\Indexes\IX_TLevels_DefinitionProviderStartDate.sql" />
+    <Build Include="Pttcd\Tables\TLevelLocations.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="Pttcd\Indexes\IX_TLevelLocations_TLevelVenue.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
