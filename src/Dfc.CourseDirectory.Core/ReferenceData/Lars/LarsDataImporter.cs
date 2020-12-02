@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,6 +7,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -63,7 +64,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
 
-            IEnumerable<T> ReadCsv<T>(string fileName)
+            IEnumerable<T> ReadCsv<T>(string fileName, Action<IReaderConfiguration> configureReader = null)
             {
                 var assm = typeof(LarsDataImporter).Assembly;
                 var filePath = Path.Join(extractDirectory, fileName);
@@ -72,6 +73,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 using (var streamReader = new StreamReader(stream))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                 {
+                    configureReader?.Invoke(csvReader.Configuration);
+
                     return csvReader.GetRecords<T>().ToList();
                 }
             }
@@ -273,7 +276,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             Task ImportLearningDeliveryCategoryToSql(HashSet<string> categoriesRefs, HashSet<string> learningDeliveryRefs)
             {
                 const string csv = "LearningDeliveryCategory.csv";
-                var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>(csv);
+                var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>(
+                    csv,
+                    configuration => configuration.RegisterClassMap<UpsertLarsLearningDeliveryCategoriesRecordClassMap>());
 
                 // check referential integrity
                 var validRecords = records.Where(r =>
@@ -365,6 +370,60 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             public string StandardSectorCodeDesc2 { get; set; }
             public DateTime EffectiveFrom { get; set; }
             public DateTime? EffectiveTo { get; set; }
+        }
+
+        private class DateConverter : DefaultTypeConverter
+        {
+            public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    return "";  // This is deliberately not null
+                }
+
+                // Sometimes we get '03 Aug 2015' format, other times '2015-08-03'
+                // Normalize to '2015-08-03'
+
+                var formats = new[] { "dd MMM yyyy", "yyyy-MM-dd" };
+                var preferredFormat = "dd MMM yyyy";
+
+                foreach (var format in formats)
+                {
+                    if (DateTime.TryParseExact(
+                        text,
+                        format,
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out var dt))
+                    {
+                        return dt.ToString(preferredFormat);
+                    }
+                }
+
+                throw new TypeConverterException(
+                    this,
+                    memberMapData,
+                    text,
+                    row.Context,
+                    $"Cannot parse date: '{text}'.");
+            }
+
+            public override string ConvertToString(object value, IWriterRow row, MemberMapData memberMapData)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class UpsertLarsLearningDeliveryCategoriesRecordClassMap : ClassMap<UpsertLarsLearningDeliveryCategoriesRecord>
+        {
+            public UpsertLarsLearningDeliveryCategoriesRecordClassMap()
+            {
+                AutoMap(CultureInfo.InvariantCulture);
+                Map(m => m.Created_On).TypeConverter<DateConverter>();
+                Map(m => m.Modified_On).TypeConverter<DateConverter>();
+                Map(m => m.EffectiveFrom).TypeConverter<DateConverter>();
+                Map(m => m.EffectiveTo).TypeConverter<DateConverter>();
+            }
         }
     }
 }
