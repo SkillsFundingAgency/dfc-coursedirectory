@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 ContactPhone = apprenticeship.ContactTelephone,
                 ContactURL = apprenticeship.ContactWebsite,
                 DeliveryMethod = DeliveryMethodConvert(location.ApprenticeshipLocationType),
-                Venue = location.VenueId.HasValue ? (await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(location.VenueId.ToString()))).Value.VenueName : string.Empty,
+                Venue = location.VenueId.HasValue ? (await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(location.VenueId.ToString()))).Value?.VenueName : string.Empty,
                 Radius = location.Radius?.ToString(),
                 DeliveryMode = DeliveryModeConvert(location.DeliveryModes),
                 AcrossEngland = location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
