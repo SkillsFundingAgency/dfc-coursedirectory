@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
+using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class CreateTLevel : ISqlQuery<Success>
+    public class CreateTLevel : ISqlQuery<OneOf<CreateTLevelFailedReason, Success>>
     {
         public Guid TLevelId { get; set; }
         public Guid ProviderId { get; set; }
@@ -22,5 +23,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string Website { get; set; }
         public UserInfo CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
+    }
+
+    public enum CreateTLevelFailedReason
+    {
+        TLevelAlreadyExistsForDate
     }
 }

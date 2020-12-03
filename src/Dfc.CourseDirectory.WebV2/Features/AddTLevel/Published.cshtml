@@ -1,0 +1,39 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.AddTLevel.Published.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Your T Level has been published");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <govuk-panel heading-level="1">
+            <govuk-panel-title>
+                Your T Level has been published
+            </govuk-panel-title>
+        </govuk-panel>
+
+        <p class="govuk-body">
+            Your T Level is available to learners searching for learning and training opportunities on the National Careers Service.
+        </p>
+        @*<p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/course-details?CourseId=7ec6d0a6-df72-43b6-a107-d678003a094a&amp;r=e1154414-ae11-4b1a-bfad-f65af2d86ad2">view your published T Level (opens in a new window or tab)</a> to see how it's viewed by learners.</p>*@
+
+        <h2 class="govuk-heading-m">What next?</h2>
+        <ul class="govuk-list">
+            <li>
+                <a asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Add a new T Level
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    View and edit T Levels
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ProviderDashboard" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

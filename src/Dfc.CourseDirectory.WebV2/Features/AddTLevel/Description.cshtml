@@ -1,0 +1,86 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.AddTLevel.Description.ViewModel
+@using Validation = Dfc.CourseDirectory.Core.Validation.TLevelValidation
+@{
+    ViewContext.SetLayoutData(title: "T Level description");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="WhoFor" />
+    <govuk-error-summary-item asp-for="EntryRequirements" />
+    <govuk-error-summary-item asp-for="WhatYoullLearn" />
+    <govuk-error-summary-item asp-for="HowYoullLearn" />
+    <govuk-error-summary-item asp-for="HowYoullBeAssessed" />
+    <govuk-error-summary-item asp-for="WhatYouCanDoNext" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Description" asp-all-route-data="@(RouteValuesHelper.FromQueryString())">
+            <h1 class="govuk-heading-xl">T Level description</h1>
+
+            <p class="govuk-body">The description of <span test-id="tlevel-name">@Model.TLevelName</span> has been provided for you to edit.</p>
+            <p class="govuk-body govuk-!-margin-bottom-5">
+                The T Level will be available on the National Careers Service,
+                <a href="https://nationalcareers.service.gov.uk/find-a-course/search" target="_blank">Find a course (opens in a new window or tab)</a>,
+                available to learners searching for learning and training opportunities.
+            </p>
+
+            <govuk-character-count asp-for="WhoFor" max-length="@Validation.Constants.WhoForMaxLength" rows="7">
+                <govuk-character-count-label class="govuk-label--m">
+                    Who this T Level is for
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Information that will help the learner decide whether this T Level is suitable for them,
+                    the learning experience and opportunities they can expect.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="EntryRequirements" max-length="@Validation.Constants.EntryRequirementsMaxLength" rows="7">
+                <govuk-character-count-label class="govuk-label--m">
+                    Entry requirements
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Specific skills, licences, vocational or academic requirements.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="WhatYoullLearn" max-length="@Validation.Constants.WhatYoullLearnMaxLength" rows="7">
+                <govuk-character-count-label class="govuk-label--m">
+                    What you'll learn
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The main topics, units or modules of the T Level a learner can expect.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="HowYoullLearn" max-length="@Validation.Constants.HowYoullLearnMaxLength" rows="7">
+                <govuk-character-count-label class="govuk-label--m">
+                    How you'll learn
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The methods used to deliver the T Level.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="HowYoullBeAssessed" max-length="@Validation.Constants.HowYoullBeAssessedMaxLength" rows="7">
+                <govuk-character-count-label class="govuk-label--m">
+                    How you'll be assessed
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The ways a learner will be assessed.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="WhatYouCanDoNext" max-length="@Validation.Constants.WhatYouCanDoNextMaxLength" rows="7">
+                <govuk-character-count-label class="govuk-label--m">
+                    What you can do next
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The further opportunities a learner can expect after successfully completing the T Level.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-button>Continue</govuk-button>
+        </form>
+    </div>
+</div>

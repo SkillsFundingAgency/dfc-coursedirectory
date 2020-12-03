@@ -1,0 +1,67 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.AddTLevel.Details.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "T Level details");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="YourReference" />
+    <govuk-error-summary-item asp-for="StartDate" />
+    <govuk-error-summary-item asp-for="LocationVenueIds" />
+    <govuk-error-summary-item asp-for="Website" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Details" asp-all-route-data="@(RouteValuesHelper.FromQueryString())">
+            <h1 class="govuk-heading-xl">T Level details</h1>
+
+            <p class="govuk-body govuk-!-margin-bottom-5">
+                Add information on how the <span test-id="tlevel-name">@Model.TLevelName</span> will be delivered.
+            </p>
+
+            <govuk-input asp-for="YourReference">
+                <govuk-input-label class="govuk-label--m">
+                    Your reference (optional)
+                </govuk-input-label>
+                <govuk-input-hint>
+                    A reference that will help you identify this T Level in your internal systems.
+                    This will not be visible to learners.
+                </govuk-input-hint>
+            </govuk-input>
+
+            <govuk-date-input asp-for="StartDate">
+                <govuk-date-input-label class="govuk-label--m">
+                    Start date
+                </govuk-date-input-label>
+                <govuk-date-input-hint>
+                    For example, 30 9 2020
+                </govuk-date-input-hint>
+            </govuk-date-input>
+
+            <govuk-checkboxes asp-for="LocationVenueIds" class="govuk-checkboxes--small">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-label--m">
+                        T Level location
+                    </govuk-checkboxes-fieldset-legend>
+                </govuk-checkboxes-fieldset>
+                @foreach (var item in Model.ProviderVenues)
+                {
+                    <govuk-checkboxes-item value="@item.VenueId" checked="@(Model.LocationVenueIds.Contains(item.VenueId))" input-data-testid="LocationVenueIds-@(item.VenueId)">
+                        @item.VenueName
+                    </govuk-checkboxes-item>
+                }
+            </govuk-checkboxes>
+
+            <govuk-input asp-for="Website">
+                <govuk-input-label class="govuk-label--m">
+                    T Level webpage
+                </govuk-input-label>
+                <govuk-input-hint>
+                    The webpage for this T Level. For example, https://www.provider.com/tlevelname.
+                </govuk-input-hint>
+            </govuk-input>
+
+            <govuk-button>Continue</govuk-button>
+        </form>
+    </div>
+</div>

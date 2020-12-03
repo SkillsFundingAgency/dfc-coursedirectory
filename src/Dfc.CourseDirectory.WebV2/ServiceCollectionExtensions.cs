@@ -6,13 +6,12 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.Filters;
-using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -161,6 +160,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
             services.AddTransient<SqlDataSync>();
             services.AddScoped<RouteValuesHelper>();
+            services.AddTransient<Features.AddTLevel.Details.CommandValidator>();
 
             if (!environment.IsTesting())
             {
