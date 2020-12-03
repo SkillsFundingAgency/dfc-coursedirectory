@@ -164,46 +164,96 @@ BEGIN
 	('E10000027', 'Somerset', 'E12000009')
 END;
 
-DECLARE @TLevelDefinitions AS table (
-	[TLevelDefinitionId] [uniqueidentifier] NOT NULL,
-	[FrameworkCode] [int] NOT NULL,
-	[ProgType] [int] NOT NULL,
-	[Name] [nvarchar](max) NOT NULL
-)
-
-INSERT INTO @TLevelDefinitions (
-	[TLevelDefinitionId],
-	[FrameworkCode],
-	[ProgType],
-	[Name]
-)
-VALUES
-(N'fc9fefe1-ee86-4df9-9d09-c275ccbf5940', 36, 31, N'T Level Construction - Design, Surveying and Planning for Construction'),
-(N'9555d14f-f73b-495c-91c3-4703691c6347', 37, 31, N'T Level Digital - Digital Production, Design and Development'),
-(N'c1bc1361-cda3-42a3-9120-a08cdb78dba0', 38, 31, N'T Level Education - Education and Childcare')
-
+;WITH TLevelDefinitionsCte AS (
+	SELECT * FROM (VALUES
+	(
+		N'fc9fefe1-ee86-4df9-9d09-c275ccbf5940',
+		36,
+		31,
+		N'T Level Construction - Design, Surveying and Planning for Construction',
+		N'This T Level is suitable for anyone wanting a career in construction, specifically in surveying and design, civil engineering, building services design, or hazardous materials surveying.' + CHAR(13) + CHAR(13) + 'The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose a specialist subject.',
+		N'You will need either 5 GCSEs (at grade 4 or above), including English, maths and science, or a pass in a relevant level 2 qualification.' + CHAR(13) + CHAR(13) + 'If you do not have the recommended entry qualifications, you may still be considered if you have relevant experience or show a natural ability for the subject.',
+		N'You''ll learn specific topics in design, surveying and planning:' + CHAR(13) + CHAR(13) + 'Project management' + CHAR(13) + 'Budgeting and resource allocation' + CHAR(13) + 'Procurement' + CHAR(13) + 'Risk management' + CHAR(13) + CHAR(13) + 'In addition to the core content, you will choose one of the following as a specialist subject:' + CHAR(13) + CHAR(13) + 'Surveying and design for construction and the built environment' + CHAR(13) + 'Civil engineering' + CHAR(13) + 'Building services design' + CHAR(13) + 'Hazardous materials analysis and surveying.',
+		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
+		N'You will be assessed by completing an employer set project and a project on your specialist subject. You''ll have time to research and complete tasks. There''ll also be 2 exams. ' + CHAR(13) + CHAR(13) + 'You''ll work with your tutor to decide when you''re ready to be assessed.',
+		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Civil engineering technician' + CHAR(13) + 'Technical surveyor' + CHAR(13) + 'Building technician' + CHAR(13) + 'Engineering construction technician' + CHAR(13) + 'Architectural technician' + CHAR(13) + CHAR(13) + 'or go onto an apprenticeship or higher education.'
+	),
+	(
+		N'9555d14f-f73b-495c-91c3-4703691c6347',
+		37,
+		32,
+		N'T Level Digital - Digital Production, Design and Development',
+		N'This T Level is suitable for anyone wanting a career in software production and design.' + CHAR(13) + CHAR(13) + 'The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification.',
+		N'You will need either 5 GCSEs (at grade 4 or above), including English, maths and science, or a pass in a relevant level 2 qualification, for example a BTEC Tech Award in Digital Information Technology.' + CHAR(13) + CHAR(13) + 'If you do not have the recommended entry qualifications, you may still be considered if you have relevant experience or show a natural ability for the subject.',
+		N'You will develop the skills to:' + CHAR(13) + CHAR(13) + 'Analyse a problem, understand user needs, define requirements and set acceptance criteria' + CHAR(13) + 'Design, implement and test software' + CHAR(13) + 'Change, maintain and support software' + CHAR(13) + 'Work collaboratively in a digital team' + CHAR(13) + 'Discover, evaluate and apply reliable sources of knowledge' + CHAR(13) + 'Work within legal and regulatory frameworks when developing software.',
+		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement.  The placement will provide you with a real experience of the workplace.',
+		N'You will be assessed by completing an employer set project and a project on a specialist subject. You''ll have time to research and complete tasks. There''ll also be 2 exams.' + CHAR(13) + CHAR(13) + 'You''ll work with your tutor to decide when you''re ready to be assessed.',
+		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Web developer' + CHAR(13) + 'Web designer' + CHAR(13) + 'IT business analyst' + CHAR(13) + 'App developer' + CHAR(13) + 'Digital marketer' + CHAR(13) + CHAR(13) + 'or to go onto an apprenticeship or higher education.'
+	),
+	(
+		N'c1bc1361-cda3-42a3-9120-a08cdb78dba0',
+		38,
+		31,
+		N'T Level Education - Education and Childcare',
+		N'This T Level is suitable for anyone wanting a career in early years education, childcare or assisting teaching.' + CHAR(13) + CHAR(13) + 'The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose a specialist subject.',
+		N'You will need either 5 GCSEs (at grade 4 or above), including English, maths and science, or a pass in a relevant level 2 qualification.' + CHAR(13) + CHAR(13) + 'If you do not have the recommended entry qualifications, you may still be considered if you have relevant experience or show a natural ability for the subject.',
+		N'You will develop an understanding of:' + CHAR(13) + CHAR(13) + 'The education and childcare sector from ages 0 to 19' + CHAR(13) + 'Child development' + CHAR(13) + 'How to support children and young people’s education' + CHAR(13) + 'Safeguarding, health and safety and wellbeing' + CHAR(13) + 'Understanding and managing behaviour' + CHAR(13) + 'Observing and assessing children and young people' + CHAR(13) + 'Equality and diversity' + CHAR(13) + 'Special educational needs and disability' + CHAR(13) + 'English as an additional language' + CHAR(13) + 'Working with parents, carers and wider families' + CHAR(13) + 'Working with agencies and services that support children, families and carers' + CHAR(13) + 'Reflective practice and other forms of professional development' + CHAR(13) + CHAR(13) + 'In addition to the core content, you will choose one of the following as a specialist subject:' + CHAR(13) + CHAR(13) + 'Early years education and childcare' + CHAR(13) + 'Assisting teaching' + CHAR(13) + 'Supporting and mentoring students in further and higher education (available from September 2021)',
+		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement.  The placement will provide you with real experience of the workplace.',
+		N'You will be assessed by completing employer set project and a project on your specialist subject. You''ll have time to research and complete tasks. There''ll also be 2 exams.' + CHAR(13) + CHAR(13) + 'You''ll work with your tutor to decide when you''re ready to be assessed.',
+		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Nursery worker' + CHAR(13) + 'Special educational needs (SEN) teaching assistant' + CHAR(13) + 'Teaching assistant' + CHAR(13) + 'Learning mentor' + CHAR(13) + CHAR(13) + 'or to go onto an apprenticeship or higher education.'
+	)
+) AS TLevelDefinitions(
+	TLevelDefinitionId,
+	FrameworkCode,
+	ProgType,
+	[Name],
+	ExemplarWhoFor,
+	ExemplarEntryRequirements,
+	ExemplarWhatYoullLearn,
+	ExemplarHowYoullLearn,
+	ExemplarHowYoullBeAssessed,
+	ExemplarWhatYouCanDoNext
+))
 MERGE Pttcd.TLevelDefinitions AS target
 USING (
 	SELECT *
-	FROM @TLevelDefinitions
+	FROM TLevelDefinitionsCte
 ) AS source
 ON target.TLevelDefinitionId = source.TLevelDefinitionId
-WHEN MATCHED AND (target.FrameworkCode <> source.FrameworkCode OR target.ProgType <> source.ProgType OR target.Name <> source.Name)
+WHEN MATCHED
 	THEN UPDATE SET
 		target.FrameworkCode = source.FrameworkCode,
 		target.ProgType = source.ProgType,
-		target.Name = source.Name
+		target.Name = source.Name,
+		target.ExemplarWhoFor = source.ExemplarWhoFor,
+		target.ExemplarEntryRequirements = source.ExemplarEntryRequirements,
+		target.ExemplarWhatYoullLearn = source.ExemplarWhatYoullLearn,
+		target.ExemplarHowYoullLearn = source.ExemplarHowYoullLearn,
+		target.ExemplarHowYoullBeAssessed = source.ExemplarHowYoullBeAssessed,
+		target.ExemplarWhatYouCanDoNext = source.ExemplarWhatYouCanDoNext
 WHEN NOT MATCHED
 	THEN INSERT (
 		TLevelDefinitionId,
 		FrameworkCode,
 		ProgType,
-		Name
+		Name,
+		ExemplarWhoFor,
+		ExemplarEntryRequirements,
+		ExemplarWhatYoullLearn,
+		ExemplarHowYoullLearn,
+		ExemplarHowYoullBeAssessed,
+		ExemplarWhatYouCanDoNext
 	) VALUES (
 		source.TLevelDefinitionId,
 		source.FrameworkCode,
 		source.ProgType,
-		source.Name
+		source.Name,
+		source.ExemplarWhoFor,
+		source.ExemplarEntryRequirements,
+		source.ExemplarWhatYoullLearn,
+		source.ExemplarHowYoullLearn,
+		source.ExemplarHowYoullBeAssessed,
+		source.ExemplarWhatYouCanDoNext
 	)
 WHEN NOT MATCHED BY SOURCE
 	THEN DELETE;
