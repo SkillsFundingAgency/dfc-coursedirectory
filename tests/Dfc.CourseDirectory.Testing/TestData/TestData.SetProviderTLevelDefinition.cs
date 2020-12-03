@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Testing
     {
         public Task SetProviderTLevelDefinitions(Guid providerId, IEnumerable<Guid> tLevelDefinitionIds)
         {
-            return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertProviderTLevelDefinitions
+            return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new SetAuthorizedTLevelDefinitionsForProvider
             {
                 ProviderId = providerId,
                 TLevelDefinitionIds = tLevelDefinitionIds

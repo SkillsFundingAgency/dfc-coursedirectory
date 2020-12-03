@@ -7,9 +7,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpsertProviderTLevelDefinitionsHandler : ISqlQueryHandler<UpsertProviderTLevelDefinitions, None>
+    public class SetAuthorizedTLevelDefinitionsForProviderHandler : ISqlQueryHandler<SetAuthorizedTLevelDefinitionsForProvider, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, UpsertProviderTLevelDefinitions query)
+        public async Task<None> Execute(SqlTransaction transaction, SetAuthorizedTLevelDefinitionsForProvider query)
         {
             const string createTableSql = @"
 CREATE TABLE #TLevelDefinitionIds (

@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
             var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitions());
             var providerTLevelDefinitions = provider.ProviderType.HasFlag(ProviderType.TLevels)
-                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
+                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetAuthorizedTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
             return CreateViewModel(provider.Id, provider.ProviderType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 ProviderType = request.ProviderType
             });
 
-            await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.UpsertProviderTLevelDefinitions
+            await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.SetAuthorizedTLevelDefinitionsForProvider
             {
                 ProviderId = request.ProviderId,
                 TLevelDefinitionIds = request.ProviderType.HasFlag(ProviderType.TLevels)

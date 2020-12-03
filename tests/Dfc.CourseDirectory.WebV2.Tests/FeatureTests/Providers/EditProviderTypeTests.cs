@@ -293,7 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
                 q.ProviderId == providerId && q.ProviderType == providerType);
 
-            SqlQuerySpy.VerifyQuery<SqlQueries.UpsertProviderTLevelDefinitions, None>(query =>
+            SqlQuerySpy.VerifyQuery<SqlQueries.SetAuthorizedTLevelDefinitionsForProvider, None>(query =>
                 query.ProviderId == providerId
                 && query.TLevelDefinitionIds.SequenceEqual(tLevelDefinitionIds));
         }
@@ -408,7 +408,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
                 q.ProviderId == providerId && q.ProviderType == newProviderType);
 
-            SqlQuerySpy.VerifyQuery<SqlQueries.UpsertProviderTLevelDefinitions, None>(query =>
+            SqlQuerySpy.VerifyQuery<SqlQueries.SetAuthorizedTLevelDefinitionsForProvider, None>(query =>
                 query.ProviderId == providerId
                 && query.TLevelDefinitionIds.SequenceEqual(Enumerable.Empty<Guid>()));
         }

@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
             var currentUser = _currentUserProvider.GetCurrentUser();
 
             var providerTLevelDefinitions = cosmosProvider.ProviderType.HasFlag(ProviderType.TLevels)
-                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
+                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetAuthorizedTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
             return new ViewModel()

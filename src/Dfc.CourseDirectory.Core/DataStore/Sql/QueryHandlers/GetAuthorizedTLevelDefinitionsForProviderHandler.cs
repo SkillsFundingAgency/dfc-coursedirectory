@@ -8,9 +8,9 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetTLevelDefinitionsForProviderHandler : ISqlQueryHandler<GetTLevelDefinitionsForProvider, IReadOnlyCollection<TLevelDefinition>>
+    public class GetAuthorizedTLevelDefinitionsForProviderHandler : ISqlQueryHandler<GetAuthorizedTLevelDefinitionsForProvider, IReadOnlyCollection<TLevelDefinition>>
     {
-        public async Task<IReadOnlyCollection<TLevelDefinition>> Execute(SqlTransaction transaction, GetTLevelDefinitionsForProvider query)
+        public async Task<IReadOnlyCollection<TLevelDefinition>> Execute(SqlTransaction transaction, GetAuthorizedTLevelDefinitionsForProvider query)
         {
             const string sql = @"
 SELECT      d.TLevelDefinitionId, d.FrameworkCode, d.ProgType, d.Name
