@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class GetProviderDashboardCounts : ISqlQuery<(int CourseRunCount, int ApprenticeshipCount, int VenueCount)>
+    public class GetProviderDashboardCounts : ISqlQuery<(IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, int ApprenticeshipCount, int VenueCount)>
     {
         public Guid ProviderId { get; set; }
     }

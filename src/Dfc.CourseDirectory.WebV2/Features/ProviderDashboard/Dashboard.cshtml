@@ -2,6 +2,14 @@
 
 <vc:qa-notifications />
 
+@if (Model.BulkUploadFileCount == 0 && (Model.MigrationPendingCourseRunCount > 0 || Model.LarslessCourseCount > 0))
+{
+    <pttcd-notification title="Migration">
+        <p class="govuk-body">We have transferred information about your courses.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="Migration" asp-action="Report" class="govuk-link">View details of migration</a></p>
+    </pttcd-notification>
+}
+
 <div class="govuk-grid-row govuk-!-margin-bottom-5">
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-l" data-testid="provider-name">@Model.ProviderName</h1>
@@ -29,7 +37,7 @@
         <div class="govuk-grid-column-one-third">
             <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
                 <h2 class="govuk-heading-s">Published courses</h2>
-                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseRunCount</p>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.LiveCourseRunCount</p>
             </div>
         </div>
 
@@ -44,7 +52,7 @@
                         <li>
                             <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
                         </li>
-                        @if (Model.CourseRunCount > 0)
+                        @if (Model.LiveCourseRunCount > 0)
                         {
                             <li>
                                 <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="courses-view-edit-link">View and edit courses</a>
