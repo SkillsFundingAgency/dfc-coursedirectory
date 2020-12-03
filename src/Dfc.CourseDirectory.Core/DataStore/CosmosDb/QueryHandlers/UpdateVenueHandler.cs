@@ -9,9 +9,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
-    public class UpdateVenueHandler : ICosmosDbQueryHandler<UpdateVenue, OneOf<NotFound, Success>>
+    public class UpdateVenueHandler : ICosmosDbQueryHandler<UpdateVenue, OneOf<NotFound, Venue>>
     {
-        public async Task<OneOf<NotFound, Success>> Execute(
+        public async Task<OneOf<NotFound, Venue>> Execute(
             DocumentClient client,
             Configuration configuration,
             UpdateVenue request)
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             await client.ReplaceDocumentAsync(documentUri, venue);
 
-            return new Success();
+            return venue;
         }
     }
 }

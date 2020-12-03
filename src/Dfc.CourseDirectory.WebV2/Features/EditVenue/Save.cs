@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.Security;
 using FormFlow;
@@ -22,22 +23,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
+        private readonly SqlDataSync _sqlDataSync;
 
         public Handler(
             FormFlowInstance<EditVenueFlowModel> formFlowInstance,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
-            IClock clock)
+            IClock clock,
+            SqlDataSync sqlDataSync)
         {
             _formFlowInstance = formFlowInstance;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
+            _sqlDataSync = sqlDataSync;
         }
 
         public async Task<Success> Handle(Command request, CancellationToken cancellationToken)
         {
-            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateVenue()
+            var result =  await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateVenue()
             {
                 VenueId = request.VenueId,
                 Name = _formFlowInstance.State.Name,
@@ -54,6 +58,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
                 UpdatedDate = _clock.UtcNow,
                 UpdatedBy = _currentUserProvider.GetCurrentUser()
             });
+
+            var venue = (Venue)result.Value;
+
+            await _sqlDataSync.SyncVenue(venue);
 
             return new Success();
         }
