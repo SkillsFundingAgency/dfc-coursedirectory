@@ -68,16 +68,6 @@ group by Ukprn
 having count(*) > 1
 
 
--- Pre-flight check: ensure there are no apprenticeships linked to providers that have duplicated records
-if exists (
-    select 1 from pttcd.apprenticeships a
-    join pttcd.providers p on a.ProviderId = p.ProviderId
-    join #DuplicateProviders x on p.Ukprn = x.Ukprn)
-begin
-    raiserror('Found apprenticeship records linked to a provider that has duplicate records', 16, 1)
-    return
-end
-
 -- Pre-flight check: ensure the DisplayNameSource is the default for providers that have duplicated records
 if exists (
     select 1 from pttcd.providers p
