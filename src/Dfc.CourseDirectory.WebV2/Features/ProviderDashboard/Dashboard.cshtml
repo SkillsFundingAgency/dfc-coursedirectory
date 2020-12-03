@@ -2,6 +2,14 @@
 
 <vc:qa-notifications />
 
+@if (Model.PastStartDateCourseRunCount > 0)
+{
+    <pttcd-notification title="Course start dates">
+        <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount courses are in the past.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="DQI" asp-action="Index" class="govuk-link">Update course start dates</a></p>
+    </pttcd-notification>
+}
+
 @if (Model.BulkUploadFileCount == 0 && (Model.MigrationPendingCourseRunCount > 0 || Model.LarslessCourseCount > 0))
 {
     <pttcd-notification title="Migration">

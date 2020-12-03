@@ -26,6 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool ShowCourses { get; set; }
         public bool ShowApprenticeships { get; set; }
         public int LiveCourseRunCount { get; set; }
+        public int PastStartDateCourseRunCount { get; set; }
         public int MigrationPendingCourseRunCount { get; set; }
         public int LarslessCourseCount { get; set; }
         public int ApprenticeshipCount { get; set; }
@@ -38,12 +39,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
+        private readonly IClock _clock;
 
-        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IBinaryStorageProvider binaryStorageProvider)
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IBinaryStorageProvider binaryStorageProvider, IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _binaryStorageProvider = binaryStorageProvider;
+            _clock = clock;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -56,8 +59,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 throw new ResourceDoesNotExistException(ResourceType.Provider, request.ProviderId);
             }
 
-            var (courseRunCounts, apprenticeshipCount, venueCount) = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetProviderDashboardCounts() { ProviderId = request.ProviderId });
+            var (courseRunCounts, apprenticeshipCount, venueCount, pastStartDateCourseRunCount) = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetProviderDashboardCounts
+                {
+                    ProviderId = request.ProviderId,
+                    Date = _clock.UtcNow.ToLocalTime().Date
+                });
 
             var courseMigrationReport = await _cosmosDbQueryDispatcher.ExecuteQuery(new CosmosDbQueries.GetCourseMigrationReportForProvider { ProviderUkprn = provider.Ukprn });
 
@@ -70,6 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
                 ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) && provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
                 LiveCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.Live),
+                PastStartDateCourseRunCount = pastStartDateCourseRunCount,
                 MigrationPendingCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.MigrationPending) + courseRunCounts.GetValueOrDefault(CourseStatus.MigrationReadyToGoLive),
                 LarslessCourseCount = courseMigrationReport?.LarslessCourses?.Count ?? 0,
                 ApprenticeshipCount = apprenticeshipCount,
