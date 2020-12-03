@@ -48,10 +48,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 // The active provider doesn't have any of the permitted provider types
                 throw new NotAuthorizedException();
             }
-            else
-            {
-                await next();
-            }
+
+            await next();
         }
 
         private void AddMetadataToAction(ActionModel action)

@@ -37,17 +37,15 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 throw new ResourceDoesNotExistException(ResourceType.Course, courseId);
             }
 
-            if (IsAuthorized())
-            {
-                var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
-                providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
-
-                await next();
-            }
-            else
+            if (!IsAuthorized())
             {
                 throw new NotAuthorizedException();
             }
+
+            var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
+            providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
+
+            await next();
 
             bool IsAuthorized()
             {
