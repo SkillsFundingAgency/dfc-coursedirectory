@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.EditVenue;
@@ -125,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be("/Venues");
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateVenue, OneOf<NotFound, Success>>(q =>
+            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateVenue, OneOf<NotFound, Venue>>(q =>
                 q.VenueId == venueId &&
                 q.Name == "Updated name" &&
                 q.Email == "updated@provider.com" &&

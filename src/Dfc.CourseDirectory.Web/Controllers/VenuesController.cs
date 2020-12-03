@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -37,6 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ISearchClient<Core.Search.Models.Onspd> _searchClient;
+        private readonly SqlDataSync _sqlDataSync;
 
         private ISession Session => HttpContext.Session;
 
@@ -46,7 +48,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueService venueService,
             ICourseService courseService, 
             IApprenticeshipService apprenticeshipService,
-            ISearchClient<Core.Search.Models.Onspd> searchClient)
+            ISearchClient<Core.Search.Models.Onspd> searchClient,
+            SqlDataSync sqlDataSync)
         {
             _addressSearchService = addressSearchService ?? throw new ArgumentNullException(nameof(addressSearchService));
             _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
@@ -54,6 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
+            _sqlDataSync = sqlDataSync;
         }
 
         /// <summary>
@@ -232,6 +236,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 );
 
                 var updatedVenue = await _venueService.UpdateAsync(venue);
+                await _sqlDataSync.SyncVenue(venue);
                 updated = true;
                 venueID = updatedVenue.Value.ID;
 
@@ -258,6 +263,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var addedVenue = await _venueService.AddAsync(venue);
                 venueID = addedVenue.Value.ID;
+                venue.ID = venueID;
+                await _sqlDataSync.SyncVenue(venue);
             }
             //Since we are updating or adding lets pass the model to the GetVenues method
             VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(requestModel.VenueName), requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
@@ -416,6 +423,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             updatedVenue.Value.Status = Deleted;
 
             updatedVenue = await _venueService.UpdateAsync(updatedVenue.Value);
+            await _sqlDataSync.SyncVenue(updatedVenue.Value);
 
             var deletedVenue = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(updatedVenue.Value.VenueName), updatedVenue.Value.Address1, updatedVenue.Value.Address2, updatedVenue.Value.Town, updatedVenue.Value.County, updatedVenue.Value.PostCode, updatedVenue.Value.ID);
 

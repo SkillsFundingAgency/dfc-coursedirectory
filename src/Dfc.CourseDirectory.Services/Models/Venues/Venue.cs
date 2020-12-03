@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Services.Models.Venues
     public class Venue
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string ID { get; }
+        public string ID { get; set; }
         public int UKPRN { get; }
         [JsonProperty("PROVIDER_ID", Required = Required.AllowNull)]
         [JsonIgnore]

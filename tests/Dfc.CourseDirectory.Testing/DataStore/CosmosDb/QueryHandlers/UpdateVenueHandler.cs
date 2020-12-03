@@ -1,13 +1,14 @@
 ﻿using System.Linq;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
-    public class UpdateVenueHandler : ICosmosDbQueryHandler<UpdateVenue, OneOf<NotFound, Success>>
+    public class UpdateVenueHandler : ICosmosDbQueryHandler<UpdateVenue, OneOf<NotFound, Venue>>
     {
-        public OneOf<NotFound, Success> Execute(InMemoryDocumentStore inMemoryDocumentStore, UpdateVenue request)
+        public OneOf<NotFound, Venue> Execute(InMemoryDocumentStore inMemoryDocumentStore, UpdateVenue request)
         {
             var venue = inMemoryDocumentStore.Venues.All.SingleOrDefault(venue => venue.Id == request.VenueId);
 
@@ -32,7 +33,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 
             inMemoryDocumentStore.Venues.Save(venue);
 
-            return new Success();
+            return venue;
         }
     }
 }

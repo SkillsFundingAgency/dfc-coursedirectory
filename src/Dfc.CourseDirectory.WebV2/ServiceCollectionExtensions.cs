@@ -158,6 +158,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
             services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
+            services.AddTransient<SqlDataSync>();
 
             if (!environment.IsTesting())
             {
