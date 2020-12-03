@@ -1,10 +1,13 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
 {
     [Route("apprenticeships/find-standard")]
+    [RestrictProviderTypes(ProviderType.Apprenticeships)]
     public class FindStandardController : Controller
     {
         private readonly IMediator _mediator;

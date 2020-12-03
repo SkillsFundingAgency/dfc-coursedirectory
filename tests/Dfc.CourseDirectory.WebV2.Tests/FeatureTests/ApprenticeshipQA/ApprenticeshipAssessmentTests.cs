@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Get_ApprenticeshipDoesNotExist_ReturnsBadRequest()
+        public async Task Get_ApprenticeshipDoesNotExist_ReturnsNotFound()
         {
             // Arrange
             await User.AsHelpdesk();
@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 $"apprenticeship-qa/apprenticeship-assessment/{apprenticeshipId}");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]

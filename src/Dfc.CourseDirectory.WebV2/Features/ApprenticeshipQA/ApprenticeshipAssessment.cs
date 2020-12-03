@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (!maybeProviderId.HasValue)
             {
-                throw new InvalidStateException(InvalidStateReason.ApprenticeshipDoesNotExist);
+                throw new ResourceDoesNotExistException(ResourceType.Apprenticeship, apprenticeshipId);
             }
 
             var providerId = maybeProviderId.Value;

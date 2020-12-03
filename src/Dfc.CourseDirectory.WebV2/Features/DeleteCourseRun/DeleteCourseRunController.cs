@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         public DeleteCourseRunController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet("")]
+        [AuthorizeCourse]
         public async Task<IActionResult> Get(
             Request request,
             FormFlowInstanceFactory instanceFactory,
@@ -28,6 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         }
 
         [HttpPost("")]
+        [AuthorizeCourse]
         public Task<IActionResult> Post(Command request, FormFlowInstance instance) =>
             _mediator.SendAndMapResponse(
                 request,

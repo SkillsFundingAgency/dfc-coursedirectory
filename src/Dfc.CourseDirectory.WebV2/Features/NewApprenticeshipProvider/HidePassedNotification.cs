@@ -3,9 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using OneOf;
@@ -24,9 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
     {
     }
 
-    public class CommandHandler :
-        IRequestHandler<Command, CommandResponse>,
-        IRestrictProviderType<Command>
+    public class CommandHandler : IRequestHandler<Command, CommandResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
@@ -38,8 +34,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
         }
-
-        ProviderType IRestrictProviderType<Command>.ProviderType => ProviderType.Apprenticeships;
 
         public async Task<CommandResponse> Handle(
             Command request,
@@ -84,7 +78,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
 
             return new Success();
         }
-
-        Guid IRestrictProviderType<Command>.GetProviderId(Command request) => request.ProviderId;
     }
 }

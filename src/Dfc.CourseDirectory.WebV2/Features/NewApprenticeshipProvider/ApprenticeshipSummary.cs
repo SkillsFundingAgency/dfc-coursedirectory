@@ -11,7 +11,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
@@ -62,9 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class Handler :
         IRequestHandler<Query, OneOf<ModelWithErrors<ViewModel>, ViewModel>>,
-        IRequireUserCanSubmitQASubmission<Query>,
-        IRequestHandler<CompleteCommand, OneOf<ModelWithErrors<ViewModel>, Success>>,
-        IRequireUserCanSubmitQASubmission<CompleteCommand>
+        IRequestHandler<CompleteCommand, OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -322,10 +319,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 .OrderBy(g => g.Name)
                 .ToList();
         }
-
-        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
-
-        Guid IRequireUserCanSubmitQASubmission<CompleteCommand>.GetProviderId(CompleteCommand request) => request.ProviderId;
 
         private void ValidateFlowState()
         {

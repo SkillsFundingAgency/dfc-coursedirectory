@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FluentValidation;
 using MediatR;
@@ -29,9 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class Handler :
         IRequestHandler<Query, Command>,
-        IRequireUserCanSubmitQASubmission<Query>,
-        IRequestHandler<Command, CommandResponse>,
-        IRequireUserCanSubmitQASubmission<Command>
+        IRequestHandler<Command, CommandResponse>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
 
@@ -69,10 +66,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
         }
-
-        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
-
-        Guid IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) => request.ProviderId;
 
         private void ValidateFlowState()
         {

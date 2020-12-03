@@ -7,7 +7,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
@@ -58,13 +57,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRequireUserCanSubmitQASubmission<Query>,
         IRequestHandler<Command, CommandResponse>,
-        IRequireUserCanSubmitQASubmission<Command>,
         IRequestHandler<ConfirmationQuery, ConfirmationViewModel>,
-        IRequireUserCanSubmitQASubmission<ConfirmationQuery>,
-        IRequestHandler<ConfirmationCommand, Success>,
-        IRequireUserCanSubmitQASubmission<ConfirmationCommand>
+        IRequestHandler<ConfirmationCommand, Success>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly MptxInstanceContext<FlowModel> _flow;
@@ -163,14 +158,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 ProviderName = provider.ProviderName
             };
         }
-
-        Guid IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) => request.ProviderId;
-
-        Guid IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) => request.ProviderId;
-
-        Guid IRequireUserCanSubmitQASubmission<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) => request.ProviderId;
-
-        Guid IRequireUserCanSubmitQASubmission<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) => request.ProviderId;
 
         private class CommandValidator : AbstractValidator<Command>
         {
