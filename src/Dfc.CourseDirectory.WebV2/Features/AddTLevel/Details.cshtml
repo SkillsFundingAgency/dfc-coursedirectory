@@ -52,6 +52,13 @@
                 }
             </govuk-checkboxes>
 
+            @* TODO move this inside the LocationVenueIds formgroup above when tag helper library supports it? *@
+            <div class="pttcd-tlevel__add-another-location">
+                <govuk-button type="submit" asp-action="AddAnotherLocation" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" class="govuk-button--secondary">
+                    Add another location
+                </govuk-button>
+            </div>
+
             <govuk-input asp-for="Website">
                 <govuk-input-label class="govuk-label--m">
                     T Level webpage

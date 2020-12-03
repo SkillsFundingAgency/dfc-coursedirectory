@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel.Details
         public Date? StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
+        // If any additional data is added here be sure to replicate in SaveDetails.Command
     }
 
     public class ViewModel : Command

@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Flurl;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -90,10 +93,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel
 
         [HttpGet("details")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Details(ProviderContext providerContext)
+        public async Task<IActionResult> Details(
+            [FromQuery] Guid? venueId,  // Populated by the Add Venue callback journey
+            ProviderContext providerContext)
         {
             var query = new Details.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
-            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+            return await _mediator.SendAndMapResponse(
+                query,
+                vm =>
+                {
+                    // If we've just added a new venue, ensure it's selected
+                    if (venueId.HasValue && vm.ProviderVenues.Any(v => v.VenueId == venueId))
+                    {
+                        vm.LocationVenueIds.Add(venueId.Value);
+                    }
+
+                    return View(vm);
+                });
         }
 
         [HttpPost("details")]
@@ -110,6 +126,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel
                     success => RedirectToAction(nameof(CheckAndPublish))
                         .WithProviderContext(providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
+        }
+
+        [HttpPost("add-location")]
+        public async Task<IActionResult> AddAnotherLocation(
+            SaveDetails.Command command,
+            ProviderContext providerContext)
+        {
+            await _mediator.Send(command);
+
+            return RedirectToAction(
+                "AddVenue",
+                "Venues",
+                new
+                {
+                    returnUrl = new Url(
+                        Url.Action(
+                            nameof(Details),
+                            new { ffiid = _journeyInstance.InstanceId.UniqueKey }))
+                        .WithProviderContext(providerContext)
+                });
         }
 
         [HttpGet("check-publish")]

@@ -201,6 +201,61 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.AddTLevel
             }
         }
 
+        [Fact]
+        public async Task Get_VenueIdPassedFromCreateVenueCallack_AddsVenueToLocationVenueIds()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: authorizedTLevelDefinitionIds);
+
+            var venueId = await TestData.CreateVenue(providerId);
+            var anotherVenueId = await TestData.CreateVenue(providerId, venueName: "Second Venue");
+
+            var selectedTLevel = tLevelDefinitions.First();
+            var whoFor = "Who for";
+            var entryRequirements = "Entry requirements";
+            var whatYoullLearn = "What you'll learn";
+            var howYoullLearn = "How you'll learn";
+            var howYoullBeAssessed = "How you'll be assessed";
+            var whatYouCanDoNext = "What you can do next";
+
+            var journeyState = new AddTLevelJourneyModel();
+
+            journeyState.SetTLevel(
+                selectedTLevel.TLevelDefinitionId,
+                selectedTLevel.Name);
+
+            journeyState.SetDescription(
+                whoFor,
+                entryRequirements,
+                whatYoullLearn,
+                howYoullLearn,
+                howYoullBeAssessed,
+                whatYouCanDoNext,
+                isComplete: true);
+
+            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstanceId = journeyInstance.InstanceId;
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/t-levels/add/details?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}&venueId={venueId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId($"LocationVenueIds-{venueId}").GetAttribute("checked").Should().Be("checked");
+        }
+
         [Theory]
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
