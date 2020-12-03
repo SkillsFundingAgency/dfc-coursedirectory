@@ -5,6 +5,24 @@ namespace Dfc.CourseDirectory.Core
 {
     public static class EnumHelper
     {
+        public static bool HasFlags<T>(this T value, params T[] flags)
+            where T : Enum, IConvertible
+        {
+            var valueAsInt = value.ToInt32(provider: null);
+
+            foreach (var flag in flags)
+            {
+                var flagAsInt = flag.ToInt32(provider: null);
+
+                if ((valueAsInt & flagAsInt) == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static IReadOnlyCollection<T> SplitFlags<T>(this T value)
             where T : Enum, IConvertible
         {
