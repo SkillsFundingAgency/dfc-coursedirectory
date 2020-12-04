@@ -28,6 +28,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string UpdatedBy { get; set; }
         public bool? NationalApprenticeshipProvider { get; set; }
         public int? TribalProviderId { get; set; }
+        public bool? BulkUploadInProgress { get; set; }
+        public DateTime? BulkUploadStartedDateTime { get; set; }
+        public int? BulkUploadTotalRowCount { get; set; }
+        public bool? BulkUploadPublishInProgress { get; set; }
     }
 
     public class UpsertProvidersRecordContact

@@ -200,6 +200,10 @@ namespace Dfc.CourseDirectory.Core
                     UpdatedBy = provider.UpdatedBy,
                     NationalApprenticeshipProvider = provider.NationalApprenticeshipProvider,
                     TribalProviderId = provider.ProviderId,
+                    BulkUploadInProgress = provider.BulkUploadStatus?.InProgress,
+                    BulkUploadPublishInProgress = provider.BulkUploadStatus?.PublishInProgress,
+                    BulkUploadStartedDateTime = provider.BulkUploadStatus?.StartedTimestamp,
+                    BulkUploadTotalRowCount = provider.BulkUploadStatus?.TotalRowCount,
                     Contacts = (provider.ProviderContact ?? Array.Empty<ProviderContact>()).Select(c => new UpsertProvidersRecordContact()
                     {
                         ContactType = c.ContactType,
