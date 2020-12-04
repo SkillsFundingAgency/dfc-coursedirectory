@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core
 {
     public class SqlDataSync
     {
-        private const int BatchSize = 300;
+        private const int BatchSize = 150;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -268,8 +268,8 @@ namespace Dfc.CourseDirectory.Core
                 {
                     await Policy
                         .Handle<SqlException>()
-                        .Retry(3)
-                        .Execute(() => processChunk(c));
+                        .WaitAndRetryAsync(3, retry => TimeSpan.FromSeconds(retry))
+                        .ExecuteAsync(() => processChunk(c));
                 }
             };
 
