@@ -15,12 +15,24 @@ INSERT INTO Pttcd.TLevelDefinitions (
     TLevelDefinitionId,
     FrameworkCode,
     ProgType,
-    Name
+    Name,
+    ExemplarWhoFor,
+    ExemplarEntryRequirements,
+    ExemplarWhatYoullLearn,
+    ExemplarHowYoullLearn,
+    ExemplarHowYoullBeAssessed,
+    ExemplarWhatYouCanDoNext
 ) VALUES (
     @TLevelDefinitionId,
     @FrameworkCode,
     @ProgType,
-    @Name
+    @Name,
+    @ExemplarWhoFor,
+    @ExemplarEntryRequirements,
+    @ExemplarWhatYoullLearn,
+    @ExemplarHowYoullLearn,
+    @ExemplarHowYoullBeAssessed,
+    @ExemplarWhatYouCanDoNext
 )";
             await transaction.Connection.ExecuteAsync(sql, query, transaction);
 
