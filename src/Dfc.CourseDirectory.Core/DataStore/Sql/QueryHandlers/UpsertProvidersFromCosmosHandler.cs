@@ -31,7 +31,11 @@ CREATE TABLE #Providers (
     UpdatedOn DATETIME,
     UpdatedBy NVARCHAR(MAX),
     NationalApprenticeshipProvider BIT,
-    TribalProviderId INT
+    TribalProviderId INT,
+    BulkUploadInProgress BIT NULL,
+    BulkUploadPublishInProgress BIT NULL,
+    BulkUploadStartedDateTime DATETIME2 (7) NULL,
+    BulkUploadTotalRowCount INT NULL
 )";
 
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
@@ -52,7 +56,11 @@ CREATE TABLE #Providers (
                         r.UpdatedOn,
                         r.UpdatedBy,
                         r.NationalApprenticeshipProvider,
-                        r.TribalProviderId
+                        r.TribalProviderId,
+                        r.BulkUploadInProgress,
+                        r.BulkUploadPublishInProgress,
+                        r.BulkUploadStartedDateTime,
+                        r.BulkUploadTotalRowCount
                     }),
                     tableName: "#Providers",
                     transaction);
@@ -77,7 +85,11 @@ WHEN NOT MATCHED THEN
         UpdatedOn,
         UpdatedBy,
         NationalApprenticeshipProvider,
-        TribalProviderId
+        TribalProviderId,
+        BulkUploadInProgress,
+        BulkUploadPublishInProgress,
+        BulkUploadStartedDateTime,
+        BulkUploadTotalRowCount
     ) VALUES (
         source.ProviderId,
         @LastSyncedFromCosmos,
@@ -93,7 +105,11 @@ WHEN NOT MATCHED THEN
         source.UpdatedOn,
         source.UpdatedBy,
         source.NationalApprenticeshipProvider,
-        source.TribalProviderId
+        source.TribalProviderId,
+        source.BulkUploadInProgress,
+        source.BulkUploadPublishInProgress,
+        source.BulkUploadStartedDateTime,
+        source.BulkUploadTotalRowCount
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -110,7 +126,11 @@ WHEN MATCHED THEN
         UpdatedOn = source.UpdatedOn,
         UpdatedBy = source.UpdatedBy,
         NationalApprenticeshipProvider = source.NationalApprenticeshipProvider,
-        TribalProviderId = source.TribalProviderId;";
+        TribalProviderId = source.TribalProviderId,
+        BulkUploadInProgress = source.BulkUploadInProgress,
+        BulkUploadPublishInProgress = source.BulkUploadPublishInProgress,
+        BulkUploadStartedDateTime = source.BulkUploadStartedDateTime,
+        BulkUploadTotalRowCount = source.BulkUploadTotalRowCount;";
 
                 await transaction.Connection.ExecuteAsync(
                     sql,

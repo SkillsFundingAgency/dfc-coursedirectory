@@ -17,4 +17,8 @@
 	[DisplayNameSource] INT NOT NULL CONSTRAINT [DF_Providers_DisplayNameSource] DEFAULT (0),
 	[NationalApprenticeshipProvider] BIT,
 	[TribalProviderId] INT,
+	[BulkUploadInProgress] BIT NULL,
+	[BulkUploadPublishInProgress] BIT NULL,
+	[BulkUploadStartedDateTime] DATETIME2 (7) NULL,
+	[BulkUploadTotalRowCount] INT NULL,
 )
