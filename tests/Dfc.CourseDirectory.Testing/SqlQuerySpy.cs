@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Moq;
@@ -16,7 +15,15 @@ namespace Dfc.CourseDirectory.Testing
             _dispatcherMock = new Mock<ISqlQueryDispatcher>();
         }
 
-        public void RegisterCall<T>(ISqlQuery<T> query)
+        public void Callback<TQuery, TResult>(Action<TQuery> action)
+            where TQuery : ISqlQuery<TResult>
+        {
+            _dispatcherMock
+                .Setup(d => d.ExecuteQuery(It.IsAny<TQuery>()))
+                .Callback<ISqlQuery<TResult>>(query => action((TQuery)query));
+        }
+
+        internal void RegisterCall<T>(ISqlQuery<T> query)
         {
             _dispatcherMock.Object.ExecuteQuery(query);
         }
