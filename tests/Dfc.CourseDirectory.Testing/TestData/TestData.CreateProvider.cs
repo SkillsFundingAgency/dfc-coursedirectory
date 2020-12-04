@@ -22,8 +22,17 @@ namespace Dfc.CourseDirectory.Testing
             string courseDirectoryName = "",
             string alias = "",
             ProviderDisplayNameSource displayNameSource = default,
-            IEnumerable<CreateProviderContact> contacts = null)
+            IEnumerable<CreateProviderContact> contacts = null,
+            IReadOnlyCollection<Guid> authorizedTLevelDefinitionIds = null)
         {
+            if (!providerType.HasFlag(ProviderType.TLevels) &&
+                (authorizedTLevelDefinitionIds?.Count ?? 0) != 0)
+            {
+                throw new ArgumentException(
+                    $"{nameof(authorizedTLevelDefinitionIds)} can only be specified for T Level providers.",
+                    nameof(authorizedTLevelDefinitionIds));
+            }
+
             var providerId = Guid.NewGuid();
 
             var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateProvider()
@@ -85,6 +94,16 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         ProviderId = providerId,
                         DisplayNameSource = displayNameSource
+                    }));
+            }
+
+            if ((authorizedTLevelDefinitionIds?.Count ?? 0) != 0)
+            {
+                await WithSqlQueryDispatcher(
+                    dispatcher => dispatcher.ExecuteQuery(new SetAuthorizedTLevelDefinitionsForProvider()
+                    {
+                        ProviderId = providerId,
+                        TLevelDefinitionIds = authorizedTLevelDefinitionIds
                     }));
             }
 
