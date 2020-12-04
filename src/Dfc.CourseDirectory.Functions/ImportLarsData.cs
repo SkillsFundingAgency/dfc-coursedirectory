@@ -14,8 +14,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName("ImportLarsData")]
-        [NoAutomaticTrigger]
         [Singleton]
-        public Task Run(string input) => _dataImporter.ImportData();
+        public Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo timer) => _dataImporter.ImportData();
     }
 }
