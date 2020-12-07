@@ -115,6 +115,22 @@ where x.ProviderId is null and y.ProviderType <> p.ProviderType
 
 if @DryRun = 0
 begin
+    -- Reassign User->Provider mappings for provider IDs that are being removed
+	;with UserProvidersCte as (
+		select up.UserId, up.ProviderId OldProviderId, z.ProviderId NewProviderId
+		from Pttcd.UserProviders up
+		join #DeletingProviderIds x ON up.ProviderId = x.ProviderId
+		join Pttcd.Providers z ON x.Ukprn = z.Ukprn
+		left join #DeletingProviderIds y on z.ProviderId = y.ProviderId
+		where y.ProviderId is null
+	)
+	merge Pttcd.UserProviders as target
+	using (select * from UserProvidersCte) as source
+	on target.UserId = source.UserId and target.ProviderId = source.OldProviderId
+	when matched and not exists (select 1 from Pttcd.UserProviders where UserId = source.UserId and ProviderId = source.NewProviderId)
+		then update set ProviderId = source.NewProviderId
+	when matched then delete;
+
 	-- Remove provider records
 	delete from Pttcd.ProviderContacts where ProviderId in (select ProviderId from #DeletingProviderIds)
 	delete from Pttcd.Providers where ProviderId in (select ProviderId from #DeletingProviderIds)
