@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             await UpsertCourses();
             await UpsertCourseRuns();
             await UpsertCourseRunRegions();
+            await UpsertCourseRunSubRegions();
 
             async Task UpsertCourses()
             {
@@ -317,7 +318,7 @@ CREATE TABLE #CourseRunRegions (
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
 
                 await BulkCopyHelper.WriteRecords(
-                    query.Records.SelectMany(c => c.CourseRuns.SelectMany(cr => cr.Regions.Select(r => new
+                    query.Records.SelectMany(c => c.CourseRuns.SelectMany(cr => cr.RegionIds.Select(r => new
                     {
                         cr.CourseRunId,
                         RegionId = r
@@ -329,6 +330,38 @@ CREATE TABLE #CourseRunRegions (
 MERGE Pttcd.CourseRunRegions AS target
 USING (
     SELECT CourseRunId, RegionId FROM #CourseRunRegions
+) AS source
+ON target.CourseRunId = source.CourseRunId AND target.RegionId = source.RegionId
+WHEN NOT MATCHED THEN
+    INSERT (CourseRunId, RegionId) VALUES (source.CourseRunId, source.RegionId)
+WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT CourseRunId FROM #CourseRuns) THEN DELETE;";
+
+                await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
+            }
+
+            async Task UpsertCourseRunSubRegions()
+            {
+                var createTableSql = @"
+CREATE TABLE #CourseRunSubRegions (
+    CourseRunId UNIQUEIDENTIFIER,
+    RegionId VARCHAR(9) COLLATE SQL_Latin1_General_CP1_CI_AS
+)";
+
+                await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
+
+                await BulkCopyHelper.WriteRecords(
+                    query.Records.SelectMany(c => c.CourseRuns.SelectMany(cr => cr.SubRegionIds.Select(r => new
+                    {
+                        cr.CourseRunId,
+                        RegionId = r
+                    }))),
+                    tableName: "#CourseRunSubRegions",
+                    transaction);
+
+                var mergeSql = @"
+MERGE Pttcd.CourseRunSubRegions AS target
+USING (
+    SELECT CourseRunId, RegionId FROM #CourseRunSubRegions
 ) AS source
 ON target.CourseRunId = source.CourseRunId AND target.RegionId = source.RegionId
 WHEN NOT MATCHED THEN

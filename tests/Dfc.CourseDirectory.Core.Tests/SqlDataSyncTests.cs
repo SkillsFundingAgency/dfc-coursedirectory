@@ -238,6 +238,10 @@ namespace Dfc.CourseDirectory.Core.Tests
                         AttendancePattern = CourseAttendancePattern.Evening,
                         National = true,
                         Regions = new[] { "E12000001" },  // North East
+                        SubRegions = new[]
+                        {
+                            new CourseRunSubRegion() { Id = "E06000001" }  // County Durham
+                        },
                         RecordStatus = CourseStatus.Live,
                         CreatedDate = Clock.UtcNow,
                         CreatedBy = "Tests",
@@ -307,7 +311,8 @@ namespace Dfc.CourseDirectory.Core.Tests
                     recordCourseRun.StudyMode == CourseStudyMode.PartTime &&
                     recordCourseRun.AttendancePattern == CourseAttendancePattern.Evening &&
                     recordCourseRun.National == true &&
-                    recordCourseRun.Regions.Single() == "E12000001" &&
+                    recordCourseRun.RegionIds.Single() == "E12000001" &&
+                    recordCourseRun.SubRegionIds.Single() == "E06000001" &&
                     recordCourseRun.CourseRunStatus == CourseStatus.Live &&
                     recordCourseRun.CreatedOn == Clock.UtcNow &&
                     recordCourseRun.CreatedBy == "Tests" &&
