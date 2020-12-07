@@ -16,5 +16,6 @@
 	[HowYoullLearn] NVARCHAR(MAX),
 	[WhatYoullNeed] NVARCHAR(MAX),
 	[HowYoullBeAssessed] NVARCHAR(MAX),
-	[WhereNext] NVARCHAR(MAX)
+	[WhereNext] NVARCHAR(MAX),
+	[BulkUploadErrorCount] INT
 )

@@ -217,6 +217,12 @@ namespace Dfc.CourseDirectory.Core.Tests
                 WhereNext = "Where next",
                 AdultEducationBudget = true,
                 AdvancedLearnerLoan = true,
+                BulkUploadErrors = new[]
+                {
+                    new BulkUploadError { Error = "TestCourseBulkUploadError1" },
+                    new BulkUploadError { Error = "TestCourseBulkUploadError2" },
+                    new BulkUploadError { Error = "TestCourseBulkUploadError3" }
+                },
                 CourseRuns = new[]
                 {
                     new CourseRun()
@@ -246,7 +252,14 @@ namespace Dfc.CourseDirectory.Core.Tests
                         CreatedDate = Clock.UtcNow,
                         CreatedBy = "Tests",
                         UpdatedDate = Clock.UtcNow,
-                        UpdatedBy = "Tests"
+                        UpdatedBy = "Tests",
+                        BulkUploadErrors = new[]
+                        {
+                            new BulkUploadError { Error = "TestCourseRunBulkUploadError1" },
+                            new BulkUploadError { Error = "TestCourseRunBulkUploadError2" },
+                            new BulkUploadError { Error = "TestCourseRunBulkUploadError3" },
+                            new BulkUploadError { Error = "TestCourseRunBulkUploadError4" }
+                        },
                     }
                 },
                 CourseStatus = CourseStatus.Live,
@@ -296,6 +309,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                     record.WhatYoullNeed == "What you'll need" &&
                     record.HowYoullBeAssessed == "How you'll be assessed" &&
                     record.WhereNext == "Where next" &&
+                    record.BulkUploadErrorCount == 3 &&
                     recordCourseRun.CourseRunId == course.CourseRuns.Single().Id &&
                     recordCourseRun.VenueId == course.CourseRuns.Single().VenueId &&
                     recordCourseRun.CourseName == "Maths" &&
@@ -317,7 +331,8 @@ namespace Dfc.CourseDirectory.Core.Tests
                     recordCourseRun.CreatedOn == Clock.UtcNow &&
                     recordCourseRun.CreatedBy == "Tests" &&
                     recordCourseRun.UpdatedOn == Clock.UtcNow &&
-                    recordCourseRun.UpdatedBy == "Tests";
+                    recordCourseRun.UpdatedBy == "Tests" &&
+                    recordCourseRun.BulkUploadErrorCount == 4;
             });
         }
 
