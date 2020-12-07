@@ -18,6 +18,39 @@
     </pttcd-notification>
 }
 
+@if (Model.BulkUploadInProgress)
+{
+    <pttcd-notification title="Processing bulk upload of courses">
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                Do not add a new course or attempt another bulk upload during this process
+            </strong>
+        </div>
+        <p class="govuk-body govuk-!-margin-bottom-0">Continue to refresh this page until you receive a notification that the bulk upload process has been completed.</p>
+    </pttcd-notification>
+}
+else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoLiveCourseRunCount > 0)
+{
+    @if (Model.BulkUploadCoursesErrorCount > 0 || Model.BulkUploadCourseRunsErrorCount > 0 || Model.BulkUploadPendingCourseRunCount > 0)
+    {
+        <pttcd-notification title="Error on bulk upload of courses">
+            <p class="govuk-body">@(Model.BulkUploadPendingCourseRunCount + Model.BulkUploadReadyToGoLiveCourseRunCount) courses uploaded have @Model.BulkUploadCourseRunsErrorCount errors.</p>
+            <div class="govuk-body govuk-!-margin-bottom-0">
+                <a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUpload" class="govuk-link">Fix errors to publish your courses</a>
+            </div>
+        </pttcd-notification>
+    }
+    else
+    {
+        <pttcd-notification title="Successful bulk upload of courses">
+            <p class="govuk-body">@Model.BulkUploadReadyToGoLiveCourseRunCount courses have been uploaded and are ready to publish to the course directory.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishCourses" class="govuk-link">Publish your courses</a></p>
+        </pttcd-notification>
+    }
+}
+
 <div class="govuk-grid-row govuk-!-margin-bottom-5">
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-l" data-testid="provider-name">@Model.ProviderName</h1>

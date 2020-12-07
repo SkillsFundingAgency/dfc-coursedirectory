@@ -28,10 +28,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int LiveCourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
         public int MigrationPendingCourseRunCount { get; set; }
+        public int BulkUploadPendingCourseRunCount { get; set; }
+        public int BulkUploadReadyToGoLiveCourseRunCount { get; set; }
+        public int BulkUploadCoursesErrorCount { get; set; }
+        public int BulkUploadCourseRunsErrorCount { get; set; }
         public int LarslessCourseCount { get; set; }
         public int ApprenticeshipCount { get; set; }
         public int VenueCount { get; set; }
         public int BulkUploadFileCount { get; set; }
+        public bool BulkUploadInProgress { get; set; }
+        public bool BulkUploadPublishInProgress { get; set; }
+        public DateTime? BulkUploadStartedDateTime { get; set; }
+        public int BulkUploadTotalRowCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -59,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 throw new ResourceDoesNotExistException(ResourceType.Provider, request.ProviderId);
             }
 
-            var (courseRunCounts, apprenticeshipCount, venueCount, pastStartDateCourseRunCount) = await _sqlQueryDispatcher.ExecuteQuery(
+            var (courseRunCounts, apprenticeshipCount, venueCount, pastStartDateCourseRunCount, bulkUploadCoursesErrorCount, bulkUploadCourseRunsErrorCount) = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderDashboardCounts
                 {
                     ProviderId = request.ProviderId,
@@ -79,10 +87,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 LiveCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.Live),
                 PastStartDateCourseRunCount = pastStartDateCourseRunCount,
                 MigrationPendingCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.MigrationPending) + courseRunCounts.GetValueOrDefault(CourseStatus.MigrationReadyToGoLive),
+                BulkUploadPendingCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadPending),
+                BulkUploadReadyToGoLiveCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadReadyToGoLive),
+                BulkUploadCoursesErrorCount = bulkUploadCoursesErrorCount,
+                BulkUploadCourseRunsErrorCount = bulkUploadCourseRunsErrorCount,
                 LarslessCourseCount = courseMigrationReport?.LarslessCourses?.Count ?? 0,
                 ApprenticeshipCount = apprenticeshipCount,
                 VenueCount = venueCount,
-                BulkUploadFileCount = bulkUploadFiles.Count()
+                BulkUploadFileCount = bulkUploadFiles.Count(),
+                BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
+                BulkUploadPublishInProgress = provider.BulkUploadPublishInProgress ?? false,
+                BulkUploadStartedDateTime = provider.BulkUploadStartedDateTime,
+                BulkUploadTotalRowCount = provider.BulkUploadTotalRowCount ?? 0
             };
 
             return vm;
