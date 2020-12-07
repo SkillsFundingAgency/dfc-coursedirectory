@@ -8,7 +8,8 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         None = 0,
         FE = 1,
-        Apprenticeships = 2
+        Apprenticeships = 2,
+        TLevels = 4
     }
 
     public static class ProviderTypeExtensions
@@ -25,6 +26,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 {
                     ProviderType.Apprenticeships => "Apprenticeships",
                     ProviderType.FE => "F.E.",
+                    ProviderType.TLevels => "T Levels",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
                 })
                 .ToArray();

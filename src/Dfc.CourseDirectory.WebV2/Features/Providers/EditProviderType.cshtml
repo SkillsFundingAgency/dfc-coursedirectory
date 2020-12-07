@@ -1,10 +1,12 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType.Command
-@{ 
+﻿@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider FeatureFlagProvider
+@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType.ViewModel
+@{
     ViewBag.Title = "Provider type settings";
 }
 
 <govuk-error-summary>
     <govuk-error-summary-item asp-for="ProviderType" />
+    <govuk-error-summary-item asp-for="SelectedProviderTLevelDefinitionIds" />
 </govuk-error-summary>
 
 <div class="govuk-grid-row">
@@ -19,6 +21,29 @@
                 <govuk-checkboxes-item value="@((int)ProviderType.Apprenticeships)" checked="@(Model.ProviderType.HasFlag(ProviderType.Apprenticeships))" input-data-testid="apprenticeships">
                     Apprenticeships
                 </govuk-checkboxes-item>
+                @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels))
+                {
+                    <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels">
+                        T Levels
+                        <govuk-checkboxes-item-conditional>
+                            <govuk-checkboxes asp-for="@Model.SelectedProviderTLevelDefinitionIds">
+                                <govuk-checkboxes-fieldset>
+                                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+                                        What T Levels can this provider offer?
+                                    </govuk-checkboxes-fieldset-legend>
+                                </govuk-checkboxes-fieldset>
+
+                                @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
+                                {
+                                    <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
+                                        @providerTLevelDefinition.Name
+                                    </govuk-checkboxes-item>
+                                }
+
+                            </govuk-checkboxes>
+                        </govuk-checkboxes-item-conditional>
+                    </govuk-checkboxes-item>
+                }
             </govuk-checkboxes>
 
             <govuk-button type="submit" class="govuk-!-margin-right-5">Save</govuk-button>

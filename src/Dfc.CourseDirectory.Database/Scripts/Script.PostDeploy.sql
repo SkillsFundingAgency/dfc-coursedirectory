@@ -162,4 +162,48 @@ BEGIN
 	('E10000009', 'Dorset', 'E12000009'),
 	('E10000013', 'Gloucestershire', 'E12000009'),
 	('E10000027', 'Somerset', 'E12000009')
-END
+END;
+
+DECLARE @TLevelDefinitions AS table (
+	[TLevelDefinitionId] [uniqueidentifier] NOT NULL,
+	[FrameworkCode] [int] NOT NULL,
+	[ProgType] [int] NOT NULL,
+	[Name] [nvarchar](max) NOT NULL
+)
+
+INSERT INTO @TLevelDefinitions (
+	[TLevelDefinitionId],
+	[FrameworkCode],
+	[ProgType],
+	[Name]
+)
+VALUES
+(N'fc9fefe1-ee86-4df9-9d09-c275ccbf5940', 36, 31, N'T Level Construction - Design, Surveying and Planning for Construction'),
+(N'9555d14f-f73b-495c-91c3-4703691c6347', 37, 31, N'T Level Digital - Digital Production, Design and Development'),
+(N'c1bc1361-cda3-42a3-9120-a08cdb78dba0', 38, 31, N'T Level Education - Education and Childcare')
+
+MERGE Pttcd.TLevelDefinitions AS target
+USING (
+	SELECT *
+	FROM @TLevelDefinitions
+) AS source
+ON target.TLevelDefinitionId = source.TLevelDefinitionId
+WHEN MATCHED AND (target.FrameworkCode <> source.FrameworkCode OR target.ProgType <> source.ProgType OR target.Name <> source.Name)
+	THEN UPDATE SET
+		target.FrameworkCode = source.FrameworkCode,
+		target.ProgType = source.ProgType,
+		target.Name = source.Name
+WHEN NOT MATCHED
+	THEN INSERT (
+		TLevelDefinitionId,
+		FrameworkCode,
+		ProgType,
+		Name
+	) VALUES (
+		source.TLevelDefinitionId,
+		source.FrameworkCode,
+		source.ProgType,
+		source.Name
+	)
+WHEN NOT MATCHED BY SOURCE
+	THEN DELETE;
