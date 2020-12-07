@@ -40,6 +40,13 @@ namespace Dfc.CourseDirectory.Core.Tests
                 UpdatedBy = "Tests",
                 NationalApprenticeshipProvider = true,
                 ProviderId = 123456,
+                BulkUploadStatus = new ProviderBulkUploadStatus
+                {
+                    InProgress = true,
+                    PublishInProgress = false,
+                    StartedTimestamp = DateTime.UtcNow,
+                    TotalRowCount = 123
+                },
                 ProviderContact = new[]
                 {
                     new ProviderContact()
@@ -98,6 +105,10 @@ namespace Dfc.CourseDirectory.Core.Tests
                     p.UpdatedBy == "Tests" &&
                     p.NationalApprenticeshipProvider == provider.NationalApprenticeshipProvider &&
                     p.TribalProviderId == provider.ProviderId &&
+                    p.BulkUploadInProgress == provider.BulkUploadStatus?.InProgress &&
+                    p.BulkUploadPublishInProgress == provider.BulkUploadStatus?.PublishInProgress &&
+                    p.BulkUploadStartedDateTime == provider.BulkUploadStatus?.StartedTimestamp &&
+                    p.BulkUploadTotalRowCount == provider.BulkUploadStatus?.TotalRowCount &&
                     p.Contacts.Any(c =>
                         c.ContactType == "P" &&
                         c.ContactRole == "Hero" &&
