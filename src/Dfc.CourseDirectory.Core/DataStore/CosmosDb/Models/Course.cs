@@ -70,10 +70,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
-        //public IEnumerable<SubRegionItemModel> SubRegions { get; set; }
+        public IEnumerable<CourseRunSubRegion> SubRegions { get; set; }
         public IEnumerable<string> ValidationErrors { get; set; }
         public IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
+    }
+
+    public class CourseRunSubRegion
+    {
+        public string Id { get; set; }
     }
 }

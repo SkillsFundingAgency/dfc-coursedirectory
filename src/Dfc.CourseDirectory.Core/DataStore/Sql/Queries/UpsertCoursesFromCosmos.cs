@@ -54,6 +54,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public bool? National { get; set; }
-        public IEnumerable<string> Regions { get; set; }
+        public IEnumerable<string> RegionIds { get; set; }
+        public IEnumerable<string> SubRegionIds { get; set; }
     }
 }

@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.Core
                 Records = courses.Select(course => new UpsertCoursesRecord()
                 {
                     CourseId = course.Id,
-                    CourseStatus = (CourseStatus)course.CourseStatus,
+                    CourseStatus = course.CourseStatus,
                     CreatedOn = course.CreatedDate,
                     CreatedBy = course.CreatedBy,
                     UpdatedOn = course.UpdatedDate,
@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.Core
                     CourseRuns = course.CourseRuns.Select(courseRun => new UpsertCoursesRecordCourseRun()
                     {
                         CourseRunId = courseRun.Id,
-                        CourseRunStatus = (CourseStatus)courseRun.RecordStatus,
+                        CourseRunStatus = courseRun.RecordStatus,
                         CreatedOn = courseRun.CreatedDate,
                         CreatedBy = courseRun.CreatedBy,
                         UpdatedOn = courseRun.UpdatedDate,
@@ -162,18 +162,19 @@ namespace Dfc.CourseDirectory.Core
                         CourseName = courseRun.CourseName,
                         VenueId = courseRun.VenueId,
                         ProviderCourseId = courseRun.ProviderCourseID,
-                        DeliveryMode = (CourseDeliveryMode)courseRun.DeliveryMode,
+                        DeliveryMode = courseRun.DeliveryMode,
                         FlexibleStartDate = courseRun.FlexibleStartDate,
                         StartDate = courseRun.StartDate,
                         CourseWebsite = courseRun.CourseURL,
                         Cost = courseRun.Cost,
                         CostDescription = courseRun.CostDescription,
-                        DurationUnit = (CourseDurationUnit)courseRun.DurationUnit,
+                        DurationUnit = courseRun.DurationUnit,
                         DurationValue = courseRun.DurationValue,
-                        StudyMode = (CourseStudyMode)courseRun.StudyMode,
-                        AttendancePattern = (CourseAttendancePattern)courseRun.AttendancePattern,
+                        StudyMode = courseRun.StudyMode,
+                        AttendancePattern = courseRun.AttendancePattern,
                         National = courseRun.National,
-                        Regions = courseRun.Regions ?? Array.Empty<string>()
+                        RegionIds = courseRun.Regions ?? Array.Empty<string>(),
+                        SubRegionIds = courseRun.SubRegions?.Select(r => r.Id) ?? Array.Empty<string>()
                     })
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
