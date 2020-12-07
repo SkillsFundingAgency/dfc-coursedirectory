@@ -35,7 +35,8 @@ CREATE TABLE #Courses (
     HowYoullLearn NVARCHAR(MAX),
     WhatYoullNeed NVARCHAR(MAX),
     HowYoullBeAssessed NVARCHAR(MAX),
-    WhereNext NVARCHAR(MAX)
+    WhereNext NVARCHAR(MAX),
+    BulkUploadErrorCount INT
 )";
 
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
@@ -58,7 +59,8 @@ CREATE TABLE #Courses (
                         r.HowYoullLearn,
                         r.WhatYoullNeed,
                         r.HowYoullBeAssessed,
-                        r.WhereNext
+                        r.WhereNext,
+                        r.BulkUploadErrorCount
                     }),
                     tableName: "#Courses",
                     transaction);
@@ -82,7 +84,8 @@ USING (
         HowYoullLearn,
         WhatYoullNeed,
         HowYoullBeAssessed,
-        WhereNext
+        WhereNext,
+        BulkUploadErrorCount
     FROM #Courses
 ) AS source
 ON target.CourseId = source.CourseId
@@ -104,7 +107,8 @@ WHEN NOT MATCHED THEN
         HowYoullLearn,
         WhatYoullNeed,
         HowYoullBeAssessed,
-        WhereNext
+        WhereNext,
+        BulkUploadErrorCount
     ) VALUES (
         source.CourseId,
         @LastSyncedFromCosmos,
@@ -122,7 +126,8 @@ WHEN NOT MATCHED THEN
         source.HowYoullLearn,
         source.WhatYoullNeed,
         source.HowYoullBeAssessed,
-        source.WhereNext
+        source.WhereNext,
+        source.BulkUploadErrorCount
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -141,7 +146,8 @@ WHEN MATCHED THEN
         HowYoullLearn = source.HowYoullLearn,
         WhatYoullNeed = source.WhatYoullNeed,
         HowYoullBeAssessed = source.HowYoullBeAssessed,
-        WhereNext = source.WhereNext;";
+        WhereNext = source.WhereNext,
+        BulkUploadErrorCount = source.BulkUploadErrorCount;";
 
                 await transaction.Connection.ExecuteAsync(
                     mergeSql,
@@ -173,7 +179,8 @@ CREATE TABLE #CourseRuns (
     DurationValue INT,
     StudyMode TINYINT,
     AttendancePattern TINYINT,
-    [National] BIT
+    [National] BIT,
+    BulkUploadErrorCount INT
 )";
 
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
@@ -201,7 +208,8 @@ CREATE TABLE #CourseRuns (
                         cr.DurationValue,
                         cr.StudyMode,
                         AttendancePattern = (byte)cr.AttendancePattern,
-                        cr.National
+                        cr.National,
+                        cr.BulkUploadErrorCount
                     })),
                     tableName: "#CourseRuns",
                     transaction);
@@ -230,7 +238,8 @@ USING (
         DurationValue,
         StudyMode,
         AttendancePattern,
-        [National]
+        [National],
+        BulkUploadErrorCount
     FROM #CourseRuns
 ) AS source
 ON target.CourseRunId = source.CourseRunId
@@ -256,7 +265,8 @@ WHEN NOT MATCHED THEN
         DurationValue,
         StudyMode,
         AttendancePattern,
-        [National]
+        [National],
+        BulkUploadErrorCount
     ) VALUES (
         source.CourseRunId,
         source.CourseId,
@@ -278,7 +288,8 @@ WHEN NOT MATCHED THEN
         source.DurationValue,
         source.StudyMode,
         source.AttendancePattern,
-        source.[National]
+        source.[National],
+        source.BulkUploadErrorCount
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -301,7 +312,8 @@ WHEN MATCHED THEN
         DurationValue = source.DurationValue,
         StudyMode = source.StudyMode,
         AttendancePattern = source.AttendancePattern,
-        [National] = source.[National]
+        [National] = source.[National],
+        BulkUploadErrorCount = source.BulkUploadErrorCount
 WHEN NOT MATCHED BY SOURCE AND target.CourseId IN (SELECT CourseId FROM #Courses) THEN DELETE;";
 
                 await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);

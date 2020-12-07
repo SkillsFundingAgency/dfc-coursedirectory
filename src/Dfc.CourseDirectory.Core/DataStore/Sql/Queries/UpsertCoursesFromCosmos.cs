@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string WhatYoullNeed { get; set; }
         public string HowYoullBeAssessed { get; set; }
         public string WhereNext { get; set; }
+        public int BulkUploadErrorCount { get; set; }
         public IEnumerable<UpsertCoursesRecordCourseRun> CourseRuns { get; set; }
     }
 
@@ -55,6 +56,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public bool? National { get; set; }
         public IEnumerable<string> RegionIds { get; set; }
+        public int BulkUploadErrorCount { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
     }
 }

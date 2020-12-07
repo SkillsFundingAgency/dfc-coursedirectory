@@ -20,5 +20,6 @@
 	[DurationValue] INT,
 	[StudyMode] TINYINT,
 	[AttendancePattern] TINYINT,
-	[National] BIT
+	[National] BIT,
+	[BulkUploadErrorCount] INT
 )
