@@ -58,7 +58,7 @@ CREATE VIEW [Pttcd].[FindACourseIndex] WITH SCHEMABINDING
 			END AS float) AS ScoreBoost
 	FROM Pttcd.Courses c
 	INNER JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-	LEFT JOIN Pttcd.CourseRunRegions crr ON cr.CourseRunId = crr.CourseRunId
+	LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId
 	LEFT JOIN Pttcd.Regions r ON crr.RegionId = r.RegionId
 	INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 	INNER JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
