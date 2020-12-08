@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -19,12 +20,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
+        private readonly SqlDataSync _sqlDataSync;
 
         private ISession Session => HttpContext.Session;
 
         public LocationsController(
             IVenueSearchHelper venueSearchHelper,
-            IVenueService venueService)
+            IVenueService venueService,
+            SqlDataSync sqlDataSync)
         {
             if (venueService == null)
             {
@@ -33,6 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _venueSearchHelper = venueSearchHelper;
             _venueService = venueService;
+            _sqlDataSync = sqlDataSync;
         }
 
         [Authorize]
@@ -61,7 +65,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult DeleteLocation(LocationDeleteViewModel locationDeleteViewModel)
+        public async Task<IActionResult> DeleteLocation(LocationDeleteViewModel locationDeleteViewModel)
         {
             if (locationDeleteViewModel.LocationDelete == LocationDelete.Delete)
             {
@@ -78,6 +82,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 updatedVenue.Status = VenueStatus.Deleted;
 
                 updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
+                await _sqlDataSync.SyncVenue(updatedVenue);
 
                 VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(
                     HtmlEncoder.Default.Encode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2,
