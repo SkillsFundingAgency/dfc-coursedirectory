@@ -14,7 +14,10 @@ namespace Dfc.CourseDirectory.Testing
 
         public FormUrlEncodedContentBuilder Add(string key, object value)
         {
-            _values.Add(new KeyValuePair<string, string>(key, value.ToString()));
+            if (value != null)
+            {
+                _values.Add(new KeyValuePair<string, string>(key, value.ToString()));
+            }
 
             return this;
         }
