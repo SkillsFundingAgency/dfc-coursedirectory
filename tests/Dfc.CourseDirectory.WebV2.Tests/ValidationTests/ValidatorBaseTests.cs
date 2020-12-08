@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
         }
 
         [Theory]
+        [InlineData(null, null, null, "Enter your date of birth")]
         [InlineData("", "", "", "Enter your date of birth")]
         [InlineData("", "2", "1987", "Date of birth must include a day")]
         [InlineData("", "", "1987", "Date of birth must include a day and month")]
@@ -81,7 +82,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             RuleFor(m => m.DateOfBirth)
                 .Date(
                     displayName: "Date of birth",
-                    missingErrorMessage: "Enter your date of birth");
+                    missingErrorMessage: "Enter your date of birth",
+                    isRequired: true);
         }
     }
 }
