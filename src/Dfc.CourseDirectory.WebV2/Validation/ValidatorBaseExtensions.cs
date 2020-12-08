@@ -28,7 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Validation
         public static IRuleBuilderInitial<T, Date?> Date<T>(
             this IRuleBuilderInitial<T, Date?> ruleBuilder,
             string displayName,
-            string missingErrorMessage)
+            string missingErrorMessage,
+            bool isRequired = false)
         {
             if (!(ruleBuilder is FluentValidation.Internal.RuleBuilder<T, Date?> b) ||
                 !(b.ParentValidator is ValidatorBase<T> validatorBase))
@@ -76,6 +77,10 @@ namespace Dfc.CourseDirectory.WebV2.Validation
 
                         context.AddFailure($"{displayName} must be a real date");
                     }
+                }
+                else if (!property.HasValue && isRequired)
+                {
+                    context.AddFailure(missingErrorMessage);
                 }
             });
         }
