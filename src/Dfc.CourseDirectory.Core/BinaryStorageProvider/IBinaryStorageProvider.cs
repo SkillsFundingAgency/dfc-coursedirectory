@@ -8,6 +8,6 @@ namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
     {
         Task<bool> TryDownloadFile(string path, Stream destination);
         Task UploadFile(string path, Stream source);
-        Task<IEnumerable<BlobFileInfo>> ListFiles(string path);
+        Task<IReadOnlyCollection<BlobFileInfo>> ListFiles(string path);
     }
 }

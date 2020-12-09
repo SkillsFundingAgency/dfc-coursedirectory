@@ -34,8 +34,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int BulkUploadCourseRunsErrorCount { get; set; }
         public int LarslessCourseCount { get; set; }
         public int ApprenticeshipCount { get; set; }
-        public int ApprenticeshipsBulkUploadPendingCount { get; set; }
-        public int ApprenticeshipsBulkUploadReadyToGoLiveCount { get; set; }
+        public int BulkUploadPendingApprenticeshipsCount { get; set; }
+        public int BulkUploadReadyToGoLiveApprenticeshipsCount { get; set; }
         public int ApprenticeshipsBulkUploadErrorCount { get; set; }
         public int VenueCount { get; set; }
         public int BulkUploadFileCount { get; set; }
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 throw new ResourceDoesNotExistException(ResourceType.Provider, request.ProviderId);
             }
 
-            var (courseRunCounts, apprenticeshipCounts, venueCount, pastStartDateCourseRunCount, bulkUploadCoursesErrorCount, bulkUploadCourseRunsErrorCount, apprenticeshipsBulkUploadErrorCount) = await _sqlQueryDispatcher.ExecuteQuery(
+            var dashboardCounts = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderDashboardCounts
                 {
                     ProviderId = request.ProviderId,
@@ -84,19 +84,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 Ukprn = provider.Ukprn,
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
                 ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) && provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
-                LiveCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.Live),
-                PastStartDateCourseRunCount = pastStartDateCourseRunCount,
-                MigrationPendingCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.MigrationPending) + courseRunCounts.GetValueOrDefault(CourseStatus.MigrationReadyToGoLive),
-                BulkUploadPendingCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadPending),
-                BulkUploadReadyToGoLiveCourseRunCount = courseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadReadyToGoLive),
-                BulkUploadCoursesErrorCount = bulkUploadCoursesErrorCount,
-                BulkUploadCourseRunsErrorCount = bulkUploadCourseRunsErrorCount,
+                LiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live),
+                PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
+                MigrationPendingCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.MigrationPending) + dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.MigrationReadyToGoLive),
+                BulkUploadPendingCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadPending),
+                BulkUploadReadyToGoLiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadReadyToGoLive),
+                BulkUploadCoursesErrorCount = dashboardCounts.BulkUploadCoursesErrorCount,
+                BulkUploadCourseRunsErrorCount = dashboardCounts.BulkUploadCourseRunsErrorCount,
                 LarslessCourseCount = courseMigrationReport?.LarslessCourses?.Count ?? 0,
-                ApprenticeshipCount = apprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
-                ApprenticeshipsBulkUploadPendingCount = apprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadPending),
-                ApprenticeshipsBulkUploadReadyToGoLiveCount = apprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadReadyToGoLive),
-                ApprenticeshipsBulkUploadErrorCount = apprenticeshipsBulkUploadErrorCount,
-                VenueCount = venueCount,
+                ApprenticeshipCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
+                BulkUploadPendingApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadPending),
+                BulkUploadReadyToGoLiveApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadReadyToGoLive),
+                ApprenticeshipsBulkUploadErrorCount = dashboardCounts.ApprenticeshipsBulkUploadErrorCount,
+                VenueCount = dashboardCounts.VenueCount,
                 BulkUploadFileCount = bulkUploadFiles.Count(),
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false
             };

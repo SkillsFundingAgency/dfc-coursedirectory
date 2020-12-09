@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -93,6 +95,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             (Services.GetRequiredService<IUserInstanceStateStore>() as TestUserInstanceStateStore)?.Clear();
 
             Session.Clear();
+
+            BinaryStorageProvider.SetReturnsDefault(Task.FromResult<IReadOnlyCollection<BlobFileInfo>>(Array.Empty<BlobFileInfo>()));
         }
 
         public async Task OnTestStartingAsync()

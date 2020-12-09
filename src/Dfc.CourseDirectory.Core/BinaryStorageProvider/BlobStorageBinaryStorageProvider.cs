@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
             await blob.UploadAsync(source);
         }
 
-        public async Task<IEnumerable<BlobFileInfo>> ListFiles(string path)
+        public async Task<IReadOnlyCollection<BlobFileInfo>> ListFiles(string path)
         {
             if (string.IsNullOrEmpty(path))
             {

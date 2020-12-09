@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -9,9 +8,9 @@ using Dfc.CourseDirectory.Core.Models;
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class GetProviderDashboardCountsHandler :
-        ISqlQueryHandler<GetProviderDashboardCounts, (IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, IReadOnlyDictionary<ApprenticeshipStatus, int> ApprenticeshipCounts, int VenueCount, int PastStartDateCourseRunCount, int BulkUploadCoursesErrorCount, int BulkUploadCourseRunsErrorCount, int ApprenticeshipsBulkUploadErrorCount)>
+        ISqlQueryHandler<GetProviderDashboardCounts, DashboardCounts>
     {
-        public async Task<(IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, IReadOnlyDictionary<ApprenticeshipStatus, int> ApprenticeshipCounts, int VenueCount, int PastStartDateCourseRunCount, int BulkUploadCoursesErrorCount, int BulkUploadCourseRunsErrorCount, int ApprenticeshipsBulkUploadErrorCount)> Execute(
+        public async Task<DashboardCounts> Execute(
             SqlTransaction transaction,
             GetProviderDashboardCounts query)
         {
@@ -20,44 +19,44 @@ DECLARE @ProviderUkprn INT
 
 SELECT TOP 1 @ProviderUkprn = Ukprn FROM Pttcd.Providers WHERE ProviderId = @{nameof(query.ProviderId)}
 
-SELECT		cr.CourseRunStatus, COUNT(*) as Count
-FROM		Pttcd.CourseRuns cr
-INNER JOIN	Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE		c.ProviderUkprn = @ProviderUkprn
-GROUP BY	cr.CourseRunStatus
+SELECT      cr.CourseRunStatus, COUNT(*) as Count
+FROM        Pttcd.CourseRuns cr
+INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
+WHERE       c.ProviderUkprn = @ProviderUkprn
+GROUP BY    cr.CourseRunStatus
 
-SELECT		a.ApprenticeshipStatus, COUNT(*) as Count
-FROM		Pttcd.Apprenticeships a
-WHERE		a.ProviderUkprn = @ProviderUkprn
-GROUP BY	a.ApprenticeshipStatus
+SELECT      a.ApprenticeshipStatus, COUNT(*) as Count
+FROM        Pttcd.Apprenticeships a
+WHERE       a.ProviderUkprn = @ProviderUkprn
+GROUP BY    a.ApprenticeshipStatus
 
 SELECT      COUNT(*)
 FROM        Pttcd.Venues v
 WHERE       v.ProviderUkprn = @ProviderUkprn
 AND         v.VenueStatus = 1
 
-SELECT		COUNT(*)
-FROM		Pttcd.CourseRuns cr
-INNER JOIN	Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE		c.ProviderUkprn = @ProviderUkprn
-AND			c.CourseStatus = c.CourseStatus & {(int)CourseStatus.Live}
-AND			cr.StartDate < @{nameof(query.Date)}
+SELECT      COUNT(*)
+FROM        Pttcd.CourseRuns cr
+INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
+WHERE       c.ProviderUkprn = @ProviderUkprn
+AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.Live}
+AND         cr.StartDate < @{nameof(query.Date)}
 
 SELECT      ISNULL(SUM(c.BulkUploadErrorCount), 0)
-FROM		Pttcd.Courses c
-WHERE		c.ProviderUkprn = @ProviderUkprn
-AND			c.CourseStatus = c.CourseStatus & {(int)CourseStatus.BulkUploadPending}
+FROM        Pttcd.Courses c
+WHERE       c.ProviderUkprn = @ProviderUkprn
+AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.BulkUploadPending}
 
 SELECT      ISNULL(SUM(cr.BulkUploadErrorCount), 0)
-FROM		Pttcd.CourseRuns cr
-INNER JOIN	Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE		c.ProviderUkprn = @ProviderUkprn
-AND			cr.CourseRunStatus = {(int)CourseStatus.BulkUploadPending}
+FROM        Pttcd.CourseRuns cr
+INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
+WHERE       c.ProviderUkprn = @ProviderUkprn
+AND         cr.CourseRunStatus = {(int)CourseStatus.BulkUploadPending}
 
 SELECT      ISNULL(SUM(a.BulkUploadErrorCount), 0)
-FROM		Pttcd.Apprenticeships a
-WHERE		a.ProviderUkprn = @ProviderUkprn
-AND			a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPending}";
+FROM        Pttcd.Apprenticeships a
+WHERE       a.ProviderUkprn = @ProviderUkprn
+AND         a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPending}";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
             {
@@ -69,7 +68,16 @@ AND			a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPending}";
                 var bulkUploadCourseRunsErrorCount = reader.ReadSingle<int>();
                 var apprenticeshipsBulkUploadErrorCount = reader.ReadSingle<int>();
 
-                return (courseRunCounts, apprenticeshipCounts, venueCount, pastStartDateCourseRunCount, bulkUploadCoursesErrorCount, bulkUploadCourseRunsErrorCount, apprenticeshipsBulkUploadErrorCount);
+                return new DashboardCounts
+                {
+                    CourseRunCounts = courseRunCounts,
+                    ApprenticeshipCounts = apprenticeshipCounts,
+                    VenueCount = venueCount,
+                    PastStartDateCourseRunCount = pastStartDateCourseRunCount,
+                    BulkUploadCoursesErrorCount = bulkUploadCoursesErrorCount,
+                    BulkUploadCourseRunsErrorCount = bulkUploadCourseRunsErrorCount,
+                    ApprenticeshipsBulkUploadErrorCount = apprenticeshipsBulkUploadErrorCount
+                };
             }
         }
     }

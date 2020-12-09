@@ -21,13 +21,9 @@
 @if (Model.BulkUploadInProgress)
 {
     <pttcd-notification title="Processing bulk upload of courses">
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                Do not add a new course or attempt another bulk upload during this process
-            </strong>
-        </div>
+        <govuk-warning-text icon-fallback-text="Warning">
+            Do not add a new course or attempt another bulk upload during this process
+        </govuk-warning-text>
         <p class="govuk-body govuk-!-margin-bottom-0">Continue to refresh this page until you receive a notification that the bulk upload process has been completed.</p>
     </pttcd-notification>
 }
@@ -51,15 +47,15 @@ else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoL
 
 @if (Model.ApprenticeshipsBulkUploadErrorCount > 0)
 {
-<pttcd-notification title="Error on bulk upload of apprenticeships">
-    <p class="govuk-body">@(Model.ApprenticeshipsBulkUploadPendingCount + Model.ApprenticeshipsBulkUploadReadyToGoLiveCount) apprenticeships uploaded have @Model.ApprenticeshipsBulkUploadErrorCount errors.</p>
-    <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUploadApprenticeships" class="govuk-link">Fix errors to publish your apprenticeships</a></p>
-</pttcd-notification>
+    <pttcd-notification title="Error on bulk upload of apprenticeships">
+        <p class="govuk-body">@(Model.BulkUploadPendingApprenticeshipsCount + Model.BulkUploadReadyToGoLiveApprenticeshipsCount) apprenticeships uploaded have @Model.ApprenticeshipsBulkUploadErrorCount errors.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUploadApprenticeships" class="govuk-link">Fix errors to publish your apprenticeships</a></p>
+    </pttcd-notification>
 }
-else if (Model.ApprenticeshipsBulkUploadReadyToGoLiveCount > 0)
+else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
 {
     <pttcd-notification title="Successful bulk upload of apprenticeships">
-        <p class="govuk-body">@Model.ApprenticeshipsBulkUploadReadyToGoLiveCount apprenticeships have been uploaded and are ready to publish to the course directory.</p>
+        <p class="govuk-body">@Model.BulkUploadReadyToGoLiveApprenticeshipsCount apprenticeships have been uploaded and are ready to publish to the course directory.</p>
         <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishApprenticeships" class="govuk-link">Publish your apprenticeships</a></p>
     </pttcd-notification>
 }
