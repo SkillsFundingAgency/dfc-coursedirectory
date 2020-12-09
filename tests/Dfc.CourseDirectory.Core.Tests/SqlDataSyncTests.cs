@@ -356,6 +356,12 @@ namespace Dfc.CourseDirectory.Core.Tests
                 ContactTelephone = "01234 567890",
                 ContactEmail = "apprenticeship@provider.com",
                 ContactWebsite = "https://provider.com",
+                BulkUploadErrors = new List<BulkUploadError>
+                {
+                    new BulkUploadError { Error = "TestBulkUploadError1" },
+                    new BulkUploadError { Error = "TestBulkUploadError2" },
+                    new BulkUploadError { Error = "TestBulkUploadError3" }
+                },
                 ApprenticeshipLocations = new List<ApprenticeshipLocation>()
                 {
                     new ApprenticeshipLocation()
@@ -432,6 +438,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                     record.ContactTelephone == "01234 567890" &&
                     record.ContactEmail == "apprenticeship@provider.com" &&
                     record.ContactWebsite == "https://provider.com" &&
+                    record.BulkUploadErrorCount == 3 &&
                     recordLocation.ApprenticeshipLocationId == apprenticeship.ApprenticeshipLocations.Single().Id &&
                     recordLocation.VenueId == apprenticeship.ApprenticeshipLocations.Single().VenueId &&
                     recordLocation.National == false &&

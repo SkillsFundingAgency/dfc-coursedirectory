@@ -21,5 +21,6 @@
 	[ApprenticeshipWebsite] NVARCHAR(MAX),
 	[ContactTelephone] NVARCHAR(MAX),
 	[ContactEmail] NVARCHAR(MAX),
-	[ContactWebsite] NVARCHAR(MAX)
+	[ContactWebsite] NVARCHAR(MAX),
+	[BulkUploadErrorCount] INT
 )
