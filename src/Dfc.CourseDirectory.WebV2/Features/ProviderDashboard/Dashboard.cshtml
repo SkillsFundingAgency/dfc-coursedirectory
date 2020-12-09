@@ -37,9 +37,7 @@ else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoL
     {
         <pttcd-notification title="Error on bulk upload of courses">
             <p class="govuk-body">@(Model.BulkUploadPendingCourseRunCount + Model.BulkUploadReadyToGoLiveCourseRunCount) courses uploaded have @Model.BulkUploadCourseRunsErrorCount errors.</p>
-            <div class="govuk-body govuk-!-margin-bottom-0">
-                <a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUpload" class="govuk-link">Fix errors to publish your courses</a>
-            </div>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUpload" class="govuk-link">Fix errors to publish your courses</a></p>
         </pttcd-notification>
     }
     else
@@ -49,6 +47,21 @@ else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoL
             <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishCourses" class="govuk-link">Publish your courses</a></p>
         </pttcd-notification>
     }
+}
+
+@if (Model.ApprenticeshipsBulkUploadErrorCount > 0)
+{
+<pttcd-notification title="Error on bulk upload of apprenticeships">
+    <p class="govuk-body">@(Model.ApprenticeshipsBulkUploadPendingCount + Model.ApprenticeshipsBulkUploadReadyToGoLiveCount) apprenticeships uploaded have @Model.ApprenticeshipsBulkUploadErrorCount errors.</p>
+    <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUploadApprenticeships" class="govuk-link">Fix errors to publish your apprenticeships</a></p>
+</pttcd-notification>
+}
+else if (Model.ApprenticeshipsBulkUploadReadyToGoLiveCount > 0)
+{
+    <pttcd-notification title="Successful bulk upload of apprenticeships">
+        <p class="govuk-body">@Model.ApprenticeshipsBulkUploadReadyToGoLiveCount apprenticeships have been uploaded and are ready to publish to the course directory.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishApprenticeships" class="govuk-link">Publish your apprenticeships</a></p>
+    </pttcd-notification>
 }
 
 <div class="govuk-grid-row govuk-!-margin-bottom-5">

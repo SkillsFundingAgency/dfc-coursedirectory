@@ -9,9 +9,9 @@ using Dfc.CourseDirectory.Core.Models;
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class GetProviderDashboardCountsHandler :
-        ISqlQueryHandler<GetProviderDashboardCounts, (IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, int ApprenticeshipCount, int VenueCount, int pastStartDateCourseRunCount, int bulkUploadCoursesErrorCount, int bulkUploadCourseRunsErrorCount)>
+        ISqlQueryHandler<GetProviderDashboardCounts, (IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, IReadOnlyDictionary<ApprenticeshipStatus, int> ApprenticeshipCounts, int VenueCount, int PastStartDateCourseRunCount, int BulkUploadCoursesErrorCount, int BulkUploadCourseRunsErrorCount, int ApprenticeshipsBulkUploadErrorCount)>
     {
-        public async Task<(IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, int ApprenticeshipCount, int VenueCount, int pastStartDateCourseRunCount, int bulkUploadCoursesErrorCount, int bulkUploadCourseRunsErrorCount)> Execute(
+        public async Task<(IReadOnlyDictionary<CourseStatus, int> CourseRunCounts, IReadOnlyDictionary<ApprenticeshipStatus, int> ApprenticeshipCounts, int VenueCount, int PastStartDateCourseRunCount, int BulkUploadCoursesErrorCount, int BulkUploadCourseRunsErrorCount, int ApprenticeshipsBulkUploadErrorCount)> Execute(
             SqlTransaction transaction,
             GetProviderDashboardCounts query)
         {
@@ -26,10 +26,10 @@ INNER JOIN	Pttcd.Courses c ON c.CourseId = cr.CourseId
 WHERE		c.ProviderUkprn = @ProviderUkprn
 GROUP BY	cr.CourseRunStatus
 
-SELECT      COUNT(*)
-FROM        Pttcd.Apprenticeships a
-WHERE       a.ProviderUkprn = @ProviderUkprn
-AND         a.ApprenticeshipStatus & 1 <> 0
+SELECT		a.ApprenticeshipStatus, COUNT(*) as Count
+FROM		Pttcd.Apprenticeships a
+WHERE		a.ProviderUkprn = @ProviderUkprn
+GROUP BY	a.ApprenticeshipStatus
 
 SELECT      COUNT(*)
 FROM        Pttcd.Venues v
@@ -52,18 +52,24 @@ SELECT      ISNULL(SUM(cr.BulkUploadErrorCount), 0)
 FROM		Pttcd.CourseRuns cr
 INNER JOIN	Pttcd.Courses c ON c.CourseId = cr.CourseId
 WHERE		c.ProviderUkprn = @ProviderUkprn
-AND			cr.CourseRunStatus = {(int)CourseStatus.BulkUploadPending}";
+AND			cr.CourseRunStatus = {(int)CourseStatus.BulkUploadPending}
+
+SELECT      ISNULL(SUM(a.BulkUploadErrorCount), 0)
+FROM		Pttcd.Apprenticeships a
+WHERE		a.ProviderUkprn = @ProviderUkprn
+AND			a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPending}";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
             {
                 var courseRunCounts = reader.Read().ToDictionary(r => (CourseStatus)r.CourseRunStatus, r => (int)r.Count);
-                var apprenticeshipCount = reader.ReadSingle<int>();
+                var apprenticeshipCounts = reader.Read().ToDictionary(r => (ApprenticeshipStatus)r.ApprenticeshipStatus, r => (int)r.Count);
                 var venueCount = reader.ReadSingle<int>();
                 var pastStartDateCourseRunCount = reader.ReadSingle<int>();
                 var bulkUploadCoursesErrorCount = reader.ReadSingle<int>();
                 var bulkUploadCourseRunsErrorCount = reader.ReadSingle<int>();
+                var apprenticeshipsBulkUploadErrorCount = reader.ReadSingle<int>();
 
-                return (courseRunCounts, apprenticeshipCount, venueCount, pastStartDateCourseRunCount, bulkUploadCoursesErrorCount, bulkUploadCourseRunsErrorCount);
+                return (courseRunCounts, apprenticeshipCounts, venueCount, pastStartDateCourseRunCount, bulkUploadCoursesErrorCount, bulkUploadCourseRunsErrorCount, apprenticeshipsBulkUploadErrorCount);
             }
         }
     }
