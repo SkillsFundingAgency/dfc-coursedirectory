@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             {
                 // TODO Validate AttendancePatterns? Consider using enum instead of int
 
-                filters.Add($"search.in({nameof(FindACourseOffering.AttendancePattern)}, '{string.Join("|", request.AttendancePatterns)}', '|')");
+                filters.Add($"({string.Join(" or ", request.AttendancePatterns.Select(ap => $"{nameof(FindACourseOffering.AttendancePattern)} eq {ap}"))})");
             }
 
             if (request.QualificationLevels?.Any() ?? false)
@@ -154,12 +154,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (request.StudyModes?.Any() ?? false)
             {
-                filters.Add($"search.in({nameof(FindACourseOffering.StudyMode)}, '{string.Join("|", request.StudyModes)}', '|')");
+                filters.Add($"({string.Join(" or ", request.StudyModes.Select(sm => $"{nameof(FindACourseOffering.StudyMode)} eq {sm}"))})");
             }
 
             if (request.DeliveryModes?.Any() ?? false)
             {
-                filters.Add($"search.in({nameof(FindACourseOffering.DeliveryMode)}, '{string.Join("|", request.DeliveryModes)}', '|')");
+                filters.Add($"({string.Join(" or ", request.DeliveryModes.Select(dm => $"{nameof(FindACourseOffering.DeliveryMode)} eq {dm}"))})");
             }
 
             if (!string.IsNullOrWhiteSpace(request.ProviderName))

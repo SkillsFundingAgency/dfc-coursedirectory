@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.in(AttendancePattern, '2|3', '|') and Live eq true");
+                "(AttendancePattern eq 2 or AttendancePattern eq 3) and Live eq true");
         }
 
         [Fact]
@@ -288,7 +288,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.in(StudyMode, '1|3', '|')");
+                "(StudyMode eq 1 or StudyMode eq 3)");
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.in(DeliveryMode, '1|3', '|')");
+                "(DeliveryMode eq 1 or DeliveryMode eq 3)");
         }
 
         [Fact]
