@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
         public InMemoryDocumentCollection<Standard> Standards { get; } = new InMemoryDocumentCollection<Standard>();
         public InMemoryDocumentCollection<StandardSectorCode> StandardSectorCodes { get; } = new InMemoryDocumentCollection<StandardSectorCode>();
         public InMemoryDocumentCollection<Venue> Venues { get; } = new InMemoryDocumentCollection<Venue>();
+        public InMemoryDocumentCollection<CourseMigrationReport> CourseMigrationReports { get; } = new InMemoryDocumentCollection<CourseMigrationReport>();
 
         public void Clear()
         {
@@ -31,6 +32,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
             Standards.Clear();
             StandardSectorCodes.Clear();
             Venues.Clear();
+            CourseMigrationReports.Clear();
         }
     }
 

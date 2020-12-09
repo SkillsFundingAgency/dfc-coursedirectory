@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -47,6 +48,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected MptxManager MptxManager => Factory.MptxManager;
 
         protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
+
+        protected Mock<IBinaryStorageProvider> BinaryStorageProvider => Factory.BinaryStorageProvider;
 
         protected SingletonSession Session => Factory.Session;
 

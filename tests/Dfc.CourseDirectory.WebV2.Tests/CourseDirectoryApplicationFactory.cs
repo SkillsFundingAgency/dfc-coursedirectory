@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
@@ -52,6 +53,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
         public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
+
+        public Mock<IBinaryStorageProvider> BinaryStorageProvider { get; } = new Mock<IBinaryStorageProvider>();
 
         public SingletonSession Session => ((SingletonSessionStore)Services.GetRequiredService<ISessionStore>()).Instance;
 
@@ -116,11 +119,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 ConfigureServices(services);
 
                 services.AddSingleton<ISearchClient<Onspd>>(OnspdSearchClient.Object);
+                services.AddSingleton(BinaryStorageProvider.Object);
             });
 
         private void ResetMocks()
         {
             OnspdSearchClient.Reset();
+            BinaryStorageProvider.Reset();
         }
     }
 }
