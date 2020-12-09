@@ -44,7 +44,8 @@ CREATE TABLE #Apprenticeships (
     ApprenticeshipWebsite NVARCHAR(MAX),
     ContactTelephone NVARCHAR(MAX),
     ContactEmail NVARCHAR(MAX),
-    ContactWebsite NVARCHAR(MAX)
+    ContactWebsite NVARCHAR(MAX),
+    BulkUploadErrorCount INT
 )";
                 await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
 
@@ -71,7 +72,8 @@ CREATE TABLE #Apprenticeships (
                         a.ApprenticeshipWebsite,
                         a.ContactTelephone,
                         a.ContactEmail,
-                        a.ContactWebsite
+                        a.ContactWebsite,
+                        a.BulkUploadErrorCount
                     }),
                     tableName: "#Apprenticeships",
                     transaction: transaction);
@@ -103,7 +105,8 @@ WHEN NOT MATCHED THEN
         ApprenticeshipWebsite,
         ContactTelephone,
         ContactEmail,
-        ContactWebsite
+        ContactWebsite,
+        BulkUploadErrorCount
     ) VALUES (
         source.ApprenticeshipId,
         @LastSyncedFromCosmos,
@@ -126,7 +129,8 @@ WHEN NOT MATCHED THEN
         source.ApprenticeshipWebsite,
         source.ContactTelephone,
         source.ContactEmail,
-        source.ContactWebsite
+        source.ContactWebsite,
+        source.BulkUploadErrorCount
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -151,7 +155,8 @@ WHEN MATCHED THEN
         ApprenticeshipWebsite = source.ApprenticeshipWebsite,
         ContactTelephone = source.ContactTelephone,
         ContactEmail = source.ContactEmail,
-        ContactWebsite = source.ContactWebsite;";
+        ContactWebsite = source.ContactWebsite,
+        BulkUploadErrorCount = source.BulkUploadErrorCount;";
 
                 await transaction.Connection.ExecuteAsync(
                     mergeSql,

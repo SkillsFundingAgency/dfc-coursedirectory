@@ -104,6 +104,7 @@ namespace Dfc.CourseDirectory.Core
                     ContactTelephone = apprenticeship.ContactTelephone,
                     ContactEmail = apprenticeship.ContactEmail,
                     ContactWebsite = apprenticeship.ContactWebsite,
+                    BulkUploadErrorCount = apprenticeship.BulkUploadErrors?.Count ?? 0,
                     Locations = apprenticeship.ApprenticeshipLocations.Select(location => new UpsertApprenticeshipRecordLocation()
                     {
                         ApprenticeshipLocationId = location.Id,

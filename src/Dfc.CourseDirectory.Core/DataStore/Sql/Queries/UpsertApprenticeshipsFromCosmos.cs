@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string ContactTelephone { get; set; }
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
+        public int BulkUploadErrorCount { get; set; }
         public IEnumerable<UpsertApprenticeshipRecordLocation> Locations { get; set; }
     }
 
