@@ -3,7 +3,12 @@
     public enum VenueStatus
     {
         Live = 1,
-        Pending = 2,  // App doesn't support Pending venues but we have some data with this status
+
+        /// <summary>
+        /// App doesn't support Pending venues but we have some data with this status
+        /// </summary>
+        Pending = 2,
+
         Archived = 4
     }
 }
