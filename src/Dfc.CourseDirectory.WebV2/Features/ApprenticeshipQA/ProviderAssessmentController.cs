@@ -11,46 +11,56 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
     [Route("apprenticeship-qa/provider-assessment/{providerId}")]
     [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
-    [FormFlowAction(key: "apprenticeship-qa/provider-assessment", stateType: typeof(FlowModel), idRouteParameterNames: "providerId")]
+    [JourneyMetadata(
+        journeyName: "apprenticeship-qa/provider-assessment",
+        stateType: typeof(JourneyModel),
+        appendUniqueKey: false,
+        requestDataKeys: "providerId")]
     public class ProviderAssessmentController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private JourneyInstance<JourneyModel> _journeyInstance;
 
-        public ProviderAssessmentController(IMediator mediator)
+        public ProviderAssessmentController(
+            IMediator mediator,
+            JourneyInstanceProvider journeyInstanceProvider)
         {
             _mediator = mediator;
+            _journeyInstanceProvider = journeyInstanceProvider;
+            _journeyInstance = _journeyInstanceProvider.GetInstance<JourneyModel>();
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Get(
             Guid providerId,
             Query query,
-            FormFlowInstanceFactory formFlowInstanceFactory,
-            [FromServices] FlowModelInitializer flowModelInitializer)
+            [FromServices] JourneyModelInitializer journeyModelInitializer)
         {
-            await formFlowInstanceFactory.GetOrCreateInstanceAsync(
-                () => flowModelInitializer.Initialize(providerId));
+            _journeyInstance = await _journeyInstanceProvider.GetOrCreateInstanceAsync(
+                () => journeyModelInitializer.Initialize(providerId));
 
             return await _mediator.SendAndMapResponse(query, vm => View("ProviderAssessment", vm));
         }
 
         [HttpPost("")]
-        [RequiresFormFlowInstance]
-        public async Task<IActionResult> Post(Command command, FormFlowInstance formFlowInstance) =>
+        [RequireJourneyInstance]
+        public async Task<IActionResult> Post(Guid providerId, Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors("ProviderAssessment", errors),
-                    vm => RedirectToAction(nameof(GetConfirmation))
-                        .WithFormFlowInstanceId(formFlowInstance)));
+                    vm => RedirectToAction(
+                        nameof(GetConfirmation),
+                        new { providerId })));
 
         [HttpGet("confirmation")]
-        [RequiresFormFlowInstance]
+        [RequireJourneyInstance]
         public async Task<IActionResult> GetConfirmation(ConfirmationQuery query) =>
             await _mediator.SendAndMapResponse(query, vm => View("ProviderAssessmentConfirmation", vm));
 
         [HttpPost("confirmation")]
-        [RequiresFormFlowInstance]
+        [RequireJourneyInstance]
         public async Task<IActionResult> PostConfirmation(ConfirmationCommand command, Guid providerId) =>
             await _mediator.SendAndMapResponse(
                 command,

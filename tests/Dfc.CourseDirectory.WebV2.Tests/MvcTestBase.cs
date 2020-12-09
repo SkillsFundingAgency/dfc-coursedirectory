@@ -60,18 +60,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task InitializeAsync() => Factory.OnTestStartingAsync();
 
-        protected FormFlowInstance<TState> CreateFormFlowInstanceForRouteParameters<TState>(
-            string key,
-            IReadOnlyDictionary<string, object> routeParameters,
+        protected JourneyInstance<TState> CreateJourneyInstance<TState>(
+            string journeyName,
+            Action<KeysBuilder> configureKeys,
             TState state,
-            IReadOnlyDictionary<object, object> properties = null)
+            IReadOnlyDictionary<object, object> properties = null,
+            string uniqueKey = null)
         {
-            var instanceId = FormFlowInstanceId.GenerateForRouteValues(key, routeParameters);
+            var keysBuilder = new KeysBuilder();
+            configureKeys(keysBuilder);
+
+            if (uniqueKey != null)
+            {
+                keysBuilder.With("ffiid", uniqueKey);
+            }
+
+            var keys = keysBuilder.Build();
+
+            var instanceId = new JourneyInstanceId(journeyName, keys);
 
             var instanceStateProvider = Factory.Services.GetRequiredService<IUserInstanceStateProvider>();
 
-            return (FormFlowInstance<TState>)instanceStateProvider.CreateInstance(
-                key,
+            return (JourneyInstance<TState>)instanceStateProvider.CreateInstance(
+                journeyName,
                 instanceId,
                 typeof(TState),
                 state,
@@ -82,15 +93,33 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             where TState : IMptxState =>
             MptxManager.CreateInstance(state);
 
-        protected FormFlowInstance<TState> GetFormFlowInstanceForRouteParameters<TState>(
-            string key,
-            IReadOnlyDictionary<string, object> routeParameters)
+        protected JourneyInstance<TState> GetJourneyInstance<TState>(
+            string journeyName,
+            Action<KeysBuilder> configureKeys,
+            string uniqueKey = null)
         {
-            var instanceId = FormFlowInstanceId.GenerateForRouteValues(key, routeParameters);
+            var keysBuilder = new KeysBuilder();
+            configureKeys(keysBuilder);
+
+            if (uniqueKey != null)
+            {
+                keysBuilder.With("ffiid", uniqueKey);
+            }
+
+            var keys = keysBuilder.Build();
+
+            var instanceId = new JourneyInstanceId(journeyName, keys);
 
             var instanceStateProvider = Factory.Services.GetRequiredService<IUserInstanceStateProvider>();
 
-            return (FormFlowInstance<TState>)instanceStateProvider.GetInstance(instanceId);
+            return (JourneyInstance<TState>)instanceStateProvider.GetInstance(instanceId);
+        }
+
+        protected JourneyInstance<TState> GetJourneyInstance<TState>(JourneyInstanceId instanceId)
+        {
+            var instanceStateProvider = Factory.Services.GetRequiredService<IUserInstanceStateProvider>();
+
+            return (JourneyInstance<TState>)instanceStateProvider.GetInstance(instanceId);
         }
 
         protected MptxInstanceContext<TState> GetMptxInstance<TState>(string instanceId)

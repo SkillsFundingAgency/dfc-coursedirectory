@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Encodings.Web;
@@ -387,7 +386,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(courseId, courseRunId);
+            CreateJourneyInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -417,7 +416,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(courseId, courseRunId);
+            CreateJourneyInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -451,7 +450,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsTestUser(userType, anotherProviderId);
 
-            CreateFormFlowInstance(courseId, courseRunId);
+            CreateJourneyInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -480,7 +479,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(courseId, courseRunId);
+            CreateJourneyInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -516,7 +515,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(courseId, courseRunId);
+            CreateJourneyInstance(courseId, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -559,10 +558,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(
+            CreateJourneyInstance(
                 courseId,
                 courseRunId,
-                new FlowModel()
+                new JourneyModel()
                 {
                     CourseName = "Maths",
                     ProviderId = providerId,
@@ -606,10 +605,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(
+            CreateJourneyInstance(
                 courseId,
                 courseRunId,
-                new FlowModel()
+                new JourneyModel()
                 {
                     CourseName = "Maths",
                     ProviderId = providerId,
@@ -656,10 +655,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            CreateFormFlowInstance(
+            CreateJourneyInstance(
                 courseId,
                 courseRunId,
-                new FlowModel()
+                new JourneyModel()
                 {
                     CourseName = "Maths",
                     ProviderId = providerId,
@@ -676,21 +675,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.NotNull(doc.GetElementByTestId("ViewEditCopyDeleteLink"));
         }
 
-        private FormFlowInstance<FlowModel> CreateFormFlowInstance(
+        private JourneyInstance<JourneyModel> CreateJourneyInstance(
             Guid courseId,
             Guid courseRunId,
-            FlowModel flowModel = null)
+            JourneyModel flowModel = null)
         {
-            var routeParameters = new Dictionary<string, object>()
-            {
-                { "courseId", courseId },
-                { "courseRunId", courseRunId },
-            };
-
-            return CreateFormFlowInstanceForRouteParameters(
+            return CreateJourneyInstance(
                 "DeleteCourseRun",
-                routeParameters,
-                flowModel ?? new FlowModel());
+                configureKeys: keysBuilder => keysBuilder
+                    .With("courseId", courseId)
+                    .With("courseRunId", courseRunId),
+                flowModel ?? new JourneyModel());
         }
 
         private async Task<Guid> GetCourseRunIdForCourse(Guid courseId)

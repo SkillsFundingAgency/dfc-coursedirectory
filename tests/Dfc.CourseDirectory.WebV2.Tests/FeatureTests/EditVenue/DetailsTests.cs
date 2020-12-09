@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         }
 
         [Fact]
-        public async Task Get_ValidRequestNoExistingFormFlowInstance_RendersExpectedOutputFromDatabase()
+        public async Task Get_ValidRequestNoExistingJourneyInstance_RendersExpectedOutputFromDatabase()
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
@@ -56,14 +56,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         }
 
         [Fact]
-        public async Task Get_ValidRequestWithExistingFormFlowInstance_RendersExpectedOutputFromState()
+        public async Task Get_ValidRequestWithExistingJourneyInstance_RendersExpectedOutputFromState()
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
             var venueId = await TestData.CreateVenue(providerId);
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state =>
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state =>
             {
                 state.Name = "Updated name";
                 state.Email = "updated@provider.com";
@@ -108,8 +108,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var providerId = await TestData.CreateProvider();
             var venueId = await TestData.CreateVenue(providerId);
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state =>
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = "82 George Square";
                 state.AddressLine2 = "";
@@ -133,17 +133,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             Assert.NotNull(doc.GetElementByTestId("outsideofengland-notification"));
         }
 
-        private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)
+        private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueFlowModelFactory>()
+            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
                 .CreateModel(venueId);
 
-            return CreateFormFlowInstanceForRouteParameters(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                },
+            return CreateJourneyInstance(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId),
                 state);
         }
     }

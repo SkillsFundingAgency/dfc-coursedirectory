@@ -34,8 +34,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
 
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state =>
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state =>
             {
                 state.Name = "Updated name";
                 state.Email = "updated@provider.com";
@@ -95,8 +95,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var providerId = await TestData.CreateProvider();
             var venueId = await TestData.CreateVenue(providerId);
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state =>
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state =>
             {
                 state.Name = "Updated name";
                 state.Email = "updated@provider.com";
@@ -143,17 +143,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
                 q.UpdatedDate == Clock.UtcNow);
         }
 
-        private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)
+        private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueFlowModelFactory>()
+            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
                 .CreateModel(venueId);
 
-            return CreateFormFlowInstanceForRouteParameters(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                },
+            return CreateJourneyInstance(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId),
                 state);
         }
     }

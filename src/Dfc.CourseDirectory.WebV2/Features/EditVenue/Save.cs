@@ -19,20 +19,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
 
     public class Handler : IRequestHandler<Command, Success>
     {
-        private readonly FormFlowInstance<EditVenueFlowModel> _formFlowInstance;
+        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly SqlDataSync _sqlDataSync;
 
         public Handler(
-            FormFlowInstance<EditVenueFlowModel> formFlowInstance,
+            JourneyInstance<EditVenueJourneyModel> journeyInstance,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             SqlDataSync sqlDataSync)
         {
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
@@ -44,17 +44,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
             var result =  await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateVenue()
             {
                 VenueId = request.VenueId,
-                Name = _formFlowInstance.State.Name,
-                Email = _formFlowInstance.State.Email,
-                PhoneNumber = _formFlowInstance.State.PhoneNumber,
-                Website = _formFlowInstance.State.Website,
-                AddressLine1 = _formFlowInstance.State.AddressLine1,
-                AddressLine2 = _formFlowInstance.State.AddressLine2,
-                Town = _formFlowInstance.State.Town,
-                County = _formFlowInstance.State.County,
-                Postcode = _formFlowInstance.State.Postcode,
-                Latitude = _formFlowInstance.State.Latitude,
-                Longitude = _formFlowInstance.State.Longitude,
+                Name = _journeyInstance.State.Name,
+                Email = _journeyInstance.State.Email,
+                PhoneNumber = _journeyInstance.State.PhoneNumber,
+                Website = _journeyInstance.State.Website,
+                AddressLine1 = _journeyInstance.State.AddressLine1,
+                AddressLine2 = _journeyInstance.State.AddressLine2,
+                Town = _journeyInstance.State.Town,
+                County = _journeyInstance.State.County,
+                Postcode = _journeyInstance.State.Postcode,
+                Latitude = _journeyInstance.State.Latitude,
+                Longitude = _journeyInstance.State.Longitude,
                 UpdatedDate = _clock.UtcNow,
                 UpdatedBy = _currentUserProvider.GetCurrentUser()
             });

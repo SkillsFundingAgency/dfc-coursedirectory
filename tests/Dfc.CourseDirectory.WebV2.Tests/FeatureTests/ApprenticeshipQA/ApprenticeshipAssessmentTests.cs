@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -125,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -162,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -219,7 +218,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded | ApprenticeshipQAApprenticeshipStyleFailedReasons.TermCourseUsed,
                 styleComments: "Bad style, yo");
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -274,7 +273,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -317,7 +316,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsTestUser(userType, providerId);
 
@@ -364,7 +363,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -407,7 +406,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -452,7 +451,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -498,7 +497,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -545,7 +544,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -590,7 +589,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -636,7 +635,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -683,7 +682,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -729,7 +728,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -778,7 +777,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -827,7 +826,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateFormFlowInstance(apprenticeshipId);
+            await CreateJourneyInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -890,9 +889,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            await CreateFormFlowInstance(
+            await CreateJourneyInstance(
                 apprenticeshipId,
-                new FlowModel()
+                new JourneyModel()
                 {
                     ProviderId = providerId
                 });
@@ -938,8 +937,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            Assert.False(formFlowInstance.State.GotAssessmentOutcome);
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            Assert.False(journeyInstance.State.GotAssessmentOutcome);
 
             await User.AsHelpdesk();
 
@@ -976,8 +975,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: true,
                 complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                 complianceComments: null,
@@ -1027,8 +1026,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: true,
                 complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                 complianceComments: null,
@@ -1078,8 +1077,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: false,
                 complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim,
                 complianceComments: "Feedback",
@@ -1129,8 +1128,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: false,
                 complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim,
                 complianceComments: "Feedback",
@@ -1182,8 +1181,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: true,
                 complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                 complianceComments: null,
@@ -1233,8 +1232,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: true,
                 complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                 complianceComments: null,
@@ -1304,8 +1303,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            var formFlowInstance = await CreateFormFlowInstance(apprenticeshipId);
-            formFlowInstance.UpdateState(s => s.SetAssessmentOutcome(
+            var journeyInstance = await CreateJourneyInstance(apprenticeshipId);
+            journeyInstance.UpdateState(s => s.SetAssessmentOutcome(
                 compliancePassed: compliancePassed,
                 complianceFailedReasons: compliancePassed ?
                     ApprenticeshipQAApprenticeshipComplianceFailedReasons.None :
@@ -1361,22 +1360,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             }
         }
 
-        private async Task<FormFlowInstance<FlowModel>> CreateFormFlowInstance(
+        private async Task<JourneyInstance<JourneyModel>> CreateJourneyInstance(
             Guid apprenticeshipId,
-            FlowModel state = null)
+            JourneyModel state = null)
         {
             state ??= await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = CreateInstance<FlowModelInitializer>(dispatcher);
+                var initializer = CreateInstance<JourneyModelInitializer>(dispatcher);
                 return await initializer.Initialize(apprenticeshipId);
             });
 
-            return CreateFormFlowInstanceForRouteParameters(
-                key: "apprenticeship-qa/apprenticeship-assessment",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "apprenticeshipId", apprenticeshipId }
-                },
+            return CreateJourneyInstance(
+                journeyName: "apprenticeship-qa/apprenticeship-assessment",
+                configureKeys: keysBuilder => keysBuilder.With("apprenticeshipId", apprenticeshipId),
                 state);
         }
     }

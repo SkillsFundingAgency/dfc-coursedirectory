@@ -16,8 +16,8 @@ using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 
 namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 {
-    [FormFlowState]
-    public class FlowModel
+    [JourneyState]
+    public class JourneyModel
     {
         public string CourseName { get; set; }
         public Guid ProviderId { get; set; }
@@ -73,18 +73,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly FormFlowInstance<FlowModel> _formFlowInstance;
+        private readonly JourneyInstance<JourneyModel> _journeyInstance;
 
         public Handler(
             IProviderInfoCache providerInfoCache,
             IProviderOwnershipCache providerOwnershipCache,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            FormFlowInstance<FlowModel> formFlowInstance)
+            JourneyInstance<JourneyModel> journeyInstance)
         {
             _providerInfoCache = providerInfoCache;
             _providerOwnershipCache = providerOwnershipCache;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _formFlowInstance = formFlowInstance;
+            _journeyInstance = journeyInstance;
         }
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
@@ -116,16 +116,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
                 ProviderUkprn = ukprn
             });
 
-            // The next page needs this info - stash it in the FlowModel
+            // The next page needs this info - stash it in the JourneyModel
             // since it will no longer able to query for it.
-            _formFlowInstance.UpdateState(new FlowModel()
+            _journeyInstance.UpdateState(new JourneyModel()
             {
                 CourseName = courseRun.CourseName,
                 ProviderId = (await _providerInfoCache.GetProviderIdForUkprn(ukprn)).Value,
                 ProviderUkprn = ukprn
             });
 
-            _formFlowInstance.Complete();
+            _journeyInstance.Complete();
 
             return new SuccessViewModel()
             {
@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         public async Task<ConfirmedViewModel> Handle(ConfirmedQuery request, CancellationToken cancellationToken)
         {
-            var ukprn = _formFlowInstance.State.ProviderUkprn;
+            var ukprn = _journeyInstance.State.ProviderUkprn;
 
             var liveCourses = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllCoursesForProvider()
             {
@@ -147,8 +147,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
             return new ConfirmedViewModel()
             {
-                ProviderId = _formFlowInstance.State.ProviderId,
-                CourseName = _formFlowInstance.State.CourseName,
+                ProviderId = _journeyInstance.State.ProviderId,
+                CourseName = _journeyInstance.State.CourseName,
                 HasOtherCourseRuns = liveCourses.Any()
             };
         }

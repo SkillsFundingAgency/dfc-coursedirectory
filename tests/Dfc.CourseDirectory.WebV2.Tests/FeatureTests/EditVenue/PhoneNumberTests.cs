@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -41,14 +40,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         [Theory]
         [InlineData("05678 912345")]
         [InlineData("")]
-        public async Task Get_NewPhoneNumberAlreadySetInFormFlowInstance_RendersExpectedOutput(string existingValue)
+        public async Task Get_NewPhoneNumberAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
             var venueId = await TestData.CreateVenue(providerId, telephone: "020 7946 0000");
 
-            var formFlowInstance = await CreateFormFlowInstance(venueId);
-            formFlowInstance.UpdateState(state => state.PhoneNumber = existingValue);
+            var journeyInstance = await CreateJourneyInstance(venueId);
+            journeyInstance.UpdateState(state => state.PhoneNumber = existingValue);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
@@ -142,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         [Theory]
         [InlineData("020 7946 0000")]
         [InlineData("")]
-        public async Task Post_ValidRequest_UpdatesFormFlowInstanceAndRedirects(string phoneNumber)
+        public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(string phoneNumber)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
@@ -164,30 +163,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/venues/{venueId}");
 
-            var formFlowInstance = GetFormFlowInstance(venueId);
-            formFlowInstance.State.PhoneNumber.Should().Be(phoneNumber);
+            var journeyInstance = GetJourneyInstance(venueId);
+            journeyInstance.State.PhoneNumber.Should().Be(phoneNumber);
         }
 
-        private async Task<FormFlowInstance<EditVenueFlowModel>> CreateFormFlowInstance(Guid venueId)
+        private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueFlowModelFactory>()
+            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
                 .CreateModel(venueId);
 
-            return CreateFormFlowInstanceForRouteParameters(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                },
+            return CreateJourneyInstance(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId),
                 state);
         }
 
-        private FormFlowInstance<EditVenueFlowModel> GetFormFlowInstance(Guid venueId) =>
-            GetFormFlowInstanceForRouteParameters<EditVenueFlowModel>(
-                key: "EditVenue",
-                routeParameters: new Dictionary<string, object>()
-                {
-                    { "venueId", venueId }
-                });
+        private JourneyInstance<EditVenueJourneyModel> GetJourneyInstance(Guid venueId) =>
+            GetJourneyInstance<EditVenueJourneyModel>(
+                journeyName: "EditVenue",
+                configureKeys: keysBuilder => keysBuilder.With("venueId", venueId));
     }
 }
