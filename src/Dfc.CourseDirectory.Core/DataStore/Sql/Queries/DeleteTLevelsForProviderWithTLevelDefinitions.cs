@@ -4,10 +4,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpsertProviderTLevelDefinitions : ISqlQuery<None>
+    public class DeleteTLevelsForProviderWithTLevelDefinitions : ISqlQuery<None>
     {
         public Guid ProviderId { get; set; }
-
         public IEnumerable<Guid> TLevelDefinitionIds { get; set; }
     }
 }

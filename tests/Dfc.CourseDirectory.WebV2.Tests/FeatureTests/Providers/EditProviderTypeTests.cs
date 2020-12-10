@@ -5,10 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Moq;
 using OneOf;
 using OneOf.Types;
@@ -293,7 +295,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
                 q.ProviderId == providerId && q.ProviderType == providerType);
 
-            SqlQuerySpy.VerifyQuery<SqlQueries.UpsertProviderTLevelDefinitions, None>(query =>
+            SqlQuerySpy.VerifyQuery<SetProviderTLevelDefinitions, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
                 query.ProviderId == providerId
                 && query.TLevelDefinitionIds.SequenceEqual(tLevelDefinitionIds));
         }
@@ -408,9 +410,154 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
                 q.ProviderId == providerId && q.ProviderType == newProviderType);
 
-            SqlQuerySpy.VerifyQuery<SqlQueries.UpsertProviderTLevelDefinitions, None>(query =>
+            SqlQuerySpy.VerifyQuery<SetProviderTLevelDefinitions, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
                 query.ProviderId == providerId
                 && query.TLevelDefinitionIds.SequenceEqual(Enumerable.Empty<Guid>()));
+        }
+
+        [Theory]
+        [InlineData(ProviderType.None)]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
+        public async Task Post_TLevelAccessIsRemoved_DeletesExistingLiveTLevels(ProviderType newProviderType)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var tLevel = await TestData.CreateTLevel(
+                providerId,
+                tLevelDefinitions.First().TLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)newProviderType)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            tLevel = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel.TLevelId }));
+
+            tLevel.Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData(ProviderType.TLevels)]
+        [InlineData(ProviderType.TLevels | ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.TLevels | ProviderType.FE)]
+        [InlineData(ProviderType.TLevels | ProviderType.FE | ProviderType.Apprenticeships)]
+        public async Task Post_TLevelAccessIsMaintained_DoesNotDeleteTLevels(ProviderType newProviderType)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: providerTLevelDefinitionIds);
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var tLevel = await TestData.CreateTLevel(
+                providerId,
+                tLevelDefinitions.First().TLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)newProviderType)
+                .Add("SelectedProviderTLevelDefinitionIds", providerTLevelDefinitionIds)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            tLevel = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel.TLevelId }));
+
+            tLevel.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Post_TLevelAccessIsRemovedForSpecificTLevelDefinition_DeletesExistingLiveTLevelsForThatDefinitionOnly()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
+            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
+
+            var tLevel1 = await TestData.CreateTLevel(
+                providerId,
+                keepingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var tLevel2 = await TestData.CreateTLevel(
+                providerId,
+                removingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.TLevels)
+                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel1.TLevelId }));
+            tLevel2 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel2.TLevelId }));
+
+            using (new AssertionScope())
+            {
+                tLevel1.Should().NotBeNull();
+                tLevel2.Should().BeNull();
+            }
         }
     }
 }
