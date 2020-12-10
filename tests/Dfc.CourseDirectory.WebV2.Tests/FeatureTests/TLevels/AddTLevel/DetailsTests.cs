@@ -428,16 +428,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 await TestData.CreateTLevel(
                     providerId,
                     selectedTLevel.TLevelDefinitionId,
-                    "Who for",
-                    "Entry requirements",
-                    "What you'll learn",
-                    "How you'll learn",
-                    "How you'll be assessed",
-                    "What you can do next",
-                    "YOUR-REF",
-                    startDate.Value,
-                    new[] { venueId },
-                    "example.com/tlevel",
+                    startDate: startDate.Value,
+                    locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo());
             }
 

@@ -12,17 +12,17 @@ namespace Dfc.CourseDirectory.Testing
         public Task<TLevel> CreateTLevel(
             Guid providerId,
             Guid tLevelDefinitionId,
-            string whoFor,
-            string entryRequirements,
-            string whatYoullLearn,
-            string howYoullLearn,
-            string howYoullBeAssessed,
-            string whatYouCanDoNext,
-            string yourReference,
-            DateTime startDate,
             IReadOnlyCollection<Guid> locationVenueIds,
-            string website,
             UserInfo createdBy,
+            DateTime? startDate = null,
+            string whoFor = "Who this T Level is for",
+            string entryRequirements = null,
+            string whatYoullLearn = null,
+            string howYoullLearn = null,
+            string howYoullBeAssessed = null,
+            string whatYouCanDoNext = null,
+            string yourReference = null,
+            string website = null,
             DateTime? createdOn = null)
         {
             var tLevelId = Guid.NewGuid();
@@ -33,6 +33,8 @@ namespace Dfc.CourseDirectory.Testing
                     "At least one location venue ID must be specified.",
                     nameof(locationVenueIds));
             }
+
+            startDate ??= new DateTime(2021, 10, 1);
 
             return WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -48,7 +50,7 @@ namespace Dfc.CourseDirectory.Testing
                     HowYoullBeAssessed = howYoullBeAssessed,
                     WhatYouCanDoNext = whatYouCanDoNext,
                     YourReference = yourReference,
-                    StartDate = startDate,
+                    StartDate = startDate.Value,
                     LocationVenueIds = locationVenueIds,
                     Website = website,
                     CreatedBy = createdBy,

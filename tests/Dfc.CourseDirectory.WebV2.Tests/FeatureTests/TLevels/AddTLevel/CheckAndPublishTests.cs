@@ -337,16 +337,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             await TestData.CreateTLevel(
                 providerId,
                 selectedTLevel.TLevelDefinitionId,
-                whoFor,
-                entryRequirements,
-                whatYoullLearn,
-                howYoullLearn,
-                howYoullBeAssessed,
-                whatYouCanDoNext,
-                yourReference,
-                startDate,
-                new[] { venueId },
-                website,
+                whoFor: whoFor,
+                entryRequirements: entryRequirements,
+                whatYoullLearn: whatYoullLearn,
+                howYoullLearn: howYoullLearn,
+                howYoullBeAssessed: howYoullBeAssessed,
+                whatYouCanDoNext: whatYouCanDoNext,
+                yourReference: yourReference,
+                startDate: startDate,
+                locationVenueIds: new[] { venueId },
+                website: website,
                 createdBy: User.ToUserInfo());
 
             var journeyState = new AddTLevelJourneyModel();
