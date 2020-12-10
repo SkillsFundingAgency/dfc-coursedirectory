@@ -5,12 +5,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.AddTLevel;
+using Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.AddTLevel
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 {
     public class AddAnotherLocationTests : AddTLevelTestBase
     {

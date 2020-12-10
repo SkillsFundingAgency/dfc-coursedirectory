@@ -8,7 +8,7 @@ using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel
+namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 {
     [Route("t-levels/add")]
     [JourneyMetadata(

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FormFlow;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel.Published
+namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Published
 {
     public class Query : IRequest<ViewModel>
     {

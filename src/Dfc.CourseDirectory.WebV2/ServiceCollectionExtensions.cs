@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
             services.AddTransient<SqlDataSync>();
             services.AddScoped<RouteValuesHelper>();
-            services.AddTransient<Features.AddTLevel.Details.CommandValidator>();
+            services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
 
             if (!environment.IsTesting())
             {

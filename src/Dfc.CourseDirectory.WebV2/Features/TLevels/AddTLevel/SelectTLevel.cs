@@ -14,7 +14,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel.SelectTLevel
+namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SelectTLevel
 {
     public class Query : IRequest<ViewModel>
     {

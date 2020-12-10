@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Features.AddTLevel;
+using Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel;
 using FluentAssertions;
 using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.AddTLevel
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 {
     public abstract class AddTLevelTestBase : MvcTestBase
     {

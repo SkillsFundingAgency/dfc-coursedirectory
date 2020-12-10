@@ -7,7 +7,7 @@ using FormFlow;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel.SaveDetails
+namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SaveDetails
 {
     public class Command : IRequest
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Features.AddTLevel
+namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 {
     [JourneyState]
     public class AddTLevelJourneyModel
