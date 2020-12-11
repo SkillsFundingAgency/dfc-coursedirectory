@@ -6,6 +6,5 @@
         public string QualificationLevel { get; set; }
         public int FrameworkCode { get; set; }
         public int ProgType { get; set; }
-        public int PathwayCode { get; set; }
     }
 }

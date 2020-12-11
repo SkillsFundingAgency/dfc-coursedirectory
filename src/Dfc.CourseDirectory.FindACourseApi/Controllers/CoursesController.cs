@@ -106,7 +106,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
                 Qualification = new Features.TLevelDetail.QualificationViewModel()
                 {
                     FrameworkCode = 36,
-                    PathwayCode = 231,
                     ProgType = 31,
                 },
                 StartDate = new System.DateTime(2021, 10, 1),
