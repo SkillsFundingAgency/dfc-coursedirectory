@@ -8,7 +8,7 @@ using FastMember;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql
 {
-    internal static class BulkCopyHelper
+    public static class BulkCopyHelper
     {
         public static async Task WriteRecords<T>(IEnumerable<T> records, string tableName, SqlTransaction transaction)
         {
