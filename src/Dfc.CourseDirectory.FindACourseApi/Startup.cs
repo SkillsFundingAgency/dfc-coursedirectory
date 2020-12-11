@@ -38,6 +38,23 @@ namespace Dfc.CourseDirectory.FindACourseApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Find a Course API", Version = "v1" });
+
+                c.CustomSchemaIds(type =>
+                {
+                    // By default the type's name is used for the schemaId;
+                    // override for places where that yields collisions
+
+                    if (type == typeof(Features.TLevelDetail.QualificationViewModel))
+                    {
+                        return $"TLevel{nameof(Features.TLevelDetail.QualificationViewModel)}";
+                    }
+                    else if (type == typeof(Features.TLevelDetail.ProviderViewModel))
+                    {
+                        return $"TLevel{nameof(Features.TLevelDetail.ProviderViewModel)}";
+                    }
+
+                    return type.Name;
+                });
             });
 
             services
