@@ -328,7 +328,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.ismatchscoring('Test Provider', 'ProviderName', 'simple', 'any')");
+                "search.ismatchscoring('Test Provider', 'ProviderDisplayName', 'simple', 'any')");
         }
 
         [Fact]

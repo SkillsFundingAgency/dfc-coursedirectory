@@ -144,7 +144,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 filters.Add(
                     $"(geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
                     $" or {nameof(FindACourseOffering.National)} eq true" +
-                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq '2')");
+                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq 2)");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Town))
@@ -164,13 +164,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (!string.IsNullOrWhiteSpace(request.ProviderName))
             {
-                filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', 'ProviderName', 'simple', 'any')");
+                filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', '{nameof(FindACourseOffering.ProviderDisplayName)}', 'simple', 'any')");
             }
 
             var orderBy = request.SortBy == SearchSortBy.StartDateDescending ?
                 "StartDate desc" : request.SortBy == SearchSortBy.StartDateAscending ?
                 "StartDate asc" : request.SortBy == SearchSortBy.Distance ?
-                $"geo.distance(VenueLocation, geography'POINT({longitude.Value} {latitude.Value})')" :
+                $"geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})')" :
                 "search.score() desc";
 
             if (!TryResolvePagingParams(request.Limit, request.Start, out var size, out var skip, out var problem))
