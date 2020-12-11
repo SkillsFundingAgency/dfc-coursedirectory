@@ -40,13 +40,11 @@ namespace Dfc.CourseDirectory.Web
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        private readonly ILogger<Startup> _logger;
         private readonly IWebHostEnvironment _env;
 
-        public Startup(IWebHostEnvironment env, ILogger<Startup> logger, IConfiguration config)
+        public Startup(IWebHostEnvironment env, IConfiguration config)
         {
             _env = env;
-            _logger = logger;
             Configuration = config;
         }
 
@@ -56,7 +54,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddSingleton(Configuration);
 
-            _logger.LogCritical("Logging from ConfigureServices.");
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
