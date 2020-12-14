@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.Body.TextContent.Should().Contain("You have no T Levels.");
+            doc.Body.TextContent.Should().Contain("You have no T Levels");
         }
 
         [Fact]
@@ -74,14 +74,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: providerTLevelDefinitionIds);
 
-            var venueId1 = await TestData.CreateVenue(providerId, venueName: "TestVenue1");
-            var venueId2 = await TestData.CreateVenue(providerId, venueName: "TestVenue2");
+            var venue1 = await TestData.CreateVenue(providerId, venueName: "TestVenue1");
+            var venue2 = await TestData.CreateVenue(providerId, venueName: "TestVenue2");
 
             var user = await TestData.CreateUser();
 
-            var tLevel1 = await CreateTLevel(providerId, tLevelDefinitions.First().TLevelDefinitionId, new DateTime(2021, 09, 01), new[] { venueId1 }, user, 1);
-            var tLevel2 = await CreateTLevel(providerId, tLevelDefinitions.Skip(1).First().TLevelDefinitionId, new DateTime(2021, 03, 10), new[] { venueId1, venueId2 }, user, 2);
-            var tLevel3 = await CreateTLevel(providerId, tLevelDefinitions.First().TLevelDefinitionId, new DateTime(2022, 09, 03), new[] { venueId2 }, user, 3);
+            var tLevel1 = await CreateTLevel(providerId, tLevelDefinitions.First().TLevelDefinitionId, new[] { venue1.Id }, user, DateTime.UtcNow.AddMonths(1).Date, 1);
+            var tLevel2 = await CreateTLevel(providerId, tLevelDefinitions.Skip(1).First().TLevelDefinitionId, new[] { venue1.Id, venue2.Id }, user, DateTime.UtcNow.AddMonths(2).Date, 2);
+            var tLevel3 = await CreateTLevel(providerId, tLevelDefinitions.First().TLevelDefinitionId, new[] { venue2.Id }, user, DateTime.UtcNow.AddMonths(6).Date, 3);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -118,10 +118,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
             }
         }
 
-        private Task<TLevel> CreateTLevel(Guid providerId, Guid tLevelDefinitionId, DateTime startDate, IEnumerable<Guid> locationVenueIds, UserInfo userInfo, int seed) =>
+        private Task<TLevel> CreateTLevel(Guid providerId, Guid tLevelDefinitionId, IEnumerable<Guid> locationVenueIds, UserInfo userInfo, DateTime startDate, int seed) =>
             TestData.CreateTLevel(
                 providerId,
                 tLevelDefinitionId,
+                locationVenueIds?.ToArray(),
+                userInfo,
+                startDate,
                 $"TestWhoFor{seed}",
                 $"TestEntryRequirements{seed}",
                 $"TestWhatYoullLearn{seed}",
@@ -129,8 +132,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
                 $"TestHowYoullBeAssessed{seed}",
                 $"TestWhatYouCanDoNext{seed}",
                 $"TestYourReference{seed}",
-                startDate,
-                locationVenueIds?.ToArray(),
-                $"http://testwebsite{seed}.com",
-                userInfo);    }
+                $"http://testwebsite{seed}.com");
+    }
 }

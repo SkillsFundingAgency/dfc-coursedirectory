@@ -6,10 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels
 {
-    [RequireProviderContext]
     [RequireFeatureFlag(FeatureFlags.TLevels)]
     [RestrictProviderTypes(ProviderType.TLevels)]
-    [Route("t-levels/list")]
+    [Route("t-levels")]
     public class ViewTLevelsController : Controller
     {
         private readonly IMediator _mediator;
@@ -19,7 +18,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels
             _mediator = mediator;
         }
 
-        [HttpGet("")]
+        [RequireProviderContext]
+        [HttpGet("list")]
         public async Task<IActionResult> List(ProviderContext providerContext)
         {
             var query = new Query
