@@ -5,7 +5,6 @@ using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.ValidationTests;
 using FormFlow.State;
-using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,8 +29,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public void Configure(IApplicationBuilder app)
         {
             app.UseCommitSqlTransaction();
-
-            app.UseCourseDirectoryErrorHandling();
 
             app.UseSession();
 

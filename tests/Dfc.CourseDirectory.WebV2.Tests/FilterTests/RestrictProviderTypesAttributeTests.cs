@@ -14,7 +14,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public RestrictProviderTypesAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
-            Factory.Settings.RewriteForbiddenToNotFound = false;
         }
 
         [Fact]

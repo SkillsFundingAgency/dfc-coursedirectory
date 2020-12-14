@@ -1,18 +1,29 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 {
-    public class ErrorTests : MvcTestBase
+    public class ErrorTests : IClassFixture<ErrorTestFixture>
     {
-        public ErrorTests(CourseDirectoryApplicationFactory factory)
-            : base(factory)
+        public ErrorTests(ErrorTestFixture fixture)
         {
-            Factory.Settings.RewriteForbiddenToNotFound = true;
+            HttpClient = fixture.CreateClient(new WebApplicationFactoryClientOptions()
+            {
+                AllowAutoRedirect = false
+            });
         }
+
+        public HttpClient HttpClient { get; }
 
         [Fact]
         public async Task UnhandledException_ReturnsErrorView()
@@ -72,6 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         }
     }
 
+    [AllowAnonymous]
     public class ErrorTestController : Controller
     {
         [HttpGet("errortests")]
@@ -79,5 +91,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
         [HttpGet("errortests/forbidden")]
         public IActionResult Forbidden() => Forbid();
+    }
+
+    public class ErrorTestFixture : CourseDirectoryApplicationFactory
+    {
+        public ErrorTestFixture(IMessageSink messageSink)
+            : base(messageSink)
+        {
+        }
+
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<IStartupFilter, AddCourseDirectoryErrorHandlingFilter>();
+        }
+
+        private class AddCourseDirectoryErrorHandlingFilter : IStartupFilter
+        {
+            public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+            {
+                return app =>
+                {
+                    app.UseCourseDirectoryErrorHandling();
+
+                    next(app);
+                };
+            }
+        }
     }
 }

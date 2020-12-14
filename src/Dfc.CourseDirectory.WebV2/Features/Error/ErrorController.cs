@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
     [Route("error")]
     public class ErrorController : Controller
     {
-        public IActionResult Error(int? code, [FromServices] Settings settings)
+        public IActionResult Error(int? code)
         {
             // If there is no error, return a 404
             // (prevents browsing to this page directly)
@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
             var statusCode = code ?? 500;
 
             // Treat Forbidden as NotFound so we don't give away our internal URLs
-            if (code == 403 && settings.RewriteForbiddenToNotFound)
+            if (code == 403)
             {
                 statusCode = 404;
             }
