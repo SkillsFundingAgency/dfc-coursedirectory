@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId, email: "person@provider.com");
+            var venueId = (await TestData.CreateVenue(providerId, email: "person@provider.com")).Id;
 
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>

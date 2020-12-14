@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
-        
+
         [Fact]
         public async Task Get_NoPersistedStateRendersExpectedOutput()
         {
@@ -171,7 +171,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
-        
+
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
@@ -322,7 +322,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             if (gotClassroomLocation)
             {
-                var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
                 mptxInstance.Update(s => s.SetClassroomLocationForVenue(
                     venueId,

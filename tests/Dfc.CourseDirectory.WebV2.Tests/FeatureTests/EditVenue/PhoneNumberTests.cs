@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId, telephone: "020 7946 0000");
+            var venueId = (await TestData.CreateVenue(providerId, telephone: "020 7946 0000")).Id;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId, telephone: "020 7946 0000");
+            var venueId = (await TestData.CreateVenue(providerId, telephone: "020 7946 0000")).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state => state.PhoneNumber = existingValue);
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", "xxx")
@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", phoneNumber)

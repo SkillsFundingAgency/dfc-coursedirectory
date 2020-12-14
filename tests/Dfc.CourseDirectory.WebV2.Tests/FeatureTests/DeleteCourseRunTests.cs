@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         {
             // Arrange
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
-            
+
             var providerId = await TestData.CreateProvider(ukprn: 12345);
             var courseId = await TestData.CreateCourse(providerId, createdBy: User.ToUserInfo());
             var courseRunId = Guid.NewGuid();
@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var venueId = await TestData.CreateVenue(providerId, venueName: "Test Venue");
+            var venueId = (await TestData.CreateVenue(providerId, venueName: "Test Venue")).Id;
 
             var courseId = await TestData.CreateCourse(
                 providerId,
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var venueId = await TestData.CreateVenue(providerId, venueName: "Test Venue");
+            await TestData.CreateVenue(providerId, venueName: "Test Venue");
 
             var courseId = await TestData.CreateCourse(
                 providerId,
@@ -197,7 +197,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var venueId = await TestData.CreateVenue(providerId, venueName: "Test Venue");
+            await TestData.CreateVenue(providerId, venueName: "Test Venue");
 
             var courseId = await TestData.CreateCourse(
                 providerId,
@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var venueId = await TestData.CreateVenue(providerId, venueName: "Test Venue");
+            await TestData.CreateVenue(providerId, venueName: "Test Venue");
 
             var courseId = await TestData.CreateCourse(
                 providerId,
@@ -271,7 +271,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var venueId = await TestData.CreateVenue(providerId, venueName: "Test Venue");
+            await TestData.CreateVenue(providerId, venueName: "Test Venue");
 
             var courseId = await TestData.CreateCourse(
                 providerId,
@@ -308,7 +308,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            var venueId = await TestData.CreateVenue(providerId, venueName: "Test Venue");
+            await TestData.CreateVenue(providerId, venueName: "Test Venue");
 
             var courseId = await TestData.CreateCourse(
                 providerId,

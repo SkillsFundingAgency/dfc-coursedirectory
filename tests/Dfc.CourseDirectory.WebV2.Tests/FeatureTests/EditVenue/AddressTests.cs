@@ -29,13 +29,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(
+            var venueId = (await TestData.CreateVenue(
                 providerId,
                 addressLine1: "Test Venue line 1",
                 addressLine2: "Test Venue line 2",
                 town: "Town",
                 county: "County",
-                postcode: "AB1 2DE");
+                postcode: "AB1 2DE")).Id;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/address");
 
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>
@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 
@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             OnspdSearchClient
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
@@ -255,7 +255,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             OnspdSearchClient
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))

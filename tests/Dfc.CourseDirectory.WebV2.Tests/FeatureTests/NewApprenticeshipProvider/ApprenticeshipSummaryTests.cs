@@ -573,7 +573,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardVersion = 1;
             var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -624,7 +624,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardVersion = 1;
             var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
@@ -706,7 +706,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 {
                     CreateApprenticeshipLocation.CreateRegions(regions)
                 });
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 

@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 

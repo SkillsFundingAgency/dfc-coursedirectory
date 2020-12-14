@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 });
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
-            
+
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
@@ -289,7 +289,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var venue = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetVenueById() { VenueId = venueId });
 
@@ -308,7 +308,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                         venue,
                         radius,
                         new[] { deliveryMode })
-                }); 
+                });
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
