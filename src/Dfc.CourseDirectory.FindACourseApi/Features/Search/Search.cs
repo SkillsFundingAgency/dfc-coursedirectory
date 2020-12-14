@@ -312,7 +312,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
         private static string TranslateCourseSearchSubjectText(string subjectText)
         {
-            if (string.IsNullOrWhiteSpace(subjectText))
+            if (string.IsNullOrWhiteSpace(subjectText) || subjectText.Trim() == "*")
             {
                 return "*";
             }
@@ -342,6 +342,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             // Any remaining terms should be made prefix terms or fuzzy terms
             terms
                 .AddRange(remaining.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Where(term => !(term.Length == 1 && _luceneSyntaxEscapeChars.Contains(term[0])))
                 .Select(EscapeSearchText)
                 .SelectMany(t => new[] { $"{t}*", $"{t}~" }));
 

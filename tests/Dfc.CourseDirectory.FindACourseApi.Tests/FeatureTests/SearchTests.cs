@@ -48,11 +48,17 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             yield return new object[] { " ", "*" };
             yield return new object[] { "   ", "*" };
 
+            // Single wildcard
+            yield return new object[] { "*", "*" };
+
             // Input is trimmed
             yield return new object[] { " foo  ", "foo* || foo~" };
 
             // Add wildcard and fuzzy modifier to end of each word
             yield return new object[] { "foo bar", "foo* || foo~ || bar* || bar~" };
+
+            // Escaped characters don't get added
+            yield return new object[] { "foo *", "foo* || foo~" };
 
             // Terms in single quotes should not be prefix searches
             yield return new object[] { "'foo'", "(foo)" };
