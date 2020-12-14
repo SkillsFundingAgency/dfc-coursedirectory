@@ -69,7 +69,7 @@ WITH RecordsCte AS (
 			END AS float) AS ScoreBoost
 	FROM Pttcd.CourseRuns cr
 	INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
-	LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId
+	LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId  AND cr.[National] = 0
 	LEFT JOIN Pttcd.Regions r ON crr.RegionId = r.RegionId
 	INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 	INNER JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
