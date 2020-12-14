@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow.State;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Session;
@@ -54,8 +55,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public SingletonSession Session => ((SingletonSessionStore)Services.GetRequiredService<ISessionStore>()).Instance;
 
-        public Settings Settings => Services.GetRequiredService<Settings>();
-
         public SqlQuerySpy SqlQuerySpy => DatabaseFixture.SqlQuerySpy;
 
         public TestData TestData => DatabaseFixture.TestData;
@@ -77,9 +76,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ResetMocks();
 
             MemoryCache.Clear();
-
-            // Restore HostingOptions values to default
-            Settings.RewriteForbiddenToNotFound = false;
 
             Clock.UtcNow = MutableClock.Start;
 
@@ -104,6 +100,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.Reset();
         }
 
+        protected virtual void ConfigureServices(IServiceCollection services)
+        {
+        }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder) => builder.UseContentRoot(".");
 
         protected override IWebHostBuilder CreateWebHostBuilder() => WebHost
@@ -113,6 +113,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             .UseStartup<Startup>()
             .ConfigureServices(services =>
             {
+                ConfigureServices(services);
+
                 services.AddSingleton<ISearchClient<Onspd>>(OnspdSearchClient.Object);
             });
 

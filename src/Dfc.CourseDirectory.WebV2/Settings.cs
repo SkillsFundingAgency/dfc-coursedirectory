@@ -3,6 +3,5 @@
     public class Settings
     {
         public string ManageUsersUrl { get; set; }
-        public bool RewriteForbiddenToNotFound { get; set; } = true;
     }
 }
