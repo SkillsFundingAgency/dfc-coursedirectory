@@ -82,6 +82,12 @@ namespace Dfc.CourseDirectory.Services.Models
         AdvancedLearnerLoan = 2
     }
 
+
+    /// <summary>
+    /// Obsolete,
+    /// use <see cref="Dfc.CourseDirectory.Core.Models.ApprenticeshipStatus"/>
+    /// or <see cref="Dfc.CourseDirectory.Core.Models.CourseStatus"/> instead.
+    /// </summary>
     public enum RecordStatus
     {
         [Description("Undefined")]

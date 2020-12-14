@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
@@ -12,7 +13,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
         public IDictionary<Guid, Apprenticeship> Execute(InMemoryDocumentStore inMemoryDocumentStore, GetApprenticeshipsByIds request) =>
             inMemoryDocumentStore.Apprenticeships.All
                 .Where(p => request.ApprenticeshipIds.Contains(p.Id))
-                .Where(p => p.RecordStatus != 4 && p.RecordStatus != 8)
+                .Where(p => p.RecordStatus != (int)ApprenticeshipStatus.Archived && p.RecordStatus != (int)ApprenticeshipStatus.Deleted)
                 .ToDictionary(p => p.Id, p => p);
     }
 }
