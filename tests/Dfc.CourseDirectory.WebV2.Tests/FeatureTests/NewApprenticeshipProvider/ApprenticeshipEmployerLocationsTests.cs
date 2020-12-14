@@ -256,7 +256,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             if (gotClassroomLocation)
             {
-                var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
                 mptxInstance.Update(s => s.SetClassroomLocationForVenue(
                     venueId,

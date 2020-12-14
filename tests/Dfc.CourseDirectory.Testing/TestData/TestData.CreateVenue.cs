@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 
@@ -7,7 +8,7 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<Guid> CreateVenue(
+        public async Task<Venue> CreateVenue(
             Guid providerId,
             string venueName = "Test Venue",
             string addressLine1 = "Venue address line 1",
@@ -53,7 +54,7 @@ namespace Dfc.CourseDirectory.Testing
             var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = venueId });
             await _sqlDataSync.SyncVenue(venue);
 
-            return venueId;
+            return venue;
         }
     }
 }

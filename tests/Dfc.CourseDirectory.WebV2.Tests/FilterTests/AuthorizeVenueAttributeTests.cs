@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
