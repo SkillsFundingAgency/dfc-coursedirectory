@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
 {
+    [DebuggerDisplay("{" + nameof(DebuggerDisplay) + "}")]
     public class Venue
     {
         [JsonProperty("id")]
@@ -69,5 +71,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
 
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
+
+        private string DebuggerDisplay => $"Venue: '{VenueName}' Status: {Status} Id: {Id}";
     }
 }
