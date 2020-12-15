@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     f => _courseSearchFacetMapping.GetValueOrDefault(f.Key, f.Key),
                     f => f.Value.Select(v => new FacetCountResultViewModel()
                     {
-                        Value = v.Key,
+                        Value = v.Key.ToString(),
                         Count = v.Value.Value
                     })),
                 Results = result.Items.Select(i => new SearchResultViewModel()
