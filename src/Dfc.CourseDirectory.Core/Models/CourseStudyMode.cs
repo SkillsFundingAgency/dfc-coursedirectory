@@ -14,8 +14,8 @@ namespace Dfc.CourseDirectory.Core.Models
         public static string ToDescription(this CourseStudyMode studyMode) => studyMode switch
         {
             0 => "Undefined",
-            CourseStudyMode.FullTime => "Full time",
-            CourseStudyMode.PartTime => "Part time",
+            CourseStudyMode.FullTime => "Full-time",
+            CourseStudyMode.PartTime => "Part-time",
             CourseStudyMode.Flexible => "Flexible",
             _ => throw new NotSupportedException($"Unknown study mode: '{studyMode}'.")
         };
