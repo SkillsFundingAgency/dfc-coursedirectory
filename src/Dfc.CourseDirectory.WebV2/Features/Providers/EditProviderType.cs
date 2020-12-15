@@ -83,13 +83,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 ProviderType = request.ProviderType
             });
 
-            await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.UpsertProviderTLevelDefinitions
+            var (_, RemovedTLevelDefinitionIds) = await _sqlQueryDispatcher.ExecuteQuery(
+                new SqlQueries.SetProviderTLevelDefinitions
+                {
+                    ProviderId = request.ProviderId,
+                    TLevelDefinitionIds = request.ProviderType.HasFlag(ProviderType.TLevels)
+                        ? request.SelectedProviderTLevelDefinitionIds ?? Enumerable.Empty<Guid>()
+                        : Enumerable.Empty<Guid>()
+                });
+
+            if (RemovedTLevelDefinitionIds.Count != 0)
             {
-                ProviderId = request.ProviderId,
-                TLevelDefinitionIds = request.ProviderType.HasFlag(ProviderType.TLevels)
-                    ? request.SelectedProviderTLevelDefinitionIds ?? Enumerable.Empty<Guid>()
-                    : Enumerable.Empty<Guid>()
-            });
+                await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.DeleteTLevelsForProviderWithTLevelDefinitions()
+                {
+                    ProviderId = request.ProviderId,
+                    TLevelDefinitionIds = RemovedTLevelDefinitionIds
+                });
+            }
 
             // Remove this provider from the cache - subsequent requests will re-fetch updated record
             await _providerInfoCache.Remove(request.ProviderId);

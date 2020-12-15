@@ -22,6 +22,22 @@ namespace Dfc.CourseDirectory.Testing
             return this;
         }
 
+        public FormUrlEncodedContentBuilder Add(string key, string value) =>
+            Add(key, (object)value);
+
+        public FormUrlEncodedContentBuilder Add<T>(string key, IEnumerable<T> values)
+        {
+            if (values != null)
+            {
+                foreach (var value in values)
+                {
+                    _values.Add(new KeyValuePair<string, string>(key, value.ToString()));
+                }
+            }
+
+            return this;
+        }
+
         public FormUrlEncodedContent ToContent() => new FormUrlEncodedContent(_values);
     }
 }
