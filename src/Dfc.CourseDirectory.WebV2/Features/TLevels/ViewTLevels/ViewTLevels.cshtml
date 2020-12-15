@@ -1,0 +1,48 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels.ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Your T Levels");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">Your T Levels</h1>
+
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">T Level</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Start date</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Venues</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+
+                @if (Model.TLevels.Any())
+                {
+                    foreach (var tLevel in Model.TLevels)
+                    {
+                        <tr class="govuk-table__row" data-testid="tLevelRow-@tLevel.TLevelId">
+                            <td class="govuk-table__cell" data-testid="tLevelTLevel"><a asp-action="View" asp-controller="ViewAndEditTLevel" asp-route-tLevelId="@tLevel.TLevelId" class="govuk-link">@tLevel.Name</a></td>
+                            <td class="govuk-table__cell nowrap" data-testid="tLevelStartDate">@tLevel.StartDate.ToString("dd MMM yyyy")</td>
+                            <td class="govuk-table__cell" data-testid="tLevelVenues">@(tLevel.VenueNames.Count > 1 ? "Multiple venues" : tLevel.VenueNames.SingleOrDefault())</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="3">You have no T Levels</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        @if (!Model.TLevels.Any())
+        {
+            <a asp-action="SelectTLevel" asp-controller="AddTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button">Add a T Level</a>
+        }
+
+    </div>
+</div>
