@@ -40,7 +40,7 @@ else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoL
     {
         <pttcd-notification title="Successful bulk upload of courses">
             <p class="govuk-body">@Model.BulkUploadReadyToGoLiveCourseRunCount courses have been uploaded and are ready to publish to the course directory.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishCourses" class="govuk-link">Publish your courses</a></p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishCourses" asp-route-publishMode="BulkUpload" class="govuk-link">Publish your courses</a></p>
         </pttcd-notification>
     }
 }
