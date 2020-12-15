@@ -355,7 +355,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         [InlineData(1, "search.score() desc")]  // Relevance
         [InlineData(2, "StartDate desc")]  // StartDateDescending
         [InlineData(3, "StartDate asc")]  // StartDateDescending
-        [InlineData(4, "geo.distance(VenueLocation, geography'POINT(2 1)')")]  // Distance
+        [InlineData(4, "geo.distance(Position, geography'POINT(2 1)')")]  // Distance
         public async Task OrderByIsCorrectlyDeduced(int sortBy, string expectedOrderByClause)
         {
             // Arrange

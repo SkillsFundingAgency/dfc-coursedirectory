@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     CourseId = i.Record.CourseId,
                     CourseRunId = i.Record.CourseRunId,
                     CourseText = i.Record.CourseDescription,
-                    DeliveryMode = i.Record.DeliveryMode.ToString(),
+                    DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
                     DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
                     Distance = GetDistanceFromPostcodeForResult(i),
                     DurationUnit = i.Record.DurationUnit ?? 0,
@@ -241,7 +241,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     Ukprn = i.Record.ProviderUkprn.ToString(),
                     UpdatedOn = i.Record.UpdatedOn,
                     VenueAddress = i.Record.VenueAddress,
-                    VenueAttendancePattern = i.Record.AttendancePattern?.ToString(),
+                    VenueAttendancePattern = ((int?)i.Record.AttendancePattern)?.ToString(),
                     VenueAttendancePatternDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
                         i.Record.AttendancePattern?.ToDescription() :
                         null,
@@ -253,7 +253,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         } :
                         null,
                     VenueName = i.Record.VenueName,
-                    VenueStudyMode = i.Record.StudyMode.ToString(),
+                    VenueStudyMode = ((int)i.Record.StudyMode).ToString(),
                     VenueStudyModeDescription = i.Record.StudyMode.ToDescription(),
                     VenueTown = i.Record.VenueTown
                 }).ToList()
