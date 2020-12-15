@@ -1,0 +1,29 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SelectTLevel.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "T Levels");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="SelectedTLevelDefinitionId" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="SelectTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())">
+            <h1 class="govuk-heading-l">T Levels</h1>
+
+            <p class="govuk-body">Select a T Level qualification to add to Publish to the course directory.</p>
+
+            <govuk-radios asp-for="SelectedTLevelDefinitionId">
+                @foreach (var tLevel in Model.TLevels)
+                {
+                    <govuk-radios-item value="@tLevel.TLevelDefinitionId" input-data-testid="tlevel-@(tLevel.TLevelDefinitionId)">
+                        @tLevel.Name
+                    </govuk-radios-item>
+                }
+            </govuk-radios>
+
+            <govuk-button>Continue</govuk-button>
+        </form>
+    </div>
+</div>

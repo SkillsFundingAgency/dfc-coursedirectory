@@ -1,0 +1,4 @@
+﻿CREATE TYPE [Pttcd].[GuidIdTable] AS TABLE
+(
+	[Id] UNIQUEIDENTIFIER
+)

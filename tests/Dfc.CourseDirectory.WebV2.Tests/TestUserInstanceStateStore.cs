@@ -4,7 +4,7 @@ using FormFlow.State;
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
     /// <summary>
-    /// An in-memory store for FormFlow instances used by tests.
+    /// An in-memory store for Journey instances used by tests.
     /// </summary>
     /// <remarks>
     /// This allows persisting instance state outside of an HTTP request.

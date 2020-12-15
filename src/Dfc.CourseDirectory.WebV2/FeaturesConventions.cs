@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (controllerFullName.StartsWith(featuresNamespace))
             {
-                var featureName = controllerFullName.Substring(featuresNamespace.Length + 1).Split('.')[0];
+                var featureName = controllerFullName[(featuresNamespace.Length + 1)..^(controller.ControllerType.Name.Length + 1)];
 
                 controller.Properties.Add("Feature", featureName);
             }
@@ -38,9 +38,9 @@ namespace Dfc.CourseDirectory.WebV2
                 !context.ViewName.StartsWith("ViewComponents/") &&
                 context.IsMainPage)
             {
-                var featureName = context.Values["Feature"];
+                var featurePath = context.Values["Feature"].Replace(".", "/");
 
-                return viewLocations.Concat(_featureViewLocations.Select(l => l.Replace("{3}", featureName)));
+                return viewLocations.Concat(_featureViewLocations.Select(l => l.Replace("{3}", featurePath)));
             }
             else
             {
