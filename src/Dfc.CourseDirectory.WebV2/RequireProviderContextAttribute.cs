@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2
     {
         private void AddMetadataToAction(ActionModel action)
         {
-            action.Properties.Add(typeof(RequireProviderContextMarker), RequireProviderContextMarker.Instance);
+            action.Properties[typeof(RequireProviderContextMarker)] = RequireProviderContextMarker.Instance;
         }
 
         void IActionModelConvention.Apply(ActionModel action)
