@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             var providerId = await TestData.CreateProvider(
                 providerType: providerType);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var selectedTLevel = tLevelDefinitions.First();
 
@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
             var venueName = "T Level test venue";
-            var venueId = await TestData.CreateVenue(providerId, venueName: venueName);
+            var venueId = (await TestData.CreateVenue(providerId, venueName: venueName)).Id;
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var providerId = await TestData.CreateProvider(providerType: providerType);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -321,7 +321,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -408,7 +408,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
