@@ -59,7 +59,7 @@ WITH RecordsCte AS (
 
 		v.Town AS VenueTown,
 		COALESCE(v.Position, r.Position) AS Position,
-		CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 THEN 'National' END AS RegionName,
+		CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 THEN 'National' ELSE '' END AS RegionName,
 
 		-- Magic numbers and logic from https://github.com/SkillsFundingAgency/dfc-providerportal-changefeedlistener/commit/608340dcfaa5c74ee8b1ae422ad902ee0c529c01#diff-5f9ef9c9ca0b0bc9af8b5c7926cfcfe31fa7e8367b9104357104ad568fbe0302R103-R104
 		CAST(CASE
