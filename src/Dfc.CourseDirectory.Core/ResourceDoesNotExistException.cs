@@ -8,7 +8,8 @@ namespace Dfc.CourseDirectory.Core
         Apprenticeship,
         Course,
         CourseRun,
-        Venue
+        Venue,
+        TLevel
     }
 
     public class ResourceDoesNotExistException : Exception

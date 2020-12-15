@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddFormFlow();
             services.AddJourneyStateTypes(typeof(ServiceCollectionExtensions).Assembly);
 
-            services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
+            services.AddTransient<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
             {

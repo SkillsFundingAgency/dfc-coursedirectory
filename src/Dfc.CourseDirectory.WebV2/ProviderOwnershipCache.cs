@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -9,11 +11,16 @@ namespace Dfc.CourseDirectory.WebV2
     public class ProviderOwnershipCache : IProviderOwnershipCache
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IMemoryCache _cache;
 
-        public ProviderOwnershipCache(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IMemoryCache cache)
+        public ProviderOwnershipCache(
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IMemoryCache cache)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _cache = cache;
         }
 
@@ -63,6 +70,29 @@ namespace Dfc.CourseDirectory.WebV2
             return providerId;
         }
 
+        public async Task<Guid?> GetProviderForTLevel(Guid tLevelId)
+        {
+            var cacheKey = GetTLevelCacheKey(tLevelId);
+
+            if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
+            {
+                var tLevel = await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetTLevel() { TLevelId = tLevelId });
+
+                if (tLevel != null)
+                {
+                    providerId = tLevel.ProviderId;
+                    _cache.Set(cacheKey, providerId);
+                }
+                else
+                {
+                    providerId = null;
+                }
+            }
+
+            return providerId;
+        }
+
         public async Task<Guid?> GetProviderForVenue(Guid venueId)
         {
             var cacheKey = GetVenueCacheKey(venueId);
@@ -98,6 +128,12 @@ namespace Dfc.CourseDirectory.WebV2
             _cache.Remove(cacheKey);
         }
 
+        public void OnTLevelDeleted(Guid tLevelId)
+        {
+            var cacheKey = GetTLevelCacheKey(tLevelId);
+            _cache.Remove(cacheKey);
+        }
+
         public void OnVenueDeleted(Guid venueId)
         {
             var cacheKey = GetVenueCacheKey(venueId);
@@ -105,13 +141,16 @@ namespace Dfc.CourseDirectory.WebV2
         }
 
         private static string GetApprenticeshipCacheKey(Guid apprenticeshipId) =>
-            $"apprenticeship-ukprns:{apprenticeshipId}";
+            $"apprenticeship-providers:{apprenticeshipId}";
 
         private static string GetCourseCacheKey(Guid courseId) =>
-            $"course-ukprns:{courseId}";
+            $"course-providers:{courseId}";
+
+        private static string GetTLevelCacheKey(Guid tLevelId) =>
+            $"tlevel-providers:{tLevelId}";
 
         private static string GetVenueCacheKey(Guid venueId) =>
-            $"venue-ukprns:{venueId}";
+            $"venue-providers:{venueId}";
 
         private async Task<Guid> GetProviderIdByUkprn(int? ukprn) =>
             (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn.Value })).Id;
