@@ -13,7 +13,6 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
-using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,14 +32,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-        }
-
-        [Authorize]
-        [RequireProviderContext]
-        [HttpGet("dashboard")]
-        public IActionResult Dashboard()
-        {
-            return View();
         }
 
         [Authorize]

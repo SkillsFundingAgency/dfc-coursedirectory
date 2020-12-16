@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
@@ -106,6 +107,8 @@ namespace Dfc.CourseDirectory.WebV2
                 services.AddCosmosDbDataStore(
                     endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
                     key: configuration["CosmosDbSettings:PrimaryKey"]);
+
+                services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             }
 			
             // HostedService to execute startup tasks.

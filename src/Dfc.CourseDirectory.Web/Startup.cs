@@ -19,7 +19,6 @@ using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
-using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -106,7 +105,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
 
-            services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));
 
             services.AddSingleton<QueueBackgroundWorkScheduler>();

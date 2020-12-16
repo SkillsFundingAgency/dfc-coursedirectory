@@ -1,9 +1,8 @@
-﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -13,13 +12,14 @@ namespace Dfc.CourseDirectory.Testing
             Guid providerId,
             StandardOrFramework standardOrFramework,
             UserInfo createdBy,
+            ApprenticeshipStatus status = ApprenticeshipStatus.Live,
             string marketingInformation = "Marketing info",
             string website = "http://provider.com/apprenticeship",
             string contactTelephone = "01234 567890",
             string contactEmail = "admin@provider.com",
             string contactWebsite = "http://provider.com",
             DateTime? createdUtc = null,
-            IEnumerable<CreateApprenticeshipLocation> locations =null)
+            IEnumerable<CreateApprenticeshipLocation> locations = null)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
@@ -38,6 +38,7 @@ namespace Dfc.CourseDirectory.Testing
                 Id = apprenticeshipId,
                 ProviderId = providerId,
                 ProviderUkprn = provider.Ukprn,
+                Status = (int)status,
                 ApprenticeshipTitle = standardOrFramework.StandardOrFrameworkTitle,
                 ApprenticeshipType = standardOrFramework.IsStandard ?
                     ApprenticeshipType.StandardCode :

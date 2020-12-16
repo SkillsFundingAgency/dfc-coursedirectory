@@ -1,5 +1,65 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard.ViewModel
 
+<vc:qa-notifications />
+
+@if (Model.PastStartDateCourseRunCount > 0)
+{
+    <pttcd-notification title="Course start dates" data-testid="courseStartDateNotification">
+        <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount courses are in the past.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="DQI" asp-action="Index" class="govuk-link">Update course start dates</a></p>
+    </pttcd-notification>
+}
+
+@if (Model.BulkUploadFileCount == 0 && (Model.MigrationPendingCourseRunCount > 0 || Model.LarslessCourseCount > 0))
+{
+    <pttcd-notification title="Migration" data-testid="migrationNotification">
+        <p class="govuk-body">We have transferred information about your courses.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="Migration" asp-action="Report" class="govuk-link">View details of migration</a></p>
+    </pttcd-notification>
+}
+
+@if (Model.BulkUploadInProgress)
+{
+    <pttcd-notification title="Processing bulk upload of courses" data-testid="processingCoursesBulkUploadNotification">
+        <govuk-warning-text icon-fallback-text="Warning">
+            Do not add a new course or attempt another bulk upload during this process
+        </govuk-warning-text>
+        <p class="govuk-body govuk-!-margin-bottom-0">Continue to refresh this page until you receive a notification that the bulk upload process has been completed.</p>
+    </pttcd-notification>
+}
+else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoLiveCourseRunCount > 0)
+{
+    @if (Model.BulkUploadCoursesErrorCount > 0 || Model.BulkUploadCourseRunsErrorCount > 0 || Model.BulkUploadPendingCourseRunCount > 0)
+    {
+        <pttcd-notification title="Error on bulk upload of courses" data-testid="coursesBulkUploadErrorNotification">
+            <p class="govuk-body">@(Model.BulkUploadPendingCourseRunCount + Model.BulkUploadReadyToGoLiveCourseRunCount) courses uploaded have @Model.BulkUploadCourseRunsErrorCount errors.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUpload" class="govuk-link">Fix errors to publish your courses</a></p>
+        </pttcd-notification>
+    }
+    else
+    {
+        <pttcd-notification title="Successful bulk upload of courses" data-testid="coursesBulkUploadSuccessfulNotification">
+            <p class="govuk-body">@Model.BulkUploadReadyToGoLiveCourseRunCount courses have been uploaded and are ready to publish to the course directory.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishCourses" asp-route-publishMode="BulkUpload" class="govuk-link">Publish your courses</a></p>
+        </pttcd-notification>
+    }
+}
+
+@if (Model.ApprenticeshipsBulkUploadErrorCount > 0)
+{
+    <pttcd-notification title="Error on bulk upload of apprenticeships" data-testid="apprenticeshipsBulkUploadErrorNotification">
+        <p class="govuk-body">@(Model.BulkUploadPendingApprenticeshipsCount + Model.BulkUploadReadyToGoLiveApprenticeshipsCount) apprenticeships uploaded have @Model.ApprenticeshipsBulkUploadErrorCount errors.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUploadApprenticeships" class="govuk-link">Fix errors to publish your apprenticeships</a></p>
+    </pttcd-notification>
+}
+else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
+{
+    <pttcd-notification title="Successful bulk upload of apprenticeships" data-testid="apprenticeshipsBulkUploadSuccessfulNotification">
+        <p class="govuk-body">@Model.BulkUploadReadyToGoLiveApprenticeshipsCount apprenticeships have been uploaded and are ready to publish to the course directory.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishApprenticeships" class="govuk-link">Publish your apprenticeships</a></p>
+    </pttcd-notification>
+}
+
 <div class="govuk-grid-row govuk-!-margin-bottom-5">
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-l" data-testid="provider-name">@Model.ProviderName</h1>
@@ -27,7 +87,7 @@
         <div class="govuk-grid-column-one-third">
             <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
                 <h2 class="govuk-heading-s">Published courses</h2>
-                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseRunCount</p>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.LiveCourseRunCount</p>
             </div>
         </div>
 
@@ -42,7 +102,7 @@
                         <li>
                             <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
                         </li>
-                        @if (Model.CourseRunCount > 0)
+                        @if (Model.LiveCourseRunCount > 0)
                         {
                             <li>
                                 <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="courses-view-edit-link">View and edit courses</a>

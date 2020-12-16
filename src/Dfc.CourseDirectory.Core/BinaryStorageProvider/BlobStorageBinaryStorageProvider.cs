@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Azure;
@@ -60,6 +61,30 @@ namespace Dfc.CourseDirectory.Core.BinaryStorageProvider
 
             var blob = _blobContainerClient.GetBlobClient(path);
             await blob.UploadAsync(source);
+        }
+
+        public async Task<IReadOnlyCollection<BlobFileInfo>> ListFiles(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException("Path cannot be empty.", nameof(path));
+            }
+
+            await EnsureContainerExists();
+
+            var files = new List<BlobFileInfo>();
+
+            await foreach (var blobItem in _blobContainerClient.GetBlobsAsync(prefix: path))
+            {
+                files.Add(new BlobFileInfo
+                {
+                    Name = blobItem.Name,
+                    Size = blobItem.Properties.ContentLength,
+                    DateUploaded = blobItem.Properties.CreatedOn
+                });
+            }
+
+            return files;
         }
 
         private async Task EnsureContainerExists()

@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
@@ -53,6 +56,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
 
+        public Mock<IBinaryStorageProvider> BinaryStorageProvider { get; } = new Mock<IBinaryStorageProvider>();
+
         public SingletonSession Session => ((SingletonSessionStore)Services.GetRequiredService<ISessionStore>()).Instance;
 
         public SqlQuerySpy SqlQuerySpy => DatabaseFixture.SqlQuerySpy;
@@ -90,6 +95,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             (Services.GetRequiredService<IUserInstanceStateStore>() as TestUserInstanceStateStore)?.Clear();
 
             Session.Clear();
+
+            BinaryStorageProvider.SetReturnsDefault(Task.FromResult<IReadOnlyCollection<BlobFileInfo>>(Array.Empty<BlobFileInfo>()));
         }
 
         public async Task OnTestStartingAsync()
@@ -116,11 +123,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 ConfigureServices(services);
 
                 services.AddSingleton<ISearchClient<Onspd>>(OnspdSearchClient.Object);
+                services.AddSingleton(BinaryStorageProvider.Object);
             });
 
         private void ResetMocks()
         {
             OnspdSearchClient.Reset();
+            BinaryStorageProvider.Reset();
         }
     }
 }
