@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (geoFilterRequired)
             {
-                var distanceInKm = GeoHelper.MilesToKilometers(request.Distance.Value);
+                var distanceInKm = Convert.ToDecimal(GeoHelper.MilesToKilometers(request.Distance.Value));
 
                 filters.Add(
                     $"(geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
