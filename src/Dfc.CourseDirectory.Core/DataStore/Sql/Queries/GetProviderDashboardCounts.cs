@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     {
         public IReadOnlyDictionary<CourseStatus, int> CourseRunCounts { get; set; }
         public IReadOnlyDictionary<ApprenticeshipStatus, int> ApprenticeshipCounts { get; set; }
+        public IReadOnlyDictionary<TLevelStatus, int> TLevelCounts { get; set; }
         public int VenueCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
         public int BulkUploadCoursesErrorCount { get; set; }

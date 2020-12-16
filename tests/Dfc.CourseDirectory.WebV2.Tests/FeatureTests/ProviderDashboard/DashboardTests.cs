@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -40,12 +42,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             var providerId = await TestData.CreateProvider(
                 ukprn,
                 providerName,
-                providerType: ProviderType.Apprenticeships | ProviderType.FE,
+                providerType: ProviderType.Apprenticeships | ProviderType.FE | ProviderType.TLevels,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+            var venues = await CreateVenues(providerId, count: 2);
 
             await CreateCourses(providerId, count: 5);
             await CreateApprenticeships(providerId, count: 3);
-            await CreateVenues(providerId, count: 2);
+            await CreateTLevels(providerId, tLevelDefinitions, venues, 4);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
@@ -61,9 +66,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             doc.GetElementByTestId("courses-row").TextContent.Should().NotBeNull();
             doc.GetElementByTestId("apprenticeships-row").TextContent.Should().NotBeNull();
+            doc.GetElementByTestId("tlevels-row").TextContent.Should().NotBeNull();
 
             doc.GetElementByTestId("course-count").TextContent.Should().Be("5");
             doc.GetElementByTestId("apprenticeship-count").TextContent.Should().Be("3");
+            doc.GetElementByTestId("tlevel-count").TextContent.Should().Be("4");
             doc.GetElementByTestId("venue-count").TextContent.Should().Be("2");
         }
 
@@ -207,6 +214,48 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             var doc = await response.GetDocument();
             doc.GetElementByTestId("apprenticeships-view-edit-link").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task TLevelsProviderHasNoTLevels_DoesNotRenderViewAndEditLink()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("tlevels-view-edit-link").Should().BeNull();
+        }
+
+        [Fact]
+        public async Task TLevelsProviderHasTLevels_DoesRenderViewAndEditLink()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels);
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+            var venues = await CreateVenues(providerId, count: 2);
+            await CreateTLevels(providerId, tLevelDefinitions, venues, 3);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("tlevels-view-edit-link").Should().NotBeNull();
         }
 
         [Fact]
@@ -393,13 +442,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             }
         }
 
-        private async Task CreateVenues(Guid providerId, int count)
-        {
-            for (var i = 1; i <= count; i++)
-            {
-                await TestData.CreateVenue(providerId, venueName: $"Test {i}");
-            }
-        }
+        private async Task<IReadOnlyCollection<Core.DataStore.CosmosDb.Models.Venue>> CreateVenues(Guid providerId, int count) =>
+            await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
+                TestData.CreateVenue(providerId, venueName: $"Test {i}")));
 
         private async Task CreateCourses(Guid providerId, int count)
         {
@@ -412,5 +457,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                     learnAimRef: $"TST{i}");
             }
         }
+
+        private async Task CreateTLevels(Guid providerId, IEnumerable<Core.DataStore.Sql.Models.TLevelDefinition> tLevelDefinitions, IEnumerable<Core.DataStore.CosmosDb.Models.Venue> venues, int count) =>
+            await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.OrderBy(_ => Guid.NewGuid()).First().TLevelDefinitionId,
+                    new[] { venues.OrderBy(_ => Guid.NewGuid()).First().Id },
+                    User.ToUserInfo(),
+                    startDate: Clock.UtcNow.AddMonths(i).Date,
+                    yourReference: $"YourReference{i}")));
     }
 }
