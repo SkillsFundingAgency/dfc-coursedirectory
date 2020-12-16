@@ -181,7 +181,7 @@ END;
 	(
 		N'9555d14f-f73b-495c-91c3-4703691c6347',
 		37,
-		32,
+		31,
 		N'T Level Digital - Digital Production, Design and Development',
 		N'This T Level is suitable for anyone wanting a career in software production and design.' + CHAR(13) + CHAR(13) + 'The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification.',
 		N'You will need either 5 GCSEs (at grade 4 or above), including English, maths and science, or a pass in a relevant level 2 qualification, for example a BTEC Tech Award in Digital Information Technology.' + CHAR(13) + CHAR(13) + 'If you do not have the recommended entry qualifications, you may still be considered if you have relevant experience or show a natural ability for the subject.',
