@@ -209,6 +209,171 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("apprenticeships-view-edit-link").Should().NotBeNull();
         }
 
+        [Fact]
+        public async Task Notifications_WithPastStartDateRunCountGreaterThanZero_DisplaysCourseStartDatesNotification()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE);
+
+            await TestData.CreateCourse(
+                    providerId,
+                    createdBy: User.ToUserInfo(),
+                    configureCourseRuns: courseRunBuilder =>
+                        courseRunBuilder.WithCourseRun(
+                            CourseDeliveryMode.ClassroomBased,
+                            CourseStudyMode.FullTime,
+                            CourseAttendancePattern.Daytime,
+                            startDate: Clock.UtcNow.AddMonths(-1).Date));
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("courseStartDateNotification").Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData(CourseStatus.MigrationPending)]
+        [InlineData(CourseStatus.MigrationReadyToGoLive)]
+        public async Task Notifications_WithMigrationCourseStatusCourseRunCountGreaterThanZero_DisplaysMigrationNotification(CourseStatus courseStatus)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE);
+
+            await TestData.CreateCourse(
+                    providerId,
+                    createdBy: User.ToUserInfo(),
+                    courseStatus: courseStatus,
+                    configureCourseRuns: courseRunBuilder =>
+                        courseRunBuilder.WithCourseRun(
+                            CourseDeliveryMode.ClassroomBased,
+                            CourseStudyMode.FullTime,
+                            CourseAttendancePattern.Daytime));
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("migrationNotification").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Notifications_WithBulkUploadInProgress_DisplaysProcessingCoursesBulkUploadNotification()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE,
+                bulkUploadInProgress: true);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("processingCoursesBulkUploadNotification").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Notifications_WithBulkUploadErrorOrPendingCountGreaterThanZero_DisplaysCoursesBulkUploadErrorNotification()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE);
+
+            await TestData.CreateCourse(
+                    providerId,
+                    createdBy: User.ToUserInfo(),
+                    courseStatus: CourseStatus.BulkUploadPending,
+                    configureCourseRuns: courseRunBuilder =>
+                        courseRunBuilder.WithCourseRun(
+                            CourseDeliveryMode.ClassroomBased,
+                            CourseStudyMode.FullTime,
+                            CourseAttendancePattern.Daytime));
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("coursesBulkUploadErrorNotification").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Notification_WithBulkUploadReadyToGoLiveCourseRunCountGreaterThanZero_DisplaysCoursesBulkUploadSuccessfulNotification()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE);
+
+            await TestData.CreateCourse(
+                    providerId,
+                    createdBy: User.ToUserInfo(),
+                    courseStatus: CourseStatus.BulkUploadReadyToGoLive,
+                    configureCourseRuns: courseRunBuilder =>
+                        courseRunBuilder.WithCourseRun(
+                            CourseDeliveryMode.ClassroomBased,
+                            CourseStudyMode.FullTime,
+                            CourseAttendancePattern.Daytime));
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("coursesBulkUploadSuccessfulNotification").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Notification_WithBulkUploadReadyToGoLiveApprenticeshipsCountGreaterThanZero_DisplaysApprenticeshipsBulkUploadSuccessfulNotification()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.Apprenticeships);
+
+            var standard = await TestData.CreateStandard(123, 456, "TestStandard");
+
+            await TestData.CreateApprenticeship(
+                providerId,
+                standard,
+                User.ToUserInfo(),
+                ApprenticeshipStatus.BulkUploadReadyToGoLive);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("apprenticeshipsBulkUploadSuccessfulNotification").Should().NotBeNull();
+        }
+
         private async Task CreateApprenticeships(Guid providerId, int count)
         {
             for (var i = 1; i <= count; i++)
