@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [HttpGet("details")]
         [RequireJourneyInstance]
         public async Task<IActionResult> Details(
-            [FromQuery] Guid? venueId,  // Populated by the Add Venue callback journey
+            [FromQuery] Guid? venueId,  // Populated by the Add Venue journey
             ProviderContext providerContext)
         {
             var query = new Details.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };

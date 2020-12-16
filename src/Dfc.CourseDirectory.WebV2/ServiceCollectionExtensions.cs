@@ -164,6 +164,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<SqlDataSync>();
             services.AddScoped<RouteValuesHelper>();
             services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
+            services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
 
             if (!environment.IsTesting())
             {
