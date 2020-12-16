@@ -1,0 +1,157 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.ViewTLevel.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Your T Level information");
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues">Back to T Level list</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">Your T Level information</h1>
+        <h2 class="govuk-heading-l">@Model.TLevelDefinitionName</h2>
+        <!-- Removed until we know where the link is going.
+    <p class="govuk-body">You can <a href="javascript:preventdefault();">view your published T Level (opens in new window or tab)</a> to see how it's viewed by learners.</p>-->
+
+        <govuk-summary-list class="govuk-!-margin-bottom-9">
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>T Level added on</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.CreatedOn.ToString("d MMMM yyyy")</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>Last updated</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.UpdatedOn.ToString("d MMMM yyyy")</govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        </govuk-summary-list>
+
+        <h3 class="govuk-heading-m">T Level details</h3>
+        <p class="govuk-body">Information for the learner about how the T Level will be delivered.</p>
+
+        <govuk-summary-list class="govuk-!-margin-bottom-9">
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Your reference
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.YourReference
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.YourReference)" visually-hidden-text="your reference">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Start date
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.StartDate.ToString("d MMMM yyyy")
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.StartDate)" visually-hidden-text="start date">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    T Level location@(Model.LocationVenueNames.Count != 1 ? "s" : "")
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <ul class="govuk-list">
+                        @foreach (var location in Model.LocationVenueNames)
+                        {
+                            <li data-testid="LocationName">@location</li>
+                        }
+                    </ul>
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="LocationVenueIds" visually-hidden-text="T Level location@(Model.LocationVenueNames.Count != 1 ? "s" : "")">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    T Level webpage
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.Website
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.Website)" visually-hidden-text="T Level webpage">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+        </govuk-summary-list>
+
+        <h3 class="govuk-heading-m">T Level description</h3>
+
+        <govuk-summary-list class="govuk-!-margin-bottom-9">
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Who this T Level is for
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.WhoFor
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.WhoFor)" visually-hidden-text="who this T Level is for">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Entry requirements
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.EntryRequirements
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.EntryRequirements)" visually-hidden-text="entry requirements">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    What you'll learn
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.WhatYoullLearn
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.WhatYoullLearn)" visually-hidden-text="what you'll learn">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    How you'll learn
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.HowYoullLearn
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.HowYoullLearn)" visually-hidden-text="how you'll learn">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    How you'll be assessed
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.HowYoullBeAssessed
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.HowYoullBeAssessed)" visually-hidden-text="how you'll be assessed">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    What you can do next
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.WhatYouCanDoNext
+                </govuk-summary-list-row-value>
+                <govuk-summary-list-row-action asp-action="Edit" asp-controller="EditTLevel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.WhatYouCanDoNext)" visually-hidden-text="what you can do next">
+                    Change
+                </govuk-summary-list-row-action>
+            </govuk-summary-list-row>
+        </govuk-summary-list>
+
+        <govuk-button asp-controller="DeleteTLevel" asp-action="Get" asp-route-tLevelId="@Model.TLevelId" class="govuk-button--warning">Delete T Level</govuk-button>
+    </div>
+</div>

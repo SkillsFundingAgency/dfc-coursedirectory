@@ -63,7 +63,7 @@
 
             <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-tlevel__delete-btn">Delete T Level</govuk-button>
 
-            <govuk-button asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+            <govuk-button asp-controller="ViewTLevel" asp-action="Index" asp-route-tLevelId="@Model.TLevelId" class="govuk-button--secondary">Cancel</govuk-button>
         </form>
     </div>
 </div>

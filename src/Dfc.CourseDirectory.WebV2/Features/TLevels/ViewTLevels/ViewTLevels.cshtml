@@ -23,7 +23,7 @@
                     foreach (var tLevel in Model.TLevels)
                     {
                         <tr class="govuk-table__row" data-testid="tLevelRow-@tLevel.TLevelId">
-                            <td class="govuk-table__cell" data-testid="tLevelTLevel"><a asp-action="View" asp-controller="ViewAndEditTLevel" asp-route-tLevelId="@tLevel.TLevelId" class="govuk-link">@tLevel.Name</a></td>
+                            <td class="govuk-table__cell" data-testid="tLevelTLevel"><a asp-action="Index" asp-controller="ViewTLevel" asp-route-tLevelId="@tLevel.TLevelId" class="govuk-link">@tLevel.Name</a></td>
                             <td class="govuk-table__cell nowrap" data-testid="tLevelStartDate">@tLevel.StartDate.ToString("dd MMM yyyy")</td>
                             <td class="govuk-table__cell" data-testid="tLevelVenues">@(tLevel.VenueNames.Count > 1 ? "Multiple venues" : tLevel.VenueNames.SingleOrDefault())</td>
                         </tr>
