@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Home
             }
             else  // Provider user
             {
-                return RedirectToAction("Dashboard", "Provider");
+                return RedirectToAction("Index", "ProviderDashboard");
             }
         }
 

@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             // Arrange
             var providerId = Guid.NewGuid();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await CreateApprenticeships(providerId, count: 3);
             await CreateVenues(providerId, count: 2);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                 providerType: ProviderType.Apprenticeships,
                 apprenticeshipQAStatus: qaStatus);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             // Arrange
             var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             await CreateVenues(providerId, count: 1);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             // Arrange
             var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -155,7 +155,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             await CreateCourses(providerId, count: 1);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                 providerType: ProviderType.Apprenticeships,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -197,7 +197,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             await CreateApprenticeships(providerId, count: 1);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard-beta?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

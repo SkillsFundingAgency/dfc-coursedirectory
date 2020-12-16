@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard
             _mediator = mediator;
         }
 
-        [HttpGet("dashboard-beta")]
+        [RequireProviderContext]
+        [HttpGet("dashboard")]
         public async Task<IActionResult> Index(ProviderContext providerContext)
         {
             var query = new Dashboard.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
