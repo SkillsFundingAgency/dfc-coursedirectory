@@ -30,6 +30,11 @@ FROM        Pttcd.Apprenticeships a
 WHERE       a.ProviderUkprn = @ProviderUkprn
 GROUP BY    a.ApprenticeshipStatus
 
+SELECT      t.TLevelStatus, COUNT(*) as Count
+FROM        Pttcd.TLevels t
+WHERE       t.ProviderId = @{nameof(query.ProviderId)}
+GROUP BY    t.TLevelStatus
+
 SELECT      COUNT(*)
 FROM        Pttcd.Venues v
 WHERE       v.ProviderUkprn = @ProviderUkprn
@@ -62,6 +67,7 @@ AND         a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPendin
             {
                 var courseRunCounts = reader.Read().ToDictionary(r => (CourseStatus)r.CourseRunStatus, r => (int)r.Count);
                 var apprenticeshipCounts = reader.Read().ToDictionary(r => (ApprenticeshipStatus)r.ApprenticeshipStatus, r => (int)r.Count);
+                var tLevelCounts = reader.Read().ToDictionary(r => (TLevelStatus)r.TLevelStatus, r => (int)r.Count);
                 var venueCount = reader.ReadSingle<int>();
                 var pastStartDateCourseRunCount = reader.ReadSingle<int>();
                 var bulkUploadCoursesErrorCount = reader.ReadSingle<int>();
@@ -72,6 +78,7 @@ AND         a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPendin
                 {
                     CourseRunCounts = courseRunCounts,
                     ApprenticeshipCounts = apprenticeshipCounts,
+                    TLevelCounts = tLevelCounts,
                     VenueCount = venueCount,
                     PastStartDateCourseRunCount = pastStartDateCourseRunCount,
                     BulkUploadCoursesErrorCount = bulkUploadCoursesErrorCount,

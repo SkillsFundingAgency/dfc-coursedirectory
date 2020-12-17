@@ -25,6 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int Ukprn { get; set; }
         public bool ShowCourses { get; set; }
         public bool ShowApprenticeships { get; set; }
+        public bool ShowTLevels { get; set; }
         public int LiveCourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
         public int MigrationPendingCourseRunCount { get; set; }
@@ -37,6 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int BulkUploadPendingApprenticeshipsCount { get; set; }
         public int BulkUploadReadyToGoLiveApprenticeshipsCount { get; set; }
         public int ApprenticeshipsBulkUploadErrorCount { get; set; }
+        public int TLevelCount { get; set; }
         public int VenueCount { get; set; }
         public int BulkUploadFileCount { get; set; }
         public bool BulkUploadInProgress { get; set; }
@@ -84,6 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 Ukprn = provider.Ukprn,
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
                 ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) && provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
+                ShowTLevels = provider.ProviderType.HasFlag(ProviderType.TLevels),
                 LiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live),
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
                 MigrationPendingCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.MigrationPending) + dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.MigrationReadyToGoLive),
@@ -96,6 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 BulkUploadPendingApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadPending),
                 BulkUploadReadyToGoLiveApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadReadyToGoLive),
                 ApprenticeshipsBulkUploadErrorCount = dashboardCounts.ApprenticeshipsBulkUploadErrorCount,
+                TLevelCount = dashboardCounts.TLevelCounts.GetValueOrDefault(TLevelStatus.Live),
                 VenueCount = dashboardCounts.VenueCount,
                 BulkUploadFileCount = bulkUploadFiles.Count(),
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false

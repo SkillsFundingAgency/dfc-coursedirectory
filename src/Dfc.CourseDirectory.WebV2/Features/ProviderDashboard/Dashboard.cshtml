@@ -1,4 +1,5 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard.ViewModel
+@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider featureFlagProvider;
 
 <vc:qa-notifications />
 
@@ -192,6 +193,46 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                         <li>
                             <a asp-controller="BulkUpload" asp-action="Apprenticeships" class="govuk-link">Bulk upload apprenticeships<span class="govuk-visually-hidden"> further education courses</span></a>
                         </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (featureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevels)
+{
+    <div class="govuk-grid-row" data-testid="tlevels-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m section-heading">T Levels</h2>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+                <h2 class="govuk-heading-s">Published T Levels</h2>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="tlevel-count">@Model.TLevelCount</p>
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-s">Your T Levels</h2>
+                    <p class="govuk-body-s">View and manage the T Levels you offer to learners.</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="AddTLevel" asp-action="SelectTLevel" class="govuk-link">Add a T Level</a>
+                        </li>
+                        @if (Model.TLevelCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="ViewTLevels" asp-action="List" class="govuk-link" data-testid="tlevels-view-edit-link">View and edit T Levels</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
