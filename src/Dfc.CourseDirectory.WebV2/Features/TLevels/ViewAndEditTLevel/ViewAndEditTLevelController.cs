@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
 {
-    [Route("t-levels/view")]
+    [Route("t-levels")]
     public class ViewAndEditTLevelController : Controller
     {
         [RequireFeatureFlag(FeatureFlags.TLevels)]

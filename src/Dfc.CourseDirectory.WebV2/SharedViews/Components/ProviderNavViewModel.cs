@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
         public ProviderInfo ProviderInfo { get; set; }
         public bool ShowApprenticeshipsLinks { get; set; }
         public bool ShowCoursesLinks { get; set; }
+        public bool ShowTLevelsLinks { get; set; }
 
         public static ProviderNavViewModel Create(
             ProviderInfo providerInfo,
@@ -17,7 +18,8 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
                 ProviderInfo = providerInfo,
                 ShowApprenticeshipsLinks = providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
                     apprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
-                ShowCoursesLinks = providerInfo.ProviderType.HasFlag(ProviderType.FE)
+                ShowCoursesLinks = providerInfo.ProviderType.HasFlag(ProviderType.FE),
+                ShowTLevelsLinks = providerInfo.ProviderType.HasFlag(ProviderType.TLevels)
             };
         }
     }

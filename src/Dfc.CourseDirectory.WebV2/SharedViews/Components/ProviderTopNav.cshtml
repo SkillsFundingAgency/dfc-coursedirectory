@@ -1,4 +1,5 @@
 ﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
+@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider featureFlagProvider;
 @{
     var currentController = (string)ViewContext.RouteData.Values["Controller"];
     var currentAction = (string)ViewContext.RouteData.Values["Action"];
@@ -25,6 +26,14 @@
             <li class="govuk-header__navigation-item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="govuk-header__link" data-testid="topnav-apprenticeships">
                     Apprenticeships
+                </a>
+            </li>
+        }
+        @if (featureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevelsLinks)
+        {
+            <li class="govuk-header__navigation-item">
+                <a asp-action="List" asp-controller="ViewTLevels" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-tlevels">
+                    T Levels
                 </a>
             </li>
         }

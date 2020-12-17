@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels
         }
 
         [RequireProviderContext]
-        [HttpGet("list")]
+        [HttpGet("")]
         public async Task<IActionResult> List(ProviderContext providerContext)
         {
             var query = new Query

@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/list?providerId={providerId}");
+                $"/t-levels?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/list?providerId={providerId}");
+                $"/t-levels?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/list?providerId={providerId}");
+                $"/t-levels?providerId={providerId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
