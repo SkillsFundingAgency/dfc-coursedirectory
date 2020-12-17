@@ -56,6 +56,7 @@
     <None Remove="Content\pages\provider-dashboard.css" />
     <None Remove="Content\pages\providers\provider-details.css" />
     <None Remove="Content\pages\start.css" />
+    <None Remove="Content\utilities\focus-formgroup.js" />
     <None Remove="Content\utilities\needs-js.css" />
     <None Remove="Content\utilities\needs-js.js" />
     <None Remove="Content\utilities\table.css" />
