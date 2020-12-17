@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.Core.Models
+﻿using System;
+
+namespace Dfc.CourseDirectory.Core.Models
 {
     public enum CourseAttendancePattern
     {
@@ -6,5 +8,19 @@
         Evening = 2,
         Weekend = 3,
         DayOrBlockRelease = 4
+    }
+
+    public static class CourseAttendancePatternExtensions
+    {
+        public static string ToDescription(this CourseAttendancePattern attendancePattern) =>
+            attendancePattern switch
+            {
+                0 => "Undefined",
+                CourseAttendancePattern.Daytime => "Daytime",
+                CourseAttendancePattern.Evening => "Evening",
+                CourseAttendancePattern.Weekend => "Weekend",
+                CourseAttendancePattern.DayOrBlockRelease => "Day/Block Release",
+                _ => throw new NotSupportedException($"Unknown attendance pattern: '{attendancePattern}'.")
+            };
     }
 }

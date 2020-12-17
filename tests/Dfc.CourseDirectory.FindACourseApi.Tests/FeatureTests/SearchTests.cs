@@ -16,14 +16,14 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
-    public class CourseSearchTests : TestBase
+    public class SearchTests : TestBase
     {
-        public CourseSearchTests(FindACourseApiApplicationFactory factory)
+        public SearchTests(FindACourseApiApplicationFactory factory)
             : base(factory)
         {
-            CourseSearchClient
-                .Setup(c => c.Search(It.IsAny<CourseSearchQuery>()))
-                .Callback<CourseSearchQuery>(q => CapturedQuery = q)
+            FindACourseOfferingSearchClient
+                .Setup(c => c.Search(It.IsAny<FindACourseOfferingSearchQuery>()))
+                .Callback<FindACourseOfferingSearchQuery>(q => CapturedQuery = q)
                 .ReturnsAsync(new SearchResult<FindACourseOffering>()
                 {
                     Facets = new Dictionary<string, IReadOnlyDictionary<object, long?>>()
@@ -48,11 +48,17 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             yield return new object[] { " ", "*" };
             yield return new object[] { "   ", "*" };
 
+            // Single wildcard
+            yield return new object[] { "*", "*" };
+
             // Input is trimmed
             yield return new object[] { " foo  ", "foo* || foo~" };
 
             // Add wildcard and fuzzy modifier to end of each word
             yield return new object[] { "foo bar", "foo* || foo~ || bar* || bar~" };
+
+            // Escaped characters don't get added
+            yield return new object[] { "foo *", "foo* || foo~" };
 
             // Terms in single quotes should not be prefix searches
             yield return new object[] { "'foo'", "(foo)" };
@@ -76,7 +82,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             yield return new object[] { "foo 'bar baz' \"qux qu|ux\"", "(bar && baz) || (\"qux qu\\|ux\") || foo* || foo~" };
         }
 
-        private CourseSearchQuery CapturedQuery { get; set; }
+        private FindACourseOfferingSearchQuery CapturedQuery { get; set; }
 
         [Fact]
         public async Task SortByDistanceButEmptyPostcode_ReturnsError()
@@ -202,7 +208,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.in(VenueAttendancePattern, '2|3', '|')");
+                "(AttendancePattern eq 2 or AttendancePattern eq 3) and Live eq true");
         }
 
         [Fact]
@@ -248,7 +254,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                $"geo.distance(VenueLocation, geography'POINT({lng} {lat})') le {distanceInKm}");
+                $"geo.distance(Position, geography'POINT({lng} {lat})') le {distanceInKm}");
         }
 
         [Fact]
@@ -288,7 +294,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.in(VenueStudyMode, '1|3', '|')");
+                "(StudyMode eq 1 or StudyMode eq 3)");
         }
 
         [Fact]
@@ -310,7 +316,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.in(DeliveryMode, '1|3', '|')");
+                "(DeliveryMode eq 1 or DeliveryMode eq 3)");
         }
 
         [Fact]
@@ -328,11 +334,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                "search.ismatchscoring('Test Provider', 'ProviderName', 'simple', 'any')");
+                "search.ismatchscoring('Test Provider', 'ProviderDisplayName', 'simple', 'any')");
         }
 
         [Fact]
-        public async Task LiveCoursesFilterIsAdded()
+        public async Task LiveFilterIsAdded()
         {
             // Arrange
             var request = CreateRequest(new { });
@@ -342,14 +348,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Be("Status eq 1");
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Be("Live eq true");
         }
 
         [Theory]
         [InlineData(1, "search.score() desc")]  // Relevance
         [InlineData(2, "StartDate desc")]  // StartDateDescending
         [InlineData(3, "StartDate asc")]  // StartDateDescending
-        [InlineData(4, "geo.distance(VenueLocation, geography'POINT(2 1)')")]  // Distance
+        [InlineData(4, "geo.distance(Position, geography'POINT(2 1)')")]  // Distance
         public async Task OrderByIsCorrectlyDeduced(int sortBy, string expectedOrderByClause)
         {
             // Arrange
@@ -515,7 +521,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var content = new StringContent(JsonConvert.SerializeObject(requestBody));
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-            return new HttpRequestMessage(HttpMethod.Post, "coursesearch")
+            return new HttpRequestMessage(HttpMethod.Post, "search")
             {
                 Content = content
             };

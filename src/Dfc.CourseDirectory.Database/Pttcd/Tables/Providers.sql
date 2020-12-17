@@ -2,6 +2,7 @@
 (
 	[ProviderId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Providers PRIMARY KEY,
 	[LastSyncedFromCosmos] DATETIME,
+	[Version] ROWVERSION NOT NULL,
 	[ApprenticeshipQAStatus] TINYINT,
 	[Ukprn] INT,
 	[ProviderStatus] TINYINT,

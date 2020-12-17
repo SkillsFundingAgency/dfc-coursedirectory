@@ -8,7 +8,7 @@ using Azure.Search.Documents.Models;
 
 namespace Dfc.CourseDirectory.Core.Search
 {
-    public class CourseSearchQuery : IAzureSearchQuery<FindACourseOffering>
+    public class FindACourseOfferingSearchQuery : IAzureSearchQuery<FindACourseOffering>
     {
         private const string RegionBoostScoringProfileName = "region-boost";
 
@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Search
         public (string SearchText, SearchOptions Options) GenerateSearchQuery()
         {
             var filter = string.Join(" and ", (Filters ?? Array.Empty<string>())
-                .Append($"{nameof(FindACourseOffering.Status)} eq 1"));
+                .Append($"{nameof(FindACourseOffering.Live)} eq true"));
 
             var searchOptions = new SearchOptions()
             {

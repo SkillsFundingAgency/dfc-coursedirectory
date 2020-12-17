@@ -2,6 +2,7 @@
 (
 	[CourseId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Courses] PRIMARY KEY,
 	[LastSyncedFromCosmos] DATETIME,
+	[Version] ROWVERSION NOT NULL,
 	[CourseStatus] INT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),

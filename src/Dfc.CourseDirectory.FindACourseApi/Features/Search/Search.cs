@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -42,8 +43,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         private static readonly IReadOnlyDictionary<string, string> _courseSearchFacetMapping = new Dictionary<string, string>()
         {
             { "NotionalNVQLevelv2", "QualificationLevel" },
-            { "VenueStudyMode", "StudyMode" },
-            { "VenueAttendancePattern", "AttendancePattern" }
+            { "RegionName", "Region" },
+            { "ProviderDisplayName", "ProviderName" }
         };
 
         private static readonly HashSet<char> _luceneSyntaxEscapeChars = new HashSet<char>("+-&|!(){}[]^\"~*?:\\/");
@@ -126,7 +127,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             {
                 // TODO Validate AttendancePatterns? Consider using enum instead of int
 
-                filters.Add($"search.in({nameof(FindACourseOffering.VenueAttendancePattern)}, '{string.Join("|", request.AttendancePatterns)}', '|')");
+                filters.Add($"({string.Join(" or ", request.AttendancePatterns.Select(ap => $"{nameof(FindACourseOffering.AttendancePattern)} eq {ap}"))})");
             }
 
             if (request.QualificationLevels?.Any() ?? false)
@@ -138,12 +139,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (geoFilterRequired)
             {
-                var distanceInKm = GeoHelper.MilesToKilometers(request.Distance.Value);
+                var distanceInKm = Convert.ToDecimal(GeoHelper.MilesToKilometers(request.Distance.Value));
 
                 filters.Add(
-                    $"(geo.distance({nameof(FindACourseOffering.VenueLocation)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
+                    $"(geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
                     $" or {nameof(FindACourseOffering.National)} eq true" +
-                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq '2')");
+                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq 2)");
             }
 
             if (!string.IsNullOrWhiteSpace(request.Town))
@@ -153,23 +154,23 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (request.StudyModes?.Any() ?? false)
             {
-                filters.Add($"search.in({nameof(FindACourseOffering.VenueStudyMode)}, '{string.Join("|", request.StudyModes)}', '|')");
+                filters.Add($"({string.Join(" or ", request.StudyModes.Select(sm => $"{nameof(FindACourseOffering.StudyMode)} eq {sm}"))})");
             }
 
             if (request.DeliveryModes?.Any() ?? false)
             {
-                filters.Add($"search.in({nameof(FindACourseOffering.DeliveryMode)}, '{string.Join("|", request.DeliveryModes)}', '|')");
+                filters.Add($"({string.Join(" or ", request.DeliveryModes.Select(dm => $"{nameof(FindACourseOffering.DeliveryMode)} eq {dm}"))})");
             }
 
             if (!string.IsNullOrWhiteSpace(request.ProviderName))
             {
-                filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', 'ProviderName', 'simple', 'any')");
+                filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', '{nameof(FindACourseOffering.ProviderDisplayName)}', 'simple', 'any')");
             }
 
             var orderBy = request.SortBy == SearchSortBy.StartDateDescending ?
                 "StartDate desc" : request.SortBy == SearchSortBy.StartDateAscending ?
                 "StartDate asc" : request.SortBy == SearchSortBy.Distance ?
-                $"geo.distance(VenueLocation, geography'POINT({longitude.Value} {latitude.Value})')" :
+                $"geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})')" :
                 "search.score() desc";
 
             if (!TryResolvePagingParams(request.Limit, request.Start, out var size, out var skip, out var problem))
@@ -179,16 +180,16 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             var searchText = TranslateCourseSearchSubjectText(request.SubjectKeyword);
 
-            var query = new CourseSearchQuery()
+            var query = new FindACourseOfferingSearchQuery()
             {
                 Facets = new[]
                 {
                     "NotionalNVQLevelv2,count:100",
-                    "VenueStudyMode",
-                    "VenueAttendancePattern",
+                    "StudyMode",
+                    "AttendancePattern",
                     "DeliveryMode",
-                    "ProviderName,count:100",
-                    "Region,count:100"
+                    "ProviderDisplayName,count:100",
+                    "RegionName,count:100"
                 },
                 Filters = filters,
                 CourseName = searchText,
@@ -208,20 +209,22 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     f => _courseSearchFacetMapping.GetValueOrDefault(f.Key, f.Key),
                     f => f.Value.Select(v => new FacetCountResultViewModel()
                     {
-                        Value = v.Key,
+                        Value = v.Key.ToString(),
                         Count = v.Value.Value
                     })),
                 Results = result.Items.Select(i => new SearchResultViewModel()
                 {
-                    Cost = i.Record.Cost,
+                    Cost = !string.IsNullOrEmpty(i.Record.Cost) ?
+                        Convert.ToInt32(decimal.Parse(i.Record.Cost)) :
+                        (int?)null,
                     CostDescription = i.Record.CostDescription,
                     CourseDescription = i.Record.CourseDescription,
                     CourseName = i.Record.CourseName,
                     CourseId = i.Record.CourseId,
                     CourseRunId = i.Record.CourseRunId,
-                    CourseText = i.Record.CourseText,
-                    DeliveryMode = i.Record.DeliveryMode,
-                    DeliveryModeDescription = i.Record.DeliveryModeDescription,
+                    CourseText = i.Record.CourseDescription,
+                    DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
+                    DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
                     Distance = GetDistanceFromPostcodeForResult(i),
                     DurationUnit = i.Record.DurationUnit ?? 0,
                     DurationValue = i.Record.DurationValue,
@@ -230,37 +233,39 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     National = i.Record.National,
                     QualificationLevel = i.Record.NotionalNVQLevelv2,
                     OfferingType = i.Record.OfferingType,
-                    ProviderName = i.Record.ProviderName,
+                    ProviderName = i.Record.ProviderDisplayName,
                     QualificationCourseTitle = i.Record.QualificationCourseTitle,
-                    Region = i.Record.Region,
+                    Region = i.Record.RegionName,
                     SearchScore = i.Score.Value,
                     StartDate = !i.Record.FlexibleStartDate.GetValueOrDefault() ? i.Record.StartDate : null,
-                    Ukprn = i.Record.UKPRN.ToString(),
+                    Ukprn = i.Record.ProviderUkprn.ToString(),
                     UpdatedOn = i.Record.UpdatedOn,
                     VenueAddress = i.Record.VenueAddress,
-                    VenueAttendancePattern = i.Record.VenueAttendancePattern,
-                    VenueAttendancePatternDescription = i.Record.VenueAttendancePatternDescription,
-                    VenueLocation = i.Record.VenueLocation != null ?
+                    VenueAttendancePattern = ((int?)i.Record.AttendancePattern)?.ToString(),
+                    VenueAttendancePatternDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
+                        i.Record.AttendancePattern?.ToDescription() :
+                        null,
+                    VenueLocation = i.Record.Position != null ?
                         new CoordinatesViewModel()
                         {
-                            Latitude = i.Record.VenueLocation.Latitude,
-                            Longitude = i.Record.VenueLocation.Longitude
+                            Latitude = i.Record.Position.Latitude,
+                            Longitude = i.Record.Position.Longitude
                         } :
                         null,
                     VenueName = i.Record.VenueName,
-                    VenueStudyMode = i.Record.VenueStudyMode,
-                    VenueStudyModeDescription = i.Record.VenueStudyModeDescription,
+                    VenueStudyMode = ((int)i.Record.StudyMode).ToString(),
+                    VenueStudyModeDescription = i.Record.StudyMode.ToDescription(),
                     VenueTown = i.Record.VenueTown
                 }).ToList()
             };
 
             double? GetDistanceFromPostcodeForResult(SearchResultItem<FindACourseOffering> item) =>
-                getPostcodeCoords && item.Record.VenueLocation != null && item.Record.National != true ?
+                getPostcodeCoords && item.Record.Position != null && item.Record.National != true ?
                     Math.Round(
                         GeoHelper.KilometersToMiles(
                             GeoHelper.GetDistanceTo(
                                 (latitude.Value, longitude.Value),
-                                (item.Record.VenueLocation.Latitude, item.Record.VenueLocation.Longitude))),
+                                (item.Record.Position.Latitude, item.Record.Position.Longitude))),
                         2) :
                     (double?)null;
         }
@@ -307,7 +312,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
         private static string TranslateCourseSearchSubjectText(string subjectText)
         {
-            if (string.IsNullOrWhiteSpace(subjectText))
+            if (string.IsNullOrWhiteSpace(subjectText) || subjectText.Trim() == "*")
             {
                 return "*";
             }
@@ -337,6 +342,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             // Any remaining terms should be made prefix terms or fuzzy terms
             terms
                 .AddRange(remaining.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Where(term => !(term.Length == 1 && _luceneSyntaxEscapeChars.Contains(term[0])))
                 .Select(EscapeSearchText)
                 .SelectMany(t => new[] { $"{t}*", $"{t}~" }));
 

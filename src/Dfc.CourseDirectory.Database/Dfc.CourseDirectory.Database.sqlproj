@@ -129,8 +129,10 @@
     <Folder Include="Pttcd" />
     <Folder Include="Pttcd\Tables" />
     <Folder Include="Pttcd\Indexes" />
-    <Folder Include="Scripts\" />
+    <Folder Include="Pttcd\StoredProcedures" />
     <Folder Include="Pttcd\Types" />
+    <Folder Include="Scripts\" />
+    <Folder Include="Pttcd\Triggers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="LARS\Tables\AwardOrgCode.sql">
@@ -254,6 +256,14 @@
     </Build>
     <Build Include="Pttcd\Indexes\IX_TLevelLocations_TLevelVenue.sql" />
     <Build Include="Pttcd\Types\GuidIdTable.sql" />
+    <Build Include="Pttcd\Tables\CourseRunSubRegions.sql" />
+    <Build Include="Pttcd\Indexes\IX_FindACourseIndex_Version.sql" />
+    <Build Include="Pttcd\StoredProcedures\RefreshFindACourseIndex.sql" />
+    <Build Include="Pttcd\Types\GuidIdTable.sql" />
+    <Build Include="Pttcd\Tables\FindACourseIndex.sql" />
+    <Build Include="Pttcd\Triggers\TRG_Providers_UpdateFindACourseIndex.sql" />
+    <Build Include="Pttcd\Indexes\IX_CourseRuns_Status.sql" />
+    <Build Include="Pttcd\Triggers\TRG_Venues_UpdateFindACourseIndex.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

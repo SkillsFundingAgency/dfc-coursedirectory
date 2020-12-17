@@ -2,6 +2,7 @@
 (
 	[ApprenticeshipId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Apprenticeships] PRIMARY KEY,
 	[LastSyncedFromCosmos] DATETIME,
+	[Version] ROWVERSION NOT NULL,
 	[ApprenticeshipStatus] INT,
 	[CreatedOn] DATETIME,
 	[CreatedBy] NVARCHAR(MAX),

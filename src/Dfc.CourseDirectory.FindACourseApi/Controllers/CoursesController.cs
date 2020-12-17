@@ -22,8 +22,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             _log = logger;
         }
 
+        [HttpPost("~/coursesearch")]  // Kept around to avoid breaking API change
         [HttpPost("~/search")]
-        [HttpPost("~/coursesearch")]  // Deprecated
         [ProducesResponseType(typeof(Features.Search.SearchViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

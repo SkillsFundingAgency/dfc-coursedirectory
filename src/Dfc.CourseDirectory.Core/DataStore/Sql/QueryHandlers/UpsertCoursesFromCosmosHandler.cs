@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             await UpsertCourseRuns();
             await UpsertCourseRunRegions();
             await UpsertCourseRunSubRegions();
+            await UpdateFindACourseIndex();
 
             async Task UpsertCourses()
             {
@@ -381,6 +382,20 @@ WHEN NOT MATCHED THEN
 WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT CourseRunId FROM #CourseRuns) THEN DELETE;";
 
                 await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
+            }
+
+            Task UpdateFindACourseIndex()
+            {
+                var courseRunIds = query.Records.SelectMany(c => c.CourseRuns).Select(cr => cr.CourseRunId);
+
+                return transaction.Connection.ExecuteAsync(
+                    "Pttcd.RefreshFindACourseIndex",
+                    param: new
+                    {
+                        CourseRunIds = TvpHelper.CreateGuidIdTable(courseRunIds)
+                    },
+                    transaction: transaction,
+                    commandType: System.Data.CommandType.StoredProcedure);
             }
 
             return new None();
