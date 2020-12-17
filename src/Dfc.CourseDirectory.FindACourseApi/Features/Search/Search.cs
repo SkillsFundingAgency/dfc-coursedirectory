@@ -229,6 +229,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     LearnAimRef = i.Record.LearnAimRef,
                     National = i.Record.National,
                     QualificationLevel = i.Record.NotionalNVQLevelv2,
+                    OfferingType = i.Record.OfferingType,
                     ProviderName = i.Record.ProviderName,
                     QualificationCourseTitle = i.Record.QualificationCourseTitle,
                     Region = i.Record.Region,

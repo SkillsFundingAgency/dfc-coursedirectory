@@ -71,6 +71,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             return new CourseRunDetailViewModel
             {
                 CourseRunId = courseRun.Id,
+                OfferingType = Core.Search.Models.FindACourseOfferingType.Course,
                 AttendancePattern = courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)courseRun.AttendancePattern : null,
                 Cost = courseRun.Cost,
                 CostDescription = courseRun.CostDescription,
