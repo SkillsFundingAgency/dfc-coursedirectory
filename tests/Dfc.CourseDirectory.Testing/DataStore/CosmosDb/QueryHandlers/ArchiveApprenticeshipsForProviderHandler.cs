@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
@@ -14,8 +15,8 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 
             foreach (var app in providerApprenticeships)
             {
-                app.RecordStatus = 4;
-                
+                app.RecordStatus = (int)ApprenticeshipStatus.Archived;
+
                 foreach (var location in app.ApprenticeshipLocations)
                 {
                     location.RecordStatus = 4;

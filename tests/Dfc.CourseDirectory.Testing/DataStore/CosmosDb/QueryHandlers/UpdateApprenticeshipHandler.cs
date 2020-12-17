@@ -2,6 +2,7 @@
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using OneOf;
 using OneOf.Types;
 
@@ -48,7 +49,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 UpdatedDate = request.UpdatedDate,
                 VenueId = l.VenueId
             }).ToList();
-            apprenticeship.RecordStatus = 1;
+            apprenticeship.RecordStatus = (int)ApprenticeshipStatus.Live;
             apprenticeship.UpdatedDate = request.UpdatedDate;
             apprenticeship.UpdatedBy = request.UpdatedBy.Email;
 
