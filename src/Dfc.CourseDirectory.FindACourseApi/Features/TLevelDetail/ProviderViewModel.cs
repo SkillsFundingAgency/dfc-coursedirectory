@@ -1,11 +1,8 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
+﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
 {
     public class ProviderViewModel
     {
         public string ProviderName { get; set; }
-        public string TradingName { get; set; }
-        public string CourseDirectoryName { get; set; }
-        public string Alias { get; set; }
         public string Ukprn { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }

@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
         public FindACourseApiApplicationFactory Factory { get; }
 
-        protected Mock<ISearchClient<Course>> CourseSearchClient => Factory.CourseSearchClient;
+        protected Mock<ISearchClient<FindACourseOffering>> CourseSearchClient => Factory.CourseSearchClient;
 
         protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
 

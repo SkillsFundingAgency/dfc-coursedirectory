@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 {
     public class CourseRunDetailViewModel
     {
+        public FindACourseOfferingType OfferingType { get; set; }
         public ProviderViewModel Provider { get; set; }
         public CourseViewModel Course { get; set; }
         public VenueViewModel Venue { get; set; }

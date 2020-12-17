@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseSearch
+﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 {
     public class CoordinatesViewModel
     {
