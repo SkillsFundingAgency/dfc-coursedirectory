@@ -179,11 +179,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUserWithBothFEAndApprenticeshipsProviderContext_RendersExpectedNav(TestUserType testUserType)
+        public async Task AdminUserWithTLevelsOnlyProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
+                providerType: ProviderType.TLevels,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
@@ -210,16 +210,61 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[5].TestId.Should().Be("topnav-signout");
             }
 
-            Assert.Equal(5, subNavLinks.Count);
+            Assert.Equal(3, subNavLinks.Count);
+
+            using (new AssertionScope())
+            {
+                subNavLinks[0].TestId.Should().Be("adminsubnav-home");
+                subNavLinks[1].TestId.Should().Be("adminsubnav-tlevels");
+                subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
+            }
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
+        public async Task AdminUserWithFEAndApprenticeshipsAndTLevelsProviderContext_RendersExpectedNav(TestUserType testUserType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels,
+                providerName: "Test Provider");
+
+            await User.AsTestUser(testUserType);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            var topLevelLinks = GetTopLevelNavLinks(doc);
+            var subNavLinks = GetSubNavLinks(doc);
+
+            topLevelLinks.Count.Should().Be(6);
+
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
+                topLevelLinks[1].TestId.Should().Be("topnav-qa");
+                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[4].TestId.Should().Be("topnav-migrationreports");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+            }
+
+            Assert.Equal(6, subNavLinks.Count);
 
             using (new AssertionScope())
             {
                 subNavLinks[0].TestId.Should().Be("adminsubnav-home");
                 subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-apprenticeships");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[4].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[4].Href.Should().Be("/BulkUpload/LandingOptions");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-tlevels");
+                subNavLinks[4].TestId.Should().Be("adminsubnav-locations");
+                subNavLinks[5].TestId.Should().Be("adminsubnav-bulkupload");
+                subNavLinks[5].Href.Should().Be("/BulkUpload/LandingOptions");
             }
         }
 
@@ -300,11 +345,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
-        public async Task ProviderUserForBothFEAndApprenticeships_RendersExpectedNav(TestUserType testUserType)
+        public async Task ProviderUserForTLevelsOnlyProvider_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
+                providerType: ProviderType.TLevels,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType, providerId);
@@ -319,17 +364,53 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(6);
+            topLevelLinks.Count.Should().Be(4);
+
+            using (new AssertionScope())
+            {
+                topLevelLinks[0].TestId.Should().Be("topnav-home");
+                topLevelLinks[1].TestId.Should().Be("topnav-tlevels");
+                topLevelLinks[2].TestId.Should().Be("topnav-locations");
+                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+            }
+
+            subNavLinks.Count.Should().Be(0);
+        }
+
+        [Theory]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task ProviderUserForFEAndApprenticeshipsAndTLevels_RendersExpectedNav(TestUserType testUserType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels,
+                providerName: "Test Provider");
+
+            await User.AsTestUser(testUserType, providerId);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            var topLevelLinks = GetTopLevelNavLinks(doc);
+            var subNavLinks = GetSubNavLinks(doc);
+
+            topLevelLinks.Count.Should().Be(7);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-courses");
                 topLevelLinks[2].TestId.Should().Be("topnav-apprenticeships");
-                topLevelLinks[3].TestId.Should().Be("topnav-locations");
-                topLevelLinks[4].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[4].Href.Should().Be("/BulkUpload/LandingOptions");
-                topLevelLinks[5].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-tlevels");
+                topLevelLinks[4].TestId.Should().Be("topnav-locations");
+                topLevelLinks[5].TestId.Should().Be("topnav-bulkupload");
+                topLevelLinks[5].Href.Should().Be("/BulkUpload/LandingOptions");
+                topLevelLinks[6].TestId.Should().Be("topnav-signout");
             }
 
             subNavLinks.Count.Should().Be(0);
