@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
@@ -14,6 +15,7 @@ namespace Dfc.CourseDirectory.Testing
         private readonly SqlDataSync _sqlDataSync;
         private readonly IServiceProvider _serviceProvider;
         private readonly IClock _clock;
+        private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
 
         public TestData(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
@@ -37,17 +39,26 @@ namespace Dfc.CourseDirectory.Testing
         protected async Task<TResult> WithSqlQueryDispatcher<TResult>(
             Func<ISqlQueryDispatcher, Task<TResult>> action)
         {
-            var serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
-            using (var scope = serviceScopeFactory.CreateScope())
+            await _dispatcherLock.WaitAsync();
+
+            try
             {
-                var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
-                var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+                var serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
+                using (var scope = serviceScopeFactory.CreateScope())
+                {
+                    var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
+                    var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
 
-                var result = await action(queryDispatcher);
+                    var result = await action(queryDispatcher);
 
-                transaction.Commit();
+                    transaction.Commit();
 
-                return result;
+                    return result;
+                }
+            }
+            finally
+            {
+                _dispatcherLock.Release();
             }
         }
     }
