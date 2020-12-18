@@ -15,8 +15,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             DeleteTLevelsForProviderWithTLevelDefinitions query)
         {
             var sql = @"
-UPDATE Pttcd.TLevels
-SET TLevelStatus = @DeletedTLevelStatus
+UPDATE Pttcd.TLevels SET
+    TLevelStatus = @DeletedTLevelStatus,
+    DeletedOn = @DeletedOn,
+    DeletedByUserId = @DeletedByUserId
 FROM Pttcd.TLevels t
 JOIN @TLevelDefinitionIds x ON t.TLevelDefinitionId = x.Id
 WHERE t.ProviderId = @ProviderId
@@ -27,6 +29,8 @@ AND t.TLevelStatus = @LiveTLevelStatus";
                 new
                 {
                     query.ProviderId,
+                    query.DeletedOn,
+                    DeletedByUserId = query.DeletedBy.UserId,
                     TLevelDefinitionIds = TvpHelper.CreateGuidIdTable(query.TLevelDefinitionIds),
                     LiveTLevelStatus = TLevelStatus.Live,
                     DeletedTLevelStatus = TLevelLocationStatus.Deleted

@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
@@ -62,15 +63,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstance<JourneyModel> _journeyInstance;
+        private readonly IClock _clock;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
             IProviderOwnershipCache providerOwnershipCache,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            JourneyInstance<JourneyModel> journeyInstance)
+            JourneyInstance<JourneyModel> journeyInstance,
+            IClock clock,
+            ICurrentUserProvider currentUserProvider)
         {
             _providerOwnershipCache = providerOwnershipCache;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstance = journeyInstance;
+            _clock = clock;
+            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
@@ -97,7 +104,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelQuery() { TLevelId = request.TLevelId });
+            await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelQuery()
+            {
+                TLevelId = request.TLevelId,
+                DeletedBy = _currentUserProvider.GetCurrentUser(),
+                DeletedOn = _clock.UtcNow
+            });
 
             _providerOwnershipCache.OnTLevelDeleted(request.TLevelId);
 
