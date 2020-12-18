@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser)).Id;
 
             // Create submission
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
-            
+
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
             {
@@ -130,10 +130,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var providerUser = await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
             await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
-            
+
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser)).Id;
 
             // Create submission 1
             var submissionId1 = await TestData.CreateApprenticeshipQASubmission(
@@ -239,7 +239,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
 
             // Create submission
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
@@ -321,7 +321,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser)).Id;
 
             // Create submission
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser)).Id;
 
             // Create submission
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
