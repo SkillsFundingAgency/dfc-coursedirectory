@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
                 standard,
                 createdBy: user,
                 contactEmail: contactEmail,
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 locations: new[]
                 {
                     CreateApprenticeshipLocation.CreateRegions(regions)
-                });
+                })).Id;
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
                 contactEmail: contactEmail,
@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 locations: new[]
                 {
                     CreateApprenticeshipLocation.CreateRegions(regions)
-                });
+                })).Id;
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
@@ -184,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
                 contactEmail: contactEmail,
@@ -195,7 +195,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 locations: new[]
                 {
                     CreateApprenticeshipLocation.CreateNational()
-                });
+                })).Id;
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
@@ -293,7 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var venue = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetVenueById() { VenueId = venueId });
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
                 contactEmail: contactEmail,
@@ -308,7 +308,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                         venue,
                         radius,
                         new[] { deliveryMode })
-                });
+                })).Id;
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
@@ -371,7 +371,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
                 framework,
                 createdBy: user,
                 contactEmail: contactEmail,
@@ -382,7 +382,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 locations: new[]
                 {
                     CreateApprenticeshipLocation.CreateNational()
-                });
+                })).Id;
 
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 

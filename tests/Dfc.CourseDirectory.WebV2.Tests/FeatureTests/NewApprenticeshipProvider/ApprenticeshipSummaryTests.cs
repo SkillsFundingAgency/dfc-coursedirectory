@@ -695,7 +695,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
             var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
             var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
                 standard,
                 createdBy: user,
                 contactEmail: adminUser.Email,
@@ -705,7 +705,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 locations: new[]
                 {
                     CreateApprenticeshipLocation.CreateRegions(regions)
-                });
+                })).Id;
             var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
