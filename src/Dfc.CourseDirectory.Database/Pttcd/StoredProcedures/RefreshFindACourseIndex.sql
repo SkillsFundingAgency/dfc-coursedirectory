@@ -10,7 +10,7 @@ BEGIN
 			1 AS OfferingType, -- Course
 			c.CourseId,
 			cr.CourseRunId,
-			c.UpdatedOn,
+			cr.UpdatedOn,
 			p.ProviderId,
 			p.ProviderName AS ProviderDisplayName,
 			c.ProviderUkprn,
