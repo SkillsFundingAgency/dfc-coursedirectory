@@ -23,6 +23,8 @@ namespace Dfc.CourseDirectory.Testing
 
         public IServiceProvider Services { get; }
 
+        public TestData CreateTestData() => Services.GetRequiredService<TestData>();
+
         public void Dispose() => DatabaseFixture.Dispose();
 
         public void OnTestStarting()
@@ -56,6 +58,7 @@ namespace Dfc.CourseDirectory.Testing
         protected DatabaseTestBase(DatabaseTestBaseFixture fixture)
         {
             Fixture = fixture;
+            TestData = fixture.CreateTestData();
             Fixture.OnTestStarting();
         }
 
@@ -67,7 +70,7 @@ namespace Dfc.CourseDirectory.Testing
 
         public IServiceProvider Services => Fixture.Services;
 
-        public TestData TestData => Fixture.DatabaseFixture.TestData;
+        public TestData TestData { get; }
 
         public Task DisposeAsync() => Task.CompletedTask;
 
