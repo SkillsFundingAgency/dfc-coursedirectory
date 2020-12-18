@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using MediatR;
 using OneOf;
@@ -41,12 +43,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderInfoCache _providerInfoCache;
+        private readonly IClock _clock;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public Handler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, ISqlQueryDispatcher sqlQueryDispatcher, IProviderInfoCache providerInfoCache)
+        public Handler(
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderInfoCache providerInfoCache,
+            IClock clock,
+            ICurrentUserProvider currentUserProvider)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerInfoCache = providerInfoCache;
+            _clock = clock;
+            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -97,7 +108,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.DeleteTLevelsForProviderWithTLevelDefinitions()
                 {
                     ProviderId = request.ProviderId,
-                    TLevelDefinitionIds = RemovedTLevelDefinitionIds
+                    TLevelDefinitionIds = RemovedTLevelDefinitionIds,
+                    DeletedBy = _currentUserProvider.GetCurrentUser(),
+                    DeletedOn = _clock.UtcNow
                 });
             }
 

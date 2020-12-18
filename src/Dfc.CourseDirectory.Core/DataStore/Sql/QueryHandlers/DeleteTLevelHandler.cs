@@ -13,8 +13,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<OneOf<NotFound, Success>> Execute(SqlTransaction transaction, DeleteTLevel query)
         {
             var sql = @"
-UPDATE Pttcd.TLevels
-SET TLevelStatus = @DeletedTLevelStatus
+UPDATE Pttcd.TLevels SET
+    TLevelStatus = @DeletedTLevelStatus,
+    DeletedOn = @DeletedOn,
+    DeletedByUserId = @DeletedByUserId
 WHERE TLevelId = @TLevelId
 AND TLevelStatus = @LiveTLevelStatus";
 
@@ -23,6 +25,8 @@ AND TLevelStatus = @LiveTLevelStatus";
                 new
                 {
                     query.TLevelId,
+                    query.DeletedOn,
+                    DeletedByUserId = query.DeletedBy.UserId,
                     DeletedTLevelStatus = TLevelStatus.Deleted,
                     LiveTLevelStatus = TLevelStatus.Live
                 },

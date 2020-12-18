@@ -328,8 +328,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 startDate: startDate,
                 createdBy: User.ToUserInfo());
 
-            await WithSqlQueryDispatcher(
-                dispatcher => dispatcher.ExecuteQuery(new DeleteTLevel() { TLevelId = tLevel.TLevelId }));
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new DeleteTLevel()
+                {
+                    TLevelId = tLevel.TLevelId,
+                    DeletedOn = Clock.UtcNow,
+                    DeletedBy = User.ToUserInfo()
+                }));
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -383,8 +388,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 startDate: startDate,
                 createdBy: User.ToUserInfo());
 
-            await WithSqlQueryDispatcher(
-                dispatcher => dispatcher.ExecuteQuery(new DeleteTLevel() { TLevelId = tLevel.TLevelId }));
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new DeleteTLevel()
+                {
+                    TLevelId = tLevel.TLevelId,
+                    DeletedOn = Clock.UtcNow,
+                    DeletedBy = User.ToUserInfo()
+                }));
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -438,8 +448,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 startDate: startDate,
                 createdBy: User.ToUserInfo());
 
-            await WithSqlQueryDispatcher(
-                dispatcher => dispatcher.ExecuteQuery(new DeleteTLevel() { TLevelId = tLevel.TLevelId }));
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new DeleteTLevel()
+                {
+                    TLevelId = tLevel.TLevelId,
+                    DeletedOn = Clock.UtcNow,
+                    DeletedBy = User.ToUserInfo()
+                }));
 
             var anotherTLevel = await TestData.CreateTLevel(
                 providerId,
