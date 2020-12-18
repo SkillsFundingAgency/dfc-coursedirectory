@@ -389,7 +389,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                         ApprenticeshipLocationId = 689
                     }
                 },
-                RecordStatus = 1,
+                RecordStatus = (int)ApprenticeshipStatus.Live,
                 CreatedDate = Clock.UtcNow,
                 CreatedBy = "Tests",
                 UpdatedDate = Clock.UtcNow,
