@@ -57,11 +57,11 @@
                     </govuk-checkboxes-fieldset-legend>
                 </govuk-checkboxes-fieldset>
                 <govuk-checkboxes-item value="@(true)">
-                    Yes - I want to delete the T level
+                    Yes, I want to delete this T level
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
 
-            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-tlevel__delete-btn">Delete</govuk-button>
+            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-tlevel__delete-btn">Delete T Level</govuk-button>
 
             <govuk-button asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
         </form>
