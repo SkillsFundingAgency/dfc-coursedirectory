@@ -63,8 +63,6 @@ namespace Dfc.CourseDirectory.Testing
 
         public SqlQuerySpy SqlQuerySpy => _services.GetRequiredService<SqlQuerySpy>();
 
-        public TestData TestData => _services.GetRequiredService<TestData>();
-
         private string ConnectionString => _configuration["ConnectionStrings:DefaultConnection"];
 
         public static void ConfigureServices(IServiceCollection services)
@@ -78,6 +76,8 @@ namespace Dfc.CourseDirectory.Testing
             services.AddTransient<SqlDataSync>();
             services.AddLogging();
         }
+
+        public TestData CreateTestData() => _services.GetRequiredService<TestData>();
 
         public void Dispose()
         {
