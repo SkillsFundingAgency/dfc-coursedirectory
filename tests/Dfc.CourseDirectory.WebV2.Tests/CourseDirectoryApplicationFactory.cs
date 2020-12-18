@@ -33,6 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public CourseDirectoryApplicationFactory(IMessageSink messageSink)
         {
             DatabaseFixture = new DatabaseFixture(Configuration, Server.Host.Services, messageSink);
+            TestData = DatabaseFixture.CreateTestData();
         }
 
         public MutableClock Clock => DatabaseFixture.Clock;
@@ -62,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public SqlQuerySpy SqlQuerySpy => DatabaseFixture.SqlQuerySpy;
 
-        public TestData TestData => DatabaseFixture.TestData;
+        public TestData TestData { get; }
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
