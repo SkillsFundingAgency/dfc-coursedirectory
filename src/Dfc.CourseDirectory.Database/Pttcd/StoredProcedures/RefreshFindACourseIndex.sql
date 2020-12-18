@@ -12,7 +12,7 @@ BEGIN
 			cr.CourseRunId,
 			cr.UpdatedOn,
 			p.ProviderId,
-			p.ProviderName AS ProviderDisplayName,
+			CASE WHEN p.DisplayNameSource = 1 /* TradingName */ THEN ISNULL(NULLIF(p.Alias, ''), p.ProviderName) ELSE p.ProviderName END AS ProviderDisplayName,
 			c.ProviderUkprn,
 			ld.LearnAimRefTitle QualificationCourseTitle,
 			c.LearnAimRef,
@@ -30,16 +30,14 @@ BEGIN
 			CASE WHEN cr.DeliveryMode = 1 THEN cr.AttendancePattern ELSE null END AttendancePattern,
 			cr.[National],
 			v.VenueName,
-
-			CONCAT_WS(
-				', ',
-				NULLIF(v.AddressLine1, ''),
-				NULLIF(v.AddressLine2, ''),
-				NULLIF(v.Town, ''),
-				NULLIF(v.County, ''),
-				NULLIF(v.Postcode, '')
-			) AS VenueAddress,
-
+			STUFF(
+				CONCAT(
+					NULLIF(', ' + v.AddressLine1, ', '),
+					NULLIF(', ' + v.AddressLine2, ', '),
+					NULLIF(', ' + v.Town, ', '),
+					NULLIF(', ' + v.County, ', '),
+					NULLIF(', ' + v.Postcode, ', ')),
+				1, 2, NULL) AS VenueAddress,
 			v.Town AS VenueTown,
 			COALESCE(v.Position, r.Position) AS Position,
 			CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 THEN 'National' ELSE '' END AS RegionName,
