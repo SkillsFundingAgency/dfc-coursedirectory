@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 
@@ -8,7 +9,7 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<Guid> CreateApprenticeship(
+        public async Task<Apprenticeship> CreateApprenticeship(
             Guid providerId,
             StandardOrFramework standardOrFramework,
             UserInfo createdBy,
@@ -54,11 +55,14 @@ namespace Dfc.CourseDirectory.Testing
                 CreatedByUser = createdBy
             });
 
-            var apprenticeship = await _cosmosDbQueryDispatcher.ExecuteQuery(
+            var createdApprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetApprenticeshipsByIds() { ApprenticeshipIds = new[] { apprenticeshipId } });
-            await _sqlDataSync.SyncApprenticeship(apprenticeship[apprenticeshipId]);
 
-            return apprenticeshipId;
+            var apprenticeship = createdApprenticeships[apprenticeshipId];
+
+            await _sqlDataSync.SyncApprenticeship(apprenticeship);
+
+            return apprenticeship;
         }
     }
 }
