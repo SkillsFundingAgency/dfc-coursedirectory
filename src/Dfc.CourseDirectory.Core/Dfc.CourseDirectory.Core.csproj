@@ -12,7 +12,7 @@
     <PackageReference Include="FastMember" Version="1.5.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.0.0-preview5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.22" />
-    <PackageReference Include="HtmlSanitizer" Version="5.0.274-beta" />
+    <PackageReference Include="HtmlSanitizer" Version="5.0.372" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.11" />
     <PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.0.0-beta.1" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
