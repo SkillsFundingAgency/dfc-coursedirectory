@@ -392,7 +392,8 @@ WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT CourseRunId FROM #C
                     "Pttcd.RefreshFindACourseIndex",
                     param: new
                     {
-                        CourseRunIds = TvpHelper.CreateGuidIdTable(courseRunIds)
+                        CourseRunIds = TvpHelper.CreateGuidIdTable(courseRunIds),
+                        Now = query.LastSyncedFromCosmos
                     },
                     transaction: transaction,
                     commandType: System.Data.CommandType.StoredProcedure);

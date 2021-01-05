@@ -4,7 +4,8 @@ AFTER UPDATE
 AS
 BEGIN
 
-	DECLARE @ProviderLiveCourseRuns Pttcd.GuidIdTable
+	DECLARE @ProviderLiveCourseRuns Pttcd.GuidIdTable,
+			@Now DATETIME
 
 	INSERT INTO @ProviderLiveCourseRuns
 	SELECT cr.CourseRunId FROM Pttcd.CourseRuns cr
@@ -12,6 +13,8 @@ BEGIN
 	JOIN inserted x ON c.ProviderUkprn = x.Ukprn
 	WHERE cr.CourseRunStatus = 1
 
-	EXEC Pttcd.RefreshFindACourseIndex @ProviderLiveCourseRuns
+	SET @Now = GETUTCDATE()
+
+	EXEC Pttcd.RefreshFindACourseIndex @ProviderLiveCourseRuns, @Now
 
 END
