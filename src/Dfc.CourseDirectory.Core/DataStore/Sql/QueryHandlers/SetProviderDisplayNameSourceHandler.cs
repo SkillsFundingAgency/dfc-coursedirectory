@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 ProviderId = query.ProviderId
             };
 
-            var updated = (await transaction.Connection.ExecuteAsync(sql, paramz, transaction)) == 1;
+            var updated = (await transaction.Connection.ExecuteAsync(sql, paramz, transaction)) != 0;
 
             if (updated)
             {
