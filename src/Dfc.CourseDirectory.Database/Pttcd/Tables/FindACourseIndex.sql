@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [Pttcd].[FindACourseIndex] (
 	[Id] VARCHAR(46) NOT NULL CONSTRAINT [PK_FindACourseIndex] PRIMARY KEY,
+	[LastSynced] DATETIME,
 	[OfferingType] INT NOT NULL,
 	[CourseId] UNIQUEIDENTIFIER,
 	[CourseRunId] UNIQUEIDENTIFIER,
