@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [Pttcd].[RefreshFindACourseIndex]
-	@CourseRunIds [Pttcd].[GuidIdTable] READONLY
+	@CourseRunIds [Pttcd].[GuidIdTable] READONLY,
+	@Now DATETIME
 AS
 BEGIN
 
@@ -62,6 +63,7 @@ BEGIN
 	USING (SELECT * FROM RecordsCte) AS source
 	ON source.Id = target.Id
 	WHEN MATCHED THEN UPDATE SET
+		LastSynced = @Now,
 		OfferingType = source.OfferingType,
 		CourseId = source.CourseId,
 		CourseRunId = source.CourseRunId,
@@ -93,6 +95,7 @@ BEGIN
 		ScoreBoost = source.ScoreBoost
 	WHEN NOT MATCHED THEN INSERT (
 		Id,
+		LastSynced,
 		OfferingType,
 		CourseId,
 		CourseRunId,
@@ -124,6 +127,7 @@ BEGIN
 		ScoreBoost)
 	VALUES (
 		source.Id,
+		@Now,
 		source.OfferingType,
 		source.CourseId,
 		source.CourseRunId,
@@ -153,6 +157,8 @@ BEGIN
 		source.Position,
 		source.RegionName,
 		source.ScoreBoost)
-	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET Live = 0;
+	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET
+		Live = 0,
+		LastSynced = @Now;
 
 END

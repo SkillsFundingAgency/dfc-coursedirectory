@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dapper;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.Azure.WebJobs;
 
@@ -8,10 +9,12 @@ namespace Dfc.CourseDirectory.Functions
     public class PopulateFindACourseIndexTable
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IClock _clock;
 
-        public PopulateFindACourseIndexTable(ISqlQueryDispatcher sqlQueryDispatcher)
+        public PopulateFindACourseIndexTable(ISqlQueryDispatcher sqlQueryDispatcher, IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _clock = clock;
         }
 
         [FunctionName(nameof(PopulateFindACourseIndexTable))]
@@ -80,6 +83,7 @@ MERGE Pttcd.FindACourseIndex AS target
 USING (SELECT * FROM RecordsCte) AS source
 ON source.Id = target.Id
 WHEN MATCHED THEN UPDATE SET
+	LastSynced = @Now,
 	OfferingType = source.OfferingType,
 	CourseId = source.CourseId,
 	CourseRunId = source.CourseRunId,
@@ -111,6 +115,7 @@ WHEN MATCHED THEN UPDATE SET
 	ScoreBoost = source.ScoreBoost
 WHEN NOT MATCHED THEN INSERT (
 	Id,
+	LastSynced,
 	OfferingType,
 	CourseId,
 	CourseRunId,
@@ -142,6 +147,7 @@ WHEN NOT MATCHED THEN INSERT (
 	ScoreBoost)
 VALUES (
 	source.Id,
+	@Now,
 	source.OfferingType,
 	source.CourseId,
 	source.CourseRunId,
@@ -171,10 +177,16 @@ VALUES (
 	source.Position,
 	source.RegionName,
 	source.ScoreBoost)
-WHEN NOT MATCHED BY SOURCE THEN UPDATE SET Live = 0;";
+WHEN NOT MATCHED BY SOURCE THEN UPDATE SET
+	Live = 0,
+	LastSynced = @Now;";
 
             return _sqlQueryDispatcher.Transaction.Connection.ExecuteAsync(
                 sql,
+                param: new
+                {
+                    Now = _clock.UtcNow
+                },
                 transaction: _sqlQueryDispatcher.Transaction,
                 commandTimeout: 0);
         }
