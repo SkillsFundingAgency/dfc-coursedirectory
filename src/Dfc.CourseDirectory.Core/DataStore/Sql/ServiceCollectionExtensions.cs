@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 {
                     connection.Open();
                 }
-                var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+                var transaction = connection.BeginTransaction(IsolationLevel.RepeatableRead);
 
                 var marker = sp.GetRequiredService<SqlTransactionMarker>();
                 marker.OnTransactionCreated(transaction);
