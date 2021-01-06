@@ -8,9 +8,12 @@
     <div class="govuk-grid-column-two-thirds">
         <govuk-panel>
             <govuk-panel-title>Your T Level has been deleted</govuk-panel-title>
-            Course
-            <br>
-            <strong data-testid="TLevelName">@Model.TLevelName</strong>
+            <span data-testid="TLevelName">@Model.TLevelName</span>
+            @if (!string.IsNullOrWhiteSpace(Model.YourReference))
+            {
+                <br>
+                <strong data-testid="YourReference">@Model.YourReference</strong>
+            }
         </govuk-panel>
 
         <h2 class="govuk-heading-m">What next?</h2>
@@ -18,7 +21,7 @@
         <ul class="govuk-list">
             <li>
                 <a asp-controller="AddTLevel" asp-action="SelectTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                    Add a T Level
+                    Add a new T Level
                 </a>
             </li>
             @if (Model.HasOtherTLevels)
