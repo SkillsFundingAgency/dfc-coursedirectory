@@ -347,7 +347,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 new JourneyModel()
                 {
                     TLevelName = tLevelDefinition.Name,
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    YourReference = yourReference
                 });
 
             journeyInstance.Complete();
@@ -407,7 +408,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 new JourneyModel()
                 {
                     TLevelName = tLevelDefinition.Name,
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    YourReference = yourReference
                 });
 
             journeyInstance.Complete();
@@ -473,7 +475,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 new JourneyModel()
                 {
                     TLevelName = tLevelDefinition.Name,
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    YourReference = yourReference
                 });
 
             journeyInstance.Complete();
@@ -486,6 +489,130 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
 
             var doc = await response.GetDocument();
             doc.GetElementByTestId("ViewEditLink").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetDeleted_WithNonEmptyYourReference_RendersYourReference()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: 12345,
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId, venueName: "T Level venue")).Id;
+
+            var tLevelDefinition = tLevelDefinitions.First();
+
+            var yourReference = "YOUR-REF";
+            var startDate = new DateTime(2021, 10, 1);
+
+            var tLevel = await TestData.CreateTLevel(
+                providerId,
+                tLevelDefinition.TLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                yourReference: yourReference,
+                startDate: startDate,
+                createdBy: User.ToUserInfo());
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new DeleteTLevel()
+                {
+                    TLevelId = tLevel.TLevelId,
+                    DeletedOn = Clock.UtcNow,
+                    DeletedBy = User.ToUserInfo()
+                }));
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/t-levels/{tLevel.TLevelId}/delete/success?providerId={providerId}");
+
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            var journeyInstance = CreateJourneyInstance(
+                tLevel.TLevelId,
+                new JourneyModel()
+                {
+                    TLevelName = tLevelDefinition.Name,
+                    ProviderId = providerId,
+                    YourReference = yourReference
+                });
+
+            journeyInstance.Complete();
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("YourReference").TextContent.Should().Be(yourReference);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("  ")]
+        [InlineData(null)]
+        public async Task GetDeleted_WithEmptyYourReference_DoesNotRenderYourReference(string yourReference)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: 12345,
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId, venueName: "T Level venue")).Id;
+
+            var tLevelDefinition = tLevelDefinitions.First();
+
+            var startDate = new DateTime(2021, 10, 1);
+
+            var tLevel = await TestData.CreateTLevel(
+                providerId,
+                tLevelDefinition.TLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                yourReference: yourReference,
+                startDate: startDate,
+                createdBy: User.ToUserInfo());
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new DeleteTLevel()
+                {
+                    TLevelId = tLevel.TLevelId,
+                    DeletedOn = Clock.UtcNow,
+                    DeletedBy = User.ToUserInfo()
+                }));
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/t-levels/{tLevel.TLevelId}/delete/success?providerId={providerId}");
+
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            var journeyInstance = CreateJourneyInstance(
+                tLevel.TLevelId,
+                new JourneyModel()
+                {
+                    TLevelName = tLevelDefinition.Name,
+                    ProviderId = providerId,
+                    YourReference = yourReference
+                });
+
+            journeyInstance.Complete();
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("YourReference").Should().BeNull();
         }
 
         private JourneyInstance<JourneyModel> CreateJourneyInstance(

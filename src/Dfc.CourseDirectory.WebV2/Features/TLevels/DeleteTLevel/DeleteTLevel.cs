@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
     {
         public string TLevelName { get; set; }
         public Guid ProviderId { get; set; }
+        public string YourReference { get; set; }
     }
 
     public class Request : IRequest<ViewModel>
@@ -53,6 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
         public Guid ProviderId { get; set; }
         public string TLevelName { get; set; }
         public bool HasOtherTLevels { get; set; }
+        public string YourReference { get; set; }
     }
 
     public class Handler :
@@ -118,7 +120,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
             _journeyInstance.UpdateState(new JourneyModel()
             {
                 TLevelName = tLevel.TLevelDefinition.Name,
-                ProviderId = tLevel.ProviderId
+                ProviderId = tLevel.ProviderId,
+                YourReference = tLevel.YourReference
             });
 
             _journeyInstance.Complete();
@@ -141,7 +144,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
             {
                 TLevelName = _journeyInstance.State.TLevelName,
                 HasOtherTLevels = liveTLevels.Count > 0,
-                ProviderId = providerId
+                ProviderId = providerId,
+                YourReference = _journeyInstance.State.YourReference
             };
         }
 
