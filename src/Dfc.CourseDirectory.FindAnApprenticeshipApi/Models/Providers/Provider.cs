@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Provider;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Provider;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.Providers
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers
 {
     public class Provider
     {

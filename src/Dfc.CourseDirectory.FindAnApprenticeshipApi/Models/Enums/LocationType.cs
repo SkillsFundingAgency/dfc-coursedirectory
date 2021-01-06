@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.Enums
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums
 {
     public enum LocationType
     {

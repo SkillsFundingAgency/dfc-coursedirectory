@@ -1,8 +1,8 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.DAS;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.DAS
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS
 {
     public class DasLocationRef : IDasLocationRef
     {

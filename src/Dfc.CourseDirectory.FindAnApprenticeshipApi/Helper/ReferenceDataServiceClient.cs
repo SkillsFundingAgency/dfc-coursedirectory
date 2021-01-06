@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     // TODO: Polly Polly Polly!
     public class ReferenceDataServiceClient : IReferenceDataServiceClient

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models.Regions
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models.Regions
 {
     public class SelectRegionModel
     {

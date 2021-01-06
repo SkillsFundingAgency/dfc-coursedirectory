@@ -1,10 +1,10 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Microsoft.Azure.Documents;
+﻿using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper
 {
     public interface ICosmosDbHelper
     {

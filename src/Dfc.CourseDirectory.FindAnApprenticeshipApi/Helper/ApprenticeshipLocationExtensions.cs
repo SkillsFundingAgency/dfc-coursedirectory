@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     public static class ApprenticeshipLocationExtensions
     {

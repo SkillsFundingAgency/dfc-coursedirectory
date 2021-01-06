@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     public class ExportException : Exception
     {

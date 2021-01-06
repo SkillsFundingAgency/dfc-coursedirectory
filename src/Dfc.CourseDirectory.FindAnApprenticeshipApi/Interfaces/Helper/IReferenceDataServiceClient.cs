@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper
 {
     public interface IReferenceDataServiceClient
     {

@@ -1,9 +1,9 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Settings;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Settings
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings
 {
     public class ReferenceDataServiceSettings : IReferenceDataServiceSettings
     {

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.DAS;
-using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.ViewModels
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.ViewModels
 {
     public class DasProviderResultViewModel
     {

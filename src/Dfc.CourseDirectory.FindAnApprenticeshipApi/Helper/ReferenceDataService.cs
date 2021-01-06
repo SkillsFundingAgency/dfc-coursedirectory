@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 using Newtonsoft.Json;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     public class ReferenceDataService : IReferenceDataService
     {

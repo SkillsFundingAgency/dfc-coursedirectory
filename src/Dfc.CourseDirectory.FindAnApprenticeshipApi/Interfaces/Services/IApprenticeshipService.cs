@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Apprenticeships;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services
 {
     public interface IApprenticeshipService
     {

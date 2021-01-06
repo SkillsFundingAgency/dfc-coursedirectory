@@ -1,7 +1,7 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models;
-using System;
+﻿using System;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models
 {
     public class ProgType : IProgType
     {

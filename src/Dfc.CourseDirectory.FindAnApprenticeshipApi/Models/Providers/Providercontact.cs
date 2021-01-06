@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.Providers
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers
 {
     public class Providercontact
     {

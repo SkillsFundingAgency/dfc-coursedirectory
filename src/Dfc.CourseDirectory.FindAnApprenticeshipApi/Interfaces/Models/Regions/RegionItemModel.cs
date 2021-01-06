@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models.Regions
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models.Regions
 {
     public class RegionItemModel
     {

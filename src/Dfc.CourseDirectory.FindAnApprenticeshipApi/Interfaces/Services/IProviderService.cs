@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services
 {
     public interface IProviderService
     {

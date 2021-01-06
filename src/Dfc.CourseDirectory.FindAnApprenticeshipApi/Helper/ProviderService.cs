@@ -4,10 +4,10 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     public class ProviderService : IProviderService
     {
