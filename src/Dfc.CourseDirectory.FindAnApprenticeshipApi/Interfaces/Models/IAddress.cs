@@ -1,4 +1,4 @@
-﻿namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models
+﻿namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models
 {
     public interface IAddress
     {

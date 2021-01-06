@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.Enums
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums
 {
     public enum DeliveryMode
     {

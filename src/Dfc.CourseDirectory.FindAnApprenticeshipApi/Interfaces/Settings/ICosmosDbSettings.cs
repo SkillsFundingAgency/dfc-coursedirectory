@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Settings
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Settings
 {
     public interface ICosmosDbSettings
     {

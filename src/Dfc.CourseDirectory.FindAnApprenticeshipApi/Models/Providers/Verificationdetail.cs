@@ -1,4 +1,4 @@
-﻿namespace Dfc.Providerportal.FindAnApprenticeship.Models.Provider
+﻿namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Provider
 {
     public class Verificationdetail
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper
 {
     [Obsolete("Please try not to use this any more, and instead create Mapper classes using Automapper or similar", false)]
     public interface IDASHelper

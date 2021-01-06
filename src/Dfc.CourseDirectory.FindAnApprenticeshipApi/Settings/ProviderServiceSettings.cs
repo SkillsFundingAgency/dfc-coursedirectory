@@ -1,6 +1,6 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Settings;
+﻿using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Settings;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Settings
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings
 {
     public class ProviderServiceSettings : IProviderServiceSettings
     {

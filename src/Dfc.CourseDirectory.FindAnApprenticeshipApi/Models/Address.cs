@@ -1,7 +1,7 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models;
+﻿using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models
 {
     public class Address : IAddress
     { 

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     public class ProviderServiceClient : IProviderServiceClient
     {

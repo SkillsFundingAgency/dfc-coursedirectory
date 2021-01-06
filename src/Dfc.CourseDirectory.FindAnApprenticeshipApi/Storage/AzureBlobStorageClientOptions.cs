@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Storage
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage
 {
     public class AzureBlobStorageClientOptions
     {

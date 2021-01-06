@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.DAS
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS
 {
     public interface IDasContact
     {

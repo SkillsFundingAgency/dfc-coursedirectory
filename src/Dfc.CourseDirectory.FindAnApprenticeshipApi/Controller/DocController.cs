@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
-using Dfc.Providerportal.FindAnApprenticeship.ViewModels;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Controller
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Controller
 {
     [Produces("application/json")]
     [Route("api")]

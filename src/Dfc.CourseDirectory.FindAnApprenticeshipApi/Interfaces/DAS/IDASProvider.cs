@@ -1,7 +1,7 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.DAS
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS
 {
     public interface IDasProvider
     {

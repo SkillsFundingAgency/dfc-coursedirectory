@@ -1,4 +1,4 @@
-﻿namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.DAS
+﻿namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS
 {
     public interface IDasAddress
     {

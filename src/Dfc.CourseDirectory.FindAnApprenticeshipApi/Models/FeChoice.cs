@@ -1,9 +1,9 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models
 {
     public class FeChoice : IFeChoice
     {
