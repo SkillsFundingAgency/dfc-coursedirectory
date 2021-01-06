@@ -98,6 +98,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var provider = new Provider
             {
+                Id = Guid.NewGuid(),
                 UnitedKingdomProviderReferenceNumber = "12345678",
                 ProviderContact = new[]
                 {
@@ -107,6 +108,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                         ContactType = "P"
                     }
                 }
+            };
+
+            var sqlProvider = new Core.DataStore.Sql.Models.Provider
+            {
+                ProviderId = provider.Id,
+                ProviderName = "TestProviderAlias",
+                DisplayNameSource = ProviderDisplayNameSource.ProviderName
             };
 
             var feChoice = new FeChoice
@@ -134,6 +142,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoiceForProvider>()))
                 .ReturnsAsync(feChoice);
 
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderById>()))
+                .ReturnsAsync(sqlProvider);
+
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.Id, courseRun.Id));
 
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
@@ -145,6 +156,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 resultJson.ToObject<object>().Should().NotBeNull();
                 resultJson["provider"].ToObject<object>().Should().NotBeNull();
                 resultJson["provider"]["ukprn"].ToObject<int>().Should().Be(provider.Ukprn);
+                resultJson["provider"]["providerName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
+                resultJson["provider"]["tradingName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
                 resultJson["provider"]["email"].ToObject<string>().Should().Be(provider.ProviderContact.Single().ContactEmail);
                 resultJson["provider"]["learnerSatisfaction"].ToObject<decimal>().Should().Be(feChoice.LearnerSatisfaction);
                 resultJson["provider"]["employerSatisfaction"].ToObject<decimal>().Should().Be(feChoice.EmployerSatisfaction);

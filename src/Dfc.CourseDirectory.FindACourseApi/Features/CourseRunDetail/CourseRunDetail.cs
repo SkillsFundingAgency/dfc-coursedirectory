@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using MediatR;
@@ -21,11 +22,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
     public class Handler : IRequestHandler<Query, OneOf<NotFound, CourseRunDetailViewModel>>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ISearchClient<Core.Search.Models.Lars> _larsSearchClient;
 
-        public Handler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, ISearchClient<Core.Search.Models.Lars> larsSearchClient)
+        public Handler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, ISqlQueryDispatcher sqlQueryDispatcher, ISearchClient<Core.Search.Models.Lars> larsSearchClient)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
         }
 
@@ -56,6 +59,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             var qualification = (await getQualification).Items.SingleOrDefault();
             var venues = await getVenues;
             var feChoice = await getFeChoice;
+            var sqlProvider = await _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = provider.Id });
 
             var venue = courseRun.VenueId.HasValue
                 ? venues.Single(v => v.Id == courseRun.VenueId)
@@ -118,8 +122,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     : null,
                 Provider = new ProviderViewModel
                 {
-                    ProviderName = provider.ProviderName,
-                    TradingName = provider.TradingName,
+                    ProviderName = sqlProvider.DisplayName,
+                    TradingName = sqlProvider.DisplayName,
                     CourseDirectoryName = provider.CourseDirectoryName,
                     Alias = provider.Alias,
                     Ukprn = provider.UnitedKingdomProviderReferenceNumber,
