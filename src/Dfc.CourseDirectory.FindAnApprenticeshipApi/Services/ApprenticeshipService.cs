@@ -4,22 +4,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Apprenticeships;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Settings;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Enums;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
-using Dfc.Providerportal.FindAnApprenticeship.Settings;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Settings;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings;
 using Dfc.ProviderPortal.Packages;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Extensions.Options;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Services
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
 {
     public class ApprenticeshipService : IApprenticeshipService
     {

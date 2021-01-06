@@ -1,7 +1,7 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Models.Enums;
-using System;
+﻿using System;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models
 {
     public interface IStandardsAndFrameworks
     {

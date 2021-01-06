@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Storage
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage
 {
     public interface IBlobStorageClient
     {

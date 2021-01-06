@@ -15,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Functions
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions
 {
     public static class Swagger
     {

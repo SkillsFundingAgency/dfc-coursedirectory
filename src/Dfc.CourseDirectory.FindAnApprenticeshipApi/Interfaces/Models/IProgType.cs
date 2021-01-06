@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Interfaces.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models
 {
     public interface IProgType
     {

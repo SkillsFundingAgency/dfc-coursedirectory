@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models
 {
     public class ExportKey
     {

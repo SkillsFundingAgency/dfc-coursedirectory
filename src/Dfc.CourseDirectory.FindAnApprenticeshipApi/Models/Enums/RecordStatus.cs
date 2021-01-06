@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.Enums
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums
 {
     public enum RecordStatus
     {

@@ -1,10 +1,10 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.DAS;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS;
 using Newtonsoft.Json;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models.DAS
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS
 {
     public class DasLocation : IDasLocation 
     {

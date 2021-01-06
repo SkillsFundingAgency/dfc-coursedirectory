@@ -1,9 +1,4 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Settings;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Enums;
-using Dfc.Providerportal.FindAnApprenticeship.Settings;
-using Dfc.ProviderPortal.Packages;
+﻿using Dfc.ProviderPortal.Packages;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Options;
@@ -13,8 +8,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Settings;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
     public class CosmosDbHelper : ICosmosDbHelper
     {

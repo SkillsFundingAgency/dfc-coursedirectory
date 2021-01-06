@@ -1,12 +1,12 @@
-﻿using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Apprenticeships;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Enums;
-using Dfc.Providerportal.FindAnApprenticeship.Models.DAS;
+﻿using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Models
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models
 {
     public class ApprenticeshipLocation : IApprenticeshipLocation
     {

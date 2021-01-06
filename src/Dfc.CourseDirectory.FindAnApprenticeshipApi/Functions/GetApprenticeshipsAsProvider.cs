@@ -3,15 +3,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Azure;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Storage;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Dfc.Providerportal.FindAnApprenticeship.Functions
+namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions
 {
     public class GetApprenticeshipsAsProvider
     {
