@@ -120,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
         }
 
         [Fact]
-        public async Task Get_ValidRequest_ReturnsOk()
+        public async Task Get_ValidRequest_ReturnsExpectedContent()
         {
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -186,6 +186,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("TLevelName").TextContent.Should().Be(createdTLevel.TLevelDefinition.Name);
         }
     }
 }
