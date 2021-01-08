@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 .Select(part => part switch
                 {
                     ProviderType.Apprenticeships => "Apprenticeships",
-                    ProviderType.FE => "F.E.",
+                    ProviderType.FE => "FE Courses",
                     ProviderType.TLevels => "T Levels",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
                 })

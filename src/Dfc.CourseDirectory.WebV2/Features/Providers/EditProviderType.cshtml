@@ -16,15 +16,15 @@
         <form asp-action="Post" asp-all-route-data="@ProviderContext.RouteValues">
             <govuk-checkboxes asp-for="ProviderType">
                 <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
-                    F.E.
+                    @ProviderType.FE.ToDescription()
                 </govuk-checkboxes-item>
                 <govuk-checkboxes-item value="@((int)ProviderType.Apprenticeships)" checked="@(Model.ProviderType.HasFlag(ProviderType.Apprenticeships))" input-data-testid="apprenticeships">
-                    Apprenticeships
+                    @ProviderType.Apprenticeships.ToString()
                 </govuk-checkboxes-item>
                 @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels))
                 {
                     <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels">
-                        T Levels
+                        @ProviderType.TLevels.ToString()
                         <govuk-checkboxes-item-conditional>
                             <govuk-checkboxes asp-for="@Model.SelectedProviderTLevelDefinitionIds">
                                 <govuk-checkboxes-fieldset>
