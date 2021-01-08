@@ -1,15 +1,7 @@
-﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Identity
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
-
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Microsoft.AspNetCore.Authorization;
-
 @inject IAuthorizationService Authorization
+@model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
 
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
@@ -27,11 +19,11 @@
 
 <div id="PendingCoursesExistMessage" hidden="hidden">
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                       {
-                           NotificationTitle = "Location cannot be deleted for the for the following reasons:-",
-                           NotificationMessage = "There are pending courses associated with this location. Please complete the outstanding bulk upload process or course migration process before deleting the location",
-                           ClassType = "error-summary"
-                       })
+    {
+        NotificationTitle = "Location cannot be deleted for the for the following reasons:-",
+        NotificationMessage = "There are pending courses associated with this location. Please complete the outstanding bulk upload process or course migration process before deleting the location",
+        ClassType = "error-summary"
+    })
 </div>
 
 <div id="PendingApprenticeshipExistMessage" hidden="hidden">
@@ -39,6 +31,15 @@
     {
         NotificationTitle = "The location cannot be deleted",
         NotificationMessage = "There are apprenticeship training courses associated with this location. You will need to delete the apprenticeship training course or assign a different location.",
+        ClassType = "error-summary"
+    })
+</div>
+
+<div id="LiveTLevelsExistMessage" hidden="hidden">
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    {
+        NotificationTitle = "The location cannot be deleted",
+        NotificationMessage = "There are T Levels associated with this location. You need to assign a different location to the T Levels before deleting the location.",
         ClassType = "error-summary"
     })
 </div>
@@ -58,12 +59,12 @@
             message += string.Concat(" has been deleted");
 
             @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-       {
+            {
 
-           NotificationTitle = "",
-           NotificationMessage = message,
-           ClassType = "success-summary"
-       });
+                NotificationTitle = "",
+                NotificationMessage = message,
+                ClassType = "success-summary"
+            });
         }
         else
         {
@@ -96,8 +97,6 @@
 
                 }
 
-
-
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                 {
 
@@ -105,18 +104,13 @@
                     NotificationMessage = message,
                     ClassType = "success-summary"
                 });
-
             }
-
-
         }
     }
-
 
     <h1 class="govuk-heading-l">Your locations</h1>
     <div class="govuk-grid-row">
         <div class="venue-list govuk-grid-column-full">
-
 
             @if (adminLogin.Succeeded || providerLogin.Succeeded)
             {
@@ -130,11 +124,6 @@
 
             @if (Model.Items.Any())
             {
-
-
-
-
-
                 <section id="live">
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -142,7 +131,6 @@
                                 <th class="govuk-table__header" scope="col">Location</th>
                                 <th class="govuk-table__header" scope="col">Address</th>
                                 <th class="govuk-table__header" scope="col">Postcode</th>
-                                <th class="govuk-table__header" scope="col"></th>
                                 <th class="govuk-table__header" scope="col"></th>
                                 <th class="govuk-table__header" scope="col"></th>
                             </tr>
@@ -190,10 +178,6 @@
                                                     View
                                                     <span class="govuk-visually-hidden">@venue.VenueName</span>
                                                 </a>
-                                                @*<a id="venue-delete-@venue.Id" class="govuk-button delete-button" asp-controller="Venues" asp-action="DeleteVenue"
-                                                    asp-route-venueId="@venue.Id"
-                                                    style="display: none;padding-right:1em;margin-bottom: 0px;">Confirm delete
-                                                     </a>*@
                                             </td>
 
                                             <td class="govuk-table__cell">
@@ -201,27 +185,14 @@
                                                     Delete
                                                     <span class="govuk-visually-hidden">@venue.VenueName</span>
                                                 </a>
-                                                @*<a href="#" class="govuk-link cancel-delete" data-venue-id="@venue.Id" hidden="hidden">Cancel</a>*@
                                             </td>
-                                            <td>
-                                                @*<a href="#" class="govuk-link cancel-delete" data-venue-id="@venue.Id" hidden="hidden">Cancel</a>*@
-                                            </td>
-
-
-
                                         }
                                     }
                                 </tr>
                             }
-
                         </tbody>
                     </table>
                 </section>
-
-
-
-
-
             }
 
             @if ((adminLogin.Succeeded || providerLogin.Succeeded) && Model.Items.Any() & Model.Items.Count() > 5)
@@ -244,6 +215,7 @@
             var $liveCoursesExistMessage = $("#LiveCoursesExistMessage");
             var $pendingCoursesExistMessage = $("#PendingCoursesExistMessage");
             var $liveApprenticeshipExistMessage = $("#PendingApprenticeshipExistMessage");
+            var $liveTLevelsExistMessage = $("#LiveTLevelsExistMessage");
 
             var $deleteButton = $(".delete");
 
@@ -266,27 +238,10 @@
             };
 
             var doSearch = function (venueId) {
-
                 makeRequestWithPayload({
                     VenueId: venueId
                 }, onSucess);
-
-
             };
-
-            var doDelete = function (venueId) {
-
-                makeDeleteRequestWithPayload({
-                    VenueId: venueId
-                }, ConfirmDeleteSuccess);
-
-
-            };
-
-            var ConfirmDeleteSuccess = function (data) {
-                window.location.href = data;
-            };
-
 
             var onSucess = function (data) {
 
@@ -300,6 +255,16 @@
                     });
                 }
 
+                if (continueDelete) {
+                    if (data.pendingCoursesExist) {
+                        continueDelete = false;
+                        $pendingCoursesExistMessage.show();
+                        $('html,body').animate({
+                            scrollTop: $pendingCoursesExistMessage.offset().top
+                        });
+                    }
+                }
+
                 if (data.liveApprenticeshipsExist) {
                     continueDelete = false;
                     $liveApprenticeshipExistMessage.show();
@@ -308,47 +273,22 @@
                     });
                 }
 
-                if (continueDelete) {
-                    if (data.pendingCoursesExist) {
-                        continueDelete = false;
-                        $pendingCoursesExistMessage.show();
-                        $('html,body').animate({
-                            scrollTop: $pendingCoursesExistMessage.offset().top
-                        });
-
-                    }
+                if (data.liveTLevelsExist) {
+                    continueDelete = false;
+                    $liveTLevelsExistMessage.show();
+                    $('html,body').animate({
+                        scrollTop: $liveTLevelsExistMessage.offset().top
+                    });
                 }
 
                 if (continueDelete) {
-
-
-
-
-
-                    //var editOption = $("#edit-" + $venueId);
-                    //editOption.hide();
-
-                    //var deleteOption = $("#delete-" + $venueId);
-                    //deleteOption.hide();
-
-                    //var confirmDelete = $("#venue-delete-" + $venueId);
-                    //confirmDelete.show();
-
-                    //var cancelDelete = $("#venue-cancel-delete-" + $venueId);
-                    //cancelDelete.show().css("display", "block");
-
-                    //debounce(doDelete($venueId), 400);
-
                     window.location.href = "/locations/deletelocation/?VenueId=" + $venueId;
                 }
-
             };
 
             var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
-
-
 
             var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
@@ -364,7 +304,6 @@
                 $.get("/Locations/DeleteLocation?" + qs, success);
             };
 
-
             $cancelDeleteButton.on("click",
                 function (event) {
                     event.preventDefault();
@@ -372,6 +311,7 @@
                         $(".cd-success-summary").hide();
                         $liveCoursesExistMessage.hide();
                         $pendingCoursesExistMessage.hide();
+                        $liveTLevelsExistMessage.hide();
 
                         var $cancelVenueId = $(this).attr("data-venue-id");
 
@@ -386,10 +326,8 @@
 
                         var editOption = $("#edit-" + $cancelVenueId);
                         editOption.show();
-
                     }
                 });
-
 
             $deleteButton.on("click",
                 function (event) {
@@ -398,6 +336,7 @@
                     $liveCoursesExistMessage.hide();
                     $pendingCoursesExistMessage.hide();
                     $liveApprenticeshipExistMessage.hide();
+                    $liveTLevelsExistMessage.hide();
 
                     $('.edit-venue-link').show();
 
@@ -410,11 +349,7 @@
                     $venueId = $(this).attr("data-venue-id");
 
                     debounce(doSearch($venueId), 400);
-
-
-
                 });
-
         });
     })(jQuery);
 </script>
