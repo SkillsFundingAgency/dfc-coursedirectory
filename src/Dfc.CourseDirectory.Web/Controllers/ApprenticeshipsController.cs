@@ -192,7 +192,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
             model.Mode = mode;
 
-            if (model.Mode == ApprenticeshipMode.EditApprenticeship ||
+            if (model.Mode == ApprenticeshipMode.Add ||
+                model.Mode == ApprenticeshipMode.EditApprenticeship ||
                 model.Mode == ApprenticeshipMode.EditYourApprenticeships && apprenticeship != null)
             {
                 apprenticeship.ApprenticeshipTitle = model.ApprenticeshipTitle;
