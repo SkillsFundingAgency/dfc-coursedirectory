@@ -1,6 +1,8 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "AzureWebJobs.SyncUkrlpChanges.Disabled": "true",
+    "AzureWebJobs.ImportLarsData.Disabled": "true",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   }
