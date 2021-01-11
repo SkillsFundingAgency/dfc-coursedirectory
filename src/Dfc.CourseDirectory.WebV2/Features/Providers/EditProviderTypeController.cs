@@ -30,11 +30,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             EditProviderType.Command command,
             ProviderContext providerContext)
         {
-            command.ProviderId = providerContext.ProviderInfo.ProviderId;
+            if (command.ProviderId != providerContext.ProviderInfo.ProviderId)
+            {
+                return BadRequest();
+            }
+
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors("EditProviderType", errors),
+                    confirm => View("EditProviderTypeConfirm", confirm),
+                    cancel => RedirectToAction(nameof(Get)).WithProviderContext(providerContext),
                     success => RedirectToAction("ProviderDetails", "Providers").WithProviderContext(providerContext)));
         }
 

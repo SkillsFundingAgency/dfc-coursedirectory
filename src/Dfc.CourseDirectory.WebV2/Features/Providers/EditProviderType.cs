@@ -24,11 +24,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
+    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, ConfirmViewModel, Cancel, Success>>
     {
         public Guid ProviderId { get; set; }
         public ProviderType ProviderType { get; set; }
-        public IEnumerable<Guid> SelectedProviderTLevelDefinitionIds { get; set; }
+        public Guid[] SelectedProviderTLevelDefinitionIds { get; set; }
+        public Guid[] ConfirmedAffectedTLevelIds { get; set; }
+        public bool? Confirm { get; set; }
     }
 
     public class ViewModel : Command
@@ -36,9 +38,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         public IEnumerable<ProviderTLevelDefinitionViewModel> ProviderTLevelDefinitions { get; set; }
     }
 
+    public class ConfirmViewModel : Command
+    {
+        public IEnumerable<AffectedItemCountViewModel> AffectedTLevelDefinitionCounts { get; set; }
+    }
+
+    public class AffectedItemCountViewModel
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
+    }
+
+    public class Cancel
+    { }
+
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ConfirmViewModel, Cancel, Success>>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -75,8 +91,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             return CreateViewModel(provider.Id, provider.ProviderType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
         }
 
-        public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<OneOf<ModelWithErrors<ViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
+            if (request.Confirm == false)
+            {
+                return new Cancel();
+            }
+
             var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitions());
 
             var validationResult = await new CommandValidator(tLevelDefinitions).ValidateAsync(request);
@@ -86,6 +107,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 return new ModelWithErrors<ViewModel>(
                     CreateViewModel(request.ProviderId, request.ProviderType, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
                     validationResult);
+            }
+
+            var tLevels = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelsForProvider { ProviderId = request.ProviderId });
+
+            var affectedTLevels = tLevels
+                .Where(t => !request.ProviderType.HasFlag(ProviderType.TLevels)
+                    || !request.SelectedProviderTLevelDefinitionIds.Contains(t.TLevelDefinition.TLevelDefinitionId))
+                .ToArray();
+
+            if (affectedTLevels.Any()
+                && !(request.Confirm == true && request.ConfirmedAffectedTLevelIds.OrderBy(i => i).SequenceEqual(affectedTLevels.Select(t => t.TLevelId).OrderBy(i => i))))
+            {
+                return new ConfirmViewModel
+                {
+                    ProviderId = request.ProviderId,
+                    ProviderType = request.ProviderType,
+                    SelectedProviderTLevelDefinitionIds = request.SelectedProviderTLevelDefinitionIds,
+                    ConfirmedAffectedTLevelIds = affectedTLevels.Select(t => t.TLevelId).ToArray(),
+                    Confirm = null,
+                    AffectedTLevelDefinitionCounts = affectedTLevels
+                        .GroupBy(t => t.TLevelDefinition.TLevelDefinitionId)
+                        .Select(g => new AffectedItemCountViewModel { Name = g.First().TLevelDefinition.Name, Count = g.Count() })
+                };
             }
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType()

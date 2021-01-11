@@ -1,0 +1,60 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType.ConfirmViewModel
+@{ 
+    ViewContext.SetLayoutData(title: "Update provider type settings");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">Update provider type settings</h1>
+
+        <p class="govuk-body">By updating this provider's type settings, the following will be permanently deleted and no longer available on Publish to the course directory, Find a course or Tlevels.gov.uk.</p>
+
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <div class="govuk-warning-text__text">
+                <p class="govuk-!-margin-top-0">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    The following will be permanently deleted:
+                </p>
+
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                    @foreach (var affectedTLevelDefinitionCount in Model.AffectedTLevelDefinitionCounts)
+                    {
+                        <li>@affectedTLevelDefinitionCount.Count @affectedTLevelDefinitionCount.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <form asp-action="Post" asp-all-route-data="@ProviderContext.RouteValues">
+
+            @Html.HiddenFor(m => m.ProviderId)
+
+            <input type="hidden" name="@nameof(Model.ProviderType)" value="@((int)Model.ProviderType)" />
+
+            @for (int i = 0; i < Model.SelectedProviderTLevelDefinitionIds.Length; i++)
+            {
+                @Html.HiddenFor(m => m.SelectedProviderTLevelDefinitionIds[i]);
+            }
+
+            @for (int i = 0; i < Model.ConfirmedAffectedTLevelIds.Length; i++)
+            {
+                @Html.HiddenFor(m => m.ConfirmedAffectedTLevelIds[i]);
+            }
+
+            <govuk-radios asp-for="Confirm">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading">Are you sure?</h2>
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-item value="True">Yes</govuk-radios-item>
+                <govuk-radios-item value="False">No</govuk-radios-item>
+            </govuk-radios>
+
+            <button type="submit" class="govuk-button govuk-!-margin-right-5" data-module="govuk-button">Save and continue</button>
+        </form>
+
+    </div>
+</div>
