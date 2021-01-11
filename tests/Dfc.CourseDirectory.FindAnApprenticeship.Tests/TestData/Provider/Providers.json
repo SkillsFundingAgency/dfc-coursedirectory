@@ -1,0 +1,77 @@
+﻿{
+  "Providers": [
+    [
+      {
+        "Id": "d071af83-a72e-4335-a6b0-e6e3ea8d4694",
+        "UnitedKingdomProviderReferenceNumber": "10054451",
+        "ProviderName": "A.N OTHER TRAINING LIMITED",
+        "CourseDirectoryName": null,
+        "ProviderStatus": "Active",
+        "ProviderContact": [
+          {
+            "ContactType": "P",
+            "ContactAddress": {
+              "SAON": {
+                "Description": null
+              },
+              "PAON": {
+                "Description": "The Brickhaus"
+              },
+              "StreetDescription": "Long Road",
+              "UniqueStreetReferenceNumber": null,
+              "Locality": "Longington",
+              "Items": [
+                "Longville"
+              ],
+              "ItemsElementName": [
+                1
+              ],
+              "PostTown": null,
+              "PostCode": "TE57 4PP",
+              "UniquePropertyReferenceNumber": null
+            },
+            "ContactPersonalDetails": {
+              "PersonNameTitle": null,
+              "PersonGivenName": null,
+              "PersonFamilyName": null,
+              "PersonNameSuffix": null,
+              "PersonRequestedName": null
+            },
+            "ContactRole": null,
+            "ContactTelephone1": "01234 567890",
+            "ContactTelephone2": null,
+            "ContactFax": null,
+            "ContactWebsiteAddress": null,
+            "ContactEmail": null,
+            "LastUpdated": "2017-01-17T17:08:39.428Z"
+          }
+        ],
+        "ProviderVerificationDate": "2020-02-28T23:35:28.428Z",
+        "ProviderVerificationDateSpecified": true,
+        "ExpiryDateSpecified": false,
+        "ProviderAssociations": null,
+        "ProviderAliases": [
+          {
+            "ProviderAlias": "Provider Alias Training",
+            "LastUpdated": null
+          }
+        ],
+        "VerificationDetails": [
+          {
+            "VerificationAuthority": "Companies House",
+            "VerificationID": "03007236"
+          }
+        ],
+        "Status": 1,
+        "ProviderId": 308183,
+        "UPIN": null,
+        "TradingName": "Trading Name Training",
+        "NationalApprenticeshipProvider": true,
+        "MarketingInformation": "<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p><ul><li>Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat.</li><li>Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus.</li><li>Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. Nam nulla quam, gravida non, commodo a, sodales sit amet, nisi.</li><li>Pellentesque fermentum dolor. Aliquam quam lectus, facilisis auctor, ultrices ut, elementum vulputate, nunc.</li></ul><p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p><dl><dt>Definition list</dt><dd>Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</dd><dt>Lorem ipsum dolor sit amet</dt><dd>Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</dd></dl><p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>",
+        "Alias": "Alias Name Training",
+        "ProviderType": 2
+      }
+    ]
+  ]
+}
+
