@@ -24,12 +24,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, ConfirmViewModel, Cancel, Success>>
+    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>>
     {
         public Guid ProviderId { get; set; }
         public ProviderType ProviderType { get; set; }
-        public Guid[] SelectedProviderTLevelDefinitionIds { get; set; }
-        public Guid[] ConfirmedAffectedTLevelIds { get; set; }
+        public IReadOnlyList<Guid> SelectedProviderTLevelDefinitionIds { get; set; }
+        public IReadOnlyList<Guid> ConfirmAffectedTLevelIds { get; set; }
         public bool? Confirm { get; set; }
     }
 
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
     public class ConfirmViewModel : Command
     {
-        public IEnumerable<AffectedItemCountViewModel> AffectedTLevelDefinitionCounts { get; set; }
+        public IEnumerable<AffectedItemCountViewModel> AffectedItemCounts { get; set; }
     }
 
     public class AffectedItemCountViewModel
@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ConfirmViewModel, Cancel, Success>>
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             return CreateViewModel(provider.Id, provider.ProviderType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
         }
 
-        public async Task<OneOf<ModelWithErrors<ViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
             if (request.Confirm == false)
             {
@@ -116,20 +116,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                     || !request.SelectedProviderTLevelDefinitionIds.Contains(t.TLevelDefinition.TLevelDefinitionId))
                 .ToArray();
 
-            if (affectedTLevels.Any()
-                && !(request.Confirm == true && request.ConfirmedAffectedTLevelIds.OrderBy(i => i).SequenceEqual(affectedTLevels.Select(t => t.TLevelId).OrderBy(i => i))))
+            var confirmValidationResult = await new ConfirmCommandValidator(affectedTLevels).ValidateAsync(request);
+
+            if (!confirmValidationResult.IsValid)
             {
-                return new ConfirmViewModel
+                var confirmViewModel = new ConfirmViewModel
                 {
                     ProviderId = request.ProviderId,
                     ProviderType = request.ProviderType,
                     SelectedProviderTLevelDefinitionIds = request.SelectedProviderTLevelDefinitionIds,
-                    ConfirmedAffectedTLevelIds = affectedTLevels.Select(t => t.TLevelId).ToArray(),
+                    ConfirmAffectedTLevelIds = affectedTLevels.Select(t => t.TLevelId).ToArray(),
                     Confirm = null,
-                    AffectedTLevelDefinitionCounts = affectedTLevels
+                    AffectedItemCounts = affectedTLevels
                         .GroupBy(t => t.TLevelDefinition.TLevelDefinitionId)
                         .Select(g => new AffectedItemCountViewModel { Name = g.First().TLevelDefinition.Name, Count = g.Count() })
                 };
+
+                // Using ConfirmAffectedTLevelIds to establish if this the first call to confirm
+                if (request.ConfirmAffectedTLevelIds == null || !request.ConfirmAffectedTLevelIds.Any())
+                {
+                    return confirmViewModel;
+                }
+
+                return new ModelWithErrors<ConfirmViewModel>(
+                        confirmViewModel,
+                        confirmValidationResult);
             }
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType()
@@ -179,6 +190,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                         RuleFor(c => c.SelectedProviderTLevelDefinitionIds)
                             .Must(ids => ids.All(id => tLevelDefinitions.Any(d => d.TLevelDefinitionId == id)))
                             .WithMessage("Select a valid T Level");
+                    });
+                    
+                });
+            }
+        }
+
+        private class ConfirmCommandValidator : AbstractValidator<Command>
+        {
+            public ConfirmCommandValidator(IEnumerable<SqlModels.TLevel> affectedTLevels)
+            {
+                When(_ => affectedTLevels.Any(), () =>
+                {
+                    RuleFor(c => c.ConfirmAffectedTLevelIds)
+                        .Must(ids => ids?.OrderBy(i => i).SequenceEqual(affectedTLevels.Select(t => t.TLevelId).OrderBy(i => i)) ?? false)
+                        .OverridePropertyName(nameof(ConfirmViewModel.AffectedItemCounts))
+                        .WithMessage("The affected T Levels have changed");
+
+                    When(c => c.ConfirmAffectedTLevelIds?.Any() ?? false, () =>
+                    {
+                        RuleFor(c => c.Confirm)
+                            .Equal(true)
+                            .WithMessage("Select yes to permanently delete");
                     });
                 });
             }

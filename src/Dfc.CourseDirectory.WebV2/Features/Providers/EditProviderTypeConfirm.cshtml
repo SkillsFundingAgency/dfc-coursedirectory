@@ -1,47 +1,65 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType.ConfirmViewModel
+﻿@using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
+@model ConfirmViewModel
 @{ 
-    ViewContext.SetLayoutData(title: "Update provider type settings");
+    ViewContext.SetLayoutData(title: "Update provider type");
+
+    var affectedItemCountErrors = ViewData.ModelState[nameof(ConfirmViewModel.AffectedItemCounts)]?.Errors
+        ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
 }
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Confirm" data-testid="confirm-error" />
+    <govuk-error-summary-item asp-for="AffectedItemCounts" data-testid="affected-item-counts-error" />
+</govuk-error-summary>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="govuk-heading-l">Update provider type settings</h1>
+        <h1 class="govuk-heading-l">Update provider type</h1>
 
-        <p class="govuk-body">By updating this provider's type settings, the following will be permanently deleted and no longer available on Publish to the course directory, Find a course or Tlevels.gov.uk.</p>
-
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <div class="govuk-warning-text__text">
-                <p class="govuk-!-margin-top-0">
-                    <span class="govuk-warning-text__assistive">Warning</span>
-                    The following will be permanently deleted:
-                </p>
-
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-                    @foreach (var affectedTLevelDefinitionCount in Model.AffectedTLevelDefinitionCounts)
-                    {
-                        <li>@affectedTLevelDefinitionCount.Count @affectedTLevelDefinitionCount.Name</li>
-                    }
-                </ul>
-            </div>
-        </div>
+        <p class="govuk-body">By updating the provider type, the following will be permanently deleted and no longer available on Publish to the course directory, Find a course or Tlevels.gov.uk.</p>
 
         <form asp-action="Post" asp-all-route-data="@ProviderContext.RouteValues">
 
-            @Html.HiddenFor(m => m.ProviderId)
+            @Html.HiddenFor(m => m.ProviderId, new Dictionary<string, object> { { "data-testid", "provider-id" } })
 
-            <input type="hidden" name="@nameof(Model.ProviderType)" value="@((int)Model.ProviderType)" />
+            <input type="hidden" name="@nameof(Model.ProviderType)" value="@((int)Model.ProviderType)" data-testid="provider-type" />
 
-            @for (int i = 0; i < Model.SelectedProviderTLevelDefinitionIds.Length; i++)
+            @for (int i = 0; i < Model.SelectedProviderTLevelDefinitionIds?.Count; i++)
             {
-                @Html.HiddenFor(m => m.SelectedProviderTLevelDefinitionIds[i]);
+                @Html.HiddenFor(m => m.SelectedProviderTLevelDefinitionIds[i], new Dictionary<string, object> { { "data-testid", "selected-provider-tlevel-definition-id" } });
             }
 
-            @for (int i = 0; i < Model.ConfirmedAffectedTLevelIds.Length; i++)
+            @for (int i = 0; i < Model.ConfirmAffectedTLevelIds?.Count; i++)
             {
-                @Html.HiddenFor(m => m.ConfirmedAffectedTLevelIds[i]);
+                @Html.HiddenFor(m => m.ConfirmAffectedTLevelIds[i], new Dictionary<string, object> { { "data-testid", "confirm-affected-tLevel-id" } });
             }
+
+            <div class="govuk-form-group@(affectedItemCountErrors.Any() ? " govuk-form-group--error" : string.Empty)">
+                <div class="govuk-warning-text govuk-!-padding-bottom-0">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <div class="govuk-warning-text__text">
+                        <p class="govuk-!-margin-top-0">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            The following will be permanently deleted:
+                        </p>
+
+                        @foreach (var error in affectedItemCountErrors)
+                        {
+                            <span class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                            </span>
+                        }
+
+                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                            @foreach (var affectedTLevelDefinitionCount in Model.AffectedItemCounts.OrderBy(c => c.Name))
+                            {
+                                <li data-testid="affected-item">@affectedTLevelDefinitionCount.Count @affectedTLevelDefinitionCount.Name</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
             <govuk-radios asp-for="Confirm">
                 <govuk-radios-fieldset>
@@ -49,11 +67,12 @@
                         <h2 class="govuk-fieldset__heading">Are you sure?</h2>
                     </govuk-radios-fieldset-legend>
                 </govuk-radios-fieldset>
-                <govuk-radios-item value="True">Yes</govuk-radios-item>
-                <govuk-radios-item value="False">No</govuk-radios-item>
+                <govuk-radios-item value="True" checked="false">Yes</govuk-radios-item>
+                <govuk-radios-item value="False" checked="false">No</govuk-radios-item>
             </govuk-radios>
 
-            <button type="submit" class="govuk-button govuk-!-margin-right-5" data-module="govuk-button">Save and continue</button>
+            <govuk-button type="submit">Save and continue</govuk-button>
+
         </form>
 
     </div>

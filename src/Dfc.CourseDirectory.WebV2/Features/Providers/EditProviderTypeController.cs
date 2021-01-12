@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors("EditProviderType", errors),
+                    confirmErrors => this.ViewFromErrors("EditProviderTypeConfirm", confirmErrors),
                     confirm => View("EditProviderTypeConfirm", confirm),
                     cancel => RedirectToAction(nameof(Get)).WithProviderContext(providerContext),
                     success => RedirectToAction("ProviderDetails", "Providers").WithProviderContext(providerContext)));
