@@ -305,6 +305,7 @@ namespace Dfc.CourseDirectory.Core
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var sqlDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+                sqlDispatcher.CreateTransaction(System.Data.IsolationLevel.ReadCommitted);
 
                 await action(sqlDispatcher);
 
