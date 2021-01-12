@@ -46,12 +46,11 @@ namespace Dfc.CourseDirectory.Testing
                 var serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
                 using (var scope = serviceScopeFactory.CreateScope())
                 {
-                    var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
                     var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
 
                     var result = await action(queryDispatcher);
 
-                    transaction.Commit();
+                    queryDispatcher.Transaction.Commit();
 
                     return result;
                 }

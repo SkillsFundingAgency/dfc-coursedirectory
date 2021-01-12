@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -49,6 +50,8 @@ namespace Dfc.CourseDirectory.Testing
         }
 
         public SqlTransaction Transaction => _inner.Transaction;
+
+        public void CreateTransaction(IsolationLevel isolationLevel) => _inner.CreateTransaction(isolationLevel);
 
         public Task<T> ExecuteQuery<T>(ISqlQuery<T> query)
         {

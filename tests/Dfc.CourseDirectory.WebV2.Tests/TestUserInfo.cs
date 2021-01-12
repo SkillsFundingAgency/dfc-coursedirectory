@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.Extensions.DependencyInjection;
@@ -221,8 +222,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     });
 
                 // REVIEW: Is there a better way of doing this?
-                var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
-                transaction.Commit();
+                var sqlQueryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+                sqlQueryDispatcher.Transaction.Commit();
             }
         }
     }
