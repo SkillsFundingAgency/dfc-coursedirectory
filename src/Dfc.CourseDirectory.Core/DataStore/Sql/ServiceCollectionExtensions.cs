@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql
@@ -18,20 +17,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
             services.AddScoped<SqlConnection>(_ => new SqlConnection(connectionString));
-            services.AddScoped<SqlTransaction>(sp =>
-            {
-                var connection = sp.GetRequiredService<SqlConnection>();
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-                var transaction = connection.BeginTransaction(IsolationLevel.RepeatableRead);
-
-                var marker = sp.GetRequiredService<SqlTransactionMarker>();
-                marker.OnTransactionCreated(transaction);
-
-                return transaction;
-            });
             services.AddScoped<SqlTransactionMarker>();
 
             return services;

@@ -53,8 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Assert
             var rows = await WithSqlQueryDispatcher(dispatcher =>
             {
-                var connection = dispatcher.Transaction.Connection;
-                return connection.QuerySingleAsync<int>(
+                return dispatcher.Transaction.Connection.QuerySingleAsync<int>(
                     "select count(*) from Pttcd.Providers where ProviderId = @ProviderId",
                     new { ProviderId = providerId },
                     dispatcher.Transaction);
