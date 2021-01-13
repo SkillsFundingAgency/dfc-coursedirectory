@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Core;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.Testing
 {
     public class OverridableFeatureFlagProvider : IFeatureFlagProvider
     {

@@ -1,5 +1,4 @@
 ﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
-@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider featureFlagProvider;
 @{
     var currentController = (string)ViewContext.RouteData.Values["Controller"];
     var currentAction = (string)ViewContext.RouteData.Values["Action"];
@@ -29,7 +28,7 @@
                 </a>
             </li>
         }
-        @if (featureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevelsLinks)
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevelsLinks)
         {
             <li class="pttcd-subnav__item">
                 <a asp-action="List" asp-controller="ViewTLevels" asp-all-route-data="@ProviderContext.RouteValues" class="pttcd-subnav__item__link" data-testid="adminsubnav-tlevels">

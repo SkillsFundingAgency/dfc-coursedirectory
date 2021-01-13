@@ -1,5 +1,4 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard.ViewModel
-@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider featureFlagProvider;
 
 <vc:qa-notifications />
 
@@ -200,7 +199,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
     </div>
 }
 
-@if (featureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevels)
+@if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevels)
 {
     <div class="govuk-grid-row" data-testid="tlevels-row">
         <div class="govuk-grid-column-full">

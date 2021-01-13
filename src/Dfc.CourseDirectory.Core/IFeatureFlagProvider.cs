@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core
 {
     public interface IFeatureFlagProvider
     {

@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Testing;
+﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.Middleware;
