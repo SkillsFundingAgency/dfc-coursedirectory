@@ -19,12 +19,12 @@
                     @ProviderType.FE.ToDescription()
                 </govuk-checkboxes-item>
                 <govuk-checkboxes-item value="@((int)ProviderType.Apprenticeships)" checked="@(Model.ProviderType.HasFlag(ProviderType.Apprenticeships))" input-data-testid="apprenticeships">
-                    @ProviderType.Apprenticeships.ToString()
+                    @ProviderType.Apprenticeships.ToDescription()
                 </govuk-checkboxes-item>
                 @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels))
                 {
                     <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels">
-                        @ProviderType.TLevels.ToString()
+                        @ProviderType.TLevels.ToDescription()
                         <govuk-checkboxes-item-conditional>
                             <govuk-checkboxes asp-for="@Model.SelectedProviderTLevelDefinitionIds">
                                 <govuk-checkboxes-fieldset>
