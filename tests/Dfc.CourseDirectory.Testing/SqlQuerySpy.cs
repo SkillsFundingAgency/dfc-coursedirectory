@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -54,6 +55,12 @@ namespace Dfc.CourseDirectory.Testing
         public void CreateTransaction(IsolationLevel isolationLevel) => _inner.CreateTransaction(isolationLevel);
 
         public Task<T> ExecuteQuery<T>(ISqlQuery<T> query)
+        {
+            _spy.RegisterCall(query);
+            return _inner.ExecuteQuery(query);
+        }
+
+        public IAsyncEnumerable<T> ExecuteQuery<T>(ISqlQuery<IAsyncEnumerable<T>> query)
         {
             _spy.RegisterCall(query);
             return _inner.ExecuteQuery(query);

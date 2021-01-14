@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -59,6 +60,31 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                     new object[] { Transaction, query });
 
                 return result;
+            }
+            finally
+            {
+                _executeLock.Release();
+            }
+        }
+
+        public virtual async IAsyncEnumerable<T> ExecuteQuery<T>(ISqlQuery<IAsyncEnumerable<T>> query)
+        {
+            var handlerType = typeof(ISqlAsyncEnumerableQueryHandler<,>).MakeGenericType(query.GetType(), typeof(T));
+            var handler = _serviceProvider.GetRequiredService(handlerType);
+
+            await _executeLock.WaitAsync();
+
+            try
+            {
+                // TODO We could make this waaay more efficient
+                var result = (IAsyncEnumerable<T>)handlerType.GetMethod("Execute").Invoke(
+                    handler,
+                    new object[] { Transaction, query });
+
+                await foreach (var row in result)
+                {
+                    yield return row;
+                }
             }
             finally
             {
