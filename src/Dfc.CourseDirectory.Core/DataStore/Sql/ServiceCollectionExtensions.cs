@@ -13,6 +13,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 .FromAssembliesOf(typeof(ISqlQuery<>))
                 .AddClasses(classes => classes.AssignableTo(typeof(ISqlQueryHandler<,>)))
                     .AsImplementedInterfaces()
+                    .WithTransientLifetime()
+                .AddClasses(classes => classes.AssignableTo(typeof(ISqlAsyncEnumerableQueryHandler<,>)))
+                    .AsImplementedInterfaces()
                     .WithTransientLifetime());
 
             services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
