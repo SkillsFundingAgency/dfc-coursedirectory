@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
@@ -66,6 +68,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
             if (Environment.EnvironmentName != "Testing")
             {
                 services.AddSqlDataStore(Configuration.GetConnectionString("DefaultConnection"));
+                services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
                 services.AddCosmosDbDataStore(
                     endpoint: new Uri(Configuration["CosmosDbSettings:EndpointUri"]),
