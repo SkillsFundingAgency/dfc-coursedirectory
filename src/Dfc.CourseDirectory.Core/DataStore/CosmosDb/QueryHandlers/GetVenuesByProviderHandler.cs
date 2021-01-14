@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 
@@ -19,11 +20,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.DatabaseId,
                 configuration.VenuesCollectionName);
 
-            var query = client.CreateDocumentQuery<Venue>(collectionUri, new FeedOptions() { EnableCrossPartitionQuery = true })
-                .Where(v => v.Ukprn == request.ProviderUkprn)
-                .AsDocumentQuery();
-
-            return query.FetchAll();
+            return client
+                .CreateDocumentQuery<Venue>(collectionUri, new FeedOptions {EnableCrossPartitionQuery = true})
+                .Where(v => v.Ukprn == request.ProviderUkprn
+                            && v.Status != (int)VenueStatus.Archived)
+                .AsDocumentQuery()
+                .FetchAll();
         }
     }
 }
