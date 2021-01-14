@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
 {
-    [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
+    [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     public class HelpdeskDashboardController : Controller
     {
         [HttpGet("helpdesk-dashboard")]

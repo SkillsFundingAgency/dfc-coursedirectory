@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
     [Route("apprenticeship-qa")]
-    [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
+    [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     public class ApprenticeshipQAController : Controller
     {
         private readonly IMediator _mediator;

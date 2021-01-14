@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(
-                    AuthorizationPolicyNames.ApprenticeshipQA,
+                    AuthorizationPolicyNames.Admin,
                     policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
             });
             
