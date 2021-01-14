@@ -1,4 +1,4 @@
-﻿@inject Dfc.CourseDirectory.WebV2.IFeatureFlagProvider featureFlagProvider;
+﻿@inject Dfc.CourseDirectory.Core.IFeatureFlagProvider FeatureFlagProvider;
 @{
     ViewBag.Title = "Helpdesk dashboard";
 }
@@ -16,7 +16,7 @@
                     </ul>
                 </div>
             </div>
-            @if (featureFlagProvider.HaveFeature(FeatureFlags.TLevels))
+            @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels))
             {
                 <div class="govuk-grid-column-one-half">
                     <div class="pttcd-helpdesk-dashboard__card">

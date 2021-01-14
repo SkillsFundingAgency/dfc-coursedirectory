@@ -62,13 +62,14 @@ namespace Dfc.CourseDirectory.FindACourseApi
 
             services.AddSwaggerGenNewtonsoftSupport();
 
+            services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
+
             services
                 .AddMediatR(typeof(Startup).Assembly);
 
             if (Environment.EnvironmentName != "Testing")
             {
                 services.AddSqlDataStore(Configuration.GetConnectionString("DefaultConnection"));
-                services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
                 services.AddCosmosDbDataStore(
                     endpoint: new Uri(Configuration["CosmosDbSettings:EndpointUri"]),

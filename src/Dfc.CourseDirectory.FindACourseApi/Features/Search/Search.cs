@@ -51,13 +51,16 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
         private readonly ISearchClient<FindACourseOffering> _courseSearchClient;
         private readonly ISearchClient<Onspd> _onspdSearchClient;
+        private readonly IFeatureFlagProvider _featureFlagProvider;
 
         public Handler(
             ISearchClient<FindACourseOffering> courseSearchClient,
-            ISearchClient<Onspd> onspdSearchClient)
+            ISearchClient<Onspd> onspdSearchClient,
+            IFeatureFlagProvider featureFlagProvider)
         {
             _courseSearchClient = courseSearchClient;
             _onspdSearchClient = onspdSearchClient;
+            _featureFlagProvider = featureFlagProvider;
         }
 
         public async Task<OneOf<ProblemDetails, SearchViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -87,6 +90,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         Title = "InvalidPostcode"
                     };
                 }
+            }
+
+            if (!_featureFlagProvider.HaveFeature(FeatureFlags.TLevels))
+            {
+                filters.Add("OfferingType ne 2");
             }
 
             var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 && gotPostcode;
