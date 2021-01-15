@@ -4,17 +4,14 @@ namespace Dfc.CourseDirectory.WebV2
 {
     public class ProviderContext
     {
-        public ProviderContext(ProviderInfo providerInfo, bool strict = true)
+        public ProviderContext(ProviderInfo providerInfo, bool isFallback = false)
         {
             ProviderInfo = providerInfo ?? throw new ArgumentNullException(nameof(providerInfo));
-            Strict = strict;
+            IsFallback = isFallback;
         }
 
         public ProviderInfo ProviderInfo { get; }
 
-        /// <summary>
-        /// If <c>true</c> indicates that the context should not be changed once set for a request.
-        /// </summary>
-        public bool Strict { get; }
+        public bool IsFallback { get; }
     }
 }

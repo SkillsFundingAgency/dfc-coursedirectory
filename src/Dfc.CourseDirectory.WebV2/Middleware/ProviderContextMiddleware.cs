@@ -57,8 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
 
                 Guid providerId;
 
-                // A 'strict' provider context means it cannot be changed for a given request
-                bool strict = true;
+                bool isFallback = false;
 
                 var requestProviderId = TryGetProviderIdFromRequest();
 
@@ -68,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
 
                     if (requestProviderId.HasValue)
                     {
-                        strict = false;
+                        isFallback = true;
                     }
                 }
 
@@ -96,12 +95,13 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
                     }
 
                     providerId = usersOwnProviderId;
+                    isFallback = false;
                 }
 
                 var providerInfo = await providerInfoCache.GetProviderInfo(providerId);
                 if (providerInfo != null)
                 {
-                    var providerContext = new ProviderContext(providerInfo, strict);
+                    var providerContext = new ProviderContext(providerInfo, isFallback);
                     providerContextProvider.SetProviderContext(providerContext);
                 }
             }

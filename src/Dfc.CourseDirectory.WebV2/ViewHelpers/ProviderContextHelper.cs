@@ -23,7 +23,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewHelpers
             { ProviderContextMiddleware.RouteValueKey, ProviderInfo?.ProviderId.ToString() }
         };
 
-        private ProviderContext ProviderContext => _providerContextProvider.GetProviderContext();
+        private ProviderContext ProviderContext =>
+            _providerContextProvider.GetProviderContext(withLegacyFallback: true);
 
         public static implicit operator ProviderContext(ProviderContextHelper helper) =>
             helper.ProviderContext;
