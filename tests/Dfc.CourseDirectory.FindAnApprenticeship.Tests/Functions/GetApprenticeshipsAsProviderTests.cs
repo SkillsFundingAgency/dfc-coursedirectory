@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Functions;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Storage;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeship.UnitTests.Functions
+namespace Dfc.ProviderPortal.FindAnApprenticeshipApi.UnitTests.Functions
 {
     public class GetApprenticeshipsAsProviderTests
     {

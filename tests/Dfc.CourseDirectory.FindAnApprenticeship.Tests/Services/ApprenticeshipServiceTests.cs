@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Security.Cryptography.X509Certificates;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeship.UnitTests.Services
+namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Services
 {
 
     public class ApprenticeshipServiceTests : IDisposable

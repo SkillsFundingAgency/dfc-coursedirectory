@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Provider;
 
 namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers
 {
+    [Obsolete("Replace with Core.Models.Provider")]
     public class Provider
     {
         public Guid Id { get; set; }

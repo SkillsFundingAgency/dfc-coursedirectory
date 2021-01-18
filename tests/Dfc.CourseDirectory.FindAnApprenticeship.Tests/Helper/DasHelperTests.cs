@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Enums;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
+using Dfc.ProviderPortal.FindAnApprenticeshipApi.UnitTests;
 using Microsoft.ApplicationInsights;
 using Xunit;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeship.UnitTests.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Helper
 {
     public class DasHelperTests : IDisposable
     {

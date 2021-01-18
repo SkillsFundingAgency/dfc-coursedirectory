@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeship.UnitTests.Integration
+namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Integration
 {
     public class MockHttpMessageHandler : HttpMessageHandler
     {
