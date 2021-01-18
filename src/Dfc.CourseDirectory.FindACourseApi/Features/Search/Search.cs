@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (!_featureFlagProvider.HaveFeature(FeatureFlags.TLevels))
             {
-                filters.Add("OfferingType ne 2");
+                filters.Add($"OfferingType ne {(int)FindACourseOfferingType.TLevel}");
             }
 
             var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 && gotPostcode;
