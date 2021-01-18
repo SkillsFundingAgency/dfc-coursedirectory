@@ -130,6 +130,9 @@
     },
     "providerPortalCosmosDbConnectionString": {
       "value": "__providerPortalCosmosDbConnectionString__"
+    },
+    "providerPortalApplicationInsights": {
+      "value": "__providerportalApplicationInsights__"
     }
   }
 }
