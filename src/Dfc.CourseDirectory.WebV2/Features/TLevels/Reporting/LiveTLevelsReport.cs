@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.Reporting.LiveTLevelsReport
         [Name("Provider Name")]
         public string ProviderName { get; set; }
 
-        [Name("TLevel Name")]
+        [Name("T Level Name")]
         public string TLevelName { get; set; }
 
         [Name("Venue Name")]
