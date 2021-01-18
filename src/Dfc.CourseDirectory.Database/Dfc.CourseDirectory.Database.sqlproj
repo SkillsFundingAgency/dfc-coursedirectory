@@ -265,6 +265,7 @@
     <Build Include="Pttcd\Indexes\IX_CourseRuns_Status.sql" />
     <Build Include="Pttcd\Triggers\TRG_Venues_UpdateFindACourseIndex.sql" />
     <Build Include="Pttcd\StoredProcedures\RefreshFindACourseIndexForTLevels.sql" />
+    <Build Include="Pttcd\Triggers\TRG_TLevels_UpdateFindACourseIndex.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
