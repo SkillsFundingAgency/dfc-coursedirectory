@@ -9,8 +9,7 @@ BEGIN
 
 	INSERT INTO @VenueLiveCourseRuns
 	SELECT cr.CourseRunId FROM Pttcd.CourseRuns cr
-	JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
-	JOIN inserted x ON c.ProviderUkprn = x.ProviderUkprn
+	JOIN inserted x ON cr.VenueId = x.VenueId
 	WHERE cr.CourseRunStatus = 1
 
 	SET @Now = GETUTCDATE()
