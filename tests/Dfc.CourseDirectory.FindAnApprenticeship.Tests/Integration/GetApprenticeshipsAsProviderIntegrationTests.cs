@@ -10,15 +10,15 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
-using Dfc.Providerportal.FindAnApprenticeship.Functions;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Helper;
-using Dfc.Providerportal.FindAnApprenticeship.Interfaces.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Models;
-using Dfc.Providerportal.FindAnApprenticeship.Models.Providers;
-using Dfc.Providerportal.FindAnApprenticeship.Services;
-using Dfc.Providerportal.FindAnApprenticeship.Settings;
-using Dfc.Providerportal.FindAnApprenticeship.Storage;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage;
 using FluentAssertions;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +33,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeship.UnitTests.Integration
+namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Integration
 {
     public class GetApprenticeshipsAsProviderIntegrationTests
     {

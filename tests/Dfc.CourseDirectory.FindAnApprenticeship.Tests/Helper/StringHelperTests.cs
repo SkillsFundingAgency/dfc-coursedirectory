@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Xunit;
-using Dfc.Providerportal.FindAnApprenticeship.Helper;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeship.UnitTests.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Helper
 {
     public class StringHelperTests : IDisposable
     {
