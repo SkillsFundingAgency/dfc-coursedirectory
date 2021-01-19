@@ -27,7 +27,13 @@ INSERT INTO Pttcd.TLevels (
 
 INSERT INTO Pttcd.TLevelLocations (TLevelLocationId, TLevelId, VenueId, TLevelLocationStatus)
 SELECT NEWID(), @TLevelId, Id, @TLevelLocationStatus
-FROM @LocationVenueIds";
+FROM @LocationVenueIds
+
+DECLARE @TLevelIds Pttcd.GuidIdTable
+
+INSERT INTO @TLevelIds VALUES (@TLevelId)
+
+EXEC Pttcd.RefreshFindACourseIndexForTLevels @TLevelIds, @CreatedOn";
 
             try
             {

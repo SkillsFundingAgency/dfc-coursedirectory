@@ -18,7 +18,13 @@ UPDATE Pttcd.TLevels SET
     DeletedOn = @DeletedOn,
     DeletedByUserId = @DeletedByUserId
 WHERE TLevelId = @TLevelId
-AND TLevelStatus = @LiveTLevelStatus";
+AND TLevelStatus = @LiveTLevelStatus
+
+DECLARE @TLevelIds Pttcd.GuidIdTable
+
+INSERT INTO @TLevelIds VALUES (@TLevelId)
+
+EXEC Pttcd.RefreshFindACourseIndexForTLevels @TLevelIds, @DeletedOn";
 
             var deleted = (await transaction.Connection.ExecuteAsync(
                 sql,

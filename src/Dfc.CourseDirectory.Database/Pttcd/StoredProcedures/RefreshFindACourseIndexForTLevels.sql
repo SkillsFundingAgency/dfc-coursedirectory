@@ -4,7 +4,8 @@
 AS
 BEGIN
 
-	WITH RecordsCte AS (
+	MERGE Pttcd.FindACourseIndex AS target
+	USING (
 		SELECT
 			CONVERT(VARCHAR(36), tll.TLevelLocationId) AS Id,
 			2 AS OfferingType, -- TLevel
@@ -50,9 +51,7 @@ BEGIN
 		INNER JOIN Pttcd.Providers p ON t.ProviderId = p.ProviderId
 		INNER JOIN Pttcd.Venues v ON tll.VenueId = v.VenueId
 		WHERE t.TLevelStatus = 1 AND tll.TLevelLocationStatus = 1  -- Live
-	)
-	MERGE Pttcd.FindACourseIndex AS target
-	USING (SELECT * FROM RecordsCte) AS source
+	) AS source
 	ON source.Id = target.Id
 	WHEN MATCHED THEN UPDATE SET
 		LastSynced = @Now,

@@ -42,6 +42,12 @@ WHEN NOT MATCHED THEN
 WHEN NOT MATCHED BY SOURCE AND target.TLevelId = @TLevelId THEN
     UPDATE SET TLevelLocationStatus = @DeletedTLevelLocationStatus;
 
+DECLARE @TLevelIds Pttcd.GuidIdTable
+
+INSERT INTO @TLevelIds VALUES (@TLevelId)
+
+EXEC Pttcd.RefreshFindACourseIndexForTLevels @TLevelIds, @UpdatedOn
+
 SELECT @Result";
 
             try

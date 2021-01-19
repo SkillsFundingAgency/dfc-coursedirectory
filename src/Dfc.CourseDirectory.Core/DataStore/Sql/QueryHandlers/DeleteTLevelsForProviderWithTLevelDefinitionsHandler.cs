@@ -15,14 +15,19 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             DeleteTLevelsForProviderWithTLevelDefinitions query)
         {
             var sql = @"
+DECLARE @TLevelIds Pttcd.GuidIdTable
+
 UPDATE Pttcd.TLevels SET
     TLevelStatus = @DeletedTLevelStatus,
     DeletedOn = @DeletedOn,
     DeletedByUserId = @DeletedByUserId
+OUTPUT INSERTED.TLevelId INTO @TLevelIds
 FROM Pttcd.TLevels t
 JOIN @TLevelDefinitionIds x ON t.TLevelDefinitionId = x.Id
 WHERE t.ProviderId = @ProviderId
-AND t.TLevelStatus = @LiveTLevelStatus";
+AND t.TLevelStatus = @LiveTLevelStatus
+
+EXEC Pttcd.RefreshFindACourseIndexForTLevels @TLevelIds, @DeletedOn";
 
             await transaction.Connection.ExecuteAsync(
                 sql,
