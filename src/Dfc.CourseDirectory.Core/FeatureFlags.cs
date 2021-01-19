@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi
+﻿namespace Dfc.CourseDirectory.Core
 {
     public static class FeatureFlags
     {
