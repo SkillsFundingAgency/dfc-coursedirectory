@@ -11,11 +11,11 @@ using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using OneOf;
 using OneOf.Types;
 using Xunit;
-using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 {
@@ -228,6 +228,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             response.StatusCode.Should().Be(HttpStatusCode.Found);
         }
 
+        [Fact]
+        public async Task Post_ProviderIdAndProviderContextProviderIdDoNotMatch_ReturnsBadRequest()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.FE)
+                .Add("ProviderId", Guid.NewGuid())
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
@@ -420,7 +443,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
         [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
-        public async Task Post_TLevelAccessIsRemoved_DeletesExistingLiveTLevels(ProviderType newProviderType)
+        public async Task Post_TLevelAccessIsRemoved_ReturnsConfirmWithExpectedContent(ProviderType newProviderType)
         {
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -431,11 +454,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var venueId = (await TestData.CreateVenue(providerId)).Id;
 
-            var tLevel = await TestData.CreateTLevel(
-                providerId,
-                tLevelDefinitions.First().TLevelDefinitionId,
-                locationVenueIds: new[] { venueId },
-                createdBy: User.ToUserInfo());
+            var tLevels = await Task.WhenAll(
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo()),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo(),
+                    startDate: new DateTime(2022, 01, 01)),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo())
+                );
 
             var content = new FormUrlEncodedContentBuilder()
                 .Add("ProviderType", (int)newProviderType)
@@ -450,12 +486,280 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.EnsureNonErrorStatusCode();
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
 
-            tLevel = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new GetTLevel() { TLevelId = tLevel.TLevelId }));
+            var doc = await response.GetDocument();
 
-            tLevel.Should().BeNull();
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
+            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                tLevels.Select(t => t.TLevelId.ToString()));
+            doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
+                tLevels.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
+
+            foreach (var tLevel in tLevels)
+            {
+                (await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                    new GetTLevel() { TLevelId = tLevel.TLevelId }))).Should().NotBeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(ProviderType.None)]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
+        public async Task Post_FromConfirm_TLevelAccessIsRemoved_WithConfirmNull_ReturnsConfirmErrorWithExpectedContent(ProviderType newProviderType)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var tLevels = await Task.WhenAll(
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo()),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo(),
+                    startDate: new DateTime(2022, 01, 01)),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo())
+                );
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)newProviderType)
+                .Add("ConfirmAffectedTLevelIds", tLevels.Select(t => t.TLevelId))
+                .Add("Confirm", null)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+            var doc = await response.GetDocument();
+
+            doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
+            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                tLevels.Select(t => t.TLevelId.ToString()));
+            doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
+                tLevels.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
+
+            foreach (var tLevel in tLevels)
+            {
+                (await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                    new GetTLevel() { TLevelId = tLevel.TLevelId }))).Should().NotBeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(ProviderType.None)]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
+        public async Task Post_FromConfirm_TLevelAccessIsRemoved_WithConfirmFalse_Redirects(ProviderType newProviderType)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var tLevels = await Task.WhenAll(
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo()),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo(),
+                    startDate: new DateTime(2022, 01, 01)),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo())
+                );
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)newProviderType)
+                .Add("ConfirmAffectedTLevelIds", tLevels.Select(t => t.TLevelId))
+                .Add("Confirm", false)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={providerId}");
+
+            foreach (var tLevel in tLevels)
+            {
+                (await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                    new GetTLevel() { TLevelId = tLevel.TLevelId }))).Should().NotBeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(ProviderType.None)]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
+        public async Task Post_FromConfirm_TLevelAccessIsRemoved_WithAffectedTLevelsChanged_ReturnsConfirmErrorWithExpectedContent(ProviderType newProviderType)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var tLevels = await Task.WhenAll(
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo()),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo(),
+                    startDate: new DateTime(2022, 01, 01)),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo())
+                );
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)newProviderType)
+                .Add("ConfirmAffectedTLevelIds", tLevels.Skip(1).Select(t => t.TLevelId))
+                .Add("Confirm", true)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+            var doc = await response.GetDocument();
+
+            doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
+            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                tLevels.Select(t => t.TLevelId.ToString()));
+            doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
+                tLevels.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
+
+            foreach (var tLevel in tLevels)
+            {
+                (await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                    new GetTLevel() { TLevelId = tLevel.TLevelId }))).Should().NotBeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(ProviderType.None)]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
+        public async Task Post_FromConfirm_TLevelAccessIsRemoved_DeletesExistingLiveTLevelsAndRedirects(ProviderType newProviderType)
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var tLevels = await Task.WhenAll(
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo()),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo(),
+                    startDate: new DateTime(2022, 01, 01)),
+                TestData.CreateTLevel(
+                    providerId,
+                    tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
+                    locationVenueIds: new[] { venueId },
+                    createdBy: User.ToUserInfo())
+                );
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)newProviderType)
+                .Add("ConfirmAffectedTLevelIds", tLevels.Select(t => t.TLevelId))
+                .Add("Confirm", true)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+
+            foreach (var tLevel in tLevels)
+            {
+                (await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                    new GetTLevel() { TLevelId = tLevel.TLevelId }))).Should().BeNull();
+            }
         }
 
         [Theory]
@@ -463,7 +767,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.TLevels | ProviderType.Apprenticeships)]
         [InlineData(ProviderType.TLevels | ProviderType.FE)]
         [InlineData(ProviderType.TLevels | ProviderType.FE | ProviderType.Apprenticeships)]
-        public async Task Post_TLevelAccessIsMaintained_DoesNotDeleteTLevels(ProviderType newProviderType)
+        public async Task Post_TLevelAccessIsMaintained_RedirectsAndDoesNotDeleteTLevels(ProviderType newProviderType)
         {
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -496,7 +800,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.EnsureNonErrorStatusCode();
+            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
 
             tLevel = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetTLevel() { TLevelId = tLevel.TLevelId }));
@@ -505,7 +810,51 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Fact]
-        public async Task Post_TLevelAccessIsRemovedForSpecificTLevelDefinition_DeletesExistingLiveTLevelsForThatDefinitionOnly()
+        public async Task Post_TLevelAccessIsRemovedForSpecificTLevelDefinition_WithNoAffectedTLevels_RemovesAccessToTLevelDefinitionAndRedirects()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
+            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
+
+            var tLevel1 = await TestData.CreateTLevel(
+                providerId,
+                keepingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.TLevels)
+                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+
+            tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel1.TLevelId }));
+            tLevel1.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Post_TLevelAccessIsRemovedForSpecificTLevelDefinition_ReturnsConfirmWithExpectedContent()
         {
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -546,7 +895,276 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.EnsureNonErrorStatusCode();
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            var doc = await response.GetDocument();
+
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
+            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                new[] { tLevel2.TLevelId.ToString() });
+            doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                new[] { keepingTLevelDefinitionId.ToString() });
+            doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
+                new[] { tLevel2 }.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
+
+            tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel1.TLevelId }));
+            tLevel2 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel2.TLevelId }));
+
+            using (new AssertionScope())
+            {
+                tLevel1.Should().NotBeNull();
+                tLevel2.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Post_FromConfirm_TLevelAccessIsRemovedForSpecificTLevelDefinition_WithConfirmNull_ReturnsConfirmErrorWithExpectedContent()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
+            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
+
+            var tLevel1 = await TestData.CreateTLevel(
+                providerId,
+                keepingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var tLevel2 = await TestData.CreateTLevel(
+                providerId,
+                removingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.TLevels)
+                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .Add("ConfirmAffectedTLevelIds", new[] { tLevel2.TLevelId })
+                .Add("Confirm", null)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+            var doc = await response.GetDocument();
+
+            doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
+            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                new[] { tLevel2.TLevelId.ToString() });
+            doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                new[] { keepingTLevelDefinitionId.ToString() });
+            doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
+                new[] { tLevel2 }.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
+
+            tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel1.TLevelId }));
+            tLevel2 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel2.TLevelId }));
+
+            using (new AssertionScope())
+            {
+                tLevel1.Should().NotBeNull();
+                tLevel2.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Post_FromConfirm_TLevelAccessIsRemovedForSpecificTLevelDefinition_WithConfirmFalse_Redirects()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
+            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
+
+            var tLevel1 = await TestData.CreateTLevel(
+                providerId,
+                keepingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var tLevel2 = await TestData.CreateTLevel(
+                providerId,
+                removingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.TLevels)
+                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .Add("ConfirmAffectedTLevelIds", new[] { tLevel2.TLevelId })
+                .Add("Confirm", false)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={providerId}");
+
+            tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel1.TLevelId }));
+            tLevel2 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel2.TLevelId }));
+
+            using (new AssertionScope())
+            {
+                tLevel1.Should().NotBeNull();
+                tLevel2.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Post_FromConfirm_TLevelAccessIsRemovedForSpecificTLevelDefinition_WithAffectedTLevelsChanged_ReturnsConfirmErrorWithExpectedContent()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
+            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
+
+            var tLevel1 = await TestData.CreateTLevel(
+                providerId,
+                keepingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var tLevel2 = await TestData.CreateTLevel(
+                providerId,
+                removingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.TLevels)
+                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .Add("ConfirmAffectedTLevelIds", new[] { Guid.NewGuid() })
+                .Add("Confirm", true)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+            var doc = await response.GetDocument();
+
+            doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
+            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                new[] { tLevel2.TLevelId.ToString() });
+            doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
+                new[] { keepingTLevelDefinitionId.ToString() });
+            doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
+                new[] { tLevel2 }.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
+
+            tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel1.TLevelId }));
+            tLevel2 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetTLevel() { TLevelId = tLevel2.TLevelId }));
+
+            using (new AssertionScope())
+            {
+                tLevel1.Should().NotBeNull();
+                tLevel2.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Post_FromConfirm_TLevelAccessIsRemovedForSpecificTLevelDefinition_DeletesExistingLiveTLevelsForThatDefinitionOnlyAndRedirects()
+        {
+            // Arrange
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            var providerId = await TestData.CreateProvider(
+                providerType: ProviderType.TLevels,
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
+
+            var venueId = (await TestData.CreateVenue(providerId)).Id;
+
+            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
+            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
+
+            var tLevel1 = await TestData.CreateTLevel(
+                providerId,
+                keepingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var tLevel2 = await TestData.CreateTLevel(
+                providerId,
+                removingTLevelDefinitionId,
+                locationVenueIds: new[] { venueId },
+                createdBy: User.ToUserInfo());
+
+            var content = new FormUrlEncodedContentBuilder()
+                .Add("ProviderType", (int)ProviderType.TLevels)
+                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .Add("ConfirmAffectedTLevelIds", new[] { tLevel2.TLevelId })
+                .Add("Confirm", true)
+                .ToContent();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            {
+                Content = content
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetTLevel() { TLevelId = tLevel1.TLevelId }));

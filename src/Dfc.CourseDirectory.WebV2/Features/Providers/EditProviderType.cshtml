@@ -14,6 +14,7 @@
         <h1 class="govuk-heading-l">Provider type</h1>
 
         <form asp-action="Post" asp-all-route-data="@ProviderContext.RouteValues">
+            @Html.HiddenFor(m => m.ProviderId)
             <govuk-checkboxes asp-for="ProviderType">
                 <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
                     @ProviderType.FE.ToDescription()
