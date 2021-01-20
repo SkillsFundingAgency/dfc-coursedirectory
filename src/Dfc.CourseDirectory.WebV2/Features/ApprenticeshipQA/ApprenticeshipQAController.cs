@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.WebV2.Mvc;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
     [Route("apprenticeship-qa")]
-    [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
+    [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     public class ApprenticeshipQAController : Controller
     {
         private readonly IMediator _mediator;
@@ -49,12 +49,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         }
 
         [HttpGet("report")]
-        public async Task<IActionResult> Report() => await _mediator.SendAndMapResponse(
-            new Report.Query(),
-            response =>
-            {
-                var bytes = ReportHelper.ConvertToBytes(response);
-                return File(bytes, "text/csv", "QAReport.csv");
-            });
+        public async Task<IActionResult> Report() =>
+            await _mediator.SendAndMapResponse(new Report.Query(),
+                response => new CsvResult<Report.ReportModel>("QAReport.csv", response.Report));
     }
 }

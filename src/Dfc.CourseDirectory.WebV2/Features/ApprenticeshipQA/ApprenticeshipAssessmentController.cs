@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
     [Route("apprenticeship-qa/apprenticeship-assessment/{apprenticeshipId}")]
-    [Authorize(Policy = AuthorizationPolicyNames.ApprenticeshipQA)]
+    [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [JourneyMetadata(
         journeyName: "apprenticeship-qa/apprenticeship-assessment",
         stateType: typeof(JourneyModel),

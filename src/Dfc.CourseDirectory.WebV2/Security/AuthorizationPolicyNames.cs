@@ -2,6 +2,6 @@
 {
     public static class AuthorizationPolicyNames
     {
-        public const string ApprenticeshipQA = "ApprenticeshipQA";
+        public const string Admin = "Admin";
     }
 }
