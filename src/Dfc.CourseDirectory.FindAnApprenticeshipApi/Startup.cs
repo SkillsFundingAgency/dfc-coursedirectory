@@ -1,40 +1,84 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Data.SqlClient;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Services;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings;
+using Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
+[assembly: FunctionsStartup(typeof(Startup))]
 namespace Dfc.CourseDirectory.FindAnApprenticeshipApi
 {
-    public class Startup
+    public class Startup : FunctionsStartup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public override void Configure(IFunctionsHostBuilder builder)
         {
+            ConfigureServices(builder.Services);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        private static void ConfigureServices(IServiceCollection services)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Environment.CurrentDirectory)
+                .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
 
-            app.UseRouting();
+            #region Settings & Config
+            
+            var cosmosDbSettings = configuration.GetSection(nameof(CosmosDbSettings));
+            var cosmosDbCollectionSettings = configuration.GetSection(nameof(CosmosDbCollectionSettings));
+            var providerServiceSettings = configuration.GetSection(nameof(ProviderServiceSettings));
+            var referenceDataServiceSettings = configuration.GetSection(nameof(ReferenceDataServiceSettings));
 
-            app.UseEndpoints(endpoints =>
+            services.AddSingleton<IConfiguration>(configuration);
+            services.Configure<CosmosDbSettings>(cosmosDbSettings);
+            services.Configure<CosmosDbCollectionSettings>(cosmosDbCollectionSettings);
+            services.Configure<ProviderServiceSettings>(providerServiceSettings);
+            services.Configure<ReferenceDataServiceSettings>(referenceDataServiceSettings);
+
+            #endregion
+
+            #region Http Clients
+
+            services.AddHttpClient<IReferenceDataService, ReferenceDataService>(client =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                var options = referenceDataServiceSettings.Get<ReferenceDataServiceSettings>();
+
+                client.BaseAddress = new Uri(options.ApiUrl);
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", options.ApiKey);
             });
+
+            #endregion
+
+            #region Services
+
+            services.AddSingleton<IReferenceDataServiceClient, ReferenceDataServiceClient>();
+            services.AddSingleton<IProviderServiceClient, ProviderServiceClient>();
+            services.AddSingleton<Func<DateTimeOffset>>(() => DateTimeOffset.UtcNow);
+
+            services.AddSingleton<IProviderService>(s =>
+            {
+                var sqlConnectionString = s.GetRequiredService<IConfiguration>().GetValue<string>("ConnectionStrings:DefaultConnection");
+                return new ProviderService(() => new SqlConnection(sqlConnectionString));
+            });
+
+            services.AddSingleton<IBlobStorageClient>(s =>
+                new AzureBlobStorageClient(
+                    new AzureBlobStorageClientOptions(
+                        s.GetRequiredService<IConfiguration>().GetValue<string>("AzureWebJobsStorage"),
+                        "fatp-providersexport")));
+
+            services.AddScoped<ICosmosDbHelper, CosmosDbHelper>();
+            services.AddScoped<IDASHelper, DASHelper>();
+            services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
+
+            #endregion
         }
     }
 }
