@@ -1,0 +1,217 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "functionAppPrefix": {
+        "type": "string",
+        "metadata": {
+          "description": "Prefix for the function app resources, in the form dfc-env-proj-fnapp"
+        }
+      },
+      "appServicePlanName": {
+        "type": "string",
+        "metadata": {
+          "description": "App service plan to run the function app under"
+        }
+      },
+      "appServicePlanResourceGroup": {
+        "type": "string",
+        "metadata": {
+          "description": "Resource group the app service plan is in"
+        }
+      },
+      "storageConnectionString": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Connection string for the storage account to store function app files"
+        }
+      },
+      "cosmosDbEndpoint": {
+        "type": "string",
+        "metadata": {
+          "description": "Url to the providerportal cosmosb account"
+        }
+      },
+      "cosmosDbAccountKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "primary key for the providerportal cosmosb account"
+        }
+      },
+      "providerApiUrl": {
+        "type": "string",
+        "metadata": {
+          "description": "Url to the provider api"
+        }
+      },
+      "providerApiKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Key to access provider api via APIM"
+        }
+      },
+      "referenceDataApiUrl": {
+        "type": "string",
+        "metadata": {
+          "description": "Url to the reference data api"
+        }
+      },
+      "referenceDataApiKey": {
+        "type": "securestring",
+        "metadata": {
+          "description": "Key to access reference data api via APIM"
+        }
+      },
+      "GenerateProviderExportSchedule": {
+        "type": "string"
+      },
+      "sqlCourseDirectoryConnectionString": {
+        "type": "string",
+        "metadata": {
+          "description": "ADO.NET connection string for the course directory database"
+        }
+      }
+    },
+    "variables": {
+      "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+      "functionAppName": "[concat(parameters('functionAppPrefix'),'-fa')]",
+      "appInsightName": "[concat(parameters('functionAppPrefix'),'-ai')]"
+    },
+    "resources": [
+      {
+        "apiVersion": "2017-05-10",
+        "name": "ppfindapprenticeshipAppInsights",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "appInsightsName": {
+              "value": "[variables('appInsightName')]"
+            },
+            "attachedService": {
+              "value": "[variables('functionAppName')]"
+            }
+          }
+        }
+      },
+      {
+        "apiVersion": "2017-05-10",
+        "name": "ppfindapprenticeshipAppService",
+        "type": "Microsoft.Resources/deployments",
+        "dependsOn": [
+          "ppfindapprenticeshipAppInsights"
+        ],
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "appServiceName": {
+              "value": "[variables('functionAppName')]"
+            },
+            "appServicePlanName": {
+              "value": "[parameters('appServicePlanName')]"
+            },
+            "appServicePlanResourceGroup": {
+              "value": "[parameters('appServicePlanResourceGroup')]"
+            },
+            "appServiceType": {
+              "value": "functionapp"
+            },
+            "appServiceAppSettings": {
+              "value": [
+                {
+                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                  "value": "[reference('ppfindapprenticeshipAppInsights').outputs.InstrumentationKey.value]"
+                },
+                {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "~3"
+                },
+                {
+                  "name": "AzureWebJobsStorage",
+                  "value": "[parameters('storageConnectionString')]"
+                },
+                { 
+                  "name": "WEBSITE_RUN_FROM_PACKAGE", 
+                  "value": "1" 
+                },
+                {
+                  "name": "FUNCTIONS_WORKER_RUNTIME",
+                  "value": "dotnet"
+                },
+                {
+                  "name": "CosmosDbSettings__EndpointUri",
+                  "value": "[parameters('cosmosDbEndpoint')]"
+                },
+                {
+                  "name": "CosmosDbSettings__PrimaryKey",
+                  "value": "[parameters('cosmosDbAccountKey')]"
+                },
+                {
+                  "name": "CosmosDbSettings__DatabaseId",
+                  "value": "providerportal"
+                },
+                {
+                  "name": "CosmosDbCollectionSettings__ApprenticeshipCollectionId",
+                  "value": "apprenticeship"
+                },
+                {
+                  "name": "ProviderServiceSettings__ApiUrl",
+                  "value": "[parameters('providerApiUrl')]"
+                },
+                {
+                  "name": "ProviderServiceSettings__ApiKey",
+                  "value": "[parameters('providerApiKey')]"
+                },
+                {
+                  "name": "ReferenceDataServiceSettings__ApiUrl",
+                  "value": "[concat(parameters('referenceDataApiUrl'), '/fe-choices/')]"
+                },
+                {
+                  "name": "ReferenceDataServiceSettings__ApiKey",
+                  "value": "[parameters('referenceDataApiKey')]"
+                },
+                {
+                  "name": "GenerateProviderExportSchedule",
+                  "value": "[parameters('GenerateProviderExportSchedule')]"
+                }
+              ]
+            },
+            "appServiceConnectionStrings": {
+              "value": [
+                {
+                  "name": "DefaultConnection",
+                  "type": "SQLServer",
+                  "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
+                }
+              ]
+            },
+            "deployStagingSlot": {
+              "value": true
+            }
+          }
+        }
+      }
+    ],
+    "outputs": {
+      "functionAppName": {
+        "type": "string",
+        "value": "[variables('functionAppName')]"
+      },
+      "appInsightName": {
+        "type": "string",
+        "value": "[variables('appInsightName')]"
+      },
+      "appInsightInstrumentationKey": {
+        "type": "string",
+        "value": "[reference('ppfindapprenticeshipAppInsights').outputs.InstrumentationKey.value]"
+      }
+    }
+  }

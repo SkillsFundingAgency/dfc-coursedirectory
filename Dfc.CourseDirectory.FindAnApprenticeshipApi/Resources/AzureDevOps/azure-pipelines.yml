@@ -1,0 +1,72 @@
+# dotnet core build
+
+variables:
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    endpoint: 'GitHub (ESFA)'
+    ref: refs/tags/v1.5.0
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+
+pr:
+  branches:
+    include:
+    - main
+
+steps:
+
+# ARM template
+- template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+  parameters:
+    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\ArmTemplates'
+
+# restore
+- task: DotNetCoreCLI@2
+  displayName: dotnet restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+
+# build
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+
+# test
+- task: DotNetCoreCLI@2
+  displayName: dotnet test
+  inputs:
+    command: test
+    projects: '**/*test*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+
+# publish
+- task: DotNetCoreCLI@2
+  displayName: dotnet publish
+  inputs:
+    command: publish
+    projects: 'dfc.providerportal.findanapprenticeship\src\dfc.providerportal.findanapprenticeship'
+    configuration: ${{ variables.buildConfiguration }}
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    publishWebProjects: false
+    zipAfterPublish: true
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+     pathtoPublish: $(Build.ArtifactStagingDirectory)
+     artifactName: dfc.providerportal.findanapprenticeship
