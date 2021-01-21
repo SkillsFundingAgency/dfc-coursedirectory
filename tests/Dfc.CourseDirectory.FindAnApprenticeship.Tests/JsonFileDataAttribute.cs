@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit.Sdk;
 
-namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests
+namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests
 {
     /// <summary>
     /// 

@@ -1,6 +1,6 @@
 using System;
 
-namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Services
+namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Services
 {
 
     public class ApprenticeshipServiceTests : IDisposable

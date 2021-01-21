@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
-namespace Dfc.ProviderPortal.FindAnApprenticeshipApi.UnitTests.Functions
+namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Functions
 {
     public class GetApprenticeshipsAsProviderTests
     {
