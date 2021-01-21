@@ -2,7 +2,7 @@
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Xunit;
 
-namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Helper
+namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper
 {
     public class StringHelperTests : IDisposable
     {

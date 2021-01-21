@@ -33,7 +33,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.FindAnApprenticeship.UnitTests.Integration
+namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
 {
     public class GetApprenticeshipsAsProviderIntegrationTests
     {
