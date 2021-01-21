@@ -8,8 +8,8 @@
 }
 
 <govuk-error-summary>
-    <govuk-error-summary-item asp-for="Confirm" data-testid="confirm-error" />
     <govuk-error-summary-item asp-for="AffectedItemCounts" data-testid="affected-item-counts-error" />
+    <govuk-error-summary-item asp-for="Confirm" data-testid="confirm-error" />
 </govuk-error-summary>
 
 <div class="govuk-grid-row">
@@ -30,10 +30,7 @@
                 @Html.HiddenFor(m => m.SelectedProviderTLevelDefinitionIds[i], new Dictionary<string, object> { { "data-testid", "selected-provider-tlevel-definition-id" } });
             }
 
-            @for (int i = 0; i < Model.ConfirmAffectedTLevelIds?.Count; i++)
-            {
-                @Html.HiddenFor(m => m.ConfirmAffectedTLevelIds[i], new Dictionary<string, object> { { "data-testid", "confirm-affected-tLevel-id" } });
-            }
+            <input type="hidden" name="@Html.NameFor(x => Model.AffectedTLevelIdsChecksum)" value="@Model.AffectedTLevelIdsChecksum" data-testid="affected-tLevel-ids-checksum" />
 
             <div class="govuk-form-group@(affectedItemCountErrors.Any() ? " govuk-form-group--error" : string.Empty)">
                 <div class="govuk-warning-text govuk-!-padding-bottom-0">

@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var providerId = await TestData.CreateProvider();
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.FE)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.FE)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var providerId = Guid.NewGuid();
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.FE)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.FE)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -235,7 +235,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.FE)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.FE)
                 .Add("ProviderId", Guid.NewGuid())
                 .ToContent();
 
@@ -261,7 +261,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)providerType)
+                .Add(nameof(Command.ProviderType), (int)providerType)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -474,7 +474,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 );
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)newProviderType)
+                .Add(nameof(Command.ProviderType), (int)newProviderType)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -492,8 +492,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
-            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
-                tLevels.Select(t => t.TLevelId.ToString()));
+            doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
                 tLevels.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
 
@@ -540,9 +539,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 );
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)newProviderType)
-                .Add("ConfirmAffectedTLevelIds", tLevels.Select(t => t.TLevelId))
-                .Add("Confirm", null)
+                .Add(nameof(Command.ProviderType), (int)newProviderType)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), null)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -561,8 +560,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
-            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
-                tLevels.Select(t => t.TLevelId.ToString()));
+            doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
                 tLevels.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
 
@@ -609,9 +607,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 );
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)newProviderType)
-                .Add("ConfirmAffectedTLevelIds", tLevels.Select(t => t.TLevelId))
-                .Add("Confirm", false)
+                .Add(nameof(Command.ProviderType), (int)newProviderType)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), false)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -669,9 +667,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 );
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)newProviderType)
-                .Add("ConfirmAffectedTLevelIds", tLevels.Skip(1).Select(t => t.TLevelId))
-                .Add("Confirm", true)
+                .Add(nameof(Command.ProviderType), (int)newProviderType)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(tLevels.Skip(1).OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -690,8 +688,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
-            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
-                tLevels.Select(t => t.TLevelId.ToString()));
+            doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
                 tLevels.GroupBy(t => t.TLevelDefinition.TLevelDefinitionId, t => t).OrderBy(g => g.First().TLevelDefinition.Name).Select(g => $"{g.Count()} {g.First().TLevelDefinition.Name}"));
 
@@ -738,9 +735,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 );
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)newProviderType)
-                .Add("ConfirmAffectedTLevelIds", tLevels.Select(t => t.TLevelId))
-                .Add("Confirm", true)
+                .Add(nameof(Command.ProviderType), (int)newProviderType)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -787,8 +784,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)newProviderType)
-                .Add("SelectedProviderTLevelDefinitionIds", providerTLevelDefinitionIds)
+                .Add(nameof(Command.ProviderType), (int)newProviderType)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), providerTLevelDefinitionIds)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -832,8 +829,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.TLevels)
-                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.TLevels)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -882,8 +879,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.TLevels)
-                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.TLevels)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -901,8 +898,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
-            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
-                new[] { tLevel2.TLevelId.ToString() });
+            doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
                 new[] { keepingTLevelDefinitionId.ToString() });
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
@@ -949,10 +945,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.TLevels)
-                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
-                .Add("ConfirmAffectedTLevelIds", new[] { tLevel2.TLevelId })
-                .Add("Confirm", null)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.TLevels)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), null)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -971,8 +967,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
-            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
-                new[] { tLevel2.TLevelId.ToString() });
+            doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
                 new[] { keepingTLevelDefinitionId.ToString() });
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
@@ -1019,10 +1014,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.TLevels)
-                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
-                .Add("ConfirmAffectedTLevelIds", new[] { tLevel2.TLevelId })
-                .Add("Confirm", false)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.TLevels)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), false)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -1078,10 +1073,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.TLevels)
-                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
-                .Add("ConfirmAffectedTLevelIds", new[] { Guid.NewGuid() })
-                .Add("Confirm", true)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.TLevels)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(new[] { Guid.NewGuid() }.SelectMany(t => t.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
@@ -1100,8 +1095,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
-            doc.GetAllElementsByTestId("confirm-affected-tLevel-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
-                new[] { tLevel2.TLevelId.ToString() });
+            doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
                 new[] { keepingTLevelDefinitionId.ToString() });
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
@@ -1148,10 +1142,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 createdBy: User.ToUserInfo());
 
             var content = new FormUrlEncodedContentBuilder()
-                .Add("ProviderType", (int)ProviderType.TLevels)
-                .Add("SelectedProviderTLevelDefinitionIds", keepingTLevelDefinitionId)
-                .Add("ConfirmAffectedTLevelIds", new[] { tLevel2.TLevelId })
-                .Add("Confirm", true)
+                .Add(nameof(Command.ProviderType), (int)ProviderType.TLevels)
+                .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
+                .Add(nameof(Command.AffectedTLevelIdsChecksum), Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()))
+                .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
