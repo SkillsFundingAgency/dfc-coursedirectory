@@ -598,7 +598,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                     website: "tlevel",
                     startDate: new DateTime(2021, 10, 1),
                     expectedErrorField: "Website",
-                    expectedErrorMessage: "Website must be a real web page");
+                    expectedErrorMessage: "Website must be a real webpage");
 
                 Add(
                     website: "www.example.com/tlevel" + new string('x', 234),

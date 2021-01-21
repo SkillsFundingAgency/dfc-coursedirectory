@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
         {
             field
                 .Apply(Rules.Website)
-                    .WithMessage("Website must be a real web page")
+                    .WithMessage("Website must be a real webpage")
                 .MaximumLength(Constants.WebsiteMaxLength)
                     .WithMessage($"T Level webpage must be {Constants.WebsiteMaxLength} characters or fewer");
         }

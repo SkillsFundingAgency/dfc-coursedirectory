@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
         public static void ContactWebsite<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .Apply(Rules.Website)
-                    .WithMessage("Contact us page must be a real web page, like http://www.provider.com/apprenticeship");
+                    .WithMessage("Contact us page must be a real webpage, like http://www.provider.com/apprenticeship");
 
         public static void MarketingInformation<T>(this IRuleBuilderInitial<T, string> field) =>
             field
@@ -33,6 +33,6 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
         public static void Website<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .Apply(Rules.Website)
-                    .WithMessage("Website must be a real web page, like http://www.provider.com/apprenticeship");
+                    .WithMessage("Website must be a real webpage, like http://www.provider.com/apprenticeship");
     }
 }
