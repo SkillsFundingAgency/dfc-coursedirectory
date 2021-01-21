@@ -70,6 +70,12 @@
         "metadata": {
           "description": "ADO.NET connection string for the course directory database"
         }
+      },
+      "providerPortalApplicationInsights": {
+        "type": "string",
+        "metadata": {
+          "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
+        }
       }
     },
     "variables": {
@@ -128,7 +134,7 @@
               "value": [
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                  "value": "[reference('ppfindapprenticeshipAppInsights').outputs.InstrumentationKey.value]"
+                  "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
