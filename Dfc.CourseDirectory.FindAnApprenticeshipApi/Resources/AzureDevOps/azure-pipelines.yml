@@ -17,6 +17,11 @@ resources:
     endpoint: 'GitHub (ESFA)'
     ref: refs/tags/v1.11.2
 
+pool:
+  name: NCS - CI and CD
+  demands:
+  - azureps
+
 trigger:
   batch: true
   branches:
@@ -47,6 +52,9 @@ pr:
     - tests/Dfc.CourseDirectory.Core.Tests/*
     - tests/Dfc.CourseDirectory.FindAnApprenticeshipApi.Tests/*
     - tests/Dfc.CourseDirectory.Testing/*
+
+workspace:
+  clean: all
 
 steps:
 

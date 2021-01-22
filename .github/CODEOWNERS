@@ -1,3 +1,5 @@
 #Requires review from DevOps when making changes to any files in the Resources folder or it's subfolders
-/Resources/    @SkillsFundingAgency/dfc-devops
+/dfc-coursedirectory/Dfc.CourseDirectory/Resources/    @SkillsFundingAgency/dfc-devops
+/dfc-coursedirectory/Dfc.CourseDirectory.FindACourseApi/Resources/    @SkillsFundingAgency/dfc-devops
+/dfc-coursedirectory/Dfc.CourseDirectory.FindAnApprenticeshipApi/Resources/   @SkillsFundingAgency/dfc-devops
 * @gunndabad @soharadesign @timabell @jameslawesynergy
