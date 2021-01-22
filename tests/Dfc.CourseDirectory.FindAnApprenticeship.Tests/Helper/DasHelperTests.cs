@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
-using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Xunit;
 
 namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper
@@ -15,12 +15,11 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper
         public class DasHelperFixture
         {
             private readonly DASHelper _dasHelper;
-            private readonly TelemetryClient _telemetryClient;
 
             public DasHelperFixture()
             {
-                var _telemetryClient = new TelemetryClient();
-                _dasHelper = new DASHelper(_telemetryClient);
+                var telemetryClient = MockTelemetryHelper.Initialize();
+                _dasHelper = new DASHelper(telemetryClient);
             }
 
             public DASHelper Sut => _dasHelper;
@@ -111,7 +110,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper
             }
 
         }
-
+        
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
