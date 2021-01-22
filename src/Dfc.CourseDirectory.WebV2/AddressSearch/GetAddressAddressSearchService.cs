@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 
         private class FindAddressResultItem
         {
-            public string Id => string.Join(" ", AddressLines).Trim().GetHashCode().ToString("X");
+            public string Id => string.Join(" ", AddressLines).Trim();
 
             public IEnumerable<string> AddressLines => new[] { Line1, Line2, Line3, Line4, Locality };
 
