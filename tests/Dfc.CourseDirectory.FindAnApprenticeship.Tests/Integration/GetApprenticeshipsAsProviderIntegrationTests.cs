@@ -10,6 +10,7 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
+using Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
@@ -20,7 +21,6 @@ using Dfc.CourseDirectory.FindAnApprenticeshipApi.Services;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Settings;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Storage;
 using FluentAssertions;
-using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents.Client;
@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
 {
     public class GetApprenticeshipsAsProviderIntegrationTests
     {
-        private readonly TelemetryClient _telemetryClient;
         private readonly Mock<Func<DateTimeOffset>> _nowUtc;
         private readonly Mock<IBlobStorageClient> _blobStorageClient;
         private readonly Mock<ICosmosDbHelper> _cosmosDbHelper;
@@ -56,7 +55,6 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
 
         public GetApprenticeshipsAsProviderIntegrationTests()
         {
-            _telemetryClient = new TelemetryClient();
             _nowUtc = new Mock<Func<DateTimeOffset>>();
             _blobStorageClient = new Mock<IBlobStorageClient>();
             _cosmosDbHelper = new Mock<ICosmosDbHelper>();
@@ -68,8 +66,9 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
             _providerService = new Mock<IProviderService>();
             _providerServiceClient = new ProviderServiceClient(_providerService.Object);
             
-            _DASHelper = new DASHelper(_telemetryClient);
-            _apprenticeshipService = new ApprenticeshipService(_cosmosDbHelper.Object, _cosmosSettings, _DASHelper, _providerServiceClient, _referenceDataServiceClient, _telemetryClient);
+            var telemetryClient = MockTelemetryHelper.Initialize();
+            _DASHelper = new DASHelper(telemetryClient);
+            _apprenticeshipService = new ApprenticeshipService(_cosmosDbHelper.Object, _cosmosSettings, _DASHelper, _providerServiceClient, _referenceDataServiceClient, telemetryClient);
 
             _generateProviderExportFunction = new GenerateProviderExportFunction(_apprenticeshipService, _blobStorageClient.Object);
             _getApprenticeshipAsProviderFunction = new GetApprenticeshipsAsProvider(_blobStorageClient.Object, _nowUtc.Object);

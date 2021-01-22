@@ -6,6 +6,13 @@ MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindAnApprenticeshipApi", "..\src\Dfc.CourseDirectory.FindAnApprenticeshipApi\Dfc.CourseDirectory.FindAnApprenticeshipApi.csproj", "{E05E25A0-4E9A-428E-BDF0-436703EEB5B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CA409D79-8BCE-4C25-931C-2B788CE84CB5}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\AzureDevOps\azure-pipelines.yml = Resources\AzureDevOps\azure-pipelines.yml
+		Resources\AzureDevOps\GitVersion.yml = Resources\AzureDevOps\GitVersion.yml
+		Resources\ArmTemplates\parameters.json = Resources\ArmTemplates\parameters.json
+		Resources\ArmTemplates\template.json = Resources\ArmTemplates\template.json
+		Resources\ArmTemplates\test-parameters.json = Resources\ArmTemplates\test-parameters.json
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindAnApprenticeship.Tests", "..\tests\Dfc.CourseDirectory.FindAnApprenticeship.Tests\Dfc.CourseDirectory.FindAnApprenticeship.Tests.csproj", "{BF7C0DFA-7F9F-4EA8-AB9C-805E94194D67}"
 EndProject
