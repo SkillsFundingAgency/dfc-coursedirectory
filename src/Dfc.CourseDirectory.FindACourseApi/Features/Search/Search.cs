@@ -246,6 +246,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     Region = i.Record.RegionName,
                     SearchScore = i.Score.Value,
                     StartDate = !i.Record.FlexibleStartDate.GetValueOrDefault() ? i.Record.StartDate : null,
+                    TLevelId = i.Record.TLevelId,
                     Ukprn = i.Record.ProviderUkprn.ToString(),
                     UpdatedOn = i.Record.UpdatedOn,
                     VenueAddress = i.Record.VenueAddress,
