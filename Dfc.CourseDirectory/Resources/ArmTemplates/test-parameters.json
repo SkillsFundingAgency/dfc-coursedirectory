@@ -130,6 +130,9 @@
     },
     "providerPortalCosmosDbConnectionString": {
       "value": "https://not-a-real-account.documents.azure.com/"
+    },
+    "providerPortalApplicationInsights":{
+      "value": "dfc-dev-prov-as-ai"
     }
   }
 }
