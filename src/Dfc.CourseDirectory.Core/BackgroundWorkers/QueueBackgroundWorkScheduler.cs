@@ -23,11 +23,6 @@ namespace Dfc.CourseDirectory.Core.BackgroundWorkers
             _work = Channel.CreateUnbounded<(WorkItem WorkItem, object State)>();
         }
 
-        public override void Dispose()
-        {
-            _work.Writer.Complete();
-        }
-
         public async Task Schedule(WorkItem workItem, object state = null)
         {
             if (workItem == null)
@@ -73,6 +68,12 @@ namespace Dfc.CourseDirectory.Core.BackgroundWorkers
 #pragma warning restore CA1031 // Do not catch general exception types
                 }
             }
+        }
+
+        public override void Dispose()
+        {
+            _work.Writer.Complete();
+            base.Dispose();
         }
     }
 }

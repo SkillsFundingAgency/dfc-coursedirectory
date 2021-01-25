@@ -11,10 +11,8 @@ using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -166,7 +164,7 @@ namespace Dfc.CourseDirectory.Web
 #endif
             }
 
-            services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
+            services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
 
             services.AddResponseCaching();
             services.AddSession(options =>
@@ -184,12 +182,6 @@ namespace Dfc.CourseDirectory.Web
 
             //TODO
             //services.Configure<GoogleAnalyticsOptions>(options => Configuration.GetSection("GoogleAnalytics").Bind(options));
-
-
-            // Register the background worker helper
-            services.AddHostedService<QueuedHostedService>();
-            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-            services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
 
             var dfeSettings = new DfeSignInSettings();
             Configuration.GetSection("DFESignInSettings").Bind(dfeSettings);
