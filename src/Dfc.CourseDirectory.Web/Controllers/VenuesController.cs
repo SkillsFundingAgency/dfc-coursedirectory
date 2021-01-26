@@ -14,6 +14,8 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress;
+using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -351,6 +353,61 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditVenueName(EditVenueRequestModel requestModel)
+        {
+            AddressModel addressModel = null;
+
+            if (!string.IsNullOrEmpty(requestModel.Id))
+            {
+                GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(requestModel.Id);
+
+                var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
+                if (getVenueByIdResult.IsSuccess)
+                {
+                    addressModel = new AddressModel
+                    {
+                        //Id = getVenueByIdResult.Value.ID,
+                        AddressLine1 = getVenueByIdResult.Value.Address1,
+                        AddressLine2 = getVenueByIdResult.Value.Address2,
+                        TownOrCity = getVenueByIdResult.Value.Town,
+                        County = getVenueByIdResult.Value.County,
+                        Postcode = getVenueByIdResult.Value.PostCode
+                    };
+                }
+
+            }
+            else
+            {
+                addressModel = requestModel.Address;
+            }
+
+            EditVenueNameModel model = new EditVenueNameModel
+            {
+                VenueName = requestModel.VenueName,
+                PostcodeId = requestModel.PostcodeId,
+                Address = addressModel,
+                Id = requestModel.Id
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditVenueAddress(EditVenueRequestModel requestModel)
+        {
+            EditVenueAddressModel model = new EditVenueAddressModel
+            {
+                Id = requestModel.Id,
+                VenueName = requestModel.VenueName,
+                PostcodeId = requestModel.PostcodeId,
+                Address = requestModel.Address
+            };
+            return View(model);
         }
 
         [Authorize]
