@@ -10,6 +10,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
     {
         [JsonProperty("id")]
         public Guid Id { get; set; }
+        /// <summary>
+        /// CosmosDb ETag for optimistic concurrency
+        /// https://github.com/Azure/azure-cosmos-dotnet-v2/blob/master/samples/code-samples/DocumentManagement/Program.cs
+        /// </summary>
+        [JsonProperty("_etag")]
+        public string ETag { get; set; }
         public Guid ProviderId { get; set; }
         public int ProviderUKPRN { get; set; }
         public string ApprenticeshipTitle { get; set; }
