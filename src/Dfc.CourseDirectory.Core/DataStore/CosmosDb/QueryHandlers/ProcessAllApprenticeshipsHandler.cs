@@ -16,9 +16,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.DatabaseId,
                 configuration.ApprenticeshipCollectionName);
 
-            IQueryable<Apprenticeship> query = client.CreateDocumentQuery<Apprenticeship>(
-                collectionUri,
-                new FeedOptions { EnableCrossPartitionQuery = true, MaxItemCount = request.MaxBatchSize ?? -1 });
+            var query = client.CreateDocumentQuery<Apprenticeship>(
+                    collectionUri,
+                    new FeedOptions
+                    {
+                        EnableCrossPartitionQuery = true,
+                        MaxItemCount = request.MaxBatchSize ?? -1
+                    })
+                .AsQueryable();
 
             if (request.Predicate != null)
             {

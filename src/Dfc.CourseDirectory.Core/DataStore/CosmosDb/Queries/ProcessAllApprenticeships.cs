@@ -12,11 +12,5 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public Expression<Func<Apprenticeship, bool>> Predicate { get; set; }
         public int? MaxBatchSize { get; set; }
         public Func<IReadOnlyCollection<Apprenticeship>, Task> ProcessChunk { get; set; }
-
-        public ProcessAllApprenticeships(Expression<Func<Apprenticeship, bool>> predicate = null, int? maxBatchSize = null)
-        {
-            Predicate = predicate;
-            MaxBatchSize = maxBatchSize;
-        }
     }
 }

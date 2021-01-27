@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Dfc.CourseDirectory.Functions.FixVenues
 {
-    internal class AnalysisCounts
+    public class AnalysisCounts
     {
         public int BatchSize { get; set; }
         public int CorruptLocationsAnalysed { get; private set; }
@@ -12,7 +12,6 @@ namespace Dfc.CourseDirectory.Functions.FixVenues
         public static AnalysisCounts GetCounts(IList<ApprenticeshipVenueCorrection> apprenticeshipVenueCorrections)
         {
             var locationCorrections = apprenticeshipVenueCorrections
-                .Where(r => r.ApprenticeshipLocationVenueCorrections.Any())
                 .SelectMany(r => r.ApprenticeshipLocationVenueCorrections)
                 .ToList();
 

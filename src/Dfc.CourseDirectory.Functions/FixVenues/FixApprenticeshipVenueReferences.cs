@@ -139,6 +139,7 @@ namespace Dfc.CourseDirectory.Functions.FixVenues
                 var response = await documentQuery.ExecuteNextAsync<Apprenticeship>();
                 foreach (var apprenticeship in response)
                 {
+                    shutdownCancellationToken.ThrowIfCancellationRequested();
                     _logger.LogInformation($"{LogPrefix} findnext fixable... {apprenticeship.Id}");
                     var analysis = await Analyse(apprenticeship);
                     if (analysis.ApprenticeshipLocationVenueCorrections.Any(c => c.VenueCorrection != null))
@@ -180,6 +181,7 @@ namespace Dfc.CourseDirectory.Functions.FixVenues
                 var response = await documentQuery.ExecuteNextAsync<Apprenticeship>();
                 foreach (var apprenticeship in response)
                 {
+                    shutdownCancellationToken.ThrowIfCancellationRequested();
                     // _logger.LogInformation($"{LogPrefix} findnext... {apprenticeship.Id}");
                     var analysis = await Analyse(apprenticeship);
                     if (analysis.ApprenticeshipLocationVenueCorrections.Any())
@@ -331,9 +333,11 @@ namespace Dfc.CourseDirectory.Functions.FixVenues
         }
 
         /// <summary>
+        /// Intended for production use to do the actual fixup.
+        ///
         /// Fix all corrupt apprenticeships that we can fix safely.
         /// Returns results as json and writes report to blob storage.
-        /// Intended for production use as a dry-run before running the final fix.
+        ///
         /// Usage:
         /// curl http://localhost:7071/api/FixAllApprenticeshipVenueReferences -d '{}' -H "Content-Type:application/json"
         /// </summary>

@@ -1,6 +1,6 @@
 namespace Dfc.CourseDirectory.Functions.FixVenues
 {
-    internal class FixCounts
+    public class FixCounts
     {
         public CorruptionType CorruptionType { get; }
 
