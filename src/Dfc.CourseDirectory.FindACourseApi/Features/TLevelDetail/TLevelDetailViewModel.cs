@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
         public string HowYoullLearn { get; set; }
         public string HowYoullBeAssessed { get; set; }
         public string WhatYouCanDoNext { get; set; }
-        public string YourReference { get; set; }
         public string Website { get; set; }
         public DateTime StartDate { get; set; }
         public IReadOnlyCollection<TLevelLocationViewModel> Locations { get; set; }
