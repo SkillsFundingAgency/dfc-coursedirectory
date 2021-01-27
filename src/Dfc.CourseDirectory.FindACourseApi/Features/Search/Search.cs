@@ -392,15 +392,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         {
             var result = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = postcode });
 
-            if (result.TotalCount != 0)
+            var doc = result.Items.SingleOrDefault();
+
+            if (doc != null)
             {
-                var doc = result.Items.Single();
                 return ((float)doc.Record.lat, (float)doc.Record.@long);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

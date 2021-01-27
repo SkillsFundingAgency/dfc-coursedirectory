@@ -549,7 +549,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                             }
                         } :
                         Array.Empty<SearchResultItem<Onspd>>(),
-                    TotalCount = coords != null ? 1 : 0
+                    TotalCount = coords != null ? 1 : (long?)null
                 });
         }
     }
