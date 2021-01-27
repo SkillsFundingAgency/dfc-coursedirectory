@@ -6,14 +6,14 @@ namespace Dfc.CourseDirectory.Testing
     public class OverridableFeatureFlagProvider : IFeatureFlagProvider
     {
         private readonly IFeatureFlagProvider _inner;
-        private ISet<string> _overridenFeatures;
+        private IReadOnlyCollection<string> _overridenFeatures;
 
         public OverridableFeatureFlagProvider(IFeatureFlagProvider inner)
         {
             _inner = inner;
         }
 
-        public ISet<string> GetFeatureFlags()
+        public IReadOnlyCollection<string> GetFeatureFlags()
         {
             if (_overridenFeatures != null)
             {

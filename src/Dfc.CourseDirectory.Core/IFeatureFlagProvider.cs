@@ -4,6 +4,6 @@ namespace Dfc.CourseDirectory.Core
 {
     public interface IFeatureFlagProvider
     {
-        ISet<string> GetFeatureFlags();
+        IReadOnlyCollection<string> GetFeatureFlags();
     }
 }
