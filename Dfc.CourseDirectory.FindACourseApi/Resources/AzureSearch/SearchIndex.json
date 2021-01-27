@@ -30,7 +30,8 @@
       { "name": "VenueTown", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": true, "sortable": false },
       { "name": "Position", "type": "Edm.GeographyPoint", "facetable": false, "filterable": true, "searchable": false, "sortable": true },
       { "name": "RegionName", "type": "Edm.String", "facetable": true, "filterable": false, "searchable": false, "sortable": false },
-      { "name": "ScoreBoost", "type": "Edm.Double", "facetable": false, "filterable": true, "searchable": false, "sortable": false }
+      { "name": "ScoreBoost", "type": "Edm.Double", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "TLevelId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false }
     ]
   }
 ]
