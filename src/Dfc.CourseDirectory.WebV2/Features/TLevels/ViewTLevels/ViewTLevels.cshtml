@@ -39,10 +39,7 @@
             </tbody>
         </table>
 
-        @if (!Model.TLevels.Any())
-        {
-            <a asp-action="SelectTLevel" asp-controller="AddTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button">Add a T Level</a>
-        }
+        <a asp-action="SelectTLevel" asp-controller="AddTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button">Add a T Level</a>
 
     </div>
 </div>
