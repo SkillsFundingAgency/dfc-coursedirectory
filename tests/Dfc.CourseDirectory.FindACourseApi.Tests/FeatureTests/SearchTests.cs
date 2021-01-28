@@ -38,6 +38,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     Items = Array.Empty<SearchResultItem<FindACourseOffering>>(),
                     TotalCount = 0
                 });
+
+            OnspdSearchClient
+                .Setup(c => c.Search(It.IsAny<OnspdSearchQuery>()))
+                .ReturnsAsync(new SearchResult<Onspd>()
+                {
+                    Items = Array.Empty<SearchResultItem<Onspd>>(),
+                    TotalCount = null
+                });
         }
 
         public static IEnumerable<object[]> TranslateCourseSearchSubjectTextData()
@@ -500,6 +508,30 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().SearchText.Should().Be(expectedSearchText);
+        }
+
+        [Fact]
+        public async Task PostcodeWithoutSpaces_IsNormalizedToIncludeSpace()
+        {
+            // Arrange
+            var postcode = "AB12DE";
+            var normalizedPostcode = "AB1 2DE";
+            var lat = 1m;
+            var lng = 2m;
+            ConfigureOnspdSearchResultsForPostcode(normalizedPostcode, coords: (lat, lng));
+
+            var request = CreateRequest(new
+            {
+                postcode,
+                sortBy = "Distance"
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            OnspdSearchClient.Verify(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == normalizedPostcode)));
         }
 
         private static async Task AssertHaveError(HttpResponseMessage response, string title, string detail)

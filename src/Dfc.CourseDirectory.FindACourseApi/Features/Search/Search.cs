@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (gotPostcode)
             {
-                if (!Rules.UkPostcodePattern.IsMatch(request.Postcode))
+                if (!PostcodeHelper.UkPostcodePattern.IsMatch(request.Postcode))
                 {
                     return new ProblemDetails()
                     {
@@ -390,7 +390,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
         private async Task<(float lat, float lng)?> TryGetCoordinatesForPostcode(string postcode)
         {
-            var result = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = postcode });
+            var normalizedPostcode = PostcodeHelper.NormalizePostcode(postcode);
+
+            var result = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = normalizedPostcode });
 
             var doc = result.Items.SingleOrDefault();
 
