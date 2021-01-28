@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         public Guid? CourseRunId { get; set; }
         public FindACourseOfferingType OfferingType { get; set; }
         public Guid? TLevelId { get; set; }
+        public Guid? TLevelLocationId { get; set; }
         public string QualificationCourseTitle { get; set; }
         public string LearnAimRef { get; set; }
         public string QualificationLevel { get; set; }

@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public Guid? CourseId { get; set; }
         public Guid? CourseRunId { get; set; }
         public Guid? TLevelId { get; set; }
+        public Guid? TLevelLocationId { get; set; }
         public bool Live { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public Guid ProviderId { get; set; }
