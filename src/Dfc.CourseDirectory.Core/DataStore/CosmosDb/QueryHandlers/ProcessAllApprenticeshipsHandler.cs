@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents.Client;
@@ -17,9 +18,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             var query = client.CreateDocumentQuery<Apprenticeship>(
                 collectionUri,
-                new FeedOptions() { EnableCrossPartitionQuery = true, MaxItemCount = -1 }).AsDocumentQuery();
+                new FeedOptions() { EnableCrossPartitionQuery = true, MaxItemCount = -1 })
+                .AsQueryable();
 
-            await query.ProcessAll(request.ProcessChunk);
+            if (request.Predicate != null)
+            {
+                query = query.Where(request.Predicate);
+            }
+
+            await query
+                .AsDocumentQuery()
+                .ProcessAll(request.ProcessChunk);
 
             return new None();
         }
