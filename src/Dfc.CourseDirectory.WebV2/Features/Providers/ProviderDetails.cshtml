@@ -25,19 +25,16 @@
                 <govuk-summary-list-row-key>Trading name</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>@Model.TradingName</govuk-summary-list-row-value>
             </govuk-summary-list-row>
-            @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ProviderDisplayName))
-            {
-                <govuk-summary-list-row data-testid="DisplayName">
-                    <govuk-summary-list-row-key>Display name</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.DisplayName</govuk-summary-list-row-value>
-                    @if (Model.CanChangeDisplayName)
-                    {
-                        <govuk-summary-list-row-action asp-action="DisplayName" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="display name" data-testid="ChangeDisplayName">
-                            Change
-                        </govuk-summary-list-row-action>
-                    }
-                </govuk-summary-list-row>
-            }
+            <govuk-summary-list-row data-testid="DisplayName">
+                <govuk-summary-list-row-key>Display name</govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>@Model.DisplayName</govuk-summary-list-row-value>
+                @if (Model.CanChangeDisplayName)
+                {
+                    <govuk-summary-list-row-action asp-action="DisplayName" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="display name" data-testid="ChangeDisplayName">
+                        Change
+                    </govuk-summary-list-row-action>
+                }
+            </govuk-summary-list-row>
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>Provider type</govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>
@@ -106,11 +103,8 @@
                 <p class="govuk-body">The name your organisation trades under if it is different to the organisation name.</p><p>
                     Trading names can be added when registering with UKRLP or after registration. Sign in to the <a href="https://www.ukrlp.co.uk/ukrlp/ukrlp.login" target="_blank" class="govuk-link">UK Register of Learning Providers</a> to add or edit your trading name.
                 </p>
-                @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ProviderDisplayName))
-                {
-                    <h3 class="govuk-heading-s">Display name</h3>
-                    <p class="govuk-body">The name displayed to learners who can view and search for learning opportunities on the National Careers Service, Find a course.</p>
-                }
+                <h3 class="govuk-heading-s">Display name</h3>
+                <p class="govuk-body">The name displayed to learners who can view and search for learning opportunities on the National Careers Service, Find a course.</p>
             </govuk-details-text>
         </govuk-details>
     </div>

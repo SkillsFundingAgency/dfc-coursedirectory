@@ -2,8 +2,6 @@
 {
     public static class FeatureFlags
     {
-        public const string ProviderDisplayName = "ProviderDisplayName";
-
         public const string TLevels = "TLevels";
     }
 }
