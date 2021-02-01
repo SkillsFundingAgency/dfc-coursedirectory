@@ -33,7 +33,8 @@ FROM Pttcd.TLevelLocations tll
 JOIN Pttcd.TLevels t ON tll.TLevelId = t.TLevelId
 JOIN Pttcd.Venues v ON tll.VenueId = v.VenueId
 WHERE t.ProviderId = @ProviderId
-AND TLevelLocationStatus = @LiveTLevelLocationStatus";
+AND TLevelLocationStatus = @LiveTLevelLocationStatus
+ORDER BY v.VenueName";
 
             var param = new
             {

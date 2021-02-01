@@ -27,7 +27,8 @@ SELECT tll.TLevelLocationId, tll.TLevelLocationStatus, tll.VenueId, v.VenueName
 FROM Pttcd.TLevelLocations tll
 JOIN Pttcd.Venues v ON tll.VenueId = v.VenueId
 WHERE TLevelId = @TLevelId
-AND TLevelLocationStatus = @LiveTLevelLocationStatus";
+AND TLevelLocationStatus = @LiveTLevelLocationStatus
+ORDER BY v.VenueName";
 
             var param = new
             {
