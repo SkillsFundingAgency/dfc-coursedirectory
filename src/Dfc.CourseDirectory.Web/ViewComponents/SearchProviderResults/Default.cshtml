@@ -24,7 +24,7 @@
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">@p.UKPRN</td>
-                        <td class="govuk-table__cell">@p.CourseDirectoryName</td>
+                        <td class="govuk-table__cell">@p.Name</td>
                         <td class="govuk-table__cell">@p.Town</td>
                         <td class="govuk-table__cell">@p.Postcode</td>
                         <td class="govuk-table__cell">@p.ProviderStatus</td>
@@ -36,7 +36,7 @@
                             }
                             else if (p.Status == ProviderStatus.Registered && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                             {
-                            <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.Id'); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span> <span class="govuk-visually-hidden">@p.CourseDirectoryName</span></a>
+                            <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.Id'); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span> <span class="govuk-visually-hidden">@p.Name</span></a>
                             }                           
                         </td>
                     </tr>

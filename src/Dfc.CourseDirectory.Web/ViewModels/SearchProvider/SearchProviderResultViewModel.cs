@@ -21,8 +21,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.SearchProvider
 
         public string ProviderStatus { get; set; }
 
-        public string CourseDirectoryName { get; set; }
-
         public string TradingName { get; set; }
 
         public string ProviderAlias { get; set; }
@@ -39,7 +37,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.SearchProvider
                 UKPRN = provider.UKPRN,
                 Status = (ProviderStatus)provider.Status,
                 ProviderStatus = provider.ProviderStatus,
-                CourseDirectoryName = provider.CourseDirectoryName,
                 TradingName = provider.TradingName,
                 ProviderAlias = provider.ProviderAlias
             };
