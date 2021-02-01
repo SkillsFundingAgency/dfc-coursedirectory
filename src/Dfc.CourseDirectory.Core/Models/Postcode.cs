@@ -18,20 +18,17 @@ namespace Dfc.CourseDirectory.Core.Models
 
         private Postcode(string value, bool validated)
         {
-            if (!validated)
+            if (!validated && !ValidateAndNormalize(value, out value))
             {
-                if (!ValidateAndNormalize(value, out value))
-                {
-                    throw new ArgumentException("Input is not a valid UK postcode.", nameof(value));
-                }
+                throw new FormatException("Input is not a valid UK postcode.");
             }
 
             _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public static bool TryParse(string input, out Postcode postcode)
+        public static bool TryParse(string s, out Postcode postcode)
         {
-            if (!ValidateAndNormalize(input, out var normalized))
+            if (!ValidateAndNormalize(s, out var normalized))
             {
                 postcode = default;
                 return false;

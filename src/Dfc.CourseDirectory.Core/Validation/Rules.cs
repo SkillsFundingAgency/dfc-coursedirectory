@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Core.Validation
 
         public static IRuleBuilderOptions<T, string> Postcode<T>(IRuleBuilder<T, string> field) =>
             field
-                .Matches(PostcodeHelper.UkPostcodePattern);
+                .Must(v => Models.Postcode.TryParse(v, out _));
 
         public static IRuleBuilderOptions<T, string> Website<T>(IRuleBuilder<T, string> field) =>
             field

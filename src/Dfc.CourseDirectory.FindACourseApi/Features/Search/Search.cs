@@ -77,11 +77,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 };
             }
 
-            var gotPostcode = !string.IsNullOrWhiteSpace(request.Postcode);
+            Postcode postcode = null;
 
-            if (gotPostcode)
+            if (!string.IsNullOrWhiteSpace(request.Postcode))
             {
-                if (!PostcodeHelper.UkPostcodePattern.IsMatch(request.Postcode))
+                if (!Postcode.TryParse(request.Postcode, out postcode))
                 {
                     return new ProblemDetails()
                     {
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 filters.Add($"OfferingType ne {(int)FindACourseOfferingType.TLevel}");
             }
 
-            var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 && gotPostcode;
+            var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 && postcode != null;
 
             // lat/lng required if Distance filter is specified *or* sorting by Distance
             var getPostcodeCoords = geoFilterRequired || request.SortBy == SearchSortBy.Distance;
@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             float? longitude = null;
             if (getPostcodeCoords)
             {
-                var coords = await TryGetCoordinatesForPostcode(request.Postcode);
+                var coords = await TryGetCoordinatesForPostcode(postcode);
 
                 if (!coords.HasValue)
                 {
@@ -388,11 +388,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             }
         }
 
-        private async Task<(float lat, float lng)?> TryGetCoordinatesForPostcode(string postcode)
+        private async Task<(float lat, float lng)?> TryGetCoordinatesForPostcode(Postcode postcode)
         {
-            var normalizedPostcode = PostcodeHelper.NormalizePostcode(postcode);
-
-            var result = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = normalizedPostcode });
+            var result = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = postcode });
 
             var doc = result.Items.SingleOrDefault();
 

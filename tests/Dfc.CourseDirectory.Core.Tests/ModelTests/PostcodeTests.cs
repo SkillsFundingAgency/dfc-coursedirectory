@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("x")]
-        public void Constructor_InvalidPostcode_ThrowsArgumentException(string input)
+        public void Ctor_InvalidPostcode_ThrowsFormatException(string input)
         {
             // Arrange
 
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
 
             // Assert
             ex.Should().NotBeNull();
-            ex.Should().BeOfType<ArgumentException>().Subject.Message.Should().Be("Input is not a valid UK postcode. (Parameter 'value')");
+            ex.Should().BeOfType<FormatException>().Subject.Message.Should().Be("Input is not a valid UK postcode.");
         }
 
         // Examples from https://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom
