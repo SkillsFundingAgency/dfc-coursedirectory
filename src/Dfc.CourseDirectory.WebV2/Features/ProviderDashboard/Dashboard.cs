@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int VenueCount { get; set; }
         public int BulkUploadFileCount { get; set; }
         public bool BulkUploadInProgress { get; set; }
+        public bool IsNewProvider { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -102,7 +103,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 TLevelCount = dashboardCounts.TLevelCounts.GetValueOrDefault(TLevelStatus.Live),
                 VenueCount = dashboardCounts.VenueCount,
                 BulkUploadFileCount = bulkUploadFiles.Count(),
-                BulkUploadInProgress = provider.BulkUploadInProgress ?? false
+                BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
+                IsNewProvider = provider.ProviderType == ProviderType.None
             };
 
             return vm;

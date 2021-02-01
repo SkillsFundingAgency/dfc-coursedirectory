@@ -423,6 +423,45 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("apprenticeshipsBulkUploadSuccessfulNotification").Should().NotBeNull();
         }
 
+        [Fact]
+        public async Task ProviderTypeNone_RendersNewProviderMessage()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("NewProvider").Should().NotBeNull();
+        }
+
+        [Theory]
+        [InlineData(ProviderType.Apprenticeships)]
+        [InlineData(ProviderType.FE)]
+        [InlineData(ProviderType.TLevels)]
+        public async Task ProviderTypeNotNone_DoesNotRenderNewProviderMessage(ProviderType providerType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: providerType);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("NewProvider").Should().BeNull();
+        }
+
         private async Task CreateApprenticeships(Guid providerId, int count)
         {
             for (var i = 1; i <= count; i++)
