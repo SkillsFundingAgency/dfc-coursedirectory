@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -31,10 +32,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         IRequestHandler<Command, CommandResponse>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
+        private readonly IRegionCache _regionCache;
 
-        public Handler(MptxInstanceContext<FlowModel> flow)
+        public Handler(MptxInstanceContext<FlowModel> flow, IRegionCache regionCache)
         {
             _flow = flow;
+            _regionCache = regionCache;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
@@ -53,7 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         {
             ValidateFlowState();
 
-            var validator = new CommandValidator();
+            var allRegions = await _regionCache.GetAllRegions();
+
+            var validator = new CommandValidator(allRegions);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -79,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator()
+            public CommandValidator(IReadOnlyCollection<Region> allRegions)
             {
                 RuleFor(c => c.RegionIds)
                     .Transform(v =>
@@ -89,8 +94,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                             return v;
                         }
 
-                        var regionIds = Region.All.Select(r => r.Id);
-                        var subRegionIds = Region.All.SelectMany(r => r.SubRegions).Select(sr => sr.Id);
+                        var regionIds = allRegions.Select(r => r.Id);
+                        var subRegionIds = allRegions.SelectMany(r => r.SubRegions).Select(sr => sr.Id);
                         var allRegionIds = regionIds.Concat(subRegionIds).ToList();
 
                         // Remove any IDs that are not regions or sub-regions

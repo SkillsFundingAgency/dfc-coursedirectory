@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -24,12 +25,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ISearchClient<Core.Search.Models.Lars> _larsSearchClient;
+        private readonly IRegionCache _regionCache;
 
-        public Handler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, ISqlQueryDispatcher sqlQueryDispatcher, ISearchClient<Core.Search.Models.Lars> larsSearchClient)
+        public Handler(
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ISearchClient<Core.Search.Models.Lars> larsSearchClient,
+            IRegionCache regionCache)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
+            _regionCache = regionCache ?? throw new ArgumentNullException(nameof(regionCache));
         }
 
         public async Task<OneOf<NotFound, CourseRunDetailViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -71,6 +78,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             var alternativeCourseRuns = course.CourseRuns
                 .Where(r => r.Id != request.CourseRunId && r.RecordStatus == CourseStatus.Live)
                 .Select(r => new { CourseRun = r, Venue = venues.SingleOrDefault(v => v.Id == r.VenueId) });
+
+            var regions = await _regionCache.GetAllRegions();
 
             return new CourseRunDetailViewModel
             {
@@ -182,7 +191,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                         }
                         : null
                 }).ToArray(),
-                SubRegions = Region.All.SelectMany(
+                SubRegions = regions.SelectMany(
                     r => r.SubRegions.Where(sr => courseRun.Regions?.Contains(sr.Id) ?? false),
                     (r, sr) => new SubRegionViewModel
                     {

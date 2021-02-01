@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
@@ -177,6 +178,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddScoped<RouteValuesHelper>();
             services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
+            services.AddSingleton<IRegionCache, RegionCache>();
 
             if (!environment.IsTesting())
             {

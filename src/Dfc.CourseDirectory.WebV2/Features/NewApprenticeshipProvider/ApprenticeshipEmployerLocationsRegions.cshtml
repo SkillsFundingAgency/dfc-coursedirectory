@@ -1,4 +1,5 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipEmployerLocationsRegions.Command
+@inject Dfc.CourseDirectory.Core.DataStore.IRegionCache RegionCache
 @{
     ViewBag.Title = "Select the regions where you provide this training";
 }
@@ -18,7 +19,7 @@
         <govuk-hint>Choose all of the areas in as many regions as you deliver this course</govuk-hint>
 
         <govuk-accordion id="pttcd-new-apprenticeship-provider__apprenticeship-employer-locations">
-            @foreach (var region in Region.All.OrderBy(r => r.Name))
+            @foreach (var region in (await RegionCache.GetAllRegions()).OrderBy(r => r.Name))
             {
                 <govuk-accordion-item id="Region-@region.Id" class="pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region" expanded="@(Model.RegionIds.Any(r => region.SubRegions.Select(sr => sr.Id).Contains(r)))">
                     <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>

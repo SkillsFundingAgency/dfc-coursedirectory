@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
@@ -56,6 +57,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
         public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
+
+        public IRegionCache RegionCache => Services.GetRequiredService<IRegionCache>();
 
         public Mock<ISearchClient<Provider>> ProviderSearchClient { get; } = new Mock<ISearchClient<Provider>>();
 
