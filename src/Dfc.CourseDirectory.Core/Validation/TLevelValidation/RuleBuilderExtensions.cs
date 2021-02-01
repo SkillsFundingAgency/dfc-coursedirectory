@@ -33,6 +33,8 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
         public static void Website<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
+                .NotEmpty()
+                    .WithMessage("Enter a webpage")
                 .Apply(Rules.Website)
                     .WithMessage("Website must be a real webpage")
                 .MaximumLength(Constants.WebsiteMaxLength)
