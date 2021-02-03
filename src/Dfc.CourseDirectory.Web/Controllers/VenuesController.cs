@@ -52,33 +52,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _sqlDataSync = sqlDataSync;
         }
 
-        /// <summary>
-        /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
-        /// </summary>
-        /// <returns></returns>
-        /// 
-        [Authorize]
-        public async Task<IActionResult> Index()
-        {
-            Session.SetString("Option", "Venues");
-            Claim providerUKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-            if (!string.IsNullOrEmpty(providerUKPRN?.Value))
-            {
-                Session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value));
-            }
-
-            int UKPRN = 0;
-            if (Session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = Session.GetInt32("UKPRN").Value;
-                return View(await GetVenues(UKPRN, null, false));
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-        }
-
         [Authorize]
         public IActionResult AddVenue([FromQuery] string returnUrl)
         {
@@ -432,7 +405,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case LocationsLandingOptions.Add:
                     return RedirectToAction("AddVenue", "Venues");
                 case LocationsLandingOptions.Manage:
-                    return RedirectToAction("Index", "Venues");
+                    return RedirectToAction("ViewVenues", "ViewVenues");
                 default:
                     return RedirectToAction("LandingOptions", "Venues");
             }

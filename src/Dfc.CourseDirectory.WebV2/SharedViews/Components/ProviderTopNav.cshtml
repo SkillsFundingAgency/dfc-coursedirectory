@@ -37,7 +37,7 @@
             </li>
         }
         <li class="govuk-header__navigation-item@(currentController == "Venues" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="Index" asp-controller="Venues" class="govuk-header__link" data-testid="topnav-locations">
+            <a asp-action="ViewVenues" asp-controller="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-locations">
                 Locations
             </a>
         </li>

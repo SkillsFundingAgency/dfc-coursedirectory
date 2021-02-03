@@ -13,7 +13,7 @@
 
         <h2 class="govuk-heading-m">Next steps</h2>
         <ul class="govuk-list">
-            <li><a asp-controller="Venues" asp-action="Index" class="govuk-link">Delete another location</a></li>
+            <li><a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Delete another location</a></li>
             <li><a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link">Return to dashboard</a></li>
         </ul>
     </div>

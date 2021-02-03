@@ -18,16 +18,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
     public class EditVenueController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private JourneyInstance<EditVenueJourneyModel> _journeyInstance;
         private readonly EditVenueJourneyModelFactory _editVenueJourneyModelFactory;
 
         public EditVenueController(
             IMediator mediator,
+            IProviderContextProvider providerContextProvider,
             JourneyInstanceProvider journeyInstanceProvider,
             EditVenueJourneyModelFactory editVenueJourneyModelFactory)
         {
             _mediator = mediator;
+            _providerContextProvider = providerContextProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
             _editVenueJourneyModelFactory = editVenueJourneyModelFactory;
         }
@@ -121,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
                 {
                     TempData[TempDataKeys.UpdatedVenueId] = venueId;
 
-                    return RedirectToAction("Index", "Venues");
+                    return RedirectToAction("ViewVenues", "ViewVenues").WithProviderContext(_providerContextProvider.GetProviderContext());
                 });
         }
 
@@ -130,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
         {
             _journeyInstance.Delete();
 
-            return RedirectToAction("Index", "Venues");
+            return RedirectToAction("ViewVenues", "ViewVenues").WithProviderContext(_providerContextProvider.GetProviderContext());
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().Be("/Venues");
+            response.Headers.Location.OriginalString.Should().Be($"/venues?providerId={providerId}");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateVenue, OneOf<NotFound, Venue>>(q =>
                 q.VenueId == venueId &&

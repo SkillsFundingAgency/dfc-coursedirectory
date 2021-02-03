@@ -150,7 +150,7 @@
                 <govuk-button type="submit" id="pttcd-delete-location__delete-btn" class="govuk-button--warning govuk-!-margin-right-5" data-testId="delete-location-button">Delete location</govuk-button>
             }
 
-            <govuk-button asp-controller="Venues" asp-action="Index" class="govuk-button--secondary">Cancel</govuk-button>
+            <govuk-button asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
 
         </form>
     </div>
