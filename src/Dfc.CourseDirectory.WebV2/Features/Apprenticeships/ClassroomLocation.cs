@@ -238,7 +238,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             var provider = await _providerInfoCache.GetProviderInfo(_flow.State.ProviderId);
 
             return await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetAllVenuesForProvider()
+                new GetVenuesByProvider()
                 {
                     ProviderUkprn = provider.Ukprn
                 });
