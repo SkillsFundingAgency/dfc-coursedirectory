@@ -11,19 +11,27 @@
             Apprenticeship published
         </h1>
 
-        @Model.ApprenticeshipName has been added to the Course directory
+        <div class="govuk-panel__body">
+            @Model.ApprenticeshipName
+        </div>
     </div>
 
 </div>
+<p class="govuk-body">
+    Your apprenticeship is available to employers who want to take on apprentices on
+    Find apprenticeship training for your apprentice.
+</p>
 <div class="Publish-Complete">
     <div class="govuk-!-margin-top-6">
-        <h2 class="govuk-heading-l govuk-!-font-size-36">Next steps</h2>
+        <h2 class="govuk-heading-l govuk-!-font-size-36">What next?</h2>
     </div>
 </div>
 <div class="govuk-form-group">
-    @Html.ActionLink("Add another apprenticeship", "AddAnotherApprenticeship", "Apprenticeships", new { }, new { @class = "govuk-link" })
+    @Html.ActionLink("Add a new apprenticeship", "AddAnotherApprenticeship", "Apprenticeships", new { }, new { @class = "govuk-link" })
     <br/>
-    @Html.ActionLink("Return to dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
+    @Html.ActionLink("View, edit, copy or delete an apprenticeship", "Index", "ProviderApprenticeships", new { }, new { @class = "govuk-link" })
+    <br/>
+    @Html.ActionLink("Back to the home screen", "Index", "Home", new { }, new { @class = "govuk-link" })
 
 </div>
 
