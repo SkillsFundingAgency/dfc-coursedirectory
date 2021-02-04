@@ -1,4 +1,5 @@
-﻿@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.CompleteViewModel
+﻿@addTagHelper *, GovUk.Frontend.AspNetCore
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.CompleteViewModel
 @{
     ViewData["Title"] = Model.ApprenticeshipName + " has been added to the Course directory";
     Layout = "_V2LayoutProviderContext";
@@ -6,16 +7,11 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-panel govuk-panel--confirmation">
-            <div class="govuk-panel__body">
-                <h1 class="govuk-panel__title">
-                    Apprenticeship published
-                </h1>
-                <div class="govuk-panel__body">
-                    @Model.ApprenticeshipName
-                </div>
-            </div>
-        </div>
+        <govuk-panel>
+            <govuk-panel-title>Apprenticeship published</govuk-panel-title>
+
+            @Model.ApprenticeshipName
+        </govuk-panel>
 
         <p class="govuk-body">
             Your apprenticeship will be available on Find an apprenticeship training provider
@@ -28,11 +24,14 @@
             </div>
         </div>
         <div class="govuk-form-group">
-            @Html.ActionLink("Add a new apprenticeship", "AddAnotherApprenticeship", "Apprenticeships", new { }, new { @class = "govuk-link" })
+            <a asp-controller="Apprenticeships" asp-action="AddAnotherApprenticeship"
+               class="govuk-link">Add a new apprenticeship</a>
             <br/>
-            @Html.ActionLink("View, edit, copy or delete an apprenticeship", "Index", "ProviderApprenticeships", new { }, new { @class = "govuk-link" })
+            <a asp-controller="ProviderApprenticeships" asp-action="Index"
+               class="govuk-link">View, edit, copy or delete an apprenticeship</a>
             <br/>
-            @Html.ActionLink("Back to the home screen", "Index", "Home", new { }, new { @class = "govuk-link" })
+            <a asp-controller="Home" asp-action="Index"
+               class="govuk-link">Back to the home screen</a>
         </div>
     </div>
 </div>
