@@ -745,7 +745,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            model.ApprenticeshipName = apprenticeship.ApprenticeshipTitle;
+            model.ApprenticeshipName = apprenticeship?.ApprenticeshipTitle;
 
             _session.Remove("selectedApprenticeship");
             _session.Remove("ApprenticeshipMode");
