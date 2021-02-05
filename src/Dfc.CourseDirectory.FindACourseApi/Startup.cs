@@ -58,6 +58,8 @@ namespace Dfc.CourseDirectory.FindACourseApi
                 });
             });
 
+            services.AddSwaggerGenNewtonsoftSupport();
+
             services
                 .AddMediatR(typeof(Startup).Assembly);
 
