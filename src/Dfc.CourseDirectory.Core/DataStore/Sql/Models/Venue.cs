@@ -15,5 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string Telephone { get; set; }
         public string Email { get; set; }
         public string Website { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

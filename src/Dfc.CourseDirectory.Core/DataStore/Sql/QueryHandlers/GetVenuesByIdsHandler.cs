@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             const string sql = @"
 SELECT v.VenueId, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
-v.Telephone, v.Email, v.Website
+v.Telephone, v.Email, v.Website, v.Position.Lat Latitude, v.Position.Long Longitude
 FROM Pttcd.Venues v
 JOIN @VenueIds x ON v.VenueId = x.Id
 WHERE v.VenueStatus = @LiveVenueStatus";

@@ -1,7 +1,10 @@
-﻿namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
+﻿using System;
+
+namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
 {
     public class TLevelLocationViewModel
     {
+        public Guid TLevelLocationId { get; set; }
         public string VenueName { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
