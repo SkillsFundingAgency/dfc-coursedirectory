@@ -9,7 +9,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.PhoneNumber
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.PhoneNumber
 {
     public class Query : IRequest<Command>
     {

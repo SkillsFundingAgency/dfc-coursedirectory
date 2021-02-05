@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FormFlow;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 {
     public class AddressTests : MvcTestBase
     {

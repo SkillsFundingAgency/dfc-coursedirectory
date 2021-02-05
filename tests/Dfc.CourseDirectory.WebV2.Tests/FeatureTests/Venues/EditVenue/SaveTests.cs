@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
 using FormFlow;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +13,7 @@ using OneOf;
 using OneOf.Types;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 {
     public class SaveTests : MvcTestBase
     {

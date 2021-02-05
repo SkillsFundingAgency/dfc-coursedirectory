@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
 {
     [JourneyState]
     public class EditVenueJourneyModel

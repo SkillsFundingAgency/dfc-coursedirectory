@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
 {
     [Route("venues/{venueId:guid}")]
     [AuthorizeVenue(venueIdRouteParameterName: "venueId")]

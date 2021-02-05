@@ -10,7 +10,7 @@ using FormFlow;
 using MediatR;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Save
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Save
 {
     public class Command : IRequest<Success>
     {

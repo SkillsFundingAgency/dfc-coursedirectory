@@ -10,7 +10,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Name
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Name
 {
     public class Query : IRequest<Command>
     {

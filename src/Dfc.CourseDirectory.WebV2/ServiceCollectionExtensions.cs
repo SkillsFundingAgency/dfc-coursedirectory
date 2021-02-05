@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ITagHelperComponent, AnalyticsTagHelperComponent>();
             services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
             services.AddTransient<ProviderContextHelper>();
-            services.AddTransient<Features.EditVenue.EditVenueJourneyModelFactory>();
+            services.AddTransient<Features.Venues.EditVenue.EditVenueJourneyModelFactory>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
             services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));

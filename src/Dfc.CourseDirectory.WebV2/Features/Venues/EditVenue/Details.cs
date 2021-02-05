@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.Core.Validation;
 using FormFlow;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Details
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Details
 {
     public class Query : IRequest<ViewModel>
     {

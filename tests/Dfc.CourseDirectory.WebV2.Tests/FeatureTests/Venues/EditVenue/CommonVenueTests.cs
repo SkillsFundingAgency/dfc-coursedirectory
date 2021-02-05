@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 {
     public class CommonVenueTests: MvcTestBase
     {

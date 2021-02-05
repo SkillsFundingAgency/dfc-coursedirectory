@@ -9,7 +9,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.EditVenue.Email
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Email
 {
     public class Query : IRequest<Command>
     {

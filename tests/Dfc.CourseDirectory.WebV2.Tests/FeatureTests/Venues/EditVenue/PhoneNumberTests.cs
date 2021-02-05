@@ -3,17 +3,17 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.EditVenue;
+using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
 using FormFlow;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 {
-    public class EmailTests : MvcTestBase
+    public class PhoneNumberTests : MvcTestBase
     {
-        public EmailTests(CourseDirectoryApplicationFactory factory)
+        public PhoneNumberTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -23,9 +23,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId, email: "person@provider.com")).Id;
+            var venueId = (await TestData.CreateVenue(providerId, telephone: "020 7946 0000")).Id;
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/email");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -34,22 +34,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementById("Email").GetAttribute("value").Should().Be("person@provider.com");
+            doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be("020 7946 0000");
         }
 
         [Theory]
-        [InlineData("another_person@provider.com")]
+        [InlineData("05678 912345")]
         [InlineData("")]
-        public async Task Get_NewEmailAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
+        public async Task Get_NewPhoneNumberAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId, email: "person@provider.com")).Id;
+            var venueId = (await TestData.CreateVenue(providerId, telephone: "020 7946 0000")).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
-            journeyInstance.UpdateState(state => state.Email = existingValue);
+            journeyInstance.UpdateState(state => state.PhoneNumber = existingValue);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/email");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementById("Email").GetAttribute("value").Should().Be(existingValue);
+            doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be(existingValue);
         }
 
         [Theory]
@@ -73,10 +73,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("Email", "user@provider.com")
+                .Add("PhoneNumber", "020 7946 0000")
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/email")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/phone-number")
             {
                 Content = requestContent
             };
@@ -97,10 +97,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             var venueId = Guid.NewGuid();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("Email", "user@provider.com")
+                .Add("PhoneNumber", "020 7946 0000")
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/email")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/phone-number")
             {
                 Content = requestContent
             };
@@ -113,17 +113,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
         }
 
         [Fact]
-        public async Task Post_InvalidEmail_RendersError()
+        public async Task Post_InvalidPhoneNumber_RendersError()
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
             var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("Email", "bademail")
+                .Add("PhoneNumber", "xxx")
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/email")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/phone-number")
             {
                 Content = requestContent
             };
@@ -135,23 +135,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Email", "Enter an email address in the correct format");
+            doc.AssertHasError("PhoneNumber", "Enter a telephone number in the correct format");
         }
 
         [Theory]
-        [InlineData("user@provider.com")]
+        [InlineData("020 7946 0000")]
         [InlineData("")]
-        public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(string email)
+        public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(string phoneNumber)
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
             var venueId = (await TestData.CreateVenue(providerId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("Email", email)
+                .Add("PhoneNumber", phoneNumber)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/email")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"venues/{venueId}/phone-number")
             {
                 Content = requestContent
             };
@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.EditVenue
             response.Headers.Location.OriginalString.Should().Be($"/venues/{venueId}");
 
             var journeyInstance = GetJourneyInstance(venueId);
-            journeyInstance.State.Email.Should().Be(email);
+            journeyInstance.State.PhoneNumber.Should().Be(phoneNumber);
         }
 
         private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
