@@ -605,6 +605,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                     startDate: new DateTime(2021, 10, 1),
                     expectedErrorField: "Website",
                     expectedErrorMessage: "T Level webpage must be 255 characters or fewer");
+
+                Add(
+                    website: "",
+                    startDate: new DateTime(2021, 10, 1),
+                    expectedErrorField: "Website",
+                    expectedErrorMessage: "Enter a webpage");
             }
 
             public void Add(
