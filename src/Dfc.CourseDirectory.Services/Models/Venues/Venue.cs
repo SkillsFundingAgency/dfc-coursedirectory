@@ -81,22 +81,22 @@ namespace Dfc.CourseDirectory.Services.Models.Venues
 
             if (string.IsNullOrWhiteSpace(venueName))
             {
-                throw new ArgumentException("message", nameof(venueName));
+                throw new ArgumentException("Error creating Venue: Required field is null or whitespace", nameof(venueName));
             }
 
             if (string.IsNullOrWhiteSpace(address1))
             {
-                throw new ArgumentException("message", nameof(address1));
+                throw new ArgumentException("Error creating Venue: Required field is null or whitespace", nameof(address1));
             }
 
             if (string.IsNullOrWhiteSpace(town))
             {
-                throw new ArgumentException("message", nameof(town));
+                throw new ArgumentException("Error creating Venue: Required field is null or whitespace", nameof(town));
             }
 
             if (string.IsNullOrWhiteSpace(postcode))
             {
-                throw new ArgumentException("message", nameof(postcode));
+                throw new ArgumentException("Error creating Venue: Required field is null or whitespace", nameof(postcode));
             }
 
             ID = id;
@@ -143,7 +143,7 @@ namespace Dfc.CourseDirectory.Services.Models.Venues
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException("message", nameof(id));
+                throw new ArgumentException("Error creating Venue: Required field is null or whitespace", nameof(id));
             }
 
             if (ukPrn < 0)
@@ -193,7 +193,7 @@ namespace Dfc.CourseDirectory.Services.Models.Venues
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException("message", nameof(id));
+                throw new ArgumentException("Error creating Venue: Required field is null or whitespace", nameof(id));
             }
 
             if (ukPrn < 0)

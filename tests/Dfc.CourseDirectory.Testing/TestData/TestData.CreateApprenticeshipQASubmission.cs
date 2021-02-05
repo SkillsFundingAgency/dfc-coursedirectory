@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Testing
                 ApprenticeshipIds = apprenticeshipIds
             });
 
-            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllVenuesForProvider()
+            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
             {
                 ProviderUkprn = provider.Ukprn
             });

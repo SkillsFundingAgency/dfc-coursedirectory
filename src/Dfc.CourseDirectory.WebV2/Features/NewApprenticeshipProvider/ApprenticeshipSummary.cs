@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var providerUkprn = provider.Ukprn;
 
             var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetAllVenuesForProvider()
+                new GetVenuesByProvider()
                 {
                     ProviderUkprn = providerUkprn
                 });
@@ -276,7 +276,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         private async Task<ViewModel> CreateViewModel(ProviderInfo provider)
         {
             var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetAllVenuesForProvider()
+                new GetVenuesByProvider()
                 {
                     ProviderUkprn = provider.Ukprn
                 });

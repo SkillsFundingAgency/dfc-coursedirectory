@@ -183,18 +183,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CurrentCourseRunDate = courseRun.StartDate
             };
 
-            if (cachedData.Mode == PublishMode.BulkUpload || cachedData.Mode == PublishMode.DataQualityIndicator)
-            {
-                vm.ValPastDateRef = DateTime.Now;
-                vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
-
-                //var venueExists = vm.Venues.Any(x => x.Text == )
-            }
-            else
-            {
-                vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
-                vm.ValPastDateMessage = courseRun.FlexibleStartDate == true ? "Start Date cannot be earlier than today’s date" : "New Start Date cannot be before the pre-edited Start Date";
-            }
+            vm.ValPastDateRef = DateTime.Now;
+            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
 
             vm.CourseName = cachedData.CourseName;
             vm.AttendanceMode = cachedData.AttendanceMode;
@@ -317,26 +307,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CurrentCourseRunDate = courseRun.StartDate
                     };
 
-                    if (mode == PublishMode.BulkUpload || mode == PublishMode.DataQualityIndicator)
-                    {
-                        vm.ValPastDateRef = DateTime.Now;
-                        vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
-
-                        //var venueExists = vm.Venues.Any(x => x.Text == )
-                    }
-                    else
-                    {
-                        vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
-                        if (courseRun.FlexibleStartDate == true)
-                        {
-                            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
-                        }
-                        else
-                        {
-                            vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
-                        }
-
-                    }
+                    vm.ValPastDateRef = DateTime.Now;
+                    vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
 

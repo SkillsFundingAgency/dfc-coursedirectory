@@ -16,7 +16,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             _mediator = mediator;
         }
 
-        [RequireFeatureFlag(FeatureFlags.ProviderDisplayName)]
         [HttpGet("display-name")]
         public async Task<IActionResult> DisplayName(ProviderContext providerContext)
         {
@@ -24,7 +23,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
-        [RequireFeatureFlag(FeatureFlags.ProviderDisplayName)]
         [HttpPost("display-name")]
         public async Task<IActionResult> DisplayName(DisplayName.Command command, ProviderContext providerContext)
         {
