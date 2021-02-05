@@ -32,6 +32,12 @@
         "description": "Access key for the cosmos db account"
       }
     },
+    "environmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "EnvironmentName to be used in the EnvironmentSetting__EnvironmentName config setting.  This may be different to the Azure DevOps environment"
+      }
+    },
     "sqlCourseDirectoryConnectionString": {
       "type": "string",
       "metadata": {
@@ -137,6 +143,10 @@
               {
                 "name": "AzureSearchQueryKey",
                 "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "EnvironmentSettings__EnvironmentName",
+                "value": "[parameters('environmentName')]"
               }
             ]
           },

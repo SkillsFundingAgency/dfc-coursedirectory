@@ -30,29 +30,9 @@
       { "name": "VenueTown", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": true, "sortable": false },
       { "name": "Position", "type": "Edm.GeographyPoint", "facetable": false, "filterable": true, "searchable": false, "sortable": true },
       { "name": "RegionName", "type": "Edm.String", "facetable": true, "filterable": false, "searchable": false, "sortable": false },
-      { "name": "ScoreBoost", "type": "Edm.Double", "facetable": false, "filterable": true, "searchable": false, "sortable": false }
-    ],
-    "scoringProfiles": [
-      {
-        "name": "region-boost",
-        "functions": [
-          {
-            "fieldName": "ScoreBoost",
-            "freshness": null,
-            "interpolation": "linear",
-            "magnitude": {
-              "boostingRangeStart": 1,
-              "boostingRangeEnd": 100,
-              "constantBoostBeyondRange": true
-            },
-            "distance": null,
-            "tag": null,
-            "type": "magnitude",
-            "boost": 100
-          }
-        ],
-        "functionAggregation": "0"
-      }
+      { "name": "ScoreBoost", "type": "Edm.Double", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "TLevelId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "TLevelLocationId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false }
     ]
   }
 ]

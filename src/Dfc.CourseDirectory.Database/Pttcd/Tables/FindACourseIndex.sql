@@ -4,6 +4,8 @@
 	[OfferingType] INT NOT NULL,
 	[CourseId] UNIQUEIDENTIFIER,
 	[CourseRunId] UNIQUEIDENTIFIER,
+	[TLevelId] UNIQUEIDENTIFIER,
+	[TLevelLocationId] UNIQUEIDENTIFIER,
 	[Live] BIT NOT NULL,
 	[Version] TIMESTAMP NOT NULL,
 	[UpdatedOn] DATETIME,

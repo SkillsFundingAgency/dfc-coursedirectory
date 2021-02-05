@@ -10,8 +10,6 @@ namespace Dfc.CourseDirectory.Core.Search
 {
     public class FindACourseOfferingSearchQuery : IAzureSearchQuery<FindACourseOffering>
     {
-        private const string RegionBoostScoringProfileName = "region-boost";
-
         public string CourseName { get; set; }
 
         public IEnumerable<string> Facets { get; set; }
@@ -33,7 +31,6 @@ namespace Dfc.CourseDirectory.Core.Search
             {
                 Filter = filter,
                 IncludeTotalCount = true,
-                ScoringProfile = RegionBoostScoringProfileName,
                 SearchFields =
                 {
                     nameof(FindACourseOffering.QualificationCourseTitle),

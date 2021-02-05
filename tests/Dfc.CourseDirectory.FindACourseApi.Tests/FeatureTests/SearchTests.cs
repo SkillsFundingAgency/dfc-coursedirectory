@@ -348,7 +348,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Be("Live eq true");
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain("Live eq true");
         }
 
         [Theory]
