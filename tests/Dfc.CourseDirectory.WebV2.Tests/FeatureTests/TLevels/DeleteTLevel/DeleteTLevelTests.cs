@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel;
@@ -13,8 +12,9 @@ using FormFlow;
 using OneOf;
 using OneOf.Types;
 using Xunit;
+using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.DeleteTLevel
 {
     public class DeleteTLevelTests : MvcTestBase
     {
@@ -299,7 +299,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
             response.Headers.Location.OriginalString.Should()
                 .Be($"/t-levels/{tLevel.TLevelId}/delete/success?providerId={providerId}");
 
-            SqlQuerySpy.VerifyQuery<DeleteTLevel, OneOf<NotFound, Success>>(q => q.TLevelId == tLevel.TLevelId);
+            SqlQuerySpy.VerifyQuery<SqlQueries.DeleteTLevel, OneOf<NotFound, Success>>(q => q.TLevelId == tLevel.TLevelId);
         }
 
         [Fact]
@@ -329,7 +329,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 createdBy: User.ToUserInfo());
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new DeleteTLevel()
+                new SqlQueries.DeleteTLevel()
                 {
                     TLevelId = tLevel.TLevelId,
                     DeletedOn = Clock.UtcNow,
@@ -390,7 +390,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 createdBy: User.ToUserInfo());
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new DeleteTLevel()
+                new SqlQueries.DeleteTLevel()
                 {
                     TLevelId = tLevel.TLevelId,
                     DeletedOn = Clock.UtcNow,
@@ -451,7 +451,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 createdBy: User.ToUserInfo());
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new DeleteTLevel()
+                new SqlQueries.DeleteTLevel()
                 {
                     TLevelId = tLevel.TLevelId,
                     DeletedOn = Clock.UtcNow,
@@ -518,7 +518,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 createdBy: User.ToUserInfo());
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new DeleteTLevel()
+                new SqlQueries.DeleteTLevel()
                 {
                     TLevelId = tLevel.TLevelId,
                     DeletedOn = Clock.UtcNow,
@@ -581,7 +581,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels
                 createdBy: User.ToUserInfo());
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new DeleteTLevel()
+                new SqlQueries.DeleteTLevel()
                 {
                     TLevelId = tLevel.TLevelId,
                     DeletedOn = Clock.UtcNow,
