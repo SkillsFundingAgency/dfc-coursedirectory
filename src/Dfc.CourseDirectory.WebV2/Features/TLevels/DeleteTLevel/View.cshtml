@@ -69,17 +69,17 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript">
-        function enableDeleteBtn() {
-            $('#pttcd-delete-tlevel__delete-btn').attr(
-                'disabled',
-                $('#Confirm').is(':checked') ? null : 'disabled');
-        }
+    <script>
+        (function ($) {
+            var confirm = $('#Confirm');
 
-        // timeout is required otherwise the _checked_ property check doesn't return the correct value
-        // (maybe GDS scripts need chance to run?)
-        setTimeout(enableDeleteBtn, 100);
+            function disableDeleteBtn() {
+                $('#pttcd-delete-tlevel__delete-btn')
+                    .attr('disabled', confirm.is(':checked') ? null : 'disabled');
+            }
 
-        $('#Confirm').change(enableDeleteBtn);
+            disableDeleteBtn();
+            confirm.change(disableDeleteBtn);
+        })(jQuery);
     </script>
 } 
