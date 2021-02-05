@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
@@ -11,19 +11,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async IAsyncEnumerable<LiveTLevelsReportItem> Execute(SqlTransaction transaction, GetLiveTLevelsReport query)
         {
             var sql = @$"
-SELECT      p.Ukprn,
+SELECT      c.ProviderUkprn,
             p.ProviderName,
-            d.Name as TLevelName,
-            v.VenueName,
-            t.StartDate
-FROM        Pttcd.TLevels t with (nolock)
-INNER JOIN  Pttcd.TLevelLocations l with (nolock) ON l.TLevelId = t.TLevelId
-INNER JOIN  Pttcd.TLevelDefinitions d with (nolock) ON d.TLevelDefinitionId = t.TLevelDefinitionId
-INNER JOIN  Pttcd.Providers p with (nolock) ON p.ProviderId = t.ProviderId
-INNER JOIN  Pttcd.Venues v with (nolock) ON v.VenueId = l.VenueId
-WHERE       t.TLevelStatus = {(int)TLevelStatus.Live}
-AND         l.TLevelLocationStatus = {(int)TLevelLocationStatus.Live}
-ORDER BY    p.UKPRN ASC, d.Name ASC, v.VenueName ASC, t.StartDate ASC";
+            c.QualificationCourseTitle AS TLevelName,
+            c.VenueName,
+            c.StartDate
+FROM        Pttcd.FindACourseIndex c with (nolock)
+INNER JOIN  Pttcd.Providers p with (nolock) ON p.ProviderId = c.ProviderId
+WHERE       c.OfferingType = {(int)FindACourseOfferingType.TLevel}
+AND         c.Live = 1
+ORDER BY    c.ProviderUkprn ASC, p.ProviderName ASC, c.QualificationCourseTitle ASC, c.VenueName ASC, c.StartDate ASC";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
             {

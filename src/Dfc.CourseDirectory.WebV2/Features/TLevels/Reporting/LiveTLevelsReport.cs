@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.Reporting.LiveTLevelsReport
     public class Csv
     {
         [Name("UKPRN")]
-        public int Ukprn { get; set; }
+        public int ProviderUkprn { get; set; }
 
         [Name("Provider Name")]
         public string ProviderName { get; set; }
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.Reporting.LiveTLevelsReport
                 {
                     yield return new Csv
                     {
-                        Ukprn = result.Ukprn,
+                        ProviderUkprn = result.ProviderUkprn,
                         ProviderName = result.ProviderName,
                         TLevelName = result.TLevelName,
                         VenueName = result.VenueName,

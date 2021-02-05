@@ -90,13 +90,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
 
                 return new Features.TLevels.Reporting.LiveTLevelsReport.Csv
                 {
-                    Ukprn = p.Ukprn,
+                    ProviderUkprn = p.Ukprn,
                     ProviderName = p.ProviderName,
                     TLevelName = t.TLevelDefinition.Name,
                     VenueName = t.Locations.Single().VenueName,
                     StartDate = t.StartDate
                 };
-            }).OrderBy(r => r.Ukprn).ThenBy(r => r.TLevelName).ThenBy(r => r.VenueName).ThenBy(r => r.StartDate));
+            }).OrderBy(r => r.ProviderUkprn).ThenBy(r => r.TLevelName).ThenBy(r => r.VenueName).ThenBy(r => r.StartDate));
         }
     }
 }
