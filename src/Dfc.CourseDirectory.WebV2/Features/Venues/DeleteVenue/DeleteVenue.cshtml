@@ -13,6 +13,13 @@
     var affectedTLevelsErrors = ViewData.ModelState[nameof(ViewModel.AffectedTLevels)]?.Errors
         ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
 }
+@functions
+{
+    static string Pluralise(bool plural, string pluralisation = "s")
+    {
+        return plural ? pluralisation : string.Empty;
+    }
+}
 
 <govuk-error-summary>
     <govuk-error-summary-item asp-for="AffectedCourses" data-testId="affected-courses-error-message" />
@@ -57,7 +64,7 @@
                     You cannot delete this location
                 </govuk-warning-text>
 
-                <p class="govuk-body">The following courses are linked to this location. You will need to change the location or delete each course before you can delete this location.</p>
+                <p class="govuk-body">You will need to change the location or delete the following before this location can be deleted.</p>
 
                 @if (Model.AffectedCourses.Count > 0)
                 {
@@ -71,9 +78,10 @@
                         }
 
                         <govuk-details>
-                            <govuk-details-summary>@Model.AffectedCourses.Count Courses</govuk-details-summary>
+                            <govuk-details-summary>@Model.AffectedCourses.Count Course@(Pluralise(Model.AffectedCourses.Count > 1))</govuk-details-summary>
                             <govuk-details-text>
-                                <ul class="govuk-list">
+                                <p class="govuk-body">The following courses are linked to this location</p>
+                                <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedCourseRun in Model.AffectedCourses.OrderBy(c => c.CourseName))
                                     {
                                         <li data-testId="affected-course-@affectedCourseRun.CourseId"><a asp-controller="CourseSummary" asp-action="Index" asp-route-courseId="@affectedCourseRun.CourseId" asp-route-courseRunId="@affectedCourseRun.CourseRunId" class="govuk-link">@affectedCourseRun.CourseName</a></li>
@@ -96,9 +104,10 @@
                         }
 
                         <govuk-details>
-                            <govuk-details-summary>@Model.AffectedApprenticeships.Count Apprenticeships</govuk-details-summary>
+                            <govuk-details-summary>@Model.AffectedApprenticeships.Count Apprenticeship@(Pluralise(Model.AffectedApprenticeships.Count > 1))</govuk-details-summary>
                             <govuk-details-text>
-                                <ul class="govuk-list">
+                                <p class="govuk-body">The following apprenticeships are linked to this location</p>
+                                <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedApprenticeship in Model.AffectedApprenticeships.OrderBy(a => a.ApprenticeshipName))
                                     {
                                         <li data-testId="affected-apprenticeship-@affectedApprenticeship.ApprenticeshipId"><a asp-controller="Apprenticeships" asp-action="ViewAndEdit" asp-route-id="@affectedApprenticeship.ApprenticeshipId" class="govuk-link">@affectedApprenticeship.ApprenticeshipName</a></li>
@@ -121,9 +130,10 @@
                         }
 
                         <govuk-details>
-                            <govuk-details-summary>@Model.AffectedTLevels.Count T Levels</govuk-details-summary>
+                            <govuk-details-summary>@Model.AffectedTLevels.Count T Level@(Pluralise(Model.AffectedTLevels.Count > 1))</govuk-details-summary>
                             <govuk-details-text>
-                                <ul class="govuk-list">
+                                <p>The following T Levels are linked to this location</p>
+                                <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedTLevel in Model.AffectedTLevels.OrderBy(t => t.TLevelName))
                                     {
                                         <li data-testId="affected-tlevel-@affectedTLevel.TLevelId"><a asp-controller="ViewTLevel" asp-action="Index" asp-route-tLevelId="@affectedTLevel.TLevelId" class="govuk-link">@affectedTLevel.TLevelName</a></li>

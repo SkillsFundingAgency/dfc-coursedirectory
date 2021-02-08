@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using OneOf;
@@ -507,7 +508,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("venue-deleted-message").TextContent.Should().Be($"{venue.VenueName} has been deleted from Publish to the course directory");
+            var locationDeletedMessage = doc.GetElementByTestId("venue-deleted-message").TextContent;
+            locationDeletedMessage.Should().NotBeNullOrEmpty();
+
+            using (new AssertionScope())
+            {
+                locationDeletedMessage.Should().Contain($"Location Deleted");
+                locationDeletedMessage.Should().Contain(venue.VenueName);
+            }
         }
     }
 }
