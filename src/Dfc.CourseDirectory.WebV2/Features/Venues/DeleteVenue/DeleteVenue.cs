@@ -107,9 +107,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                 return new NotFound();
             }
 
-            var getCourses = _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllCoursesForProvider { ProviderUkprn = venue.Ukprn, CourseStatuses = CourseStatus.Live | CourseStatus.Pending | CourseStatus.BulkUploadPending | CourseStatus.BulkUploadReadyToGoLive | CourseStatus.APIPending | CourseStatus.APIReadyToGoLive | CourseStatus.MigrationPending | CourseStatus.MigrationReadyToGoLive });
-            var getApprenticeships = _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships { Predicate = a => a.ProviderUKPRN == venue.Ukprn && a.ApprenticeshipLocations.Any(al => al.VenueId == request.VenueId) });
-            var getTLevels = _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelsForProvider { ProviderId = request.ProviderId });
+            var getCourses = _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllCoursesForProvider
+            {
+                ProviderUkprn = venue.Ukprn,
+                CourseStatuses = CourseStatus.Live | CourseStatus.Pending | CourseStatus.BulkUploadPending | CourseStatus.BulkUploadReadyToGoLive | CourseStatus.APIPending | CourseStatus.APIReadyToGoLive | CourseStatus.MigrationPending | CourseStatus.MigrationReadyToGoLive
+            });
+            
+            var getApprenticeships = _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
+            {
+                Predicate = a => a.ProviderUKPRN == venue.Ukprn && a.ApprenticeshipLocations.Any(al => al.VenueId == request.VenueId)
+            });
+            
+            var getTLevels = _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelsForProvider
+            {
+                ProviderId = request.ProviderId
+            });
 
             await Task.WhenAll(getCourses, getApprenticeships, getTLevels);
 
@@ -158,7 +170,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
             });
         }
 
-        private static ViewModel CreateViewModel(Venue venue, Guid providerId, IEnumerable<Course> courseRuns, IEnumerable<Apprenticeship> apprenticeships, IEnumerable<SqlModels.TLevel> tLevels) => new ViewModel
+        private static ViewModel CreateViewModel(
+            Venue venue,
+            Guid providerId,
+            IEnumerable<Course> courseRuns,
+            IEnumerable<Apprenticeship> apprenticeships,
+            IEnumerable<SqlModels.TLevel> tLevels) => new ViewModel
         {
             VenueId = venue.Id,
             ProviderId = providerId,
@@ -225,7 +242,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 
                 RuleFor(c => c.Confirm)
                     .Equal(true)
-                    .WithMessage("Confirm you want to delete the venue");
+                    .WithMessage("Confirm you want to delete the location");
             }
         }
     }

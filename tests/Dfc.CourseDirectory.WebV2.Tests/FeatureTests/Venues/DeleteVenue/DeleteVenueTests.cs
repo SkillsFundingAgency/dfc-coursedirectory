@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("confirm-error-message").TextContent.Should().Be("Confirm you want to delete the venue");
+            doc.GetElementByTestId("confirm-error-message").TextContent.Should().Be("Confirm you want to delete the location");
         }
 
         [Fact]
@@ -513,7 +513,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             using (new AssertionScope())
             {
-                locationDeletedMessage.Should().Contain($"Location Deleted");
+                locationDeletedMessage.Should().Contain($"Location deleted");
                 locationDeletedMessage.Should().Contain(venue.VenueName);
             }
         }

@@ -84,7 +84,9 @@
                                 <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedCourseRun in Model.AffectedCourses.OrderBy(c => c.CourseName))
                                     {
-                                        <li data-testId="affected-course-@affectedCourseRun.CourseId"><a asp-controller="CourseSummary" asp-action="Index" asp-route-courseId="@affectedCourseRun.CourseId" asp-route-courseRunId="@affectedCourseRun.CourseRunId" class="govuk-link">@affectedCourseRun.CourseName</a></li>
+                                        <li data-testId="affected-course-@affectedCourseRun.CourseId">
+                                            <a asp-controller="CourseSummary" asp-action="Index" asp-route-courseId="@affectedCourseRun.CourseId" asp-route-courseRunId="@affectedCourseRun.CourseRunId" class="govuk-link">@affectedCourseRun.CourseName</a>
+                                        </li>
                                     }
                                 </ul>
                             </govuk-details-text>
@@ -110,7 +112,9 @@
                                 <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedApprenticeship in Model.AffectedApprenticeships.OrderBy(a => a.ApprenticeshipName))
                                     {
-                                        <li data-testId="affected-apprenticeship-@affectedApprenticeship.ApprenticeshipId"><a asp-controller="Apprenticeships" asp-action="ViewAndEdit" asp-route-id="@affectedApprenticeship.ApprenticeshipId" class="govuk-link">@affectedApprenticeship.ApprenticeshipName</a></li>
+                                        <li data-testId="affected-apprenticeship-@affectedApprenticeship.ApprenticeshipId">
+                                            <a asp-controller="Apprenticeships" asp-action="ViewAndEdit" asp-route-id="@affectedApprenticeship.ApprenticeshipId" class="govuk-link">@affectedApprenticeship.ApprenticeshipName</a>
+                                        </li>
                                     }
                                 </ul>
                             </govuk-details-text>
@@ -136,7 +140,9 @@
                                 <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedTLevel in Model.AffectedTLevels.OrderBy(t => t.TLevelName))
                                     {
-                                        <li data-testId="affected-tlevel-@affectedTLevel.TLevelId"><a asp-controller="ViewTLevel" asp-action="Index" asp-route-tLevelId="@affectedTLevel.TLevelId" class="govuk-link">@affectedTLevel.TLevelName</a></li>
+                                        <li data-testId="affected-tlevel-@affectedTLevel.TLevelId">
+                                            <a asp-controller="ViewTLevel" asp-action="Index" asp-route-tLevelId="@affectedTLevel.TLevelId" class="govuk-link">@affectedTLevel.TLevelName</a>
+                                        </li>
                                     }
                                 </ul>
                             </govuk-details-text>
