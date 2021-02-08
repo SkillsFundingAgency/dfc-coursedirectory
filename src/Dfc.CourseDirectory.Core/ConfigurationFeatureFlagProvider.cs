@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 
 namespace Dfc.CourseDirectory.Core
@@ -15,8 +16,9 @@ namespace Dfc.CourseDirectory.Core
             _configuration = configuration;
         }
 
-        public ISet<string> GetFeatureFlags() => new HashSet<string>(
-            (_configuration[ConfigurationKey] ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries),
-            StringComparer.OrdinalIgnoreCase);
+        public IReadOnlyCollection<string> GetFeatureFlags() =>
+            new HashSet<string>(
+                _configuration[ConfigurationKey]?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>(),
+                StringComparer.OrdinalIgnoreCase);
     }
 }
