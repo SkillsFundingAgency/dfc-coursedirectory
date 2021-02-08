@@ -26,5 +26,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
         public CourseDurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
         public decimal? Cost { get; set; }
+        public string CostDescription { get; set; }
     }
 }

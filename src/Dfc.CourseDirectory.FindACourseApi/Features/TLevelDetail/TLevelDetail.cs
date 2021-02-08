@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
             return new TLevelDetailViewModel()
             {
                 AttendancePattern = CourseAttendancePattern.Daytime,
-                Cost = 0,
+                CostDescription = "T Levels are currently only available to 16-19 year olds. Contact us for details of other suitable courses.",
                 DeliveryMode = CourseDeliveryMode.ClassroomBased,
                 DurationUnit = CourseDurationUnit.Years,
                 DurationValue = 2,
