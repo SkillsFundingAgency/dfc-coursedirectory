@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 FirstName = principal.FindFirst("given_name").Value,
                 LastName = principal.FindFirst("family_name").Value,
                 Role = principal.FindFirst(ClaimTypes.Role)?.Value,
-                UserId = principal.FindFirst("sub").Value,
+                UserId = principal.FindFirst("sub").Value, // sub == subject of claim in JWT, i.e. userId. https://tools.ietf.org/html/rfc7519#section-4.1.2
                 CurrentProviderId = providerId
             };
         }
