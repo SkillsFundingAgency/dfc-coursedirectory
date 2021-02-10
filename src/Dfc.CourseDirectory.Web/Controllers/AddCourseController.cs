@@ -23,10 +23,10 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
         private readonly ICourseTextService _courseTextService;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
@@ -48,36 +49,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
         private const string SessionPublishedCourse = "PublishedCourse";
 
-        public AddCourseController(
-            IOptions<CourseServiceSettings> courseSearchSettings,
-            HtmlEncoder htmlEncoder,
-            ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService, ICourseTextService courseTextService)
+        public AddCourseController(HtmlEncoder htmlEncoder,
+            ICourseService courseService,
+            IVenueSearchHelper venueSearchHelper,
+            IVenueService venueService,
+            ICourseTextService courseTextService,
+            ICurrentUserProvider currentUserProvider)
         {
-            if (courseSearchSettings == null)
-            {
-                throw new ArgumentNullException(nameof(courseSearchSettings));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (courseTextService == null)
-            {
-                throw new ArgumentNullException(nameof(courseTextService));
-            }
-
-            _htmlEncoder = htmlEncoder;
-            _courseService = courseService;
-            _venueService = venueService;
-            _venueSearchHelper = venueSearchHelper;
-            _courseTextService = courseTextService;
+            _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
+            _courseTextService = courseTextService ?? throw new ArgumentNullException(nameof(courseTextService));
+            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
         }
 
         [Authorize]
@@ -754,7 +738,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AttendancePattern = addCourseSection2.AttendanceMode,
                         Regions = addCourseSection2.SelectedRegions,
                         CreatedDate = DateTime.Now,
-                        CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                        CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
                         RecordStatus = RecordStatus.Live // TODO - To Be Decided
                     };
 
@@ -781,7 +765,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StudyMode = StudyMode.Undefined,
                     AttendancePattern = AttendancePattern.Undefined,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
                     RecordStatus = RecordStatus.Live, // TODO - To Be Decided
                 };
                 var availableRegions = new SelectRegionModel();
@@ -829,7 +813,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     AttendancePattern = AttendancePattern.Undefined,
                     Regions = _courseService.GetRegions().RegionItems.Select(x => x.Id),
                     CreatedDate = DateTime.Now,
-                    CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
                     RecordStatus = RecordStatus.Live // TODO - To Be Decided
                 };
 
@@ -870,7 +854,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseRuns = courseRuns,
 
                 CreatedDate = DateTime.Now,
-                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
+                CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
 
                 //RecordStatus = RecordStatus.Live // TODO - To Be Decided
             };
