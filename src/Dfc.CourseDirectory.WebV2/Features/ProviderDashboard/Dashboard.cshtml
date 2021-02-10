@@ -75,6 +75,17 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
     </div>
 </div>
 
+@if (Model.IsNewProvider)
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-5" data-testid="NewProvider">
+        <div class="govuk-grid-column-full">
+            <p class="govuk-body">As a new provider to Publish to the course directory you will need to <a class="govuk-link" href="mailto:support@coursedirectory.org.uk">contact the support team</a> providing your UKPRN.</p>
+
+            <p class="govuk-body">The support team will set your provider type.  Once set you can publish the courses and training you offer in Publish to the course directory.</p>
+        </div>
+    </div>
+}
+
 @if (Model.ShowCourses)
 {
     <div class="govuk-grid-row" data-testid="courses-row">
