@@ -213,7 +213,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 json["studyMode"].ToObject<string>().Should().Be("FullTime");
                 json["durationUnit"].ToObject<string>().Should().Be("Years");
                 json["durationValue"].ToObject<int>().Should().Be(2);
-                json["cost"].ToObject<decimal>().Should().Be(0);
+                json["cost"].ToObject<decimal?>().Should().BeNull();
+                json["costDescription"].ToObject<string>().Should().Be("T Levels are currently only available to 16-19 year olds. Contact us for details of other suitable courses.");
 
                 var location = json["locations"].ToArray().Should().ContainSingle().Subject;
                 location["tLevelLocationId"].ToObject<string>().Should().Be(tLevelLocationId.ToString());
