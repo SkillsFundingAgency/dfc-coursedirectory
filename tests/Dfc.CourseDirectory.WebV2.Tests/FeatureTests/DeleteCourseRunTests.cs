@@ -541,6 +541,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 capturedDeleteCourseRunQuery.CourseId.Should().Be(courseId);
                 capturedDeleteCourseRunQuery.CourseRunId.Should().Be(courseRunId);
                 capturedDeleteCourseRunQuery.ProviderUkprn.Should().Be(ukprn);
+                capturedDeleteCourseRunQuery.UpdatedBy.Should().Be(TestUserInfo.DefaultUserId);
+                capturedDeleteCourseRunQuery.UpdatedDate.Should().Be(MutableClock.Start);
             }
         }
 
