@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
@@ -74,17 +75,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly JourneyInstance<JourneyModel> _journeyInstance;
+        private readonly IClock _clock;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
             IProviderInfoCache providerInfoCache,
             IProviderOwnershipCache providerOwnershipCache,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            JourneyInstance<JourneyModel> journeyInstance)
+            JourneyInstance<JourneyModel> journeyInstance,
+            IClock clock,
+            ICurrentUserProvider currentUserProvider)
         {
-            _providerInfoCache = providerInfoCache;
-            _providerOwnershipCache = providerOwnershipCache;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _journeyInstance = journeyInstance;
+            _providerInfoCache = providerInfoCache ?? throw new ArgumentNullException(nameof(providerInfoCache));
+            _providerOwnershipCache = providerOwnershipCache ?? throw new ArgumentNullException(nameof(providerOwnershipCache));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _journeyInstance = journeyInstance ?? throw new ArgumentNullException(nameof(journeyInstance));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
         }
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
@@ -113,7 +120,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             {
                 CourseId = request.CourseId,
                 CourseRunId = request.CourseRunId,
-                ProviderUkprn = ukprn
+                ProviderUkprn = ukprn,
+                UpdatedBy = _currentUserProvider.GetCurrentUser().UserId,
+                UpdatedDate = _clock.UtcNow,
             });
 
             // The next page needs this info - stash it in the JourneyModel

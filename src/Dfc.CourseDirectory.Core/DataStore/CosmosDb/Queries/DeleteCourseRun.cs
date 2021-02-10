@@ -9,5 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public Guid CourseId { get; set; }
         public Guid CourseRunId { get; set; }
         public int ProviderUkprn { get; set; }
+        public string UpdatedBy { get; set; }
+        public DateTime? UpdatedDate { get; set; }
     }
 }
