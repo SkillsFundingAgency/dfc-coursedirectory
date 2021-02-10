@@ -24,7 +24,8 @@ namespace Dfc.CourseDirectory.Testing
             ProviderDisplayNameSource displayNameSource = default,
             IEnumerable<CreateProviderContact> contacts = null,
             IReadOnlyCollection<Guid> tLevelDefinitionIds = null,
-            bool? bulkUploadInProgress = null)
+            bool? bulkUploadInProgress = null,
+            ProviderStatus status = ProviderStatus.Onboarded)
         {
             if (!providerType.HasFlag(ProviderType.TLevels) &&
                 (tLevelDefinitionIds?.Count ?? 0) != 0)
@@ -71,7 +72,8 @@ namespace Dfc.CourseDirectory.Testing
                     LastUpdated = _clock.UtcNow
                 }),
                 DateUpdated = _clock.UtcNow,
-                UpdatedBy = "TestData"
+                UpdatedBy = "TestData",
+                Status = status
             });
             Assert.Equal(CreateProviderResult.Ok, result);
 

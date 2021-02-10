@@ -10,9 +10,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
-    public class UpdateProviderOnboardedHandler : ICosmosDbQueryHandler<UpdateProviderOnboarded, OneOf<NotFound, Success>>
+    public class UpdateProviderOnboardedHandler : ICosmosDbQueryHandler<UpdateProviderOnboarded, OneOf<NotFound, AlreadyOnboarded, Success>>
     {
-        public async Task<OneOf<NotFound, Success>> Execute(DocumentClient client, Configuration configuration, UpdateProviderOnboarded request)
+        public async Task<OneOf<NotFound, AlreadyOnboarded, Success>> Execute(DocumentClient client, Configuration configuration, UpdateProviderOnboarded request)
         {
             var documentUri = UriFactory.CreateDocumentUri(
                 configuration.DatabaseId,
@@ -25,10 +25,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
                 var provider = response.Document;
 
+                if (provider.Status == ProviderStatus.Onboarded)
+                {
+                    return new AlreadyOnboarded();
+                }
+
                 provider.Status = ProviderStatus.Onboarded;
                 provider.DateOnboarded = request.UpdatedDateTime;
                 provider.DateUpdated = request.UpdatedDateTime;
-                provider.UpdatedBy = request.UpdatedBy.Email;
+                provider.UpdatedBy = request.UpdatedBy.UserId;
 
                 await client.ReplaceDocumentAsync(documentUri, provider);
 

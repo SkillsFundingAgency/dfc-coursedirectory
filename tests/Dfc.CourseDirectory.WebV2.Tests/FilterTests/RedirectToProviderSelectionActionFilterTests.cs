@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             // Assert
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal("/SearchProvider", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
+            Assert.Equal("/provider-search", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             // Assert
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal("/SearchProvider", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
+            Assert.Equal("/provider-search", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
     }
 
