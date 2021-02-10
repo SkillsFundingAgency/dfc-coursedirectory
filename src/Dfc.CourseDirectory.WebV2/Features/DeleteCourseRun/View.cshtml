@@ -12,8 +12,8 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form 
-              asp-action="Post" 
+        <form
+              asp-action="Post"
               asp-route-courseId="@Model.CourseId"
               asp-route-courseRunId="@Model.CourseRunId"
               asp-route-returnUrl="@returnUrl">
@@ -65,7 +65,7 @@
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
 
-            <govuk-button type="submit" class="govuk-button--warning" id="pttcd-courses__delete-course__btn">Delete</govuk-button>
+            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-3" id="pttcd-courses__delete-course__btn">Delete</govuk-button>
 
             <govuk-button href="@returnUrl" class="govuk-button--secondary" data-testid="cancel-btn">Cancel</govuk-button>
         </form>
@@ -86,4 +86,4 @@
 
         $('#Confirm').change(enableDeleteBtn);
     </script>
-} 
+}

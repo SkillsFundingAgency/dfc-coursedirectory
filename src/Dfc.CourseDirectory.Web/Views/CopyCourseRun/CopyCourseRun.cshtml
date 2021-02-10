@@ -233,7 +233,7 @@
                 })
             </div>
 
-            <button name="saveButton" type="submit" class="govuk-button" id="save">Continue</button>
+            <button name="saveButton" type="submit" class="govuk-button govuk-!-margin-right-3" id="save">Continue</button>
 
             <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="govuk-button govuk-button--secondary">Cancel</a>
 
