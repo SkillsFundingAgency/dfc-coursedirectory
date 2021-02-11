@@ -33,16 +33,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 var query = await client.ReadDocumentAsync<Venue>(documentUri);
 
                 venue = query.Document;
+
+                venue.Status = (int)VenueStatus.Archived;
+                venue.DateUpdated = request.UpdatedDate;
+                venue.UpdatedBy = request.UpdatedBy.UserId;
+
+                await client.ReplaceDocumentAsync(documentUri, venue);
             }
             catch (DocumentClientException ex)
                 when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 return new NotFound();
             }
-
-            venue.Status = (int)VenueStatus.Archived;
-
-            await client.ReplaceDocumentAsync(documentUri, venue);
 
             await _sqlDataSync.SyncVenue(venue);
 

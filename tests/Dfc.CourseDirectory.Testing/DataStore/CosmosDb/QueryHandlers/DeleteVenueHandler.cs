@@ -18,6 +18,8 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
             }
 
             venue.Status = (int)VenueStatus.Archived;
+            venue.DateUpdated = request.UpdatedDate;
+            venue.UpdatedBy = request.UpdatedBy.UserId;
 
             inMemoryDocumentStore.Venues.Save(venue);
 

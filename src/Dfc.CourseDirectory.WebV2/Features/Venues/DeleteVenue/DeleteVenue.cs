@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using FormFlow;
 using MediatR;
@@ -84,18 +86,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
+        private readonly ICurrentUserProvider _currentUserProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private readonly IClock _clock;
 
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderOwnershipCache providerOwnershipCache,
-            JourneyInstanceProvider journeyInstanceProvider)
+            ICurrentUserProvider currentUserProvider,
+            JourneyInstanceProvider journeyInstanceProvider,
+            IClock clock)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerOwnershipCache = providerOwnershipCache;
+            _currentUserProvider = currentUserProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
+            _clock = clock;
         }
 
         public async Task<OneOf<NotFound, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -115,7 +123,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
             
             var getApprenticeships = _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
             {
-                Predicate = a => a.ProviderUKPRN == venue.Ukprn && a.ApprenticeshipLocations.Any(al => al.VenueId == request.VenueId)
+                Predicate = a => a.ProviderUKPRN == venue.Ukprn && a.ApprenticeshipLocations.Any(al =>
+                    al.RecordStatus != (int)ApprenticeshipStatus.Archived
+                    && al.RecordStatus != (int)ApprenticeshipStatus.Deleted
+                    && al.VenueId == request.VenueId)
             });
             
             var getTLevels = _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelsForProvider
@@ -143,7 +154,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                         return new ModelWithErrors<ViewModel>(vm, validationResult);
                     }
 
-                    var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.DeleteVenue { VenueId = request.VenueId });
+                    var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.DeleteVenue
+                    {
+                        VenueId = request.VenueId,
+                        UpdatedDate = _clock.UtcNow,
+                        UpdatedBy = _currentUserProvider.GetCurrentUser()
+                    });
 
                     if (!(result.Value is Success))
                     {
