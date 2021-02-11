@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow.State;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Session;
@@ -57,6 +56,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
         public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
+
+        public Mock<ISearchClient<Provider>> ProviderSearchClient { get; } = new Mock<ISearchClient<Provider>>();
 
         public Mock<IBinaryStorageProvider> BinaryStorageProvider { get; } = new Mock<IBinaryStorageProvider>();
 
@@ -124,13 +125,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             {
                 ConfigureServices(services);
 
-                services.AddSingleton<ISearchClient<Onspd>>(OnspdSearchClient.Object);
+                services.AddSingleton(OnspdSearchClient.Object);
+                services.AddSingleton(ProviderSearchClient.Object);
                 services.AddSingleton(BinaryStorageProvider.Object);
             });
 
         private void ResetMocks()
         {
             OnspdSearchClient.Reset();
+            ProviderSearchClient.Reset();
             BinaryStorageProvider.Reset();
         }
     }

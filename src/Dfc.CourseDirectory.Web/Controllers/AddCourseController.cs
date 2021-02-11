@@ -944,8 +944,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var ukprn = Session.GetInt32("UKPRN");
                 return ukprn.HasValue
-                    ? RedirectToAction("SearchProvider", "ProviderSearch", new { UKPRN = ukprn })
-                    : RedirectToAction("Index", "SearchProvider");
+                    ? RedirectToAction("Index", "ProviderDashboard")
+                    : RedirectToAction("ProviderSearch", "ProviderSearch");
             }
 
             Session.Remove(SessionPublishedCourse);

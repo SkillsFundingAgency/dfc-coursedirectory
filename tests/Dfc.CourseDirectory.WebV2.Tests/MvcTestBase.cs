@@ -49,6 +49,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
 
+        protected Mock<ISearchClient<Provider>> ProviderSearchClient => Factory.ProviderSearchClient;
+
         protected Mock<IBinaryStorageProvider> BinaryStorageProvider => Factory.BinaryStorageProvider;
 
         protected SingletonSession Session => Factory.Session;

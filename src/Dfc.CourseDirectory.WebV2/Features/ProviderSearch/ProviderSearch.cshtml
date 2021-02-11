@@ -1,0 +1,96 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.ProviderSearch.ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Search Providers");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <form asp-action="ProviderSearch" method="get">
+
+            <govuk-input asp-for="SearchQuery" autocomplete="off" spellcheck="false" input-data-testid="search-query-input">
+                <govuk-input-label class="govuk-label--xl">
+                    Search Providers
+                </govuk-input-label>
+                <govuk-input-hint>
+                    Search by UKPRN, name or address
+                </govuk-input-hint>
+            </govuk-input>
+
+            <govuk-button>Search</govuk-button>
+
+        </form>
+
+        @if (Model.ProviderSearchResults != null)
+        {
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">UKPRN</th>
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Town/City</th>
+                        <th scope="col" class="govuk-table__header">Postcode</th>
+                        <th scope="col" class="govuk-table__header">UKPRN Status</th>
+                        <th scope="col" class="govuk-table__header">CD Status</th>
+                        <th scope="col" class="govuk-table__header"></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+
+                    @if (Model.ProviderSearchResults.Any())
+                    {
+                        foreach (var provider in Model.ProviderSearchResults)
+                        {
+                            <tr class="govuk-table__row" data-testid="search-result-row-@provider.ProviderId">
+                                <td class="govuk-table__cell">@provider.Ukprn</td>
+                                <td class="govuk-table__cell" data-testid="provider-name">@provider.Name</td>
+                                <td class="govuk-table__cell">@provider.Town</td>
+                                <td class="govuk-table__cell">@provider.Postcode</td>
+                                <td class="govuk-table__cell">@provider.ProviderStatus</td>
+                                <td class="govuk-table__cell">@provider.Status</td>
+                                <td class="govuk-table__cell" data-testid="provider-action">
+                                    @if (string.Equals(provider.ProviderStatus, "Active", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        @if (provider.Status == ProviderStatus.Onboarded)
+                                        {
+                                            <a asp-controller="ProviderDashboard" asp-action="Index" asp-route-providerId="@provider.ProviderId" class="govuk-link pttcd-text-nowrap">View dashboard</a>
+                                        }
+                                        else if (provider.Status == ProviderStatus.Registered)
+                                        {
+                                            <form asp-action="OnboardProvider">
+                                                <input type="hidden" name="@nameof(Dfc.CourseDirectory.WebV2.Features.ProviderSearch.OnboardProviderCommand.ProviderId)" value="@provider.ProviderId" />
+                                                <govuk-button class="govuk-!-margin-0 pttcd-text-nowrap">Add provider</govuk-button>
+                                            </form>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="7">No providers found</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // When the page loads, automatically focus on the SearchQuery input with the cursor at the end of the value
+        (function ($) {
+            const searchInput = $("#SearchQuery");
+            const valueLength = searchInput.val().length * 2;
+
+            searchInput.focus();
+            searchInput[0].setSelectionRange(valueLength, valueLength);
+        })(jQuery);
+    </script>
+} 

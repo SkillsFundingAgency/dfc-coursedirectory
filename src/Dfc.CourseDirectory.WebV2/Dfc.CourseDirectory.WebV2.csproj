@@ -60,6 +60,7 @@
     <None Remove="Content\utilities\needs-js.css" />
     <None Remove="Content\utilities\needs-js.js" />
     <None Remove="Content\utilities\table.css" />
+    <None Remove="Content\utilities\typography.css" />
     <None Remove="Content\utilities\width.css" />
   </ItemGroup>
 

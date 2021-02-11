@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 CourseDirectoryName = request.CourseDirectoryName,
                 Alias = request.Alias,
                 ProviderContact = request.ProviderContact?.ToList() ?? new List<ProviderContact>(),
-                Status = Core.Models.ProviderStatus.Onboarded,
+                Status = request.Status,
                 DateUpdated = request.DateUpdated,
                 UpdatedBy = request.UpdatedBy,
                 BulkUploadStatus = request.BulkUploadInProgress.HasValue

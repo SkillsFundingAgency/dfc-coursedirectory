@@ -40,8 +40,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 if (providerContext == null)
                 {
                     context.Result = new RedirectToActionResult(
-                        "Index",
-                        "SearchProvider",
+                        "ProviderSearch",
+                        "ProviderSearch",
                         new { returnUrl = context.HttpContext.Request.GetEncodedUrl() });
                 }
             }
