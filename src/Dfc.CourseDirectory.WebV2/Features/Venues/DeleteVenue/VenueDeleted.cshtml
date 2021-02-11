@@ -1,0 +1,20 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue.DeletedViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Your location has been deleted";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel data-testId="venue-deleted-message">
+            <govuk-panel-title>Location deleted</govuk-panel-title>
+            @Model.VenueName
+        </govuk-panel>
+
+        <h2 class="govuk-heading-m">Next steps</h2>
+        <ul class="govuk-list">
+            <li><a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">View and edit locations</a></li>
+            <li><a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link">Return to the home screen</a></li>
+        </ul>
+    </div>
+</div>

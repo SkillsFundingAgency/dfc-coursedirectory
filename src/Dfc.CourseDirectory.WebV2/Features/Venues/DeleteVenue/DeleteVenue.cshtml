@@ -1,0 +1,189 @@
+﻿@using Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
+@model ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Delete location");
+
+    var affectedCoursesErrors = ViewData.ModelState[nameof(ViewModel.AffectedCourses)]?.Errors
+        ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
+
+    var affectedApprenticeshipsErrors = ViewData.ModelState[nameof(ViewModel.AffectedApprenticeships)]?.Errors
+        ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
+
+    var affectedTLevelsErrors = ViewData.ModelState[nameof(ViewModel.AffectedTLevels)]?.Errors
+        ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
+}
+@functions
+{
+    static string Pluralise(bool plural, string pluralisation = "s")
+    {
+        return plural ? pluralisation : string.Empty;
+    }
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="AffectedCourses" data-testId="affected-courses-error-message" />
+    <govuk-error-summary-item asp-for="AffectedApprenticeships" data-testId="affected-apprenticeships-error-message" />
+    <govuk-error-summary-item asp-for="AffectedTLevels" data-testId="affected-tlevels-error-message" />
+    <govuk-error-summary-item asp-for="Confirm" data-testId="confirm-error-message" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="DeleteVenue" asp-all-route-data="@ProviderContext.RouteValues">
+
+            @Html.HiddenFor(m => m.ProviderId)
+
+            <h1 class="govuk-heading-xl">Delete location</h1>
+
+            <govuk-summary-list>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Location name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Address</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                        @foreach (var part in Model.AddressParts)
+                        {
+                            @part<br />
+                        }
+                    </govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Postcode</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.PostCode</govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+            </govuk-summary-list>
+
+            @if (Model.AffectedCourses.Count > 0
+               || Model.AffectedApprenticeships.Count > 0
+               || Model.AffectedTLevels.Count > 0)
+            {
+                <govuk-warning-text icon-fallback-text="Warning">
+                    You cannot delete this location
+                </govuk-warning-text>
+
+                <p class="govuk-body">You will need to change the location or delete the following before this location can be deleted.</p>
+
+                @if (Model.AffectedCourses.Count > 0)
+                {
+                    <div class="govuk-form-group@(affectedCoursesErrors.Any() ? " govuk-form-group--error" : string.Empty)">
+
+                        @foreach (var error in affectedCoursesErrors)
+                        {
+                            <govuk-error-message>
+                                @error.ErrorMessage
+                            </govuk-error-message>
+                        }
+
+                        <govuk-details>
+                            <govuk-details-summary>@Model.AffectedCourses.Count Course@(Pluralise(Model.AffectedCourses.Count > 1))</govuk-details-summary>
+                            <govuk-details-text>
+                                <p class="govuk-body">The following courses are linked to this location</p>
+                                <ul class="govuk-list govuk-list--bullet">
+                                    @foreach (var affectedCourseRun in Model.AffectedCourses.OrderBy(c => c.CourseName))
+                                    {
+                                        <li data-testId="affected-course-@affectedCourseRun.CourseId">
+                                            <a asp-controller="CourseSummary" asp-action="Index" asp-route-courseId="@affectedCourseRun.CourseId" asp-route-courseRunId="@affectedCourseRun.CourseRunId" class="govuk-link">@affectedCourseRun.CourseName</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </govuk-details-text>
+                        </govuk-details>
+                    </div>
+                }
+
+                @if (Model.AffectedApprenticeships.Count > 0)
+                {
+                    <div class="govuk-form-group@(affectedApprenticeshipsErrors.Any() ? " govuk-form-group--error" : string.Empty)">
+
+                        @foreach (var error in affectedApprenticeshipsErrors)
+                        {
+                            <govuk-error-message>
+                                @error.ErrorMessage
+                            </govuk-error-message>
+                        }
+
+                        <govuk-details>
+                            <govuk-details-summary>@Model.AffectedApprenticeships.Count Apprenticeship@(Pluralise(Model.AffectedApprenticeships.Count > 1))</govuk-details-summary>
+                            <govuk-details-text>
+                                <p class="govuk-body">The following apprenticeships are linked to this location</p>
+                                <ul class="govuk-list govuk-list--bullet">
+                                    @foreach (var affectedApprenticeship in Model.AffectedApprenticeships.OrderBy(a => a.ApprenticeshipName))
+                                    {
+                                        <li data-testId="affected-apprenticeship-@affectedApprenticeship.ApprenticeshipId">
+                                            <a asp-controller="Apprenticeships" asp-action="ViewAndEdit" asp-route-id="@affectedApprenticeship.ApprenticeshipId" class="govuk-link">@affectedApprenticeship.ApprenticeshipName</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </govuk-details-text>
+                        </govuk-details>
+                    </div>
+                }
+
+                @if (Model.AffectedTLevels.Count > 0)
+                {
+                    <div class="govuk-form-group@(affectedTLevelsErrors.Any() ? " govuk-form-group--error" : string.Empty)">
+
+                        @foreach (var error in affectedTLevelsErrors)
+                        {
+                            <govuk-error-message>
+                                @error.ErrorMessage
+                            </govuk-error-message>
+                        }
+
+                        <govuk-details>
+                            <govuk-details-summary>@Model.AffectedTLevels.Count T Level@(Pluralise(Model.AffectedTLevels.Count > 1))</govuk-details-summary>
+                            <govuk-details-text>
+                                <p>The following T Levels are linked to this location</p>
+                                <ul class="govuk-list govuk-list--bullet">
+                                    @foreach (var affectedTLevel in Model.AffectedTLevels.OrderBy(t => t.TLevelName))
+                                    {
+                                        <li data-testId="affected-tlevel-@affectedTLevel.TLevelId">
+                                            <a asp-controller="ViewTLevel" asp-action="Index" asp-route-tLevelId="@affectedTLevel.TLevelId" class="govuk-link">@affectedTLevel.TLevelName</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </govuk-details-text>
+                        </govuk-details>
+                    </div>
+                }
+            }
+            else
+            {
+                <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                    <govuk-checkboxes-fieldset>
+                        <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">Are you sure?</h2>
+                        </govuk-checkboxes-fieldset-legend>
+                    </govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-item value="@(true)" checked="false">
+                        Yes, I want to delete this location
+                    </govuk-checkboxes-item>
+                </govuk-checkboxes>
+
+                <govuk-button type="submit" id="pttcd-delete-location__delete-btn" class="govuk-button--warning govuk-!-margin-right-5" data-testId="delete-location-button">Delete location</govuk-button>
+            }
+
+            <govuk-button asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function ($) {
+            var confirm = $('#Confirm');
+
+            function disableDeleteBtn() {
+                $('#pttcd-delete-location__delete-btn')
+                    .attr('disabled', confirm.is(':checked') ? null : 'disabled');
+            }
+
+            disableDeleteBtn();
+            confirm.change(disableDeleteBtn);
+        })(jQuery);
+    </script>
+}

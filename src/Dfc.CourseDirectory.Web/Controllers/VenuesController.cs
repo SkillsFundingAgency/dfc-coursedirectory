@@ -5,8 +5,6 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Onspd;
 using Dfc.CourseDirectory.Services.Models.Venues;
@@ -26,8 +24,6 @@ using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -37,8 +33,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IAddressSearchService _addressSearchService;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        private readonly ICourseService _courseService;
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ISearchClient<Core.Search.Models.Onspd> _searchClient;
         private readonly SqlDataSync _sqlDataSync;
 
@@ -48,45 +42,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IAddressSearchService addressSearchService,
             IVenueSearchHelper venueSearchHelper,
             IVenueService venueService,
-            ICourseService courseService, 
-            IApprenticeshipService apprenticeshipService,
             ISearchClient<Core.Search.Models.Onspd> searchClient,
             SqlDataSync sqlDataSync)
         {
             _addressSearchService = addressSearchService ?? throw new ArgumentNullException(nameof(addressSearchService));
             _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
             _sqlDataSync = sqlDataSync;
-        }
-
-        /// <summary>
-        /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
-        /// </summary>
-        /// <returns></returns>
-        /// 
-        [Authorize]
-        public async Task<IActionResult> Index()
-        {
-            Session.SetString("Option", "Venues");
-            Claim providerUKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-            if (!string.IsNullOrEmpty(providerUKPRN?.Value))
-            {
-                Session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value));
-            }
-
-            int UKPRN = 0;
-            if (Session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = Session.GetInt32("UKPRN").Value;
-                return View(await GetVenues(UKPRN, null, false));
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
         }
 
         [Authorize]
@@ -428,66 +391,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> CheckForCoursesOrApprenticeships(Guid VenueId)
-        {
-            int? UKPRN = Session.GetInt32("UKPRN");
-            
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
-            var coursesByUKPRN = (await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-
-            var apprenticeships = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
-            var liveApprenticeships = apprenticeships.Value?.Where(x => x.RecordStatus == RecordStatus.Live);
-            var apprenticeshipLocations = liveApprenticeships.SelectMany(x => x.ApprenticeshipLocations).Where(x => (x.VenueId == VenueId || x.LocationGuidId == VenueId)).ToList();
-
-            var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-
-            var liveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.Live && x.VenueId == VenueId).ToList();
-
-            var migrationPendingCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
-
-            var bulkUploadPendingCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.BulkUploadPending && x.VenueId == VenueId).ToList();
-
-            var migrationReadyForLiveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
-
-            var bulkUploadReadyForLiveCourseRuns = courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Services.Models.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
-
-            var model = new DeleteVenueCheckViewModel()
-            {
-                LiveCoursesExist = liveCourseRuns?.Count() > 0,
-                PendingCoursesExist = migrationPendingCourseRuns?.Count() > 0 || bulkUploadPendingCourseRuns?.Count() > 0 || migrationReadyForLiveCourseRuns?.Count() > 0 || bulkUploadReadyForLiveCourseRuns?.Count() > 0,
-                LiveApprenticeshipsExist = apprenticeshipLocations?.Count() > 0
-
-            };
-
-            return Ok(model);
-        }
-
-        [Authorize]
-        public async Task<IActionResult> DeleteVenue(Guid VenueId)
-        {
-            int? UKPRN = Session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
-            var updatedVenue = await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString()));
-            updatedVenue.Value.Status = Deleted;
-
-            updatedVenue = await _venueService.UpdateAsync(updatedVenue.Value);
-            await _sqlDataSync.SyncVenue(updatedVenue.Value);
-
-            var deletedVenue = new VenueSearchResultItemModel(HtmlEncoder.Default.Encode(updatedVenue.Value.VenueName), updatedVenue.Value.Address1, updatedVenue.Value.Address2, updatedVenue.Value.Town, updatedVenue.Value.County, updatedVenue.Value.PostCode, updatedVenue.Value.ID);
-
-            return View("VenueSearchResults", await GetVenues(deletedVenue));
-        }
-
-        [Authorize]
         [HttpGet]
         public IActionResult LandingOptions()
         {
@@ -502,7 +405,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case LocationsLandingOptions.Add:
                     return RedirectToAction("AddVenue", "Venues");
                 case LocationsLandingOptions.Manage:
-                    return RedirectToAction("Index", "Venues");
+                    return RedirectToAction("ViewVenues", "ViewVenues");
                 default:
                     return RedirectToAction("LandingOptions", "Venues");
             }

@@ -6,8 +6,5 @@ namespace Dfc.CourseDirectory.WebV2.Tests.StubControllers
     {
         [Route("Venues/Add")]
         public IActionResult AddVenue() => Ok();
-
-        [Route("Venues")]
-        public IActionResult Index() => Ok();
     }
 }

@@ -278,7 +278,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                     @if (Model.VenueCount > 0)
                     {
                         <li>
-                            <a asp-controller="Venues" asp-action="Index" class="govuk-link" data-testid="venues-view-edit-link">View and edit locations</a>
+                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">View and edit locations</a>
                         </li>
                     }
                 </ul>

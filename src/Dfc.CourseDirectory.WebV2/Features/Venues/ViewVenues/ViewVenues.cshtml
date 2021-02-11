@@ -1,0 +1,56 @@
+﻿@using Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
+@model ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Your locations");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        
+        <h1 class="govuk-heading-xl">Your locations</h1>
+
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Location</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Address</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Postcode</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">&nbsp;</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+
+                @if (Model.Venues.Any())
+                {
+                    foreach (var venue in Model.Venues.OrderBy(v => v.VenueName))
+                    {
+                        <tr class="govuk-table__row" data-testid="venue-row-@venue.VenueId">
+                            <td class="govuk-table__cell nowrap" data-testid="venue-name">@venue.VenueName</td>
+                            <td class="govuk-table__cell nowrap" data-testid="venue-address">
+                                @foreach (var item in venue.AddressParts)
+                                {
+                                    @item<br />
+                                }
+                            </td>
+                            <td class="govuk-table__cell" data-testid="venue-postcode">@venue.PostCode</td>
+                            <td class="govuk-table__cell"><a asp-action="Details" asp-controller="EditVenue" asp-route-venueId="@venue.VenueId" class="govuk-link" data-testid="venue-view-link">View<span class="govuk-visually-hidden"> @venue.VenueName</span></a></td>
+                            <td class="govuk-table__cell"><a asp-action="DeleteVenue" asp-controller="DeleteVenue" asp-route-venueId="@venue.VenueId" class="govuk-link" data-testid="venue-delete-link">Delete<span class="govuk-visually-hidden"> @venue.VenueName</span></a></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="5">You have no locations</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        <govuk-button asp-action="AddVenue" asp-controller="Venues" asp-all-route-data="@ProviderContext.RouteValues">Add a location</govuk-button>
+
+    </div>
+</div>
