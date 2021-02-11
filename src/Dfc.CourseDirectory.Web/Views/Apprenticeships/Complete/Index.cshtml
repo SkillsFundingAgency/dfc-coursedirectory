@@ -1,33 +1,37 @@
-﻿@using Microsoft.AspNetCore.Authorization;
-@using Microsoft.AspNetCore.Identity
-@using Dfc.CourseDirectory.Services.Models
+﻿@addTagHelper *, GovUk.Frontend.AspNetCore
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.CompleteViewModel
 @{
-    ViewData["Title"] = Model.ApprenticeshipName + " has been added to the Course directory"; 
-    Layout = "_Layout_Your_Courses";
+    ViewData["Title"] = Model.ApprenticeshipName + " has been added to the Course directory";
+    Layout = "_V2LayoutProviderContext";
 }
 
-<div class="govuk-panel govuk-panel--confirmation">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel>
+            <govuk-panel-title>Apprenticeship published</govuk-panel-title>
 
-    <div class="govuk-panel__body">
-        <h1 class="govuk-panel__title">
-            Apprenticeship published
-        </h1>
+            @Model.ApprenticeshipName
+        </govuk-panel>
 
-        @Model.ApprenticeshipName has been added to the Course directory
+        <p class="govuk-body">
+            Your apprenticeship will be available on Find an apprenticeship training provider
+            for employers who want to take on an apprentice.
+        </p>
+
+        <div class="Publish-Complete">
+            <div class="govuk-!-margin-top-6">
+                <h2 class="govuk-heading-l govuk-!-font-size-36">What next?</h2>
+            </div>
+        </div>
+        <div class="govuk-form-group">
+            <a asp-controller="Apprenticeships" asp-action="AddAnotherApprenticeship"
+               class="govuk-link">Add a new apprenticeship</a>
+            <br/>
+            <a asp-controller="ProviderApprenticeships" asp-action="Index"
+               class="govuk-link">View, edit, copy or delete an apprenticeship</a>
+            <br/>
+            <a asp-controller="Home" asp-action="Index"
+               class="govuk-link">Back to the home screen</a>
+        </div>
     </div>
-
 </div>
-<div class="Publish-Complete">
-    <div class="govuk-!-margin-top-6">
-        <h2 class="govuk-heading-l govuk-!-font-size-36">Next steps</h2>
-    </div>
-</div>
-<div class="govuk-form-group">
-    @Html.ActionLink("Add another apprenticeship", "AddAnotherApprenticeship", "Apprenticeships", new { }, new { @class = "govuk-link" })
-    <br/>
-    @Html.ActionLink("Return to dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
-
-</div>
-
-
