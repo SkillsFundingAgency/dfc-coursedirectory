@@ -145,13 +145,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             VerifyNotUploaded();
         }
 
-        private static bool StreamContainsOriginalData(Stream stream, string originalData)
-        {
-            var reader = new StreamReader(stream);
-            var actualCsv = reader.ReadToEnd();
-            return originalData == actualCsv;
-        }
-
         private BulkUploadApprenticeshipsController BuildController()
         {
             var mockUser = new Mock<ClaimsPrincipal>();

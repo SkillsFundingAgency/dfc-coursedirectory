@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Services.Models;
 
 namespace Dfc.CourseDirectory.Services.Models.Courses
 {
@@ -9,11 +8,11 @@ namespace Dfc.CourseDirectory.Services.Models.Courses
     {
         public Guid id { get; set; }
         public int? CourseId { get; set; }
-        public string QualificationCourseTitle { get; set; } 
-        public string LearnAimRef { get; set; } 
-        public string NotionalNVQLevelv2 { get; set; } 
-        public string AwardOrgCode { get; set; } 
-        public string QualificationType { get; set; } 
+        public string QualificationCourseTitle { get; set; }
+        public string LearnAimRef { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
+        public string AwardOrgCode { get; set; }
+        public string QualificationType { get; set; }
         public int ProviderUKPRN { get; set; }
         public string CourseDescription { get; set; }
         public string EntryRequirements { get; set; }
@@ -40,13 +39,6 @@ namespace Dfc.CourseDirectory.Services.Models.Courses
 
         object ICloneable.Clone() {
             return Clone();
-        }
-
-        public Course WithNoCourseRuns()
-        {
-            Course empty = (Course)this.MemberwiseClone();
-            empty.CourseRuns = new List<CourseRun>();
-            return empty;
         }
 
         private static RecordStatus GetBitMaskState(IEnumerable<CourseRun> courseRuns)
