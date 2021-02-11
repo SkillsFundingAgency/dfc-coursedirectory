@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             {
                 Address = l.Address,
                 ApprenticeshipLocationType = l.ApprenticeshipLocationType,
-                CreatedBy = request.UpdatedBy.Email,
+                CreatedBy = request.UpdatedBy.UserId,
                 CreatedDate = request.UpdatedDate,
                 DeliveryModes = l.DeliveryModes.ToList(),
                 Id = Guid.NewGuid(),
@@ -61,12 +61,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 Radius = l.Radius,
                 RecordStatus = 1,
                 Regions = l.Regions,
-                UpdatedBy = request.UpdatedBy.Email,
+                UpdatedBy = request.UpdatedBy.UserId,
                 UpdatedDate = request.UpdatedDate,
                 VenueId = l.VenueId
             }).ToList();
             apprenticeship.UpdatedDate = request.UpdatedDate;
-            apprenticeship.UpdatedBy = request.UpdatedBy.Email;
+            apprenticeship.UpdatedBy = request.UpdatedBy.UserId;
 
             request.StandardOrFramework.Switch(
                 standard =>

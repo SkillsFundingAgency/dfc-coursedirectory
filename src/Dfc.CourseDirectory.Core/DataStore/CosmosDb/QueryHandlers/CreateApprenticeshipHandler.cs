@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 {
                     Address = l.Address,
                     ApprenticeshipLocationType = l.ApprenticeshipLocationType,
-                    CreatedBy = request.CreatedByUser.Email,
+                    CreatedBy = request.CreatedByUser.UserId,
                     CreatedDate = request.CreatedDate,
                     DeliveryModes = l.DeliveryModes.ToList(),
                     Id = Guid.NewGuid(),
@@ -45,15 +45,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                     Radius = l.Radius,
                     RecordStatus = 1,
                     Regions = l.Regions,
-                    UpdatedBy = request.CreatedByUser.Email,
+                    UpdatedBy = request.CreatedByUser.UserId,
                     UpdatedDate = request.CreatedDate,
                     VenueId = l.VenueId
                 }).ToList(),
                 RecordStatus = request.Status,
                 CreatedDate = request.CreatedDate,
-                CreatedBy = request.CreatedByUser.Email,
+                CreatedBy = request.CreatedByUser.UserId,
                 UpdatedDate = request.CreatedDate,
-                UpdatedBy = request.CreatedByUser.Email,
+                UpdatedBy = request.CreatedByUser.UserId,
                 BulkUploadErrors = new List<BulkUploadError>(),
                 ValidationErrors = Array.Empty<string>(),
                 LocationValidationErrors = Array.Empty<string>()
