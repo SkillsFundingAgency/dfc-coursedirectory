@@ -13,7 +13,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         Task<Result<CourseSearchResult>> GetYourCoursesByUKPRNAsync(CourseSearchCriteria criteria);
         Task<Result<Course>> UpdateCourseAsync(Course course);
         Task<Result<Course>> GetCourseByIdAsync(GetCourseByIdCriteria criteria);
-        Task<Result> ArchiveProviderLiveCourses(int? UKPRN);
         Task<Result> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo);
         Task<Result> ArchiveCourseRunsByUKPRN(int UKPRN);
         SelectRegionModel GetRegions();
@@ -23,11 +22,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
         Task<Result> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
         Result<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode);
         Task<Result<IEnumerable<CourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(CourseSearchCriteria criteria);
-        Task<Result<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(CourseSearchCriteria criteria);
         Task<Result> DeleteBulkUploadCourses(int UKPRN);
         Task<Result<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
         Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports();
-        Task<Result<int>> GetTotalLiveCourses();
         Task<Result> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN, int StatusToBeChangedTo);
     }
 }

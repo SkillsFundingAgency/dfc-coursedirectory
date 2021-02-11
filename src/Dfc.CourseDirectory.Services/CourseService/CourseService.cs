@@ -361,54 +361,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<Result<IEnumerable<Course>>> GetRecentCourseChangesByUKPRN(CourseSearchCriteria criteria)
-        {
-            if (criteria == null)
-            {
-                throw new ArgumentNullException(nameof(criteria));
-            }
-
-            if (criteria.UKPRN < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(criteria.UKPRN), $"{nameof(criteria.UKPRN)} cannot be less than 0.");
-            }
-
-            try
-            {
-                if (!criteria.UKPRN.HasValue)
-                    return Result.Fail<IEnumerable<Course>>("Get recent course changes unknown UKRLP");
-
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    if (!json.StartsWith("["))
-                        json = "[" + json + "]";
-
-                    var courses = JsonConvert.DeserializeObject<IEnumerable<Course>>(json);
-
-                    return Result.Ok(courses);
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<Course>>("Get recent course changes service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get recent course changes service http request error");
-                return Result.Fail<IEnumerable<Course>>("Get recent course changes service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get recent course changes service unknown error.");
-                return Result.Fail<IEnumerable<Course>>("Get recent course changes service unknown error.");
-            }
-        }
-
         public Result<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode)
         {
             if (courses == null)
@@ -826,26 +778,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 .Replace("�", "£");
         }
 
-        public async Task<Result> ArchiveProviderLiveCourses(int? UKPRN)
-        {
-            if (UKPRN == null)
-            {
-                throw new ArgumentNullException(nameof(UKPRN));
-            }
-
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "?UKPRN=" + UKPRN));
-
-            if (response.IsSuccessStatusCode)
-            {
-                return Result.Ok();
-            }
-            else
-            {
-                return Result.Fail("Archive courses service unsuccessful http response");
-            }
-        }
-
         public async Task<Result> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
         {
             // @ToDo: sort out this ugly hack that fixes the TaskCancelledException when this is called from the background worker in the CourseDirectory app per
@@ -1001,29 +933,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 _logger.LogError(e, "Get course migration report service unknown error.");
                 return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
-            }
-        }
-
-        public async Task<Result<int>> GetTotalLiveCourses()
-        {
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-
-                var response = await httpClient.GetAsync(_getTotalLiveCoursesUri);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var total = JsonConvert.DeserializeObject<int>(json);
-
-                    return Result.Ok(total);
-                }
-                else
-                {
-                    return Result.Fail<int>("GetTotalLiveCourses service unsuccessful http response");
-                }
             }
         }
 
