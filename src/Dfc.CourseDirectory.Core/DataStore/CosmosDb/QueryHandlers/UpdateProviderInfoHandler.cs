@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             provider.MarketingInformation = request.MarketingInformation;
             provider.DateUpdated = request.UpdatedOn;
-            provider.UpdatedBy = request.UpdatedBy.Email;
+            provider.UpdatedBy = request.UpdatedBy.UserId;
 
             await client.ReplaceDocumentAsync(documentUri, provider);
 

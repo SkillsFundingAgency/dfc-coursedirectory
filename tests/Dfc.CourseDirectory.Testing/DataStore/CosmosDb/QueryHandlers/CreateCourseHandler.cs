@@ -47,15 +47,15 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     Regions = cr.Regions,
                     RecordStatus = request.CourseStatus,
                     CreatedDate = request.CreatedDate,
-                    CreatedBy = request.CreatedByUser.Email,
+                    CreatedBy = request.CreatedByUser.UserId,
                     UpdatedDate = request.CreatedDate,
-                    UpdatedBy = request.CreatedByUser.Email,
+                    UpdatedBy = request.CreatedByUser.UserId,
                     ProviderCourseID = cr.ProviderCourseId
                 }),
                 CourseStatus = request.CourseStatus,
-                CreatedBy = request.CreatedByUser.Email,
+                CreatedBy = request.CreatedByUser.UserId,
                 CreatedDate = request.CreatedDate,
-                UpdatedBy = request.CreatedByUser.Email,
+                UpdatedBy = request.CreatedByUser.UserId,
                 UpdatedDate = request.CreatedDate
             };
 

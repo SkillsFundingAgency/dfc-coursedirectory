@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 
             provider.MarketingInformation = request.MarketingInformation;
             provider.DateUpdated = request.UpdatedOn;
-            provider.UpdatedBy = request.UpdatedBy.Email;
+            provider.UpdatedBy = request.UpdatedBy.UserId;
 
             inMemoryDocumentStore.Providers.Save(provider);
 
