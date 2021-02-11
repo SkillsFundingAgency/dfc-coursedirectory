@@ -2,6 +2,7 @@
     [TLevelDefinitionId]         UNIQUEIDENTIFIER NOT NULL,
     [FrameworkCode]              INT              NOT NULL,
     [ProgType]                   INT              NOT NULL,
+    [QualificationLevel]         INT     NOT NULL DEFAULT 0,
     [Name]                       NVARCHAR (MAX)   NOT NULL,
     [ExemplarWhoFor]             NVARCHAR(500),
     [ExemplarEntryRequirements]  NVARCHAR(500),

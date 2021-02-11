@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<IReadOnlyCollection<TLevelDefinition>> Execute(SqlTransaction transaction, GetTLevelDefinitionsForProvider query)
         {
             const string sql = @"
-SELECT      d.TLevelDefinitionId, d.FrameworkCode, d.ProgType, d.Name
+SELECT      d.TLevelDefinitionId, d.FrameworkCode, d.ProgType, d.QualificationLevel, d.Name
 FROM        Pttcd.TLevelDefinitions d
 INNER JOIN  Pttcd.ProviderTLevelDefinitions pd ON pd.TLevelDefinitionId = d.TLevelDefinitionId
 WHERE       pd.ProviderId = @ProviderId

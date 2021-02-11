@@ -17,7 +17,7 @@ SELECT
     t.TLevelId, t.TLevelStatus, p.ProviderId, p.ProviderName,
     t.WhoFor, t.EntryRequirements, t.WhatYoullLearn, t.HowYoullLearn, t.HowYoullBeAssessed,
     t.WhatYouCanDoNext, t.YourReference, t.StartDate, t.Website, t.CreatedOn, t.UpdatedOn,
-    d.TLevelDefinitionId, d.FrameworkCode, d.ProgType, d.Name
+    d.TLevelDefinitionId, d.FrameworkCode, d.ProgType, d.QualificationLevel, d.Name
 FROM Pttcd.TLevels t
 JOIN Pttcd.TLevelDefinitions d ON t.TLevelDefinitionId = d.TLevelDefinitionId
 JOIN Pttcd.Providers p ON t.ProviderId = p.ProviderId

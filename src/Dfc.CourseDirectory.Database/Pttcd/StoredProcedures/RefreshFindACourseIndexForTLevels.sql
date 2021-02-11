@@ -17,7 +17,7 @@ BEGIN
 			p.Ukprn ProviderUkprn,
 			tld.Name QualificationCourseTitle,
 			NULL LearnAimRef,
-			'3' NotionalNVQLevelv2,
+			tld.QualificationLevel NotionalNVQLevelv2,
 			t.WhoFor CourseDescription,
 			tld.Name CourseName,
 			1 DeliveryMode,  -- Classroom based,

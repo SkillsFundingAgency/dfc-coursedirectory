@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public Guid TLevelDefinitionId { get; set; }
         public int FrameworkCode { get; set; }
         public int ProgType { get; set; }
+        public int QualificationLevel { get; set; }
         public string Name { get; set; }
         public string ExemplarWhoFor { get; set; }
         public string ExemplarEntryRequirements { get; set; }
