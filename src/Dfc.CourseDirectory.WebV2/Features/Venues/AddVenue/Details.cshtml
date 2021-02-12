@@ -1,0 +1,53 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details.ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Add location");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Details" asp-all-route-data="RouteValuesHelper.FromQueryString()">
+            <h1 class="govuk-heading-xl">
+                Add location
+            </h1>
+
+            <p class="govuk-body-l">This information will be linked with the courses you provide.</p>
+
+            <govuk-input asp-for="Name" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label class="govuk-label--s">Location name</govuk-input-label>
+            </govuk-input>
+
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Address</h2>
+            <p class="govuk-body">
+          
+                @foreach (var part in Model.AddressParts)
+                {
+                    @part<br />
+                }
+            </p>
+
+            <govuk-input asp-for="Email" type="email" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label class="govuk-label--s">Email</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="PhoneNumber" type="tel" input-class="govuk-!-width-one-third">
+                <govuk-input-label class="govuk-label--s">Telephone</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label class="govuk-label--s">Website</govuk-input-label>
+            </govuk-input>
+
+            <govuk-button type="submit" class="govuk-!-margin-right-3">Continue</govuk-button>
+            
+            @if (ViewBag.FromPublishPage == true)
+            {
+                <govuk-button asp-action="CheckAndPublish" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-button--secondary">Cancel</govuk-button>
+            }
+            else
+            {
+                <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
+            }
+        </form>
+    </div>
+</div>

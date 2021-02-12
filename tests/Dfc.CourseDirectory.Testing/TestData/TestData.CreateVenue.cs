@@ -38,9 +38,9 @@ namespace Dfc.CourseDirectory.Testing
             {
                 VenueId = venueId,
                 ProviderUkprn = provider.Ukprn,
-                VenueName = venueName,
+                Name = venueName,
                 Email = email,
-                Telephone = telephone,
+                PhoneNumber = telephone,
                 Website = website,
                 AddressLine1 = addressLine1,
                 AddressLine2 = addressLine2,

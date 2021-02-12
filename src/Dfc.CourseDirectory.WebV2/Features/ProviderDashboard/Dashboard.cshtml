@@ -273,7 +273,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
             <div class="pttcd-provider-dashboard__card__actions">
                 <ul class="govuk-list pttcd-list--small">
                     <li>
-                        <a asp-controller="Venues" asp-action="AddVenue" class="govuk-link">Add a location</a>
+                        <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a location</a>
                     </li>
                     @if (Model.VenueCount > 0)
                     {

@@ -1,5 +1,5 @@
 ﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
@@ -13,9 +13,9 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 Id = request.VenueId,
                 Status = 1,
                 Ukprn = request.ProviderUkprn,
-                VenueName = request.VenueName,
+                VenueName = request.Name,
                 Email = request.Email,
-                PHONE = request.Telephone,
+                PHONE = request.PhoneNumber,
                 Website = request.Website,
                 AddressLine1 = request.AddressLine1,
                 AddressLine2 = request.AddressLine2,

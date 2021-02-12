@@ -1,0 +1,43 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch.SearchViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Add location");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="AddressId" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="SelectPostcode" asp-all-route-data="@RouteValuesHelper.FromQueryString()">
+            <h1 class="govuk-heading-xl">
+                Add location
+            </h1>
+
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Postcode</h2>
+            <p class="govuk-body">
+                <span data-testid="postcode">@Model.Postcode</span>
+                <a asp-action="Index" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-fragment="@nameof(Model.Postcode)" class="govuk-link govuk-!-margin-left-5">
+                    Change<span class="govuk-visually-hidden"> postcode</span>
+                </a>
+            </p>
+
+            <govuk-select asp-for="AddressId">
+                <govuk-select-label class="govuk-label--m">Select an address</govuk-select-label>
+                <govuk-select-item value="">@Model.Results.Count address@(Model.Results.Count > 1 ? "es" : "") found</govuk-select-item>
+                @foreach (var result in Model.Results)
+                {
+                    <govuk-select-item value="@result.AddressId">@result.StreetAddress</govuk-select-item>
+                }
+            </govuk-select>
+
+            <p class="govuk-body">
+                <a asp-action="Address" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link">I can't find my address in the list</a>
+            </p>
+
+            <govuk-button class="govuk-!-margin-right-3">Continue</govuk-button>
+            <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
+    </div>
+</div>
