@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<IReadOnlyCollection<TLevelDefinition>> Execute(SqlTransaction transaction, GetTLevelDefinitions query)
         {
             const string sql = @"
-SELECT      TLevelDefinitionId, FrameworkCode, ProgType, Name
+SELECT      TLevelDefinitionId, FrameworkCode, ProgType, QualificationLevel, Name
 FROM        Pttcd.TLevelDefinitions
 ORDER BY    Name ASC";
 

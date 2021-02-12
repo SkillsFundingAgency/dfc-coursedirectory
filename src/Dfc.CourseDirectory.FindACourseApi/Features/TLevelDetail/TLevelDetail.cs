@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
                 {
                     FrameworkCode = tLevel.TLevelDefinition.FrameworkCode,
                     ProgType = tLevel.TLevelDefinition.ProgType,
-                    QualificationLevel = "3",
+                    QualificationLevel = tLevel.TLevelDefinition.QualificationLevel.ToString(),
                     TLevelName = tLevel.TLevelDefinition.Name
                 },
                 StartDate = tLevel.StartDate,

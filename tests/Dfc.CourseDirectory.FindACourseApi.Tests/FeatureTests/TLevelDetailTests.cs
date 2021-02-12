@@ -49,6 +49,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var tLevelDefinitionName = "T Level name";
             var tLevelDefinitionFrameworkCode = 4;
             var tLevelDefinitionProgType = 3;
+            var tLevelDefinitionQualificationLevel = 5;
 
             var venueId = Guid.NewGuid();
             var venueName = "Venue";
@@ -89,7 +90,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                          TLevelDefinitionId = tLevelDefinitionId,
                          Name = tLevelDefinitionName,
                          FrameworkCode = tLevelDefinitionFrameworkCode,
-                         ProgType = tLevelDefinitionProgType
+                         ProgType = tLevelDefinitionProgType,
+                         QualificationLevel = tLevelDefinitionQualificationLevel
                      },
                      ProviderId = providerId,
                      ProviderName = providerName,
@@ -191,10 +193,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 json["offeringType"].ToObject<string>().Should().Be("TLevel");
                 json["tLevelId"].ToObject<string>().Should().Be(tLevelId.ToString());
-                json["qualification"]["tLevelName"].ToObject<string>().Should().Be(tLevelDefinitionName);
-                json["qualification"]["qualificationLevel"].ToObject<string>().Should().Be("3");
                 json["qualification"]["frameworkCode"].ToObject<int>().Should().Be(tLevelDefinitionFrameworkCode);
                 json["qualification"]["progType"].ToObject<int>().Should().Be(tLevelDefinitionProgType);
+                json["qualification"]["qualificationLevel"].ToObject<string>().Should().Be(tLevelDefinitionQualificationLevel.ToString());
+                json["qualification"]["tLevelName"].ToObject<string>().Should().Be(tLevelDefinitionName);
                 json["provider"]["providerName"].ToObject<string>().Should().Be(providerName);
                 json["provider"]["ukprn"].ToObject<int>().Should().Be(providerUkprn);
                 json["provider"]["email"].ToObject<string>().Should().Be(providerContactEmail);

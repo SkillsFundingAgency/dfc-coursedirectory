@@ -10,6 +10,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 
         public int ProgType { get; set; }
 
+        public int QualificationLevel { get; set; }
+
         public string Name { get; set; }
     }
 }
