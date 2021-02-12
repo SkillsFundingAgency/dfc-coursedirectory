@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search.Models;
 
-namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
+namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
 {
     public class TLevelDetailViewModel
     {
-        public FindACourseOfferingType OfferingType { get; set; }
+        public FindACourseOfferingType OfferingType => FindACourseOfferingType.TLevel;
         public Guid TLevelId { get; set; }
+        public Guid TLevelDefinitionId { get; set; }
         public QualificationViewModel Qualification { get; set; }
         public ProviderViewModel Provider { get; set; }
         public string WhoFor { get; set; }
@@ -20,12 +21,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
         public string Website { get; set; }
         public DateTime StartDate { get; set; }
         public IReadOnlyCollection<TLevelLocationViewModel> Locations { get; set; }
-        public CourseDeliveryMode DeliveryMode { get; set; }
-        public CourseAttendancePattern AttendancePattern { get; set; }
-        public CourseStudyMode StudyMode { get; set; }
-        public CourseDurationUnit DurationUnit { get; set; }
-        public int? DurationValue { get; set; }
-        public decimal? Cost { get; set; }
-        public string CostDescription { get; set; }
+        public CourseDeliveryMode DeliveryMode => CourseDeliveryMode.ClassroomBased;
+        public CourseAttendancePattern AttendancePattern => CourseAttendancePattern.Daytime;
+        public CourseStudyMode StudyMode => CourseStudyMode.FullTime;
+        public CourseDurationUnit DurationUnit => CourseDurationUnit.Years;
+        public int? DurationValue => 2;
+        public decimal? Cost => null;
+        public string CostDescription => "T Levels are currently only available to 16-19 year olds. Contact us for details of other suitable courses.";
     }
 }

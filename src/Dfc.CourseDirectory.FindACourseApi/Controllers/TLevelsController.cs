@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         }
 
         [HttpGet("~/tleveldefinitions")]
-        [ProducesResponseType(typeof(Features.TLevelDefinitions.TLevelDefinitionViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Features.TLevelDefinitions.ViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -32,12 +32,27 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
         }
 
-        [HttpGet("~/tleveldetail")]
-        [ProducesResponseType(typeof(Features.TLevelDetail.TLevelDetailViewModel), StatusCodes.Status200OK)]
+        [HttpGet("~/tlevels")]
+        [ProducesResponseType(typeof(Features.TLevels.ViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> TLevelDetail([FromQuery] Features.TLevelDetail.Query request)
+        public async Task<IActionResult> GetTLevels()
+        {
+            if (!_featureFlagProvider.HaveFeature(FeatureFlags.TLevels))
+            {
+                return NotFound();
+            }
+
+            return Ok(await _mediator.Send(new Features.TLevels.Query()));
+        }
+
+        [HttpGet("~/tleveldetail")]
+        [ProducesResponseType(typeof(Features.TLevels.TLevelDetailViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> TLevelDetail([FromQuery] Features.TLevels.TLevelDetail.Query request)
         {
             var result = await _mediator.Send(request);
 

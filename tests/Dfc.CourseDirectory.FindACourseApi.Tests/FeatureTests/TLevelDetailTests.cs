@@ -193,6 +193,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 json["offeringType"].ToObject<string>().Should().Be("TLevel");
                 json["tLevelId"].ToObject<string>().Should().Be(tLevelId.ToString());
+                json["tLevelDefinitionId"].ToObject<string>().Should().Be(tLevelDefinitionId.ToString());
                 json["qualification"]["frameworkCode"].ToObject<int>().Should().Be(tLevelDefinitionFrameworkCode);
                 json["qualification"]["progType"].ToObject<int>().Should().Be(tLevelDefinitionProgType);
                 json["qualification"]["qualificationLevel"].ToObject<string>().Should().Be(tLevelDefinitionQualificationLevel.ToString());

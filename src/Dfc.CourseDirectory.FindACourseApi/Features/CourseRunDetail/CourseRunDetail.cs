@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 Cost = courseRun.Cost,
                 CostDescription = courseRun.CostDescription,
                 CourseName = courseRun.CourseName,
-                CourseURL = EnsureHttpPrefixed(courseRun.CourseURL),
+                CourseURL = ViewModelFormatting.EnsureHttpPrefixed(courseRun.CourseURL),
                 CreatedDate = courseRun.CreatedDate,
                 DeliveryMode = courseRun.DeliveryMode,
                 DurationUnit = courseRun.DurationUnit,
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                         Telephone = venue.PHONE,
                         Town = venue.Town,
                         VenueName = venue.VenueName,
-                        Website = EnsureHttpPrefixed(venue.Website),
+                        Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website),
                         Latitude = venue.Latitude,
                         Longitude = venue.Longitude
                     }
@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     County = providerContact?.ContactAddress?.Locality,
                     Telephone = providerContact?.ContactTelephone1,
                     Fax = providerContact?.ContactFax,
-                    Website = EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
+                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
                     Email = providerContact?.ContactEmail,
                     EmployerSatisfaction = feChoice?.EmployerSatisfaction,
                     LearnerSatisfaction = feChoice?.LearnerSatisfaction,
@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     Cost = c.CourseRun.Cost,
                     CostDescription = c.CourseRun.CostDescription,
                     CourseName = c.CourseRun.CourseName,
-                    CourseURL = EnsureHttpPrefixed(c.CourseRun.CourseURL),
+                    CourseURL = ViewModelFormatting.EnsureHttpPrefixed(c.CourseRun.CourseURL),
                     CreatedDate = c.CourseRun.CreatedDate,
                     DeliveryMode = c.CourseRun.DeliveryMode,
                     DurationUnit = c.CourseRun.DurationUnit,
@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                             Telephone = c.Venue.PHONE,
                             Town = c.Venue.Town,
                             VenueName = c.Venue.VenueName,
-                            Website = EnsureHttpPrefixed(c.Venue.Website),
+                            Website = ViewModelFormatting.EnsureHttpPrefixed(c.Venue.Website),
                             Latitude = c.Venue.Latitude,
                             Longitude = c.Venue.Longitude
                         }
@@ -196,11 +196,5 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     }).ToArray()
             };
         }
-
-        private static string EnsureHttpPrefixed(string url) => !string.IsNullOrEmpty(url)
-            ? url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-                ? url
-                : $"http://{url}"
-            : null;
     }
 }

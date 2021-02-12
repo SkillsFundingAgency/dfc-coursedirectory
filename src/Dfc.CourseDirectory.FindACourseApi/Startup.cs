@@ -47,13 +47,24 @@ namespace Dfc.CourseDirectory.FindACourseApi
                     // By default the type's name is used for the schemaId;
                     // override for places where that yields collisions
 
-                    if (type == typeof(Features.TLevelDetail.QualificationViewModel))
+                    if (type == typeof(Features.TLevelDefinitions.ViewModel))
                     {
-                        return $"TLevel{nameof(Features.TLevelDetail.QualificationViewModel)}";
+                        return $"TLevelDefinitions{nameof(Features.TLevelDefinitions.ViewModel)}";
                     }
-                    else if (type == typeof(Features.TLevelDetail.ProviderViewModel))
+                    
+                    if (type == typeof(Features.TLevels.ViewModel))
                     {
-                        return $"TLevel{nameof(Features.TLevelDetail.ProviderViewModel)}";
+                        return $"TLevels{nameof(Features.TLevels.ViewModel)}";
+                    }
+                    
+                    if (type == typeof(Features.TLevels.QualificationViewModel))
+                    {
+                        return $"TLevel{nameof(Features.TLevels.QualificationViewModel)}";
+                    }
+                    
+                    if (type == typeof(Features.TLevels.ProviderViewModel))
+                    {
+                        return $"TLevel{nameof(Features.TLevels.ProviderViewModel)}";
                     }
 
                     return type.Name;
