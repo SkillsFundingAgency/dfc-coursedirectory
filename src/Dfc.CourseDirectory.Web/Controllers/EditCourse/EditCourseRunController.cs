@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
 using Dfc.CourseDirectory.WebV2;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         private ISession Session => HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly IVenueService _venueService;
 
         private const string SessionVenues = "Venues";
@@ -42,7 +44,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
             IVenueService venueService,
-            IVenueSearchHelper venueSearchHelper)
+            IVenueSearchHelper venueSearchHelper,
+            IProviderContextProvider providerContextProvider)
         {
             if (courseSearchSettings == null)
             {
@@ -63,13 +66,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             _htmlEncoder = htmlEncoder;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
 
-            Session.SetString("Option", "AddNewVenueForEdit");
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
                 AwardOrgCode = model.AwardOrgCode,
@@ -105,7 +108,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             Session.SetObject("EditCourseRunObject", vm);
 
 
-            return Json(Url.Action("AddVenue", "Venues"));
+            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
+                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
+                .ToString());
 
 
         }
@@ -232,8 +237,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid courseRunId, PublishMode mode)
         {
-            Session.SetString("Option", "AddNewVenueForEdit");
-
             int? UKPRN;
 
             if (Session.GetInt32("UKPRN") != null)

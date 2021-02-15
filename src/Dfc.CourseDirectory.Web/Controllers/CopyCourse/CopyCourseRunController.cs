@@ -15,6 +15,8 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
+using Dfc.CourseDirectory.WebV2;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
         private ISession _session => HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly IVenueService _venueService;
 
         public CopyCourseRunController(
@@ -43,7 +46,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
             IVenueService venueService,
-            IVenueSearchHelper venueSearchHelper)
+            IVenueSearchHelper venueSearchHelper,
+            IProviderContextProvider providerContextProvider)
         {
             if (logger == null)
             {
@@ -70,13 +74,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _courseService = courseService;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
-            _session.SetString("Option", "AddNewVenueForCopy");
-
             CopyCourseRunViewModel vm = new CopyCourseRunViewModel
             {
                 AwardOrgCode = model.AwardOrgCode,
@@ -108,7 +111,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             _session.SetObject("CopyCourseRunObject", vm);
 
-            return Json(Url.Action("AddVenue", "Venues"));
+            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "CopyCourseRun") }))
+                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
+                .ToString());
         }
 
         [HttpGet]

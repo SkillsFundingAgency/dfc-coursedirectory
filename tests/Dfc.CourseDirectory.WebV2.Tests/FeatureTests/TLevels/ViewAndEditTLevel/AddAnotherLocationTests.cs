@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().StartWith($"/Venues/Add");
+            response.Headers.Location.OriginalString.Should().StartWith($"/venues/add");
 
             var journeyState = GetJourneyInstance<EditTLevelJourneyModel>(journeyInstanceId).State;
 

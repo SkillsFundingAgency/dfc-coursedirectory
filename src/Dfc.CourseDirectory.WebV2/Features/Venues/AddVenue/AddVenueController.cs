@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Flurl;
 using FormFlow;
@@ -156,6 +157,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
                 command,
                 success =>
                 {
+                    // LEGACY: Some legacy journeys display a notification when a venue has been added.
+                    // Stash the venue's address in TempData so it can be read by those legacy views.
+                    TempData.Add(
+                        TempDataKeys.AddedVenueDescription,
+                        string.Join(
+                            ", ",
+                            new[]
+                            {
+                                _journeyInstance.State.Name,
+                                _journeyInstance.State.AddressLine1,
+                                _journeyInstance.State.AddressLine2,
+                                _journeyInstance.State.Town,
+                                _journeyInstance.State.County,
+                                _journeyInstance.State.Postcode
+                            }
+                            .Where(l => !string.IsNullOrWhiteSpace(l))));
+
                     if (_journeyInstance.Properties.TryGetValue(ReturnUrlJourneyInstancePropertyKey, out var returnUrlObj) &&
                         returnUrlObj is string returnUrl &&
                         Url.IsLocalUrl(returnUrl))

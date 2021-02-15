@@ -389,7 +389,7 @@
         <h2 class="govuk-heading-m">VENUE</h2>
 
         <p class="govuk-body">You can only enter a venue that is already added to Publish to the course directory.</p>
-        <p class="govuk-body">If you have a new venue you must <a asp-action="AddVenue" asp-controller="Venues" class="govuk-link">add this to your locations</a> before you can complete a bulk upload.</p>
+        <p class="govuk-body">If you have a new venue you must <a asp-action="Index" asp-controller="AddVenue" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">add this to your locations</a> before you can complete a bulk upload.</p>
 
         <table class="govuk-table pttcd-table-header-width__40">
             <tbody class="govuk-table__body">

@@ -23,16 +23,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         private readonly IMediator _mediator;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly EditTLevelJourneyModelFactory _journeyModelFactory;
+        private readonly IProviderContextProvider _providerContextProvider;
         private JourneyInstance<EditTLevelJourneyModel> _journeyInstance;
 
         public EditTLevelController(
             IMediator mediator,
             JourneyInstanceProvider journeyInstanceProvider,
-            EditTLevelJourneyModelFactory journeyModelFactory)
+            EditTLevelJourneyModelFactory journeyModelFactory,
+            IProviderContextProvider providerContextProvider)
         {
             _mediator = mediator;
             _journeyInstanceProvider = journeyInstanceProvider;
             _journeyModelFactory = journeyModelFactory;
+            _providerContextProvider = providerContextProvider;
         }
 
         [HttpGet("edit")]
@@ -79,14 +82,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
             await _mediator.Send(command);
 
             return RedirectToAction(
+                "Index",
                 "AddVenue",
-                "Venues",
                 new
                 {
                     returnUrl = Url.Action(
                         nameof(Edit),
                         new { tLevelId, ffiid = _journeyInstance.InstanceId.UniqueKey })
-                });
+                })
+                .WithProviderContext(_providerContextProvider.GetProviderContext());
         }
 
         [HttpGet("check-publish")]
