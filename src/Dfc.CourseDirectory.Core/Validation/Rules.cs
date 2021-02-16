@@ -38,7 +38,8 @@ namespace Dfc.CourseDirectory.Core.Validation
                         ? $"https://{url}"
                         : url;
 
-                    return Uri.TryCreate(withPrefix, UriKind.Absolute, out var uri)
+                    return Uri.IsWellFormedUriString(withPrefix, UriKind.Absolute)
+                        && Uri.TryCreate(withPrefix, UriKind.Absolute, out var uri)
                         && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
                         && uri.Host.Contains('.')
                         && !uri.Host.StartsWith('.')
