@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             // Act
             var validationResult = validator.Validate(model);
 
-            // Asser
+            // Assert
             Assert.True(validationResult.IsValid);
         }
 
@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             // Act
             var validationResult = validator.Validate(model);
 
-            // Asser
+            // Assert
             Assert.True(validationResult.IsValid);
         }
 
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             // Act
             var validationResult = validator.Validate(model);
 
-            // Asser
+            // Assert
             Assert.False(validationResult.IsValid);
         }
 
@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             // Act
             var validationResult = validator.Validate(model);
 
-            // Asser
+            // Assert
             Assert.False(validationResult.IsValid);
         }
 
@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             // Act
             var validationResult = validator.Validate(model);
 
-            // Asser
+            // Assert
             Assert.True(validationResult.IsValid);
         }
 
@@ -93,8 +93,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
             // Act
             var validationResult = validator.Validate(model);
 
-            // Asser
+            // Assert
             Assert.True(validationResult.IsValid);
+        }
+
+        [Fact]
+        public void WebsiteWithSpacesFailsValidation()
+        {
+            // Arrange
+            var website = "https://google.com/t level";
+            var model = new Model() { Website = website };
+            var validator = new Validator();
+
+            // Act
+            var validationResult = validator.Validate(model);
+
+            // Assert
+            Assert.False(validationResult.IsValid);
         }
 
         private class Model
