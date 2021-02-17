@@ -2,6 +2,8 @@
 {
     public class GetAddressAddressSearchServiceOptions
     {
-        public string Key { get; set; }
+        public bool UseGetAddress { get; set; }
+        public string ApiUrl { get; set; }
+        public string ApiKey { get; set; }
     }
 }

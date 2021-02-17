@@ -26,13 +26,13 @@
         "description": "API host key (code) needed to access the postcode search"
       }
     },
-    "getaddressApiUrl": {
+    "getAddressApiUrl": {
       "type": "string",
       "metadata": {
         "description": "API URL for the GetAddress postcode search"
       }
     },
-    "getaddressApiKey": {
+    "getAddressApiKey": {
       "type": "securestring",
       "metadata": {
         "description": "API host key (code) needed to access the GetAddress postcode search"
@@ -384,14 +384,6 @@
                 "value": "[parameters('larsApiKey')]"
               },
               {
-                "name": "GetAddressSettings__ApiUrl",
-                "value": "[parameters('getaddressApiUrl')]"
-              },
-              {
-                "name": "GetAddressSettings__ApiKey",
-                "value": "[parameters('getaddressApiKey')]"
-              },
-              {
                 "name": "LarsSearchSettings__ApiVersion",
                 "value": "2017-11-11"
               },
@@ -418,6 +410,14 @@
               {
                 "name": "PostCodeSearchSettings__Key",
                 "value": "[parameters('postcodeApiKey')]"
+              },
+              {
+                "name": "GetAddressSettings__ApiUrl",
+                "value": "[parameters('getAddressApiUrl')]"
+              },
+              {
+                "name": "GetAddressSettings__ApiKey",
+                "value": "[parameters('getAddressApiKey')]"
               },
               {
                 "name": "VenueServiceSettings__ApiUrl",

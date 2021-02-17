@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
@@ -143,7 +144,19 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<MptxInstanceContextFactory>();
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new AddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
-            services.AddSingleton<IAddressSearchService, LoqateAddressSearchService>();
+            services.Configure<GetAddressAddressSearchServiceOptions>(configuration.GetSection("GetAddressSettings"));
+            services.AddSingleton<IAddressSearchService>(s =>
+            {
+                var getAddressOptions = s.GetRequiredService<IOptions<GetAddressAddressSearchServiceOptions>>();
+
+                if (getAddressOptions.Value.UseGetAddress)
+                {
+                    return new GetAddressAddressSearchService(s.GetRequiredService<HttpClient>(), getAddressOptions);
+                }
+
+                return new LoqateAddressSearchService(s.GetRequiredService<HttpClient>(), s.GetRequiredService<AddressSearch.Options>());
+            });
+
             services.AddTransient<UkrlpSyncHelper>();
             services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             services.AddTransient<MptxManager>();
