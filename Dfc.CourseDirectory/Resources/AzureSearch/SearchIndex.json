@@ -22,5 +22,85 @@
 			{ "name": "Country", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
 			{ "name": "updated", "type": "Edm.DateTimeOffset", "filterable": false, "sortable": false, "facetable": false }
 		]
+	},
+	{
+		"name": "provider",
+		"fields": [
+			{
+				"name": "id",
+				"type": "Edm.String",
+				"key": true,
+				"sortable": false,
+				"facetable": false,
+				"searchable": false
+			},
+			{
+				"name": "UKPRN",
+				"type": "Edm.String",
+				"facetable": false
+			},
+			{
+				"name": "Name",
+				"type": "Edm.String",
+				"facetable": false,
+				"analyzer": "en.microsoft"
+			},
+			{
+				"name": "Town",
+				"type": "Edm.String"
+			},
+			{
+				"name": "Postcode",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "Region",
+				"type": "Edm.String"
+			},
+			{
+				"name": "DateUpdated",
+				"type": "Edm.DateTimeOffset",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "DateOnboarded",
+				"type": "Edm.DateTimeOffset",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "Status",
+				"type": "Edm.Int32",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "ProviderStatus",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "CourseDirectoryName",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "TradingName",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "ProviderAlias",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			}
+		]
 	}
 ]
