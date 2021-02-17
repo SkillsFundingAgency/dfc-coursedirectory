@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -34,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
                 course = query.Document;
             }
-            catch (DocumentClientException dex) when (dex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            catch (DocumentClientException dex) when (dex.StatusCode == HttpStatusCode.NotFound)
             {
                 return new NotFound();
             }
@@ -48,6 +49,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             }
 
             courseRun.RecordStatus = CourseStatus.Archived;
+            courseRun.UpdatedBy = request.UpdatedBy;
+            courseRun.UpdatedDate = request.UpdatedDate;
 
             course.CourseStatus = course.CourseRuns
                 .Select(cr => cr.RecordStatus)

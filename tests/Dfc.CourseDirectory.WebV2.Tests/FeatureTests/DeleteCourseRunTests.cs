@@ -7,7 +7,10 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using FormFlow;
+using Moq;
 using OneOf;
 using OneOf.Types;
 using Xunit;
@@ -493,7 +496,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         public async Task Post_ValidRequest_DeletesCourseRunAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            const int ukprn = 12345;
+            var providerId = await TestData.CreateProvider(ukprn: ukprn);
 
             var courseId = await TestData.CreateCourse(
                 providerId,
@@ -517,6 +521,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             CreateJourneyInstance(courseId, courseRunId);
 
+            DeleteCourseRunQuery capturedDeleteCourseRunQuery = null;
+            CosmosDbQueryDispatcher.Callback<DeleteCourseRunQuery, OneOf<NotFound, Success>>(q => capturedDeleteCourseRunQuery = q);
+
             // Act
             var response = await HttpClient.SendAsync(request);
 
@@ -527,8 +534,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed",
                 response.Headers.Location.OriginalString);
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<DeleteCourseRunQuery, OneOf<NotFound, Success>>(q =>
-                q.CourseId == courseId && q.CourseRunId == courseRunId && q.ProviderUkprn == 12345);
+            CosmosDbQueryDispatcher.Verify(d => d.ExecuteQuery(It.IsAny<DeleteCourseRunQuery>()), Times.Once);
+            using (new AssertionScope())
+            {
+                capturedDeleteCourseRunQuery.Should().NotBeNull();
+                capturedDeleteCourseRunQuery.CourseId.Should().Be(courseId);
+                capturedDeleteCourseRunQuery.CourseRunId.Should().Be(courseRunId);
+                capturedDeleteCourseRunQuery.ProviderUkprn.Should().Be(ukprn);
+                capturedDeleteCourseRunQuery.UpdatedBy.Should().Be(TestUserInfo.DefaultUserId);
+                capturedDeleteCourseRunQuery.UpdatedDate.Should().Be(MutableClock.Start);
+            }
         }
 
         [Fact]
