@@ -16,20 +16,20 @@
         }
     },
     {
-        "name" : "cdb-providerportal-ukrlp-contacttypep",
-        "type" : "documentdb",
-        "description": "Cosmos DB, providerportal database, ukrlp collection, only contact type P",
+        "name" : "sql-coursedirectory-providers",
+        "type":  "azuresql",
+        "description": "Provider list",
         "credentials" :
         {
-            "connectionString": "__providerPortalCosmosDbConnectionString__"
+            "connectionString":  "__sqlCourseDirectoryConnectionString__"
         },
         "container": {
-            "name": "ukrlp",
-            "query": "SELECT VALUE { 'id':c.id, '_ts':c._ts, 'UKPRN':c.UnitedKingdomProviderReferenceNumber, 'Name':c.ProviderName,'Status':c.Status,'ProviderStatus':c.ProviderStatus,'CourseDirectoryName':IS_DEFINED(c.CourseDirectoryName)?IS_NULL(c.CourseDirectoryName)?c.ProviderName:c.CourseDirectoryName:c.ProviderName,'ProviderAlias':c.Alias,'TradingName':c.TradingName, 'Region':c.Region, 'DateUpdated':c.DateUpdated, 'DateOnboarded':c.DateOnboarded, 'ContactType':(c.ProviderContact[1].ContactType='P')?c.ProviderContact[1].ContactType:c.ProviderContact[0].ContactType,'PostCode': (c.ProviderContact[1].ContactType='P')?c.ProviderContact[1].ContactAddress.PostCode:c.ProviderContact[0].ContactAddress.PostCode,  'Towns':(c.ProviderContact[1].ContactType='P')?c.ProviderContact[1].ContactAddress.Items:c.ProviderContact[0].ContactAddress.Items  , 'Town': (c.ProviderContact[1].ContactType='P')?c.ProviderContact[1].ContactAddress.Items[0]:c.ProviderContact[0].ContactAddress.Items[0]  } FROM c WHERE c._ts >= @HighWaterMark ORDER BY c._ts"
+            "name": "Pttcd.vwProviderSearchIndex",
+            "query": null
         },
         "dataChangeDetectionPolicy": {
             "@odata.type" : "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
-            "highWaterMarkColumnName" : "_ts"
+            "highWaterMarkColumnName":  "Version"
         }
     }
 ]

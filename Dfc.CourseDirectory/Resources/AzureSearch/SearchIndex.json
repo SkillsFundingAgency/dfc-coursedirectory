@@ -24,10 +24,10 @@
 		]
 	},
 	{
-		"name": "provider",
+		"name": "providers",
 		"fields": [
 			{
-				"name": "id",
+				"name": "ProviderId",
 				"type": "Edm.String",
 				"key": true,
 				"sortable": false,
@@ -35,12 +35,12 @@
 				"searchable": false
 			},
 			{
-				"name": "UKPRN",
+				"name": "Ukprn",
 				"type": "Edm.String",
 				"facetable": false
 			},
 			{
-				"name": "Name",
+				"name": "ProviderName",
 				"type": "Edm.String",
 				"facetable": false,
 				"analyzer": "en.microsoft"
@@ -56,47 +56,13 @@
 				"facetable": false
 			},
 			{
-				"name": "Region",
-				"type": "Edm.String"
-			},
-			{
-				"name": "DateUpdated",
-				"type": "Edm.DateTimeOffset",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "DateOnboarded",
-				"type": "Edm.DateTimeOffset",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "Status",
+				"name": "ProviderStatus",
 				"type": "Edm.Int32",
 				"sortable": false,
 				"facetable": false
 			},
 			{
-				"name": "ProviderStatus",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "CourseDirectoryName",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "TradingName",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "ProviderAlias",
+				"name": "UkrlpProviderStatusDescription",
 				"type": "Edm.String",
 				"sortable": false,
 				"facetable": false

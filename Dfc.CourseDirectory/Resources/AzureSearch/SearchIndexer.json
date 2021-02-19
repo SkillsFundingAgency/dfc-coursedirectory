@@ -15,16 +15,16 @@
         ]
     },
     {
-        "name": "providerupdate",
-        "description": "Update provider index",
-        "dataSourceName": "cdb-providerportal-ukrlp-contacttypep",
-        "targetIndexName": "provider",
+        "name": "providers-update",
+        "description": "Update providers index",
+        "dataSourceName": "sql-coursedirectory-providers",
+        "targetIndexName": "providers",
         "schedule": {
             "interval": "PT5M",
             "startTime": "2019-08-08T08:00:00Z"
         },
         "parameters": {
-            "configuration": { "assumeOrderByHighWaterMarkColumn": true }
+            "configuration": { "convertHighWaterMarkToRowVersion": true }
         }
     }
 ]
