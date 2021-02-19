@@ -14,5 +14,22 @@
             "@odata.type":  "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
             "highWaterMarkColumnName":  "updated"
         }
+    },
+    {
+        "name" : "sql-coursedirectory-providers",
+        "type":  "azuresql",
+        "description": "Provider list",
+        "credentials" :
+        {
+            "connectionString":  "__sqlCourseDirectoryConnectionString__"
+        },
+        "container": {
+            "name": "Pttcd.vwProviderSearchIndex",
+            "query": null
+        },
+        "dataChangeDetectionPolicy": {
+            "@odata.type" : "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+            "highWaterMarkColumnName":  "Version"
+        }
     }
 ]

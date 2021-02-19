@@ -22,5 +22,51 @@
 			{ "name": "Country", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
 			{ "name": "updated", "type": "Edm.DateTimeOffset", "filterable": false, "sortable": false, "facetable": false }
 		]
+	},
+	{
+		"name": "providers",
+		"fields": [
+			{
+				"name": "ProviderId",
+				"type": "Edm.String",
+				"key": true,
+				"sortable": false,
+				"facetable": false,
+				"searchable": false
+			},
+			{
+				"name": "Ukprn",
+				"type": "Edm.String",
+				"facetable": false
+			},
+			{
+				"name": "ProviderName",
+				"type": "Edm.String",
+				"facetable": false,
+				"analyzer": "en.microsoft"
+			},
+			{
+				"name": "Town",
+				"type": "Edm.String"
+			},
+			{
+				"name": "Postcode",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "ProviderStatus",
+				"type": "Edm.Int32",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "UkrlpProviderStatusDescription",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			}
+		]
 	}
 ]
