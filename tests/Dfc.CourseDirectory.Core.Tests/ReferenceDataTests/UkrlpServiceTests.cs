@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -31,7 +32,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             ProviderRecordStructure returnedProviderData;
             try
             {
-                returnedProviderData = await ukrlpService.GetProviderData(10040271);
+                returnedProviderData = (await ukrlpService.GetProviderData(new[] { 10040271 })).Values.SingleOrDefault();
             }
             catch (TimeoutException)
             {

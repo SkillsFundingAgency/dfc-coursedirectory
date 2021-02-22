@@ -183,7 +183,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         private UkrlpSyncHelper SetupUkrlpSyncHelper(int ukprn, ProviderRecordStructure ukrlpProviderData)
         {
             var ukrlpWcfService = new Mock<IUkrlpService>();
-            ukrlpWcfService.Setup(w => w.GetProviderData(ukprn)).ReturnsAsync(ukrlpProviderData);
+            ukrlpWcfService
+                .Setup(w => w.GetProviderData(It.Is<IEnumerable<int>>(v => v.SequenceEqual(new[] { ukprn }))))
+                .ReturnsAsync(new Dictionary<int, ProviderRecordStructure>()
+                {
+                    { ukprn, ukrlpProviderData }
+                });
 
             var loggerFactory = new Mock<ILoggerFactory>();
             loggerFactory.Setup(mock => mock.CreateLogger(It.IsAny<string>())).Returns(Mock.Of<ILogger>());

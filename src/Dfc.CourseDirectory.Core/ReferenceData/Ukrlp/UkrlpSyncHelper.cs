@@ -68,10 +68,26 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             _logger.LogInformation("UKRLP Sync: Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
         }
 
+        public Task SyncAllKnownProvidersData()
+        {
+            const int chunkSize = 200;
+
+            return _cosmosDbQueryDispatcher.ExecuteQuery(new ProcessAllProviders()
+            {
+                ProcessChunk = async providers =>
+                {
+                    foreach (var chunk in providers.Buffer(chunkSize))
+                    {
+                        await SyncProviderData(chunk.Select(p => p.Ukprn));
+                    }
+                }
+            });
+        }
+
         public async Task SyncProviderData(int ukprn)
         {
             _logger.LogDebug($"UKRLP Sync: Fetching updated UKRLP data for UKPRN {ukprn}...");
-            var providerData = await _ukrlpService.GetProviderData(ukprn);
+            (await _ukrlpService.GetProviderData(new[] { ukprn })).TryGetValue(ukprn, out var providerData);
 
             if (providerData == null)
             {
@@ -83,6 +99,27 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             await CreateOrUpdateProvider(providerData);
 
             _logger.LogInformation("UKRLP Sync: Successfully updated provider information from UKRLP for {0}.", ukprn);
+        }
+
+        public async Task SyncProviderData(IEnumerable<int> ukprns)
+        {
+            _logger.LogDebug($"UKRLP Sync: Fetching updated UKRLP data for UKPRNs {string.Join(", ", ukprns)}...");
+
+            var allProviderData = await _ukrlpService.GetProviderData(ukprns);
+
+            foreach (var ukprn in ukprns)
+            {
+                if (allProviderData.TryGetValue(ukprn, out var providerData))
+                {
+                    await CreateOrUpdateProvider(providerData);
+
+                    _logger.LogInformation("UKRLP Sync: Successfully updated provider information from UKRLP for {0}.", ukprn);
+                }
+                else
+                {
+                    _logger.LogWarning("UKRLP Sync: Failed to update provider information from UKRLP for {0}.", ukprn);
+                }
+            }
         }
 
         // internal for testing

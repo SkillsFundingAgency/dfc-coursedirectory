@@ -25,5 +25,10 @@ namespace Dfc.CourseDirectory.Functions
 
             await _ukrlpSyncHelper.SyncAllProviderData(updatedSince);
         }
+
+        [FunctionName("SyncKnownProviders")]
+        [Singleton]
+        [NoAutomaticTrigger]
+        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
     }
 }
