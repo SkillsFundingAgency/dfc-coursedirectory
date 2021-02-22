@@ -9,7 +9,7 @@ select
     p.ProviderStatus,
     p.UkrlpProviderStatusDescription,
     p_contact.AddressPostcode Postcode,
-    p_contact.AddressPostTown Town,
+    p_contact.AddressItems Town, -- for approximate compatibility, the old index was reading Items[0] which has been squashed into this field in sql
     p.Version -- Timestamp (RowVersion) type, used here for cosmos HighWaterMark
 from Pttcd.Providers p
 outer apply (
