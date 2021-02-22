@@ -77,26 +77,33 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             };
         }
 
-        public async Task<ProviderRecordStructure> GetProviderData(int ukprn)
+        public async Task<IReadOnlyDictionary<int, ProviderRecordStructure>> GetProviderData(IEnumerable<int> ukprns)
         {
             using var client = _ukrlpWcfClientFactory.Build();
 
+            var resultsByUkprn = new Dictionary<int, ProviderRecordStructure>();
+
             foreach (var status in _statuses)
             {
-                var request = CreateRequest(ukprn, status);
+                var request = CreateRequest(ukprns, status);
 
                 var result = await client.retrieveAllProvidersAsync(request);
                 var response = result.ProviderQueryResponse;
 
-                if (response.MatchingProviderRecords.Any())
+                if (response.MatchingProviderRecords == null)
                 {
-                    return response.MatchingProviderRecords.Single();
+                    continue;
+                }
+
+                foreach (var r in response.MatchingProviderRecords)
+                {
+                    resultsByUkprn.Add(int.Parse(r.UnitedKingdomProviderReferenceNumber), r);
                 }
             }
 
-            return null;
+            return resultsByUkprn;
 
-            static ProviderQueryStructure CreateRequest(int ukprn, string status) => new ProviderQueryStructure()
+            static ProviderQueryStructure CreateRequest(IEnumerable<int> ukprns, string status) => new ProviderQueryStructure()
             {
                 SelectionCriteria = new SelectionCriteriaStructure()
                 {
@@ -105,7 +112,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     CriteriaConditionSpecified = true,
                     ProviderStatus = status,
                     StakeholderId = StakeholderId,
-                    UnitedKingdomProviderReferenceNumberList = new[] { ukprn.ToString() },
+                    UnitedKingdomProviderReferenceNumberList = ukprns.Select(ukprn => ukprn.ToString()).ToArray(),
                 },
                 QueryId = QueryId
             };
