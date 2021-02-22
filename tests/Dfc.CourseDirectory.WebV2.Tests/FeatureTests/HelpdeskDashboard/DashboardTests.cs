@@ -1,5 +1,6 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
@@ -24,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
         }
 
         [Theory]
@@ -39,7 +40,47 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+        }
+
+        [Fact]
+        public async Task Get_RendersDownloadProviderTypeReportLink()
+        {
+            // Arrange
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync("helpdesk-dashboard");
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            var doc = await response.GetDocument();
+            var downloadProviderTypeReportLink = doc.GetElementByTestId("download-provider-type-report-link");
+
+            downloadProviderTypeReportLink.Should().NotBeNull();
+            downloadProviderTypeReportLink.TextContent.Should().Be("Download provider type report");
+            downloadProviderTypeReportLink.Attributes["href"].Value.Should().Be("/providers/reports/provider-type");
+        }
+
+        [Fact]
+        public async Task Get_RendersDownloadLiveTLevelsReportLink()
+        {
+            // Arrange
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync("helpdesk-dashboard");
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            var doc = await response.GetDocument();
+            var downloadLiveTLevelsReportLink = doc.GetElementByTestId("download-live-tlevels-report-link");
+
+            downloadLiveTLevelsReportLink.Should().NotBeNull();
+            downloadLiveTLevelsReportLink.TextContent.Should().Be("Download live T Levels report");
+            downloadLiveTLevelsReportLink.Attributes["href"].Value.Should().Be("/t-levels/reports/live-t-levels");
         }
     }
 }

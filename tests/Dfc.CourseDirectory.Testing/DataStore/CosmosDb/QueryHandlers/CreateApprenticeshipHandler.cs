@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using OneOf.Types;
@@ -15,6 +14,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
             var apprenticeship = new Apprenticeship()
             {
                 Id = request.Id,
+                ProviderId = request.ProviderId,
                 ProviderUKPRN = request.ProviderUkprn,
                 ApprenticeshipTitle = request.ApprenticeshipTitle,
                 ApprenticeshipType = request.ApprenticeshipType,
