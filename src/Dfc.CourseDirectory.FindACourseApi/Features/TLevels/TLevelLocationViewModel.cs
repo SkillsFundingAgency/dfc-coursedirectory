@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
+namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
 {
     public class TLevelLocationViewModel
     {

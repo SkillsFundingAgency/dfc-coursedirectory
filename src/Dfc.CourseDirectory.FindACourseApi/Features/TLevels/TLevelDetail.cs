@@ -6,12 +6,11 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
+namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
 {
     public class Query : IRequest<OneOf<NotFound, TLevelDetailViewModel>>
     {
@@ -61,33 +60,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
 
             return new TLevelDetailViewModel()
             {
-                AttendancePattern = CourseAttendancePattern.Daytime,
-                CostDescription = "T Levels are currently only available to 16-19 year olds. Contact us for details of other suitable courses.",
-                DeliveryMode = CourseDeliveryMode.ClassroomBased,
-                DurationUnit = CourseDurationUnit.Years,
-                DurationValue = 2,
-                EntryRequirements = tLevel.EntryRequirements,
-                HowYoullBeAssessed = tLevel.HowYoullBeAssessed,
-                HowYoullLearn = tLevel.HowYoullLearn,
-                Locations = tLevel.Locations
-                    .Select(l => (Venue: venues[l.VenueId], Location: l))
-                    .Select(t => new TLevelLocationViewModel()
-                    {
-                        TLevelLocationId = t.Location.TLevelLocationId,
-                        AddressLine1 = t.Venue.AddressLine1,
-                        AddressLine2 = t.Venue.AddressLine2,
-                        County = t.Venue.County,
-                        Email = t.Venue.Email,
-                        Latitude = Convert.ToDecimal(t.Venue.Latitude),
-                        Longitude = Convert.ToDecimal(t.Venue.Longitude),
-                        Postcode = t.Venue.Postcode,
-                        Telephone = t.Venue.Telephone,
-                        Town = t.Venue.Town,
-                        VenueName = t.Venue.VenueName,
-                        Website = EnsureHttpPrefixed(t.Venue.Website)
-                    })
-                    .ToArray(),
-                OfferingType = Core.Search.Models.FindACourseOfferingType.TLevel,
+                TLevelId = tLevel.TLevelId,
+                TLevelDefinitionId = tLevel.TLevelDefinition.TLevelDefinitionId,
+                Qualification = new QualificationViewModel()
+                {
+                    FrameworkCode = tLevel.TLevelDefinition.FrameworkCode,
+                    ProgType = tLevel.TLevelDefinition.ProgType,
+                    QualificationLevel = tLevel.TLevelDefinition.QualificationLevel.ToString(),
+                    TLevelName = tLevel.TLevelDefinition.Name
+                },
                 Provider = new ProviderViewModel()
                 {
                     ProviderName = sqlProvider.DisplayName,
@@ -97,34 +78,40 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDetail
                     Town = providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString(),
                     Postcode = providerContact?.ContactAddress?.PostCode,
                     County = providerContact?.ContactAddress?.Locality,
+                    Email = providerContact?.ContactEmail,
                     Telephone = providerContact?.ContactTelephone1,
                     Fax = providerContact?.ContactFax,
-                    Website = EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
-                    Email = providerContact?.ContactEmail,
-                    EmployerSatisfaction = feChoice?.EmployerSatisfaction,
-                    LearnerSatisfaction = feChoice?.LearnerSatisfaction
+                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
+                    LearnerSatisfaction = feChoice?.LearnerSatisfaction,
+                    EmployerSatisfaction = feChoice?.EmployerSatisfaction
                 },
-                Qualification = new QualificationViewModel()
-                {
-                    FrameworkCode = tLevel.TLevelDefinition.FrameworkCode,
-                    ProgType = tLevel.TLevelDefinition.ProgType,
-                    QualificationLevel = tLevel.TLevelDefinition.QualificationLevel.ToString(),
-                    TLevelName = tLevel.TLevelDefinition.Name
-                },
-                StartDate = tLevel.StartDate,
-                StudyMode = CourseStudyMode.FullTime,
-                TLevelId = tLevel.TLevelId,
-                Website = EnsureHttpPrefixed(tLevel.Website),
-                WhatYouCanDoNext = tLevel.WhatYouCanDoNext,
+                WhoFor = tLevel.WhoFor,
+                EntryRequirements = tLevel.EntryRequirements,
                 WhatYoullLearn = tLevel.WhatYoullLearn,
-                WhoFor = tLevel.WhoFor
+                HowYoullLearn = tLevel.HowYoullLearn,
+                HowYoullBeAssessed = tLevel.HowYoullBeAssessed,
+                WhatYouCanDoNext = tLevel.WhatYouCanDoNext,
+                Website = ViewModelFormatting.EnsureHttpPrefixed(tLevel.Website),
+                StartDate = tLevel.StartDate,
+                Locations = tLevel.Locations
+                    .Select(l => (Venue: venues[l.VenueId], Location: l))
+                    .Select(t => new TLevelLocationViewModel()
+                    {
+                        TLevelLocationId = t.Location.TLevelLocationId,
+                        VenueName = t.Venue.VenueName,
+                        AddressLine1 = t.Venue.AddressLine1,
+                        AddressLine2 = t.Venue.AddressLine2,
+                        Town = t.Venue.Town,
+                        County = t.Venue.County,
+                        Postcode = t.Venue.Postcode,
+                        Telephone = t.Venue.Telephone,
+                        Email = t.Venue.Email,
+                        Website = ViewModelFormatting.EnsureHttpPrefixed(t.Venue.Website),
+                        Latitude = Convert.ToDecimal(t.Venue.Latitude),
+                        Longitude = Convert.ToDecimal(t.Venue.Longitude)
+                    })
+                    .ToArray()
             };
         }
-
-        private static string EnsureHttpPrefixed(string url) => !string.IsNullOrEmpty(url)
-            ? url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-                ? url
-                : $"http://{url}"
-            : null;
     }
 }
