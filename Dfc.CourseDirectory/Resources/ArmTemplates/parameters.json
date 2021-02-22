@@ -14,6 +14,12 @@
     "postcodeApiKey": {
       "value": "__postcodeApiKey__"
     },
+    "getaddressApiUrl":{
+      "value": "__getaddressApiUrl__"
+    },
+    "getaddressApiKey":{
+      "value": "__getaddressApiKey__"
+    },
     "venueApiUrl": {
       "value": "__venueServiceApiUrl__"
     },

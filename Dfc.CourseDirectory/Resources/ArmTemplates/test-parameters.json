@@ -14,6 +14,12 @@
     "postcodeApiKey": {
       "value": "not-a-real-key"
     },
+    "getaddressApiUrl":{
+      "value": "https://my.api.net/api/postcode?"
+    },
+    "getaddressApiKey":{
+      "value": "not-a-real-key"
+    },
     "venueApiUrl": {
       "value": "https://my.api.net/api/venue/"
     },
