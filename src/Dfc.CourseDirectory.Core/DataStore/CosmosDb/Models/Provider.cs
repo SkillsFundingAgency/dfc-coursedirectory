@@ -74,6 +74,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string Locality { get; set; }
         public IList<string> Items { get; set; }
         public string PostTown { get; set; }
+        public string County { get; set; }
         public string PostCode { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }

@@ -218,6 +218,7 @@ namespace Dfc.CourseDirectory.Core
                         AddressLocality = c.ContactAddress?.Locality,
                         AddressItems = string.Join(" ", c.ContactAddress?.Items ?? Array.Empty<string>()),
                         AddressPostTown = c.ContactAddress?.PostTown,
+                        AddressCounty = c.ContactAddress?.County,
                         AddressPostcode = c.ContactAddress?.PostCode,
                         PersonalDetailsPersonNameTitle = string.Join(" ", c.ContactPersonalDetails?.PersonNameTitle ?? Array.Empty<string>()),
                         PersonalDetailsPersonNameGivenName = string.Join(" ", c.ContactPersonalDetails?.PersonGivenName ?? Array.Empty<string>()),

@@ -76,6 +76,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                         AddressLocality = "Locality",
                         AddressItems = new[] {"ItemDescription"},
                         AddressPostTown = "PostTown",
+                        AddressCounty = "County",
                         AddressPostCode = "Postcode",
                         PersonalDetailsFamilyName = "FamilyName",
                         PersonalDetailsGivenName = "GivenName"
@@ -163,9 +164,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             actualContactAddress.PAON.Description.Should().Be(ukrlpContact.ContactAddress.Address2);
             actualContactAddress.StreetDescription.Should().Be(ukrlpContact.ContactAddress.Address3);
             actualContactAddress.Locality.Should().Be(ukrlpContact.ContactAddress.Address4);
-
-            // Town is still mapped to items as it was in the v3 client to minimize change in data
-            actualContactAddress.PostTown.Should().BeNull();
+            actualContactAddress.PostTown.Should().Be(ukrlpContact.ContactAddress.Town);
+            actualContactAddress.County.Should().Be(ukrlpContact.ContactAddress.County);
             actualContactAddress.Items.Should().BeEquivalentTo(new List<string>
             {
                 ukrlpContact.ContactAddress.Town,
