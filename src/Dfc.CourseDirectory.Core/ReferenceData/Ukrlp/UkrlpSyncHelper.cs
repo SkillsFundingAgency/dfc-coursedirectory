@@ -110,7 +110,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     contact.ContactAddress.Town,
                     contact.ContactAddress.County,
                 }.Where(s => s != null).ToList(),
-                PostTown = null, // town still in Items to avoid changing data after upgrade from v3 to v6 UKRLP client
+                PostTown = contact.ContactAddress.Town,
+                County = contact.ContactAddress.County,
                 PostCode = contact.ContactAddress.PostCode,
             },
             ContactEmail = contact.ContactEmail,

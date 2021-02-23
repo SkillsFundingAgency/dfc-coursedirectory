@@ -44,6 +44,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string AddressLocality { get; set; }
         public string AddressItems { get; set; }
         public string AddressPostTown { get; set; }
+        public string AddressCounty { get; set; }
         public string AddressPostcode { get; set; }
         public string PersonalDetailsPersonNameTitle { get; set; }
         public string PersonalDetailsPersonNameGivenName { get; set; }

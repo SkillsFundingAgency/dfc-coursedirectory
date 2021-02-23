@@ -67,6 +67,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                             Locality = "Locality",
                             Items = new[] { "Item1", "Item2" },
                             PostTown = "Town",
+                            County = "County",
                             PostCode = "AB1 2CD"
                         },
                         ContactTelephone1 = "01234 567890",
@@ -118,6 +119,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                         c.AddressLocality == "Locality" &&
                         c.AddressItems == "Item1 Item2" &&
                         c.AddressPostTown == "Town" &&
+                        c.AddressCounty == "County" &&
                         c.AddressPostcode == "AB1 2CD" &&
                         c.PersonalDetailsPersonNameTitle == "Mr" &&
                         c.PersonalDetailsPersonNameGivenName == "Person" &&

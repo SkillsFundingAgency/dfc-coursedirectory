@@ -11,6 +11,7 @@
 	[AddressLocality] NVARCHAR(MAX),
 	[AddressItems] NVARCHAR(MAX),
 	[AddressPostTown] NVARCHAR(MAX),
+	[AddressCounty] NVARCHAR(MAX),
 	[AddressPostcode] NVARCHAR(MAX),
 	[PersonalDetailsPersonNameTitle] NVARCHAR(MAX),
 	[PersonalDetailsPersonNameGivenName] NVARCHAR(MAX),

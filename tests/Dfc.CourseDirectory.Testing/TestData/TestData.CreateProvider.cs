@@ -57,6 +57,7 @@ namespace Dfc.CourseDirectory.Testing
                         PAON = new ProviderContactAddressPAON() { Description = c.AddressPaonDescription },
                         SAON = new ProviderContactAddressSAON() { Description = c.AddressSaonDescription },
                         PostTown = c.AddressPostTown,
+                        County = c.AddressCounty,
                         PostCode = c.AddressPostCode,
                         StreetDescription = c.AddressStreetDescription
                     },
@@ -122,6 +123,7 @@ namespace Dfc.CourseDirectory.Testing
         public string AddressLocality { get; set; }
         public IList<string> AddressItems { get; set; }
         public string AddressPostTown { get; set; }
+        public string AddressCounty { get; set; }
         public string AddressPostCode { get; set; }
         public string PersonalDetailsGivenName { get; set; }
         public string PersonalDetailsFamilyName { get; set; }
