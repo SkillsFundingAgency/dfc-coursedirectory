@@ -125,11 +125,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     tLevel["qualification"]["progType"].ToObject<int>().Should().Be(expectedTLevel.TLevelDefinition.ProgType);
                     tLevel["provider"]["providerName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
                     tLevel["provider"]["ukprn"].ToObject<string>().Should().Be(provider.Ukprn.ToString());
-                    tLevel["provider"]["addressLine1"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.SAON?.Description);
-                    tLevel["provider"]["addressLine2"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.PAON?.Description);
-                    tLevel["provider"]["town"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.Items?.FirstOrDefault());
+                    tLevel["provider"]["addressLine1"].ToObject<string>().Should().Be($"{providerContact?.ContactAddress?.SAON?.Description} {providerContact?.ContactAddress?.PAON?.Description} {providerContact?.ContactAddress?.StreetDescription}");
+                    tLevel["provider"]["addressLine2"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.Locality);
+                    tLevel["provider"]["town"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.PostTown);
                     tLevel["provider"]["postcode"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.PostCode);
-                    tLevel["provider"]["county"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.Locality);
+                    tLevel["provider"]["county"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.County);
                     tLevel["provider"]["email"].ToObject<string>().Should().Be(providerContact?.ContactEmail);
                     tLevel["provider"]["telephone"].ToObject<string>().Should().Be(providerContact?.ContactTelephone1);
                     tLevel["provider"]["fax"].ToObject<string>().Should().Be(providerContact?.ContactFax);
@@ -199,8 +199,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                             {
                                 Description = $"TestPAON{seed}"
                             },
+                            StreetDescription = "TestStreetDescription{seed}",
                             Locality = $"TestLocality{seed}",
-                            Items = new[] { $"TestProviderContactItem{seed}[0]" },
+                            Items = new[] { $"TestItemsTown{seed}", $"TestItemsCounty{seed}" },
+                            PostTown = $"TestPostTown{seed}",
+                            County = $"TestCounty{seed}",
                             PostCode = $"TestPostCode{seed}"
                         },
                         ContactTelephone1 = $"TestContactTelephone1{seed}",
