@@ -24,11 +24,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTLevelDefinitions()
         {
-            if (!_featureFlagProvider.HaveFeature(FeatureFlags.TLevels))
-            {
-                return NotFound();
-            }
-
             return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
         }
 
@@ -39,11 +34,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTLevels()
         {
-            if (!_featureFlagProvider.HaveFeature(FeatureFlags.TLevels))
-            {
-                return NotFound();
-            }
-
             return Ok(await _mediator.Send(new Features.TLevels.Query()));
         }
 
