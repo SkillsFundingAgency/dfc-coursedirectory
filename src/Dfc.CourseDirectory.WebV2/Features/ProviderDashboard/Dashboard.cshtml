@@ -139,7 +139,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                             <a asp-controller="BlobStorage" asp-action="GetBulkUploadTemplateFile" class="govuk-link">A course information template (CSV)</a>
                         </li>
                         <li>
-                            <a asp-controller="BulkUpload" asp-action="Courses" class="govuk-link">Bulk upload courses</a>
+                            <a asp-controller="BulkUpload" asp-action="Courses" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload courses</a>
                         </li>
                     </ul>
                 </div>
@@ -201,7 +201,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                             <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">An apprenticeships training course template (CSV)</a>
                         </li>
                         <li>
-                            <a asp-controller="BulkUpload" asp-action="Apprenticeships" class="govuk-link">Bulk upload apprenticeships<span class="govuk-visually-hidden"> further education courses</span></a>
+                            <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload apprenticeships<span class="govuk-visually-hidden"> further education courses</span></a>
                         </li>
                     </ul>
                 </div>
