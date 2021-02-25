@@ -3,7 +3,7 @@ AS
 SELECT      p.ProviderId,
             p.Ukprn,
             p.ProviderName,
-            p.CourseDirectoryName,
+            coalesce(p.CourseDirectoryName,p.ProviderName) CourseDirectoryName, -- as per previous search index definition (affects scoring)
             p.TradingName,
             p.Alias,
             p.ProviderStatus,
