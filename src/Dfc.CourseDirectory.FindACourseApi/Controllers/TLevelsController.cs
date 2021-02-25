@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +8,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
     public class TLevelsController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IFeatureFlagProvider _featureFlagProvider;
 
-        public TLevelsController(IMediator mediator, IFeatureFlagProvider featureFlagProvider)
+        public TLevelsController(IMediator mediator)
         {
             _mediator = mediator;
-            _featureFlagProvider = featureFlagProvider;
         }
 
         [HttpGet("~/tleveldefinitions")]
