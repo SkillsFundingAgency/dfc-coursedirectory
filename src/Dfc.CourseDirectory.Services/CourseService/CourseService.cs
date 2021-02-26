@@ -28,14 +28,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getCourseByIdUri;
         private readonly Uri _updateStatusUri;
         private readonly Uri _getCourseCountsByStatusForUKPRNUri;
-        private readonly Uri _getRecentCourseChangesByUKPRNUri;
         private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
         private readonly Uri _archiveCourseRunsByUKPRNUri;
-        private readonly Uri _archiveLiveCoursesUri;
         private readonly Uri _deleteBulkUploadCoursesUri;
         private readonly Uri _getCourseMigrationReportByUKPRN;
-        private readonly Uri _getAllDfcReports;
-        private readonly Uri _getTotalLiveCoursesUri;
         private readonly Uri _archiveCoursesExceptBulkUploadReadytoGoLiveUri;
 
         private readonly int _courseForTextFieldMaxChars;
@@ -125,16 +121,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
-            _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
             _updateStatusUri = settings.Value.ToUpdateStatusUri();
             _getCourseCountsByStatusForUKPRNUri = settings.Value.ToGetCourseCountsByStatusForUKPRNUri();
-            _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
             _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
             _archiveCourseRunsByUKPRNUri = settings.Value.ToArchiveCourseRunsByUKPRNUri();
             _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
             _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
-            _getAllDfcReports = settings.Value.ToGetAllDfcReports();
-            _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
             _archiveCoursesExceptBulkUploadReadytoGoLiveUri = settings.Value.ToArchiveCoursesExceptBulkUploadReadytoGoLiveUri();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
@@ -902,37 +894,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 _logger.LogError(e, "Get course migration report service unknown error.");
                 return Result.Fail<CourseMigrationReport>("Get course migration report service unknown error.");
-            }
-        }
-
-        public async Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports()
-        {
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getAllDfcReports.AbsoluteUri));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    IList<DfcMigrationReport> dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
-                    return Result.Ok(dfcReports);
-                }
-                else
-                {
-                    return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get course migration report service http request error");
-                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get course migration report service unknown error.");
-                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
             }
         }
 

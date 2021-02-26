@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -20,7 +19,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
-            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports, _getTotalLiveCoursesUri;
+            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getTotalLiveCoursesUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -58,7 +57,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _changeApprenticeshipStatusesForUKPRNSelectionUri =
                 settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
             _getApprenticeshipDashboardCountsUri = settings.Value.GetApprenticeshipDashboardCountsUri();
-            _getAllDfcReports = settings.Value.ToGetAllDfcReports();
             _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
         }
 
@@ -442,37 +440,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogError(e, "Get apprenticeship unknown error.");
                 return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unknown error.");
-            }
-        }
-
-        public async Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports()
-        {
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getAllDfcReports.AbsoluteUri));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
-                    return Result.Ok(dfcReports);
-                }
-                else
-                {
-                    return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get course migration report service http request error");
-                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get course migration report service unknown error.");
-                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
             }
         }
 
