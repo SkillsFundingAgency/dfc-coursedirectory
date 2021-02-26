@@ -21,8 +21,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .Responds()
                 .WithJsonContent(new
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -125,8 +125,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .Responds()
                 .WithStatus(HttpStatusCode.NotFound)
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -155,8 +155,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .Responds()
                 .WithStatus(HttpStatusCode.BadRequest)
@@ -165,7 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -185,8 +185,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .Responds()
                 .WithStatus(HttpStatusCode.InternalServerError)
@@ -195,7 +195,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -212,8 +212,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .Responds()
                 .WithJsonContent(new
@@ -284,7 +284,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -312,8 +312,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .Responds()
                 .WithStatus(HttpStatusCode.NotFound)
@@ -322,7 +322,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -342,8 +342,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             new HttpRequestInterceptionBuilder()
                 .Requests()
                 .ForHttps()
-                .ForHost("api.getaddress.io")
-                .ForPath("find/XX2 00X")
+                .ForHost("example.com")
+                .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
                 .IgnoringQuery()
                 .Responds()
@@ -353,7 +353,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { Key = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 

@@ -96,8 +96,8 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 
         private async Task<FindAddressResult> FindAddresses(string postcode)
         {
-            var url = new Url($"https://api.getaddress.io/find/{postcode}")
-                .SetQueryParam("api-key", _options.Key)
+            var url = new Url(string.Format(_options.ApiUrl, postcode))
+                .SetQueryParam("api-key", _options.ApiKey)
                 .SetQueryParam("expand", "true")
                 .SetQueryParam("sort", "true");
 

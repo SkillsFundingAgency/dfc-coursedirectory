@@ -14,10 +14,10 @@
     "postcodeApiKey": {
       "value": "not-a-real-key"
     },
-    "getaddressApiUrl":{
+    "getAddressApiUrl":{
       "value": "https://my.api.net/api/postcode?"
     },
-    "getaddressApiKey":{
+    "getAddressApiKey":{
       "value": "not-a-real-key"
     },
     "venueApiUrl": {
@@ -137,7 +137,7 @@
     "providerPortalCosmosDbConnectionString": {
       "value": "https://not-a-real-account.documents.azure.com/"
     },
-    "providerPortalApplicationInsights":{
+    "providerPortalApplicationInsights": {
       "value": "dfc-dev-prov-as-ai"
     }
   }
