@@ -3,14 +3,16 @@ AS
 SELECT      p.ProviderId,
             p.Ukprn,
             p.ProviderName,
-            coalesce(p.CourseDirectoryName,p.ProviderName) CourseDirectoryName, -- as per previous search index definition (affects scoring)
-            p.TradingName,
-            p.Alias,
+            ISNULL(pc.AddressPostTown, pc.AddressItems) Town,
+            pc.AddressPostcode Postcode,
             p.ProviderStatus,
             p.UkrlpProviderStatusDescription,
-            pc.AddressPostcode Postcode,
-            ISNULL(pc.AddressPostTown, pc.AddressItems) Town,
-            p.Version -- Timestamp (RowVersion) type, used here for cosmos HighWaterMark
+            p.Version, -- Timestamp (RowVersion) type, used here for cosmos HighWaterMark
+
+            -- additional fields to skew the search index score approximately as per the old index
+            coalesce(p.CourseDirectoryName,p.ProviderName) CourseDirectoryName, -- as per previous cosmos-based search index definition
+            p.TradingName,
+            p.Alias
 FROM        [Pttcd].[Providers] p
 OUTER APPLY (
     SELECT TOP 1    AddressItems,

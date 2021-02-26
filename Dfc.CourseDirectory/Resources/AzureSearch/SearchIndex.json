@@ -46,24 +46,6 @@
 				"analyzer": "en.microsoft"
 			},
 			{
-				"name": "CourseDirectoryName",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "TradingName",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "Alias",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
 				"name": "Town",
 				"type": "Edm.String"
 			},
@@ -81,6 +63,24 @@
 			},
 			{
 				"name": "UkrlpProviderStatusDescription",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "CourseDirectoryName",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "TradingName",
+				"type": "Edm.String",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "Alias",
 				"type": "Edm.String",
 				"sortable": false,
 				"facetable": false
