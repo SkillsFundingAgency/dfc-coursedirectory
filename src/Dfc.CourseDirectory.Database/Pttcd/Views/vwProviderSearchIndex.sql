@@ -14,8 +14,8 @@ SELECT      p.ProviderId,
             p.TradingName,
             p.Alias,
             p.UpdatedOn,
-            null as DateOnboarded,
-            null as Region
+            cast(null as datetime) as DateOnboarded,
+            cast(null as varchar(255)) as Region
 FROM        [Pttcd].[Providers] p
 OUTER APPLY (
     SELECT TOP 1    AddressItems,
