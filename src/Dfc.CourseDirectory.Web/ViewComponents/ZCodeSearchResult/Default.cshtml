@@ -1,22 +1,11 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Authorization;
-@using Dfc.CourseDirectory.Services.UnregulatedProvision
-
 @addTagHelper *, Dfc.CourseDirectory.WebV2
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 @model Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult.ZCodeSearchResultModel;
-
 
 <div class="govuk-grid-row">
     @if (Model.Items != null && Model.Items.Count() > 0)
     {
-
-
-
         <div class="govuk-grid-column-one-quarter">
             @*<h3>filter controls here</h3>*@
             @if (Model.Filters != null)
@@ -65,9 +54,7 @@
 
         <div class="govuk-grid-column-three-quarters">
 
-
             <div class="govuk-table govuk-!-font-size-14">
-
 
                 @foreach (var item in Model.Items)
                 {
@@ -77,17 +64,25 @@
                         <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
                         @*<p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>*@
 
-
                         @Html.ActionLink("Choose this provision", "AddCourse", "AddCourse", new { @item?.LearnAimRef, @item?.NotionalNVQLevelv2, @item?.AwardOrgCode, @item?.LearnAimRefTitle, @item?.LearnAimRefTypeDesc }, new { @class = "link--button" })
-
-
 
                     </div>
                 }
 
             </div>
-            <vc:pager current-page=Model.CurrentPage total-pages=(int)Math.Ceiling((decimal)Model.TotalCount)/Model.ItemsPerPage get-page-url="@(pageNumber => Url.Action("ZCodeNotKnown", new {Level1Id =Model.Level1Id, Level2Id=Model.Level2Id,  PageNo = pageNumber}))" />
-           
+            <vc:pager
+                current-page="Model.CurrentPage"
+                total-pages="(int)Math.Ceiling((decimal)Model.TotalCount)/Model.ItemsPerPage"
+                get-page-url="@(pageNumber => Url.Action(
+                    "ZCodeNotKnown",
+                    new
+                    {
+                        Level1Id = Model.Level1Id,
+                        Level2Id = Model.Level2Id,
+                        NotionalNVQLevelv2Filter = Model.Filters.SingleOrDefault(f => f.Title == "Level")?.Items?.Where(i => i.IsSelected).Select(i => i.Value),
+                        AwardOrgAimRefFilter = Model.Filters.SingleOrDefault(f => f.Title == "Category")?.Items?.Where(i => i.IsSelected).Select(i => i.Value),
+                        PageNo = pageNumber
+                    }))" />
         </div>
     }
 
@@ -114,43 +109,3 @@
         });
     })(jQuery);
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
