@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow.State;
@@ -35,6 +36,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             DatabaseFixture = new DatabaseFixture(Configuration, Server.Host.Services, messageSink);
             TestData = DatabaseFixture.CreateTestData();
         }
+
+        public Mock<IAddressSearchService> AddressSearchService { get; } = new Mock<IAddressSearchService>();
 
         public MutableClock Clock => DatabaseFixture.Clock;
 
@@ -128,10 +131,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 services.AddSingleton(OnspdSearchClient.Object);
                 services.AddSingleton(ProviderSearchClient.Object);
                 services.AddSingleton(BinaryStorageProvider.Object);
+                services.AddSingleton(AddressSearchService.Object);
             });
 
         private void ResetMocks()
         {
+            AddressSearchService.Reset();
             OnspdSearchClient.Reset();
             ProviderSearchClient.Reset();
             BinaryStorageProvider.Reset();

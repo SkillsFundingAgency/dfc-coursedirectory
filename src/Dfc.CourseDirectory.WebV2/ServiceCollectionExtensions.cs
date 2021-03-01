@@ -143,18 +143,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new AddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.Configure<GetAddressAddressSearchServiceOptions>(configuration.GetSection("GetAddressSettings"));
-            services.AddSingleton<IAddressSearchService>(s =>
-            {
-                var getAddressOptions = s.GetRequiredService<IOptions<GetAddressAddressSearchServiceOptions>>();
-
-                if (getAddressOptions.Value.UseGetAddress)
-                {
-                    return new GetAddressAddressSearchService(s.GetRequiredService<HttpClient>(), getAddressOptions);
-                }
-
-                return new LoqateAddressSearchService(s.GetRequiredService<HttpClient>(), s.GetRequiredService<AddressSearch.Options>());
-            });
-
             services.AddTransient<UkrlpSyncHelper>();
             services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             services.AddTransient<MptxManager>();
@@ -194,6 +182,18 @@ namespace Dfc.CourseDirectory.WebV2
                     new Uri(configuration["AzureSearchUrl"]),
                     configuration["AzureSearchQueryKey"],
                     indexName: "onspd");
+
+                services.AddSingleton<IAddressSearchService>(s =>
+                {
+                    var getAddressOptions = s.GetRequiredService<IOptions<GetAddressAddressSearchServiceOptions>>();
+
+                    if (getAddressOptions.Value.UseGetAddress)
+                    {
+                        return new GetAddressAddressSearchService(s.GetRequiredService<HttpClient>(), getAddressOptions);
+                    }
+
+                    return new LoqateAddressSearchService(s.GetRequiredService<HttpClient>(), s.GetRequiredService<AddressSearch.Options>());
+                });
             }
 
 #if DEBUG
