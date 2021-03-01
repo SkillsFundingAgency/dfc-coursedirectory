@@ -29,7 +29,7 @@
                 <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Weekend">@WebHelper.GetEnumDescription(AttendancePattern.Weekend)</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input daynight" })
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input", id = AttendancePattern.DayOrBlockRelease })
                 <label class="govuk-label govuk-radios__label" for="@AttendancePattern.DayOrBlockRelease">@WebHelper.GetEnumDescription(AttendancePattern.DayOrBlockRelease)</label>
             </div>
 
