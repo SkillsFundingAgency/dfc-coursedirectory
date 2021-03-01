@@ -84,6 +84,22 @@
 				"type": "Edm.String",
 				"sortable": false,
 				"facetable": false
+			},
+			{
+				"name": "DateUpdated",
+				"type": "Edm.DateTimeOffset",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "DateOnboarded",
+				"type": "Edm.DateTimeOffset",
+				"sortable": false,
+				"facetable": false
+			},
+			{
+				"name": "Region",
+				"type": "Edm.String"
 			}
 		]
 	}

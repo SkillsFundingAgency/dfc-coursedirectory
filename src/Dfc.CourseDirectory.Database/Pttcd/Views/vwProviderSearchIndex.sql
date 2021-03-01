@@ -12,7 +12,10 @@ SELECT      p.ProviderId,
             -- additional fields to skew the search index score approximately as per the old index
             coalesce(p.CourseDirectoryName,p.ProviderName) CourseDirectoryName, -- as per previous cosmos-based search index definition
             p.TradingName,
-            p.Alias
+            p.Alias,
+            p.UpdatedOn,
+            null as DateOnboarded,
+            null as Region
 FROM        [Pttcd].[Providers] p
 OUTER APPLY (
     SELECT TOP 1    AddressItems,
