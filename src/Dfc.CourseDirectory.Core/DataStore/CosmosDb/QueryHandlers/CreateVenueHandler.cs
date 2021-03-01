@@ -9,6 +9,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
     public class CreateVenueHandler : ICosmosDbQueryHandler<CreateVenue, Success>
     {
+        private readonly SqlDataSync _sqlDataSync;
+
+        public CreateVenueHandler(SqlDataSync sqlDataSync)
+        {
+            _sqlDataSync = sqlDataSync;
+        }
+
         public async Task<Success> Execute(
             DocumentClient client,
             Configuration configuration,
@@ -41,6 +48,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             };
 
             await client.CreateDocumentAsync(collectionUri, venue);
+
+            await _sqlDataSync.SyncVenue(venue);
 
             return new Success();
         }

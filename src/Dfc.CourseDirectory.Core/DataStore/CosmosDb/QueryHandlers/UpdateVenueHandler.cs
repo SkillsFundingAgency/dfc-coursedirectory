@@ -11,6 +11,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
     public class UpdateVenueHandler : ICosmosDbQueryHandler<UpdateVenue, OneOf<NotFound, Venue>>
     {
+        private readonly SqlDataSync _sqlDataSync;
+
+        public UpdateVenueHandler(SqlDataSync sqlDataSync)
+        {
+            _sqlDataSync = sqlDataSync;
+        }
+
         public async Task<OneOf<NotFound, Venue>> Execute(
             DocumentClient client,
             Configuration configuration,
@@ -49,6 +56,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             venue.DateUpdated = request.UpdatedDate;
 
             await client.ReplaceDocumentAsync(documentUri, venue);
+
+            await _sqlDataSync.SyncVenue(venue);
 
             return venue;
         }
