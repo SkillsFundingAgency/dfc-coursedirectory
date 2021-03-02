@@ -4,5 +4,6 @@
     {
         public const string TLevels = "TLevels";
         public const string TLevelsBeta = "TLevelsBeta";
+        public const string OpenData = "OpenData";
     }
 }
