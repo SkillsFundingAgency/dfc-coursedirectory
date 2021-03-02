@@ -37,7 +37,7 @@
             </li>
         }
         <li class="pttcd-subnav__item">
-            <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link" data-testid="adminsubnav-locations">
+            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="pttcd-subnav__item__link" data-testid="adminsubnav-locations">
                 Locations
             </a>
         </li>
