@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Longitude = 43M,
                     Name = name,
                     AddressIsOutsideOfEngland = false,
-                    PhoneNumber = phoneNumber,
+                    Telephone = phoneNumber,
                     Postcode = postcode,
                     Town = town,
                     Website = website
@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Longitude = 43M,
                     Name = name,
                     AddressIsOutsideOfEngland = false,
-                    PhoneNumber = phoneNumber,
+                    Telephone = phoneNumber,
                     Postcode = postcode,
                     Town = town,
                     Website = website

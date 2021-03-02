@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
         public string Name { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
         public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string Telephone { get; set; }
         public string Website { get; set; }
         public bool NewAddressIsOutsideOfEngland { get; set; }
     }
@@ -36,10 +36,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
         IRequestHandler<Command, Success>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly JourneyInstance<AddVenueJourneyModel> _journeyInstance;
 
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
@@ -49,35 +49,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
             IProviderContextProvider providerContextProvider)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _journeyInstanceProvider = journeyInstanceProvider;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _providerContextProvider = providerContextProvider;
-            _journeyInstance = journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             ThrowIfFlowStateNotValid();
 
-            var state = _journeyInstance.State;
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
 
             var addressParts = new[]
             {
-                state.AddressLine1,
-                state.AddressLine2,
-                state.Town,
-                state.County,
-                state.Postcode
+                journeyInstance.State.AddressLine1,
+                journeyInstance.State.AddressLine2,
+                journeyInstance.State.Town,
+                journeyInstance.State.County,
+                journeyInstance.State.Postcode
             }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
 
             var vm = new ViewModel()
             {
                 AddressParts = addressParts,
-                Email = state.Email,
-                Name = state.Name,
-                PhoneNumber = state.PhoneNumber,
-                Website = state.Website,
-                NewAddressIsOutsideOfEngland = state.AddressIsOutsideOfEngland
+                Email = journeyInstance.State.Email,
+                Name = journeyInstance.State.Name,
+                Telephone = journeyInstance.State.Telephone,
+                Website = journeyInstance.State.Website,
+                NewAddressIsOutsideOfEngland = journeyInstance.State.AddressIsOutsideOfEngland
             };
 
             return Task.FromResult(vm);
@@ -87,6 +87,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
         {
             ThrowIfFlowStateNotValid();
 
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
             var venueId = Guid.NewGuid();
             var providerUkprn = _providerContextProvider.GetProviderContext().ProviderInfo.Ukprn;
 
@@ -94,34 +96,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
             {
                 VenueId = venueId,
                 ProviderUkprn = providerUkprn,
-                Name = _journeyInstance.State.Name,
-                Email = _journeyInstance.State.Email,
-                PhoneNumber = _journeyInstance.State.PhoneNumber,
-                Website = _journeyInstance.State.Website,
-                AddressLine1 = _journeyInstance.State.AddressLine1,
-                AddressLine2 = _journeyInstance.State.AddressLine2,
-                Town = _journeyInstance.State.Town,
-                County = _journeyInstance.State.County,
-                Postcode = _journeyInstance.State.Postcode,
-                Latitude = _journeyInstance.State.Latitude,
-                Longitude = _journeyInstance.State.Longitude,
+                Name = journeyInstance.State.Name,
+                Email = journeyInstance.State.Email,
+                Telephone = journeyInstance.State.Telephone,
+                Website = journeyInstance.State.Website,
+                AddressLine1 = journeyInstance.State.AddressLine1,
+                AddressLine2 = journeyInstance.State.AddressLine2,
+                Town = journeyInstance.State.Town,
+                County = journeyInstance.State.County,
+                Postcode = journeyInstance.State.Postcode,
+                Latitude = journeyInstance.State.Latitude,
+                Longitude = journeyInstance.State.Longitude,
                 CreatedBy = _currentUserProvider.GetCurrentUser(),
                 CreatedDate = _clock.UtcNow
             });
 
-            _journeyInstance.UpdateState(state => state.VenueId = venueId);
+            journeyInstance.UpdateState(state => state.VenueId = venueId);
 
             // Complete JourneyInstance so state can no longer be changed
-            _journeyInstance.Complete();
+            journeyInstance.Complete();
 
             return new Success();
         }
 
         private void ThrowIfFlowStateNotValid()
         {
-            _journeyInstance.ThrowIfCompleted();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.ThrowIfCompleted();
 
-            if (!_journeyInstance.State.ValidStages.HasFlags(AddVenueCompletedStages.All))
+            if (!journeyInstance.State.ValidStages.HasFlags(AddVenueCompletedStages.All))
             {
                 throw new InvalidStateException();
             }

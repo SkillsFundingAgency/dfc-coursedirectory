@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var journeyState = new AddTLevelJourneyModel();
 
-            journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.None);
+            journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
             var journeyInstance = CreateJourneyInstance(providerId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 journeyState.LocationVenueIds.Should().BeEquivalentTo(new[] { venueId });
                 journeyState.Website.Should().Be(website);
 
-                journeyState.ValidStages.Should().Be(
+                journeyState.CompletedStages.Should().Be(
                     AddTLevelJourneyCompletedStages.SelectTLevel |
                     AddTLevelJourneyCompletedStages.Description);
             }

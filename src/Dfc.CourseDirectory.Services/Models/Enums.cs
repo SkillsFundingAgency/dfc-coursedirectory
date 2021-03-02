@@ -180,16 +180,6 @@ namespace Dfc.CourseDirectory.Services.Models
         View = 3
     }
 
-    public enum LocationsLandingOptions
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Add a new location")]
-        Add = 1,
-        [Description("Manage your existing locations")]
-        Manage = 2
-    }
-
     public enum BulkUploadLandingOptions
     {
         [Description("Undefined")]

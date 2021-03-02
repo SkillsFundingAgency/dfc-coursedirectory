@@ -19,7 +19,6 @@
 
             <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Address</h2>
             <p class="govuk-body">
-          
                 @foreach (var part in Model.AddressParts)
                 {
                     @part<br />
@@ -30,7 +29,7 @@
                 <govuk-input-label class="govuk-label--s">Email</govuk-input-label>
             </govuk-input>
 
-            <govuk-input asp-for="PhoneNumber" type="tel" input-class="govuk-!-width-one-third">
+            <govuk-input asp-for="Telephone" type="tel" input-class="govuk-!-width-one-third">
                 <govuk-input-label class="govuk-label--s">Telephone</govuk-input-label>
             </govuk-input>
 

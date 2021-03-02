@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
     [JourneyState]
     public class AddTLevelJourneyModel
     {
-        public AddTLevelJourneyCompletedStages ValidStages { get; set; }
+        public AddTLevelJourneyCompletedStages CompletedStages { get; set; }
         public Guid? TLevelId { get; set; }
         public Guid? TLevelDefinitionId { get; set; }
         public string TLevelName { get; set; }
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 
             TLevelDefinitionId = tLevelDefinitionId;
             TLevelName = tLevelName;
-            ValidStages |= AddTLevelJourneyCompletedStages.SelectTLevel;
+            CompletedStages |= AddTLevelJourneyCompletedStages.SelectTLevel;
         }
 
         public void SetDescription(
@@ -71,11 +71,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 
             if (isComplete)
             {
-                ValidStages |= AddTLevelJourneyCompletedStages.Description;
+                CompletedStages |= AddTLevelJourneyCompletedStages.Description;
             }
             else
             {
-                ValidStages &= ~AddTLevelJourneyCompletedStages.Description;
+                CompletedStages &= ~AddTLevelJourneyCompletedStages.Description;
             }
         }
 
@@ -93,11 +93,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 
             if (isComplete)
             {
-                ValidStages |= AddTLevelJourneyCompletedStages.Details;
+                CompletedStages |= AddTLevelJourneyCompletedStages.Details;
             }
             else
             {
-                ValidStages &= ~AddTLevelJourneyCompletedStages.Details;
+                CompletedStages &= ~AddTLevelJourneyCompletedStages.Details;
             }
         }
 

@@ -22,7 +22,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         private readonly IMediator _mediator;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly IProviderContextProvider _providerContextProvider;
-        private JourneyInstance<AddVenueJourneyModel> _journeyInstance;
 
         public AddVenueController(
             IMediator mediator,
@@ -32,23 +31,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
             _mediator = mediator;
             _journeyInstanceProvider = journeyInstanceProvider;
             _providerContextProvider = providerContextProvider;
-            _journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
         }
 
         [HttpGet("")]
         public IActionResult Index([FromQuery] string postcode, [FromQuery] string returnUrl)
         {
-            _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(
+            var journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(
                 () => new AddVenueJourneyModel(),
                 new PropertiesBuilder()
                     .Add(ReturnUrlJourneyInstancePropertyKey, returnUrl)
                     .Build());
 
-            if (!_journeyInstanceProvider.IsCurrentInstance(_journeyInstance))
+            if (!_journeyInstanceProvider.IsCurrentInstance(journeyInstance))
             {
                 return RedirectToAction()
                     .WithProviderContext(_providerContextProvider.GetProviderContext())
-                    .WithJourneyInstanceUniqueKey(_journeyInstance);
+                    .WithJourneyInstanceUniqueKey(journeyInstance);
             }
 
             return View(
@@ -63,11 +61,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         [RequireJourneyInstance]
         public IActionResult Cancel()
         {
-            _journeyInstance.Delete();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.Delete();
 
-            if (_journeyInstance.Properties.TryGetValue(ReturnUrlJourneyInstancePropertyKey, out var returnUrlObj) &&
-                returnUrlObj is string returnUrl &&
-                Url.IsLocalUrl(returnUrl))
+            if (journeyInstance.Properties.TryGetValue(ReturnUrlJourneyInstancePropertyKey, out var returnUrlObj)
+                && returnUrlObj is string returnUrl
+                && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
@@ -87,17 +86,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("select-postcode")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> SelectPostcode(PostcodeSearch.SelectCommand command, [FromQuery] string postcode)
+        public Task<IActionResult> SelectPostcode(PostcodeSearch.SelectCommand command, [FromQuery] string postcode)
         {
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
             command.Postcode = postcode;
 
-            return await _mediator.SendAndMapResponse(
+            return _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors("PostcodeSearchResults", errors),
                     success => RedirectToAction(nameof(Details))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())
-                        .WithJourneyInstanceUniqueKey(_journeyInstance)));
+                        .WithJourneyInstanceUniqueKey(journeyInstance)));
         }
 
         [HttpGet("address")]
@@ -113,14 +114,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("address")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Address(Address.Command command, [FromQuery] bool? fromPublishPage) =>
-            await _mediator.SendAndMapResponse(
+        public Task<IActionResult> Address(Address.Command command, [FromQuery] bool? fromPublishPage)
+        {
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
+            return _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(fromPublishPage == true ? nameof(CheckAndPublish) : nameof(Details))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())
-                        .WithJourneyInstanceUniqueKey(_journeyInstance)));
+                        .WithJourneyInstanceUniqueKey(journeyInstance)));
+        }
 
         [HttpGet("details")]
         [RequireJourneyInstance]
@@ -131,17 +136,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("details")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Details(Details.Command command)
+        public Task<IActionResult> Details(Details.Command command)
         {
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
             command.ProviderId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId;
 
-            return await _mediator.SendAndMapResponse(
+            return _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(CheckAndPublish))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())
-                        .WithJourneyInstanceUniqueKey(_journeyInstance)));
+                        .WithJourneyInstanceUniqueKey(journeyInstance)));
         }
 
         [HttpGet("check-publish")]
@@ -152,11 +159,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("publish")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Publish(CheckAndPublish.Command command) =>
-            await _mediator.SendAndMapResponse(
+        public Task<IActionResult> Publish(CheckAndPublish.Command command) =>
+            _mediator.SendAndMapResponse(
                 command,
                 success =>
                 {
+                    var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
                     // LEGACY: Some legacy journeys display a notification when a venue has been added.
                     // Stash the venue's address in TempData so it can be read by those legacy views.
                     TempData.Add(
@@ -165,26 +174,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
                             ", ",
                             new[]
                             {
-                                _journeyInstance.State.Name,
-                                _journeyInstance.State.AddressLine1,
-                                _journeyInstance.State.AddressLine2,
-                                _journeyInstance.State.Town,
-                                _journeyInstance.State.County,
-                                _journeyInstance.State.Postcode
+                                journeyInstance.State.Name,
+                                journeyInstance.State.AddressLine1,
+                                journeyInstance.State.AddressLine2,
+                                journeyInstance.State.Town,
+                                journeyInstance.State.County,
+                                journeyInstance.State.Postcode
                             }
                             .Where(l => !string.IsNullOrWhiteSpace(l))));
 
-                    if (_journeyInstance.Properties.TryGetValue(ReturnUrlJourneyInstancePropertyKey, out var returnUrlObj) &&
-                        returnUrlObj is string returnUrl &&
-                        Url.IsLocalUrl(returnUrl))
+                    if (journeyInstance.Properties.TryGetValue(ReturnUrlJourneyInstancePropertyKey, out var returnUrlObj)
+                        && returnUrlObj is string returnUrl
+                        && Url.IsLocalUrl(returnUrl))
                     {
-                        var venueId = _journeyInstance.State.VenueId.Value;
+                        var venueId = journeyInstance.State.VenueId.Value;
                         return Redirect(new Url(returnUrl).SetQueryParam("venueId", venueId));
                     }
 
                     return (IActionResult)RedirectToAction(nameof(Published))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())
-                        .WithJourneyInstanceUniqueKey(_journeyInstance);
+                        .WithJourneyInstanceUniqueKey(journeyInstance);
                 });
 
         [HttpGet("success")]

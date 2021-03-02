@@ -867,12 +867,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var returnUrl = type == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
                 Url.Action("DeliveryOptionsCombined", "Apprenticeships", new
                 {
-                    message = "",
+                    message = string.Empty,
                     mode = "Add"
                 }) :
                 Url.Action("DeliveryOptions", "Apprenticeships", new
                 {
-                    message = "",
+                    message = string.Empty,
                     mode = "Add"
                 });
 

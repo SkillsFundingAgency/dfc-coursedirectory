@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         public Guid ProviderId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string Telephone { get; set; }
         public string Website { get; set; }
     }
 
@@ -37,18 +37,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
     {
-        private readonly JourneyInstance<AddVenueJourneyModel> _journeyInstance;
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
             IProviderInfoCache providerInfoCache,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             JourneyInstanceProvider journeyInstanceProvider)
         {
-            _journeyInstance = journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
             _providerInfoCache = providerInfoCache;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -74,11 +74,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            _journeyInstance.UpdateState(state =>
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
+            journeyInstance.UpdateState(state =>
             {
                 state.Name = request.Name;
                 state.Email = request.Email;
-                state.PhoneNumber = request.PhoneNumber;
+                state.Telephone = request.Telephone;
                 state.Website = request.Website;
                 state.ValidStages |= AddVenueCompletedStages.Details;
             });
@@ -88,32 +90,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
 
         private ViewModel CreateViewModel()
         {
-            var state = _journeyInstance.State;
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
 
             var addressParts = new[]
             {
-                state.AddressLine1,
-                state.AddressLine2,
-                state.Town,
-                state.County,
-                state.Postcode
+                journeyInstance.State.AddressLine1,
+                journeyInstance.State.AddressLine2,
+                journeyInstance.State.Town,
+                journeyInstance.State.County,
+                journeyInstance.State.Postcode
             }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
 
             return new ViewModel()
             {
                 AddressParts = addressParts,
-                Email = state.Email,
-                Name = state.Name,
-                PhoneNumber = state.PhoneNumber,
-                Website = state.Website
+                Email = journeyInstance.State.Email,
+                Name = journeyInstance.State.Name,
+                Telephone = journeyInstance.State.Telephone,
+                Website = journeyInstance.State.Website
             };
         }
 
         private void ThrowIfFlowStateNotValid()
         {
-            _journeyInstance.ThrowIfCompleted();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.ThrowIfCompleted();
 
-            if (!_journeyInstance.State.ValidStages.HasFlag(AddVenueCompletedStages.Address))
+            if (!journeyInstance.State.ValidStages.HasFlag(AddVenueCompletedStages.Address))
             {
                 throw new InvalidStateException();
             }
@@ -128,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                 RuleFor(c => c.Name)
                     .VenueName(providerUkprn, venueId: null, cosmosDbQueryDispatcher);
                 RuleFor(c => c.Email).Email();
-                RuleFor(c => c.PhoneNumber).PhoneNumber();
+                RuleFor(c => c.Telephone).PhoneNumber();
                 RuleFor(c => c.Website).Website();
             }
         }

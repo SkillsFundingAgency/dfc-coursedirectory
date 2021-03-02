@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var postcode = "AB1 2DE";
             var name = "My Venue";
             var email = "email@example.com";
-            var phoneNumber = "020 7946 0000";
+            var telephone = "020 7946 0000";
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Longitude = 43M,
                     Name = name,
                     AddressIsOutsideOfEngland = addressIsOutsideOfEngland,
-                    PhoneNumber = phoneNumber,
+                    Telephone = telephone,
                     Postcode = postcode,
                     Town = town,
                     Website = website,
@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 doc.GetSummaryListValueWithKey("Location name").Should().Be(name);
                 doc.GetSummaryListValueWithKey("Address").Should().Be($"{addressLine1}\n{addressLine2}\n{town}\n{county}\n{postcode}");
                 doc.GetSummaryListValueWithKey("Email").Should().Be(email);
-                doc.GetSummaryListValueWithKey("Telephone").Should().Be(phoneNumber);
+                doc.GetSummaryListValueWithKey("Telephone").Should().Be(telephone);
                 doc.GetSummaryListValueWithKey("Website").Should().Be(website);
 
                 if (addressIsOutsideOfEngland)
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var postcode = "AB1 2DE";
             var name = "My Venue";
             var email = "email@example.com";
-            var phoneNumber = "020 7946 0000";
+            var telephone = "020 7946 0000";
             var website = "example.com";
             var latitude = 42M;
             var longitude = 43M;
@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Longitude = longitude,
                     Name = name,
                     AddressIsOutsideOfEngland = false,
-                    PhoneNumber = phoneNumber,
+                    Telephone = telephone,
                     Postcode = postcode,
                     Town = town,
                     Website = website,
@@ -144,7 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 q.ProviderUkprn == ukprn &&
                 q.Name == name &&
                 q.Email == email &&
-                q.PhoneNumber == phoneNumber &&
+                q.Telephone == telephone &&
                 q.Website == website &&
                 q.AddressLine1 == addressLine1 &&
                 q.AddressLine2 == addressLine2 &&

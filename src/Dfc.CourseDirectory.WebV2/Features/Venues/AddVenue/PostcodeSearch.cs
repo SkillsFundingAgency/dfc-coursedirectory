@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
     {
         private readonly IAddressSearchService _addressSearchService;
         private readonly ISearchClient<Onspd> _onspdSearchClient;
-        private readonly JourneyInstance<AddVenueJourneyModel> _journeyInstance;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
             IAddressSearchService addressSearchService,
@@ -53,14 +53,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
         {
             _addressSearchService = addressSearchService;
             _onspdSearchClient = onspdSearchClient;
-            _journeyInstance = journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         public async Task<OneOf<ModelWithErrors<SearchCommand>, SearchViewModel>> Handle(
             SearchCommand request,
             CancellationToken cancellationToken)
         {
-            ThrowIfFlowStateNotValid();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
+            journeyInstance.ThrowIfCompleted();
 
             var validator = new SearchCommandValidator();
             var validationResult = validator.Validate(request);
@@ -80,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                 return CreateInvalidPostcodeResponse();
             }
 
-            var vm = await CreateViewModel(request.Postcode);
+            var vm = await SearchAddressesByPostcode(request.Postcode);
 
             if (vm.Results.Count == 0)
             {
@@ -102,7 +104,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             SelectCommand request,
             CancellationToken cancellationToken)
         {
-            ThrowIfFlowStateNotValid();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
+            journeyInstance.ThrowIfCompleted();
 
             var validator = new SelectCommandValidator();
             var validationResult = validator.Validate(request);
@@ -110,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             if (!validationResult.IsValid)
             {
                 // No address specified. Re-run the search with a prompt to select an address.
-                var vm = await CreateViewModel(request.Postcode);
+                var vm = await SearchAddressesByPostcode(request.Postcode);
                 return new ModelWithErrors<SearchViewModel>(vm, validationResult);
             }
 
@@ -126,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                     new ValidationFailure(nameof(SelectCommand.AddressId), "Select an address")
                 });
 
-                var vm = await CreateViewModel(request.Postcode);
+                var vm = await SearchAddressesByPostcode(request.Postcode);
                 return new ModelWithErrors<SearchViewModel>(vm, badAddressValidationResult);
             }
 
@@ -135,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = addressDetail.Postcode });
             var onspdPostcodeRecord = onspdSearchResult.Items.Single();
 
-            _journeyInstance.UpdateState(state =>
+            journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = addressDetail.Line1;
                 state.AddressLine2 = addressDetail.Line2;
@@ -144,14 +148,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                 state.Postcode = addressDetail.Postcode;
                 state.Latitude = onspdPostcodeRecord.Record.lat;
                 state.Longitude = onspdPostcodeRecord.Record.@long;
-                state.AddressIsOutsideOfEngland = onspdPostcodeRecord.Record.Country != "England";
+                state.AddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
                 state.ValidStages |= AddVenueCompletedStages.Address;
             });
 
             return new Success();
         }
 
-        private async Task<SearchViewModel> CreateViewModel(string postcode)
+        private async Task<SearchViewModel> SearchAddressesByPostcode(string postcode)
         {
             var results = await _addressSearchService.SearchByPostcode(postcode);
 
@@ -166,11 +170,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                     })
                     .ToArray()
             };
-        }
-
-        private void ThrowIfFlowStateNotValid()
-        {
-            _journeyInstance.ThrowIfCompleted();
         }
 
         private class SearchCommandValidator : AbstractValidator<SearchCommand>

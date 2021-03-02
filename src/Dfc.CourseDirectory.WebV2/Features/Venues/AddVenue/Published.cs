@@ -16,20 +16,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Published
 
     public class Handler : IRequestHandler<Query, ViewModel>
     {
-        private readonly JourneyInstance<AddVenueJourneyModel> _journeyInstance;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
-        public Handler(JourneyInstance<AddVenueJourneyModel> journeyInstance)
+        public Handler(JourneyInstanceProvider journeyInstanceProvider)
         {
-            _journeyInstance = journeyInstance;
+            _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            _journeyInstance.ThrowIfNotCompleted();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+
+            journeyInstance.ThrowIfNotCompleted();
 
             return Task.FromResult(new ViewModel()
             {
-                Name = _journeyInstance.State.Name
+                Name = journeyInstance.State.Name
             });
         }
     }

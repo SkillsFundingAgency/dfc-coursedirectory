@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Testing
                 ProviderUkprn = provider.Ukprn,
                 Name = venueName,
                 Email = email,
-                PhoneNumber = telephone,
+                Telephone = telephone,
                 Website = website,
                 AddressLine1 = addressLine1,
                 AddressLine2 = addressLine2,

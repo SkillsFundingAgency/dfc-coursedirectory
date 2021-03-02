@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SaveDetails
         {
             _journeyInstance.ThrowIfCompleted();
 
-            if (!_journeyInstance.State.ValidStages.HasFlags(
+            if (!_journeyInstance.State.CompletedStages.HasFlags(
                 AddTLevelJourneyCompletedStages.SelectTLevel,
                 AddTLevelJourneyCompletedStages.Description))
             {

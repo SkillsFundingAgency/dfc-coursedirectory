@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var name = "My Venue";
             var email = "email@example.com";
-            var phoneNumber = "020 7946 0000";
+            var telephone = "020 7946 0000";
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 {
                     Name = name,
                     Email = email,
-                    PhoneNumber = phoneNumber,
+                    Telephone = telephone,
                     Website = website,
                     ValidStages = AddVenueCompletedStages.Address
                 });
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 var doc = await response.GetDocument();
                 doc.GetElementById("Name").GetAttribute("value").Should().Be(name);
                 doc.GetElementById("Email").GetAttribute("value").Should().Be(email);
-                doc.GetElementById("PhoneNumber").GetAttribute("value").Should().Be(phoneNumber);
+                doc.GetElementById("Telephone").GetAttribute("value").Should().Be(telephone);
                 doc.GetElementById("Website").GetAttribute("value").Should().Be(website);
             }
         }
@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Post_InvalidDetails_RendersErrorMessage(
             string name,
             string email,
-            string phoneNumber,
+            string telephone,
             string website,
             string expectedErrorInputId,
             string expectedErrorMessage)
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Name", name)
                     .Add("Email", email)
-                    .Add("PhoneNumber", phoneNumber)
+                    .Add("Telephone", telephone)
                     .Add("Website", website)
                     .ToContent()
             };
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var name = "My Venue";
             var email = "email@example.com";
-            var phoneNumber = "020 7946 0000";
+            var telephone = "020 7946 0000";
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
@@ -132,7 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Name", name)
                     .Add("Email", email)
-                    .Add("PhoneNumber", phoneNumber)
+                    .Add("Telephone", telephone)
                     .Add("Website", website)
                     .ToContent()
             };
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 journeyInstance = GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId);
                 journeyInstance.State.Name.Should().Be(name);
                 journeyInstance.State.Email.Should().Be(email);
-                journeyInstance.State.PhoneNumber.Should().Be(phoneNumber);
+                journeyInstance.State.Telephone.Should().Be(telephone);
                 journeyInstance.State.Website.Should().Be(website);
             }
         }
@@ -163,7 +163,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 (
                     Name: "Existing Venue",
                     Email: "",
-                    PhoneNumber: "",
+                    Telephone: "",
                     Website: "",
                     ExpectedErrorInputId: "Name",
                     ExpectedErrorMessage: "Location name must not already exist"
@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 (
                     Name: "My Venue",
                     Email: "xxx",
-                    PhoneNumber: "",
+                    Telephone: "",
                     Website: "",
                     ExpectedErrorInputId: "Email",
                     ExpectedErrorMessage: "Enter an email address in the correct format"
@@ -181,22 +181,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 (
                     Name: "My Venue",
                     Email: "",
-                    PhoneNumber: "xxx",
+                    Telephone: "xxx",
                     Website: "",
-                    ExpectedErrorInputId: "PhoneNumber",
+                    ExpectedErrorInputId: "Telephone",
                     ExpectedErrorMessage: "Enter a telephone number in the correct format"
                 ),
                 // Invalid Website
                 (
                     Name: "My Venue",
                     Email: "",
-                    PhoneNumber: "",
+                    Telephone: "",
                     Website: ":bad/website",
                     ExpectedErrorInputId: "Website",
                     ExpectedErrorMessage: "Enter a website in the correct format"
                 )
             }
-            .Select(t => new object[] { t.Name, t.Email, t.PhoneNumber, t.Website, t.ExpectedErrorInputId, t.ExpectedErrorMessage })
+            .Select(t => new object[] { t.Name, t.Email, t.Telephone, t.Website, t.ExpectedErrorInputId, t.ExpectedErrorMessage })
             .ToArray();
 
         private JourneyInstance<AddVenueJourneyModel> CreateJourneyInstance(Guid providerId, AddVenueJourneyModel state = null)

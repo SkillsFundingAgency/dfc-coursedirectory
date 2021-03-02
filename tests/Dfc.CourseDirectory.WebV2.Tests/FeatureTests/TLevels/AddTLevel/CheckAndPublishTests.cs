@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             var journeyInstance = CreateJourneyInstance(providerId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
-            journeyInstance.State.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.None);
+            journeyInstance.State.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -279,7 +279,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             var journeyInstance = CreateJourneyInstance(providerId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
-            journeyInstance.State.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.None);
+            journeyInstance.State.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,

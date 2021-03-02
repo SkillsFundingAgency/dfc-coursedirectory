@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 state.Postcode = request.Postcode;
                 state.Latitude = onspdPostcodeRecord.Record.lat;
                 state.Longitude = onspdPostcodeRecord.Record.@long;
-                state.NewAddressIsOutsideOfEngland = onspdPostcodeRecord.Record.Country != "England";
+                state.NewAddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
             });
 
             return new Success();

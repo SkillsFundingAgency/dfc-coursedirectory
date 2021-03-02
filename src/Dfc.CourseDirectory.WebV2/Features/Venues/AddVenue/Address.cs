@@ -32,32 +32,34 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
         IRequestHandler<Query, Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
-        private readonly JourneyInstance<AddVenueJourneyModel> _journeyInstance;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly ISearchClient<Onspd> _onspdSearchClient;
 
         public Handler(JourneyInstanceProvider journeyInstanceProvider, ISearchClient<Onspd> onspdSearchClient)
         {
-            _journeyInstance = journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            _journeyInstanceProvider = journeyInstanceProvider;
             _onspdSearchClient = onspdSearchClient;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
-            ThrowIfFlowStateNotValid();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.ThrowIfCompleted();
 
             return Task.FromResult(new Command()
             {
-                AddressLine1 = _journeyInstance.State.AddressLine1,
-                AddressLine2 = _journeyInstance.State.AddressLine2,
-                Town = _journeyInstance.State.Town,
-                County = _journeyInstance.State.County,
-                Postcode = _journeyInstance.State.Postcode
+                AddressLine1 = journeyInstance.State.AddressLine1,
+                AddressLine2 = journeyInstance.State.AddressLine2,
+                Town = journeyInstance.State.Town,
+                County = journeyInstance.State.County,
+                Postcode = journeyInstance.State.Postcode
             });
         }
 
         public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
-            ThrowIfFlowStateNotValid();
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.ThrowIfCompleted();
 
             // Normalize the postcode; validation accepts postcodes with no spaces but ONSPD lookup requires spaces.
             // Also ensures we have postcodes consistently capitalized.
@@ -75,8 +77,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
             }
 
             var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = request.Postcode });
+            var onspdPostcodeRecord = onspdSearchResult.Items.SingleOrDefault();
 
-            if (onspdSearchResult.Items.Count == 0)
+            if (onspdPostcodeRecord == null)
             {
                 validationResult = new ValidationResult(new[]
                 {
@@ -86,9 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            var onspdPostcodeRecord = onspdSearchResult.Items.Single();
-
-            _journeyInstance.UpdateState(state =>
+            journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = request.AddressLine1;
                 state.AddressLine2 = request.AddressLine2;
@@ -97,16 +98,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
                 state.Postcode = request.Postcode;
                 state.Latitude = onspdPostcodeRecord.Record.lat;
                 state.Longitude = onspdPostcodeRecord.Record.@long;
-                state.AddressIsOutsideOfEngland = onspdPostcodeRecord.Record.Country != "England";
+                state.AddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
                 state.ValidStages |= AddVenueCompletedStages.Address;
             });
 
             return new Success();
-        }
-
-        private void ThrowIfFlowStateNotValid()
-        {
-            _journeyInstance.ThrowIfCompleted();
         }
 
         private class CommandValidator : AbstractValidator<Command>
