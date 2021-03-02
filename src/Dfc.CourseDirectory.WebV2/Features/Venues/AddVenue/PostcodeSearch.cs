@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -72,17 +73,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                 return new ModelWithErrors<SearchCommand>(request, validationResult);
             }
 
+            var postcode = new Postcode(request.Postcode);
+
             // We need the postcode to exist in ONSPD so we can resolve a lat/lng.
             // Check it's present before we do an address search so we can output an error early.
 
-            var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = request.Postcode });
+            var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = postcode });
 
             if (onspdSearchResult.Items.Count == 0)
             {
                 return CreateInvalidPostcodeResponse();
             }
 
-            var vm = await SearchAddressesByPostcode(request.Postcode);
+            var vm = await SearchAddressesByPostcode(postcode);
 
             if (vm.Results.Count == 0)
             {

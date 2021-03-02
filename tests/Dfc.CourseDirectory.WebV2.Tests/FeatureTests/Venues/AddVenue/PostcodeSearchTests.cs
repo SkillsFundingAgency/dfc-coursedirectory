@@ -163,6 +163,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         }
 
         [Fact]
+        public async Task PostcodeSearch_ValidRequest_NormalizesPostcode()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider();
+
+            var inputPostcode = "ab12de";
+
+            var town = "Town";
+            var country = "England";
+            var normalizedPostcode = "AB1 2DE";
+
+            var postcodeLatitude = 42M;
+            var postcodeLongitude = 43M;
+
+            ConfigureOnspdLookupForPostcode(normalizedPostcode, country, postcodeLatitude, postcodeLongitude);
+
+            ConfigureAddressSearchServiceResults(normalizedPostcode, town, resultCount: 3);
+
+            var journeyInstance = CreateJourneyInstance(providerId);
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/venues/add/postcode-search?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={inputPostcode}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            using (new AssertionScope())
+            {
+                var doc = await response.GetDocument();
+                doc.GetElementByTestId("postcode").TextContent.Should().Be(normalizedPostcode);
+            }
+        }
+
+        [Fact]
         public async Task SelectPostcode_NoAddressSelected_ReturnsError()
         {
             // Arrange
