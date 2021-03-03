@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features
 {
@@ -9,5 +10,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features
                 ? url
                 : $"http://{url}"
             : null;
+
+        public static string ConcatAddressLines(string saon, string paon, string street)
+            => string.Join(" ", new[] { saon, paon, street }.Where(v => !string.IsNullOrWhiteSpace(v)).Select(v => v.Trim()));
     }
 }
