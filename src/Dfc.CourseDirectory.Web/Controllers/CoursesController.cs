@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -24,8 +25,6 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Services.Models.Courses.CourseRun;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -33,52 +32,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
     [Authorize("Fe")]
     public class CoursesController : Controller
     {
-        private readonly ILogger<CoursesController> _logger;
-        private readonly ICourseService _courseService;
-        private ISession _session => HttpContext.Session;
-        private readonly IVenueSearchHelper _venueSearchHelper;
-        private readonly IVenueService _venueService;
         private const string SessionAddCourseSection1 = "AddCourseSection1";
         private const string SessionAddCourseSection2 = "AddCourseSection2";
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
-        private readonly ICourseTextService _courseTextService;
+
+        private readonly ICourseService _courseService;
+        private readonly IVenueSearchHelper _venueSearchHelper;
+        private readonly IVenueService _venueService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+
+        private ISession _session => HttpContext.Session;
 
         public CoursesController(
-            ILogger<CoursesController> logger,
-            IOptions<CourseServiceSettings> courseSearchSettings,
-            ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService, ICourseTextService courseTextService)
+            ICourseService courseService,
+            IVenueSearchHelper venueSearchHelper,
+            IVenueService venueService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (courseSearchSettings == null)
-            {
-                throw new ArgumentNullException(nameof(courseSearchSettings));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
-            if (courseTextService == null)
-            {
-                throw new ArgumentNullException(nameof(courseTextService));
-            }
-
-            _logger = logger;
-            _courseService = courseService;
-            _venueService = venueService;
-            _venueSearchHelper = venueSearchHelper;
-            _courseTextService = courseTextService;
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
         [Authorize]
@@ -213,7 +188,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
+        public async Task<IActionResult> AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
             _session.SetString("LearnAimRef", learnAimRef);
             _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
@@ -222,15 +197,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
             Course course = null;
-            CourseText defaultCourseText = null;
+            Core.DataStore.CosmosDb.Models.CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
-                course = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value)).Result.Value;
+                course = (await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value))).Value;
             }
             else
             {
-                defaultCourseText = _courseTextService.GetCourseTextByLARS(new CourseTextSearchCriteria(learnAimRef)).Result.Value;
+                if (string.IsNullOrWhiteSpace(learnAimRef))
+                {
+                    throw new ArgumentException($"{nameof(learnAimRef)} cannot be null or whitespace.", nameof(learnAimRef));
+                }
+
+                defaultCourseText = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseTextByLearnAimRef { LearnAimRef = learnAimRef });
             }
 
             AddCourseViewModel vm = new AddCourseViewModel

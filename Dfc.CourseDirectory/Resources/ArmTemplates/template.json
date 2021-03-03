@@ -158,18 +158,6 @@
         "description": "ADO.NET connection string for the course directory database"
       }
     },
-    "courseTextApiUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "API URL for the coursetext services"
-      }
-    },
-    "courseTextApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the coursetext service function app (REST API)"
-      }
-    },
     "findCourseApiUrl": {
       "type": "string",
       "metadata": {
@@ -518,14 +506,6 @@
               {
                 "name": "DFESignInSettings__APIUri",
                 "value": "[parameters('dfeApiUri')]"
-              },
-              {
-                "name": "CourseTextServiceSettings__ApiUrl",
-                "value": "[parameters('courseTextApiUrl')]"
-              },
-              {
-                "name": "CourseTextServiceSettings__ApiKey",
-                "value": "[parameters('courseTextApiKey')]"
               },
               {
                 "name": "FindACourseServiceSettings__ApiUrl",

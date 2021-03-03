@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
     {
         [JsonProperty("id")]
         public Guid CourseTextId { get; set; }
-        public object LearnAimRef { get; set; }
+        public string LearnAimRef { get; set; }
         public string QualificationCourseTitle { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
         public string TypeName { get; set; }

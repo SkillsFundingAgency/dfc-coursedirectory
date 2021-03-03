@@ -80,12 +80,6 @@
     "sqlCourseDirectoryConnectionString": {
       "value": "__sqlCourseDirectoryConnectionString__"
     },
-    "courseTextApiUrl": {
-      "value": "__courseTextApiUrl__"
-    },
-    "courseTextApiKey": {
-      "value": "__ApimPublishCourseDirectoryKey__"
-    },
     "findCourseApiUrl": {
       "value": "__apimCoursesUrl__"
     },

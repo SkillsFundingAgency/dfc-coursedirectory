@@ -20,11 +20,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
             if (int.TryParse(request.LearnAimRef, out var learnAimRef))
             {
-                query = query.Where(c => (int)c.LearnAimRef == learnAimRef || (string)c.LearnAimRef == request.LearnAimRef);
+                query = query.Where(c => c.LearnAimRef == (object)learnAimRef || c.LearnAimRef == request.LearnAimRef.ToUpperInvariant());
             }
             else
             {
-                query = query.Where(c => (string)c.LearnAimRef == request.LearnAimRef);
+                query = query.Where(c => c.LearnAimRef == request.LearnAimRef.ToUpperInvariant());
             }
 
             var results = await query

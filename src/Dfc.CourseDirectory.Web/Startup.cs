@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -85,9 +84,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
             services.Configure<FindACourseServiceSettings>(Configuration.GetSection(nameof(FindACourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
-
-            services.Configure<CourseTextServiceSettings>(Configuration.GetSection(nameof(CourseTextServiceSettings)));
-            services.AddScoped<ICourseTextService, CourseTextService>();
 
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICSVHelper, CSVHelper>();
