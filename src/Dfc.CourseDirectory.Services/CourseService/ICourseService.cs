@@ -24,7 +24,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         Task<Result<IEnumerable<CourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(CourseSearchCriteria criteria);
         Task<Result> DeleteBulkUploadCourses(int UKPRN);
         Task<Result<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
-        Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports();
         Task<Result> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN, int StatusToBeChangedTo);
     }
 }

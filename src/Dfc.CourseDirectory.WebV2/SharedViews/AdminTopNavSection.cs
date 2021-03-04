@@ -5,7 +5,6 @@
         HelpdeskDashboard,
         QualityAssurance,
         SearchProviders,
-        ManageUsers,
-        MigrationReports
+        ManageUsers
     }
 }

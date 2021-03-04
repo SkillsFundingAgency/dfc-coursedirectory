@@ -36,13 +36,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return new Uri($"{trimmed}/GetCourseById");
         }
 
-        public Uri ToArchiveLiveCoursesUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ArchiveProvidersLiveCourses");
-        }
-
         public Uri ToUpdateStatusUri()
         {
             var uri = new Uri(ApiUrl);
@@ -55,13 +48,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var uri = new Uri(ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetCourseCountsByStatusForUKPRN");
-        }
-
-        public Uri ToGetRecentCourseChangesByUKPRNUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetRecentCourseChangesByUKPRN");
         }
 
         public Uri ToChangeCourseRunStatusesForUKPRNSelectionUri()
@@ -90,20 +76,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var uri = new Uri(ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetCourseMigrationReportByUKPRN");
-        }
-
-        public Uri ToGetAllDfcReports()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetAllDfcReports");
-        }
-
-        public Uri ToGetTotalLiveCourses()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetTotalLiveCourses");
         }
 
         public Uri ToArchiveCoursesExceptBulkUploadReadytoGoLiveUri()

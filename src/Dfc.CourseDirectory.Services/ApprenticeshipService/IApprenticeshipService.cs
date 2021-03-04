@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
@@ -19,7 +18,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         Task<Result> DeleteBulkUploadApprenticeships(int UKPRN);
         Task<Result> ChangeApprenticeshipStatusesForUKPRNSelection(int ukprn, int currentStatus, int statusToBeChangedTo);
         Task<Result<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN);
-        Task<Result<IList<DfcMigrationReport>>> GetAllDfcReports();
         Task<Result<int>> GetTotalLiveApprenticeships();
     }
 }
