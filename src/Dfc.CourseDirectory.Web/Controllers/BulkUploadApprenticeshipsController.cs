@@ -326,24 +326,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> PublishYourFile()
         {
             int? sUKPRN = HttpContext.Session.GetInt32("UKPRN");
+            
             if (!sUKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var numberOfApprenticeships = 0;
-
-            var model = new ApprenticeshipsPublishYourFileViewModel();
-
-            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(sUKPRN.ToString());
-            if (result.IsSuccess)
+            var readyToGoLiveApprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
             {
-                numberOfApprenticeships =
-                    result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive).Count();
-            }
-            model.NumberOfApprenticeships = numberOfApprenticeships;
+                Predicate = a =>
+                    a.ProviderUKPRN == sUKPRN
+                    && a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive
+            });
 
-            return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);
+            return View("../BulkUploadApprenticeships/PublishYourFile/Index", new ApprenticeshipsPublishYourFileViewModel()
+            {
+                NumberOfApprenticeships = readyToGoLiveApprenticeships.Count
+            });
         }
 
         [Authorize]

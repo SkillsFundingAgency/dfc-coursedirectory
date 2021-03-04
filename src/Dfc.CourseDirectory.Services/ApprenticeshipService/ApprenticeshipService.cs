@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
+        private readonly Uri _addApprenticeshipUri, _addApprenticeshipsUri, 
             _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
@@ -47,7 +47,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
             _addApprenticeshipsUri = settings.Value.AddApprenticeshipsUri();
-            _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
             _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
@@ -139,42 +138,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogError(e, "Apprenticeship add service unknown error.");
                 return Result.Fail("Apprenticeship add service unknown error.");
-            }
-        }
-
-        public async Task<Result<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
-        {
-            if (string.IsNullOrWhiteSpace(criteria))
-            {
-                throw new ArgumentNullException($"{nameof(criteria)} cannot be null or empty or whitespace.", nameof(criteria));
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var results = JsonConvert.DeserializeObject<IEnumerable<Apprenticeship>>(json);
-
-                    return Result.Ok<IEnumerable<Apprenticeship>>(results);
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Search Apprenticeship by UKPRN service http request error");
-                return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Standards and Frameworks unknown error.");
-                return Result.Fail<IEnumerable<Apprenticeship>>("Search Apprenticeship by UKPRN service unknown error.");
             }
         }
 
