@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _addApprenticeshipUri, _addApprenticeshipsUri, 
+        private readonly Uri _addApprenticeshipsUri,
             _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
@@ -45,54 +45,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _settings = settings.Value;
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
             _addApprenticeshipsUri = settings.Value.AddApprenticeshipsUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
             _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
-        }
-
-        public async Task<Result> AddApprenticeship(Apprenticeship apprenticeship)
-        {
-            if (apprenticeship == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeship));
-            }
-
-            try
-            {
-                var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
-
-                var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
-                
-                var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    return Result.Ok();
-                }
-                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    return Result.Fail("Apprenticeship add service unsuccessful http response - TooManyRequests");
-                }
-                else
-                {
-                    return Result.Fail("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Apprenticeship add service http request error");
-                return Result.Fail("Apprenticeship add service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Apprenticeship add service unknown error.");
-
-                return Result.Fail("Apprenticeship add service unknown error.");
-            }
         }
 
         public async Task<Result> AddApprenticeships(

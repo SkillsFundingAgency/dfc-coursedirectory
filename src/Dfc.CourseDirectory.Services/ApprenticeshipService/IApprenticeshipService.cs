@@ -7,7 +7,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
     public interface IApprenticeshipService
     {
-        Task<Result> AddApprenticeship(Apprenticeship apprenticeship);
         Task<Result> AddApprenticeships(IEnumerable<Apprenticeship> apprenticeships, bool addInParallel);
         Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship);
         Task<Result> DeleteBulkUploadApprenticeships(int UKPRN);

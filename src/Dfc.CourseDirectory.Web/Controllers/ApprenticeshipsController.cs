@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -21,10 +22,10 @@ using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearc
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -40,7 +41,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
-        private readonly ILogger<ApprenticeshipsController> _logger;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         private ISession _session => HttpContext.Session;
 
@@ -51,7 +53,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
-            ILogger<ApprenticeshipsController> logger)
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
@@ -59,7 +62,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         [Authorize]
@@ -478,13 +482,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
             var mode =_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
 
             if (mode == ApprenticeshipMode.EditYourApprenticeships)
             {
-                var result = await _apprenticeshipService.UpdateApprenticeshipAsync(Apprenticeship);
+                var result = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeship);
 
                 if (result.IsSuccess)
                 {
@@ -498,18 +502,51 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                Apprenticeship.id = Guid.NewGuid();
-                var result = await _apprenticeshipService.AddApprenticeship(Apprenticeship);
+                var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateApprenticeship
+                {
+                    Id = Guid.NewGuid(),
+                    ProviderId = apprenticeship.ProviderId,
+                    ProviderUkprn = apprenticeship.ProviderUKPRN,
+                    ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle,
+                    ApprenticeshipType = apprenticeship.ApprenticeshipType,
+                    StandardOrFramework = await _standardsAndFrameworksCache.GetStandard(apprenticeship.StandardCode.Value, apprenticeship.Version.Value),
+                    MarketingInformation = apprenticeship.MarketingInformation,
+                    Url = apprenticeship.Url,
+                    ContactTelephone = apprenticeship.ContactTelephone,
+                    ApprenticeshipLocations = apprenticeship.ApprenticeshipLocations.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
+                    {
+                        Id = al.Id,
+                        VenueId = al.VenueId,
+                        National = al.National,
+                        Address = al.Address != null
+                            ? new Core.DataStore.CosmosDb.Models.ApprenticeshipLocationAddress
+                            {
+                                Address1 = al.Address.Address1,
+                                Address2 = al.Address.Address2,
+                                County = al.Address.County,
+                                Email = al.Address.Email,
+                                Latitude = al.Address.Latitude ?? 0,
+                                Longitude = al.Address.Longitude ?? 0,
+                                Phone = al.Address.Phone,
+                                Postcode = al.Address.Postcode,
+                                Town = al.Address.Town,
+                                Website = al.Address.Website
+                            }
+                            : null,
+                        DeliveryModes = al.DeliveryModes.Cast<ApprenticeshipDeliveryMode>().ToList(),
+                        Name = al.Name,
+                        Phone = al.Phone,
+                        Regions = al.Regions,
+                        ApprenticeshipLocationType = al.ApprenticeshipLocationType,
+                        LocationType = al.LocationType,
+                        Radius = al.Radius
+                    }),
+                    CreatedDate = _clock.UtcNow,
+                    CreatedByUser = _currentUserProvider.GetCurrentUser(),
+                    Status = (int)apprenticeship.RecordStatus
+                });
 
-                if (result.IsSuccess)
-                {
-                    return RedirectToAction("Complete", "Apprenticeships");
-                }
-                else
-                {
-                    //Action needs to be decided if failure
-                    return RedirectToAction("Summary", "Apprenticeships");
-                }
+                return RedirectToAction("Complete", "Apprenticeships");
             }
         }
 
