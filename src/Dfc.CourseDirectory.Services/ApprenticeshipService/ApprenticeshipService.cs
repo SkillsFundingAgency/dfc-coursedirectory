@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
-            _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
-            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getTotalLiveCoursesUri;
+            _getApprenticeshipByIdUri, _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
+            _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -51,13 +51,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
             _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
-            _getStandardByCodeUri = settings.Value.GetStandardByCodeUri();
-            _getFrameworkByCodeUri = settings.Value.GetFrameworkByCodeUri();
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
-            _changeApprenticeshipStatusesForUKPRNSelectionUri =
-                settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
-            _getApprenticeshipDashboardCountsUri = settings.Value.GetApprenticeshipDashboardCountsUri();
-            _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
+            _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
         }
 
         public async Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -257,78 +252,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
-        {
-            if (criteria == null)
-            {
-                throw new ArgumentNullException(nameof(criteria));
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_getStandardByCodeUri.AbsoluteUri + "?StandardCode=" + criteria.StandardCode + "&Version=" + criteria.Version));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
-
-                    return Result.Ok<IEnumerable<StandardsAndFrameworks>>(results);
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "GetStandardByCode service http request error");
-                return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "GetStandardByCode unknown error.");
-                return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetStandardByCode service unknown error.");
-            }
-        }
-
-        public async Task<Result<IEnumerable<StandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
-        {
-            if (criteria == null)
-            {
-                throw new ArgumentNullException(nameof(criteria));
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_getFrameworkByCodeUri.AbsoluteUri + "?FrameworkCode=" + criteria.FrameworkCode + "&ProgType=" + criteria.ProgType + "&PathwayCode=" + criteria.PathwayCode));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
-
-                    return Result.Ok<IEnumerable<StandardsAndFrameworks>>(results);
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "GetFrameworkByCode service http request error");
-                return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "GetStandardByCode unknown error.");
-                return Result.Fail<IEnumerable<StandardsAndFrameworks>>("GetFrameworkByCode service unknown error.");
-            }
-        }
-
         public async Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship)
         {
             if (apprenticeship == null)
@@ -405,65 +328,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
 
             return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
-        }
-
-        public async Task<Result<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN)
-        {
-            if (UKPRN < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(UKPRN), $"{nameof(UKPRN)} cannot be less than 0.");
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipDashboardCountsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var results = JsonConvert.DeserializeObject<ApprenticeshipDashboardCounts>(json);
-
-                    return Result.Ok(results);
-                }
-                else
-                {
-                    return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get Apprenticeship by Id service http request error");
-                return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get apprenticeship unknown error.");
-                return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unknown error.");
-            }
-        }
-
-        public async Task<Result<int>> GetTotalLiveApprenticeships()
-        {
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-
-                var response = await httpClient.GetAsync(_getTotalLiveCoursesUri);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var total = JsonConvert.DeserializeObject<int>(json);
-
-                    return Result.Ok(total);
-                }
-                else
-                {
-                    return Result.Fail<int>("GetTotalLiveApprenticeships service unsuccessful http response");
-                }
-            }
         }
     }
 }
