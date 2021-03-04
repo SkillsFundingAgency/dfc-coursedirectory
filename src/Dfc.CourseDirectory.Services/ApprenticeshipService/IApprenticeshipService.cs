@@ -7,7 +7,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
     public interface IApprenticeshipService
     {
-        Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN);
         Task<Result> AddApprenticeship(Apprenticeship apprenticeship);
         Task<Result> AddApprenticeships(IEnumerable<Apprenticeship> apprenticeships, bool addInParallel);
         Task<Result<IEnumerable<Apprenticeship>>> GetApprenticeshipByUKPRN(string criteria);

@@ -7,13 +7,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         public string ApiUrl { get; set; }
         public string ApiKey { get; set; }
 
-        public Uri GetStandardsAndFrameworksUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/StandardsAndFrameworksSearch");
-        }
-
         public Uri AddApprenticeshipUri()
         {
             var uri = new Uri(ApiUrl);

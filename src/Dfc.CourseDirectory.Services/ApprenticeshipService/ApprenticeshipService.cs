@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
+        private readonly Uri _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
@@ -45,7 +45,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _settings = settings.Value;
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
             _addApprenticeshipsUri = settings.Value.AddApprenticeshipsUri();
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
@@ -53,42 +52,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
             _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
-        }
-
-        public async Task<Result<IEnumerable<StandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
-        {
-            if (string.IsNullOrWhiteSpace(criteria))
-            {
-                throw new ArgumentNullException($"{nameof(criteria)} cannot be null or empty or whitespace.", nameof(criteria));
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria + "&UKPRN=" + UKPRN));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
-
-                    return Result.Ok<IEnumerable<StandardsAndFrameworks>>(results);
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get your Standards and Frameworks service http request error");
-                return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Standards and Frameworks unknown error.");
-                return Result.Fail<IEnumerable<StandardsAndFrameworks>>("Standards and Frameworks service unknown error.");
-            }
         }
 
         public async Task<Result> AddApprenticeship(Apprenticeship apprenticeship)

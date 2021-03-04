@@ -19,6 +19,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
+        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly ILogger<ApprenticeshipsController> _logger;
 
         private ISession _session => HttpContext.Session;
@@ -47,6 +49,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IApprenticeshipService apprenticeshipService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
+            IStandardsAndFrameworksCache standardsAndFrameworksCache,
             ILogger<ApprenticeshipsController> logger)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
@@ -54,6 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
+            _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -74,54 +78,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            ApprenticeshipsSearchResultModel model = new ApprenticeshipsSearchResultModel();
-
-            if (!string.IsNullOrEmpty(requestModel.SearchTerm))
+            if (string.IsNullOrWhiteSpace(requestModel?.SearchTerm))
             {
-                var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm, UKPRN.Value);
-
-                var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
-
-                if (result.IsSuccess)
-                {
-                    foreach (var item in result.Value.Where(r => r.ApprenticeshipType != ApprenticeshipType.FrameworkCode))
-                    {
-                        listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
-                        {
-                            ApprenticeshipTitle = item.StandardName ?? item.NasTitle,
-                            id = item.id,
-                            StandardCode = item.StandardCode,
-                            Version = item.Version,
-                            StandardSectorCode = item.StandardSectorCode,
-                            URLLink = item.URLLink,
-                            OtherBodyApprovalRequired = item.OtherBodyApprovalRequired,
-                            ApprenticeshipType = item.ApprenticeshipType,
-                            EffectiveFrom = item.EffectiveFrom,
-                            CreatedDateTimeUtc = item.CreatedDateTimeUtc,
-                            ModifiedDateTimeUtc = item.ModifiedDateTimeUtc,
-                            RecordStatusId = item.RecordStatusId,
-                            FrameworkCode = item.FrameworkCode,
-                            ProgType = item.ProgType,
-                            PathwayCode = item.PathwayCode,
-                            PathwayName = item.PathwayName,
-                            NasTitle = item.NasTitle,
-                            EffectiveTo = item.EffectiveTo,
-                            SectorSubjectAreaTier1 = item.SectorSubjectAreaTier1,
-                            SectorSubjectAreaTier2 = item.SectorSubjectAreaTier2,
-                            NotionalNVQLevelv2 = item.NotionalEndLevel,
-                            ProgTypeDesc = item.ProgTypeDesc,
-                            ProgTypeDesc2 = item.ProgTypeDesc2,
-                            AlreadyCreated = item.AlreadyCreated
-
-                        });
-                    }
-                }
-
-                model.Items = listOfApprenticeships;
-                model.SearchTerm = requestModel.SearchTerm;
+                return ViewComponent(nameof(ApprenticeshipSearchResult), new ApprenticeshipsSearchResultModel());
             }
 
-            return ViewComponent(nameof(ApprenticeshipSearchResult), model);
+            var searchTermWords = GetSearchWords(requestModel.SearchTerm);
+            var standards = await _standardsAndFrameworksCache.GetAllStandards();
+
+            // Match whenever any search term is found in reference words using a prefix match
+            // i.e. search for 'retail' should match 'retail' & 'retailer'
+            // but search for 'etail' should not match either
+            // *unless* the search term is a number in which case the entire word must match
+            var results = standards.Where(standard =>
+            {
+                var words = GetSearchWords(standard.StandardName);
+
+                return searchTermWords.Any(searchTermWord =>
+                    words.Any(word => searchTermWord.All(char.IsDigit)
+                        ? word.Equals(searchTermWord, StringComparison.InvariantCultureIgnoreCase)
+                        : word.StartsWith(searchTermWord, StringComparison.InvariantCultureIgnoreCase)));
+            });
+
+            return ViewComponent(nameof(ApprenticeshipSearchResult), new ApprenticeshipsSearchResultModel
+            {
+                SearchTerm = requestModel.SearchTerm,
+                Items = results.Select(r => new ApprenticeShipsSearchResultItemModel
+                {
+                    ApprenticeshipTitle = r.StandardName,
+                    id = r.CosmosId,
+                    StandardCode = r.StandardCode,
+                    Version = r.Version,
+                    OtherBodyApprovalRequired = r.OtherBodyApprovalRequired,
+                    ApprenticeshipType = ApprenticeshipType.StandardCode,
+                    NotionalNVQLevelv2 = r.NotionalNVQLevelv2
+                })
+            });
+
+            static IReadOnlyCollection<string> GetSearchWords(string searchTerm) =>
+                new string(searchTerm.Select(c => char.IsLetterOrDigit(c) ? c : ' ').ToArray())
+                    .Split(" ", StringSplitOptions.RemoveEmptyEntries);
         }
 
         [Authorize]
