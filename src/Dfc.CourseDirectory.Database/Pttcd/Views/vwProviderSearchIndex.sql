@@ -8,8 +8,7 @@ SELECT      p.ProviderId,
             p.ProviderStatus,
             p.UkrlpProviderStatusDescription,
             p.Version, -- Timestamp (RowVersion) type, used here for cosmos HighWaterMark
-
-            -- additional fields to skew the search index score approximately as per the old index
+            -- The following fields are only here to affect the scoring of results to approximate the behaviour of the old comsos based index:
             COALESCE(p.CourseDirectoryName, p.ProviderName) AS CourseDirectoryName, -- as per previous cosmos-based search index definition
             p.TradingName,
             p.Alias,
