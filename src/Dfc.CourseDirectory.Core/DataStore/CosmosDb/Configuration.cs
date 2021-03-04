@@ -14,5 +14,6 @@
         public string SectorSubjectAreaTier1sCollectionName { get; set; } = "sectorsubjectareatier1s";
         public string SectorSubjectAreaTier2sCollectionName { get; set; } = "sectorsubjectareatier2s";
         public string FeChoicesCollectionName { get; set; } = "fechoices";
+        public string CourseTextCollectionName { get; set; } = "coursetext";
     }
 }

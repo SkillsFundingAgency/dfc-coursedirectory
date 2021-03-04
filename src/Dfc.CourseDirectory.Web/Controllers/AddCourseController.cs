@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -38,7 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private ISession Session => HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        private readonly ICourseTextService _courseTextService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         private const string SessionVenues = "Venues";
@@ -53,20 +54,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICourseService courseService,
             IVenueSearchHelper venueSearchHelper,
             IVenueService venueService,
-            ICourseTextService courseTextService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICurrentUserProvider currentUserProvider)
         {
             _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
-            _courseTextService = courseTextService ?? throw new ArgumentNullException(nameof(courseTextService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
+        public async Task<IActionResult> AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
             RemoveSessionVariables();
 
@@ -77,15 +78,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
             Course course = null;
-            CourseText defaultCourseText = null;
+            Core.DataStore.CosmosDb.Models.CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
-                course = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value)).Result.Value;
+                course = (await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value))).Value;
             }
             else
             {
-                defaultCourseText = _courseTextService.GetCourseTextByLARS(new CourseTextSearchCriteria(learnAimRef)).Result.Value;
+                if (string.IsNullOrWhiteSpace(learnAimRef))
+                {
+                    throw new ArgumentException($"{nameof(learnAimRef)} cannot be null or whitespace.", nameof(learnAimRef));
+                }
+
+                defaultCourseText = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseTextByLearnAimRef { LearnAimRef = learnAimRef });
             }
 
             AddCourseViewModel vm = new AddCourseViewModel
@@ -161,13 +167,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetObject(SessionSummaryPageLoadedAtLeastOnce, false);      // not got to summary page yet
             Session.SetObject("AddCourseViewModel", vm);
 
-
-
-
             if (courseId.HasValue)
             {
                 vm.CourseId = courseId.Value;
             }
+
             var addcoursesteponevalues = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             var DetailViewModel = Session.GetObject<AddCourseViewModel>("AddCourseViewModel");
 
@@ -180,7 +184,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.WhatYouNeed.WhatYouNeed = addcoursesteponevalues.WhatYouNeed;
                 vm.HowAssessed.HowAssessed = addcoursesteponevalues.HowAssessed;
                 vm.WhereNext.WhereNext = addcoursesteponevalues.WhereNext;
-
             }
 
             return View(vm);
