@@ -66,6 +66,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 ProcessSynchronouslyRowLimit = 100
             });
 
+            var providerContextProvider = new Mock<IProviderContextProvider>();
+
             // Need to be able to resolve the service via IApprenticeshipBulkUploadService
             var serviceProvider = new ServiceCollection()
                 .AddTransient(_ => _apprenticeshipBulkUploadService)
@@ -84,7 +86,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 _blobStorageService.Object,
                 _courseService.Object,
                 _cosmosDbQueryDispatcher.Object,
-                _currentUserProvider.Object)
+                _currentUserProvider.Object,
+                providerContextProvider.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

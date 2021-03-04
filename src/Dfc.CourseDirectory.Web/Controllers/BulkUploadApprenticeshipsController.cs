@@ -14,6 +14,7 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,26 +32,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         public BulkUploadApprenticeshipsController(
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IBlobStorageService blobService,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IProviderContextProvider providerContextProvider)
         {
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService ?? throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
         [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction("Apprenticeships", "BulkUpload");
+            return RedirectToAction("Apprenticeships", "BulkUpload")
+                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
         }
 
         [Authorize]
