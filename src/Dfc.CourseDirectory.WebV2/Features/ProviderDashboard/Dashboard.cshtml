@@ -235,12 +235,12 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
                         <li>
-                            <a asp-controller="AddTLevel" asp-action="SelectTLevel" class="govuk-link">Add a T Level</a>
+                            <a asp-controller="AddTLevel" asp-action="SelectTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a T Level</a>
                         </li>
                         @if (Model.TLevelCount > 0)
                         {
                             <li>
-                                <a asp-controller="ViewTLevels" asp-action="List" class="govuk-link" data-testid="tlevels-view-edit-link">View and edit T Levels</a>
+                                <a asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="tlevels-view-edit-link">View and edit T Levels</a>
                             </li>
                         }
                     </ul>
