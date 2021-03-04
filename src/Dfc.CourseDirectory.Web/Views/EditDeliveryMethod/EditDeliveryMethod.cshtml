@@ -1,11 +1,10 @@
-﻿@using Dfc.CourseDirectory.Services.Models
-@using Dfc.CourseDirectory.Services.Models.Apprenticeships
+﻿@using Dfc.CourseDirectory.Core.Models
+@using Dfc.CourseDirectory.Services.Models
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
-@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipLocationList
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @{
-    ViewData["Title"] = "Select delivery options";     
+    ViewData["Title"] = "Select delivery options";
     Layout = "_Layout_Your_Courses";
 }
 
@@ -98,9 +97,9 @@
 
         </div>
 
-      
+
     </form>
-      
+
 
 </div>
 
@@ -136,8 +135,8 @@
                 $selectedVenue.govUkSelect("validState");
                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
 
-                            
-               
+
+
 
                 // venue
                 $selectedVenue.govUkSelect("validState");
@@ -177,7 +176,7 @@
                 }
             }
 
-           
+
 
 
             $Continue.on("click", function (event) {

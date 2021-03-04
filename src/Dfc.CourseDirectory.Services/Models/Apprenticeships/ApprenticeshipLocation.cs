@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
 {
@@ -8,8 +8,6 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
     {
         public Guid Id { get; set; }
         public Guid? VenueId { get; set; }
-        public int? TribalId { get; set; }
-        public int ApprenticeshipLocationId { get; set; }
         public Guid? LocationGuidId { get; set; }
         public int? LocationId { get; set; }
         public bool? National { get; set; }
@@ -18,7 +16,6 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
         public string Name { get; set; }
         public string Phone { get; set; }
         public int ProviderUKPRN { get; set; }
-        public int? ProviderId { get; set; }
         public IEnumerable<string> Regions { get; set; }
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public LocationType LocationType { get; set; }

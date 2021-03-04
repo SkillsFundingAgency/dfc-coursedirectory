@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 

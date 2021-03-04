@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -384,18 +385,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
             }
 
-            var getApprenticehipByIdResult = await _apprenticeshipService.GetApprenticeshipByIdAsync(requestModel.Id);
+            if (!Guid.TryParse(requestModel.Id, out var apprenticeshipId))
+            {
+                return BadRequest();
+            }
 
-            if (!getApprenticehipByIdResult.IsSuccess || getApprenticehipByIdResult.Value.RecordStatus != RecordStatus.Live)
+            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = apprenticeshipId });
+
+            if (result == null || result.RecordStatus != (int)RecordStatus.Live)
             {
                 return NotFound();
             }
 
-            var selectedApprenticeship = getApprenticehipByIdResult.Value;
+            var selectedApprenticeship = Apprenticeship.FromCosmosDbModel(result);
 
             model.Apprenticeship = selectedApprenticeship;
 
-            var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
+            var type = result.ApprenticeshipLocations.FirstOrDefault();
 
             model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                 ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions)
@@ -812,14 +818,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 case ApprenticeshipDelete.Delete:
                     //call delete service
-                    var getApprenticehipByIdResult = await _apprenticeshipService.GetApprenticeshipByIdAsync(theModel.ApprenticeshipId.ToString());
+                    var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = theModel.ApprenticeshipId });
 
-                    if (getApprenticehipByIdResult.IsSuccess)
+                    if (result != null)
                     {
-                        getApprenticehipByIdResult.Value.RecordStatus = RecordStatus.Deleted;
+                        var getApprenticehipByIdResult = Apprenticeship.FromCosmosDbModel(result);
 
-                        var updateApprenticeshipResult =
-                            await _apprenticeshipService.UpdateApprenticeshipAsync(getApprenticehipByIdResult.Value);
+                        getApprenticehipByIdResult.RecordStatus = RecordStatus.Deleted;
+
+                        var updateApprenticeshipResult = await _apprenticeshipService.UpdateApprenticeshipAsync(getApprenticehipByIdResult);
 
                         if (updateApprenticeshipResult.IsSuccess)
                         {
@@ -949,8 +956,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             if (loc.Venue != null)
             {
-                apprenticeshipLocation.TribalId = loc.Venue.TribalLocationId ?? null;
-                apprenticeshipLocation.ProviderId = loc.Venue.ProviderID;
                 apprenticeshipLocation.LocationId = loc.Venue.LocationId ?? null;
                 apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID);
                 apprenticeshipLocation.Address = new Address
@@ -963,8 +968,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Email = loc.Venue.Email,
                     Phone = loc.Venue.Telephone,
                     Website = loc.Venue.Website,
-                    Latitude = (double)loc.Venue.Latitude,
-                    Longitude = (double)loc.Venue.Longitude
+                    Latitude = loc.Venue.Latitude,
+                    Longitude = loc.Venue.Longitude
                 };
             }
             if (!string.IsNullOrEmpty(loc.LocationId))

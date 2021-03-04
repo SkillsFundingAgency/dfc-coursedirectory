@@ -1,5 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult
 {

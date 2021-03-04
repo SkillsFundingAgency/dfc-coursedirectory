@@ -1,7 +1,7 @@
-﻿
+﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using System;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
@@ -17,12 +17,8 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public ApprenticeshipType ApprenticeshipType { get; set; }
         public int? ProgType { get; set; }
         public ApprenticeShipPreviousPage PreviousPage { get; set; }
-
         public ApprenticeshipMode Mode { get; set; }
-
         public bool? Cancelled { get; set; }
-
         public bool? ShowCancelled { get; set; }
-
     }
 }

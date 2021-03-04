@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;

@@ -11,6 +11,7 @@ using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
@@ -352,7 +353,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                     }
 
                     var venues = _cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == VenueStatus.Live).ToList();
+                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == Models.Venues.VenueStatus.Live).ToList();
 
                     if (venues.Any())
                     {
@@ -1239,8 +1240,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                 RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
                 National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
-                TribalId = venue?.TribalLocationId,
-                ProviderId = venue?.ProviderID,
                 LocationId = venue?.LocationId,
                 VenueId = Guid.TryParse(venue?.ID, out var venueId) ? venueId : Guid.Empty,
                 Address = venue != null
@@ -1254,8 +1253,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                         Email = venue.Email,
                         Phone = venue.Telephone,
                         Website = venue.Website,
-                        Latitude = (double)venue.Latitude,
-                        Longitude = (double)venue.Longitude
+                        Latitude = venue.Latitude,
+                        Longitude = venue.Longitude
                     }
                     : null,
                 LocationGuidId = Guid.TryParse(venue?.ID, out var locationGuid) ? locationGuid : Guid.Empty,

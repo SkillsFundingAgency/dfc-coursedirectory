@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Services.Models.Apprenticeships
+﻿@using Dfc.CourseDirectory.Core.Models
+@using Dfc.CourseDirectory.Services.Models.Apprenticeships
 @using Microsoft.AspNetCore.Authorization;
 
 @model Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships.PublishApprenticeshipsViewModel
@@ -56,13 +57,13 @@
                         </div>
 
                     }
-                   
+
                 }
             </div>
         </div>
         <div style="display:none">@apprenticeship.id</div>
 
-      
+
     </div>
 
 }

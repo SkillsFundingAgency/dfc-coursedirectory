@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _addApprenticeshipUri, _addApprenticeshipsUri, _getApprenticeshipByUKPRNUri, 
-            _getApprenticeshipByIdUri, _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
+            _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
             _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
         public ApprenticeshipService(
@@ -48,7 +48,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
             _addApprenticeshipsUri = settings.Value.AddApprenticeshipsUri();
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
-            _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
             _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
@@ -140,42 +139,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogError(e, "Apprenticeship add service unknown error.");
                 return Result.Fail("Apprenticeship add service unknown error.");
-            }
-        }
-
-        public async Task<Result<Apprenticeship>> GetApprenticeshipByIdAsync(string Id)
-        {
-            if (string.IsNullOrWhiteSpace(Id))
-            {
-                throw new ArgumentNullException($"{nameof(Id)} cannot be null or empty or whitespace.", nameof(Id));
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "?id=" + Id));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var results = JsonConvert.DeserializeObject<Apprenticeship>(json);
-
-                    return Result.Ok<Apprenticeship>(results);
-                }
-                else
-                {
-                    return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get Apprenticeship by Id service http request error");
-                return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get apprenticeship unknown error.");
-                return Result.Fail<Apprenticeship>("Get Apprenticeship by Id service unknown error.");
             }
         }
 
