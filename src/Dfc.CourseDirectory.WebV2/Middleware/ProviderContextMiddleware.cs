@@ -33,13 +33,13 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
 
             if (runNext)
             {
-                await _next(context);
-            }
+                // As the layout includes links to pages that require the legacy context we need to always set this
+                if (providerContextProvider.GetProviderContext() != null)
+                {
+                    providerContextProvider.AssignLegacyProviderContext();
+                }
 
-            // As the layout includes links to pages that require the legacy context we need to always set this
-            if (providerContextProvider.GetProviderContext() != null)
-            {
-                providerContextProvider.AssignLegacyProviderContext();
+                await _next(context);
             }
 
             async Task TryAssignFeature()
