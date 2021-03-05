@@ -14,20 +14,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             return new Uri($"{trimmed}/AddApprenticeships");
         }
 
-        public Uri DeleteBulkUploadApprenticeshipsUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/DeleteBulkUploadApprenticeships");
-        }
-
-        public Uri ToGetAllDfcReports()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetAllDfcReports");
-        }
-
         public Uri UpdateAprrenticeshipUri()
         {
             var uri = new Uri(ApiUrl);

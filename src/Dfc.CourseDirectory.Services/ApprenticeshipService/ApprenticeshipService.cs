@@ -17,9 +17,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _addApprenticeshipsUri,
-            _updateApprenticshipUri, _deleteBulkUploadApprenticeshipsUri,
-            _changeApprenticeshipStatusesForUKPRNSelectionUri;
+        private readonly Uri _addApprenticeshipsUri, _updateApprenticshipUri, _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -47,7 +45,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             _addApprenticeshipsUri = settings.Value.AddApprenticeshipsUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
-            _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
             _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
         }
 
@@ -134,32 +131,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogError(e, "Apprenticeship update service unknown error.");
                 return Result.Fail<Apprenticeship>("Apprenticeship update service unknown error.");
-            }
-        }
-
-        public async Task<Result> DeleteBulkUploadApprenticeships(int UKPRN)
-        {
-            if (UKPRN < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(UKPRN), $"{nameof(UKPRN)} cannot be less than 0.");
-            }
-
-            try
-            {
-                var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return Result.Ok();
-                }
-                else
-                {
-                    return Result.Fail("Delete Bulk Upload Apprenticeship unsuccessful: " + response.ReasonPhrase);
-                }
-            }
-            catch (Exception)
-            {
-                return Result.Fail("Delete Bulk Upload Apprenticeship http response");
             }
         }
 
