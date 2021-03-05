@@ -276,7 +276,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
 
-            var venues = await _venueService.SearchAsync(new VenueSearchCriteria(ukprn.ToString(), null));
+            var venues = await _venueService.SearchAsync(new VenueSearchCriteria(ukprn.ToString()));
             var regions = _courseService.GetRegions();
 
             foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))

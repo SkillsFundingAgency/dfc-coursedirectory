@@ -167,15 +167,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     };
                     var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
 
-                    if (!string.IsNullOrEmpty(criteria.NewAddressId))
-                    {
-                        var newVenueIndex = venues.FindIndex(x => x.ID == criteria.NewAddressId);
-                        var newVenueItem = venues[newVenueIndex];
-
-                        venues.RemoveAt(newVenueIndex);
-                        venues.Insert(0, newVenueItem);
-                    }
-
                     return Result.Ok(new VenueSearchResult(venues));
                 }
                 else

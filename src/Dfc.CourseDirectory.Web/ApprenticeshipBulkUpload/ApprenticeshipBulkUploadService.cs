@@ -339,7 +339,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     if (_cachedVenues == null)
                     {
-                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_ukprn.ToString(), string.Empty)))
+                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_ukprn.ToString())))
                             .Result
                             .Value
                             .Value

@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             }
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
+            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
             var allRegions = _courseService.GetRegions().RegionItems;
 
             var allCourses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
@@ -375,7 +375,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.ProviderCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>("ProviderCourses");
 
             //var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
+            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
             var allRegions = _courseService.GetRegions().RegionItems;
 
             List<ProviderCoursesFilterItemModel> levelFilterItems = new List<ProviderCoursesFilterItemModel>();
