@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.VenueService;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public static class VenueHelper
     {
-        public static async Task<Dictionary<Guid, string>> GetVenueNames(IEnumerable<Course> courses, IVenueService venueService )
+        public static async Task<Dictionary<Guid, string>> GetVenueNames(IEnumerable<Course> courses, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            Dictionary<Guid, string> venueNames = new Dictionary<Guid, string>();
+            var venueNames = new Dictionary<Guid, string>();
             foreach (var course in courses)
             {
                 foreach (var courseRun in course.CourseRuns)
@@ -19,12 +20,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     {
                         if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
                         {
-                            var result = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.ToString()));
-                            if (result.IsSuccess)
-                            {
-                                Guid.TryParse(result.Value.ID, out Guid venueId);
-                                venueNames.Add(venueId, result.Value.VenueName);
-                            }
+                            var venue = await cosmosDbQueryDispatcher.ExecuteQuery(
+                                new GetVenueById {VenueId = courseRun.VenueId.Value});
+
+                            venueNames.Add(courseRun.VenueId.Value, venue.VenueName);
                         }
                     }
                 }
