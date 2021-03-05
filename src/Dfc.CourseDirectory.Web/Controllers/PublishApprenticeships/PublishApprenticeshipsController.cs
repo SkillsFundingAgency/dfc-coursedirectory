@@ -66,6 +66,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 });
             }
 
+            vm.AreAllReadyToBePublished = true;
+
             return View("Index", vm);
         }
 
