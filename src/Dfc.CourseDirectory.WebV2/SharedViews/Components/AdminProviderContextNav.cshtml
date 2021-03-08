@@ -28,7 +28,7 @@
                 </a>
             </li>
         }
-        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevelsLinks)
+        @if (Model.ShowTLevelsLinks)
         {
             <li class="pttcd-subnav__item">
                 <a asp-action="List" asp-controller="ViewTLevels" asp-all-route-data="@ProviderContext.RouteValues" class="pttcd-subnav__item__link" data-testid="adminsubnav-tlevels">

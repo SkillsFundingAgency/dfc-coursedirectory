@@ -20,10 +20,7 @@
                     <h2 class="govuk-heading-m">Reports</h2>
                     <ul class="govuk-list">
                         <li><a asp-controller="ProviderReports" asp-action="ProviderTypeReport" class="govuk-link" data-testid="download-provider-type-report-link">Download provider type report</a></li>
-                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels))
-                        {
-                            <li><a asp-controller="TLevelsReports" asp-action="LiveTLevelsReport" class="govuk-link" data-testid="download-live-tlevels-report-link">Download live T Levels report</a></li>
-                        }
+                        <li><a asp-controller="TLevelsReports" asp-action="LiveTLevelsReport" class="govuk-link" data-testid="download-live-tlevels-report-link">Download live T Levels report</a></li>
                     </ul>
                 </div>
             </div>

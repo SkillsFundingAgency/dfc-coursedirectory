@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using FormFlow;
@@ -17,7 +16,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         stateType: typeof(EditTLevelJourneyModel),
         appendUniqueKey: true,
         requestDataKeys: "tLevelId")]
-    [RequireFeatureFlag(FeatureFlags.TLevels)]
     [RestrictProviderTypes(ProviderType.TLevels)]
     [AuthorizeTLevel]
     public class EditTLevelController : Controller
