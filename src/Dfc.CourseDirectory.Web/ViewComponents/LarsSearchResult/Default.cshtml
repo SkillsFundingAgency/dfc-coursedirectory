@@ -126,7 +126,7 @@
             </div>
             @if (Model.Items.Any())
             {
-                <vc:pager current-page=Model.PageNumber get-page-url="@(pageNumber => new Url(Model.Url).SetQueryParam("PageNo", pageNumber))" total-pages=(int)Math.Ceiling((decimal)Model.TotalCount)/Model.ItemsPerPage />
+                <vc:pager current-page=Model.PageNumber get-page-url="@(pageNumber => new Url(Model.Url).SetQueryParam("PageNo", pageNumber))" total-pages=(int)Math.Ceiling((decimal)Model.TotalCount/Model.ItemsPerPage) />
             }
         </div>
 
