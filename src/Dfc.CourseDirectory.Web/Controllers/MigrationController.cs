@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
@@ -20,19 +20,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class MigrationController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
         private readonly ISearchClient<Lars> _larsSearchClient;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
         public MigrationController(
             ICourseService courseService,
-            IVenueService venueService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISearchClient<Lars> larsSearchClient)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
         [Authorize]
@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
             }
 
-            var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _venueService);
+            var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _cosmosDbQueryDispatcher);
 
             var model = new LarslessViewModel
             {
