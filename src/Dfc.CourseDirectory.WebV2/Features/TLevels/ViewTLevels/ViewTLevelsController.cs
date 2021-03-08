@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using MediatR;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels
 {
-    [RequireFeatureFlag(FeatureFlags.TLevels)]
     [RestrictProviderTypes(ProviderType.TLevels)]
     [Route("t-levels")]
     public class ViewTLevelsController : Controller

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.Filters;
 using FormFlow;
 using MediatR;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
 {
-    [RequireFeatureFlag(FeatureFlags.TLevels)]
     [Route("t-levels/{tLevelId}/delete")]
     [JourneyMetadata(
         journeyName: "DeleteTLevel",

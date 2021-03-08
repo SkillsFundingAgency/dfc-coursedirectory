@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Flurl;
@@ -17,7 +16,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         stateType: typeof(AddTLevelJourneyModel),
         appendUniqueKey: true,
         requestDataKeys: "providerId?")]
-    [RequireFeatureFlag(FeatureFlags.TLevels)]
     [RequireProviderContext]
     [RestrictProviderTypes(ProviderType.TLevels)]
     public class AddTLevelController : Controller

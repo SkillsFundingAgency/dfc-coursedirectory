@@ -210,7 +210,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
     </div>
 }
 
-@if (FeatureFlagProvider.HaveFeature(FeatureFlags.TLevels) && Model.ShowTLevels)
+@if (Model.ShowTLevels)
 {
     <div class="govuk-grid-row" data-testid="tlevels-row">
         <div class="govuk-grid-column-full">

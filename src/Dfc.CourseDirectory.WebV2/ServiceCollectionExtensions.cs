@@ -134,7 +134,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();
             services.TryAddScoped<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
-            services.Decorate<IFeatureFlagProvider, TLevelsBetaCanaryUserFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
             services.AddBehaviors(typeof(ServiceCollectionExtensions).Assembly);
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
