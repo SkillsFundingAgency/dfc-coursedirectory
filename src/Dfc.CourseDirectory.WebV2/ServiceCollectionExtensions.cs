@@ -184,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2
 				services.AddAzureSearchClient<Provider>(
 	                new Uri(configuration["AzureSearchUrl"]),
 	                configuration["AzureSearchQueryKey"],
-	                configuration["ProvidersAzureSearchIndexName"]);
+	                configuration["ProviderAzureSearchIndexName"]);
 
                 services.AddAzureSearchClient<Lars>(
                     new Uri(configuration["AzureSearchUrl"]),
