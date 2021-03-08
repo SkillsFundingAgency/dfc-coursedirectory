@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Services.Models.Apprenticeships
-@using Dfc.CourseDirectory.Web.Helpers
 
 @inject IAuthorizationService Authorization
 
@@ -46,13 +45,9 @@ else
                     <div class="cd-apprenticeships-search-result__container">
                         <h2 class="govuk-heading-m">
                             @apprenticeship.ApprenticeshipTitle
-                            @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
-                            {
-                                <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
-                            }
                         </h2>
 
-                        @if (apprenticeship.OtherBodyApprovalRequired == "Y")
+                        @if (apprenticeship.OtherBodyApprovalRequired)
                         {
                             <span class="govuk-hint">
                                 You may need approval from the regulator of this occupation before you can deliver this training.<br />
@@ -66,45 +61,23 @@ else
                         {
                             <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
                         }
-                        @{
-                            if (apprenticeship.AlreadyCreated)
-                            {
-                                <p class="govuk-body">
-                                    <a class="govuk-link already-added" href="#" style="display:inline-flex">
-                                        <span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>Choose this apprenticeship
-                                    </a>
-                                </p>
-                            }
-                            else
-                            {
-                                <p class="govuk-body">
-                                    <a class="govuk-link" style="display:inline-flex"
-                                       asp-controller="Apprenticeships"
-                                       asp-action="Details"
-                                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                                       asp-route-id="@apprenticeship.id"
-                                       asp-route-progtype="@apprenticeship.ProgType"
-                                       asp-route-standardcode="@apprenticeship.StandardCode"
-                                       asp-route-frameworkcode="@apprenticeship.FrameworkCode"
-                                       asp-route-pathwaycode="@apprenticeship.PathwayCode"
-                                       asp-route-version="@apprenticeship.Version"
-                                       asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
-                                       asp-route-Mode="@ApprenticeshipMode.Add"
-                                       asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
-                                </p>
-                            }
-                        }
 
-                        @if (apprenticeship.IsFramework)
-                        {
-                            <div class="govuk-warning-text govuk-!-margin-bottom-2 govuk-!-margin-top-4" id="framework-warning">
-                                <span class="govuk-warning-text__icon">!</span>
-                                <strong class="govuk-warning-text__text">
-                                    <span class="govuk-warning-text__assistive">Warning</span>
-                                    This apprenticeship is available to new starters until 31st July 2020
-                                </strong>
-                            </div>
-                        }
+                        <p class="govuk-body">
+                            <a class="govuk-link" style="display:inline-flex"
+                               asp-controller="Apprenticeships"
+                               asp-action="Details"
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                               asp-route-id="@apprenticeship.id"
+                               asp-route-progtype="@null"
+                               asp-route-standardcode="@apprenticeship.StandardCode"
+                               asp-route-frameworkcode="@null"
+                               asp-route-pathwaycode="@null"
+                               asp-route-version="@apprenticeship.Version"
+                               asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
+                               asp-route-Mode="@ApprenticeshipMode.Add"
+                               asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+                        </p>
+
                     </div>
                 </div>
 

@@ -1,11 +1,6 @@
-﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Identity
+﻿@using Dfc.CourseDirectory.Core.Models
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@using Dfc.CourseDirectory.Services.Models
 @using Dfc.CourseDirectory.Services.Models.Apprenticeships
 
 @inject IAuthorizationService Authorization
@@ -28,15 +23,15 @@ else
 
     if (!Model.Items.Any())
     {
-    <div class="">
-        <span class="govuk-visually-hidden">Data Unavailable</span>
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-        {
-            NotificationTitle = "",
-            NotificationMessage = "No apprenticeships found that match your search criteria",
-            ClassType = "error-summary"
-        })
-    </div>
+        <div class="">
+            <span class="govuk-visually-hidden">Data Unavailable</span>
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = "",
+                NotificationMessage = "No apprenticeships found that match your search criteria",
+                ClassType = "error-summary"
+            })
+        </div>
     }
     else
     {
@@ -53,8 +48,8 @@ else
                 </div>
             }
 
-                    @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
-                    {
+            @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
+            {
                 <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
                     <h2 class="govuk-heading-m">
                         @apprenticeship.ApprenticeshipTitle
@@ -68,22 +63,22 @@ else
                         <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
                     }
                 </div>
-                        <div class="ctas">
-                            <a class="govuk-link"
-                               asp-controller="Apprenticeships"
-                               asp-action="ViewAndEdit"
-                               asp-route-Id="@apprenticeship.id"
-                               asp-route-Cancelled=null
-                               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
-                            </a>
-                            <a class="govuk-link"
-                               asp-controller="Apprenticeships"
-                               asp-action="ConfirmationDelete"
-                               asp-route-apprenticeshipId="@apprenticeship.id"
-                               asp-route-level="@apprenticeship.NotionalNVQLevelv2"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
-                        </div>
-                    }
+                <div class="ctas">
+                    <a class="govuk-link"
+                       asp-controller="Apprenticeships"
+                       asp-action="ViewAndEdit"
+                       asp-route-Id="@apprenticeship.id"
+                       asp-route-Cancelled=null
+                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
+                    </a>
+                    <a class="govuk-link"
+                       asp-controller="Apprenticeships"
+                       asp-action="ConfirmationDelete"
+                       asp-route-apprenticeshipId="@apprenticeship.id"
+                       asp-route-level="@apprenticeship.NotionalNVQLevelv2"
+                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+                </div>
+            }
 
 
 

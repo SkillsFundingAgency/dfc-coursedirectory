@@ -3,54 +3,34 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 {
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class EditDeliveryMethodController : Controller
     {
-        private readonly ILogger<EditDeliveryMethodController> _logger;
-
         private readonly IApprenticeshipService _apprenticeshipService;
-        private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
         public EditDeliveryMethodController(
-           ILogger<EditDeliveryMethodController> logger,
-           IApprenticeshipService apprenticeshipService,
-           IOptions<ApprenticeshipSettings> apprenticeshipSettings)
+            IApprenticeshipService apprenticeshipService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (apprenticeshipService == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipService));
-            }
-
-            if (apprenticeshipSettings == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipSettings));
-            }
-
-            _apprenticeshipSettings = apprenticeshipSettings;
-            _logger = logger;
-
-            _apprenticeshipService = apprenticeshipService;
+            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
         [HttpGet]
@@ -67,21 +47,23 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            var result = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipId.ToString());
+            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = apprenticeshipId.Value });
 
-            if (!result.IsSuccess)
+            if (result == null)
             {
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            if (result.Value?.ApprenticeshipLocations == null)
+            var apprenticeship = Apprenticeship.FromCosmosDbModel(result);
+
+            if (apprenticeship.ApprenticeshipLocations == null)
             {
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
             return View("EditDeliveryMethod", new EditApprenticeshipViewModel
             {
-                locations = result.Value.ApprenticeshipLocations
+                locations = apprenticeship.ApprenticeshipLocations
             });
         }
 
@@ -91,25 +73,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
         {
             if (model.ApprenticeshipId.HasValue)
             {
-                string apprenticeshipGuidId = model.ApprenticeshipId.ToString();
+                var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = model.ApprenticeshipId.Value });
+                var apprenticeshipForEdit = Apprenticeship.FromCosmosDbModel(result);
 
-                var apprenticeshipForEdit = await _apprenticeshipService.GetApprenticeshipByIdAsync(apprenticeshipGuidId);
-
-                if (apprenticeshipForEdit.IsSuccess)
+                if (apprenticeshipForEdit != null)
                 {
-                    apprenticeshipForEdit.Value.MarketingInformation = model?.Information;
-                    apprenticeshipForEdit.Value.ContactEmail = model?.Email;
-                    apprenticeshipForEdit.Value.ContactWebsite = model?.WebSite;
-                    apprenticeshipForEdit.Value.ContactTelephone = model?.Telephone;
-                    apprenticeshipForEdit.Value.Url = model?.ContactUsURL;
-                    apprenticeshipForEdit.Value.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
-                    apprenticeshipForEdit.Value.UpdatedDate = DateTime.Now;
-                    apprenticeshipForEdit.Value.BulkUploadErrors = new List<BulkUploadError> { };
-                    if (apprenticeshipForEdit.Value.BulkUploadErrors.Count() == 0)
+                    apprenticeshipForEdit.MarketingInformation = model?.Information;
+                    apprenticeshipForEdit.ContactEmail = model?.Email;
+                    apprenticeshipForEdit.ContactWebsite = model?.WebSite;
+                    apprenticeshipForEdit.ContactTelephone = model?.Telephone;
+                    apprenticeshipForEdit.Url = model?.ContactUsURL;
+                    apprenticeshipForEdit.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
+                    apprenticeshipForEdit.UpdatedDate = DateTime.Now;
+                    apprenticeshipForEdit.BulkUploadErrors = new List<BulkUploadError> { };
+                    if (apprenticeshipForEdit.BulkUploadErrors.Count() == 0)
                     {
-                        apprenticeshipForEdit.Value.RecordStatus = Services.Models.RecordStatus.BulkUploadReadyToGoLive;
+                        apprenticeshipForEdit.RecordStatus = Services.Models.RecordStatus.BulkUploadReadyToGoLive;
                     }
-                    var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit.Value);
+                    var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit);
                 }
 
                 return RedirectToAction("Index", "PublishApprenticeships");

@@ -310,18 +310,6 @@ namespace Dfc.CourseDirectory.Services.Models
         Both = 3
     }
 
-    public enum LocationType
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Venue")]
-        Venue = 1,
-        [Description("Region")]
-        Region = 2,
-        [Description("SubRegion")]
-        SubRegion = 3
-    }
-
     public enum NationalApprenticeship
     {
         [Description("Undefined")]

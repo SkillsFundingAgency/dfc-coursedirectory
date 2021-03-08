@@ -1,7 +1,5 @@
-﻿@using Dfc.CourseDirectory.Services.Models
+﻿@using Dfc.CourseDirectory.Core.Models
 @using Dfc.CourseDirectory.Services.Models.Apprenticeships
-@using Dfc.CourseDirectory.Web.Helpers
-@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipLocationList
 @{
     if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
@@ -107,7 +105,7 @@
             </dl>
 
             <div class="summary--linked-title">
-               
+
                 <div class="govuk-summary-list">
                     @if (!Model.HasAllLocationTypes)
                     {
@@ -176,33 +174,33 @@
 
                             <table class="govuk-table">
                                 <thead class="govuk-table__head">
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header govuk-!-width-one-third">Location</th>
-                                    <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
-                                </tr>
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header govuk-!-width-one-third">Location</th>
+                                        <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
+                                    </tr>
                                 </thead>
                                 <tbody class="govuk-table__body">
-                                @{
-                                    if (location.National.HasValue && location.National.Value)
-                                    {
-                                        <tr class="govuk-table__row">
-                                            <th class="govuk-table__header">National</th>
-                                            <td class="govuk-table__cell">All</td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-
-                                        foreach (var item in Model.Regions)
+                                    @{
+                                        if (location.National.HasValue && location.National.Value)
                                         {
                                             <tr class="govuk-table__row">
-                                                <th class="govuk-table__header">@item.Key</th>
-                                                <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
+                                                <th class="govuk-table__header">National</th>
+                                                <td class="govuk-table__cell">All</td>
                                             </tr>
+                                        }
+                                        else
+                                        {
 
+                                            foreach (var item in Model.Regions)
+                                            {
+                                                <tr class="govuk-table__row">
+                                                    <th class="govuk-table__header">@item.Key</th>
+                                                    <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
+                                                </tr>
+
+                                            }
                                         }
                                     }
-                                }
                                 </tbody>
                             </table>
 

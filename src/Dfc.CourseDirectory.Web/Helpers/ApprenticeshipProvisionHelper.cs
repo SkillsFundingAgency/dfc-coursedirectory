@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -20,7 +20,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
     public class ApprenticeshipProvisionHelper : IApprenticeshipProvisionHelper
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICSVHelper _CSVHelper;
@@ -29,13 +28,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
         public ApprenticeshipProvisionHelper(
             IHttpContextAccessor contextAccessor,
-            IApprenticeshipService apprenticeshipService,
             IVenueService venueService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICSVHelper CSVHelper)
         {
             _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
@@ -53,9 +50,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = UKPRN.Value });
             var providerName = provider?.ProviderName.Replace(" ", "");
 
-            var apprenticeships = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
-            var csvApprenticeships = await ApprenticeshipsToCsvApprenticeships(
-                apprenticeships.Value.Where(y => y.RecordStatus == RecordStatus.Live));
+            var apprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
+            {
+                Predicate = a =>
+                    a.ProviderUKPRN == UKPRN
+                    && a.RecordStatus == (int)ApprenticeshipStatus.Live
+            });
+
+            var csvApprenticeships = await ApprenticeshipsToCsvApprenticeships(apprenticeships.Values.Select(Apprenticeship.FromCosmosDbModel));
 
             return CsvApprenticeshipsToFileStream(csvApprenticeships, providerName);
         }

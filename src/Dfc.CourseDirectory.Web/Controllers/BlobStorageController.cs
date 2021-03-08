@@ -7,7 +7,8 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -23,25 +24,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class BlobStorageController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private ICourseProvisionHelper _courseProvisionHelper;
         private IApprenticeshipProvisionHelper _apprenticeshipProvisionHelper;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession _session => HttpContext.Session;
 
         public BlobStorageController(
                 ICourseService courseService,
-                IApprenticeshipService apprenticeshipService,
                 IBlobStorageService blobService,
                 ICourseProvisionHelper courseProvisionHelper,
-                IApprenticeshipProvisionHelper apprenticeshipProvisionHelper)
+                IApprenticeshipProvisionHelper apprenticeshipProvisionHelper,
+                ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
             _courseProvisionHelper = courseProvisionHelper ?? throw new ArgumentNullException(nameof(courseProvisionHelper));
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _apprenticeshipProvisionHelper = apprenticeshipProvisionHelper ?? throw new ArgumentNullException(nameof(apprenticeshipProvisionHelper));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
         [Authorize]
@@ -142,19 +143,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public FileStreamResult GetApprenticeshipBulkUploadErrors(int? UKPRN)
+        public async Task<FileStreamResult> GetApprenticeshipBulkUploadErrors(int? UKPRN)
         {
             if (!UKPRN.HasValue)
+            {
                 return null;
+            }
 
-            var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString())
-                .Result.Value.Where((y => ((int)y.RecordStatus & (int)RecordStatus.BulkUploadPending) > 0
-                                          || ((int)y.RecordStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
-            //.Where((y => ((int)y. & (int)RecordStatus.BulkUploadPending) > 0
-                                                        //|| ((int)y.CourseStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
+            var apprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
+            {
+                Predicate = a =>
+                    a.ProviderUKPRN == UKPRN
+                    && ((a.RecordStatus & (int)RecordStatus.BulkUploadPending) > 0 || (a.RecordStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0)
+            });
 
-            var apprenticeshipBUErrors = apprenticeships.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
-
+            var apprenticeshipBUErrors = apprenticeships.Values.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
 
             IEnumerable<string> headers = new string[] { "Row Number,Column Name,Error Description" };
             IEnumerable<string> csvlines = apprenticeshipBUErrors.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error.Replace(',', ' ') }));

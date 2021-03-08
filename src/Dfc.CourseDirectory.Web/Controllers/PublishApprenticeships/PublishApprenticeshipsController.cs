@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
@@ -19,43 +20,54 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class PublishApprenticeshipsController : Controller
     {
-        private ISession Session => HttpContext.Session;
         private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public PublishApprenticeshipsController(IApprenticeshipService apprenticeshipService)
+        private ISession Session => HttpContext.Session;
+
+        public PublishApprenticeshipsController(
+            IApprenticeshipService apprenticeshipService,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            if (apprenticeshipService == null)
-            {
-                throw new ArgumentNullException(nameof(apprenticeshipService));
-            }
-
             _apprenticeshipService = apprenticeshipService;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            PublishApprenticeshipsViewModel vm = new PublishApprenticeshipsViewModel();
             int? UKPRN = Session.GetInt32("UKPRN");
+
             if (!UKPRN.HasValue)
+            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.Value.ToString()).Result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
-
-            var getApprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.Value.ToString()).Result.Value.Where(x => x.ProviderUKPRN == UKPRN);
-
-            vm.ListOfApprenticeships = apprenticeships;
-            vm.ListOfApprenticeships = GetErrorMessages(vm.ListOfApprenticeships);
-
-            if (!getApprenticeships.Any(x => x.RecordStatus == RecordStatus.BulkUploadPending))
-            {
-                vm.AreAllReadyToBePublished = true;
             }
 
-            if (vm.AreAllReadyToBePublished)
+            PublishApprenticeshipsViewModel vm = new PublishApprenticeshipsViewModel();
+
+            var apprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
             {
-                return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new { NumberOfApprenticeships = apprenticeships.SelectMany(s => s.ApprenticeshipLocations.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
+                Predicate = a =>
+                    a.ProviderUKPRN == UKPRN
+                    && (a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadPending || a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive)
+            });
+
+            var bulkUploadPendingApprenticeships = apprenticeships.Values.Where(a => a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadPending).Select(Apprenticeship.FromCosmosDbModel).ToArray();
+            var bulkUploadReadyToGoLiveApprenticeships = apprenticeships.Values.Where(a => a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive).Select(Apprenticeship.FromCosmosDbModel).ToArray();
+
+            vm.ListOfApprenticeships = GetErrorMessages(bulkUploadPendingApprenticeships);
+
+            if (!bulkUploadPendingApprenticeships.Any())
+            {
+                return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new
+                {
+                    NumberOfApprenticeships = bulkUploadReadyToGoLiveApprenticeships.Sum(a => a.ApprenticeshipLocations.Count(al => al.RecordStatus == RecordStatus.BulkUploadReadyToGoLive))
+                });
             }
+
+            vm.AreAllReadyToBePublished = true;
+
             return View("Index", vm);
         }
 
@@ -199,30 +211,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
         public bool HasOnlyFollowingValidCharacters(string value)
         {
             string regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";
-            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
-
-            return validUKPRN.Success;
-        }
-
-        public bool IsValidUrl(string value)
-        {
-            string regex = @"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$";
-            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
-
-            return validUKPRN.Success;
-        }
-
-        public bool IsCorrectCostFormatting(string value)
-        {
-            string regex = @"^[0-9]*(\.[0-9]{1,2})?$";
-            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
-
-            return validUKPRN.Success;
-        }
-
-        public bool ValidDurationValue(string value)
-        {
-            string regex = @"^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$";
             var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validUKPRN.Success;

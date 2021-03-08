@@ -11,6 +11,7 @@ using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
@@ -74,7 +75,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             public List<string> RegionsList { get; set; }
 
             [Ignore]
-            public StandardsAndFrameworks Standard { get; set; }
+            public Core.Models.Standard Standard { get; set; }
 
             public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
@@ -125,7 +126,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
 
             #region Mandatory Checks
 
-            private StandardsAndFrameworks Mandatory_Checks_GetStandard(IReaderRow row)
+            private Core.Models.Standard Mandatory_Checks_GetStandard(IReaderRow row)
             {
                 var standardCode = Mandatory_Checks_STANDARD_CODE(row);
                 var standardVersion = Mandatory_Checks_STANDARD_VERSION(row);
@@ -352,7 +353,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                     }
 
                     var venues = _cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == VenueStatus.Live).ToList();
+                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == Models.Venues.VenueStatus.Live).ToList();
 
                     if (venues.Any())
                     {
@@ -835,27 +836,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                 }
             }
 
-            private async Task<StandardsAndFrameworks> GetStandard(int standardCode, int version)
-            {
-                var standard = await _standardsAndFrameworksCache.GetStandard(standardCode, version);
-
-                if (standard != null)
-                {
-                    return new StandardsAndFrameworks()
-                    {
-                        id = standard.CosmosId,
-                        StandardCode = standard.StandardCode,
-                        Version = standard.Version,
-                        StandardName = standard.StandardName,
-                        NotionalEndLevel = standard.NotionalNVQLevelv2,
-                        OtherBodyApprovalRequired = standard.OtherBodyApprovalRequired ? "Y" : "N"
-                    };
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            private Task<Core.Models.Standard> GetStandard(int standardCode, int version)
+                => _standardsAndFrameworksCache.GetStandard(standardCode, version);
 
             private IEnumerable<string> ParseRegionData(string regions)
             {
@@ -1214,10 +1196,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                             ProviderUKPRN = int.Parse(userDetails.UKPRN),
                             ApprenticeshipLocations = record.ApprenticeshipLocations,
                             ApprenticeshipType = ApprenticeshipType.StandardCode,
-                            StandardId = record.Standard.id,
+                            StandardId = record.Standard.CosmosId,
                             StandardCode = record.Standard?.StandardCode,
                             Version = record.Standard?.Version,
-                            NotionalNVQLevelv2 = record.Standard.NotionalEndLevel,
+                            NotionalNVQLevelv2 = record.Standard.NotionalNVQLevelv2,
                             MarketingInformation = record.APPRENTICESHIP_INFORMATION,
                             Url = record.APPRENTICESHIP_WEBPAGE,
                             ContactTelephone = record.CONTACT_PHONE,
@@ -1258,8 +1240,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                 RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
                 National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
-                TribalId = venue?.TribalLocationId,
-                ProviderId = venue?.ProviderID,
                 LocationId = venue?.LocationId,
                 VenueId = Guid.TryParse(venue?.ID, out var venueId) ? venueId : Guid.Empty,
                 Address = venue != null
@@ -1273,8 +1253,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                         Email = venue.Email,
                         Phone = venue.Telephone,
                         Website = venue.Website,
-                        Latitude = (double)venue.Latitude,
-                        Longitude = (double)venue.Longitude
+                        Latitude = venue.Latitude,
+                        Longitude = venue.Longitude
                     }
                     : null,
                 LocationGuidId = Guid.TryParse(venue?.ID, out var locationGuid) ? locationGuid : Guid.Empty,

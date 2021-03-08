@@ -297,16 +297,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{BlobContainerPath}");
             }
 
-            var deleteBulkuploadResults = await _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
+            var apprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
+            {
+                Predicate = a =>
+                    a.ProviderUKPRN == UKPRN
+                    && (a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadPending || a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive)
+            });
 
-            if (deleteBulkuploadResults.IsSuccess)
+            foreach (var apprenticeship in apprenticeships.Values)
             {
-                return RedirectToAction("DeleteFileConfirmation", "BulkUploadApprenticeships", new { fileUploadDate = fileUploadDate });
+                await _cosmosDbQueryDispatcher.ExecuteQuery(new DeleteApprenticeship { ApprenticeshipId = apprenticeship.Id, ProviderUkprn = apprenticeship.ProviderUKPRN });
             }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Delete All Bulk Uploaded Apprenticeships Error" });
-            }
+
+            return RedirectToAction("DeleteFileConfirmation", "BulkUploadApprenticeships", new { fileUploadDate = fileUploadDate });
         }
 
         [Authorize]
@@ -326,24 +329,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> PublishYourFile()
         {
             int? sUKPRN = HttpContext.Session.GetInt32("UKPRN");
+            
             if (!sUKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var numberOfApprenticeships = 0;
-
-            var model = new ApprenticeshipsPublishYourFileViewModel();
-
-            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(sUKPRN.ToString());
-            if (result.IsSuccess)
+            var readyToGoLiveApprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
             {
-                numberOfApprenticeships =
-                    result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive).Count();
-            }
-            model.NumberOfApprenticeships = numberOfApprenticeships;
+                Predicate = a =>
+                    a.ProviderUKPRN == sUKPRN
+                    && a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive
+            });
 
-            return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);
+            return View("../BulkUploadApprenticeships/PublishYourFile/Index", new ApprenticeshipsPublishYourFileViewModel()
+            {
+                NumberOfApprenticeships = readyToGoLiveApprenticeships.Count
+            });
         }
 
         [Authorize]
