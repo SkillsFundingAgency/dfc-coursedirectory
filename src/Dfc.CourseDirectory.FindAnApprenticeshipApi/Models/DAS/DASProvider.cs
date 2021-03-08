@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS
         public string Email { get; set; }
         public string Website { get; set; }
         public string Phone { get; set; }
-        public double? LearnerSatisfaction { get; set; }
-        public double? EmployerSatisfaction { get; set; }
+        public decimal? LearnerSatisfaction { get; set; }
+        public decimal? EmployerSatisfaction { get; set; }
         public List<DasStandard> Standards { get; set; }
         public List<DasFramework> Frameworks { get; set; }
         public List<DasLocation> Locations { get; set; }

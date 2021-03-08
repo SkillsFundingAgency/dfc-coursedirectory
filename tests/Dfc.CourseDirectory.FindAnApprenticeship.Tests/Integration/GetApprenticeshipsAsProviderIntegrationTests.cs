@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Http;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure;
@@ -10,6 +9,8 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
@@ -42,13 +43,11 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
         private readonly Mock<ICosmosDbHelper> _cosmosDbHelper;
         private readonly IOptions<CosmosDbCollectionSettings> _cosmosSettings;
 
-        private readonly Mock<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>> _referenceDataResponse;
-        private readonly IReferenceDataService _referenceDataService;
-        private readonly IReferenceDataServiceClient _referenceDataServiceClient;
         private readonly Mock<IProviderService> _providerService;
         private readonly IProviderServiceClient _providerServiceClient;
         private readonly IDASHelper _DASHelper;
         private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly Mock<ICosmosDbQueryDispatcher> _cosmosDbQueryDispatcher;
 
         private readonly GenerateProviderExportFunction _generateProviderExportFunction;
         private readonly GetApprenticeshipsAsProvider _getApprenticeshipAsProviderFunction;
@@ -60,15 +59,13 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
             _cosmosDbHelper = new Mock<ICosmosDbHelper>();
             _cosmosSettings = Options.Create(new CosmosDbCollectionSettings());
 
-            _referenceDataResponse = new Mock<Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>>();
-            _referenceDataService = new ReferenceDataService(new HttpClient(new MockHttpMessageHandler(_referenceDataResponse.Object)) { BaseAddress = new Uri("https://test.com") });
-            _referenceDataServiceClient = new ReferenceDataServiceClient(_referenceDataService);
             _providerService = new Mock<IProviderService>();
             _providerServiceClient = new ProviderServiceClient(_providerService.Object);
+            _cosmosDbQueryDispatcher = new Mock<ICosmosDbQueryDispatcher>();
             
             var telemetryClient = MockTelemetryHelper.Initialize();
             _DASHelper = new DASHelper(telemetryClient);
-            _apprenticeshipService = new ApprenticeshipService(_cosmosDbHelper.Object, _cosmosSettings, _DASHelper, _providerServiceClient, _referenceDataServiceClient, telemetryClient);
+            _apprenticeshipService = new ApprenticeshipService(_cosmosDbHelper.Object, _cosmosSettings, _DASHelper, _providerServiceClient, telemetryClient, _cosmosDbQueryDispatcher.Object);
 
             _generateProviderExportFunction = new GenerateProviderExportFunction(_apprenticeshipService, _blobStorageClient.Object);
             _getApprenticeshipAsProviderFunction = new GetApprenticeshipsAsProvider(_blobStorageClient.Object, _nowUtc.Object);
@@ -82,14 +79,13 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
             _nowUtc.Setup(s => s.Invoke())
                 .Returns(now);
 
-            _referenceDataResponse.Setup(s => s.Invoke(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
-                .Returns<HttpRequestMessage, CancellationToken>(async (r, ct) => new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(await File.ReadAllTextAsync("Integration/fechoices.json"))
-                });
-
             _providerService.Setup(s => s.GetActiveProvidersAsync())
                 .Returns(async () => JsonConvert.DeserializeObject<IEnumerable<Provider>>(await File.ReadAllTextAsync("Integration/providers.json")));
+
+            _cosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoicesByProviderUkprns>()))
+                .Returns<GetFeChoicesByProviderUkprns>(async r =>
+                    JsonConvert.DeserializeObject<IEnumerable<Core.DataStore.CosmosDb.Models.FeChoice>>(await File.ReadAllTextAsync("Integration/fechoices.json"))
+                        .Where(f => r.ProviderUkprns.Contains(f.UKPRN)).ToDictionary(f => f.UKPRN, f => f));
 
             _cosmosDbHelper.Setup(s => s.GetLiveApprenticeships(It.IsAny<DocumentClient>(), It.IsAny<string>()))
                 .Returns(() => JsonConvert.DeserializeObject<List<Apprenticeship>>(File.ReadAllText("Integration/apprenticeships.json")));

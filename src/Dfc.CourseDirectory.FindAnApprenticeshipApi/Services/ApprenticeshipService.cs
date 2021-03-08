@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
@@ -27,23 +29,23 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
         private readonly ICosmosDbCollectionSettings _cosmosSettings;
         private readonly IDASHelper _DASHelper;
         private readonly IProviderServiceClient _providerServiceClient;
-        private readonly IReferenceDataServiceClient _referenceDataServiceClient;
         private readonly TelemetryClient _telemetryClient;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         public ApprenticeshipService(
             ICosmosDbHelper cosmosDbHelper,
             IOptions<CosmosDbCollectionSettings> cosmosSettings,
             IDASHelper DASHelper,
             IProviderServiceClient providerServiceClient,
-            IReferenceDataServiceClient referenceDataServiceClient,
-            TelemetryClient telemetryClient)
+            TelemetryClient telemetryClient,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _cosmosDbHelper = cosmosDbHelper ?? throw new ArgumentNullException(nameof(cosmosDbHelper));
             _cosmosSettings = cosmosSettings?.Value ?? throw new ArgumentNullException(nameof(cosmosSettings));
             _DASHelper = DASHelper ?? throw new ArgumentNullException(nameof(DASHelper));
             _providerServiceClient = providerServiceClient ?? throw new ArgumentNullException(nameof(providerServiceClient));
-            _referenceDataServiceClient = referenceDataServiceClient ?? throw new ArgumentNullException(nameof(referenceDataServiceClient));
             _telemetryClient = telemetryClient ?? throw new ArgumentNullException(nameof(telemetryClient));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
         public async Task<IEnumerable<IApprenticeship>> GetApprenticeshipCollection()
@@ -108,8 +110,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
                 var providers = (await _providerServiceClient.GetAllProviders())
                     .ToArray();
 
-                var feChoices = (await _referenceDataServiceClient.GetAllFeChoiceData())
-                    .ToArray();
+                var feChoices = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoicesByProviderUkprns { ProviderUkprns = apprenticeshipsByUKPRN.Select(a => a.Key) });
 
                 evt.Metrics.TryAdd("Apprenticeships", apprenticeships.Count);
                 evt.Metrics.TryAdd("Providers", apprenticeshipsByUKPRN.Length);
@@ -128,7 +129,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
                             p.Index + 1000,
                             providers.Where(pp => pp.UnitedKingdomProviderReferenceNumber == p.UKPRN.ToString()),
                             p.Apprenticeships,
-                            feChoices.SingleOrDefault(f => f.UKPRN == p.UKPRN));
+                            feChoices.GetValueOrDefault(p.UKPRN));
 
                         results.Add(DasProviderResult.Succeeded(p.UKPRN, provider));
 
@@ -173,7 +174,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
             int exportKey,
             IEnumerable<Provider> providers,
             List<Apprenticeship> apprenticeships,
-            FeChoice feChoice)
+            Core.DataStore.CosmosDb.Models.FeChoice feChoice)
         {
             var evt = new EventTelemetry {Name = "ComposeProviderForExport"};
 

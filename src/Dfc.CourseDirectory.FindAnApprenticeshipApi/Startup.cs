@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
@@ -44,21 +45,8 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi
 
             #endregion
 
-            #region Http Clients
-
-            services.AddHttpClient<IReferenceDataService, ReferenceDataService>(client =>
-            {
-                var options = referenceDataServiceSettings.Get<ReferenceDataServiceSettings>();
-
-                client.BaseAddress = new Uri(options.ApiUrl);
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", options.ApiKey);
-            });
-
-            #endregion
-
             #region Services
 
-            services.AddSingleton<IReferenceDataServiceClient, ReferenceDataServiceClient>();
             services.AddSingleton<IProviderServiceClient, ProviderServiceClient>();
             services.AddSingleton<Func<DateTimeOffset>>(() => DateTimeOffset.UtcNow);
 
@@ -67,6 +55,10 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi
                 var sqlConnectionString = s.GetRequiredService<IConfiguration>().GetValue<string>("ConnectionStrings:DefaultConnection");
                 return new ProviderService(() => new SqlConnection(sqlConnectionString));
             });
+
+            services.AddCosmosDbDataStore(
+                endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
+                key: configuration["CosmosDbSettings:PrimaryKey"]);
 
             services.AddSingleton<IBlobStorageClient>(s =>
                 new AzureBlobStorageClient(

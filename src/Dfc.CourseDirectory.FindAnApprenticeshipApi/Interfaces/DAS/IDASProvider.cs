@@ -8,9 +8,9 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.DAS
         int? Id { get; set; }
         int? UKPRN { get; set; }
         string Email { get; set; }
-        double? EmployerSatisfaction { get; set; }
+        decimal? EmployerSatisfaction { get; set; }
         List<DasFramework> Frameworks { get; set; }
-        double? LearnerSatisfaction { get; set; }
+        decimal? LearnerSatisfaction { get; set; }
         List<DasLocation> Locations { get; set; }
         string MarketingInfo { get; set; }
         string Name { get; set; }
