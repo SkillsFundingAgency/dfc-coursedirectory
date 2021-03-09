@@ -1,35 +1,50 @@
 [
-    {
-        "name":  "sql-coursedirectory-onspd",
-        "description":  "Gets postcode data from the ONSPD view",
-        "type":  "azuresql",
-        "credentials":  {
-            "connectionString":  "__sqlCourseDirectoryConnectionString__"
-        },
-        "container":  {
-            "name":  "ONSPD",
-            "query":  null
-        },
-        "dataChangeDetectionPolicy":  {
-            "@odata.type":  "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
-            "highWaterMarkColumnName":  "updated"
-        }
+  {
+    "name": "sql-coursedirectory-onspd",
+    "description": "Gets postcode data from the ONSPD view",
+    "type": "azuresql",
+    "credentials": {
+      "connectionString": "__sqlCourseDirectoryConnectionString__"
     },
-    {
-        "name" : "sql-coursedirectory-providers",
-        "type":  "azuresql",
-        "description": "Provider list",
-        "credentials" :
-        {
-            "connectionString":  "__sqlCourseDirectoryConnectionString__"
-        },
-        "container": {
-            "name": "Pttcd.vwProviderSearchIndex",
-            "query": null
-        },
-        "dataChangeDetectionPolicy": {
-            "@odata.type" : "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
-            "highWaterMarkColumnName":  "Version"
-        }
+    "container": {
+      "name": "ONSPD",
+      "query": null
+    },
+    "dataChangeDetectionPolicy": {
+      "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+      "highWaterMarkColumnName": "updated"
     }
+  },
+  {
+    "name": "sql-coursedirectory-providers",
+    "type": "azuresql",
+    "description": "Provider list",
+    "credentials": {
+      "connectionString": "__sqlCourseDirectoryConnectionString__"
+    },
+    "container": {
+      "name": "Pttcd.vwProviderSearchIndex",
+      "query": null
+    },
+    "dataChangeDetectionPolicy": {
+      "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+      "highWaterMarkColumnName": "Version"
+    }
+  },
+  {
+    "name": "sql-coursedirectory-lars",
+    "description": "Gets data from the LARS view",
+    "type": "azuresql",
+    "credentials": {
+      "connectionString": "__sqlCourseDirectoryConnectionString__"
+    },
+    "container": {
+      "name": "LARS",
+      "query": null
+    },
+    "dataChangeDetectionPolicy": {
+      "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+      "highWaterMarkColumnName": "Modified_On"
+    }
+  }
 ]
