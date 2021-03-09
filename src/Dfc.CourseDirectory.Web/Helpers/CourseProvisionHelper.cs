@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 .Value
                 .SelectMany(o => o.Value)
                 .SelectMany(i => i.Value)
-                .Where(y => (int)y.CourseStatus == (int)RecordStatus.Live);
+                .Where(c => c.CourseStatus.HasFlag(RecordStatus.Live));
 
             var csvCourses = CoursesToCsvCourses(courses);
 
@@ -72,7 +72,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
             foreach (var course in courses)
             {
                 //First course run is on same line as course line in CSV
-                var firstCourseRun = course.CourseRuns.First();
+                var courseRuns = course.CourseRuns.Where(r => r.RecordStatus == RecordStatus.Live).ToArray();
+
+                if (!courseRuns.Any())
+                {
+                    continue;
+                }
+
+                var firstCourseRun = courseRuns.First();
 
                 if (firstCourseRun.Regions != null)
                     firstCourseRun.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(firstCourseRun.Regions);
@@ -125,7 +132,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     }
                 }
                 csvCourses.Add(csvCourse);
-                foreach (var courseRun in course.CourseRuns)
+                foreach (var courseRun in courseRuns)
                 {
                     //Ignore the first course run as we've already captured it
                     if (courseRun.id == firstCourseRun.id)
