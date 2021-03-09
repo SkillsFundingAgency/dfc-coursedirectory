@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -11,6 +12,7 @@ using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
@@ -925,6 +927,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
@@ -934,6 +937,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
             IBinaryStorageProvider binaryStorageProvider,
             IBackgroundWorkScheduler backgroundWorkScheduler,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -942,6 +946,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
             _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _settings = (settings ?? throw new ArgumentNullException(nameof(settings))).Value;
         }
 
@@ -1134,15 +1139,32 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
-        private async Task UploadApprenticeships(
-            List<Apprenticeship> apprenticeships,
-            bool addInParallel)
+        private async Task UploadApprenticeships(List<Apprenticeship> apprenticeships, bool addInParallel)
         {
-            var result = await _apprenticeshipService.AddApprenticeships(apprenticeships, addInParallel);
-
-            if (!result.IsSuccess)
+            if (addInParallel)
             {
-                throw new Exception(result.Error);
+                using var syncLock = new SemaphoreSlim(10);
+
+                await Task.WhenAll(apprenticeships.Select(async apprenticeship =>
+                {
+                    await syncLock.WaitAsync();
+
+                    try
+                    {
+                        await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToCreateApprenticeship());
+                    }
+                    finally
+                    {
+                        syncLock.Release();
+                    }
+                }));
+            }
+            else
+            {
+                foreach (var apprenticeship in apprenticeships)
+                {
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToCreateApprenticeship());
+                }
             }
         }
 

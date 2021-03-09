@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             // Need to be able to resolve the service via IApprenticeshipBulkUploadService
             var serviceProvider = new ServiceCollection()
-                .AddTransient<IApprenticeshipBulkUploadService>(_ => _apprenticeshipBulkUploadService)
+                .AddTransient(_ => _apprenticeshipBulkUploadService)
                 .BuildServiceProvider();
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
@@ -83,6 +83,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 _standardsAndFrameworksCache.Object,
                 _binaryStorageProvider.Object,
                 new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
+                _cosmosDbQueryDispatcher.Object,
                 _apprenticeshipBulkUploadSettings);
 
             _controller = new BulkUploadApprenticeshipsController(
@@ -131,10 +132,11 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _apprenticeshipService.Setup(s => s.ChangeApprenticeshipStatusesForUKPRNSelection(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(Result.Ok());
 
-            var addedApprenticeships = new List<Apprenticeship>();
-            _apprenticeshipService.Setup(s => s.AddApprenticeships(It.IsAny<IEnumerable<Apprenticeship>>(), It.IsAny<bool>()))
-                .Callback<IEnumerable<Apprenticeship>, bool>((a, _) => addedApprenticeships.AddRange(a))
-                .ReturnsAsync(Result.Ok());
+            var addedApprenticeships = new List<CreateApprenticeship>();
+
+            _cosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CreateApprenticeship>()))
+                .Callback<ICosmosDbQuery<OneOf.Types.Success>>(q => addedApprenticeships.Add((CreateApprenticeship)q))
+                .ReturnsAsync(new OneOf.Types.Success());
 
             const string csv = "STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY,REGION,SUB_REGION\r\n" +
                 "105,1,,,,\"This apprenticeship is applicable to any industry and perfect for those already in a team leading role or entering a management role for the first time.It lasts around 15 months and incorporates 14 one day modules plus on - the job learning and mentoring.It involves managing projects, leading and managing teams, change, financial management and coaching.If you choose to do this qualification with Azesta, you can expect exciting and engaging day long modules fully utilising experiential learning methods(one per month), high quality tutorial support, access to e-mail and telephone support whenever you need it and great results in your end point assessments.\",http://www.azesta.co.uk/apprenticeships/,info@azesta.co.uk,1423711904,http://www.azesta.co.uk/contact-us/,Both,Fenestra Centre Scunthorpe,100,Employer,No,,,\r\n" +
@@ -161,10 +163,10 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             var apprenticeship1 = addedApprenticeships.First();
             var apprenticeship2 = addedApprenticeships.Skip(1).First();
 
-            Assert.Equal(ukPrn, apprenticeship1.ProviderUKPRN);
+            Assert.Equal(ukPrn, apprenticeship1.ProviderUkprn);
             Assert.Equal(authUserDetails.ProviderID, apprenticeship1.ProviderId);
-            Assert.Equal(authUserDetails.UserId.ToString(), apprenticeship1.CreatedBy);
-            Assert.Equal(105, apprenticeship1.StandardCode);
+            Assert.Equal(authUserDetails.UserId.ToString(), apprenticeship1.CreatedByUser.UserId);
+            Assert.Equal(105, apprenticeship1.StandardOrFramework.Standard.StandardCode);
             Assert.Equal("This apprenticeship is applicable to any industry and perfect for those already in a team leading role or entering a management role for the first time.It lasts around 15 months and incorporates 14 one day modules plus on - the job learning and mentoring.It involves managing projects, leading and managing teams, change, financial management and coaching.If you choose to do this qualification with Azesta, you can expect exciting and engaging day long modules fully utilising experiential learning methods(one per month), high quality tutorial support, access to e-mail and telephone support whenever you need it and great results in your end point assessments.", apprenticeship1.MarketingInformation);
             Assert.Equal("http://www.azesta.co.uk/apprenticeships/", apprenticeship1.Url);
             Assert.Equal("info@azesta.co.uk", apprenticeship1.ContactEmail);
@@ -173,12 +175,11 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             var apprenticeship1Location = apprenticeship1.ApprenticeshipLocations.Single();
             Assert.Equal("Fenestra Centre Scunthorpe", apprenticeship1Location.Name);
-            Assert.Equal(authUserDetails.Email, apprenticeship1Location.CreatedBy);
 
-            Assert.Equal(ukPrn, apprenticeship2.ProviderUKPRN);
+            Assert.Equal(ukPrn, apprenticeship2.ProviderUkprn);
             Assert.Equal(authUserDetails.ProviderID, apprenticeship2.ProviderId);
-            Assert.Equal(authUserDetails.UserId.ToString(), apprenticeship2.CreatedBy);
-            Assert.Equal(104, apprenticeship2.StandardCode);
+            Assert.Equal(authUserDetails.UserId.ToString(), apprenticeship2.CreatedByUser.UserId);
+            Assert.Equal(104, apprenticeship2.StandardOrFramework.Standard.StandardCode);
             Assert.Equal("This apprenticeship is great for current managers. It involves managing projects, leading and managing teams, change, financial and resource management, talent management and coaching and mentoring. It takes around 2.5 years to complete and if you choose to do this qualification with Azesta, you can expect exciting and engaging day long modules fully utilising experiential learning methods (one per month), high quality tutorial support, access to e-mail and telephone support whenever you need it and great results in your end point assessments.", apprenticeship2.MarketingInformation);
             Assert.Equal("http://www.azesta.co.uk/apprenticeships/", apprenticeship2.Url);
             Assert.Equal("info@azesta.co.uk", apprenticeship2.ContactEmail);
@@ -187,7 +188,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             var apprenticeship2Location = apprenticeship2.ApprenticeshipLocations.Single();
             Assert.Equal("Fenestra Centre Scunthorpe", apprenticeship2Location.Name);
-            Assert.Equal(authUserDetails.Email, apprenticeship2Location.CreatedBy);
         }
     }
 }
