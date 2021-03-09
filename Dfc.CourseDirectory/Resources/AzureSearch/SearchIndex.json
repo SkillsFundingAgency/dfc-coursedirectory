@@ -1,106 +1,361 @@
 [
-	{
-	    "name": "onspd",
-	    "fields": [
-		    { "name": "pcd", "type": "Edm.String", "key": true, "sortable": false, "facetable": false },
-			{ "name": "pcd2", "type": "Edm.String", "sortable": false, "facetable": false },
-			{ "name": "pcds", "type": "Edm.String", "sortable": false, "facetable": false },
-			{ "name": "dointr", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "doterm", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "oscty", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "oslaua", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "osward", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "prsh", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "ctry", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "rgn", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "lat", "type": "Edm.Double", "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "long", "type": "Edm.Double", "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "Parish", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "LocalAuthority", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "Region", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "County", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "Country", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
-			{ "name": "updated", "type": "Edm.DateTimeOffset", "filterable": false, "sortable": false, "facetable": false }
-		]
-	},
-	{
-		"name": "providers",
-		"fields": [
-			{
-				"name": "ProviderId",
-				"type": "Edm.String",
-				"key": true,
-				"sortable": false,
-				"facetable": false,
-				"searchable": false
-			},
-			{
-				"name": "Ukprn",
-				"type": "Edm.String",
-				"facetable": false
-			},
-			{
-				"name": "ProviderName",
-				"type": "Edm.String",
-				"facetable": false,
-				"analyzer": "en.microsoft"
-			},
-			{
-				"name": "Town",
-				"type": "Edm.String"
-			},
-			{
-				"name": "Postcode",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "ProviderStatus",
-				"type": "Edm.Int32",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "UkrlpProviderStatusDescription",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "CourseDirectoryName",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "TradingName",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "Alias",
-				"type": "Edm.String",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "DateUpdated",
-				"type": "Edm.DateTimeOffset",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "DateOnboarded",
-				"type": "Edm.DateTimeOffset",
-				"sortable": false,
-				"facetable": false
-			},
-			{
-				"name": "Region",
-				"type": "Edm.String"
-			}
-		]
-	}
+  {
+    "name": "onspd",
+    "fields": [
+      {
+        "name": "pcd",
+        "type": "Edm.String",
+        "key": true,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "pcd2",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "pcds",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "dointr",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "doterm",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "oscty",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "oslaua",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "osward",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "prsh",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "ctry",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "rgn",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "lat",
+        "type": "Edm.Double",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "long",
+        "type": "Edm.Double",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "Parish",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "LocalAuthority",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "Region",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "County",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "Country",
+        "type": "Edm.String",
+        "searchable": false,
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "updated",
+        "type": "Edm.DateTimeOffset",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false
+      }
+    ]
+  },
+  {
+    "name": "providers",
+    "fields": [
+      {
+        "name": "ProviderId",
+        "type": "Edm.String",
+        "key": true,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "Ukprn",
+        "type": "Edm.String",
+        "facetable": false
+      },
+      {
+        "name": "ProviderName",
+        "type": "Edm.String",
+        "facetable": false,
+        "analyzer": "en.microsoft"
+      },
+      {
+        "name": "Town",
+        "type": "Edm.String"
+      },
+      {
+        "name": "Postcode",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "ProviderStatus",
+        "type": "Edm.Int32",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "UkrlpProviderStatusDescription",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "CourseDirectoryName",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "TradingName",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "Alias",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "DateUpdated",
+        "type": "Edm.DateTimeOffset",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "DateOnboarded",
+        "type": "Edm.DateTimeOffset",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "Region",
+        "type": "Edm.String"
+      }
+    ]
+  },
+  {
+    "name": "lars",
+    "fields": [
+      {
+        "name": "LearnAimRef",
+        "type": "Edm.String",
+        "key": true,
+        "sortable": false,
+        "facetable": false,
+        "searchable": true
+      },
+      {
+        "name": "LearnAimRefTitle",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false,
+        "searchable": true
+      },
+      {
+        "name": "LearnAimRefTypeDesc",
+        "type": "Edm.String",
+        "sortable": false,
+        "facetable": false,
+        "searchable": true
+      },
+      {
+        "name": "NotionalNVQLevelv2",
+        "type": "Edm.String",
+        "sortable": false,
+        "searchable": true
+      },
+      {
+        "name": "AwardOrgCode",
+        "type": "Edm.String",
+        "sortable": false,
+        "searchable": true
+      },
+      {
+        "name": "LearnDirectClassSystemCode1",
+        "type": "Edm.String",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "LearnDirectClassSystemCode2",
+        "type": "Edm.String",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "SectorSubjectAreaTier1",
+        "type": "Edm.String",
+        "searchable": false
+      },
+      {
+        "name": "SectorSubjectAreaTier2",
+        "type": "Edm.String",
+        "searchable": false
+      },
+      {
+        "name": "GuidedLearningHours",
+        "type": "Edm.String",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "TotalQualificationTime",
+        "type": "Edm.String",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "UnitType",
+        "type": "Edm.String",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "AwardOrgName",
+        "type": "Edm.String",
+        "filterable": false,
+        "sortable": false,
+        "facetable": false,
+        "searchable": false
+      },
+      {
+        "name": "Modified_On",
+        "type": "Edm.DateTimeOffset",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "EffectiveTo",
+        "type": "Edm.DateTimeOffset",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "CertificationEndDate",
+        "type": "Edm.DateTimeOffset",
+        "sortable": false,
+        "facetable": false
+      },
+      {
+        "name": "SectorSubjectAreaTier1Desc",
+        "type": "Edm.String",
+        "searchable": false
+      },
+      {
+        "name": "SectorSubjectAreaTier2Desc",
+        "type": "Edm.String",
+        "searchable": false
+      },
+      {
+        "name": "AwardOrgAimRef",
+        "type": "Edm.String",
+        "searchable": false
+      }
+    ]
+  }
 ]
