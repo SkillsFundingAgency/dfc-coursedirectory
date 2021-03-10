@@ -1255,7 +1255,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                 LocationId = venue?.LocationId,
                 VenueId = Guid.TryParse(venue?.ID, out var venueId) ? venueId : Guid.Empty,
                 Address = venue != null
-                    ? new Address
+                    ? new ApprenticeshipLocationAddress
                     {
                         Address1 = venue.Address1,
                         Address2 = venue.Address2,

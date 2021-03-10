@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -20,16 +19,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class PublishApprenticeshipsController : Controller
     {
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
-        public PublishApprenticeshipsController(
-            IApprenticeshipService apprenticeshipService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public PublishApprenticeshipsController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _apprenticeshipService = apprenticeshipService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
@@ -56,7 +51,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             var bulkUploadPendingApprenticeships = apprenticeships.Values.Where(a => a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadPending).Select(Apprenticeship.FromCosmosDbModel).ToArray();
             var bulkUploadReadyToGoLiveApprenticeships = apprenticeships.Values.Where(a => a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive).Select(Apprenticeship.FromCosmosDbModel).ToArray();
 
-            vm.ListOfApprenticeships = GetErrorMessages(bulkUploadPendingApprenticeships);
+            vm.ListOfApprenticeships = await GetErrorMessages(bulkUploadPendingApprenticeships);
 
             if (!bulkUploadPendingApprenticeships.Any())
             {
@@ -114,20 +109,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             return RedirectToAction("Complete", "Apprenticeships", new { CompleteVM });
         }
 
-        internal IEnumerable<Apprenticeship> GetErrorMessages(IEnumerable<Apprenticeship> apprenticeships)
+        private async Task<IEnumerable<Apprenticeship>> GetErrorMessages(IEnumerable<Apprenticeship> apprenticeships)
         {
-            foreach (var apprentice in apprenticeships)
+            foreach (var apprenticeship in apprenticeships)
             {
-                apprentice.ValidationErrors = ValidateApprenticeships(apprentice).Select(x => x.Value);
+                apprenticeship.ValidationErrors = ValidateApprenticeships(apprenticeship).Select(x => x.Value);
 
-                apprentice.LocationValidationErrors = ValidateApprenticeshipLocations(apprentice).Select(x => x.Value);
+                apprenticeship.LocationValidationErrors = ValidateApprenticeshipLocations(apprenticeship).Select(x => x.Value);
 
-                if (apprentice.BulkUploadErrors.Any() && !apprentice.ValidationErrors.Any())
+                if (apprenticeship.BulkUploadErrors.Any() && !apprenticeship.ValidationErrors.Any())
                 {
-                    apprentice.BulkUploadErrors = new List<BulkUploadError> { };
-                }               
-
-                _apprenticeshipService.UpdateApprenticeshipAsync(apprentice);
+                    apprenticeship.BulkUploadErrors = new List<BulkUploadError>();
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToUpdateApprenticeship());
+                }
             }
 
             return apprenticeships;

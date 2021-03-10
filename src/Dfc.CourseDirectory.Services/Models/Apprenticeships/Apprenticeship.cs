@@ -161,7 +161,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                     LocationId = l.ApprenticeshipLocationId,
                     National = l.National,
                     Address = l.Address != null
-                            ? new Address
+                            ? new ApprenticeshipLocationAddress
                             {
                                 Address1 = l.Address.Address1,
                                 Address2 = l.Address.Address2,

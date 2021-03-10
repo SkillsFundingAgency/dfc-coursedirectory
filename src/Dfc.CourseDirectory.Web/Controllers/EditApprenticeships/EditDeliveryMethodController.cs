@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -20,16 +19,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class EditDeliveryMethodController : Controller
     {
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
-        public EditDeliveryMethodController(
-            IApprenticeshipService apprenticeshipService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public EditDeliveryMethodController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
@@ -90,7 +85,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                     {
                         apprenticeshipForEdit.RecordStatus = Services.Models.RecordStatus.BulkUploadReadyToGoLive;
                     }
-                    var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit);
+
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeshipForEdit.ToUpdateApprenticeship());
                 }
 
                 return RedirectToAction("Index", "PublishApprenticeships");

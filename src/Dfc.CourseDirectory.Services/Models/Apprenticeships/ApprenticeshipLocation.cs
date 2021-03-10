@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
         public Guid? LocationGuidId { get; set; }
         public int? LocationId { get; set; }
         public bool? National { get; set; }
-        public Address Address { get; set; }
+        public ApprenticeshipLocationAddress Address { get; set; }
         public List<int> DeliveryModes { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
