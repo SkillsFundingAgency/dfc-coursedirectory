@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
@@ -50,6 +51,65 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
         public string NotionalNVQLevelv2 { get; set; }
         public IEnumerable<string> ValidationErrors { get; set; }
         public IEnumerable<string> LocationValidationErrors { get; set; }
+
+        public CreateApprenticeship ToCreateApprenticeship()
+        {
+            return new CreateApprenticeship
+            {
+                Id = Guid.NewGuid(),
+                ProviderId = ProviderId,
+                ProviderUkprn = ProviderUKPRN,
+                ApprenticeshipTitle = ApprenticeshipTitle,
+                ApprenticeshipType = ApprenticeshipType,
+                StandardOrFramework = new Standard
+                {
+                    CosmosId = StandardId.Value,
+                    StandardCode = StandardCode.Value,
+                    Version = Version.Value,
+                    StandardName = ApprenticeshipTitle,
+                    NotionalNVQLevelv2 = NotionalNVQLevelv2
+                },
+                MarketingInformation = MarketingInformation,
+                Url = Url,
+                ContactTelephone = ContactTelephone,
+                ContactEmail = ContactEmail,
+                ContactWebsite = ContactWebsite,
+                ApprenticeshipLocations = ApprenticeshipLocations.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
+                {
+                    Id = al.Id,
+                    VenueId = al.VenueId,
+                    National = al.National,
+                    Address = al.Address != null
+                        ? new Core.DataStore.CosmosDb.Models.ApprenticeshipLocationAddress
+                        {
+                            Address1 = al.Address.Address1,
+                            Address2 = al.Address.Address2,
+                            County = al.Address.County,
+                            Email = al.Address.Email,
+                            Latitude = al.Address.Latitude ?? 0,
+                            Longitude = al.Address.Longitude ?? 0,
+                            Phone = al.Address.Phone,
+                            Postcode = al.Address.Postcode,
+                            Town = al.Address.Town,
+                            Website = al.Address.Website
+                        }
+                        : null,
+                    DeliveryModes = al.DeliveryModes.Cast<ApprenticeshipDeliveryMode>().ToList(),
+                    Name = al.Name,
+                    Phone = al.Phone,
+                    Regions = al.Regions,
+                    ApprenticeshipLocationType = al.ApprenticeshipLocationType,
+                    LocationType = al.LocationType,
+                    Radius = al.Radius
+                }),
+                CreatedDate = CreatedDate,
+                CreatedByUser = new UserInfo
+                {
+                    UserId = CreatedBy
+                },
+                Status = (int)RecordStatus
+            };
+        }
 
         public static Apprenticeship FromCosmosDbModel(Core.DataStore.CosmosDb.Models.Apprenticeship apprenticeship)
         {

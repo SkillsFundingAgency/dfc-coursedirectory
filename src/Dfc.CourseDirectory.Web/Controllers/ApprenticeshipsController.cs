@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -22,7 +21,6 @@ using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearc
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +39,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
-        private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IClock _clock;
 
         private ISession _session => HttpContext.Session;
 
@@ -52,9 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IApprenticeshipService apprenticeshipService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
-            IStandardsAndFrameworksCache standardsAndFrameworksCache,
-            ICurrentUserProvider currentUserProvider,
-            IClock clock)
+            IStandardsAndFrameworksCache standardsAndFrameworksCache)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
@@ -62,8 +56,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
-            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
-            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         [Authorize]
@@ -502,49 +494,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateApprenticeship
-                {
-                    Id = Guid.NewGuid(),
-                    ProviderId = apprenticeship.ProviderId,
-                    ProviderUkprn = apprenticeship.ProviderUKPRN,
-                    ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle,
-                    ApprenticeshipType = apprenticeship.ApprenticeshipType,
-                    StandardOrFramework = await _standardsAndFrameworksCache.GetStandard(apprenticeship.StandardCode.Value, apprenticeship.Version.Value),
-                    MarketingInformation = apprenticeship.MarketingInformation,
-                    Url = apprenticeship.Url,
-                    ContactTelephone = apprenticeship.ContactTelephone,
-                    ApprenticeshipLocations = apprenticeship.ApprenticeshipLocations.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
-                    {
-                        Id = al.Id,
-                        VenueId = al.VenueId,
-                        National = al.National,
-                        Address = al.Address != null
-                            ? new Core.DataStore.CosmosDb.Models.ApprenticeshipLocationAddress
-                            {
-                                Address1 = al.Address.Address1,
-                                Address2 = al.Address.Address2,
-                                County = al.Address.County,
-                                Email = al.Address.Email,
-                                Latitude = al.Address.Latitude ?? 0,
-                                Longitude = al.Address.Longitude ?? 0,
-                                Phone = al.Address.Phone,
-                                Postcode = al.Address.Postcode,
-                                Town = al.Address.Town,
-                                Website = al.Address.Website
-                            }
-                            : null,
-                        DeliveryModes = al.DeliveryModes.Cast<ApprenticeshipDeliveryMode>().ToList(),
-                        Name = al.Name,
-                        Phone = al.Phone,
-                        Regions = al.Regions,
-                        ApprenticeshipLocationType = al.ApprenticeshipLocationType,
-                        LocationType = al.LocationType,
-                        Radius = al.Radius
-                    }),
-                    CreatedDate = _clock.UtcNow,
-                    CreatedByUser = _currentUserProvider.GetCurrentUser(),
-                    Status = (int)apprenticeship.RecordStatus
-                });
+                await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToCreateApprenticeship());
 
                 return RedirectToAction("Complete", "Apprenticeships");
             }
