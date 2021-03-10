@@ -36,7 +36,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
     public class SelectCommand : IRequest<OneOf<ModelWithErrors<SearchViewModel>, Success>>
     {
         public string AddressId { get; set; }
-        public string Postcode { get; set; }
     }
 
     public class Handler :
@@ -85,7 +84,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                 return CreateInvalidPostcodeResponse();
             }
 
-            var vm = await SearchAddressesByPostcode(postcode);
+            var results = await _addressSearchService.SearchByPostcode(postcode);
+            var vm = CreateViewModel(postcode, results);
+
+            // Stash the results in journey state so we can re-use them in the SelectCommand's handler
+            journeyInstance.UpdateState(state =>
+            {
+                state.PostcodeSearchResults = results;
+                state.PostcodeSearchQuery = request.Postcode;
+            });
 
             if (vm.Results.Count == 0)
             {
@@ -111,13 +118,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
 
             journeyInstance.ThrowIfCompleted();
 
+            // We should have cached search results at this point from the postcode search above
+            if ((journeyInstance.State.PostcodeSearchResults?.Count ?? 0) == 0)
+            {
+                throw new InvalidStateException();
+            }
+
             var validator = new SelectCommandValidator();
             var validationResult = validator.Validate(request);
 
             if (!validationResult.IsValid)
             {
-                // No address specified. Re-run the search with a prompt to select an address.
-                var vm = await SearchAddressesByPostcode(request.Postcode);
+                var vm = CreateViewModel(
+                    journeyInstance.State.PostcodeSearchQuery,
+                    journeyInstance.State.PostcodeSearchResults);
+
                 return new ModelWithErrors<SearchViewModel>(vm, validationResult);
             }
 
@@ -126,15 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             if (addressDetail == null)
             {
                 // Address specified isn't valid. (We should never get here.)
-                // Re-run the search to get a list of valid addresses with a prompt to select an address.
-
-                var badAddressValidationResult = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(SelectCommand.AddressId), "Select an address")
-                });
-
-                var vm = await SearchAddressesByPostcode(request.Postcode);
-                return new ModelWithErrors<SearchViewModel>(vm, badAddressValidationResult);
+                throw new InvalidStateException();
             }
 
             // SearchCommand has already checked that there is an ONSPD entry for this postcode
@@ -158,13 +165,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             return new Success();
         }
 
-        private async Task<SearchViewModel> SearchAddressesByPostcode(string postcode)
-        {
-            var results = await _addressSearchService.SearchByPostcode(postcode);
-
-            return new SearchViewModel()
+        private static SearchViewModel CreateViewModel(string postcode, IReadOnlyCollection<PostcodeSearchResult> results) =>
+            new SearchViewModel()
             {
-                Postcode = postcode,
+                Postcode = new Postcode(postcode),
                 Results = results
                     .Select(r => new SearchResult()
                     {
@@ -173,7 +177,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                     })
                     .ToArray()
             };
-        }
 
         private class SearchCommandValidator : AbstractValidator<SearchCommand>
         {

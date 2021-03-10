@@ -215,9 +215,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureOnspdLookupForPostcode(postcode, country, postcodeLatitude, postcodeLongitude);
 
-            ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
+            var postcodeSearchResults = ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(
+                providerId,
+                new AddVenueJourneyModel()
+                {
+                    PostcodeSearchResults = postcodeSearchResults,
+                    PostcodeSearchQuery = postcode
+                });
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
@@ -238,7 +244,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         }
 
         [Fact]
-        public async Task SelectPostcode_InvalidAddressSelected_ReturnsError()
+        public async Task SelectPostcode_InvalidAddressSelected_ReturnsBadRequest()
         {
             // Arrange
             var providerId = await TestData.CreateProvider();
@@ -253,9 +259,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureOnspdLookupForPostcode(postcode, country, postcodeLatitude, postcodeLongitude);
 
-            ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
+            var postcodeSearchResults = ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(
+                providerId,
+                new AddVenueJourneyModel()
+                {
+                    PostcodeSearchResults = postcodeSearchResults,
+                    PostcodeSearchQuery = postcode
+                });
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
@@ -271,9 +283,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var doc = await response.GetDocument();
-            doc.AssertHasError("AddressId", "Select an address");
         }
 
         [Theory]
@@ -298,6 +307,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureOnspdLookupForPostcode(postcode, onspdRecordCountry, postcodeLatitude, postcodeLongitude);
 
+            var postcodeSearchResults = new[]
+            {
+                new PostcodeSearchResult()
+                {
+                    Id = "result1",
+                    StreetAddress = $"{addressLine1} {addressLine2}",
+                    Place = town
+                }
+            };
+
+            var journeyInstance = CreateJourneyInstance(
+                providerId,
+                new AddVenueJourneyModel()
+                {
+                    PostcodeSearchResults = postcodeSearchResults,
+                    PostcodeSearchQuery = postcode
+                });
+
             AddressSearchService
                 .Setup(s => s.GetById(addressId))
                 .ReturnsAsync(new AddressDetail()
@@ -309,8 +336,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Postcode = postcode,
                     PostTown = town
                 });
-
-            var journeyInstance = CreateJourneyInstance(providerId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,

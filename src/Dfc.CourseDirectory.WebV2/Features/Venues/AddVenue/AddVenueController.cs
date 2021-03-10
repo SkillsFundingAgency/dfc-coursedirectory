@@ -86,11 +86,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("select-postcode")]
         [RequireJourneyInstance]
-        public Task<IActionResult> SelectPostcode(PostcodeSearch.SelectCommand command, [FromQuery] string postcode)
+        public Task<IActionResult> SelectPostcode(PostcodeSearch.SelectCommand command)
         {
             var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
-
-            command.Postcode = postcode;
 
             return _mediator.SendAndMapResponse(
                 command,

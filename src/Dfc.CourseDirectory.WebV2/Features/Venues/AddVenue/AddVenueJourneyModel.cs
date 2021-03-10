@@ -1,5 +1,7 @@
 ﻿using System;
 using FormFlow;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 {
@@ -20,6 +22,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         public decimal Longitude { get; set; }
         public bool AddressIsOutsideOfEngland { get; set; }
         public Guid? VenueId { get; set; }
+        public IReadOnlyCollection<PostcodeSearchResult> PostcodeSearchResults { get; set; }
+        public string PostcodeSearchQuery { get; set; }
     }
 
     [Flags]
