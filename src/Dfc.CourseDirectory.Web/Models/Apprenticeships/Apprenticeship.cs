@@ -4,9 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
-namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
+namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
 {
     public enum ApprenticeshipMode
     {

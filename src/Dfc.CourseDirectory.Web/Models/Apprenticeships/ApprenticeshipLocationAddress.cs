@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
+﻿namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
 {
     public class ApprenticeshipLocationAddress
     {

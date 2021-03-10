@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {

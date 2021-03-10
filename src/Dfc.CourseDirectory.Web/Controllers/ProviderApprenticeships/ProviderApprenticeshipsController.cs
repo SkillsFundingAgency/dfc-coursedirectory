@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;

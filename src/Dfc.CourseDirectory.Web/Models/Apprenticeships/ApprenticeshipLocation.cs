@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Services.Models;
 
-namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
+namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
 {
     public class ApprenticeshipLocation
     {

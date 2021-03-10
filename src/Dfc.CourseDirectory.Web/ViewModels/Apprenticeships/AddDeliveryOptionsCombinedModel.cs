@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
