@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                 ContactTelephone = ContactTelephone,
                 ContactEmail = ContactEmail,
                 ContactWebsite = ContactWebsite,
-                ApprenticeshipLocations = ApprenticeshipLocations.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
+                ApprenticeshipLocations = ApprenticeshipLocations?.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
                 {
                     Id = al.Id,
                     VenueId = al.VenueId,
@@ -107,7 +107,13 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                 {
                     UserId = CreatedBy
                 },
-                Status = (int)RecordStatus
+                Status = (int)RecordStatus,
+                BulkUploadErrors = BulkUploadErrors?.Where(b => b != null).Select(b => new Core.DataStore.CosmosDb.Models.BulkUploadError
+                {
+                    LineNumber = b.LineNumber,
+                    Header = b.Header,
+                    Error = b.Error
+                })
             };
         }
 
@@ -184,9 +190,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                     Header = b.Header,
                     Error = b.Error
                 }).ToList(),
-                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2,
-                ValidationErrors = apprenticeship.ValidationErrors,
-                LocationValidationErrors = apprenticeship.LocationValidationErrors
+                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2
             };
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -48,9 +47,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 CreatedBy = request.CreatedByUser.UserId,
                 UpdatedDate = request.CreatedDate,
                 UpdatedBy = request.CreatedByUser.UserId,
-                BulkUploadErrors = new List<BulkUploadError>(),
-                ValidationErrors = Array.Empty<string>(),
-                LocationValidationErrors = Array.Empty<string>()
+                BulkUploadErrors = request.BulkUploadErrors?.ToList()
             };
 
             request.StandardOrFramework.Switch(
