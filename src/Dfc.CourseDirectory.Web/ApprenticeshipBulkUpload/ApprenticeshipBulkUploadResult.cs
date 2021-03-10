@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
+namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 {
     public class ApprenticeshipBulkUploadResult
     {

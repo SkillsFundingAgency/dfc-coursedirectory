@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Models.Auth;
 
-namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
+namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 {
     public interface IApprenticeshipBulkUploadService
     {

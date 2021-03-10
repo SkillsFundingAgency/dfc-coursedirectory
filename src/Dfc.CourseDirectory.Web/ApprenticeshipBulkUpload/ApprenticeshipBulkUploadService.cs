@@ -26,7 +26,7 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
+namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 {
     public class ApprenticeshipBulkUploadService : IApprenticeshipBulkUploadService
     {
@@ -354,7 +354,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                     }
 
                     var venues = _cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == Models.Venues.VenueStatus.Live).ToList();
+                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == Services.Models.Venues.VenueStatus.Live).ToList();
 
                     if (venues.Any())
                     {

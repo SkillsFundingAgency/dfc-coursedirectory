@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
 
-namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
+namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 {
     public class CsvApprenticeship
     {
