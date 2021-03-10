@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _updateApprenticshipUri, _changeApprenticeshipStatusesForUKPRNSelectionUri;
+        private readonly Uri _updateApprenticshipUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -42,7 +42,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
-            _changeApprenticeshipStatusesForUKPRNSelectionUri = settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
         }
 
         public async Task<Result<Apprenticeship>> UpdateApprenticeshipAsync(Apprenticeship apprenticeship)
@@ -83,18 +82,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogError(e, "Apprenticeship update service unknown error.");
                 return Result.Fail<Apprenticeship>("Apprenticeship update service unknown error.");
             }
-        }
-
-        public async Task<Result> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
-        {
-            var response = await _httpClient.GetAsync(new Uri(_changeApprenticeshipStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
-
-            if (response.IsSuccessStatusCode)
-            {
-                return Result.Ok();
-            }
-
-            return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
         }
     }
 }

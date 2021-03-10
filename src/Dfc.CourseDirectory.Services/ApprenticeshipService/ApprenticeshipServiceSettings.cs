@@ -13,12 +13,5 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/UpdateApprenticeship");
         }
-
-        public Uri ChangeApprenticeshipStatusesForUKPRNSelectionUri()
-        {
-            var uri = new Uri(ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ChangeApprenticeshipStatusForUKPRNSelection");
-        }
     }
 }

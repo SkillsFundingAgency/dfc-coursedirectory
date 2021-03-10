@@ -85,25 +85,33 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 UKPRN = sUKPRN ?? 0;
 
             CompleteVM.NumberOfCoursesPublished = vm.NumberOfApprenticeships;
-            await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
-            await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
+
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
+            {
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.MigrationPending | ApprenticeshipStatus.MigrationReadyToGoLive,
+                NewStatus = ApprenticeshipStatus.Archived
+            });
 
             //Archive any existing courses
-            var resultArchivingCourses = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
-            if (resultArchivingCourses.IsSuccess)
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
             {
-                // Publish courses
-                var resultPublishBulkUploadedCourses = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
-                CompleteVM.Mode = PublishMode.BulkUpload;
-                if (resultPublishBulkUploadedCourses.IsSuccess)
-                    return RedirectToAction("Complete", "Apprenticeships", new { CompleteVM });
-                else
-                    return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-PublishCourses Error" });
-            }
-            else
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.Live,
+                NewStatus = ApprenticeshipStatus.Archived
+            });
+
+            // Publish courses
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-ArchiveCourses Error" });
-            }
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.BulkUploadReadyToGoLive,
+                NewStatus = ApprenticeshipStatus.Live
+            });
+
+            CompleteVM.Mode = PublishMode.BulkUpload;
+
+            return RedirectToAction("Complete", "Apprenticeships", new { CompleteVM });
         }
 
         internal IEnumerable<Apprenticeship> GetErrorMessages(IEnumerable<Apprenticeship> apprenticeships)

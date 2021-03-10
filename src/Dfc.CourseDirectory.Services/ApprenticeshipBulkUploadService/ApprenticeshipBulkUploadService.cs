@@ -13,8 +13,8 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Auth;
@@ -24,7 +24,6 @@ using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
@@ -921,8 +920,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             }
         }
 
-        private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
@@ -931,8 +928,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
         private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
-            ILogger<ApprenticeshipBulkUploadService> logger,
-            IApprenticeshipService apprenticeshipService,
             IVenueService venueService,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
             IBinaryStorageProvider binaryStorageProvider,
@@ -940,8 +935,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
@@ -1051,15 +1044,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService
                     }
                 }
 
-                var archiveResult = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(
-                    int.Parse(userDetails.UKPRN),
-                    (int)(RecordStatus.BulkUploadPending | RecordStatus.BulkUploadReadyToGoLive),
-                    (int)RecordStatus.Archived);
-
-                if (!archiveResult.IsSuccess)
+                await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
                 {
-                    throw new Exception(archiveResult.Error);
-                }
+                    ProviderUkprn = int.Parse(userDetails.UKPRN),
+                    CurrentStatus = ApprenticeshipStatus.BulkUploadPending | ApprenticeshipStatus.BulkUploadReadyToGoLive,
+                    NewStatus = ApprenticeshipStatus.Archived
+                });
 
                 var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
                 errors = ValidateApprenticeships(apprenticeships);

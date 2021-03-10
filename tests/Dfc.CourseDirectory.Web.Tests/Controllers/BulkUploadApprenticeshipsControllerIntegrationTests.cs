@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -23,7 +22,6 @@ using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -35,7 +33,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
     {
         private Mock<IVenueService> _venueService;
         private Mock<IStandardsAndFrameworksCache> _standardsAndFrameworksCache;
-        private Mock<IApprenticeshipService> _apprenticeshipService;
         private Mock<IBlobStorageService> _blobStorageService;
         private Mock<ICourseService> _courseService;
         private Mock<ICosmosDbQueryDispatcher> _cosmosDbQueryDispatcher;
@@ -53,7 +50,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         {
             _venueService = new Mock<IVenueService>();
             _standardsAndFrameworksCache = new Mock<IStandardsAndFrameworksCache>();
-            _apprenticeshipService = new Mock<IApprenticeshipService>();
             _blobStorageService = new Mock<IBlobStorageService>();
             _courseService = new Mock<ICourseService>();
             _cosmosDbQueryDispatcher = new Mock<ICosmosDbQueryDispatcher>();
@@ -77,8 +73,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 .BuildServiceProvider();
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
-                NullLogger<ApprenticeshipBulkUploadService>.Instance,
-                _apprenticeshipService.Object,
                 _venueService.Object,
                 _standardsAndFrameworksCache.Object,
                 _binaryStorageProvider.Object,
@@ -88,7 +82,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             _controller = new BulkUploadApprenticeshipsController(
                 _apprenticeshipBulkUploadService,
-                _apprenticeshipService.Object,
                 _blobStorageService.Object,
                 _courseService.Object,
                 _cosmosDbQueryDispatcher.Object,
@@ -128,9 +121,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             _venueService.Setup(s => s.SearchAsync(It.IsAny<VenueSearchCriteria>()))
                 .ReturnsAsync<VenueSearchCriteria, IVenueService, Result<VenueSearchResult>>(c => Result.Ok<VenueSearchResult>(new VenueSearchResult(new[] { new Venue { VenueName = "Fenestra Centre Scunthorpe", Status = VenueStatus.Live } })));
-
-            _apprenticeshipService.Setup(s => s.ChangeApprenticeshipStatusesForUKPRNSelection(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(Result.Ok());
 
             var addedApprenticeships = new List<CreateApprenticeship>();
 
