@@ -26,6 +26,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.StoredProcedures
         {
             await DeployStoredProcedureToCollection(_configuration.CoursesCollectionName, "ArchiveCoursesForProvider");
             await DeployStoredProcedureToCollection(_configuration.ApprenticeshipCollectionName, "ArchiveApprenticeshipsForProvider");
+            await DeployStoredProcedureToCollection(_configuration.ApprenticeshipCollectionName, "UpdateRecordStatuses");
 
             async Task DeployStoredProcedureToCollection(string collection, string storedProcedureName)
             {
