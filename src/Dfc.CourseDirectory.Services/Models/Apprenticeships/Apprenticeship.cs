@@ -74,40 +74,50 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                 ContactTelephone = ContactTelephone,
                 ContactEmail = ContactEmail,
                 ContactWebsite = ContactWebsite,
-                ApprenticeshipLocations = ApprenticeshipLocations?.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
-                {
-                    Id = al.Id,
-                    VenueId = al.VenueId,
-                    National = al.National,
-                    Address = al.Address != null
-                        ? new Core.DataStore.CosmosDb.Models.ApprenticeshipLocationAddress
-                        {
-                            Address1 = al.Address.Address1,
-                            Address2 = al.Address.Address2,
-                            County = al.Address.County,
-                            Email = al.Address.Email,
-                            Latitude = al.Address.Latitude ?? 0,
-                            Longitude = al.Address.Longitude ?? 0,
-                            Phone = al.Address.Phone,
-                            Postcode = al.Address.Postcode,
-                            Town = al.Address.Town,
-                            Website = al.Address.Website
-                        }
-                        : null,
-                    DeliveryModes = al.DeliveryModes.Cast<ApprenticeshipDeliveryMode>().ToList(),
-                    Name = al.Name,
-                    Phone = al.Phone,
-                    Regions = al.Regions,
-                    ApprenticeshipLocationType = al.ApprenticeshipLocationType,
-                    LocationType = al.LocationType,
-                    Radius = al.Radius
-                }),
+                ApprenticeshipLocations = ApprenticeshipLocations?.Where(al => al != null).Select(al => al.ToCreateApprenticeshipLocation()),
                 CreatedDate = CreatedDate,
                 CreatedByUser = new UserInfo
                 {
                     UserId = CreatedBy
                 },
                 Status = (int)RecordStatus,
+                BulkUploadErrors = BulkUploadErrors?.Where(b => b != null).Select(b => new Core.DataStore.CosmosDb.Models.BulkUploadError
+                {
+                    LineNumber = b.LineNumber,
+                    Header = b.Header,
+                    Error = b.Error
+                })
+            };
+        }
+
+        public UpdateApprenticeship ToUpdateApprenticeship()
+        {
+            return new UpdateApprenticeship
+            {
+                Id = id,
+                ProviderUkprn = ProviderUKPRN,
+                ApprenticeshipTitle = ApprenticeshipTitle,
+                ApprenticeshipType = ApprenticeshipType,
+                StandardOrFramework = new Standard
+                {
+                    CosmosId = StandardId.Value,
+                    StandardCode = StandardCode.Value,
+                    Version = Version.Value,
+                    StandardName = ApprenticeshipTitle,
+                    NotionalNVQLevelv2 = NotionalNVQLevelv2
+                },
+                MarketingInformation = MarketingInformation,
+                Url = Url,
+                ContactTelephone = ContactTelephone,
+                ContactEmail = ContactEmail,
+                ContactWebsite = ContactWebsite,
+                ApprenticeshipLocations = ApprenticeshipLocations.Where(al => al != null).Select(al => al.ToCreateApprenticeshipLocation()),
+                Status = (int)RecordStatus,
+                UpdatedDate = UpdatedDate ?? DateTime.UtcNow,
+                UpdatedBy = new UserInfo
+                {
+                    UserId = UpdatedBy
+                },
                 BulkUploadErrors = BulkUploadErrors?.Where(b => b != null).Select(b => new Core.DataStore.CosmosDb.Models.BulkUploadError
                 {
                     LineNumber = b.LineNumber,
