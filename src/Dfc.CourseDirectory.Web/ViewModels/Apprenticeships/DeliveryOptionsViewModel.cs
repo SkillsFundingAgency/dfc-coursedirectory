@@ -1,7 +1,6 @@
-﻿using Dfc.CourseDirectory.Services.Models.Apprenticeships;
-using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {

@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult;
@@ -25,6 +24,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -35,7 +35,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
@@ -45,14 +44,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public ApprenticeshipsController(
             ICourseService courseService,
             IVenueService venueService,
-            IApprenticeshipService apprenticeshipService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
             IStandardsAndFrameworksCache standardsAndFrameworksCache)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
@@ -480,17 +477,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (mode == ApprenticeshipMode.EditYourApprenticeships)
             {
-                var result = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeship);
+                var result = await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToUpdateApprenticeship());
 
-                if (result.IsSuccess)
-                {
-                    return RedirectToAction("Index", "ProviderApprenticeships", new { apprenticeshipId = result.Value.id, message = "You edited " + result.Value.ApprenticeshipTitle });
-                }
-                else
-                {
-                    //Action needs to be decided if failure
-                    return RedirectToAction("Summary", "Apprenticeships");
-                }
+                return result.Match(
+                    _ => RedirectToAction("Summary", "Apprenticeships"),
+                    _ => RedirectToAction("Index", "ProviderApprenticeships", new { apprenticeshipId = apprenticeship.id, message = "You edited " + apprenticeship.ApprenticeshipTitle }));
             }
             else
             {
@@ -811,16 +802,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         var getApprenticehipByIdResult = Apprenticeship.FromCosmosDbModel(result);
 
-                        getApprenticehipByIdResult.RecordStatus = RecordStatus.Deleted;
+                        getApprenticehipByIdResult.RecordStatus = ApprenticeshipStatus.Deleted;
 
-                        var updateApprenticeshipResult = await _apprenticeshipService.UpdateApprenticeshipAsync(getApprenticehipByIdResult);
+                        var updateResult = await _cosmosDbQueryDispatcher.ExecuteQuery(getApprenticehipByIdResult.ToUpdateApprenticeship());
 
-                        if (updateApprenticeshipResult.IsSuccess)
+                        if (updateResult.Value is Success)
                         {
-
                             return RedirectToAction("DeleteConfirm", "Apprenticeships", new { ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });
                         }
-
                     }
                     return RedirectToAction("Index", "ProviderApprenticeships");
 
@@ -933,7 +922,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ApprenticeshipLocationType = apprenticeshipLocationType,
                 Id = Guid.NewGuid(),
                 LocationType = LocationType.Venue,
-                RecordStatus = RecordStatus.Live,
+                RecordStatus = ApprenticeshipStatus.Live,
                 Regions = loc.Regions,
                 National = loc.National ?? false,
                 UpdatedDate = DateTime.Now,
@@ -945,7 +934,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 apprenticeshipLocation.LocationId = loc.Venue.LocationId ?? null;
                 apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID);
-                apprenticeshipLocation.Address = new Address
+                apprenticeshipLocation.Address = new ApprenticeshipLocationAddress
                 {
                     Address1 = loc.Venue.Address1,
                     Address2 = loc.Venue.Address2,
@@ -1019,7 +1008,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ContactWebsite = model.ContactUsIUrl,
                 CreatedDate = DateTime.Now,
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                RecordStatus = RecordStatus.Live,
+                RecordStatus = ApprenticeshipStatus.Live,
                 PathwayCode = model.PathwayCode,
                 Version = model.Version ?? (int?)null,
                 NotionalNVQLevelv2 = model.NotionalNVQLevelv2,

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships

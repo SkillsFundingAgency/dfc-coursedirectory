@@ -1,6 +1,6 @@
-﻿namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
+﻿namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
 {
-    public class Address
+    public class ApprenticeshipLocationAddress
     {
         public string Address1 { get; set; }
         public string Address2 { get; set; }

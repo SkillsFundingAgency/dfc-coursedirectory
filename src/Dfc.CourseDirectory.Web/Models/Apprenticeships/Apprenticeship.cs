@@ -6,7 +6,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
-namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
+namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
 {
     public enum ApprenticeshipMode
     {
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
         public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
-        public RecordStatus RecordStatus { get; set; }
+        public ApprenticeshipStatus RecordStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                 ApprenticeshipType = ApprenticeshipType,
                 StandardOrFramework = new Standard
                 {
-                    CosmosId = StandardId.Value,
+                    CosmosId = StandardId ?? Guid.Empty,
                     StandardCode = StandardCode.Value,
                     Version = Version.Value,
                     StandardName = ApprenticeshipTitle,
@@ -74,40 +74,56 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                 ContactTelephone = ContactTelephone,
                 ContactEmail = ContactEmail,
                 ContactWebsite = ContactWebsite,
-                ApprenticeshipLocations = ApprenticeshipLocations.Where(al => al != null).Select(al => new CreateApprenticeshipLocation
-                {
-                    Id = al.Id,
-                    VenueId = al.VenueId,
-                    National = al.National,
-                    Address = al.Address != null
-                        ? new Core.DataStore.CosmosDb.Models.ApprenticeshipLocationAddress
-                        {
-                            Address1 = al.Address.Address1,
-                            Address2 = al.Address.Address2,
-                            County = al.Address.County,
-                            Email = al.Address.Email,
-                            Latitude = al.Address.Latitude ?? 0,
-                            Longitude = al.Address.Longitude ?? 0,
-                            Phone = al.Address.Phone,
-                            Postcode = al.Address.Postcode,
-                            Town = al.Address.Town,
-                            Website = al.Address.Website
-                        }
-                        : null,
-                    DeliveryModes = al.DeliveryModes.Cast<ApprenticeshipDeliveryMode>().ToList(),
-                    Name = al.Name,
-                    Phone = al.Phone,
-                    Regions = al.Regions,
-                    ApprenticeshipLocationType = al.ApprenticeshipLocationType,
-                    LocationType = al.LocationType,
-                    Radius = al.Radius
-                }),
+                ApprenticeshipLocations = ApprenticeshipLocations?.Where(al => al != null).Select(al => al.ToCreateApprenticeshipLocation()),
                 CreatedDate = CreatedDate,
                 CreatedByUser = new UserInfo
                 {
                     UserId = CreatedBy
                 },
-                Status = (int)RecordStatus
+                Status = (int)RecordStatus,
+                BulkUploadErrors = BulkUploadErrors?.Where(b => b != null).Select(b => new Core.DataStore.CosmosDb.Models.BulkUploadError
+                {
+                    LineNumber = b.LineNumber,
+                    Header = b.Header,
+                    Error = b.Error
+                })
+            };
+        }
+
+        public UpdateApprenticeship ToUpdateApprenticeship()
+        {
+            return new UpdateApprenticeship
+            {
+                Id = id,
+                ProviderUkprn = ProviderUKPRN,
+                ApprenticeshipTitle = ApprenticeshipTitle,
+                ApprenticeshipType = ApprenticeshipType,
+                StandardOrFramework = new Standard
+                {
+                    CosmosId = StandardId ?? Guid.Empty,
+                    StandardCode = StandardCode.Value,
+                    Version = Version.Value,
+                    StandardName = ApprenticeshipTitle,
+                    NotionalNVQLevelv2 = NotionalNVQLevelv2
+                },
+                MarketingInformation = MarketingInformation,
+                Url = Url,
+                ContactTelephone = ContactTelephone,
+                ContactEmail = ContactEmail,
+                ContactWebsite = ContactWebsite,
+                ApprenticeshipLocations = ApprenticeshipLocations.Where(al => al != null).Select(al => al.ToCreateApprenticeshipLocation()),
+                Status = (int)RecordStatus,
+                UpdatedDate = UpdatedDate ?? DateTime.UtcNow,
+                UpdatedBy = new UserInfo
+                {
+                    UserId = UpdatedBy
+                },
+                BulkUploadErrors = BulkUploadErrors?.Where(b => b != null).Select(b => new Core.DataStore.CosmosDb.Models.BulkUploadError
+                {
+                    LineNumber = b.LineNumber,
+                    Header = b.Header,
+                    Error = b.Error
+                })
             };
         }
 
@@ -145,7 +161,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                     LocationId = l.ApprenticeshipLocationId,
                     National = l.National,
                     Address = l.Address != null
-                            ? new Address
+                            ? new ApprenticeshipLocationAddress
                             {
                                 Address1 = l.Address.Address1,
                                 Address2 = l.Address.Address2,
@@ -167,13 +183,13 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                     ApprenticeshipLocationType = l.ApprenticeshipLocationType,
                     LocationType = l.LocationType,
                     Radius = l.Radius,
-                    RecordStatus = (RecordStatus)l.RecordStatus,
+                    RecordStatus = (ApprenticeshipStatus)l.RecordStatus,
                     CreatedDate = l.CreatedDate,
                     CreatedBy = l.CreatedBy,
                     UpdatedDate = l.UpdatedDate,
                     UpdatedBy = l.UpdatedBy
                 }).ToList(),
-                RecordStatus = (RecordStatus)apprenticeship.RecordStatus,
+                RecordStatus = (ApprenticeshipStatus)apprenticeship.RecordStatus,
                 CreatedDate = apprenticeship.CreatedDate,
                 CreatedBy = apprenticeship.CreatedBy,
                 UpdatedDate = apprenticeship.UpdatedDate,
@@ -184,9 +200,7 @@ namespace Dfc.CourseDirectory.Services.Models.Apprenticeships
                     Header = b.Header,
                     Error = b.Error
                 }).ToList(),
-                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2,
-                ValidationErrors = apprenticeship.ValidationErrors,
-                LocationValidationErrors = apprenticeship.LocationValidationErrors
+                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2
             };
         }
     }

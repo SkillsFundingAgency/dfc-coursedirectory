@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
 using Microsoft.AspNetCore.Authorization;
@@ -20,16 +19,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class PublishApprenticeshipsController : Controller
     {
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
-        public PublishApprenticeshipsController(
-            IApprenticeshipService apprenticeshipService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public PublishApprenticeshipsController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _apprenticeshipService = apprenticeshipService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
@@ -56,13 +51,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             var bulkUploadPendingApprenticeships = apprenticeships.Values.Where(a => a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadPending).Select(Apprenticeship.FromCosmosDbModel).ToArray();
             var bulkUploadReadyToGoLiveApprenticeships = apprenticeships.Values.Where(a => a.RecordStatus == (int)ApprenticeshipStatus.BulkUploadReadyToGoLive).Select(Apprenticeship.FromCosmosDbModel).ToArray();
 
-            vm.ListOfApprenticeships = GetErrorMessages(bulkUploadPendingApprenticeships);
+            vm.ListOfApprenticeships = await GetErrorMessages(bulkUploadPendingApprenticeships);
 
             if (!bulkUploadPendingApprenticeships.Any())
             {
                 return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new
                 {
-                    NumberOfApprenticeships = bulkUploadReadyToGoLiveApprenticeships.Sum(a => a.ApprenticeshipLocations.Count(al => al.RecordStatus == RecordStatus.BulkUploadReadyToGoLive))
+                    NumberOfApprenticeships = bulkUploadReadyToGoLiveApprenticeships.Sum(a => a.ApprenticeshipLocations.Count(al => al.RecordStatus == ApprenticeshipStatus.BulkUploadReadyToGoLive))
                 });
             }
 
@@ -85,41 +80,48 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 UKPRN = sUKPRN ?? 0;
 
             CompleteVM.NumberOfCoursesPublished = vm.NumberOfApprenticeships;
-            await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
-            await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
+
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
+            {
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.MigrationPending | ApprenticeshipStatus.MigrationReadyToGoLive,
+                NewStatus = ApprenticeshipStatus.Archived
+            });
 
             //Archive any existing courses
-            var resultArchivingCourses = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
-            if (resultArchivingCourses.IsSuccess)
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
             {
-                // Publish courses
-                var resultPublishBulkUploadedCourses = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
-                CompleteVM.Mode = PublishMode.BulkUpload;
-                if (resultPublishBulkUploadedCourses.IsSuccess)
-                    return RedirectToAction("Complete", "Apprenticeships", new { CompleteVM });
-                else
-                    return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-PublishCourses Error" });
-            }
-            else
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.Live,
+                NewStatus = ApprenticeshipStatus.Archived
+            });
+
+            // Publish courses
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-ArchiveCourses Error" });
-            }
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.BulkUploadReadyToGoLive,
+                NewStatus = ApprenticeshipStatus.Live
+            });
+
+            CompleteVM.Mode = PublishMode.BulkUpload;
+
+            return RedirectToAction("Complete", "Apprenticeships", new { CompleteVM });
         }
 
-        internal IEnumerable<Apprenticeship> GetErrorMessages(IEnumerable<Apprenticeship> apprenticeships)
+        private async Task<IEnumerable<Apprenticeship>> GetErrorMessages(IEnumerable<Apprenticeship> apprenticeships)
         {
-            foreach (var apprentice in apprenticeships)
+            foreach (var apprenticeship in apprenticeships)
             {
-                apprentice.ValidationErrors = ValidateApprenticeships(apprentice).Select(x => x.Value);
+                apprenticeship.ValidationErrors = ValidateApprenticeships(apprenticeship).Select(x => x.Value);
 
-                apprentice.LocationValidationErrors = ValidateApprenticeshipLocations(apprentice).Select(x => x.Value);
+                apprenticeship.LocationValidationErrors = ValidateApprenticeshipLocations(apprenticeship).Select(x => x.Value);
 
-                if (apprentice.BulkUploadErrors.Any() && !apprentice.ValidationErrors.Any())
+                if (apprenticeship.BulkUploadErrors.Any() && !apprenticeship.ValidationErrors.Any())
                 {
-                    apprentice.BulkUploadErrors = new List<BulkUploadError> { };
-                }               
-
-                _apprenticeshipService.UpdateApprenticeshipAsync(apprentice);
+                    apprenticeship.BulkUploadErrors = new List<BulkUploadError>();
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToUpdateApprenticeship());
+                }
             }
 
             return apprenticeships;

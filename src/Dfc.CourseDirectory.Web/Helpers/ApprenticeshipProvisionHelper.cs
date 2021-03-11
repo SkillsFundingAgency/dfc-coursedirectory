@@ -9,9 +9,10 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

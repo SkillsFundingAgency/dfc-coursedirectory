@@ -1,7 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Apprenticeships;
+using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
 {

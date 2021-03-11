@@ -7,11 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Auth;
+using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
@@ -159,7 +158,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             var bulkUploadApprenticeshipsController = new BulkUploadApprenticeshipsController(
                 _mockApprenticeshipBulkUploadService.Object,
-                new Mock<IApprenticeshipService>().Object,
                 _mockBlobStorageService.Object,
                 new Mock<ICourseService>().Object,
                 new Mock<ICosmosDbQueryDispatcher>().Object,

@@ -8,11 +8,10 @@ using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
@@ -28,7 +27,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string BlobContainerPath = "/Apprenticeship Bulk Upload/Files/";
 
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
-        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -36,14 +34,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public BulkUploadApprenticeshipsController(
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
-            IApprenticeshipService apprenticeshipService,
             IBlobStorageService blobService,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IUserHelper userHelper)
         {
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService ?? throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
-            _apprenticeshipService = apprenticeshipService ?? throw new ArgumentNullException(nameof(apprenticeshipService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
@@ -361,18 +357,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             UKPRN = sUKPRN ?? 0;
 
-
-            var resultArchivingApprenticeships = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(
-                UKPRN,
-                (int)(RecordStatus.Live | RecordStatus.MigrationPending | RecordStatus.Pending | RecordStatus.MigrationReadyToGoLive),
-                (int)RecordStatus.Archived);
-
-            if (!resultArchivingApprenticeships.IsSuccess)
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
             {
-                throw new Exception(resultArchivingApprenticeships.Error);
-            }
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.Live | ApprenticeshipStatus.MigrationPending | ApprenticeshipStatus.Pending | ApprenticeshipStatus.MigrationReadyToGoLive,
+                NewStatus = ApprenticeshipStatus.Archived
+            });
 
-            await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
+            {
+                ProviderUkprn = UKPRN,
+                CurrentStatus = ApprenticeshipStatus.BulkUploadReadyToGoLive,
+                NewStatus = ApprenticeshipStatus.Live
+            });
 
             //to publish stuff
             return View("../BulkUploadApprenticeships/Complete/Index", new ApprenticeshipsPublishCompleteViewModel() { NumberOfApprenticeshipsPublished = model.NumberOfApprenticeships, Mode = PublishMode.ApprenticeshipBulkUpload });

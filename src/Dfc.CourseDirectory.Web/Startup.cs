@@ -4,12 +4,11 @@ using System.Net.Http;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Dfc.CourseDirectory.Services.ApprenticeshipBulkUploadService;
-using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
@@ -88,8 +87,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICSVHelper, CSVHelper>();
             services.AddScoped<ICourseProvisionHelper, CourseProvisionHelper>();
-            services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
-            services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
             services.AddScoped<IBulkUploadService, BulkUploadService>();
             services.AddScoped<IApprenticeshipBulkUploadService, ApprenticeshipBulkUploadService>();

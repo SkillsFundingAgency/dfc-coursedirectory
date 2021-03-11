@@ -23,11 +23,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public DateTime CreatedDate { get; set; }
         public UserInfo CreatedByUser { get; set; }
         public int Status { get; set; } = 1;
+        public IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
     }
 
     public class CreateApprenticeshipLocation
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public Guid? VenueId { get; set; }
         public bool? National { get; set; }
         public ApprenticeshipLocationAddress Address { get; set; }
