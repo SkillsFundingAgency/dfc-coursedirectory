@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                     CreatedBy = request.CreatedByUser.UserId,
                     CreatedDate = request.CreatedDate,
                     DeliveryModes = l.DeliveryModes.ToList(),
-                    Id = Guid.NewGuid(),
+                    Id = l.Id ?? Guid.NewGuid(),
                     LocationType = l.LocationType,
                     Name = l.Name,
                     National = l.National,

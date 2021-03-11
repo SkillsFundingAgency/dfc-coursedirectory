@@ -2,7 +2,6 @@
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using OneOf;
 using OneOf.Types;
 
@@ -36,7 +35,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 CreatedBy = request.UpdatedBy.UserId,
                 CreatedDate = request.UpdatedDate,
                 DeliveryModes = l.DeliveryModes.ToList(),
-                Id = Guid.NewGuid(),
+                Id = l.Id ?? Guid.NewGuid(),
                 LocationType = l.LocationType,
                 Name = l.Name,
                 National = l.National,

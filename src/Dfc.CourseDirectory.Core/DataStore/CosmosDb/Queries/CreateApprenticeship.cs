@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 
     public class CreateApprenticeshipLocation
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public Guid? VenueId { get; set; }
         public bool? National { get; set; }
         public ApprenticeshipLocationAddress Address { get; set; }
