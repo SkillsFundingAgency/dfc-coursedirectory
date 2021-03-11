@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
                 ApprenticeshipType = ApprenticeshipType,
                 StandardOrFramework = new Standard
                 {
-                    CosmosId = StandardId.Value,
+                    CosmosId = StandardId ?? Guid.Empty,
                     StandardCode = StandardCode.Value,
                     Version = Version.Value,
                     StandardName = ApprenticeshipTitle,
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
                 ApprenticeshipType = ApprenticeshipType,
                 StandardOrFramework = new Standard
                 {
-                    CosmosId = StandardId.Value,
+                    CosmosId = StandardId ?? Guid.Empty,
                     StandardCode = StandardCode.Value,
                     Version = Version.Value,
                     StandardName = ApprenticeshipTitle,
