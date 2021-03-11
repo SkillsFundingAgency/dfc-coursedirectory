@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models;
 
 namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
 {
@@ -23,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public LocationType LocationType { get; set; }
         public int? Radius { get; set; }
-        public RecordStatus RecordStatus { get; set; }
+        public ApprenticeshipStatus RecordStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }

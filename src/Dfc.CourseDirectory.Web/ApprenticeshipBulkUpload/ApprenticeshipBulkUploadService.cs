@@ -1217,7 +1217,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                             ContactTelephone = record.CONTACT_PHONE,
                             ContactEmail = record.CONTACT_EMAIL,
                             ContactWebsite = record.CONTACT_URL,                            
-                            RecordStatus = record.ErrorsList.Any()? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                            RecordStatus = record.ErrorsList.Any()? ApprenticeshipStatus.BulkUploadPending : ApprenticeshipStatus.BulkUploadReadyToGoLive,
                             CreatedDate = DateTime.Now,
                             CreatedBy = userDetails.UserId.ToString(),
                             BulkUploadErrors = record.ErrorsList
@@ -1249,7 +1249,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 CreatedBy = authUserDetails.Email,
                 ApprenticeshipLocationType = (ApprenticeshipLocationType)record.DELIVERY_METHOD,
                 LocationType = LocationType.Venue,
-                RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                RecordStatus = record.ErrorsList.Any() ? ApprenticeshipStatus.BulkUploadPending : ApprenticeshipStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
                 National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
                 LocationId = venue?.LocationId,

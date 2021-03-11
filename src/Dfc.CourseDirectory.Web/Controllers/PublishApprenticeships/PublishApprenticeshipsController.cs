@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             {
                 return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new
                 {
-                    NumberOfApprenticeships = bulkUploadReadyToGoLiveApprenticeships.Sum(a => a.ApprenticeshipLocations.Count(al => al.RecordStatus == RecordStatus.BulkUploadReadyToGoLive))
+                    NumberOfApprenticeships = bulkUploadReadyToGoLiveApprenticeships.Sum(a => a.ApprenticeshipLocations.Count(al => al.RecordStatus == ApprenticeshipStatus.BulkUploadReadyToGoLive))
                 });
             }
 

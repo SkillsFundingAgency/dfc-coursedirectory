@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                     apprenticeshipForEdit.BulkUploadErrors = new List<BulkUploadError> { };
                     if (apprenticeshipForEdit.BulkUploadErrors.Count() == 0)
                     {
-                        apprenticeshipForEdit.RecordStatus = Services.Models.RecordStatus.BulkUploadReadyToGoLive;
+                        apprenticeshipForEdit.RecordStatus = ApprenticeshipStatus.BulkUploadReadyToGoLive;
                     }
 
                     await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeshipForEdit.ToUpdateApprenticeship());

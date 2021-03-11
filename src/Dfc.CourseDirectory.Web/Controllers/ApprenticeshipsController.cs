@@ -802,7 +802,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         var getApprenticehipByIdResult = Apprenticeship.FromCosmosDbModel(result);
 
-                        getApprenticehipByIdResult.RecordStatus = RecordStatus.Deleted;
+                        getApprenticehipByIdResult.RecordStatus = ApprenticeshipStatus.Deleted;
 
                         var updateResult = await _cosmosDbQueryDispatcher.ExecuteQuery(getApprenticehipByIdResult.ToUpdateApprenticeship());
 
@@ -922,7 +922,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ApprenticeshipLocationType = apprenticeshipLocationType,
                 Id = Guid.NewGuid(),
                 LocationType = LocationType.Venue,
-                RecordStatus = RecordStatus.Live,
+                RecordStatus = ApprenticeshipStatus.Live,
                 Regions = loc.Regions,
                 National = loc.National ?? false,
                 UpdatedDate = DateTime.Now,
@@ -1008,7 +1008,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ContactWebsite = model.ContactUsIUrl,
                 CreatedDate = DateTime.Now,
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                RecordStatus = RecordStatus.Live,
+                RecordStatus = ApprenticeshipStatus.Live,
                 PathwayCode = model.PathwayCode,
                 Version = model.Version ?? (int?)null,
                 NotionalNVQLevelv2 = model.NotionalNVQLevelv2,

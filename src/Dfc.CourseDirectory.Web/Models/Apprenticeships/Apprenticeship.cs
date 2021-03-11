@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
@@ -43,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
         public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
-        public RecordStatus RecordStatus { get; set; }
+        public ApprenticeshipStatus RecordStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
@@ -184,13 +183,13 @@ namespace Dfc.CourseDirectory.Web.Models.Apprenticeships
                     ApprenticeshipLocationType = l.ApprenticeshipLocationType,
                     LocationType = l.LocationType,
                     Radius = l.Radius,
-                    RecordStatus = (RecordStatus)l.RecordStatus,
+                    RecordStatus = (ApprenticeshipStatus)l.RecordStatus,
                     CreatedDate = l.CreatedDate,
                     CreatedBy = l.CreatedBy,
                     UpdatedDate = l.UpdatedDate,
                     UpdatedBy = l.UpdatedBy
                 }).ToList(),
-                RecordStatus = (RecordStatus)apprenticeship.RecordStatus,
+                RecordStatus = (ApprenticeshipStatus)apprenticeship.RecordStatus,
                 CreatedDate = apprenticeship.CreatedDate,
                 CreatedBy = apprenticeship.CreatedBy,
                 UpdatedDate = apprenticeship.UpdatedDate,
