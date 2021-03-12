@@ -123,27 +123,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
 
             doc.GetElementByTestId("search-query-input").Attributes["value"].Value.Should().Be(searchQuery);
 
-            var provider1SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult1.Id}");
-            var provider2SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult2.Id}");
-            var provider3SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult3.Id}");
-            var provider4SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult4.Id}");
+            var provider1SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult1.ProviderId}");
+            var provider2SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult2.ProviderId}");
+            var provider3SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult3.ProviderId}");
+            var provider4SearchResultRow = doc.GetElementByTestId($"search-result-row-{providerSearchResult4.ProviderId}");
 
             using (new AssertionScope())
             {
                 provider1SearchResultRow.Should().NotBeNull();
-                provider1SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult1.Name);
+                provider1SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult1.ProviderName);
                 provider1SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().Be("View dashboard");
 
                 provider2SearchResultRow.Should().NotBeNull();
-                provider2SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult2.Name);
+                provider2SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult2.ProviderName);
                 provider2SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().Be("Add provider");
 
                 provider3SearchResultRow.Should().NotBeNull();
-                provider3SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult3.Name);
+                provider3SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult3.ProviderName);
                 provider3SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().BeEmpty();
 
                 provider4SearchResultRow.Should().NotBeNull();
-                provider4SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult4.Name);
+                provider4SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult4.ProviderName);
                 provider4SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().BeEmpty();
             }
         }
@@ -228,13 +228,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
         {
             return new Provider
             {
-                Id = Guid.NewGuid(),
-                Name = $"TestSearchResult{seed}",
+                ProviderId = Guid.NewGuid(),
+                ProviderName = $"TestSearchResult{seed}",
                 Postcode = $"TE1 {seed}ST",
                 Town = $"TestTown{seed}",
-                UKPRN = seed.ToString("00000000"),
-                Status = (int)status,
-                ProviderStatus = providerStatus
+                Ukprn = seed.ToString("00000000"),
+                ProviderStatus = (int)status,
+                UkrlpProviderStatusDescription = providerStatus
             };
         }
     }

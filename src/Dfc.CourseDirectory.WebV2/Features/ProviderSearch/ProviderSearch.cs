@@ -92,13 +92,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
             {
                 ProviderSearchResults = result.Items.Select(r => r.Record).Select(p => new ProviderSearchResultViewModel
                 {
-                    ProviderId = p.Id,
-                    Name = p.Name,
+                    ProviderId = p.ProviderId,
+                    Name = p.ProviderName,
                     Postcode = p.Postcode,
                     Town = p.Town,
-                    Ukprn = p.UKPRN,
-                    Status = (ProviderStatus)p.Status,
-                    ProviderStatus = p.ProviderStatus
+                    Ukprn = p.Ukprn,
+                    Status = (ProviderStatus)p.ProviderStatus,
+                    ProviderStatus = p.UkrlpProviderStatusDescription
                 }).ToArray()
             };
         }

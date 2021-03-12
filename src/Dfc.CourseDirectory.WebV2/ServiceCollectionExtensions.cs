@@ -94,13 +94,13 @@ namespace Dfc.CourseDirectory.WebV2
                     AuthorizationPolicyNames.Admin,
                     policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
             });
-            
+
             // SignInActions - order here is the order they're executed in
             services.AddTransient<ISignInAction, DfeUserInfoHelper>();
             services.AddTransient<ISignInAction, EnsureProviderExistsSignInAction>();
             services.AddTransient<ISignInAction, SignInTracker>();
             services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
-            
+
             services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
             if (!environment.IsTesting())
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2
 
                 services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             }
-			
+
             // HostedService to execute startup tasks.
             // N.B. it's important this is the first HostedService to run; it may set up dependencies for other services.
             services.Insert(
