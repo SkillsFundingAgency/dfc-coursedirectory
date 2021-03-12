@@ -34,12 +34,6 @@ namespace Dfc.CourseDirectory.Services.Models
         YourApprenticeships = 8
     }
 
-    public enum ReportType
-    {
-        Fe,
-        Apprenticeship
-    }
-
     public enum ApprenticeShipDeliveryLocation
     {
         [Display(Name = "Undefined")]
@@ -126,56 +120,6 @@ namespace Dfc.CourseDirectory.Services.Models
         PreProduction = 3,
         [Description("Production")]
         Production = 4
-    }
-
-    public enum TransferMethod
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("BulkUpload")]
-        BulkUpload = 1,
-        [Description("API")]
-        API = 2,
-        [Description("CourseMigrationTool")]
-        CourseMigrationTool = 3,
-        [Description("CourseMigrationToolCsvFile")]
-        CourseMigrationToolCsvFile = 4,
-        [Description("CourseMigrationToolSingleUkprn")]
-        CourseMigrationToolSingleUkprn = 5
-    }
-
-    public enum MigrationSuccess
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Success")]
-        Success = 1,
-        [Description("Failure")]
-        Failure = 2
-    }
-
-    public enum DeploymentEnvironment
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Local")]
-        Local = 1,
-        [Description("Dev")]
-        Dev = 2,
-        [Description("Sit")]
-        Sit = 3,
-        [Description("PreProd")]
-        PreProd = 4,
-        [Description("Prod")]
-        Prod = 5
-    }
-
-    public enum RegulatedType
-    {
-        [Description("Regulated qualification")]
-        Regulated = 0,
-        [Description("Non-regulated provision")]
-        NonRegulated = 1
     }
 
     public enum WhatDoYouWantToDoNext

@@ -15,14 +15,13 @@ using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -90,18 +89,22 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             private readonly IVenueService _venueService;
-            private readonly AuthUserDetails _authUserDetails;
             private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+            private readonly AuthenticatedUserInfo _authUserDetails;
+            private readonly int _ukprn;
+
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(
                 IVenueService venueService,
-                AuthUserDetails userDetails,
-                IStandardsAndFrameworksCache standardsAndFrameworksCache)
+                IStandardsAndFrameworksCache standardsAndFrameworksCache,
+                AuthenticatedUserInfo userInfo,
+                int ukprn)
             {
                 _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-                _authUserDetails = userDetails ?? throw new ArgumentNullException(nameof(userDetails));
                 _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+                _authUserDetails = userInfo ?? throw new ArgumentNullException(nameof(userInfo));
+                _ukprn = ukprn;
 
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
@@ -187,7 +190,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. DELIVERY_METHOD is required.");
                 }
-                var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
+                var deliveryMethod = ToEnum(value, DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
                 {
                     return DeliveryMethod.Undefined;
@@ -227,7 +230,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     Dictionary<DeliveryMode, int> deliveryModes = new Dictionary<DeliveryMode, int>();
                     foreach (var mode in modes)
                     {
-                        var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
+                        var deliveryMode = ToEnum(mode, DeliveryMode.Undefined);
                         if (deliveryMode == DeliveryMode.Undefined)
                         {
                             return new List<int>();
@@ -336,7 +339,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     if (_cachedVenues == null)
                     {
-                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_authUserDetails.UKPRN, string.Empty)))
+                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_ukprn.ToString(), string.Empty)))
                             .Result
                             .Value
                             .Value
@@ -597,7 +600,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                 }
 
-                var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
+                var deliveryMethod = ToEnum(value, DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
                 {
                     throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
@@ -688,7 +691,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 }
                 foreach (var mode in modeArray)
                 {
-                    var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
+                    var deliveryMode = ToEnum(mode, DeliveryMode.Undefined);
                     if (deliveryMode == DeliveryMode.Undefined)
                     {                        
 
@@ -918,6 +921,15 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                 return totalList;
             }
+
+            private static T ToEnum<T>(string value, T defaultValue) where T : struct
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    return defaultValue;
+                }
+                return Enum.TryParse<T>(value, true, out T result) ? result : defaultValue;
+            }
         }
 
         private readonly IVenueService _venueService;
@@ -946,16 +958,17 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         public async Task<ApprenticeshipBulkUploadResult> ValidateAndUploadCSV(
             string fileName,
             Stream stream,
-            AuthUserDetails userDetails)
+            AuthenticatedUserInfo userInfo,
+            int ukprn)
         {
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            if (userDetails == null)
+            if (userInfo == null)
             {
-                throw new ArgumentNullException(nameof(userDetails));
+                throw new ArgumentNullException(nameof(userInfo));
             }
 
             if (!stream.CanSeek)
@@ -970,7 +983,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             var bulkUploadFileNewName = $@"{DateTime.Now:yyMMdd-HHmmss}-{Path.GetFileName(fileName)}.{DateTime.UtcNow:yyyyMMddHHmmss}.processed";
 
             await _binaryStorageProvider.UploadFile(
-                $"{userDetails.UKPRN}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}",
+                $"{ukprn}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}",
                 stream);
 
             stream.Seek(0L, SeekOrigin.Begin);
@@ -992,8 +1005,9 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                         var classMap = new ApprenticeshipCsvRecordMap(
                             _venueService,
-                            userDetails,
-                            _standardsAndFrameworksCache);
+                            _standardsAndFrameworksCache,
+                            userInfo,
+                            ukprn);
 
                         csv.Configuration.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
@@ -1024,7 +1038,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                             if (containsDuplicates == false)
                             {
-                                record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
+                                record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userInfo));
                                 errors.AddRange(record.ErrorsList.Select(x => x.Error));
                             }
 
@@ -1046,12 +1060,12 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                 await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatusesByProviderUkprn
                 {
-                    ProviderUkprn = int.Parse(userDetails.UKPRN),
+                    ProviderUkprn = ukprn,
                     CurrentStatus = ApprenticeshipStatus.BulkUploadPending | ApprenticeshipStatus.BulkUploadReadyToGoLive,
                     NewStatus = ApprenticeshipStatus.Archived
                 });
 
-                var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userInfo, ukprn);
                 errors = ValidateApprenticeships(apprenticeships);
 
                 if (errors.Count == 0)
@@ -1183,7 +1197,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         }
 
         private List<Apprenticeship> ApprenticeshipCsvRecordToApprenticeship(
-            List<ApprenticeshipCsvRecord> records, AuthUserDetails userDetails)
+            List<ApprenticeshipCsvRecord> records, AuthenticatedUserInfo userInfo, int ukprn)
         {
             List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
 
@@ -1204,8 +1218,8 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         {
                             id = Guid.NewGuid(),
                             ApprenticeshipTitle = record.Standard.StandardName,
-                            ProviderId = userDetails.ProviderID ?? Guid.Empty,
-                            ProviderUKPRN = int.Parse(userDetails.UKPRN),
+                            ProviderId = userInfo.CurrentProviderId ?? Guid.Empty,
+                            ProviderUKPRN = ukprn,
                             ApprenticeshipLocations = record.ApprenticeshipLocations,
                             ApprenticeshipType = ApprenticeshipType.StandardCode,
                             StandardId = record.Standard.CosmosId,
@@ -1219,7 +1233,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                             ContactWebsite = record.CONTACT_URL,                            
                             RecordStatus = record.ErrorsList.Any()? ApprenticeshipStatus.BulkUploadPending : ApprenticeshipStatus.BulkUploadReadyToGoLive,
                             CreatedDate = DateTime.Now,
-                            CreatedBy = userDetails.UserId.ToString(),
+                            CreatedBy = userInfo.UserId.ToString(),
                             BulkUploadErrors = record.ErrorsList
                         });
                 }
@@ -1234,7 +1248,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 .FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
         }
 
-        private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthUserDetails authUserDetails)
+        private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthenticatedUserInfo userInfo)
         {
             Venue venue = null;
             if (record.VENUE?.Count == 1)
@@ -1246,7 +1260,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 Id = Guid.NewGuid(),
                 Name = venue?.VenueName,
                 CreatedDate = DateTime.Now,
-                CreatedBy = authUserDetails.Email,
+                CreatedBy = userInfo.Email,
                 ApprenticeshipLocationType = (ApprenticeshipLocationType)record.DELIVERY_METHOD,
                 LocationType = LocationType.Venue,
                 RecordStatus = record.ErrorsList.Any() ? ApprenticeshipStatus.BulkUploadPending : ApprenticeshipStatus.BulkUploadReadyToGoLive,

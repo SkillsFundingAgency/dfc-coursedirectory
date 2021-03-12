@@ -12,9 +12,9 @@ using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,20 +30,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IUserHelper _userHelper;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
         public BulkUploadApprenticeshipsController(
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IBlobStorageService blobService,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IUserHelper userHelper)
+            ICurrentUserProvider currentUserProvider)
         {
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService ?? throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
-            _userHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
+            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
         }
 
         [Authorize]
@@ -133,7 +133,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     result = await _apprenticeshipBulkUploadService.ValidateAndUploadCSV(
                         bulkUploadFile.FileName,
                         ms,
-                        await _userHelper.GetUserDetailsFromClaims(HttpContext.User.Claims, UKPRN));
+                        _currentUserProvider.GetCurrentUser(),
+                        UKPRN.Value);
                 }
                 catch (HeaderValidationException he)
                 {

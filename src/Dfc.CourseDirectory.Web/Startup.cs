@@ -84,7 +84,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<FindACourseServiceSettings>(Configuration.GetSection(nameof(FindACourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
 
-            services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<ICSVHelper, CSVHelper>();
             services.AddScoped<ICourseProvisionHelper, CourseProvisionHelper>();
 
