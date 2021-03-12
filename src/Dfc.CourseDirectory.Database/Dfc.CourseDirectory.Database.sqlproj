@@ -268,6 +268,7 @@
     <Build Include="Pttcd\StoredProcedures\RefreshFindACourseIndexForTLevels.sql" />
     <Build Include="Pttcd\Views\vwProviderSearchIndex.sql" />
     <Build Include="Pttcd\Tables\Standards.sql" />
+    <Build Include="Pttcd\Tables\StandardSectorCodes.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

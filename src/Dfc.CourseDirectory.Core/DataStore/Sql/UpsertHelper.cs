@@ -58,11 +58,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                     {
                         return "BIT";
                     }
-                    else if (type == typeof(int) || type == typeof(int))
+                    else if (type == typeof(int) || type == typeof(int?))
                     {
                         return "INT";
                     }
-                    else if (type == typeof(decimal) || type == typeof(decimal))
+                    else if (type == typeof(decimal) || type == typeof(decimal?))
                     {
                         // This is arbitrarily the largest available, as it's near impossible to map a CLR type to an SqlServer type without understanding what you're storing
                         return "DECIMAL(38, 10)";
