@@ -11,14 +11,13 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Auth;
 using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Controllers;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +39,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         private ISession _session;
         private ClaimsPrincipal _claimsPrincipal;
         private HttpContext _httpContext;
-        private Mock<IUserHelper> _userHelper;
+        private Mock<ICurrentUserProvider> _currentUserProvider;
         private IOptions<ApprenticeshipBulkUploadSettings> _apprenticeshipBulkUploadSettings;
 
         private IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
@@ -61,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 Session = _session,
                 User = _claimsPrincipal
             };
-            _userHelper = new Mock<IUserHelper>();
+            _currentUserProvider = new Mock<ICurrentUserProvider>();
             _apprenticeshipBulkUploadSettings = Options.Create(new ApprenticeshipBulkUploadSettings()
             {
                 ProcessSynchronouslyRowLimit = 100
@@ -85,7 +84,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 _blobStorageService.Object,
                 _courseService.Object,
                 _cosmosDbQueryDispatcher.Object,
-                _userHelper.Object)
+                _currentUserProvider.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -98,11 +97,10 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
         public async Task Upload_WithBulkUploadFile_UploadsApprenticeshipsAndReturnsRedirectToActionResult()
         {
             var ukPrn = 12345678;
-            var authUserDetails = new AuthUserDetails
+            var userInfo = new AuthenticatedUserInfo
             {
-                UKPRN = ukPrn.ToString(),
-                ProviderID = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
+                CurrentProviderId = Guid.NewGuid(),
+                UserId = Guid.NewGuid().ToString(),
                 Email = "test@test.com"
             };
 
@@ -110,8 +108,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
             _blobStorageService.SetupGet(s => s.InlineProcessingThreshold).Returns(400);
 
-            _userHelper.Setup(s => s.GetUserDetailsFromClaims(It.IsAny<IEnumerable<Claim>>(), It.IsAny<int?>()))
-                .ReturnsAsync(authUserDetails);
+            _currentUserProvider.Setup(s => s.GetCurrentUser())
+                .Returns(userInfo);
 
             _standardsAndFrameworksCache.Setup(s => s.GetStandard(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync<int, int, IStandardsAndFrameworksCache, Core.Models.Standard>((c, v) => new Core.Models.Standard { StandardCode = c, Version = v });
@@ -154,8 +152,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             var apprenticeship2 = addedApprenticeships.Skip(1).First();
 
             Assert.Equal(ukPrn, apprenticeship1.ProviderUkprn);
-            Assert.Equal(authUserDetails.ProviderID, apprenticeship1.ProviderId);
-            Assert.Equal(authUserDetails.UserId.ToString(), apprenticeship1.CreatedByUser.UserId);
+            Assert.Equal(userInfo.CurrentProviderId, apprenticeship1.ProviderId);
+            Assert.Equal(userInfo.UserId.ToString(), apprenticeship1.CreatedByUser.UserId);
             Assert.Equal(105, apprenticeship1.StandardOrFramework.Standard.StandardCode);
             Assert.Equal("This apprenticeship is applicable to any industry and perfect for those already in a team leading role or entering a management role for the first time.It lasts around 15 months and incorporates 14 one day modules plus on - the job learning and mentoring.It involves managing projects, leading and managing teams, change, financial management and coaching.If you choose to do this qualification with Azesta, you can expect exciting and engaging day long modules fully utilising experiential learning methods(one per month), high quality tutorial support, access to e-mail and telephone support whenever you need it and great results in your end point assessments.", apprenticeship1.MarketingInformation);
             Assert.Equal("http://www.azesta.co.uk/apprenticeships/", apprenticeship1.Url);
@@ -167,8 +165,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             Assert.Equal("Fenestra Centre Scunthorpe", apprenticeship1Location.Name);
 
             Assert.Equal(ukPrn, apprenticeship2.ProviderUkprn);
-            Assert.Equal(authUserDetails.ProviderID, apprenticeship2.ProviderId);
-            Assert.Equal(authUserDetails.UserId.ToString(), apprenticeship2.CreatedByUser.UserId);
+            Assert.Equal(userInfo.CurrentProviderId, apprenticeship2.ProviderId);
+            Assert.Equal(userInfo.UserId.ToString(), apprenticeship2.CreatedByUser.UserId);
             Assert.Equal(104, apprenticeship2.StandardOrFramework.Standard.StandardCode);
             Assert.Equal("This apprenticeship is great for current managers. It involves managing projects, leading and managing teams, change, financial and resource management, talent management and coaching and mentoring. It takes around 2.5 years to complete and if you choose to do this qualification with Azesta, you can expect exciting and engaging day long modules fully utilising experiential learning methods (one per month), high quality tutorial support, access to e-mail and telephone support whenever you need it and great results in your end point assessments.", apprenticeship2.MarketingInformation);
             Assert.Equal("http://www.azesta.co.uk/apprenticeships/", apprenticeship2.Url);
