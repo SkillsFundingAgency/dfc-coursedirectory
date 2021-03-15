@@ -56,6 +56,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(83914);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
+                (await CountSqlRows("Pttcd.Standards")).Should().Be(605);
+                (await CountSqlRows("Pttcd.StandardSectorCodes")).Should().Be(75);
             }
         }
 

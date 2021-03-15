@@ -63,6 +63,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportLearningDeliveryCategoryToSql(categoriesRefs, learningDeliveryRefs);
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
+            await ImportStandardsToSql();
+            await ImportStandardSectorCodesToSql();
 
             IEnumerable<T> ReadCsv<T>(string fileName, Action<IReaderConfiguration> configureReader = null)
             {
@@ -307,6 +309,26 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<UpsertLarsSectorSubjectAreaTier2sRecord>("SectorSubjectAreaTier2.csv");
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsSectorSubjectAreaTier2s()
+                {
+                    Records = records
+                }));
+            }
+
+            Task ImportStandardsToSql()
+            {
+                var records = ReadCsv<UpsertLarsStandardRecord>("Standard.csv", config => config.RegisterClassMap<UpsertLarsStandardRecord.ClassMap>());
+
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsStandards
+                {
+                    Records = records
+                }));
+            }
+
+            Task ImportStandardSectorCodesToSql()
+            {
+                var records = ReadCsv<UpsertLarsStandardSectorCodeRecord>("StandardSectorCode.csv");
+
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsStandardSectorCodes
                 {
                     Records = records
                 }));
