@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 
     public class LiveCourseProvidersReportItem
     {
-        public int ProviderUkprn { get; set; }
+        public int Ukprn { get; set; }
         public string ProviderName { get; set; }
         public string TradingName { get; set; }
         public string AddressSaonDescription { get; set; }
