@@ -31,10 +31,10 @@ SELECT
 FROM        Pttcd.Providers p with(nolock)
 INNER JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
 WHERE       p.ProviderId IN(
-                SELECT      DISTINCT c.ProviderId FROM[Pttcd].[FindACourseIndex] c
+                SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
                 AND         c.Live = 1
-                AND         (c.FlexibleStartDate = 1 OR c.StartDate > '{string.Format("dd-MM-yyyy", query.FromDate)}'))
+                AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{string.Format("dd-MM-yyyy", query.FromDate)}'));
 ORDER BY    p.Ukprn ASC";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
