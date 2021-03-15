@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies
             AuthorizationHandlerContext context,
             ProviderTypeRequirement requirement)
         {
-            var providerContext = _providerContextProvider.GetProviderContext();
+            var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
             
             if (providerContext == null)
             {

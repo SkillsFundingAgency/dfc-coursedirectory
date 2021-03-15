@@ -69,7 +69,6 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
                     options.Filters.Add(new StateExpiredExceptionFilter());
 
-                    options.ModelBinderProviders.Insert(0, new ProviderContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new StandardModelBinderProvider());

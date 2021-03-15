@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ILogger<BulkUploadController> _logger;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         private ISession _session => HttpContext.Session;
 
@@ -42,7 +44,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IBackgroundWorkScheduler backgroundWorkScheduler,
-            ILogger<BulkUploadController> logger)
+            ILogger<BulkUploadController> logger,
+            IProviderContextProvider providerContextProvider)
         {
             _bulkUploadService = bulkUploadService ?? throw new ArgumentNullException(nameof(bulkUploadService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
@@ -50,13 +53,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
         [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction("Courses", "BulkUpload");
+            return RedirectToAction("Courses", "BulkUpload")
+                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
         }
 
         [Authorize]

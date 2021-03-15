@@ -23,18 +23,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly IMediator _mediator;
         private JourneyInstance<AddTLevelJourneyModel> _journeyInstance;
+        private readonly ProviderContext _providerContext;
 
         public AddTLevelController(
             JourneyInstanceProvider JourneyInstanceProvider,
-            IMediator mediator)
+            IMediator mediator,
+            IProviderContextProvider providerContextProvider)
         {
             _journeyInstanceProvider = JourneyInstanceProvider;
             _mediator = mediator;
             _journeyInstance = JourneyInstanceProvider.GetInstance<AddTLevelJourneyModel>();
+            _providerContext = providerContextProvider.GetProviderContext();
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> SelectTLevel(ProviderContext providerContext)
+        public async Task<IActionResult> SelectTLevel()
         {
             _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(
                 () => new AddTLevelJourneyModel());
@@ -42,27 +45,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
             if (!_journeyInstanceProvider.IsCurrentInstance(_journeyInstance))
             {
                 return RedirectToAction()
-                    .WithProviderContext(providerContext)
+                    .WithProviderContext(_providerContext)
                     .WithJourneyInstanceUniqueKey(_journeyInstance);
             }
 
-            var query = new SelectTLevel.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
+            var query = new SelectTLevel.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View("SelectTLevel", vm));
         }
 
         [HttpPost("")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> SelectTLevel(
-            SelectTLevel.Command command,
-            ProviderContext providerContext)
+        public async Task<IActionResult> SelectTLevel(SelectTLevel.Command command)
         {
-            command.ProviderId = providerContext.ProviderInfo.ProviderId;
+            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(Description))
-                        .WithProviderContext(providerContext)
+                        .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }
 
@@ -78,25 +79,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> Description(
             Description.Command command,
-            [FromQuery] bool? fromPublishPage,
-            ProviderContext providerContext)
+            [FromQuery] bool? fromPublishPage)
         {
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(fromPublishPage == true ? nameof(CheckAndPublish) : nameof(Details))
-                        .WithProviderContext(providerContext)
+                        .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }
 
         [HttpGet("details")]
         [RequireJourneyInstance]
         public async Task<IActionResult> Details(
-            [FromQuery] Guid? venueId,  // Populated by the Add Venue journey
-            ProviderContext providerContext)
+            [FromQuery] Guid? venueId)  // Populated by the Add Venue callback journey)
         {
-            var query = new Details.Query() { ProviderId = providerContext.ProviderInfo.ProviderId };
+            var query = new Details.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 query,
                 vm =>
@@ -113,24 +112,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 
         [HttpPost("details")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Details(
-            Details.Command command,
-            ProviderContext providerContext)
+        public async Task<IActionResult> Details(Details.Command command)
         {
-            command.ProviderId = providerContext.ProviderInfo.ProviderId;
+            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(CheckAndPublish))
-                        .WithProviderContext(providerContext)
+                        .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }
 
         [HttpPost("add-location")]
-        public async Task<IActionResult> AddAnotherLocation(
-            SaveDetails.Command command,
-            ProviderContext providerContext)
+        public async Task<IActionResult> AddAnotherLocation(SaveDetails.Command command)
         {
             await _mediator.Send(command);
 
@@ -143,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
                         Url.Action(
                             nameof(Details),
                             new { ffiid = _journeyInstance.InstanceId.UniqueKey }))
-                        .WithProviderContext(providerContext)
+                        .WithProviderContext(_providerContext)
                 });
         }
 
@@ -157,15 +152,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 
         [HttpPost("check-publish")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Publish(ProviderContext providerContext)
+        public async Task<IActionResult> Publish()
         {
-            var command = new CheckAndPublish.Command() { ProviderId = providerContext.ProviderInfo.ProviderId };
+            var command = new CheckAndPublish.Command() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(nameof(CheckAndPublish), errors),
                     success => RedirectToAction(nameof(Published))
-                        .WithProviderContext(providerContext)
+                        .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }
 

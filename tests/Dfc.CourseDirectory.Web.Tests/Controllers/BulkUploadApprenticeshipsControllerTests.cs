@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -160,7 +161,8 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 _mockBlobStorageService.Object,
                 new Mock<ICourseService>().Object,
                 new Mock<ICosmosDbQueryDispatcher>().Object,
-                new Mock<ICurrentUserProvider>().Object);
+                new Mock<ICurrentUserProvider>().Object,
+                new Mock<IProviderContextProvider>().Object);
             bulkUploadApprenticeshipsController.ControllerContext.HttpContext = mockContext;
             return bulkUploadApprenticeshipsController;
         }

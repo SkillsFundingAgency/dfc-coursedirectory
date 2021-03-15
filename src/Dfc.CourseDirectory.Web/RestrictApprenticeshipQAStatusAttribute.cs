@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Web
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var providerContextProvider = context.HttpContext.RequestServices.GetRequiredService<IProviderContextProvider>();
-            var providerContext = providerContextProvider.GetProviderContext();
+            var providerContext = providerContextProvider.GetProviderContext(withLegacyFallback: true);
 
             if (providerContext == null)
             {

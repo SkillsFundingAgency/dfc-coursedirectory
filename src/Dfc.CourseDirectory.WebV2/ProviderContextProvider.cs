@@ -26,11 +26,11 @@ namespace Dfc.CourseDirectory.WebV2
             httpContext.Session.SetInt32("UKPRN", feature.ProviderContext.ProviderInfo.Ukprn);
         }
 
-        public ProviderContext GetProviderContext()
+        public ProviderContext GetProviderContext(bool withLegacyFallback = false)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var feature = httpContext.Features.Get<ProviderContextFeature>();
-            return feature?.ProviderContext;
+            return (feature?.ProviderContext.IsFallback == false || withLegacyFallback) ? feature?.ProviderContext : null;
         }
 
         public void SetProviderContext(ProviderContext providerContext)
@@ -44,16 +44,15 @@ namespace Dfc.CourseDirectory.WebV2
 
             var currentContextFeature = httpContext.Features.Get<ProviderContextFeature>();
 
-            if (currentContextFeature != null && currentContextFeature.ProviderContext.Strict)
+            if (currentContextFeature != null && !currentContextFeature.ProviderContext.IsFallback)
             {
                 if (currentContextFeature.ProviderContext.ProviderInfo.ProviderId != providerContext.ProviderInfo.ProviderId)
                 {
                     throw new InvalidOperationException(
                         $"Provider context has already been set for another provider: '{currentContextFeature.ProviderContext.ProviderInfo.ProviderId}'.");
                 }
-                else if (currentContextFeature.ProviderContext.Strict && !providerContext.Strict)
+                else if (!currentContextFeature.ProviderContext.IsFallback && providerContext.IsFallback)
                 {
-                    // Don't allow going from strict -> non-strict
                     return;
                 }
             }

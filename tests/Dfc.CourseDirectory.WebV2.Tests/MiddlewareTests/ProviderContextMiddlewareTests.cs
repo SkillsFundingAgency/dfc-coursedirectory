@@ -151,12 +151,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         }
     }
 
+    [RequireProviderContext]
     public class ProviderContextModelBinderTestController : Controller
     {
+        private readonly ProviderContext _providerContext;
+
+        public ProviderContextModelBinderTestController(IProviderContextProvider providerContextProvider)
+        {
+            _providerContext = providerContextProvider.GetProviderContext();
+        }
+
         [HttpGet("currentprovideractionfiltertests")]
-        public IActionResult Get(ProviderContext providerContext) => Json(providerContext);
+        public IActionResult Get() => Json(_providerContext);
 
         [HttpGet("currentprovideractionfiltertests/from-route/{providerId}")]
-        public IActionResult GetFromRoute(ProviderContext providerContext) => Json(providerContext);
+        public IActionResult GetFromRoute() => Json(_providerContext);
     }
 }

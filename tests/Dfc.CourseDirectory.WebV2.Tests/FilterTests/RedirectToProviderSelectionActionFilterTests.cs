@@ -15,20 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         }
 
         [Fact]
-        public async Task ProviderInfoNotBound_ReturnsRedirectToSelectProviderView()
-        {
-            // Arrange
-            await User.AsDeveloper();
-
-            // Act
-            var response = await HttpClient.GetAsync("RedirectToProviderSelectionActionFilterTest");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal("/provider-search", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
-        }
-
-        [Fact]
         public async Task ActionDecoratedWithRequireProviderContext_ReturnsRedirectToSelectProviderView()
         {
             // Arrange
@@ -46,9 +32,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
     public class RedirectToProviderSelectionActionFilterTestController : Controller
     {
-        [HttpGet("RedirectToProviderSelectionActionFilterTest")]
-        public IActionResult Get(ProviderContext providerContext) => Ok("Yay");
-
         [HttpGet("RedirectToProviderSelectionActionFilterTest/without-parameter")]
         [RequireProviderContext]
         public IActionResult GetWithoutParameter() => Ok("Yay");

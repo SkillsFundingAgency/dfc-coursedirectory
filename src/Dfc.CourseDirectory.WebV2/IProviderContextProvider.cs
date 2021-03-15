@@ -3,7 +3,7 @@
     public interface IProviderContextProvider
     {
         void AssignLegacyProviderContext();
-        ProviderContext GetProviderContext();
+        ProviderContext GetProviderContext(bool withLegacyFallback = false);
         void SetProviderContext(ProviderContext providerContext);
     }
 }

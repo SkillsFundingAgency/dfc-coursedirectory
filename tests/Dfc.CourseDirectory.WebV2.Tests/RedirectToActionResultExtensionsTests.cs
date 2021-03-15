@@ -33,8 +33,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class RedirectToActionResultExtensionsTestController : Controller
     {
         [HttpGet("redirecttoactionresultextensionstestcontroller/first")]
-        public IActionResult First(ProviderContext providerContext) =>
-            RedirectToAction("Second").WithProviderContext(providerContext);
+        public IActionResult First([FromServices] IProviderContextProvider providerContextProvider) =>
+            RedirectToAction("Second").WithProviderContext(providerContextProvider.GetProviderContext());
 
         [HttpGet("redirecttoactionresultextensionstestcontroller/second")]
         public IActionResult Second(ProviderContext providerContext) => Json(providerContext.ProviderInfo);
