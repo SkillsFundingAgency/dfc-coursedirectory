@@ -95,51 +95,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
         }
 
-        public async Task<Result<VenueSearchResult>> GetVenuesByPRNAndNameAsync(GetVenuesByPRNAndNameCriteria criteria)
-        {
-            if (criteria == null)
-            {
-                throw new ArgumentNullException(nameof(criteria));
-            }
-
-
-            try
-            {
-                var response = await _httpClient.GetAsync(_getVenueByPRNAndNameUri + $"?prn={criteria.PRN}&name={criteria.Name}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    if (string.IsNullOrEmpty(json))
-                        json = "[]";
-
-                    JsonSerializerSettings settings = new JsonSerializerSettings
-                    {
-                        ContractResolver = new VenueSearchResultContractResolver()
-                    };
-                    IEnumerable<Venue> venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings);
-                    return Result.Ok(new VenueSearchResult(venues));
-
-                }
-                else
-                {
-                    return Result.Fail<VenueSearchResult>("Get Venue By PRN & Name service unsuccessful http response");
-                }
-            }
-
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get Venue By PRN and Name service http request error");
-                return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get Venue By PRN and Name service unknown error.");
-                return Result.Fail<VenueSearchResult>("Get Venue By PRN and Name service unknown error.");
-            }
-        }
-
         public async Task<Result<VenueSearchResult>> SearchAsync(VenueSearchCriteria criteria)
         {
             if (criteria == null)
