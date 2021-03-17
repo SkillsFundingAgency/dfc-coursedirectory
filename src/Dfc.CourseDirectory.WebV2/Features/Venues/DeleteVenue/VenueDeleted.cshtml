@@ -14,7 +14,7 @@
         <h2 class="govuk-heading-m">Next steps</h2>
         <ul class="govuk-list">
             <li><a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">View and edit locations</a></li>
-            <li><a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link">Return to the home screen</a></li>
+            <li><a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Return to the home screen</a></li>
         </ul>
     </div>
 </div>
