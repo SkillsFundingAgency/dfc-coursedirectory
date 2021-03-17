@@ -166,8 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
                     // LEGACY: Some legacy journeys display a notification when a venue has been added.
                     // Stash the venue's address in TempData so it can be read by those legacy views.
-                    TempData.Add(
-                        TempDataKeys.AddedVenueDescription,
+                    TempData[TempDataKeys.AddedVenueDescription] =
                         string.Join(
                             ", ",
                             new[]
@@ -179,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
                                 journeyInstance.State.County,
                                 journeyInstance.State.Postcode
                             }
-                            .Where(l => !string.IsNullOrWhiteSpace(l))));
+                            .Where(l => !string.IsNullOrWhiteSpace(l)));
 
                     if (journeyInstance.Properties.TryGetValue(ReturnUrlJourneyInstancePropertyKey, out var returnUrlObj)
                         && returnUrlObj is string returnUrl
