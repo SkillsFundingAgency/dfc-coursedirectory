@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var journeyState = new AddTLevelJourneyModel();
 
-            journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.None);
+            journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
             var journeyInstance = CreateJourneyInstance(providerId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
@@ -271,7 +271,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var journeyState = new AddTLevelJourneyModel();
 
-            journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.None);
+            journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
             var journeyInstance = CreateJourneyInstance(providerId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
@@ -355,7 +355,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             doc.AssertHasError(expectedErrorField, expectedErrorMessage);
 
             GetJourneyInstance<AddTLevelJourneyModel>(journeyInstanceId).State
-                .ValidStages.Should().NotHaveFlag(AddTLevelJourneyCompletedStages.Description);
+                .CompletedStages.Should().NotHaveFlag(AddTLevelJourneyCompletedStages.Description);
         }
 
         [Fact]
@@ -421,7 +421,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 journeyState.HowYoullLearn.Should().Be(howYoullLearn);
                 journeyState.HowYoullBeAssessed.Should().Be(howYoullBeAssessed);
                 journeyState.WhatYouCanDoNext.Should().Be(whatYouCanDoNext);
-                journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
+                journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
             }
         }
 

@@ -130,8 +130,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
             await _mediator.Send(command);
 
             return RedirectToAction(
+                "Index",
                 "AddVenue",
-                "Venues",
                 new
                 {
                     returnUrl = new Url(
@@ -139,7 +139,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
                             nameof(Details),
                             new { ffiid = _journeyInstance.InstanceId.UniqueKey }))
                         .WithProviderContext(_providerContext)
-                });
+                })
+                .WithProviderContext(_providerContext);
         }
 
         [HttpGet("check-publish")]

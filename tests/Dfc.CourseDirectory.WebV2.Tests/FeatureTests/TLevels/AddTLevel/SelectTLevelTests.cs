@@ -332,7 +332,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var journeyState = GetJourneyInstance<AddTLevelJourneyModel>(journeyInstanceId).State;
             journeyState.TLevelDefinitionId.Should().Be(selectedTLevelId);
-            journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel);
+            journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel);
         }
 
         [Fact]
@@ -366,7 +366,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 currentHowYoullBeAssessed,
                 currentWhatYouCanDoNext,
                 isComplete: true);
-            journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
+            journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
 
             var newSelectedTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             newSelectedTLevelDefinitionId.Should().NotBe(currentlySelectedTLevel.TLevelDefinitionId);
@@ -405,7 +405,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 journeyState.HowYoullLearn.Should().Be(newTLevelExemplarContent.HowYoullLearn);
                 journeyState.HowYoullBeAssessed.Should().Be(newTLevelExemplarContent.HowYoullBeAssessed);
                 journeyState.WhatYouCanDoNext.Should().Be(newTLevelExemplarContent.WhatYouCanDoNext);
-                journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel);
+                journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel);
             }
         }
 
@@ -440,7 +440,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 howYoullBeAssessed,
                 whatYouCanDoNext,
                 isComplete: true);
-            journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
+            journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
 
             var journeyInstance = CreateJourneyInstance(providerId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
@@ -470,7 +470,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 journeyState.HowYoullLearn.Should().Be(howYoullLearn);
                 journeyState.HowYoullBeAssessed.Should().Be(howYoullBeAssessed);
                 journeyState.WhatYouCanDoNext.Should().Be(whatYouCanDoNext);
-                journeyState.ValidStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
+                journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.SelectTLevel | AddTLevelJourneyCompletedStages.Description);
             }
         }
     }

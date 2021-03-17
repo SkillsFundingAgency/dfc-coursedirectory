@@ -19,9 +19,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
         private readonly HttpClient _httpClient;
         private readonly Uri _getVenueByIdUri;
         private readonly Uri _getVenueByPRNAndNameUri;
-        private readonly Uri _updateVenueUri;
         private readonly Uri _searchVenueUri;
-        private readonly Uri _addVenueUri;
 
         public VenueService(
             ILogger<VenueService> logger,
@@ -50,51 +48,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             _getVenueByIdUri = settings.Value.ToGetVenueByIdUri();
             _getVenueByPRNAndNameUri = settings.Value.ToGetVenuesByPRNAndNameUri();
-            _updateVenueUri = settings.Value.ToUpdateVenueUrl();
             _searchVenueUri = settings.Value.ToSearchVenueUri();
-            _addVenueUri = settings.Value.ToAddVenueUri();
-        }
-
-        public async Task<Result<Venue>> UpdateAsync(Venue venue)
-        {
-            if (venue == null)
-            {
-                throw new ArgumentNullException(nameof(venue));
-            }
-
-
-            try
-            {
-                var venueJson = JsonConvert.SerializeObject(venue);
-
-                var content = new StringContent(venueJson, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_updateVenueUri, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var venueResult = JsonConvert.DeserializeObject<Venue>(json);
-
-                    return Result.Ok(venueResult);
-                }
-                else
-                {
-                    return Result.Fail<Venue>("Venue update service unsuccessful http response");
-                }
-            }
-
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Venue update service http request error");
-                return Result.Fail<Venue>("Venue update service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Venue update service unknown error.");
-
-                return Result.Fail<Venue>("Venue update service unknown error.");
-            }
         }
 
         public async Task<Result<Venue>> GetVenueByIdAsync(GetVenueByIdCriteria criteria)
@@ -239,47 +193,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             {
                 _logger.LogError(e, "Venue search service unknown error.");
                 return Result.Fail<VenueSearchResult>("Venue search service unknown error.");
-            }
-        }
-
-        public async Task<Result<Venue>> AddAsync(Venue venue)
-        {
-            if (venue == null)
-            {
-                throw new ArgumentNullException(nameof(venue));
-            }
-
-
-            try
-            {
-                var venueJson = JsonConvert.SerializeObject(venue);
-
-                var content = new StringContent(venueJson, Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PostAsync(_addVenueUri, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var venueResult = JsonConvert.DeserializeObject<Venue>(json);
-
-                    return Result.Ok(venueResult);
-                }
-                else
-                {
-                    return Result.Fail<Venue>("Venue add service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Venue add service http request error");
-                return Result.Fail<Venue>("Venue add service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Venue add service unknown error.");
-                return Result.Fail<Venue>("Venue add service unknown error.");
             }
         }
     }

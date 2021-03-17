@@ -1,0 +1,58 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish.ViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Add location");
+}
+
+@if (Model.NewAddressIsOutsideOfEngland)
+{
+    <pttcd-notification title="Non England address" data-testid="outsideofengland-notification">
+        You are adding an address that is outside of England. Your course for this address will not appear in any search results.
+    </pttcd-notification>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Publish" asp-all-route-data="RouteValuesHelper.FromQueryString()">
+            <h1 class="govuk-heading-xl">
+                Add location
+            </h1>
+
+            <govuk-summary-list>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Location name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.Name</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Name)" visually-hidden-text="location name">Change</govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Address</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                        @foreach (var part in Model.AddressParts)
+                        {
+                            @part<br />
+                        }
+                    </govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="Address" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" visually-hidden-text="address">Change</govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Email</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.Email</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Email)" visually-hidden-text="email">Change</govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Telephone</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.Telephone</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Telephone)" visually-hidden-text="phone number">Change</govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Website</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.Website</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Website)" visually-hidden-text="website">Change</govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+            </govuk-summary-list>
+
+            <govuk-button type="submit" class="govuk-!-margin-right-3">Save location</govuk-button>
+            <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
+    </div>
+</div>

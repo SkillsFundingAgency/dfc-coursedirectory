@@ -20,6 +20,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearc
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         private ISession _session => HttpContext.Session;
 
@@ -46,13 +48,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueService venueService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
-            IStandardsAndFrameworksCache standardsAndFrameworksCache)
+            IStandardsAndFrameworksCache standardsAndFrameworksCache,
+            IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
@@ -860,10 +864,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult AddNewVenue(ApprenticeshipLocationType type)
         {
-            _session.SetString("Option", type == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
-                "AddNewVenueForApprenticeshipsCombined" :"AddNewVenueForApprenticeships");
+            var returnUrl = type == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
+                Url.Action("DeliveryOptionsCombined", "Apprenticeships", new
+                {
+                    message = string.Empty,
+                    mode = "Add"
+                }) :
+                Url.Action("DeliveryOptions", "Apprenticeships", new
+                {
+                    message = string.Empty,
+                    mode = "Add"
+                });
 
-            return Json(Url.Action("AddVenue", "Venues"));
+            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl }))
+                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
+                .ToString());
         }
 
         private Dictionary<string, List<string>> SubRegionCodesToDictionary(IEnumerable<string> subRegions)

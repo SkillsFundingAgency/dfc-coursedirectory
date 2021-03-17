@@ -24,7 +24,9 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +43,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueService _venueService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
@@ -55,7 +58,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueSearchHelper venueSearchHelper,
             IVenueService venueService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IProviderContextProvider providerContextProvider)
         {
             _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
@@ -63,6 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
@@ -301,7 +306,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // AddCourseRun - going to Summary
             //Session.SetObject(SessionAddCourseSection2, model);
             //Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
-            Session.SetString("Option", "AddNewVenue");
 
             // AddCourseRun - going to Summary
             Session.SetObject(SessionAddCourseSection2, model);
@@ -394,11 +398,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
 
 
-            return Json(Url.Action("AddVenue", "Venues"));
+            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("SummaryToAddCourseRun", "AddCourse") }))
+                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
+                .ToString());
 
             //return RedirectToAction("AddVenue", "Venues");
 
-        }
+            }
 
         [Authorize]
         [HttpGet]

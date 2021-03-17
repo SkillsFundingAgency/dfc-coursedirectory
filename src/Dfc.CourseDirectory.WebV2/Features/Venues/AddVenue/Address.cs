@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -13,16 +13,14 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
+namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
 {
     public class Query : IRequest<Command>
     {
-        public Guid VenueId { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
-        public Guid VenueId { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string Town { get; set; }
@@ -34,34 +32,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
         IRequestHandler<Query, Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
-        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly ISearchClient<Onspd> _onspdSearchClient;
 
-        public Handler(
-            JourneyInstance<EditVenueJourneyModel> journeyInstance,
-            ISearchClient<Onspd> onspdSearchClient)
+        public Handler(JourneyInstanceProvider journeyInstanceProvider, ISearchClient<Onspd> onspdSearchClient)
         {
-            _journeyInstance = journeyInstance;
+            _journeyInstanceProvider = journeyInstanceProvider;
             _onspdSearchClient = onspdSearchClient;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.ThrowIfCompleted();
+
             return Task.FromResult(new Command()
             {
-                VenueId = request.VenueId,
-                AddressLine1 = _journeyInstance.State.AddressLine1,
-                AddressLine2 = _journeyInstance.State.AddressLine2,
-                Town = _journeyInstance.State.Town,
-                County = _journeyInstance.State.County,
-                Postcode = _journeyInstance.State.Postcode
+                AddressLine1 = journeyInstance.State.AddressLine1,
+                AddressLine2 = journeyInstance.State.AddressLine2,
+                Town = journeyInstance.State.Town,
+                County = journeyInstance.State.County,
+                Postcode = journeyInstance.State.Postcode
             });
         }
 
-        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
-            Command request,
-            CancellationToken cancellationToken)
+        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
+            journeyInstance.ThrowIfCompleted();
+
+            // Normalize the postcode; validation accepts postcodes with no spaces but ONSPD lookup requires spaces.
+            // Also ensures we have postcodes consistently capitalized.
+            if (Postcode.TryParse(request.Postcode, out var postcode))
+            {
+                request.Postcode = postcode;
+            }
+
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
 
@@ -71,8 +77,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
             }
 
             var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = request.Postcode });
+            var onspdPostcodeRecord = onspdSearchResult.Items.SingleOrDefault();
 
-            if (onspdSearchResult.Items.Count == 0)
+            if (onspdPostcodeRecord == null)
             {
                 validationResult = new ValidationResult(new[]
                 {
@@ -82,9 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            var onspdPostcodeRecord = onspdSearchResult.Items.Single();
-
-            _journeyInstance.UpdateState(state =>
+            journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = request.AddressLine1;
                 state.AddressLine2 = request.AddressLine2;
@@ -93,7 +98,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 state.Postcode = request.Postcode;
                 state.Latitude = onspdPostcodeRecord.Record.lat;
                 state.Longitude = onspdPostcodeRecord.Record.@long;
-                state.NewAddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
+                state.AddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
+                state.ValidStages |= AddVenueCompletedStages.Address;
             });
 
             return new Success();

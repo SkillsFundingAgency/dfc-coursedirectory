@@ -1,0 +1,29 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch.SearchCommand
+@inject FormFlow.JourneyInstanceProvider JourneyInstanceProvider
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: "Add location");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Postcode" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="PostcodeSearch" method="get">
+            <h1 class="govuk-heading-xl">
+                Add location
+            </h1>
+
+            <input name="ffiid" type="hidden" value="@JourneyInstanceProvider.GetInstance().InstanceId.UniqueKey" />
+            @ProviderContext.CreateHiddenInput()
+
+            <govuk-input asp-for="Postcode" input-class="govuk-input--width-10">
+                <govuk-input-label class="govuk-label--m">Postcode</govuk-input-label>
+            </govuk-input>
+
+            <govuk-button type="submit">Find address</govuk-button>
+        </form>
+    </div>
+</div>

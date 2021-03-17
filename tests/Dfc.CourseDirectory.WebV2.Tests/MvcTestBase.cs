@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow;
 using FormFlow.State;
@@ -31,6 +32,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             });
             Factory.OnTestStarting();
         }
+
+        protected Mock<IAddressSearchService> AddressSearchService => Factory.AddressSearchService;
 
         protected MutableClock Clock => Factory.Clock;
 

@@ -155,7 +155,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.CheckAndPublish
         {
             _journeyInstance.ThrowIfCompleted();
 
-            if (!_journeyInstance.State.ValidStages.HasFlags(AddTLevelJourneyCompletedStages.All))
+            if (!_journeyInstance.State.CompletedStages.HasFlags(AddTLevelJourneyCompletedStages.All))
             {
                 throw new InvalidStateException();
             }

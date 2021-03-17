@@ -23,40 +23,14 @@
 }
 
 @{
-    var newVenueObject = Context.Session.GetObject<AddedVenueModel>("NewAddedVenue");
-    if (newVenueObject != null)
+    var newVenueDescription = TempData[Dfc.CourseDirectory.WebV2.TempDataKeys.AddedVenueDescription] as string;
+
+    if (newVenueDescription != null)
     {
-        string message = "";
-        if (!string.IsNullOrWhiteSpace(newVenueObject.VenueName))
-        {
-            message += string.Concat(newVenueObject.VenueName, ", ");
-        }
-        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine1))
-        {
-            message += string.Concat(newVenueObject.AddressLine1, ", ");
-        }
-        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine2))
-        {
-            message += string.Concat(newVenueObject.AddressLine2, ", ");
-        }
-        if (!string.IsNullOrWhiteSpace(newVenueObject.Town))
-        {
-            message += string.Concat(newVenueObject.Town, ", ");
-        }
-        if (!string.IsNullOrWhiteSpace(newVenueObject.County))
-        {
-            message += string.Concat(@newVenueObject.County, ", ");
-        }
-        if (!string.IsNullOrWhiteSpace(newVenueObject.PostCode))
-        {
-            message += newVenueObject.PostCode;
-
-        }
-
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
             NotificationTitle = "New location added:",
-            NotificationMessage = message,
+            NotificationMessage = newVenueDescription,
             ClassType = "success-summary"
         })
     }

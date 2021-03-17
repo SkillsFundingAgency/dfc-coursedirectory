@@ -1,14 +1,14 @@
 ﻿using System;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.Models;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
+namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 {
     public class CreateVenue : ICosmosDbQuery<Success>
     {
         public Guid VenueId { get; set; }
         public int ProviderUkprn { get; set; }
-        public string VenueName { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
         public string Telephone { get; set; }
         public string Website { get; set; }
@@ -19,5 +19,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public string Postcode { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public UserInfo CreatedBy { get; set; }
     }
 }

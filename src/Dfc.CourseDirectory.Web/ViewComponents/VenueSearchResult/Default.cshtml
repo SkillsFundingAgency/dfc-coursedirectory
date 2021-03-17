@@ -111,7 +111,7 @@
 
         @if (adminLogin.Succeeded || providerLogin.Succeeded)
         {
-            <a asp-controller="Venues" asp-action="AddVenue" class="govuk-button">Add a location</a>
+            <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button">Add a location</a>
         }
     </div>
 </div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Dfc.CourseDirectory.Core.Search.Models
 {
@@ -23,5 +24,8 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public string County { get; set; }
         public string Country { get; set; }
         public DateTime updated { get; set; }
+
+        [JsonIgnore]
+        public bool IsInEngland => Country == "England";
     }
 }
