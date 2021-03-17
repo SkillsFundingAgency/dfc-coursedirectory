@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 throw new ArgumentNullException(nameof(venueSearchRequestModel));
             }
 
-            var criteria = new VenueSearchCriteria(venueSearchRequestModel.SearchTerm, venueSearchRequestModel.NewAddressId);
+            var criteria = new VenueSearchCriteria(venueSearchRequestModel.SearchTerm);
             return criteria;
         }
         public IEnumerable<VenueSearchResultItemModel> GetVenueSearchResultItemModels(

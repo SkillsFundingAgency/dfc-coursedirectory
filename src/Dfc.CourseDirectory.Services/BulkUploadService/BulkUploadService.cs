@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             string previousLearnAimRef = string.Empty;
 
             try {
-                cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(providerUKPRN.ToString(), string.Empty)))
+                cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(providerUKPRN.ToString())))
                                                                        .Result
                                                                        .Value
                                                                        .Value

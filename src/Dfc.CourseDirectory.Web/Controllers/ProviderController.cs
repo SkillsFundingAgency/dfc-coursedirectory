@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             int? UKPRN = Session.GetInt32("UKPRN");
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
+            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
             var allRegions = _courseService.GetRegions().RegionItems;
 
 

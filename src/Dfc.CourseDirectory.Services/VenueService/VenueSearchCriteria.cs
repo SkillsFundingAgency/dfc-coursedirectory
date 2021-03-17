@@ -5,11 +5,9 @@ namespace Dfc.CourseDirectory.Services.VenueService
     public class VenueSearchCriteria
     {
         public string Search { get; }
-        public string NewAddressId { get; }
 
         public VenueSearchCriteria(
-            string search,
-            string newAddressId)
+            string search)
         {
             if (string.IsNullOrWhiteSpace(search))
             {
@@ -17,7 +15,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             }
 
             Search = search;
-            NewAddressId = newAddressId;
         }
     }
 }
