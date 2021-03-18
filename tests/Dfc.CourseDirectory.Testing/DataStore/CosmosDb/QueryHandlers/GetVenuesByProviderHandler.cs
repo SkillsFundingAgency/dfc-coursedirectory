@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
     {
         public IReadOnlyCollection<Venue> Execute(InMemoryDocumentStore inMemoryDocumentStore, GetVenuesByProvider request)
         {
-            return inMemoryDocumentStore.Venues.All.Where(v => v.Ukprn == request.ProviderUkprn && v.Status == (int)VenueStatus.Live).ToList();
+            return inMemoryDocumentStore.Venues.All.Where(v => v.Ukprn == request.ProviderUkprn && v.Status == VenueStatus.Live).ToList();
         }
     }
 }

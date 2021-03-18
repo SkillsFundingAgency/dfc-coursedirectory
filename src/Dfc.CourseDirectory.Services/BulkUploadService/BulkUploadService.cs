@@ -14,10 +14,10 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 using Course = Dfc.CourseDirectory.Services.Models.Courses.Course;
+using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -75,7 +75,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             try {
                 cachedVenues = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUKPRN }))
-                    .Select(v => Venue.FromCoreModel(v))
                     .ToList();
 
                 string missingFieldsError = string.Empty;
@@ -496,35 +495,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 else
                 {
-                    //GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadCourse.ProviderUKPRN.ToString(), bulkUploadCourse.VenueName);
-                    var venueResultCache = cachedVenues.Where(o => o.VenueName.ToLower() == bulkUploadCourse.VenueName.ToLower() && o.Status == VenueStatus.Live).ToList();
+                    var venueResultCache = cachedVenues.Where(o => o.VenueName.ToLower() == bulkUploadCourse.VenueName.ToLower()).ToList();
 
-                    if (null != venueResultCache && venueResultCache.Count > 0)
+                    if (venueResultCache.Count == 1)
                     {
-                        //var venues = (IEnumerable<Venue>)venueResultCeche.Value.Value;
-                        if (venueResultCache.Count().Equals(1))
-                        {
-                            if (venueResultCache.FirstOrDefault().Status.Equals(VenueStatus.Live))
-                            {
-                                courseRun.VenueId = new Guid(venueResultCache.FirstOrDefault().ID);
-                            }
-                            else
-                            {
-                                validationMessages.Add($"Venue is not LIVE (The status is { venueResultCache.FirstOrDefault().Status }) for VenueName { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
-                            }
-                        }
-                        else
-                        {
-                            validationMessages.Add($"We have obtained muliple Venues for { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
-                            if (venueResultCache.FirstOrDefault().Status.Equals(VenueStatus.Live))
-                            {
-                                courseRun.VenueId = new Guid(venueResultCache.FirstOrDefault().ID);
-                            }
-                            else
-                            {
-                                validationMessages.Add($"The selected Venue is not LIVE (The status is { venueResultCache.FirstOrDefault().Status }) for VenueName { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
-                            }
-                        }
+                        courseRun.VenueId = venueResultCache[0].Id;
                     }
                     else
                     {

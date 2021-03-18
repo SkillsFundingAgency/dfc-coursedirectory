@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Dfc.CourseDirectory.Core.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -45,7 +46,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         [JsonProperty("WEBSITE")]
         public string Website { get; set; }
 
-        public int Status { get; set; }
+        public VenueStatus Status { get; set; }
 
         public int? LocationId { get; set; }
 

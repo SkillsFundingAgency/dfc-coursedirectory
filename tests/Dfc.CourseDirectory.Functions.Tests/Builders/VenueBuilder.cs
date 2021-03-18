@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Functions.Tests.Builders
                     PHONE = Faker.Phone.Number(),
                     Email = Faker.Internet.Email(),
                     Website = Faker.Internet.Url(),
-                    Status = (int)VenueStatus.Live,
+                    Status = VenueStatus.Live,
                 };
         }
 

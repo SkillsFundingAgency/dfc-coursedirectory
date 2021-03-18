@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 configuration.VenuesCollectionName);
 
             var query = client.CreateDocumentQuery<Venue>(collectionUri, new FeedOptions() { EnableCrossPartitionQuery = true })
-                .Where(v => v.Id == request.VenueId && v.Status == (int)VenueStatus.Live)
+                .Where(v => v.Id == request.VenueId && v.Status == VenueStatus.Live)
                 .AsDocumentQuery();
 
             return (await query.ExecuteNextAsync()).SingleOrDefault();

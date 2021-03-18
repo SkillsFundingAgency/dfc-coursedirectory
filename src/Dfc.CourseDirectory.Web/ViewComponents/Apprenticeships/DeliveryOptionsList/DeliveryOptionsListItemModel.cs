@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Services.Models.Venues;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {

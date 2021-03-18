@@ -10,8 +10,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Controllers;
@@ -23,7 +21,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using VenueStatus = Dfc.CourseDirectory.Services.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Web.Tests.Controllers
 {
@@ -122,7 +119,7 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                     new Core.DataStore.CosmosDb.Models.Venue()
                     {
                         VenueName = "Fenestra Centre Scunthorpe",
-                        Status = 1
+                        Status = Core.Models.VenueStatus.Live
                     }
                 });
 

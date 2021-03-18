@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 CreatedDate = request.CreatedDate,
                 UpdatedBy = request.CreatedBy.UserId,
                 DateUpdated = request.CreatedDate,
-                Status = (int)VenueStatus.Live,
+                Status = VenueStatus.Live,
                 Ukprn = request.ProviderUkprn
             };
 

@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -18,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
@@ -49,14 +49,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         }
 
 
-        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
-        {
-            if (list == null) list = new List<Venue>();
-
-            var found = list.ToList().Find(x => x.ID == id.ToString());
-
-            return found;
-        }
+        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.Id == id);
 
         internal string FormatAddress(Venue venue)
         {
@@ -113,11 +106,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             }
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-
-            var venueResult = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value }))
-                .Select(v => Venue.FromCoreModel(v))
-                .ToList();
-
+            var venueResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value });
             var allRegions = _courseService.GetRegions().RegionItems;
 
             var allCourses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
@@ -359,7 +348,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
 
         [Authorize]
-        public async Task<IActionResult> FilterCourses(ProviderCoursesRequestModel requestModel)
+        public IActionResult FilterCourses(ProviderCoursesRequestModel requestModel)
         {
 
             Session.SetString("Option", "Courses");

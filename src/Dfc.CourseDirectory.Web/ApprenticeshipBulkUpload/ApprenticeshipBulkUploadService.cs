@@ -17,12 +17,12 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 {
@@ -340,7 +340,6 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     {
                         _cachedVenues = Task.Run(() => _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = _ukprn }))
                             .Result
-                            .Select(v => Venue.FromCoreModel(v))
                             .ToList();
                     }
                     string fieldName = "VENUE";
@@ -351,7 +350,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     }
 
                     var venues = _cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == Services.Models.Venues.VenueStatus.Live).ToList();
+                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper()).ToList();
 
                     if (venues.Any())
                     {
@@ -1258,23 +1257,23 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 Regions = record.RegionsList.ToArray(),
                 National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
                 LocationId = venue?.LocationId,
-                VenueId = Guid.TryParse(venue?.ID, out var venueId) ? venueId : Guid.Empty,
+                VenueId = venue?.Id,
                 Address = venue != null
                     ? new ApprenticeshipLocationAddress
                     {
-                        Address1 = venue.Address1,
-                        Address2 = venue.Address2,
+                        Address1 = venue.AddressLine1,
+                        Address2 = venue.AddressLine2,
                         Town = venue.Town,
                         County = venue.County,
-                        Postcode = venue.PostCode,
+                        Postcode = venue.Postcode,
                         Email = venue.Email,
-                        Phone = venue.Telephone,
+                        Phone = venue.PHONE,
                         Website = venue.Website,
                         Latitude = venue.Latitude,
                         Longitude = venue.Longitude
                     }
                     : null,
-                LocationGuidId = Guid.TryParse(venue?.ID, out var locationGuid) ? locationGuid : Guid.Empty,
+                LocationGuidId = venue?.Id,
                 Radius = record.RADIUS,
                 DeliveryModes = record.DELIVERY_MODE
             };
