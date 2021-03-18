@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             $"{UKPRN.ToString()}/Courses Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                         task.Wait();
 
-                        var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
+                        var errors = await _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
 
                         if (errors.Any())
                         {

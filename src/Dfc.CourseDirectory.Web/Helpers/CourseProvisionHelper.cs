@@ -11,7 +11,6 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +20,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICSVHelper _CSVHelper;
 
@@ -30,13 +28,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
         public CourseProvisionHelper(
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
-            IVenueService venueService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICSVHelper CSVHelper)
         {
             _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
         }
@@ -124,11 +120,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 };
                 if(firstCourseRun.VenueId.HasValue)
                 {
-                    var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result;
+                    var result = _cosmosDbQueryDispatcher.ExecuteQuery(
+                        new GetVenueById() { VenueId = firstCourseRun.VenueId.Value }).Result;
                     
-                    if (result.IsSuccess && !string.IsNullOrWhiteSpace(result.Value.VenueName))
+                    if (!string.IsNullOrWhiteSpace(result?.VenueName))
                     {
-                        csvCourse.VenueName = result.Value.VenueName;
+                        csvCourse.VenueName = result.VenueName;
                     }
                 }
                 csvCourses.Add(csvCourse);
@@ -174,12 +171,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
                     if (courseRun.VenueId.HasValue)
                     {
-                        var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
-                        (courseRun.VenueId.Value.ToString())).Result;
+                        var result = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = courseRun.VenueId.Value }).Result;
 
-                        if (result.IsSuccess && !string.IsNullOrWhiteSpace(result.Value.VenueName))
+                        if (!string.IsNullOrWhiteSpace(result?.VenueName))
                         {
-                            csvCourseRun.VenueName = result.Value.VenueName;
+                            csvCourseRun.VenueName = result.VenueName;
                         }
                     }
                     csvCourses.Add(csvCourseRun);

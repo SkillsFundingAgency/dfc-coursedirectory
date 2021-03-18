@@ -18,7 +18,6 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -88,7 +87,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
-            private readonly IVenueService _venueService;
+            private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
             private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
             private readonly AuthenticatedUserInfo _authUserDetails;
             private readonly int _ukprn;
@@ -96,12 +95,12 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(
-                IVenueService venueService,
+                ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
                 IStandardsAndFrameworksCache standardsAndFrameworksCache,
                 AuthenticatedUserInfo userInfo,
                 int ukprn)
             {
-                _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+                _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
                 _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
                 _authUserDetails = userInfo ?? throw new ArgumentNullException(nameof(userInfo));
                 _ukprn = ukprn;
@@ -339,15 +338,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     if (_cachedVenues == null)
                     {
-                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_ukprn.ToString())))
+                        _cachedVenues = Task.Run(() => _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = _ukprn }))
                             .Result
-                            .Value
-                            .Value
+                            .Select(v => Venue.FromCoreModel(v))
                             .ToList();
-                        if (!_cachedVenues.Any())
-                        {
-                            return null;
-                        }
                     }
                     string fieldName = "VENUE";
                     row.TryGetField<string>(fieldName, out string value);
@@ -932,7 +926,6 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             }
         }
 
-        private readonly IVenueService _venueService;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
@@ -940,14 +933,12 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
-            IVenueService venueService,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
             IBinaryStorageProvider binaryStorageProvider,
             IBackgroundWorkScheduler backgroundWorkScheduler,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
             _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
@@ -1004,7 +995,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         ValidateHeader(csv);
 
                         var classMap = new ApprenticeshipCsvRecordMap(
-                            _venueService,
+                            _cosmosDbQueryDispatcher,
                             _standardsAndFrameworksCache,
                             userInfo,
                             ukprn);

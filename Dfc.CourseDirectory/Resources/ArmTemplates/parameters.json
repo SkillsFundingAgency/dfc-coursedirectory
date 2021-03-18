@@ -20,12 +20,6 @@
     "getAddressApiKey":{
       "value": "__getaddressApiKey__"
     },
-    "venueApiUrl": {
-      "value": "__venueServiceApiUrl__"
-    },
-    "venueApiKey": {
-      "value": "__ApimPublishCourseDirectoryKey__"
-    },
     "larsApiUrl": {
       "value": "__larsApiUrl__"
     },

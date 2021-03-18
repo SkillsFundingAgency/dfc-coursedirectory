@@ -16,10 +16,6 @@
     <Compile Remove="VenueSearchResultItem.cs" />
     <Compile Remove="VenueSearchService.cs" />
     <Compile Remove="VenueSearchSettings.cs" />
-    <Compile Remove="VenueService\GetVenueByIdResult.cs" />
-    <Compile Remove="VenueService\GetVenueByIdResultContractResolver.cs" />
-    <Compile Remove="VenueService\UpdatedVenue.cs" />
-    <Compile Remove="VenueService\UpdatedVenueResult.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Services.Models.Venues;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -35,7 +35,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ApprenticeshipsController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
@@ -45,14 +44,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public ApprenticeshipsController(
             ICourseService courseService,
-            IVenueService venueService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
             IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
@@ -568,8 +565,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Summary", "Apprenticeships");
             }
 
-            var venue = await _venueService.GetVenueByIdAsync(
-                new GetVenueByIdCriteria(model.LocationId.Value.ToString()));
+            var venue = Venue.FromCoreModel(
+                await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = model.LocationId.Value }));
 
             string deliveryMethod;
             if (model.BlockRelease && model.DayRelease)
@@ -587,12 +584,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Value.ID.ToString(),
-                    LocationName = venue.Value.VenueName,
-                    PostCode = venue.Value.PostCode,
+                    LocationId = venue.ID.ToString(),
+                    LocationName = venue.VenueName,
+                    PostCode = venue.PostCode,
                     Radius = model.Radius,
                     National = model.National,
-                    Venue = venue.Value
+                    Venue = venue
                 },
                 ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
 
@@ -616,8 +613,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Summary", "Apprenticeships");
             }
 
-            var venue = await _venueService.GetVenueByIdAsync(
-                new GetVenueByIdCriteria(model.LocationId.Value.ToString()));
+            var venue = Venue.FromCoreModel(
+                await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = model.LocationId.Value }));
 
             string deliveryMethod;
             if (model.BlockRelease && model.DayRelease)
@@ -633,10 +630,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Value.ID.ToString(),
-                    LocationName = venue.Value.VenueName,
-                    PostCode = venue.Value.PostCode,
-                    Venue = venue.Value,
+                    LocationId = venue.ID.ToString(),
+                    LocationName = venue.VenueName,
+                    PostCode = venue.PostCode,
+                    Venue = venue,
                     Radius = _apprenticeshipSettings.Value.DefaultRadius.ToString()
                 },
                 ApprenticeshipLocationType.ClassroomBased));
@@ -655,7 +652,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 apprenticeship.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
             }
 
-            var venue = await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(LocationId));
+            var venue = Venue.FromCoreModel(
+                await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = Guid.Parse(LocationId) }));
 
             string deliveryMethod;
             if (BlockRelease && DayRelease)
@@ -671,10 +669,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Value.ID.ToString(),
-                    LocationName = venue.Value.VenueName,
-                    PostCode = venue.Value.PostCode,
-                    Venue = venue.Value,
+                    LocationId = venue.ID.ToString(),
+                    LocationName = venue.VenueName,
+                    PostCode = venue.PostCode,
+                    Venue = venue,
                     Radius = _apprenticeshipSettings.Value.DefaultRadius.ToString()
 
                 },
@@ -689,7 +687,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            var venue = await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(LocationId));
+            var venue = Venue.FromCoreModel(
+                await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = Guid.Parse(LocationId) }));
 
             string deliveryMethod;
             if (BlockRelease && DayRelease)
@@ -709,12 +708,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Value.ID.ToString(),
-                    LocationName = venue.Value.VenueName,
-                    PostCode = venue.Value.PostCode,
+                    LocationId = venue.ID.ToString(),
+                    LocationName = venue.VenueName,
+                    PostCode = venue.PostCode,
                     National = National,
                     Radius = radiusValue.ToString(),
-                    Venue = venue.Value
+                    Venue = venue
                 },
                 ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
 

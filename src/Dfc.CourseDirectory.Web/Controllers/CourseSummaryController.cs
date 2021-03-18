@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,25 +15,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class CourseSummaryController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         public CourseSummaryController(
             ICourseService courseService,
-            IVenueService venueService
-            )
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             if (courseService == null)
             {
                 throw new ArgumentNullException(nameof(courseService));
             }
 
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
             _courseService = courseService;
-            _venueService = venueService;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
         public async Task<IActionResult> Index(Guid? courseId, Guid? courseRunId)
         {
@@ -100,8 +95,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (vm.VenueId != Guid.Empty)
                 {
-                    var result = await _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString()));
-                    vm.VenueName = result.Value?.VenueName;
+                    var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = courseRun.VenueId.Value });
+                    vm.VenueName = venue?.VenueName;
                 }
             }
 

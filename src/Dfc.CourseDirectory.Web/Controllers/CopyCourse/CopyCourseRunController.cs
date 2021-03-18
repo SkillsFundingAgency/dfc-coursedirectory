@@ -1,15 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
@@ -34,19 +33,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private readonly ILogger<CopyCourseRunController> _logger;
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession _session => HttpContext.Session;
-        private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly IVenueService _venueService;
 
         public CopyCourseRunController(
             ILogger<CopyCourseRunController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
-            IVenueService venueService,
-            IVenueSearchHelper venueSearchHelper,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             if (logger == null)
@@ -64,16 +61,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 throw new ArgumentNullException(nameof(courseService));
             }
 
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
             _logger = logger;
             _htmlEncoder = htmlEncoder;
             _courseService = courseService;
-            _venueService = venueService;
-            _venueSearchHelper = venueSearchHelper;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _providerContextProvider = providerContextProvider;
         }
 
@@ -203,29 +194,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 AriaDescribedBy = "Select all that apply.",
                 Ukprn = ukprn
             };
-            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess)
+
+            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+
+            selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                var venueItems = new List<VenueItemModel>();
+                Id = v.Id.ToString(),
+                VenueName = v.VenueName
+            }).ToList();
 
-                foreach (var venueSearchResultItemModel in items)
-                {
-                    venueItems.Add(new VenueItemModel
-                    {
-                        Id = venueSearchResultItemModel.Id,
-                        VenueName = venueSearchResultItemModel.VenueName
-                    });
-                }
-
-                selectVenue.VenueItems = venueItems;
-                if (venueItems.Count == 1)
-                {
-                    selectVenue.HintText = string.Empty;
-                    selectVenue.AriaDescribedBy = string.Empty;
-                }
+            if (selectVenue.VenueItems.Count == 1)
+            {
+                selectVenue.HintText = string.Empty;
+                selectVenue.AriaDescribedBy = string.Empty;
             }
 
             return selectVenue;
@@ -276,7 +257,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
 
-            var venues = await _venueService.SearchAsync(new VenueSearchCriteria(ukprn.ToString()));
+            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
             var regions = _courseService.GetRegions();
 
             foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
@@ -293,7 +274,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 CourseId = courseId.Value,
                 CourseRunId = courseRunId.Value,
                 CourseName = courseRun?.CourseName,
-                Venues = venues.Value.Value.Select(v => new SelectListItem { Text = v.VenueName, Value = v.ID }).ToList(),
+                Venues = venues.Select(v => new SelectListItem { Text = v.VenueName, Value = v.Id.ToString() }).ToList(),
                 VenueId = courseRun.VenueId ?? Guid.Empty,
                 ChooseRegion = new ChooseRegionModel
                 {

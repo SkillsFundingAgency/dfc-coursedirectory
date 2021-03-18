@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -25,12 +26,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         private readonly ILogger<ProviderCoursesController> _logger;
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         public ProviderCoursesController(
             ILogger<ProviderCoursesController> logger,
             ICourseService courseService,
-            IVenueService venueService)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             if (logger == null)
             {
@@ -42,15 +43,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 throw new ArgumentNullException(nameof(courseService));
             }
 
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
             _logger = logger;
             _courseService = courseService;
-            _venueService = venueService;
-           
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
 
@@ -118,7 +113,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             }
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
+
+            var venueResult = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value }))
+                .Select(v => Venue.FromCoreModel(v))
+                .ToList();
+
             var allRegions = _courseService.GetRegions().RegionItems;
 
             var allCourses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
@@ -169,7 +168,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
                                                         : $"0 {cr.DurationUnit.ToDescription()}",
                         Venue = cr.VenueId.HasValue
-                                                        ? FormatAddress(GetVenueByIdFrom(venueResult.Value, cr.VenueId.Value))
+                                                        ? FormatAddress(GetVenueByIdFrom(venueResult, cr.VenueId.Value))
                                                         : string.Empty,
                         StartDate = cr.FlexibleStartDate
                                                         ? "Flexible start date"
@@ -373,10 +372,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var model = new ProviderCoursesViewModel();
             model.ProviderCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>("ProviderCourses");
-
-            //var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
-            var allRegions = _courseService.GetRegions().RegionItems;
 
             List<ProviderCoursesFilterItemModel> levelFilterItems = new List<ProviderCoursesFilterItemModel>();
             List<ProviderCoursesFilterItemModel> deliveryModelFilterItems = new List<ProviderCoursesFilterItemModel>();

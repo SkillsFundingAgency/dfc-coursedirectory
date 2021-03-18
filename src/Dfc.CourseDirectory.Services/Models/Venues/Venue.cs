@@ -219,5 +219,10 @@ namespace Dfc.CourseDirectory.Services.Models.Venues
 
         public Venue()
         { }
+
+        public static Venue FromCoreModel(Core.DataStore.CosmosDb.Models.Venue venue)
+        {
+            return JsonConvert.DeserializeObject<Venue>(JsonConvert.SerializeObject(venue));
+        }
     }
 }

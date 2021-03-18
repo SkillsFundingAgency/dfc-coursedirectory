@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -38,21 +37,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string SessionRegions = "Regions";
 
         private readonly ICourseService _courseService;
-        private readonly IVenueSearchHelper _venueSearchHelper;
-        private readonly IVenueService _venueService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession _session => HttpContext.Session;
 
         public CoursesController(
             ICourseService courseService,
-            IVenueSearchHelper venueSearchHelper,
-            IVenueService venueService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
-            _venueSearchHelper = venueSearchHelper ?? throw new ArgumentNullException(nameof(venueSearchHelper));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
         }
 
@@ -1100,29 +1093,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AriaDescribedBy = "Select all that apply.",
                 Ukprn = ukprn
             };
-            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess)
+
+            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+
+            selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                var venueItems = new List<VenueItemModel>();
+                Id = v.Id.ToString(),
+                VenueName = v.VenueName
+            }).ToList();
 
-                foreach (var venueSearchResultItemModel in items)
-                {
-                    venueItems.Add(new VenueItemModel
-                    {
-                        Id = venueSearchResultItemModel.Id,
-                        VenueName = venueSearchResultItemModel.VenueName
-                    });
-                }
-
-                selectVenue.VenueItems = venueItems;
-                if (venueItems.Count == 1)
-                {
-                    selectVenue.HintText = string.Empty;
-                    selectVenue.AriaDescribedBy = string.Empty;
-                }
+            if (selectVenue.VenueItems.Count == 1)
+            {
+                selectVenue.HintText = string.Empty;
+                selectVenue.AriaDescribedBy = string.Empty;
             }
 
             return selectVenue;

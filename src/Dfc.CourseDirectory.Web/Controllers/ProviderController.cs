@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
@@ -22,16 +23,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ProviderController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
         public ProviderController(
             ICourseService courseService,
-            IVenueService venueService)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         [Authorize]
@@ -48,7 +49,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             int? UKPRN = Session.GetInt32("UKPRN");
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
+
+            var venueResult = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value }))
+                .Select(v => Venue.FromCoreModel(v)).ToList();
+
             var allRegions = _courseService.GetRegions().RegionItems;
 
 
@@ -127,7 +131,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                         ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}"
                                         : $"0 {y.DurationUnit.ToDescription()}",
                                 Venue = y.VenueId.HasValue
-                                        ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value))
+                                        ? FormatAddress(GetVenueByIdFrom(venueResult, y.VenueId.Value))
                                         : string.Empty,
                                 Region = y.Regions != null
                                         ? FormattedRegionsByIds(allRegions, y.Regions)

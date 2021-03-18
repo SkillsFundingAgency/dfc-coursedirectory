@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -13,7 +15,6 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 using Course = Dfc.CourseDirectory.Services.Models.Courses.Course;
@@ -22,23 +23,23 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
     public class BulkUploadService : IBulkUploadService
     {
-        private readonly IVenueService _venueService;
         private readonly CourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private List<Venue> cachedVenues;
 
         public BulkUploadService(
-            IVenueService venueService,
             IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
-            ISearchClient<Lars> larsSearchClient)
+            ISearchClient<Lars> larsSearchClient,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _courseServiceSettings = courseServiceSettings?.Value ?? throw new ArgumentNullException(nameof(courseServiceSettings));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         public int BulkUploadSecondsPerRecord
@@ -64,7 +65,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
+        public async Task<List<string>> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
         {
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
@@ -73,11 +74,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             string previousLearnAimRef = string.Empty;
 
             try {
-                cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(providerUKPRN.ToString())))
-                                                                       .Result
-                                                                       .Value
-                                                                       .Value
-                                                                       .ToList();
+                cachedVenues = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUKPRN }))
+                    .Select(v => Venue.FromCoreModel(v))
+                    .ToList();
+
                 string missingFieldsError = string.Empty;
                 int missingFieldsErrorCount = 0;
                 stream.Position = 0;

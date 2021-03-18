@@ -38,18 +38,6 @@
         "description": "API host key (code) needed to access the GetAddress postcode search"
       }
     },
-    "venueApiUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "API URL for the venue search"
-      }
-    },
-    "venueApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the function app (REST API)"
-      }
-    },
     "larsApiUrl": {
       "type": "string",
       "metadata": {
@@ -406,18 +394,6 @@
               {
                 "name": "GetAddressSettings__ApiKey",
                 "value": "[parameters('getAddressApiKey')]"
-              },
-              {
-                "name": "VenueServiceSettings__ApiUrl",
-                "value": "[parameters('venueApiUrl')]"
-              },
-              {
-                "name": "VenueServiceSettings__ApiKey",
-                "value": "[parameters('venueApiKey')]"
-              },
-              {
-                "name": "VenueServiceSettings__ApiVersion",
-                "value": ""
               },
               {
                 "name": "CourseServiceSettings__ApiUrl",
