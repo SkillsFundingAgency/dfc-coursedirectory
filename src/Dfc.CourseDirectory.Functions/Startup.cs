@@ -1,10 +1,12 @@
 ﻿using System;
 using Azure;
 using Azure.Search.Documents;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
+using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Functions;
 using Dfc.CourseDirectory.Functions.Config;
@@ -46,9 +48,13 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<VenueAnalyser>();
             builder.Services.AddTransient<VenueCorrector>();
             builder.Services.AddTransient<IVenueCorrectionFinder, VenueCorrectionFinder>();
+            builder.Services.AddTransient<OnspdDataImporter>();
 
             builder.Services.AddSingleton<Func<SearchClientSettings, SearchClient>>(settings =>
                 new SearchClient(new Uri(settings.Url), settings.IndexName, new AzureKeyCredential(settings.Key)));
+
+            builder.Services.AddSingleton(
+                _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
         }
 
 
