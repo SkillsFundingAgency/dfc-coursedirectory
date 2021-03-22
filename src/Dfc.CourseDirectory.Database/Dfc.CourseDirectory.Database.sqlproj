@@ -269,6 +269,7 @@
     <Build Include="Pttcd\Views\vwProviderSearchIndex.sql" />
     <Build Include="Pttcd\Tables\Standards.sql" />
     <Build Include="Pttcd\Tables\StandardSectorCodes.sql" />
+    <Build Include="Pttcd\Tables\Postcodes.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
