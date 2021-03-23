@@ -105,8 +105,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
                 Town = journeyInstance.State.Town,
                 County = journeyInstance.State.County,
                 Postcode = journeyInstance.State.Postcode,
-                Latitude = journeyInstance.State.Latitude,
-                Longitude = journeyInstance.State.Longitude,
+                Latitude = Convert.ToDecimal(journeyInstance.State.Latitude),
+                Longitude = Convert.ToDecimal(journeyInstance.State.Longitude),
                 CreatedBy = _currentUserProvider.GetCurrentUser(),
                 CreatedDate = _clock.UtcNow
             });

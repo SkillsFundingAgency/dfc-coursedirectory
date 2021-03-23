@@ -103,24 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
             var anotherProvider = await TestData.CreateProvider();
 
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = new[]
-                    {
-                        new SearchResultItem<Onspd>()
-                        {
-                            Record = new Onspd()
-                            {
-                                pcds = "CV1 2AA",
-                                Country = "England",
-                                lat = 42M,
-                                @long = 43M
-                            }
-                        }
-                    }
-                });
+            await TestData.CreatePostcodeInfo("CV1 2AA", latitude: 42D, longitude: 43D, inEngland: true);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("AddressLine1", "Updated address line 1")
@@ -150,24 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             // Arrange
             var venueId = Guid.NewGuid();
 
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = new[]
-                    {
-                        new SearchResultItem<Onspd>()
-                        {
-                            Record = new Onspd()
-                            {
-                                pcds = "CV1 2AA",
-                                Country = "England",
-                                lat = 42M,
-                                @long = 43M
-                            }
-                        }
-                    }
-                });
+            await TestData.CreatePostcodeInfo("CV1 2AA", latitude: 42D, longitude: 43D, inEngland: true);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("AddressLine1", "Updated address line 1")
@@ -204,24 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             var provider = await TestData.CreateProvider();
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = new[]
-                    {
-                        new SearchResultItem<Onspd>()
-                        {
-                            Record = new Onspd()
-                            {
-                                pcds = postcode,
-                                Country = "England",
-                                lat = 42M,
-                                @long = 43M
-                            }
-                        }
-                    }
-                });
+            await TestData.CreatePostcodeInfo("CV1 2AA", latitude: 42D, longitude: 43D, inEngland: true);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("AddressLine1", addressLine1)
@@ -250,31 +199,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         [InlineData("England", false)]
         [InlineData("Scotland", true)]
         public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(
-            string onspdRecordPostcode,
+            string onspdRecordCountry,
             bool expectedNewAddressIsOutsideOfEnglandValue)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = new[]
-                    {
-                        new SearchResultItem<Onspd>()
-                        {
-                            Record = new Onspd()
-                            {
-                                pcds = "CV1 2AA",
-                                Country = onspdRecordPostcode,
-                                lat = 42M,
-                                @long = 43M
-                            }
-                        }
-                    }
-                });
+            await TestData.CreatePostcodeInfo("CV1 2AA", latitude: 42D, longitude: 43D, onspdRecordCountry == "England");
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("AddressLine1", "Updated address line 1")
@@ -304,8 +236,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 journeyInstance.State.Town.Should().Be("Updated town");
                 journeyInstance.State.County.Should().Be("Updated county");
                 journeyInstance.State.Postcode.Should().Be("CV1 2AA");
-                journeyInstance.State.Latitude.Should().Be(42M);
-                journeyInstance.State.Longitude.Should().Be(43M);
+                journeyInstance.State.Latitude.Should().Be(42D);
+                journeyInstance.State.Longitude.Should().Be(43D);
                 journeyInstance.State.NewAddressIsOutsideOfEngland.Should().Be(expectedNewAddressIsOutsideOfEnglandValue);
             }
         }

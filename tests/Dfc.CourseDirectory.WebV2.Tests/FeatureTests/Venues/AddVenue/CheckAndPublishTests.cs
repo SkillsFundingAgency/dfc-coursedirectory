@@ -46,8 +46,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     AddressLine2 = addressLine2,
                     County = county,
                     Email = email,
-                    Latitude = 42M,
-                    Longitude = 43M,
+                    Latitude = 42D,
+                    Longitude = 43D,
                     Name = name,
                     AddressIsOutsideOfEngland = addressIsOutsideOfEngland,
                     Telephone = telephone,
@@ -102,8 +102,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var email = "email@example.com";
             var telephone = "020 7946 0000";
             var website = "example.com";
-            var latitude = 42M;
-            var longitude = 43M;
+            var latitude = 42D;
+            var longitude = 43D;
 
             var journeyInstance = CreateJourneyInstance(
                 provider.ProviderId,
@@ -150,8 +150,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 q.Town == town &&
                 q.County == county &&
                 q.Postcode == postcode &&
-                q.Latitude == latitude &&
-                q.Longitude == longitude &&
+                q.Latitude == Convert.ToDecimal(latitude) &&
+                q.Longitude == Convert.ToDecimal(longitude) &&
                 q.CreatedBy.UserId == User.UserId &&
                 q.CreatedDate == Clock.UtcNow);
         }

@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         public string Town { get; set; }
         public string County { get; set; }
         public string Postcode { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public bool AddressIsOutsideOfEngland { get; set; }
         public Guid? VenueId { get; set; }
         public IReadOnlyCollection<PostcodeSearchResult> PostcodeSearchResults { get; set; }

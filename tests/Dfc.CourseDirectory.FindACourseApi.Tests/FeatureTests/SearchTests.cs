@@ -5,6 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using FluentAssertions;
@@ -37,14 +40,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     },
                     Items = Array.Empty<SearchResultItem<FindACourseOffering>>(),
                     TotalCount = 0
-                });
-
-            OnspdSearchClient
-                .Setup(c => c.Search(It.IsAny<OnspdSearchQuery>()))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = Array.Empty<SearchResultItem<Onspd>>(),
-                    TotalCount = null
                 });
         }
 
@@ -280,8 +275,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         {
             // Arrange
             var postcode = "AB1 2DE";
-            var lat = 1m;
-            var lng = 2m;
+            var lat = 1D;
+            var lng = 2D;
             ConfigureOnspdSearchResultsForPostcode(postcode, coords: (lat, lng));
 
             var distance = 10;
@@ -335,8 +330,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         {
             // Arrange
             var postcode = "AB1 2DE";
-            var postcodeLat = 1m;
-            var postcodeLng = 2m;
+            var postcodeLat = 1D;
+            var postcodeLng = 2D;
             ConfigureOnspdSearchResultsForPostcode(postcode, coords: (postcodeLat, postcodeLng));
 
             var lat = 5d;
@@ -466,8 +461,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         {
             // Arrange
             var postcode = "AB1 2DE";
-            var lat = 1m;
-            var lng = 2m;
+            var lat = 1D;
+            var lng = 2D;
             ConfigureOnspdSearchResultsForPostcode(postcode, coords: (lat, lng));
 
             var request = CreateRequest(new
@@ -614,8 +609,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Arrange
             var postcode = "AB12DE";
             var normalizedPostcode = "AB1 2DE";
-            var lat = 1m;
-            var lng = 2m;
+            var lat = 1D;
+            var lng = 2D;
             ConfigureOnspdSearchResultsForPostcode(normalizedPostcode, coords: (lat, lng));
 
             var request = CreateRequest(new
@@ -629,7 +624,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            OnspdSearchClient.Verify(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == normalizedPostcode)));
+            SqlQueryDispatcher.Verify(c => c.ExecuteQuery(It.Is<GetPostcodeInfo>(q => q.Postcode == normalizedPostcode)));
         }
 
         private static async Task AssertHaveError(HttpResponseMessage response, string title, string detail)
@@ -659,28 +654,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
         private void ConfigureOnspdSearchResultsForPostcode(
             string postcode,
-            (decimal lat, decimal lng)? coords)
+            (double lat, double lng)? coords)
         {
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == postcode)))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = coords != null ?
-                        new[]
-                        {
-                            new SearchResultItem<Onspd>()
-                            {
-                                Record = new Onspd()
-                                {
-                                    pcd2 = postcode,
-                                    lat = coords.Value.lat,
-                                    @long = coords.Value.lng
-                                }
-                            }
-                        } :
-                        Array.Empty<SearchResultItem<Onspd>>(),
-                    TotalCount = coords != null ? 1 : (long?)null
-                });
+            if (coords.HasValue)
+            {
+                SqlQueryDispatcher.Setup(mock => mock.ExecuteQuery(It.Is<GetPostcodeInfo>(q => q.Postcode == postcode)))
+                    .ReturnsAsync(new Core.DataStore.Sql.Models.PostcodeInfo()
+                    {
+                        InEngland = true,
+                        Latitude = coords.Value.lat,
+                        Longitude = coords.Value.lng,
+                        Postcode = postcode
+                    });
+            }
         }
     }
 }
