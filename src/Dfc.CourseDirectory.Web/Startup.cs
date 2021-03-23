@@ -7,7 +7,6 @@ using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -75,10 +74,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
 
             services.AddScoped<IPaginationHelper, PaginationHelper>();
-
-            services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
-            services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
-            services.AddScoped<IVenueService, VenueService>();
 
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
             services.Configure<FindACourseServiceSettings>(Configuration.GetSection(nameof(FindACourseServiceSettings)));

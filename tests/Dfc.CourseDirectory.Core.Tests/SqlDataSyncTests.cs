@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                 PHONE = "01234 567890",
                 Email = "venue@provider.com",
                 Website = "https://provider.com/venue",
-                Status = 1,
+                Status = VenueStatus.Live,
                 LocationId = 42,
                 ProvVenueID = "MY VENUE",
                 CreatedDate = Clock.UtcNow,

@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Functions.Tests.VenueFixup
             return new Venue
             {
                 Id = Guid.NewGuid(),
-                Status = (int)VenueStatus.Live,
+                Status = VenueStatus.Live,
                 VenueName = source.VenueName,
                 Ukprn = source.Ukprn,
                 AddressLine1 = source.AddressLine1,

@@ -6,39 +6,40 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 using Course = Dfc.CourseDirectory.Services.Models.Courses.Course;
+using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
     public class BulkUploadService : IBulkUploadService
     {
-        private readonly IVenueService _venueService;
         private readonly CourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private List<Venue> cachedVenues;
 
         public BulkUploadService(
-            IVenueService venueService,
             IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
-            ISearchClient<Lars> larsSearchClient)
+            ISearchClient<Lars> larsSearchClient,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
-            _venueService = venueService ?? throw new ArgumentNullException(nameof(venueService));
             _courseServiceSettings = courseServiceSettings?.Value ?? throw new ArgumentNullException(nameof(courseServiceSettings));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         public int BulkUploadSecondsPerRecord
@@ -64,7 +65,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
+        public async Task<List<string>> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
         {
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
@@ -73,11 +74,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             string previousLearnAimRef = string.Empty;
 
             try {
-                cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(providerUKPRN.ToString())))
-                                                                       .Result
-                                                                       .Value
-                                                                       .Value
-                                                                       .ToList();
+                cachedVenues = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUKPRN }))
+                    .ToList();
+
                 string missingFieldsError = string.Empty;
                 int missingFieldsErrorCount = 0;
                 stream.Position = 0;
@@ -496,35 +495,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 else
                 {
-                    //GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadCourse.ProviderUKPRN.ToString(), bulkUploadCourse.VenueName);
-                    var venueResultCache = cachedVenues.Where(o => o.VenueName.ToLower() == bulkUploadCourse.VenueName.ToLower() && o.Status == VenueStatus.Live).ToList();
+                    var venueResultCache = cachedVenues.Where(o => o.VenueName.ToLower() == bulkUploadCourse.VenueName.ToLower()).ToList();
 
-                    if (null != venueResultCache && venueResultCache.Count > 0)
+                    if (venueResultCache.Count == 1)
                     {
-                        //var venues = (IEnumerable<Venue>)venueResultCeche.Value.Value;
-                        if (venueResultCache.Count().Equals(1))
-                        {
-                            if (venueResultCache.FirstOrDefault().Status.Equals(VenueStatus.Live))
-                            {
-                                courseRun.VenueId = new Guid(venueResultCache.FirstOrDefault().ID);
-                            }
-                            else
-                            {
-                                validationMessages.Add($"Venue is not LIVE (The status is { venueResultCache.FirstOrDefault().Status }) for VenueName { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
-                            }
-                        }
-                        else
-                        {
-                            validationMessages.Add($"We have obtained muliple Venues for { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
-                            if (venueResultCache.FirstOrDefault().Status.Equals(VenueStatus.Live))
-                            {
-                                courseRun.VenueId = new Guid(venueResultCache.FirstOrDefault().ID);
-                            }
-                            else
-                            {
-                                validationMessages.Add($"The selected Venue is not LIVE (The status is { venueResultCache.FirstOrDefault().Status }) for VenueName { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
-                            }
-                        }
+                        courseRun.VenueId = venueResultCache[0].Id;
                     }
                     else
                     {

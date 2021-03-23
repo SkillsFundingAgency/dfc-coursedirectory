@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
             var venue = new Venue()
             {
                 Id = request.VenueId,
-                Status = 1,
+                Status = Core.Models.VenueStatus.Live,
                 Ukprn = request.ProviderUkprn,
                 VenueName = request.Name,
                 Email = request.Email,

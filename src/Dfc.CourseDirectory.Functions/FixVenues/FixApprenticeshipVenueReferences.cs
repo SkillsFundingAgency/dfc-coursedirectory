@@ -431,10 +431,8 @@ namespace Dfc.CourseDirectory.Functions.FixVenues
         {
             try
             {
-                var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetVenuesByProvider {ProviderUkprn = ukprn});
-
-                return venues.Where(v => v.Status == (int)VenueStatus.Live).ToList();
+                return await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new GetVenuesByProvider { ProviderUkprn = ukprn });
             }
             catch (Exception exception)
             {

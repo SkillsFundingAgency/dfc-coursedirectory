@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -30,11 +31,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
     {
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
-        private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly IVenueService _venueService;
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
@@ -43,8 +43,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IOptions<CourseServiceSettings> courseSearchSettings,
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
-            IVenueService venueService,
-            IVenueSearchHelper venueSearchHelper,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             if (courseSearchSettings == null)
@@ -57,15 +56,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 throw new ArgumentNullException(nameof(courseService));
             }
 
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
             _courseService = courseService;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _htmlEncoder = htmlEncoder;
-            _venueService = venueService;
-            _venueSearchHelper = venueSearchHelper;
             _providerContextProvider = providerContextProvider;
         }
 
@@ -594,30 +587,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 AriaDescribedBy = "Select all that apply.",
                 Ukprn = ukprn
             };
-            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-            if (result.IsSuccess)
+
+            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+
+            selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                var venueItems = new List<VenueItemModel>();
+                Id = v.Id.ToString(),
+                VenueName = v.VenueName
+            }).ToList();
 
-                foreach (var venueSearchResultItemModel in items)
-                {
-                    venueItems.Add(new VenueItemModel
-                    {
-                        Id = venueSearchResultItemModel.Id,
-                        VenueName = venueSearchResultItemModel.VenueName
-                    });
-                }
-
-                if (venueItems.Count == 1)
-                {
-                    selectVenue.HintText = string.Empty;
-                    selectVenue.AriaDescribedBy = string.Empty;
-                }
-
-                selectVenue.VenueItems = venueItems;
+            if (selectVenue.VenueItems.Count == 1)
+            {
+                selectVenue.HintText = string.Empty;
+                selectVenue.AriaDescribedBy = string.Empty;
             }
 
             return selectVenue;

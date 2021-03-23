@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -19,34 +20,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         public YourCoursesController(
             ICourseService courseService,
-            IVenueService venueService)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             if (courseService == null)
             {
                 throw new ArgumentNullException(nameof(courseService));
             }
 
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
             _courseService = courseService;
-            _venueService = venueService;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
-        {
-            if (list == null) list = new List<Venue>();
-
-            var found = list.ToList().Find(x => x.ID == id.ToString());
-
-            return found;
-        }
+        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.Id == id);
 
         internal string FormatAddress(Venue venue)
         {
@@ -54,11 +43,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var list = new List<string>
             {
-                venue.Address1,
-                venue.Address2,
-                venue.Address3,
+                venue.AddressLine1,
+                venue.AddressLine2,
+                venue.Town,
                 venue.County,
-                venue.PostCode
+                venue.Postcode
             }
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .ToList();
@@ -119,7 +108,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
+            var venueResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value });
             var allRegions = _courseService.GetRegions().RegionItems;
 
             var levelFilters = courseResult
@@ -162,7 +151,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         CourseName = y.CourseName,
                         DeliveryMode = y.DeliveryMode.ToDescription(),
                         Duration = y.DurationValue.HasValue ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}" : $"0 {y.DurationUnit.ToDescription()}",
-                        Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value)) : string.Empty,
+                        Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult, y.VenueId.Value)) : string.Empty,
                         Region =  y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
                         StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/mm/yyyy"),
                         StudyMode = y.StudyMode.ToDescription(),

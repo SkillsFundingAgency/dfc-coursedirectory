@@ -4,7 +4,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 {
     public class SelectVenueModel
     {
-        public IEnumerable<VenueItemModel> VenueItems { get; set; }
+        public List<VenueItemModel> VenueItems { get; set; }
         public int Ukprn { get; set; }
 
         public string LabelText { get; set; }

@@ -10,9 +10,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Controllers;
@@ -24,13 +21,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using VenueStatus = Dfc.CourseDirectory.Services.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Web.Tests.Controllers
 {
     public class BulkUploadApprenticeshipsControllerIntegrationTests
     {
-        private Mock<IVenueService> _venueService;
         private Mock<IStandardsAndFrameworksCache> _standardsAndFrameworksCache;
         private Mock<IBlobStorageService> _blobStorageService;
         private Mock<ICourseService> _courseService;
@@ -47,7 +42,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
 
         public BulkUploadApprenticeshipsControllerIntegrationTests()
         {
-            _venueService = new Mock<IVenueService>();
             _standardsAndFrameworksCache = new Mock<IStandardsAndFrameworksCache>();
             _blobStorageService = new Mock<IBlobStorageService>();
             _courseService = new Mock<ICourseService>();
@@ -74,7 +68,6 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
                 .BuildServiceProvider();
 
             _apprenticeshipBulkUploadService = new ApprenticeshipBulkUploadService(
-                _venueService.Object,
                 _standardsAndFrameworksCache.Object,
                 _binaryStorageProvider.Object,
                 new ExecuteImmediatelyBackgroundWorkScheduler(serviceProvider.GetRequiredService<IServiceScopeFactory>()),
@@ -120,8 +113,15 @@ namespace Dfc.CourseDirectory.Web.Tests.Controllers
             _standardsAndFrameworksCache.Setup(s => s.GetFramework(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync<int, int, int, IStandardsAndFrameworksCache, Core.Models.Framework>((c, t, p) => new Core.Models.Framework { FrameworkCode = c, ProgType = t, PathwayCode = p });
 
-            _venueService.Setup(s => s.SearchAsync(It.IsAny<VenueSearchCriteria>()))
-                .ReturnsAsync<VenueSearchCriteria, IVenueService, Result<VenueSearchResult>>(c => Result.Ok<VenueSearchResult>(new VenueSearchResult(new[] { new Venue { VenueName = "Fenestra Centre Scunthorpe", Status = VenueStatus.Live } })));
+            _cosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
+                .ReturnsAsync(new List<Core.DataStore.CosmosDb.Models.Venue>()
+                {
+                    new Core.DataStore.CosmosDb.Models.Venue()
+                    {
+                        VenueName = "Fenestra Centre Scunthorpe",
+                        Status = Core.Models.VenueStatus.Live
+                    }
+                });
 
             var addedApprenticeships = new List<CreateApprenticeship>();
 

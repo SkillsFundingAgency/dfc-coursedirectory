@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Services.Models.Venues;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
@@ -25,12 +26,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         private readonly ILogger<ProviderCoursesController> _logger;
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
+        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
         public ProviderCoursesController(
             ILogger<ProviderCoursesController> logger,
             ICourseService courseService,
-            IVenueService venueService)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             if (logger == null)
             {
@@ -42,26 +43,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 throw new ArgumentNullException(nameof(courseService));
             }
 
-            if (venueService == null)
-            {
-                throw new ArgumentNullException(nameof(venueService));
-            }
-
             _logger = logger;
             _courseService = courseService;
-            _venueService = venueService;
-           
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
 
-        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
-        {
-            if (list == null) list = new List<Venue>();
-
-            var found = list.ToList().Find(x => x.ID == id.ToString());
-
-            return found;
-        }
+        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.Id == id);
 
         internal string FormatAddress(Venue venue)
         {
@@ -118,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             }
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
+            var venueResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value });
             var allRegions = _courseService.GetRegions().RegionItems;
 
             var allCourses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
@@ -169,7 +157,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
                                                         : $"0 {cr.DurationUnit.ToDescription()}",
                         Venue = cr.VenueId.HasValue
-                                                        ? FormatAddress(GetVenueByIdFrom(venueResult.Value, cr.VenueId.Value))
+                                                        ? FormatAddress(GetVenueByIdFrom(venueResult, cr.VenueId.Value))
                                                         : string.Empty,
                         StartDate = cr.FlexibleStartDate
                                                         ? "Flexible start date"
@@ -360,7 +348,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
 
         [Authorize]
-        public async Task<IActionResult> FilterCourses(ProviderCoursesRequestModel requestModel)
+        public IActionResult FilterCourses(ProviderCoursesRequestModel requestModel)
         {
 
             Session.SetString("Option", "Courses");
@@ -373,10 +361,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var model = new ProviderCoursesViewModel();
             model.ProviderCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>("ProviderCourses");
-
-            //var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString()))).Value;
-            var allRegions = _courseService.GetRegions().RegionItems;
 
             List<ProviderCoursesFilterItemModel> levelFilterItems = new List<ProviderCoursesFilterItemModel>();
             List<ProviderCoursesFilterItemModel> deliveryModelFilterItems = new List<ProviderCoursesFilterItemModel>();

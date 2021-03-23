@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
                 venue = query.Document;
 
-                venue.Status = (int)VenueStatus.Archived;
+                venue.Status = VenueStatus.Archived;
                 venue.DateUpdated = request.UpdatedDate;
                 venue.UpdatedBy = request.UpdatedBy.UserId;
 

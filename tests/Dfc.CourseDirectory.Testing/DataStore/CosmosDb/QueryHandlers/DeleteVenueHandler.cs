@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 return new NotFound();
             }
 
-            venue.Status = (int)VenueStatus.Archived;
+            venue.Status = VenueStatus.Archived;
             venue.DateUpdated = request.UpdatedDate;
             venue.UpdatedBy = request.UpdatedBy.UserId;
 
