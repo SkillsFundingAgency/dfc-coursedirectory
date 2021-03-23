@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -216,17 +217,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         };
 
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IRegionCache _regionCache;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly JourneyInstance<JourneyModel> _journeyInstance;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
+            IRegionCache regionCache,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             JourneyInstance<JourneyModel> journeyInstance)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _regionCache = regionCache;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _journeyInstance = journeyInstance;
@@ -371,6 +375,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             var submission = await GetSubmission();
             var submissionApprenticeship = submission.Apprenticeships.Single(a => a.ApprenticeshipId == apprenticeshipId);
 
+            var regions = await _regionCache.GetAllRegions();
+
             return new ViewModel()
             {
                 ApprenticeshipId = _journeyInstance.State.ApprenticeshipId,
@@ -408,7 +414,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     .Select(l => l.AsT1)
                     .SelectMany(l => l.SubRegionIds);
 
-                return Region.All
+                return regions
                     .SelectMany(r => r.SubRegions.Select(sr => new { SubRegion = sr, Region = r }))
                     .Where(r => subRegionIds.Contains(r.SubRegion.Id))
                     .GroupBy(x => x.Region)

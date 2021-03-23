@@ -155,8 +155,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             flowModel.SetApprenticeshipIsNational(false);
             var mptxInstance = CreateMptxInstance(flowModel);
 
-            var subRegion1Id = Region.All.First().SubRegions.First().Id;
-            var subRegion2Id = Region.All.Skip(1).First().SubRegions.First().Id;
+            var regions = await RegionCache.GetAllRegions();
+            var subRegion1Id = regions.First().SubRegions.First().Id;
+            var subRegion2Id = regions.Skip(1).First().SubRegions.First().Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("RegionIds", subRegion1Id)
@@ -189,8 +190,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             flowModel.SetApprenticeshipIsNational(false);
             var mptxInstance = CreateMptxInstance(flowModel);
 
-            var subRegion1Id = Region.All.First().SubRegions.First().Id;
-            var subRegion2Id = Region.All.Skip(1).First().SubRegions.First().Id;
+            var regions = await RegionCache.GetAllRegions();
+            var subRegion1Id = regions.First().SubRegions.First().Id;
+            var subRegion2Id = regions.Skip(1).First().SubRegions.First().Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("RegionIds", subRegion1Id)
@@ -221,8 +223,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             flowModel.SetApprenticeshipIsNational(false);
             var mptxInstance = CreateMptxInstance(flowModel);
 
-            var subRegion1Id = Region.All.First().SubRegions.First().Id;
-            var subRegion2Id = Region.All.Skip(1).First().SubRegions.First().Id;
+            var regions = await RegionCache.GetAllRegions();
+            var subRegion1Id = regions.First().SubRegions.First().Id;
+            var subRegion2Id = regions.Skip(1).First().SubRegions.First().Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("RegionIds", subRegion1Id)
@@ -377,7 +380,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 requestContent);
 
             // Assert
-            var region = Region.All.Single(r => r.Id == "E12000001");
+            var regions = await RegionCache.GetAllRegions();
+            var region = regions.Single(r => r.Id == "E12000001");
             var state = GetMptxInstance<FlowModel>(mptxInstance.InstanceId).State;
             Assert.All(region.SubRegions, sr => state.ApprenticeshipLocationSubRegionIds.Contains(sr.Id));
         }

@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject Dfc.CourseDirectory.Core.DataStore.IRegionCache RegionCache
+@{
     ViewBag.Title = "Regions and sub regions";
 }
 
@@ -19,7 +20,7 @@
         <p class="govuk-body"><span class="govuk-!-font-weight-bold">Example:</span> Derby;Norfolk;Leicester;Brent</p>
 
         <govuk-accordion id="bulkupload-formatting-regions-accordion">
-            @foreach (var region in Region.All.OrderBy(r => r.Name))
+            @foreach (var region in (await RegionCache.GetAllRegions()).OrderBy(r => r.Name))
             {
                 <govuk-accordion-item>
                     <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
@@ -108,6 +109,8 @@ namespace Dfc.CourseDirectory.FindACourseApi
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],
                     "lars");
+
+                services.AddSingleton<IRegionCache, RegionCache>();
             }
         }
 

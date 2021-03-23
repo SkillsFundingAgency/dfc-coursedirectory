@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
@@ -23,13 +24,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
         public FindACourseApiApplicationFactory Factory { get; }
 
-        protected Mock<ISearchClient<FindACourseOffering>> FindACourseOfferingSearchClient => Factory.FindACourseOfferingSearchClient;
+        protected Mock<ICosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
 
-        protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
+        protected Mock<ISearchClient<FindACourseOffering>> FindACourseOfferingSearchClient => Factory.FindACourseOfferingSearchClient;
 
         protected Mock<ISearchClient<Lars>> LarsSearchClient => Factory.LarsSearchClient;
 
-        protected Mock<ICosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
+        protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
+
+        protected Mock<IRegionCache> RegionCache => Factory.RegionCache;
 
         protected Mock<ISqlQueryDispatcher> SqlQueryDispatcher => Factory.SqlQueryDispatcher;
     }

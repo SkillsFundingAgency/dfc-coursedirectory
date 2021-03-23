@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -66,6 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IRegionCache _regionCache;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IProviderInfoCache _providerInfoCache;
@@ -74,6 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             MptxInstanceContext<FlowModel> flow,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IRegionCache regionCache,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             IProviderInfoCache providerInfoCache)
@@ -81,6 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             _flow = flow;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _regionCache = regionCache;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _providerInfoCache = providerInfoCache;
@@ -281,6 +285,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     ProviderUkprn = provider.Ukprn
                 });
 
+            var regions = await _regionCache.GetAllRegions();
+
             return new ViewModel()
             {
                 ProviderId = provider.ProviderId,
@@ -307,7 +313,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     ?.ToList()
             };
 
-            IReadOnlyCollection<ViewModelEmployerBasedLocationRegion> GroupSubRegions() => Region.All
+            IReadOnlyCollection<ViewModelEmployerBasedLocationRegion> GroupSubRegions() => regions
                 .SelectMany(r => r.SubRegions.Select(sr => new { SubRegion = sr, Region = r }))
                 .Where(r => _flow.State.ApprenticeshipLocationSubRegionIds.Contains(r.SubRegion.Id))
                 .GroupBy(x => x.Region)
