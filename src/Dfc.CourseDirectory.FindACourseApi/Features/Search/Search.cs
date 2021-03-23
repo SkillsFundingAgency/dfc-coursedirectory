@@ -6,9 +6,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Core.Search.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OneOf;
@@ -51,14 +52,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         private static readonly HashSet<char> _luceneSyntaxEscapeChars = new HashSet<char>("+-&|!(){}[]^\"~*?:\\/");
 
         private readonly ISearchClient<FindACourseOffering> _courseSearchClient;
-        private readonly ISearchClient<Onspd> _onspdSearchClient;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             ISearchClient<FindACourseOffering> courseSearchClient,
-            ISearchClient<Onspd> onspdSearchClient)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _courseSearchClient = courseSearchClient;
-            _onspdSearchClient = onspdSearchClient;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<ProblemDetails, SearchViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -396,13 +397,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
         private async Task<(float lat, float lng)?> TryGetCoordinatesForPostcode(Postcode postcode)
         {
-            var result = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = postcode });
+            var postcodeInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = postcode });
 
-            var doc = result.Items.SingleOrDefault();
-
-            if (doc != null)
+            if (postcodeInfo != null)
             {
-                return ((float)doc.Record.lat, (float)doc.Record.@long);
+                return ((float)postcodeInfo.Latitude, (float)postcodeInfo.Longitude);
             }
 
             return null;

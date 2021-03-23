@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Dfc.CourseDirectory.Core.Search.Models
 {
+    [Obsolete("Use postcode data in SQL Server instead.")]
     public class Onspd
     {
         public string pcd { get; set; }

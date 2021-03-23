@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
@@ -35,14 +34,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
-        private readonly ISearchClient<Onspd> _onspdSearchClient;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             JourneyInstance<EditVenueJourneyModel> journeyInstance,
-            ISearchClient<Onspd> onspdSearchClient)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _journeyInstance = journeyInstance;
-            _onspdSearchClient = onspdSearchClient;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
@@ -70,9 +69,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = request.Postcode });
+            var postcodeInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = request.Postcode });
 
-            if (onspdSearchResult.Items.Count == 0)
+            if (postcodeInfo == null)
             {
                 validationResult = new ValidationResult(new[]
                 {
@@ -82,8 +81,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            var onspdPostcodeRecord = onspdSearchResult.Items.Single();
-
             _journeyInstance.UpdateState(state =>
             {
                 state.AddressLine1 = request.AddressLine1;
@@ -91,9 +88,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 state.Town = request.Town;
                 state.County = request.County;
                 state.Postcode = request.Postcode;
-                state.Latitude = onspdPostcodeRecord.Record.lat;
-                state.Longitude = onspdPostcodeRecord.Record.@long;
-                state.NewAddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
+                state.Latitude = postcodeInfo.Latitude;
+                state.Longitude = postcodeInfo.Longitude;
+                state.NewAddressIsOutsideOfEngland = !postcodeInfo.InEngland;
             });
 
             return new Success();
