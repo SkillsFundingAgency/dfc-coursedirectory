@@ -182,11 +182,6 @@ namespace Dfc.CourseDirectory.WebV2
                     configuration["AzureSearchQueryKey"],
                     configuration["LarsAzureSearchIndexName"]);
 
-                services.AddAzureSearchClient<Onspd>(
-                    new Uri(configuration["AzureSearchUrl"]),
-                    configuration["AzureSearchQueryKey"],
-                    indexName: "onspd");
-
                 services.AddSingleton<IAddressSearchService>(s =>
                 {
                     var getAddressOptions = s.GetRequiredService<IOptions<GetAddressAddressSearchServiceOptions>>();

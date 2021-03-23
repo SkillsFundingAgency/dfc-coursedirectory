@@ -59,8 +59,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
-        public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
-
         public IRegionCache RegionCache => Services.GetRequiredService<IRegionCache>();
 
         public Mock<ISearchClient<Provider>> ProviderSearchClient { get; } = new Mock<ISearchClient<Provider>>();
@@ -131,7 +129,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             {
                 ConfigureServices(services);
 
-                services.AddSingleton(OnspdSearchClient.Object);
                 services.AddSingleton(ProviderSearchClient.Object);
                 services.AddSingleton(BinaryStorageProvider.Object);
                 services.AddSingleton(AddressSearchService.Object);
@@ -140,7 +137,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         private void ResetMocks()
         {
             AddressSearchService.Reset();
-            OnspdSearchClient.Reset();
             ProviderSearchClient.Reset();
             BinaryStorageProvider.Reset();
         }
