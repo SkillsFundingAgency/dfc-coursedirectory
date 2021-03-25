@@ -4,7 +4,7 @@
 }
 
 @section BackLink {
-    <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index">Back to home screen</govuk-back-link>
+    <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back to home screen</govuk-back-link>
 }
 
 <div class="govuk-grid-row">
