@@ -23,7 +23,7 @@
             <li><a asp-action="Index" asp-controller="AddVenue" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">add new venues</a> to the service prior to a bulk upload</li>
             <li>include existing apprenticeship training courses and new apprenticeship training courses in the file</li>
             <li>complete all mandatory fields</li>
-            <li>follow the <a asp-action="ApprenticeshipsFormatting" asp-controller="BulkUpload" class="govuk-link">format requirements</a></li>
+            <li>follow the <a asp-action="ApprenticeshipsFormatting" asp-controller="BulkUpload" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">format requirements</a></li>
             <li>save the file as a CSV</li>
         </ul>
 
