@@ -54,12 +54,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             try
             {
-                // TODO We could make this waaay more efficient
-                var result = await (Task<T>)handlerType.GetMethod("Execute").Invoke(
-                    handler,
-                    new object[] { Transaction, query });
+                var wrapperHandlerType = typeof(TaskQueryHandler<,>).MakeGenericType(query.GetType(), typeof(T));
+                var wrappedHandler = (TaskQueryHandler<T>)Activator.CreateInstance(
+                    wrapperHandlerType,
+                    handler);
 
-                return result;
+                return await wrappedHandler.Execute(Transaction, query);
             }
             finally
             {
@@ -76,10 +76,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             try
             {
-                // TODO We could make this waaay more efficient
-                var result = (IAsyncEnumerable<T>)handlerType.GetMethod("Execute").Invoke(
-                    handler,
-                    new object[] { Transaction, query });
+                var wrapperHandlerType = typeof(AsyncEnumerableQueryHandler<,>).MakeGenericType(query.GetType(), typeof(T));
+                var wrappedHandler = (AsyncEnumerableQueryHandler<T>)Activator.CreateInstance(
+                    wrapperHandlerType,
+                    handler);
+
+                var result = wrappedHandler.Execute(Transaction, query);
 
                 await foreach (var row in result)
                 {
@@ -117,6 +119,48 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 {
                     CreateTransactionCore(DefaultIsolationLevel);
                 }
+            }
+        }
+
+        private abstract class AsyncEnumerableQueryHandler<T>
+        {
+            public abstract IAsyncEnumerable<T> Execute(SqlTransaction transaction, ISqlQuery<IAsyncEnumerable<T>> query);
+        }
+
+        private class AsyncEnumerableQueryHandler<TQuery, TResult> : AsyncEnumerableQueryHandler<TResult>
+            where TQuery : ISqlQuery<IAsyncEnumerable<TResult>>
+        {
+            private readonly ISqlAsyncEnumerableQueryHandler<TQuery, TResult> _innerHandler;
+
+            public AsyncEnumerableQueryHandler(ISqlAsyncEnumerableQueryHandler<TQuery, TResult> innerHandler)
+            {
+                _innerHandler = innerHandler;
+            }
+
+            public override IAsyncEnumerable<TResult> Execute(SqlTransaction transaction, ISqlQuery<IAsyncEnumerable<TResult>> query)
+            {
+                return _innerHandler.Execute(transaction, (TQuery)query);
+            }
+        }
+
+        private abstract class TaskQueryHandler<T>
+        {
+            public abstract Task<T> Execute(SqlTransaction transaction, ISqlQuery<T> query);
+        }
+
+        private class TaskQueryHandler<TQuery, TResult> : TaskQueryHandler<TResult>
+            where TQuery : ISqlQuery<TResult>
+        {
+            private readonly ISqlQueryHandler<TQuery, TResult> _innerHandler;
+
+            public TaskQueryHandler(ISqlQueryHandler<TQuery, TResult> innerHandler)
+            {
+                _innerHandler = innerHandler;
+            }
+
+            public override Task<TResult> Execute(SqlTransaction transaction, ISqlQuery<TResult> query)
+            {
+                return _innerHandler.Execute(transaction, (TQuery)query);
             }
         }
     }
