@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
@@ -60,7 +61,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         {
             var venue = new Venue
             {
-                Id = Guid.NewGuid(),
+                VenueId = Guid.NewGuid(),
                 VenueName = "TestVenueName"
             };
 
@@ -74,14 +75,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 Id = Guid.NewGuid(),
                 RecordStatus = CourseStatus.Live,
-                VenueId = venue.Id
+                VenueId = venue.VenueId
             };
 
             var alternativeCourseRun = new CourseRun
             {
                 Id = Guid.NewGuid(),
                 RecordStatus = CourseStatus.Live,
-                VenueId = venue.Id
+                VenueId = venue.VenueId
             };
 
             var course = new Course
@@ -136,7 +137,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     Items = new[] { new SearchResultItem<Core.Search.Models.Lars> { Record = lars } }
                 });
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetVenuesByProvider>()))
                 .ReturnsAsync(new[] { venue });
 
             CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoiceForProvider>()))

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -18,6 +17,7 @@ using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
 {
@@ -138,10 +138,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var apprenticeshipId = _flow.State.ApprenticeshipId.GetValueOrDefault(Guid.NewGuid());
             var providerUkprn = provider.Ukprn;
 
-            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+            var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByProvider()
                 {
-                    ProviderUkprn = providerUkprn
+                    ProviderId = providerId
                 });
 
             var locations = CreateLocations(providerVenues, providerUkprn);
@@ -214,7 +214,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                                     {
                                         DeliveryModes = l.DeliveryModes,
                                         Radius = l.Radius.Value,
-                                        VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                                        VenueName = providerVenues.Single(v => v.VenueId == l.VenueId).VenueName
                                     }),
                                 ApprenticeshipLocationType.EmployerBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
                                     l.National == true ?
@@ -264,7 +264,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 {
                     locations.AddRange(_flow.State.ApprenticeshipClassroomLocations.Select(l =>
                     {
-                        var venue = providerVenues.Single(v => v.Id == l.Value.VenueId);
+                        var venue = providerVenues.Single(v => v.VenueId == l.Value.VenueId);
 
                         return CreateApprenticeshipLocation.CreateFromVenue(
                             venue,
@@ -279,10 +279,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
         private async Task<ViewModel> CreateViewModel(ProviderInfo provider)
         {
-            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+            var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByProvider()
                 {
-                    ProviderUkprn = provider.Ukprn
+                    ProviderId = provider.ProviderId
                 });
 
             var regions = await _regionCache.GetAllRegions();
@@ -307,7 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         DeliveryModes = l.DeliveryModes,
                         Radius = l.Radius,
                         VenueId = l.VenueId,
-                        VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                        VenueName = providerVenues.Single(v => v.VenueId == l.VenueId).VenueName
                     })
                     ?.OrderBy(l => l.VenueName)
                     ?.ToList()

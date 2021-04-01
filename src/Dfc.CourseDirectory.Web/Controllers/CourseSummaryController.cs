@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -16,10 +18,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public CourseSummaryController(
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -28,6 +32,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _courseService = courseService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
         public async Task<IActionResult> Index(Guid? courseId, Guid? courseRunId)
         {
@@ -95,7 +100,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (vm.VenueId != Guid.Empty)
                 {
-                    var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = courseRun.VenueId.Value });
+                    var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = courseRun.VenueId.Value });
                     vm.VenueName = venue?.VenueName;
                 }
             }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -110,17 +110,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         IRequestHandler<RemoveQuery, RemoveViewModel>,
         IRequestHandler<RemoveCommand, Success>
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IProviderInfoCache _providerInfoCache;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly MptxInstanceContext<FlowModel, IFlowModelCallback> _flow;
 
         public Handler(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IProviderInfoCache providerInfoCache,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             MptxInstanceContext<FlowModel, IFlowModelCallback> flow)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _providerInfoCache = providerInfoCache;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _flow = flow;
         }
 
@@ -183,7 +180,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             }
 
             var providerVenues = await GetProviderVenues();
-            var thisVenue = providerVenues.Single(v => v.Id == _flow.State.VenueId);
+            var thisVenue = providerVenues.Single(v => v.VenueId == _flow.State.VenueId);
 
             return new RemoveViewModel()
             {
@@ -211,10 +208,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
                 Mode = _flow.State.Mode,
                 Cancelable = _flow.State.Cancelable,
                 Venues = providerVenues
-                    .Select(v => (v.Id, v.VenueName, blocked: blockedVenueIds.Contains(v.Id)))
+                    .Select(v => (v.VenueId, v.VenueName, blocked: blockedVenueIds.Contains(v.VenueId)))
                     .OrderBy(v => v.VenueName)
                     .ToList(),
-                VenueId = _flow.State.VenueId.HasValue && providerVenues.Any(v => v.Id == _flow.State.VenueId) ?
+                VenueId = _flow.State.VenueId.HasValue && providerVenues.Any(v => v.VenueId == _flow.State.VenueId) ?
                     _flow.State.VenueId :
                     null,
                 Radius = _flow.State.Radius,
@@ -233,23 +230,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             return set;
         }
 
-        private async Task<IReadOnlyCollection<Venue>> GetProviderVenues()
-        {
-            var provider = await _providerInfoCache.GetProviderInfo(_flow.State.ProviderId);
-
-            return await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetVenuesByProvider()
-                {
-                    ProviderUkprn = provider.Ukprn
-                });
-        }
+        private Task<IReadOnlyCollection<Venue>> GetProviderVenues() => _sqlQueryDispatcher.ExecuteQuery(
+            new GetVenuesByProvider()
+            {
+                ProviderId = _flow.State.ProviderId
+            });
 
         private class Validator : AbstractValidator<Command>
         {
             public Validator(IReadOnlyCollection<Venue> providerVenues, ISet<Guid> blockedVenueIds)
             {
                 RuleFor(c => c.VenueId)
-                    .Must(id => providerVenues.Select(v => v.Id).Except(blockedVenueIds).Contains(id.GetValueOrDefault()))
+                    .Must(id => providerVenues.Select(v => v.VenueId).Except(blockedVenueIds).Contains(id.GetValueOrDefault()))
                     .WithMessageForAllRules("Select the venue");
 
                 RuleFor(c => c.Radius)

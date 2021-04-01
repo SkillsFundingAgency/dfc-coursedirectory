@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesForProvider()
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
             {
                 ProviderId = providerContext.ProviderInfo.ProviderId
             });

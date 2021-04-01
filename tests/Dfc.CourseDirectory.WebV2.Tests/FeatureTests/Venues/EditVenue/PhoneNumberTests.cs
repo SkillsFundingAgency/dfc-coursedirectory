@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, telephone: "020 7946 0000")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), telephone: "020 7946 0000")).VenueId;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, telephone: "020 7946 0000")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), telephone: "020 7946 0000")).VenueId;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state => state.PhoneNumber = existingValue);
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var anotherProvider = await TestData.CreateProvider();
 
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", "xxx")
@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", phoneNumber)
@@ -169,8 +169,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
-                .CreateModel(venueId);
+            var state = await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                var modelFactory = CreateInstance<EditVenueJourneyModelFactory>(dispatcher);
+                return await modelFactory.CreateModel(venueId);
+            });
 
             return CreateJourneyInstance(
                 journeyName: "EditVenue",

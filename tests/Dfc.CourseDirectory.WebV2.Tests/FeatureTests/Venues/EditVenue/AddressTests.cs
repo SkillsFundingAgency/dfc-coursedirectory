@@ -29,11 +29,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             var provider = await TestData.CreateProvider();
             var venueId = (await TestData.CreateVenue(
                 provider.ProviderId,
+                createdBy: User.ToUserInfo(),
                 addressLine1: "Test Venue line 1",
                 addressLine2: "Test Venue line 2",
                 town: "Town",
                 county: "County",
-                postcode: "AB1 2DE")).Id;
+                postcode: "AB1 2DE")).VenueId;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/address");
 
@@ -59,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>
@@ -97,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var anotherProvider = await TestData.CreateProvider();
 
@@ -166,7 +167,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             await TestData.CreatePostcodeInfo("CV1 2AA", latitude: 42D, longitude: 43D, inEngland: true);
 
@@ -202,7 +203,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             await TestData.CreatePostcodeInfo("CV1 2AA", latitude: 42D, longitude: 43D, onspdRecordCountry == "England");
 
@@ -339,8 +340,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
-                .CreateModel(venueId);
+            var state = await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                var modelFactory = CreateInstance<EditVenueJourneyModelFactory>(dispatcher);
+                return await modelFactory.CreateModel(venueId);
+            });
 
             return CreateJourneyInstance(
                 journeyName: "EditVenue",

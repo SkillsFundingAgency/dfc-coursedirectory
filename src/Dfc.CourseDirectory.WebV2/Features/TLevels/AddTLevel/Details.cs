@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
 
         private  Task<IReadOnlyCollection<Venue>> GetVenuesForProvider(Guid providerId) =>
             _sqlQueryDispatcher.ExecuteQuery(
-                new GetVenuesForProvider()
+                new GetVenuesByProvider()
                 {
                     ProviderId = providerId
                 });

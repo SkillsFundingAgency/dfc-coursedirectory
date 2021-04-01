@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, website: "provider.com")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), website: "provider.com")).VenueId;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/website");
 
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, website: "provider.com")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), website: "provider.com")).VenueId;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state => state.Website = existingValue);
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var anotherProvider = await TestData.CreateProvider();
 
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Website", ":bad/website")
@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Website", website)
@@ -171,8 +171,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
-                .CreateModel(venueId);
+            var state = await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                var modelFactory = CreateInstance<EditVenueJourneyModelFactory>(dispatcher);
+                return await modelFactory.CreateModel(venueId);
+            });
 
             return CreateJourneyInstance(
                 journeyName: "EditVenue",

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
@@ -88,9 +88,9 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 
         public static void VenueName<T>(
             this IRuleBuilderInitial<T, string> field,
-            int providerUkprn,
+            Guid providerId,
             Guid? venueId,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             field
                 .NotEmpty()
@@ -101,14 +101,14 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 {
                     // Venue name must be distinct for this provider
 
-                    var providerVenues = await cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
+                    var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
                     {
-                        ProviderUkprn = providerUkprn
+                        ProviderId = providerId
                     });
 
                     var otherVenuesWithSameName = providerVenues
                         .Where(v => v.VenueName.Equals(name, StringComparison.OrdinalIgnoreCase))
-                        .Where(v => v.Id != venueId);
+                        .Where(v => v.VenueId != venueId);
 
                     return !otherVenuesWithSameName.Any();
                 })

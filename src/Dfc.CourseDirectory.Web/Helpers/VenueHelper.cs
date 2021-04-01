@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public static class VenueHelper
     {
-        public static async Task<Dictionary<Guid, string>> GetVenueNames(IEnumerable<Course> courses, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public static async Task<Dictionary<Guid, string>> GetVenueNames(IEnumerable<Course> courses, ISqlQueryDispatcher sqlQueryDispatcher)
         {
             var venueNames = new Dictionary<Guid, string>();
             foreach (var course in courses)
@@ -20,8 +20,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     {
                         if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
                         {
-                            var venue = await cosmosDbQueryDispatcher.ExecuteQuery(
-                                new GetVenueById {VenueId = courseRun.VenueId.Value});
+                            var venue = await sqlQueryDispatcher.ExecuteQuery(
+                                new GetVenue {VenueId = courseRun.VenueId.Value});
 
                             venueNames.Add(courseRun.VenueId.Value, venue.VenueName);
                         }

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<Venue> CreateVenue(
+        public Task<Venue> CreateVenue(
             Guid providerId,
+            UserInfo createdBy,
             string venueName = "Test Venue",
             string addressLine1 = "Venue address line 1",
             string addressLine2 = "",
@@ -20,41 +21,46 @@ namespace Dfc.CourseDirectory.Testing
             decimal longitude = 1,
             string email = "",
             string telephone = "",
-            string website = "")
+            string website = "",
+            DateTime? createdOn = null)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
+            return WithSqlQueryDispatcher(async dispatcher =>
             {
-                ProviderId = providerId
+                var provider = await dispatcher.ExecuteQuery(new GetProviderById()
+                {
+                    ProviderId = providerId
+                });
+
+                if (provider == null)
+                {
+                    throw new ArgumentException("Provider does not exist.", nameof(providerId));
+                }
+
+                var venueId = Guid.NewGuid();
+
+                await dispatcher.ExecuteQuery(new CreateVenue()
+                {
+                    VenueId = venueId,
+                    ProviderUkprn = provider.Ukprn,
+                    Name = venueName,
+                    Email = email,
+                    Telephone = telephone,
+                    Website = website,
+                    AddressLine1 = addressLine1,
+                    AddressLine2 = addressLine2,
+                    Town = town,
+                    County = county,
+                    Postcode = postcode,
+                    Latitude = latitude,
+                    Longitude = longitude,
+                    CreatedBy = createdBy,
+                    CreatedOn = createdOn ?? _clock.UtcNow
+                });
+
+                var venue = await dispatcher.ExecuteQuery(new GetVenue() { VenueId = venueId });
+
+                return venue;
             });
-
-            if (provider == null)
-            {
-                throw new ArgumentException("Provider does not exist.", nameof(providerId));
-            }
-
-            var venueId = Guid.NewGuid();
-
-            await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateVenue()
-            {
-                VenueId = venueId,
-                ProviderUkprn = provider.Ukprn,
-                Name = venueName,
-                Email = email,
-                Telephone = telephone,
-                Website = website,
-                AddressLine1 = addressLine1,
-                AddressLine2 = addressLine2,
-                Town = town,
-                County = county,
-                Postcode = postcode,
-                Latitude = latitude,
-                Longitude = longitude
-            });
-
-            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = venueId });
-            await _sqlDataSync.SyncVenue(venue);
-
-            return venue;
         }
     }
 }

@@ -4,6 +4,8 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -34,6 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         private ISession _session => HttpContext.Session;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -44,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             if (logger == null)
@@ -65,6 +69,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _htmlEncoder = htmlEncoder;
             _courseService = courseService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
         }
 
@@ -121,7 +126,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             var cachedData = _session.GetObject<CopyCourseRunViewModel>("CopyCourseRunObject");
             var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(cachedData.CourseId.Value));
             var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == cachedData.CourseRunId);
-            var venues = await GetVenuesByUkprn(ukprn);
+            var venues = await GetVenuesForProvider();
 
             var regions = _courseService.GetRegions();
 
@@ -185,21 +190,23 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             return View("CopyCourseRun", vm);
         }
 
-        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        private async Task<SelectVenueModel> GetVenuesForProvider()
         {
+            var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
+
             var selectVenue = new SelectVenueModel
             {
                 LabelText = "Select course venue",
                 HintText = "Select all that apply.",
                 AriaDescribedBy = "Select all that apply.",
-                Ukprn = ukprn
+                Ukprn = providerContext.ProviderInfo.Ukprn
             };
 
-            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerContext.ProviderInfo.ProviderId });
 
             selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                Id = v.Id.ToString(),
+                Id = v.VenueId.ToString(),
                 VenueName = v.VenueName
             }).ToList();
 
@@ -222,6 +229,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             }
 
             var ukprn = _session.GetInt32("UKPRN").Value;
+            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
             var savedModel = _session.GetObject<CopyCourseRunSaveViewModel>(CopyCourseRunSaveViewModelSessionKey);
 
@@ -257,7 +265,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
 
-            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
             var regions = _courseService.GetRegions();
 
             foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
@@ -274,7 +282,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 CourseId = courseId.Value,
                 CourseRunId = courseRunId.Value,
                 CourseName = courseRun?.CourseName,
-                Venues = venues.Select(v => new SelectListItem { Text = v.VenueName, Value = v.Id.ToString() }).ToList(),
+                Venues = venues.Select(v => new SelectListItem { Text = v.VenueName, Value = v.VenueId.ToString() }).ToList(),
                 VenueId = courseRun.VenueId ?? Guid.Empty,
                 ChooseRegion = new ChooseRegionModel
                 {
@@ -390,7 +398,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     ? "Flexible"
                     : $"{model.Day}/{model.Month}/{model.Year}",
                 Venues = model.DeliveryMode == DeliveryMode.ClassroomBased
-                    ? (await GetVenuesByUkprn(ukprn)).VenueItems
+                    ? (await GetVenuesForProvider()).VenueItems
                         .Where(v => v.Id == model.VenueId.ToString())
                         .Select(v => v.VenueName)
                     : Enumerable.Empty<string>(),

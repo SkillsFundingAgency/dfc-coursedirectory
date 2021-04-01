@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -22,17 +23,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
 
         public MigrationController(
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             ISearchClient<Lars> larsSearchClient)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         [Authorize]
@@ -202,7 +206,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
             }
 
-            var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _cosmosDbQueryDispatcher);
+            var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _sqlQueryDispatcher);
 
             var model = new LarslessViewModel
             {

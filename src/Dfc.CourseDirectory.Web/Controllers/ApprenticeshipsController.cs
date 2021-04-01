@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -35,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -44,12 +47,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public ApprenticeshipsController(
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
             IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _providerContextProvider = providerContextProvider;
@@ -564,7 +569,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Summary", "Apprenticeships");
             }
 
-            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = model.LocationId.Value });
+            var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = model.LocationId.Value });
 
             string deliveryMethod;
             if (model.BlockRelease && model.DayRelease)
@@ -582,7 +587,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Id.ToString(),
+                    LocationId = venue.VenueId.ToString(),
                     LocationName = venue.VenueName,
                     PostCode = venue.Postcode,
                     Radius = model.Radius,
@@ -611,7 +616,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Summary", "Apprenticeships");
             }
 
-            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = model.LocationId.Value });
+            var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = model.LocationId.Value });
 
             string deliveryMethod;
             if (model.BlockRelease && model.DayRelease)
@@ -627,7 +632,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Id.ToString(),
+                    LocationId = venue.VenueId.ToString(),
                     LocationName = venue.VenueName,
                     PostCode = venue.Postcode,
                     Venue = venue,
@@ -649,7 +654,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 apprenticeship.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
             }
 
-            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = Guid.Parse(LocationId) });
+            var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = Guid.Parse(LocationId) });
 
             string deliveryMethod;
             if (BlockRelease && DayRelease)
@@ -665,7 +670,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Id.ToString(),
+                    LocationId = venue.VenueId.ToString(),
                     LocationName = venue.VenueName,
                     PostCode = venue.Postcode,
                     Venue = venue,
@@ -683,7 +688,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = Guid.Parse(LocationId) });
+            var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = Guid.Parse(LocationId) });
 
             string deliveryMethod;
             if (BlockRelease && DayRelease)
@@ -703,7 +708,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new DeliveryOption()
                 {
                     Delivery = deliveryMethod,
-                    LocationId = venue.Id.ToString(),
+                    LocationId = venue.VenueId.ToString(),
                     LocationName = venue.VenueName,
                     PostCode = venue.Postcode,
                     National = National,
@@ -941,8 +946,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             if (loc.Venue != null)
             {
-                apprenticeshipLocation.LocationId = loc.Venue.LocationId ?? null;
-                apprenticeshipLocation.VenueId = loc.Venue.Id;
+                apprenticeshipLocation.VenueId = loc.Venue.VenueId;
                 apprenticeshipLocation.Address = new ApprenticeshipLocationAddress
                 {
                     Address1 = loc.Venue.AddressLine1,
@@ -951,10 +955,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     County = loc.Venue.County,
                     Postcode = loc.Venue.Postcode,
                     Email = loc.Venue.Email,
-                    Phone = loc.Venue.PHONE,
+                    Phone = loc.Venue.Telephone,
                     Website = loc.Venue.Website,
-                    Latitude = loc.Venue.Latitude,
-                    Longitude = loc.Venue.Longitude
+                    Latitude = Convert.ToDecimal(loc.Venue.Latitude),
+                    Longitude = Convert.ToDecimal(loc.Venue.Longitude)
                 };
             }
             if (!string.IsNullOrEmpty(loc.LocationId))

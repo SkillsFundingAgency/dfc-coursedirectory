@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -21,6 +23,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICSVHelper _CSVHelper;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -28,10 +31,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
         public ApprenticeshipProvisionHelper(
             IHttpContextAccessor contextAccessor,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             ICSVHelper CSVHelper)
         {
             _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
         }
 
@@ -96,7 +101,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 ContactPhone = apprenticeship.ContactTelephone,
                 ContactURL = apprenticeship.ContactWebsite,
                 DeliveryMethod = DeliveryMethodConvert(location.ApprenticeshipLocationType),
-                Venue = location.VenueId.HasValue ? (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = location.VenueId.Value }))?.VenueName : string.Empty,
+                Venue = location.VenueId.HasValue ? (await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = location.VenueId.Value }))?.VenueName : string.Empty,
                 Radius = location.Radius?.ToString(),
                 DeliveryMode = DeliveryModeConvert(location.DeliveryModes),
                 AcrossEngland = location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?

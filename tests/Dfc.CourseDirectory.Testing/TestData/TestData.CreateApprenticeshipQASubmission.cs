@@ -28,10 +28,10 @@ namespace Dfc.CourseDirectory.Testing
                 ApprenticeshipIds = apprenticeshipIds
             });
 
-            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
+            var providerVenues = await WithSqlQueryDispatcher(sqlDispatcher => sqlDispatcher.ExecuteQuery(new GetVenuesByProvider()
             {
-                ProviderUkprn = provider.Ukprn
-            });
+                ProviderId = providerId
+            }));
 
             var queryApps = apprenticeshipIds
                 .Select(id => apps[id])
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Testing
                             {
                                 DeliveryModes = l.DeliveryModes,
                                 Radius = l.Radius.Value,
-                                VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                                VenueName = providerVenues.Single(v => v.VenueId == l.VenueId).VenueName
                             }),
                         ApprenticeshipLocationType.EmployerBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
                             l.National == true ?

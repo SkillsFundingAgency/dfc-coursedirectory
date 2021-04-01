@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.Models;
 using OneOf.Types;
+using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
 {
@@ -47,16 +48,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
             new CreateApprenticeshipLocation()
             {
                 Id = Guid.NewGuid(),
-                VenueId = venue.Id,
+                VenueId = venue.VenueId,
                 Address = new ApprenticeshipLocationAddress()
                 {
                     Address1 = venue.AddressLine1,
                     Address2 = venue.AddressLine2,
                     County = venue.County,
                     Email = venue.Email,
-                    Latitude = venue.Latitude,
-                    Longitude = venue.Longitude,
-                    Phone = venue.PHONE,
+                    Latitude = Convert.ToDecimal(venue.Latitude),
+                    Longitude = Convert.ToDecimal(venue.Longitude),
+                    Phone = venue.Telephone,
                     Postcode = venue.Postcode,
                     Town = venue.Town,
                     Website = venue.Website

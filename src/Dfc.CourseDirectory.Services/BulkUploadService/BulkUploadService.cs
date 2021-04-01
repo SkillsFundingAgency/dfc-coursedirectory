@@ -13,6 +13,8 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -38,6 +40,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IRegionCache _regionCache;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly IProviderInfoCache _providerInfoCache;
@@ -48,6 +51,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             ICourseService courseService,
             ISearchClient<Lars> larsSearchClient,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             IRegionCache regionCache,
             IBackgroundWorkScheduler backgroundWorkScheduler,
             BlobServiceClient blobServiceClient,
@@ -57,6 +61,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _regionCache = regionCache;
             _backgroundWorkScheduler = backgroundWorkScheduler;
             _providerInfoCache = providerInfoCache;
@@ -555,7 +560,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             var courses = new List<Course>();
             var listsCourseRuns = new List<BulkUploadCourseRun>();
 
-            var cachedVenues = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUkprn })
+            var providerId = _providerInfoCache.GetProviderIdForUkprn(providerUkprn).GetAwaiter().GetResult().Value;
+            var cachedVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId })
                 .GetAwaiter().GetResult().ToList();
 
             var allRegions = _regionCache.GetAllRegions().GetAwaiter().GetResult();
@@ -613,7 +619,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     if (venueResultCache.Count == 1)
                     {
-                        courseRun.VenueId = venueResultCache[0].Id;
+                        courseRun.VenueId = venueResultCache[0].VenueId;
                     }
                     else
                     {
