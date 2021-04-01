@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -13,26 +15,33 @@ using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
+using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class ProviderController : Controller
     {
         private readonly ICourseService _courseService;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         private ISession Session => HttpContext.Session;
 
         public ProviderController(
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
@@ -48,8 +57,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetString("Option", "Courses");
             int? UKPRN = Session.GetInt32("UKPRN");
 
+            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
+
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN.Value });
+            var venueResult = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
             var allRegions = _courseService.GetRegions().RegionItems;
 
 
@@ -196,7 +207,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(viewModel);
         }
 
-        private Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.Id == id);
+        private Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.VenueId == id);
 
         private string FormatAddress(Venue venue)
         {

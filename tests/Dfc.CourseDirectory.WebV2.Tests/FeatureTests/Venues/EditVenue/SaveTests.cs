@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
@@ -29,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, email: "person@provider.com")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), email: "person@provider.com")).VenueId;
 
             var anotherProvider = await TestData.CreateProvider();
 
@@ -92,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>
@@ -125,11 +126,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/venues?providerId={provider.ProviderId}");
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateVenue, OneOf<NotFound, Venue>>(q =>
+            SqlQuerySpy.VerifyQuery<UpdateVenue, OneOf<NotFound, Success>>(q =>
                 q.VenueId == venueId &&
                 q.Name == "Updated name" &&
                 q.Email == "updated@provider.com" &&
-                q.PhoneNumber == "02345 678901" &&
+                q.Telephone == "02345 678901" &&
                 q.Website == "updated-provider.com" &&
                 q.AddressLine1 == "Updated line 1" &&
                 q.AddressLine2 == "Updated line 2" &&
@@ -139,13 +140,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 q.Latitude == 42 &&
                 q.Longitude == 42 &&
                 q.UpdatedBy.UserId == User.UserId &&
-                q.UpdatedDate == Clock.UtcNow);
+                q.UpdatedOn == Clock.UtcNow);
         }
 
         private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
-                .CreateModel(venueId);
+            var state = await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                var modelFactory = CreateInstance<EditVenueJourneyModelFactory>(dispatcher);
+                return await modelFactory.CreateModel(venueId);
+            });
 
             return CreateJourneyInstance(
                 journeyName: "EditVenue",

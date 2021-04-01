@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
@@ -26,16 +26,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
 
     public class EditVenueJourneyModelFactory
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public EditVenueJourneyModelFactory(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public EditVenueJourneyModelFactory(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<EditVenueJourneyModel> CreateModel(Guid venueId)
         {
-            var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = venueId });
+            var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = venueId });
 
             if (venue == null)
             {
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
             {
                 Email = venue.Email,
                 Name = venue.VenueName,
-                PhoneNumber = venue.PHONE,
+                PhoneNumber = venue.Telephone,
                 Website = venue.Website,
                 AddressLine1 = venue.AddressLine1,
                 AddressLine2 = venue.AddressLine2,

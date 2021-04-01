@@ -1,49 +1,33 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class VenueSearchController : Controller
     {
-        private readonly ILogger<VenueSearchController> _logger;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private ISession Session => HttpContext.Session;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         public VenueSearchController(
-            ILogger<VenueSearchController> logger,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderContextProvider providerContextProvider)
         {
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            _logger = logger;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            int UKPRN = 0;
-            if (Session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = Session.GetInt32("UKPRN").Value;
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
+            var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
 
-            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = UKPRN });
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerContext.ProviderInfo.ProviderId });
 
             var items = venues.Select(v => new VenueSearchResultItemModel(
                 v.VenueName,
@@ -52,10 +36,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 v.Town,
                 v.County,
                 v.Postcode,
-                v.Id.ToString()));
+                v.VenueId.ToString()));
 
             var model = new VenueSearchResultModel(
-                searchTerm: UKPRN.ToString(),
+                searchTerm: providerContext.ProviderInfo.Ukprn.ToString(),
                 items,
                 newItem: null,
                 updated: false);

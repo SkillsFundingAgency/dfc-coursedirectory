@@ -6,6 +6,8 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -14,6 +16,7 @@ using FormFlow;
 using MediatR;
 using OneOf;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries.DeleteCourseRun;
+using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 {
@@ -74,6 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstance<JourneyModel> _journeyInstance;
         private readonly IClock _clock;
         private readonly ICurrentUserProvider _currentUserProvider;
@@ -82,16 +86,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             IProviderInfoCache providerInfoCache,
             IProviderOwnershipCache providerOwnershipCache,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             JourneyInstance<JourneyModel> journeyInstance,
             IClock clock,
             ICurrentUserProvider currentUserProvider)
         {
-            _providerInfoCache = providerInfoCache ?? throw new ArgumentNullException(nameof(providerInfoCache));
-            _providerOwnershipCache = providerOwnershipCache ?? throw new ArgumentNullException(nameof(providerOwnershipCache));
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
-            _journeyInstance = journeyInstance ?? throw new ArgumentNullException(nameof(journeyInstance));
-            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
+            _providerInfoCache = providerInfoCache;
+            _providerOwnershipCache = providerOwnershipCache;
+            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _journeyInstance = journeyInstance;
+            _clock = clock;
+            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
@@ -167,7 +173,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             Venue venue = default;
             if (courseRun.VenueId.HasValue)
             {
-                venue = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = courseRun.VenueId.Value });
+                venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = courseRun.VenueId.Value });
             }
 
             return new ViewModel()

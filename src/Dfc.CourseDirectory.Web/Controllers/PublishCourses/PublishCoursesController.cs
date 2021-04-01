@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -21,15 +22,18 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
 
         public PublishCoursesController(
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
         }
 
@@ -72,7 +76,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                         vm.Courses = migratedCoursesWithErrors.OrderBy(x => x.QualificationCourseTitle);
                         vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCoursesWithErrors, PublishMode.Migration);
-                        vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _cosmosDbQueryDispatcher).Result;
+                        vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _sqlQueryDispatcher).Result;
                         break;
                     }
                     else
@@ -88,7 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
-                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _cosmosDbQueryDispatcher).Result;
+                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _sqlQueryDispatcher).Result;
                     break;
 
                 case PublishMode.DataQualityIndicator:
@@ -118,7 +122,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();
                     vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
-                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _cosmosDbQueryDispatcher).Result;
+                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _sqlQueryDispatcher).Result;
                     vm.Regions = allRegions;
                     break;
             }

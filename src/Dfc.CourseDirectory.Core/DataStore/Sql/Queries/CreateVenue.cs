@@ -2,9 +2,9 @@
 using Dfc.CourseDirectory.Core.Models;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
+namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class CreateVenue : ICosmosDbQuery<Success>
+    public class CreateVenue : ISqlQuery<Success>
     {
         public Guid VenueId { get; set; }
         public int ProviderUkprn { get; set; }
@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public string Postcode { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedOn { get; set; }
         public UserInfo CreatedBy { get; set; }
     }
 }

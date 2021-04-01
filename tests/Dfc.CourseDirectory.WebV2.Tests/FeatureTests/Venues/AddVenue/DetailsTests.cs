@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var provider = await TestData.CreateProvider();
 
             // Create another venue for the provider for testing the unique venue name error case
-            await TestData.CreateVenue(provider.ProviderId, venueName: "Existing Venue");
+            await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Existing Venue");
 
             var journeyInstance = CreateJourneyInstance(
                 provider.ProviderId,

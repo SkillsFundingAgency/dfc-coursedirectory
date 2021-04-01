@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -21,6 +23,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,15 +41,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         private ISession _session => HttpContext.Session;
 
         public CoursesController(
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
@@ -139,7 +148,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (courseRunForEdit != null)
                 {
-                    var venues = await GetVenuesByUkprn(course.ProviderUKPRN);
+                    var venues = await GetVenuesForProvider();
                     //var regions = GetRegions();
 
                     var editCourseRunViewModel = new AddCourseDetailsViewModel
@@ -309,7 +318,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         ProviderUKPRN = UKPRN
                     };
 
-                    viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+                    viewModel.SelectVenue = await GetVenuesForProvider();
                     //viewModel.SelectRegion = GetRegions();
 
                     _session.SetObject(SessionVenues, viewModel.SelectVenue);
@@ -1084,21 +1093,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove(SessionAddCourseSection2);
         }
 
-        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        private async Task<SelectVenueModel> GetVenuesForProvider()
         {
+            var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
+
             var selectVenue = new SelectVenueModel
             {
                 LabelText = "Select course venue",
                 HintText = "Select all that apply.",
                 AriaDescribedBy = "Select all that apply.",
-                Ukprn = ukprn
+                Ukprn = providerContext.ProviderInfo.Ukprn
             };
 
-            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerContext.ProviderInfo.ProviderId });
 
             selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                Id = v.Id.ToString(),
+                Id = v.VenueId.ToString(),
                 VenueName = v.VenueName
             }).ToList();
 
@@ -1137,7 +1148,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ProviderUKPRN = UKPRN
             };
 
-            viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+            viewModel.SelectVenue = await GetVenuesForProvider();
            // viewModel.SelectRegion = GetRegions();
 
             _session.SetObject(SessionVenues, viewModel.SelectVenue);

@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue;
 using FluentAssertions;
@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId).Completed.Should().BeTrue();
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<CreateVenue, Success>(q =>
+            SqlQuerySpy.VerifyQuery<CreateVenue, Success>(q =>
                 q.ProviderUkprn == provider.Ukprn &&
                 q.Name == name &&
                 q.Email == email &&
@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 q.Latitude == Convert.ToDecimal(latitude) &&
                 q.Longitude == Convert.ToDecimal(longitude) &&
                 q.CreatedBy.UserId == User.UserId &&
-                q.CreatedDate == Clock.UtcNow);
+                q.CreatedOn == Clock.UtcNow);
         }
 
         private JourneyInstance<AddVenueJourneyModel> CreateJourneyInstance(Guid providerId, AddVenueJourneyModel state)

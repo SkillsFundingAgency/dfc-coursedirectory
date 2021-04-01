@@ -99,12 +99,12 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
             {
-                var venue = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetVenueById() { VenueId = venueId });
+                var venue = await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetVenue() { VenueId = venueId });
 
                 if (venue != null)
                 {
-                    providerId = await GetProviderIdByUkprn(venue.Ukprn);
+                    providerId = venue.ProviderId;
                     _cache.Set(cacheKey, providerId);
                 }
                 else

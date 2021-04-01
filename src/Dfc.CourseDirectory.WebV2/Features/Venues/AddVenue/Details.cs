@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
@@ -37,17 +37,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
     {
-        private readonly IProviderInfoCache _providerInfoCache;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
-            IProviderInfoCache providerInfoCache,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             JourneyInstanceProvider journeyInstanceProvider)
         {
-            _providerInfoCache = providerInfoCache;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstanceProvider = journeyInstanceProvider;
         }
 
@@ -62,9 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         {
             ThrowIfFlowStateNotValid();
 
-            var providerInfo = await _providerInfoCache.GetProviderInfo(request.ProviderId);
-
-            var validator = new CommandValidator(providerInfo.Ukprn, _cosmosDbQueryDispatcher);
+            var validator = new CommandValidator(request.ProviderId, _sqlQueryDispatcher);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -125,11 +120,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         private class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator(
-                int providerUkprn,
-                ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+                Guid providerId,
+                ISqlQueryDispatcher sqlQueryDispatcher)
             {
                 RuleFor(c => c.Name)
-                    .VenueName(providerUkprn, venueId: null, cosmosDbQueryDispatcher);
+                    .VenueName(providerId, venueId: null, sqlQueryDispatcher);
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
                 RuleFor(c => c.Website).Website();

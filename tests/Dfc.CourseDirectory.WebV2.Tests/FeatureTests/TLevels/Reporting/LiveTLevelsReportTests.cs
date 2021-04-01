@@ -59,10 +59,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
             var tLevels = (await Task.WhenAll(providers.Select(async (p, i) =>
             {
                 var user = await TestData.CreateUser($"TestUser{p.ProviderId}-{i}");
-                var venues = await Task.WhenAll(Enumerable.Range(0, 3).Select(ii => TestData.CreateVenue(p.ProviderId, venueName: $"TestVenue{p.ProviderId}-{ii}")));
+                var venues = await Task.WhenAll(Enumerable.Range(0, 3).Select(
+                    ii => TestData.CreateVenue(p.ProviderId, createdBy: User.ToUserInfo(), venueName: $"TestVenue{p.ProviderId}-{ii}")));
 
                 return await Task.WhenAll(venues.Select((v, ii) =>
-                    TestData.CreateTLevel(p.ProviderId, tLevelDefinitions.OrderBy(_ => Guid.NewGuid()).Select(d => d.TLevelDefinitionId).First(), new[] { v.Id }, user, startDate: Clock.UtcNow.AddDays(ii).Date)));
+                    TestData.CreateTLevel(p.ProviderId, tLevelDefinitions.OrderBy(_ => Guid.NewGuid()).Select(d => d.TLevelDefinitionId).First(), new[] { v.VenueId }, user, startDate: Clock.UtcNow.AddDays(ii).Date)));
             }))).SelectMany(t => t).ToArray();
 
             await User.AsTestUser(userType);

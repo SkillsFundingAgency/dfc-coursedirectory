@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                     CreateContact(postcode, saonDescription, paonDescription, addressPaonDescription)
                 });
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
             var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var tLevel = await TestData.CreateTLevel(
                provider.ProviderId,
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                     CreateContact(postcode, addressSaonDescription, addressPaonDescription, addressStreetDescription)
                 });
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
             var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var tLevel = await TestData.CreateTLevel(
                provider.ProviderId,
@@ -397,7 +397,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                     CreateContact(postcode, addressSaonDescription, addressPaonDescription, addressStreetDescription)
                 });
 
-            var venueId = (await TestData.CreateVenue(provider2.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider2.ProviderId, createdBy: User.ToUserInfo())).VenueId;
             var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var tLevel = await TestData.CreateTLevel(
                provider2.ProviderId,
@@ -550,7 +550,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                     CreateContact("CV1 1AA", null, "some Street",null)
                 });
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
             var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var tLevel = await TestData.CreateTLevel(
                provider.ProviderId,
@@ -600,7 +600,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 {
                     CreateContact("CV2 1AA", null, null,null)
                 });
-            var venueId2= (await TestData.CreateVenue(provider2.ProviderId)).Id;
+            var venueId2= (await TestData.CreateVenue(provider2.ProviderId, createdBy: User.ToUserInfo())).VenueId;
             var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var tLevel = await TestData.CreateTLevel(
                provider2.ProviderId,
