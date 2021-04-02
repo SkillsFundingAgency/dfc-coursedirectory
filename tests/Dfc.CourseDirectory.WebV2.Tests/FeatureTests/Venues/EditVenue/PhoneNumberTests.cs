@@ -22,8 +22,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId, telephone: "020 7946 0000")).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, telephone: "020 7946 0000")).Id;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/phone-number");
 
@@ -43,8 +43,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_NewPhoneNumberAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId, telephone: "020 7946 0000")).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, telephone: "020 7946 0000")).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state => state.PhoneNumber = existingValue);
@@ -67,10 +67,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_UserCannotAccessVenue_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
+            var anotherProvider = await TestData.CreateProvider();
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", "020 7946 0000")
@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 Content = requestContent
             };
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -116,8 +116,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_InvalidPhoneNumber_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", "xxx")
@@ -144,8 +144,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(string phoneNumber)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("PhoneNumber", phoneNumber)

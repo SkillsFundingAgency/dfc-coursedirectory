@@ -32,11 +32,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_UserCannotEditProviderType_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -64,9 +64,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ValidRequestNoneProviderType_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -93,11 +93,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             IEnumerable<string> expectedCheckedTestIds)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
             var tLevelDefinitionIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateTLevelDefinition()));
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -144,16 +144,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             IEnumerable<int> expectedSelectedTLevelDefinitionIds)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
             var parsedTLevelDefinitionIds = tLevelDefinitionIds.Select(ToGuid).ToArray();
             var parsedSelectedTLevelDefinitionIds = selectedTLevelDefinitionIds.Select(ToGuid).ToArray();
             var parsedExpectedSelectedTLevelDefinitionIds = expectedSelectedTLevelDefinitionIds.Select(ToGuid).ToArray();
 
             await Task.WhenAll(parsedTLevelDefinitionIds.Select(id => TestData.CreateTLevelDefinition(tLevelDefinitionId: id)));
-            await TestData.SetProviderTLevelDefinitions(providerId, parsedSelectedTLevelDefinitionIds);
+            await TestData.SetProviderTLevelDefinitions(provider.ProviderId, parsedSelectedTLevelDefinitionIds);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -186,18 +186,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_UserCannotEditProviderType_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var content = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.ProviderType), (int)ProviderType.FE)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -232,14 +232,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ProviderIdAndProviderContextProviderIdDoNotMatch_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var content = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.ProviderType), (int)ProviderType.FE)
                 .Add("ProviderId", Guid.NewGuid())
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -258,13 +258,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ValidRequest_UpdatesProviderTypeAndRedirects(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var content = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.ProviderType), (int)providerType)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -274,10 +274,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == providerId && q.ProviderType == providerType);
+                q.ProviderId == provider.ProviderId && q.ProviderType == providerType);
         }
 
         [Theory]
@@ -288,7 +288,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_WithTLevelsAndSelectedTLevelDefinitions_UpdatesProviderTypeAndSelectedTLevelDefinitionsAndRedirects(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var tLevelDefinitionIds = (await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateTLevelDefinition())))
                 .OrderBy(_ => Guid.NewGuid())
@@ -303,7 +303,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 contentBuilder.Add(nameof(Command.SelectedProviderTLevelDefinitionIds), tLevelDefinitionId);
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = contentBuilder.ToContent()
             };
@@ -313,13 +313,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == providerId && q.ProviderType == providerType);
+                q.ProviderId == provider.ProviderId && q.ProviderType == providerType);
 
             SqlQuerySpy.VerifyQuery<SetProviderTLevelDefinitions, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
-                query.ProviderId == providerId
+                query.ProviderId == provider.ProviderId
                 && query.TLevelDefinitionIds.SequenceEqual(tLevelDefinitionIds));
         }
 
@@ -331,14 +331,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_WithTLevelsAndNoSelectedTLevelDefinitions_DoesNotUpdateProviderTypeOrSelectedTLevelDefinitionsAndReturnsViewWithErrorMessage(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
             await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateTLevelDefinition()));
 
             var contentBuilder = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.ProviderType), (int)providerType);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = contentBuilder.ToContent()
             };
@@ -353,14 +353,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.AssertHasError(nameof(Command.SelectedProviderTLevelDefinitionIds), "Select the T Levels this provider can offer");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == providerId && q.ProviderType == providerType, Times.Never());
+                q.ProviderId == provider.ProviderId && q.ProviderType == providerType, Times.Never());
         }
 
         [Fact]
         public async Task Post_WithTLevelsProviderAndInvalidTLevelDefinitionId_DoesNotUpdateProviderTypeOrSelectedTLevelDefinitionsAndReturnsViewWithErrorMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
             var tLevelDefinitionIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateTLevelDefinition()));
             var selectedTLevelDefinitionIds = tLevelDefinitionIds.OrderBy(_ => Guid.NewGuid()).Take(2).ToArray();
@@ -375,7 +375,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             contentBuilder.Add(nameof(Command.SelectedProviderTLevelDefinitionIds), Guid.NewGuid());
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = contentBuilder.ToContent()
             };
@@ -390,7 +390,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.AssertHasError(nameof(Command.SelectedProviderTLevelDefinitionIds), "Select a valid T Level");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == providerId && q.ProviderType == ProviderType.TLevels, Times.Never());
+                q.ProviderId == provider.ProviderId && q.ProviderType == ProviderType.TLevels, Times.Never());
         }
 
         [Theory]
@@ -401,14 +401,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_WithTLevelsProviderWithSelectedTLevelDefinitions_UpdatesProviderTypeAndRemovesSelectedTLevelDefinitionsAndRedirects(ProviderType newProviderType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.TLevels);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.TLevels);
 
             var tLevelDefinitionIds = (await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateTLevelDefinition())))
                 .OrderBy(_ => Guid.NewGuid())
                 .Take(2)
                 .ToArray();
 
-            await TestData.SetProviderTLevelDefinitions(providerId, tLevelDefinitionIds);
+            await TestData.SetProviderTLevelDefinitions(provider.ProviderId, tLevelDefinitionIds);
 
             var contentBuilder = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.ProviderType), (int)newProviderType);
@@ -418,7 +418,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 contentBuilder.Add(nameof(Command.SelectedProviderTLevelDefinitionIds), tLevelDefinitionId);
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = contentBuilder.ToContent()
             };
@@ -428,13 +428,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == providerId && q.ProviderType == newProviderType);
+                q.ProviderId == provider.ProviderId && q.ProviderType == newProviderType);
 
             SqlQuerySpy.VerifyQuery<SetProviderTLevelDefinitions, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
-                query.ProviderId == providerId
+                query.ProviderId == provider.ProviderId
                 && query.TLevelDefinitionIds.SequenceEqual(Enumerable.Empty<Guid>()));
         }
 
@@ -448,26 +448,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevels = await Task.WhenAll(
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo()),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo(),
                     startDate: new DateTime(2022, 01, 01)),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo())
@@ -477,7 +477,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.ProviderType), (int)newProviderType)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -490,7 +490,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
@@ -513,26 +513,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevels = await Task.WhenAll(
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo()),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo(),
                     startDate: new DateTime(2022, 01, 01)),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo())
@@ -544,7 +544,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), null)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -558,7 +558,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
 
             doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
-            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
@@ -581,26 +581,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevels = await Task.WhenAll(
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo()),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo(),
                     startDate: new DateTime(2022, 01, 01)),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo())
@@ -612,7 +612,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), false)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -622,7 +622,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={provider.ProviderId}");
 
             foreach (var tLevel in tLevels)
             {
@@ -641,26 +641,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevels = await Task.WhenAll(
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo()),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo(),
                     startDate: new DateTime(2022, 01, 01)),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo())
@@ -672,7 +672,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -686,7 +686,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
 
             doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
-            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("affected-item").Select(i => i.TextContent).Should().Equal(
@@ -709,26 +709,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevels = await Task.WhenAll(
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo()),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo(),
                     startDate: new DateTime(2022, 01, 01)),
                 TestData.CreateTLevel(
-                    providerId,
+                    provider.ProviderId,
                     tLevelDefinitions.Skip(1).First().TLevelDefinitionId,
                     locationVenueIds: new[] { venueId },
                     createdBy: User.ToUserInfo())
@@ -740,7 +740,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -750,7 +750,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             foreach (var tLevel in tLevels)
             {
@@ -771,14 +771,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var providerTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: providerTLevelDefinitionIds);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitions.First().TLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -788,7 +788,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), providerTLevelDefinitionIds)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -798,7 +798,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             tLevel = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetTLevel() { TLevelId = tLevel.TLevelId }));
@@ -812,18 +812,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
 
             var tLevel1 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 keepingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -833,7 +833,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -843,7 +843,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetTLevel() { TLevelId = tLevel1.TLevelId }));
@@ -856,24 +856,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
 
             var tLevel1 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 keepingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
 
             var tLevel2 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 removingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -883,7 +883,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.SelectedProviderTLevelDefinitionIds), keepingTLevelDefinitionId)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -896,7 +896,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
@@ -922,24 +922,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
 
             var tLevel1 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 keepingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
 
             var tLevel2 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 removingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -951,7 +951,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), null)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -965,7 +965,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
 
             doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
-            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
@@ -991,24 +991,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
 
             var tLevel1 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 keepingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
 
             var tLevel2 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 removingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -1020,7 +1020,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), false)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -1030,7 +1030,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={provider.ProviderId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetTLevel() { TLevelId = tLevel1.TLevelId }));
@@ -1050,24 +1050,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
 
             var tLevel1 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 keepingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
 
             var tLevel2 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 removingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -1079,7 +1079,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -1093,7 +1093,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
 
             doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
-            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(providerId.ToString());
+            doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
             doc.GetAllElementsByTestId("selected-provider-tlevel-definition-id").Select(e => e.GetAttribute("value")).Should().BeEquivalentTo(
@@ -1119,24 +1119,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
             var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
             keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
 
             var tLevel1 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 keepingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
 
             var tLevel2 = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 removingTLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -1148,7 +1148,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 .Add(nameof(Command.Confirm), true)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={providerId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -1158,7 +1158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetTLevel() { TLevelId = tLevel1.TLevelId }));

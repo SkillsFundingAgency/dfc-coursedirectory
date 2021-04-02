@@ -29,13 +29,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var createdTLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitionId: tLevelDefinitions.First().TLevelDefinitionId,
                 whoFor: "Who for",
                 entryRequirements: "Entry requirements",
@@ -73,14 +73,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             journeyState.SetCreatedTLevel(createdTLevel.TLevelId);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             journeyInstance.Complete();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/add/success?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                $"/t-levels/add/success?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -97,20 +97,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
             var journeyState = new AddTLevelJourneyModel();
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             journeyInstance.Completed.Should().BeFalse();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/add/success?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                $"/t-levels/add/success?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -127,14 +127,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var createdTLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitionId: tLevelDefinitions.First().TLevelDefinitionId,
                 whoFor: "Who for",
                 entryRequirements: "Entry requirements",
@@ -172,14 +172,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             journeyState.SetCreatedTLevel(createdTLevel.TLevelId);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             journeyInstance.Complete();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/add/success?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                $"/t-levels/add/success?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

@@ -19,8 +19,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies
         public async Task Get_AuthenticatedUser_ReturnsOk(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync("cookies/details");

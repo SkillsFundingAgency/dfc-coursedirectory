@@ -28,9 +28,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
             var venueId = (await TestData.CreateVenue(
-                providerId,
+                provider.ProviderId,
                 addressLine1: "Test Venue line 1",
                 addressLine2: "Test Venue line 2",
                 town: "Town",
@@ -60,8 +60,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_NewAddressAlreadySetInJourneyInstance_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>
@@ -98,10 +98,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_UserCannotAccessVenue_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
+            var anotherProvider = await TestData.CreateProvider();
 
             OnspdSearchClient
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 Content = requestContent
             };
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -201,8 +201,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             string expectedErrorMessage)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             OnspdSearchClient
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))
@@ -254,8 +254,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             bool expectedNewAddressIsOutsideOfEnglandValue)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             OnspdSearchClient
                 .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == "CV1 2AA")))

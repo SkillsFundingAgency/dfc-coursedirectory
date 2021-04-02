@@ -8,12 +8,15 @@ namespace Dfc.CourseDirectory.Testing
     public partial class TestData
     {
         public async Task<UserInfo> CreateUser(
-            string userId = "bobby-tables",
-            string email = "bobby.tables@example.org",
-            string firstName = "Bobby",
-            string lastName = "Tables",
+            string firstName = null,
+            string lastName = null,
             Guid? providerId = default)
         {
+            var userId = _uniqueIdHelper.GenerateUserId();
+            var email = _uniqueIdHelper.GenerateUserEmail();
+            firstName ??= Faker.Name.First();
+            lastName ??= Faker.Name.Last();
+
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new Query()
                 {

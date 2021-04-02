@@ -20,20 +20,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
         public async Task NewProvider_InsertsProviderRecord()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
-            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderById()
+            var cosmosProvider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderById()
             {
-                ProviderId = providerId
+                ProviderId = provider.ProviderId
             });
 
             var signInContext = new SignInContext(new System.Security.Claims.ClaimsPrincipal())
             {
-                Provider = provider,
+                Provider = cosmosProvider,
                 ProviderUkprn = provider.Ukprn,
                 UserInfo = new AuthenticatedUserInfo()
                 {
-                    CurrentProviderId = providerId,
+                    CurrentProviderId = provider.ProviderId,
                     Email = "test.guy@provider.com",
                     FirstName = "Test",
                     LastName = "Guy",
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             {
                 return dispatcher.Transaction.Connection.QuerySingleAsync<int>(
                     "select count(*) from Pttcd.Providers where ProviderId = @ProviderId",
-                    new { ProviderId = providerId },
+                    new { ProviderId = provider.ProviderId },
                     dispatcher.Transaction);
             });
             Assert.Equal(1, rows);

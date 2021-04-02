@@ -21,10 +21,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
         public async Task ViewVenues_Get_WithNoVenues_ReturnsExpectedContent()
         {
             //Arange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -40,12 +40,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
         public async Task ViewVenues_Get_WithVenues_ReturnsExpectedContent()
         {
             //Arange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={provider.ProviderId}");
 
-            var venues = await Task.WhenAll(Enumerable.Range(0, 3).Select(i => TestData.CreateVenue(providerId, venueName: $"TestVenue{i}")));
+            var venues = await Task.WhenAll(Enumerable.Range(0, 3).Select(i => TestData.CreateVenue(provider.ProviderId, venueName: $"TestVenue{i}")));
 
             // Act
             var response = await HttpClient.SendAsync(request);

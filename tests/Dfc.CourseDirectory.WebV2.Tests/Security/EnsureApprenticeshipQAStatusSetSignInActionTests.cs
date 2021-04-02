@@ -22,22 +22,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
         public async Task NewApprenticeshipProvider_SetsApprenticeshipQAStatus(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 apprenticeshipQAStatus: null);
 
-            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
+            var cosmosProvider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
             {
-                ProviderId = providerId
+                ProviderId = provider.ProviderId
             });
 
             var signInContext = new SignInContext(new System.Security.Claims.ClaimsPrincipal())
             {
-                Provider = provider,
+                Provider = cosmosProvider,
                 ProviderUkprn = provider.Ukprn,
                 UserInfo = new AuthenticatedUserInfo()
                 {
-                    CurrentProviderId = providerId,
+                    CurrentProviderId = provider.ProviderId,
                     Email = "test.guy@provider.com",
                     FirstName = "Test",
                     LastName = "Guy",
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             var qaStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = providerId
+                    ProviderId = provider.ProviderId
                 }));
             Assert.Equal(ApprenticeshipQAStatus.NotStarted, qaStatus);
         }
@@ -68,22 +68,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
         public async Task NewFEOnlyProvider_DoesNotSetApprenticeshipQAStatus(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 apprenticeshipQAStatus: null);
 
-            var provider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
+            var cosmosProvider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
             {
-                ProviderId = providerId
+                ProviderId = provider.ProviderId
             });
 
             var signInContext = new SignInContext(new System.Security.Claims.ClaimsPrincipal())
             {
-                Provider = provider,
+                Provider = cosmosProvider,
                 ProviderUkprn = provider.Ukprn,
                 UserInfo = new AuthenticatedUserInfo()
                 {
-                    CurrentProviderId = providerId,
+                    CurrentProviderId = provider.ProviderId,
                     Email = "test.guy@provider.com",
                     FirstName = "Test",
                     LastName = "Guy",
@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             var qaStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = providerId
+                    ProviderId = provider.ProviderId
                 }));
             Assert.Null(qaStatus);
         }

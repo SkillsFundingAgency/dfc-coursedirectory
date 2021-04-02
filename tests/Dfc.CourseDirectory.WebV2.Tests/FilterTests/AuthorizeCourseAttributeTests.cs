@@ -21,9 +21,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task AdminUsers_AreNotBlocked(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
-            var courseId = await TestData.CreateCourse(providerId, createdBy: providerUser);
+            var provider = await TestData.CreateProvider();
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -44,15 +44,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUsersForSameProviderAsCourse_AreNotBlocked(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
-            var courseId = await TestData.CreateCourse(providerId, createdBy: providerUser);
+            var provider = await TestData.CreateProvider();
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/AuthorizeCourseAttributeTests/{courseId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -67,17 +67,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUsersForDifferentProviderAsCourse_AreBlocked(TestUserType userType)
         {
             // Arrange
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
+            var anotherProvider = await TestData.CreateProvider();
 
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
-            var courseId = await TestData.CreateCourse(providerId, createdBy: providerUser);
+            var provider = await TestData.CreateProvider();
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/AuthorizeCourseAttributeTests/{courseId}");
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -90,9 +90,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task UnauthenticatedUser_IsBlocked()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
-            var courseId = await TestData.CreateCourse(providerId, createdBy: providerUser);
+            var provider = await TestData.CreateProvider();
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,

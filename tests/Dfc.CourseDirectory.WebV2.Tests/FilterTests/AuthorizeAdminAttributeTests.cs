@@ -38,11 +38,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUsers_AreBlocked(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var request = new HttpRequestMessage(HttpMethod.Get, "/AuthorizeAdminAttributeTests");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);

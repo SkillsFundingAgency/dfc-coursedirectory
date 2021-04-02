@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Get_JourneyStateIsNotValid_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     AddressLine1 = addressLine1,
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/success?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/success?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Get_ValidRequest_ReturnsExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     AddressLine1 = addressLine1,
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/success?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/success?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

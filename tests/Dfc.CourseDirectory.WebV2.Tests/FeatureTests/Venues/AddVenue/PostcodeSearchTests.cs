@@ -27,15 +27,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task PostcodeSearch_InvalidPostcode_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var postcode = "xxx";
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/postcode-search?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
+                $"/venues/add/postcode-search?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task PostcodeSearch_PostcodeNotInOnspdData_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var town = "Town";
             var postcode = "AB1 2DE";
@@ -65,11 +65,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/postcode-search?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
+                $"/venues/add/postcode-search?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task PostcodeSearch_SearchReturnsZeroResults_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var town = "Town";
             var country = "England";
@@ -98,11 +98,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureAddressSearchServiceResults(postcode, town, resultCount: 0);
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/postcode-search?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
+                $"/venues/add/postcode-search?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task PostcodeSearch_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var town = "Town";
             var country = "England";
@@ -131,11 +131,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/postcode-search?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
+                $"/venues/add/postcode-search?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task PostcodeSearch_ValidRequest_NormalizesPostcode()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var inputPostcode = "ab12de";
 
@@ -181,11 +181,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             ConfigureAddressSearchServiceResults(normalizedPostcode, town, resultCount: 3);
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/postcode-search?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={inputPostcode}");
+                $"/venues/add/postcode-search?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={inputPostcode}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -204,7 +204,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task SelectPostcode_NoAddressSelected_ReturnsError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var town = "Town";
             var country = "England";
@@ -218,7 +218,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var postcodeSearchResults = ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     PostcodeSearchResults = postcodeSearchResults,
@@ -227,7 +227,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/select-postcode?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}")
+                $"/venues/add/select-postcode?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .ToContent()
@@ -247,7 +247,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task SelectPostcode_InvalidAddressSelected_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressId = "42";
             var town = "Town";
@@ -262,7 +262,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var postcodeSearchResults = ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     PostcodeSearchResults = postcodeSearchResults,
@@ -271,7 +271,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/select-postcode?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}")
+                $"/venues/add/select-postcode?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("AddressId", addressId)
@@ -293,7 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             bool expectedNewAddressIsOutsideOfEnglandValue)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressId = "42";
             var addressLine1 = "Test Venue line 1";
@@ -318,7 +318,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             };
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     PostcodeSearchResults = postcodeSearchResults,
@@ -339,7 +339,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/select-postcode?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}")
+                $"/venues/add/select-postcode?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={postcode}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("AddressId", addressId)
@@ -353,7 +353,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should()
-                .Be($"/venues/add/details?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                .Be($"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             using (new AssertionScope())
             {

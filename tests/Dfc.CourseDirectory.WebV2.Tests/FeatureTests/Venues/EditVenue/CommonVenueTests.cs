@@ -30,14 +30,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_UserCannotAccessVenue_ReturnsForbidden(string urlFragment, TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
+            var anotherProvider = await TestData.CreateProvider();
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}{urlFragment}");
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);

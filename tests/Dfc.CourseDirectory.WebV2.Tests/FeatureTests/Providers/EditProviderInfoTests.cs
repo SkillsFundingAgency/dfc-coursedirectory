@@ -21,14 +21,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ProviderUser_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 marketingInformation: "Current overview");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/providers/info?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/providers/info?providerId={provider.ProviderId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -39,14 +39,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 marketingInformation: "Current overview");
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"/providers/info?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/providers/info?providerId={provider.ProviderId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -58,14 +58,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ValidRequest_RendersExpectedOutput(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 marketingInformation: "Current overview");
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"/providers/info?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/providers/info?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Overview")
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.PostAsync($"/providers/info?providerId={providerId}", requestContent);
+            var response = await HttpClient.PostAsync($"/providers/info?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -100,16 +100,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ProviderUser_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Overview")
                 .ToContent();
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
-            var response = await HttpClient.PostAsync($"/providers/info?providerId={providerId}", requestContent);
+            var response = await HttpClient.PostAsync($"/providers/info?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_InvalidMarketingInformation_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", new string('z', 751))  // Limit is 750 characters
@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.PostAsync($"/providers/info?providerId={providerId}", requestContent);
+            var response = await HttpClient.PostAsync($"/providers/info?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -143,7 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ValidRequest_ReturnsRedirect()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Overview")
@@ -152,11 +152,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.PostAsync($"/providers/info?providerId={providerId}", requestContent);
+            var response = await HttpClient.PostAsync($"/providers/info?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal($"/providers?providerId={providerId}", response.Headers.Location.OriginalString);
+            Assert.Equal($"/providers?providerId={provider.ProviderId}", response.Headers.Location.OriginalString);
         }
     }
 }

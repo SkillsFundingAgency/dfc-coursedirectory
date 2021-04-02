@@ -21,10 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task RendersExpectedOutput()
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 contacts: new[]
@@ -49,25 +46,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                     }
                 });
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             var providerUserSignInDate = new DateTime(2018, 4, 12, 11, 30, 0, DateTimeKind.Utc);
-            await TestData.CreateUserSignIn(providerUserId, providerUserSignInDate);
+            await TestData.CreateUserSignIn(providerUser.UserId, providerUserSignInDate);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: new DateTime(2018, 4, 12, 12, 0, 0, DateTimeKind.Utc),
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var assessorUserId = "assessor";
-            await TestData.CreateUser(assessorUserId, "assessor@place.com", "Mr", "Assessor", providerId: null);
+            var assessorUser = await TestData.CreateUser();
 
             var lastAssessedOnDate = new DateTime(2018, 4, 12, 12, 3, 0, DateTimeKind.Utc);
             await TestData.UpdateApprenticeshipQASubmission(
@@ -75,13 +70,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: true,
                 apprenticeshipAssessmentsPassed: null,
                 passed: null,
-                lastAssessedByUserId: assessorUserId,
+                lastAssessedByUserId: assessorUser.UserId,
                 lastAssessedOn: lastAssessedOnDate);
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"providerapprenticeshipqainfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerapprenticeshipqainfopaneltests/{provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -92,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 "Provider 1",
                 doc.GetElementById("pttcd-apprenticeship-qa-info-panel__provider-name").TextContent.Trim());
             Assert.Equal(
-                "12345",
+                provider.Ukprn.ToString(),
                 GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-ukprn"));
             Assert.Equal(
                 "1st Line of Address\n2nd Line of Address\nThe Street\nThe Town\nUnited Kingdom\nAB1 2CD",
@@ -110,13 +105,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 "01234 567890",
                 GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-telephone"));
             Assert.Equal(
-                "Provider 1 Person",
+                providerUser.FullName,
                 GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-last-signed-in"));
             Assert.Equal(
                 providerUserSignInDate.ToString("dd MMM yyyy"),
                 GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-last-signed-in-date"));
             Assert.Equal(
-                "Mr Assessor",
+                assessorUser.FullName,
                 GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-last-qa-by"));
             Assert.Equal(
                 lastAssessedOnDate.ToString("dd MMM yyyy"),
@@ -127,35 +122,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task NotAssessedYetUsesDoesNotRenderPanel()
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await TestData.CreateUserSignIn(providerUserId, new DateTime(2018, 4, 12, 11, 30, 10, DateTimeKind.Utc));
+            await TestData.CreateUserSignIn(providerUser.UserId, new DateTime(2018, 4, 12, 11, 30, 10, DateTimeKind.Utc));
 
             await User.AsHelpdesk();
 
             Clock.UtcNow = new DateTime(2018, 5, 3, 9, 3, 27, DateTimeKind.Utc);
 
             // Act
-            var response = await HttpClient.GetAsync($"providerapprenticeshipqainfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerapprenticeshipqainfopaneltests/{provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -170,10 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task NoPTypeContactRendersExpectedOutput()
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 contacts: new[]
@@ -198,25 +186,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                     }
                 });
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             var providerUserSignInDate = new DateTime(2018, 4, 12, 11, 30, 0, DateTimeKind.Utc);
-            await TestData.CreateUserSignIn(providerUserId, providerUserSignInDate);
+            await TestData.CreateUserSignIn(providerUser.UserId, providerUserSignInDate);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: new DateTime(2018, 4, 12, 12, 0, 0, DateTimeKind.Utc),
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            var assessorUserId = "assessor";
-            await TestData.CreateUser(assessorUserId, "assessor@place.com", "Mr", "Assessor", providerId: null);
+            var assessorUser = await TestData.CreateUser();
 
             var lastAssessedOnDate = new DateTime(2018, 4, 12, 12, 3, 0, DateTimeKind.Utc);
             await TestData.UpdateApprenticeshipQASubmission(
@@ -224,13 +210,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: true,
                 apprenticeshipAssessmentsPassed: null,
                 passed: null,
-                lastAssessedByUserId: assessorUserId,
+                lastAssessedByUserId: assessorUser.UserId,
                 lastAssessedOn: lastAssessedOnDate);
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"providerapprenticeshipqainfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerapprenticeshipqainfopaneltests/{provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();

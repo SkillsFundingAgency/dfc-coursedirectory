@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Get_ValidRequest_ReturnsExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var name = "My Venue";
             var email = "email@example.com";
@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     Name = name,
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/details?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -73,13 +73,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             string expectedErrorMessage)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             // Create another venue for the provider for testing the unique venue name error case
-            await TestData.CreateVenue(providerId, venueName: "Existing Venue");
+            await TestData.CreateVenue(provider.ProviderId, venueName: "Existing Venue");
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     ValidStages = AddVenueCompletedStages.Address
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/details?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+                $"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Name", name)
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Post_ValidRequest_UpdatesJourneyStateAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var name = "My Venue";
             var email = "email@example.com";
@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     ValidStages = AddVenueCompletedStages.Address
@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/details?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+                $"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Name", name)
@@ -144,7 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should()
-                .Be($"/venues/add/check-publish?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                .Be($"/venues/add/check-publish?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             using (new AssertionScope())
             {

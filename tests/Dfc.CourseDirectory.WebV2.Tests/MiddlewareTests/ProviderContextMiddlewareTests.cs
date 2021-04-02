@@ -20,18 +20,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         public async Task AdminUser_QueryParamSpecified_AssignsContext(TestUserType userType)
         {
             // Arrange
-            var ukprn = 12345;
-            var providerId = await TestData.CreateProvider(ukprn);
+            var provider = await TestData.CreateProvider();
             await User.AsTestUser(userType);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovideractionfiltertests?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"currentprovideractionfiltertests?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
             Assert.True(Guid.TryParse(responseJson["providerInfo"]["providerId"].ToString(), out var boundProviderId), "Binding failed.");
-            Assert.Equal(providerId, boundProviderId);
+            Assert.Equal(provider.ProviderId, boundProviderId);
         }
 
         [Theory]
@@ -40,18 +39,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         public async Task AdminUser_RouteValueSpecified_AssignsContext(TestUserType userType)
         {
             // Arrange
-            var ukprn = 12345;
-            var providerId = await TestData.CreateProvider(ukprn);
+            var provider = await TestData.CreateProvider();
             await User.AsTestUser(userType);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovideractionfiltertests/from-route/{providerId}");
+            var response = await HttpClient.GetAsync($"currentprovideractionfiltertests/from-route/{provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
             Assert.True(Guid.TryParse(responseJson["providerInfo"]["providerId"].ToString(), out var boundProviderId), "Binding failed.");
-            Assert.Equal(providerId, boundProviderId);
+            Assert.Equal(provider.ProviderId, boundProviderId);
         }
 
         [Theory]
@@ -60,12 +58,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         public async Task AdminUser_QueryParamAndRouteSpecifiedButDontMatch_DoesNotAssignContext(TestUserType userType)
         {
             // Arrange
-            var ukprn = 12345;
-            var providerId = await TestData.CreateProvider(ukprn);
+            var provider = await TestData.CreateProvider();
             await User.AsTestUser(userType);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovideractionfiltertests/from-route/{providerId}?providerId={Guid.NewGuid()}");
+            var response = await HttpClient.GetAsync($"currentprovideractionfiltertests/from-route/{provider.ProviderId}?providerId={Guid.NewGuid()}");
 
             // Assert
             Assert.False(response.IsSuccessStatusCode);
@@ -92,8 +89,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         public async Task ProviderUser_AssignsContextFromAuthToken(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovideractionfiltertests");
@@ -102,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
             Assert.True(Guid.TryParse(responseJson["providerInfo"]["providerId"].ToString(), out var boundProviderId), "Binding failed.");
-            Assert.Equal(providerId, boundProviderId);
+            Assert.Equal(provider.ProviderId, boundProviderId);
         }
 
         [Theory]
@@ -111,8 +108,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         public async Task ProviderUser_QueryParamSpecifiedDoesntMatchAuthToken_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovideractionfiltertests?providerId={Guid.NewGuid()}");
@@ -127,8 +124,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
         public async Task ProviderUser_RouteParamSpecifiedDoesntMatchAuthToken_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovideractionfiltertests/from-route/{Guid.NewGuid()}");

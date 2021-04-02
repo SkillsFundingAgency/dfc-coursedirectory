@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Get_HelpdeskUserCannotAccess()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -44,11 +44,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Get_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: qaStatus);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: qaStatus);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -66,13 +66,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Get_NotApprenticeshipProviderReturnsForbidden()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.FE);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -90,11 +90,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Get_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}");
 
             // Act
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_HelpdeskUserCannotAccess()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -150,11 +150,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: qaStatus);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: qaStatus);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.FE);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -168,7 +168,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -179,13 +179,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_NotApprenticeshipProviderReturnsForbidden()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.FE);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -199,7 +199,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -211,11 +211,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_InvalidMarketingInformationRendersError(string marketingInfo)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -229,7 +229,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -246,11 +246,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_InvalidWebsiteRendersError(string website)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -265,7 +265,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -285,11 +285,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             string expectedErrorMessage)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -303,7 +303,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -321,11 +321,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             string expectedErrorMessage)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -339,7 +339,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -354,11 +354,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_InvalidContactWebsiteRendersError(string contactWebsite)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -373,7 +373,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -389,11 +389,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Post_ValidRequestRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+            var provider = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetApprenticeshipStandardOrFramework(standard);
@@ -407,7 +407,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={provider.ProviderId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act

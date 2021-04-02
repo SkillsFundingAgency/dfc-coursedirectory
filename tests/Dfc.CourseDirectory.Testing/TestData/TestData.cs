@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
@@ -15,18 +14,21 @@ namespace Dfc.CourseDirectory.Testing
         private readonly SqlDataSync _sqlDataSync;
         private readonly IServiceProvider _serviceProvider;
         private readonly IClock _clock;
+        private readonly UniqueIdHelper _uniqueIdHelper;
         private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
 
         public TestData(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             SqlDataSync sqlDataSync,
             IServiceProvider serviceProvider,
-            IClock clock)
+            IClock clock,
+            UniqueIdHelper uniqueIdHelper)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlDataSync = sqlDataSync;
             _serviceProvider = serviceProvider;
             _clock = clock;
+            _uniqueIdHelper = uniqueIdHelper;
         }
 
         protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>

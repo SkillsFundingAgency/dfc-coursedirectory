@@ -19,8 +19,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Initialize_ApprenticeshipWithStandard_PopulatesModelCorrectly()
         {
             // Arrange
-            var ukprn = 12347;
-            var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
             var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
@@ -28,19 +26,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var regions = new List<string> { "123" };
             var contactEmail = "somecontact@nonexistentprovider.com";
 
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
-            var providerUserId = $"{ukprn}-user";
-            var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-            var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var adminUser = await TestData.CreateUser();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId,
                 standard,
-                createdBy: user,
+                createdBy: providerUser,
                 contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
@@ -54,9 +50,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -65,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
                 // Act
-                var model = await initializer.Initialize(providerId);
+                var model = await initializer.Initialize(provider.ProviderId);
 
                 // Assert
                 Assert.True(model.GotApprenticeshipDetails);
@@ -92,8 +88,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Initialize_ApprenticeshipWithFramework_PopulatesModelSuccessfully()
         {
             // Arrange
-            var ukprn = 12346;
-            var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
             var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
@@ -101,19 +95,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var regions = new List<string> { "123" };
             var contactEmail = "somecontact@nonexistentprovider.com";
 
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
-            var providerUserId = $"{ukprn}-user";
-            var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-            var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var adminUser = await TestData.CreateUser(null);
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId,
                 framework,
-                createdBy: user,
+                createdBy: providerUser,
                 contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
@@ -127,9 +119,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -138,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
                 // Act
-                var model = await initializer.Initialize(providerId);
+                var model = await initializer.Initialize(provider.ProviderId);
 
                 // Assert
                 Assert.True(model.GotApprenticeshipDetails);
@@ -165,8 +157,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Initialize_NationalApprenticeship_PopulatesModelCorrectly()
         {
             // Arrange
-            var ukprn = 12346;
-            var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
             var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
@@ -174,19 +164,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var regions = new List<string> { "123" };
             var contactEmail = "somecontact@nonexistentprovider.com";
 
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
-            var providerUserId = $"{ukprn}-user";
-            var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-            var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var adminUser = await TestData.CreateUser();
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId,
                 framework,
-                createdBy: user,
+                createdBy: providerUser,
                 contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
@@ -200,9 +188,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -211,7 +199,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
                 // Act
-                var model = await initializer.Initialize(providerId);
+                var model = await initializer.Initialize(provider.ProviderId);
 
                 // Assert
                 Assert.True(model.GotApprenticeshipDetails);
@@ -233,11 +221,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Initialize_NoSubmission_DoesNotPopulateApprenticeshipFields()
         {
             // Arrange
-            var ukprn = 12345;
             var marketingInfo = "example marketing information";
 
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted,
                 marketingInformation: marketingInfo);
@@ -249,7 +235,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
                 // Act
-                var model = await initializer.Initialize(providerId);
+                var model = await initializer.Initialize(provider.ProviderId);
 
                 // Assert
                 Assert.False(model.GotApprenticeshipDetails);
@@ -270,8 +256,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Initialize_BothLocationType_InitializesModelCorrectly()
         {
             // Arrange
-            var ukprn = 12346;
-            var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
             var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
@@ -280,22 +264,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var contactEmail = "somecontact@nonexistentprovider.com";
             var radius = 30;
             var deliveryMode = ApprenticeshipDeliveryMode.BlockRelease;
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
-            var providerUserId = $"{ukprn}-user";
-            var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-            var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var adminUser = await TestData.CreateUser();
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var venue = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetVenueById() { VenueId = venueId });
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId,
                 framework,
-                createdBy: user,
+                createdBy: providerUser,
                 contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
@@ -313,9 +295,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -324,7 +306,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
                 // Act
-                var model = await initializer.Initialize(providerId);
+                var model = await initializer.Initialize(provider.ProviderId);
 
                 // Assert
                 Assert.True(model.GotApprenticeshipDetails);
@@ -353,27 +335,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Initialize_EmployerBasedLocationType_PopulatesModelCorrectly()
         {
             // Arrange
-            var ukprn = 12346;
-            var adminUserId = $"admin-user";
             var contactTelephone = "1111 111 1111";
             var website = "https://somerandomprovider.com/apprenticeship";
             var contactWebsite = "https://somerandomprovider.com";
             var marketingInfo = "Providing Online training";
             var contactEmail = "somecontact@nonexistentprovider.com";
 
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
-            var providerUserId = $"{ukprn}-user";
-            var user = await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-            var adminUser = await TestData.CreateUser(adminUserId, "admin@provider.com", "admin", "admin", null);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+            var adminUser = await TestData.CreateUser();
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId,
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId,
                 framework,
-                createdBy: user,
+                createdBy: providerUser,
                 contactEmail: contactEmail,
                 contactTelephone: contactTelephone,
                 contactWebsite: contactWebsite,
@@ -387,9 +365,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standardsAndFrameworksCache = new StandardsAndFrameworksCache(CosmosDbQueryDispatcher.Object);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -398,7 +376,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
 
                 // Act
-                var model = await initializer.Initialize(providerId);
+                var model = await initializer.Initialize(provider.ProviderId);
 
                 // Assert
                 Assert.True(model.GotApprenticeshipDetails);

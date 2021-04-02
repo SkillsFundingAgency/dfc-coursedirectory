@@ -39,13 +39,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task CurrentProviderDoesNotHaveAnySpecifiedPermittedProviderTypes_ReturnsForbidden(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
             await User.AsHelpdesk();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"RestrictProviderTypesAttributeTests?providerId={providerId}");
+                $"RestrictProviderTypesAttributeTests?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -60,13 +60,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task CurrentProviderDoesHaveAnySpecifiedPermittedProviderTypes_ReturnsOk(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
             await User.AsHelpdesk();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"RestrictProviderTypesAttributeTests?providerId={providerId}");
+                $"RestrictProviderTypesAttributeTests?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

@@ -36,23 +36,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var ukprn = 12345;
             var providerName = "Test provider";
 
-            var providerId = await TestData.CreateProvider(
-                ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName,
                 providerType: ProviderType.Apprenticeships | ProviderType.FE | ProviderType.TLevels,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
-            var venues = await CreateVenues(providerId, count: 2);
+            var venues = await CreateVenues(provider.ProviderId, count: 2);
 
-            await CreateCourses(providerId, count: 5);
-            await CreateApprenticeships(providerId, count: 3);
-            await CreateTLevels(providerId, tLevelDefinitions, venues, 4);
+            await CreateCourses(provider.ProviderId, count: 5);
+            await CreateApprenticeships(provider.ProviderId, count: 3);
+            await CreateTLevels(provider.ProviderId, tLevelDefinitions, venues, 4);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -61,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("ukprn").TextContent.Should().Be(ukprn.ToString());
+            doc.GetElementByTestId("ukprn").TextContent.Should().Be(provider.Ukprn.ToString());
             doc.GetElementByTestId("provider-name").TextContent.Should().Be(providerName);
 
             doc.GetElementByTestId("courses-row").TextContent.Should().NotBeNull();
@@ -82,11 +80,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task HasNotPassedQA_DoesNotRenderApprenticeshipsRow(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 apprenticeshipQAStatus: qaStatus);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -102,9 +100,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ProviderHasNoVenues_DoesNotRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -120,11 +118,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ProviderHasVenues_DoesRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-            await CreateVenues(providerId, count: 1);
+            await CreateVenues(provider.ProviderId, count: 1);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -140,9 +138,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task FEProviderHasNoCourses_DoesNotRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -158,11 +156,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task FEProviderHasCourses_DoesRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-            await CreateCourses(providerId, count: 1);
+            await CreateCourses(provider.ProviderId, count: 1);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -178,11 +176,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ApprenticeshipProviderHasNoApprenticeships_DoesNotRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -198,13 +196,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ApprenticeshipProviderHasApprenticeships_DoesRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
 
-            await CreateApprenticeships(providerId, count: 1);
+            await CreateApprenticeships(provider.ProviderId, count: 1);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -220,10 +218,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task TLevelsProviderHasNoTLevels_DoesNotRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -239,14 +237,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task TLevelsProviderHasTLevels_DoesRenderViewAndEditLink()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels);
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
-            var venues = await CreateVenues(providerId, count: 2);
-            await CreateTLevels(providerId, tLevelDefinitions, venues, 3);
+            var venues = await CreateVenues(provider.ProviderId, count: 2);
+            await CreateTLevels(provider.ProviderId, tLevelDefinitions, venues, 3);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -262,20 +260,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task Notifications_WithPastStartDateRunCountGreaterThanZero_DisplaysCourseStartDatesNotification()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE);
 
             await TestData.CreateCourse(
-                    providerId,
-                    createdBy: User.ToUserInfo(),
-                    configureCourseRuns: courseRunBuilder =>
-                        courseRunBuilder.WithCourseRun(
-                            CourseDeliveryMode.ClassroomBased,
-                            CourseStudyMode.FullTime,
-                            CourseAttendancePattern.Daytime,
-                            startDate: Clock.UtcNow.AddMonths(-1).Date));
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                configureCourseRuns: courseRunBuilder =>
+                    courseRunBuilder.WithCourseRun(
+                        CourseDeliveryMode.ClassroomBased,
+                        CourseStudyMode.FullTime,
+                        CourseAttendancePattern.Daytime,
+                        startDate: Clock.UtcNow.AddMonths(-1).Date));
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -293,20 +291,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task Notifications_WithMigrationCourseStatusCourseRunCountGreaterThanZero_DisplaysMigrationNotification(CourseStatus courseStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE);
 
             await TestData.CreateCourse(
-                    providerId,
-                    createdBy: User.ToUserInfo(),
-                    courseStatus: courseStatus,
-                    configureCourseRuns: courseRunBuilder =>
-                        courseRunBuilder.WithCourseRun(
-                            CourseDeliveryMode.ClassroomBased,
-                            CourseStudyMode.FullTime,
-                            CourseAttendancePattern.Daytime));
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                courseStatus: courseStatus,
+                configureCourseRuns: courseRunBuilder =>
+                    courseRunBuilder.WithCourseRun(
+                        CourseDeliveryMode.ClassroomBased,
+                        CourseStudyMode.FullTime,
+                        CourseAttendancePattern.Daytime));
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -322,11 +320,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task Notifications_WithBulkUploadInProgress_DisplaysProcessingCoursesBulkUploadNotification()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE,
                 bulkUploadInProgress: true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -342,20 +340,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task Notifications_WithBulkUploadErrorOrPendingCountGreaterThanZero_DisplaysCoursesBulkUploadErrorNotification()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE);
 
             await TestData.CreateCourse(
-                    providerId,
-                    createdBy: User.ToUserInfo(),
-                    courseStatus: CourseStatus.BulkUploadPending,
-                    configureCourseRuns: courseRunBuilder =>
-                        courseRunBuilder.WithCourseRun(
-                            CourseDeliveryMode.ClassroomBased,
-                            CourseStudyMode.FullTime,
-                            CourseAttendancePattern.Daytime));
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                courseStatus: CourseStatus.BulkUploadPending,
+                configureCourseRuns: courseRunBuilder =>
+                    courseRunBuilder.WithCourseRun(
+                        CourseDeliveryMode.ClassroomBased,
+                        CourseStudyMode.FullTime,
+                        CourseAttendancePattern.Daytime));
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -371,20 +369,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task Notification_WithBulkUploadReadyToGoLiveCourseRunCountGreaterThanZero_DisplaysCoursesBulkUploadSuccessfulNotification()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE);
 
             await TestData.CreateCourse(
-                    providerId,
-                    createdBy: User.ToUserInfo(),
-                    courseStatus: CourseStatus.BulkUploadReadyToGoLive,
-                    configureCourseRuns: courseRunBuilder =>
-                        courseRunBuilder.WithCourseRun(
-                            CourseDeliveryMode.ClassroomBased,
-                            CourseStudyMode.FullTime,
-                            CourseAttendancePattern.Daytime));
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                courseStatus: CourseStatus.BulkUploadReadyToGoLive,
+                configureCourseRuns: courseRunBuilder =>
+                    courseRunBuilder.WithCourseRun(
+                        CourseDeliveryMode.ClassroomBased,
+                        CourseStudyMode.FullTime,
+                        CourseAttendancePattern.Daytime));
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -400,18 +398,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task Notification_WithBulkUploadReadyToGoLiveApprenticeshipsCountGreaterThanZero_DisplaysApprenticeshipsBulkUploadSuccessfulNotification()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships);
 
             var standard = await TestData.CreateStandard(123, 456, "TestStandard");
 
             await TestData.CreateApprenticeship(
-                providerId,
+                provider.ProviderId,
                 standard,
                 User.ToUserInfo(),
                 ApprenticeshipStatus.BulkUploadReadyToGoLive);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -427,9 +425,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ProviderTypeNone_RendersNewProviderMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.None);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -448,9 +446,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         public async Task ProviderTypeNotNone_DoesNotRenderNewProviderMessage(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

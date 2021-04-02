@@ -21,10 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
         public async Task RendersExpectedOutput()
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 contacts: new[]
@@ -49,16 +46,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
                     }
                 });
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var providerUserSignInDate = new DateTime(2018, 4, 12, 11, 30, 0, DateTimeKind.Utc);
-            await TestData.CreateUserSignIn(providerUserId, providerUserSignInDate);
+            await TestData.CreateUserSignIn(providerUser.UserId, providerUserSignInDate);
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"providerinfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerinfopaneltests/{provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -86,10 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
         public async Task NoPTypeContactRendersExpectedOutput()
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 contacts: new[]
@@ -114,16 +107,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
                     }
                 });
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var providerUserSignInDate = new DateTime(2018, 4, 12, 11, 30, 0, DateTimeKind.Utc);
-            await TestData.CreateUserSignIn(providerUserId, providerUserSignInDate);
+            await TestData.CreateUserSignIn(providerUser.UserId, providerUserSignInDate);
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"providerinfopaneltests/{providerId}");
+            var response = await HttpClient.GetAsync($"providerinfopaneltests/{provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();

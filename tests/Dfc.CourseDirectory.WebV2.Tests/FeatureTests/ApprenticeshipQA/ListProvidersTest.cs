@@ -19,9 +19,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task Get_ProviderUserCannotAccess(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync("apprenticeship-qa");
@@ -37,46 +37,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var provider1Ukprn = 12345;
-            var provider1UserId = $"user-{provider1Ukprn}";
-            var provider1Id = await TestData.CreateProvider(
-                ukprn: provider1Ukprn,
+            var provider1 = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
-            await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User", provider1Id);
-            await TestData.CreateUserSignIn(provider1UserId, new DateTime(2018, 4, 1, 10, 4, 3));
-            var provider1ApprenticeshipId = (await TestData.CreateApprenticeship(provider1Id, standard, createdBy: User.ToUserInfo())).Id;
+            var provider1User = await TestData.CreateUser(providerId: provider1.ProviderId);
+            await TestData.CreateUserSignIn(provider1User.UserId, new DateTime(2018, 4, 1, 10, 4, 3));
+            var provider1ApprenticeshipId = (await TestData.CreateApprenticeship(provider1.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
             await TestData.CreateApprenticeshipQASubmission(
-                provider1Id,
+                provider1.ProviderId,
                 submittedOn: new DateTime(2018, 4, 1, 12, 30, 37),
-                submittedByUserId: provider1UserId,
+                submittedByUserId: provider1User.UserId,
                 providerMarketingInformation: "Provider 1 overview",
                 apprenticeshipIds: new[] { provider1ApprenticeshipId });
 
-            var provider2Ukprn = 23456;
-            var provider2UserId = $"user-{provider2Ukprn}";
-            var provider2Id = await TestData.CreateProvider(
-                ukprn: provider2Ukprn,
+            var provider2 = await TestData.CreateProvider(
                 providerName: "Provider 2",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
-            await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User", provider2Id);
-            await TestData.CreateUserSignIn(provider2UserId, new DateTime(2019, 5, 3, 14, 55, 17));
-            var provider2ApprenticeshipId = (await TestData.CreateApprenticeship(provider2Id, standard, createdBy: User.ToUserInfo())).Id;
+            var provider2User = await TestData.CreateUser(providerId: provider2.ProviderId);
+            await TestData.CreateUserSignIn(provider2User.UserId, new DateTime(2019, 5, 3, 14, 55, 17));
+            var provider2ApprenticeshipId = (await TestData.CreateApprenticeship(provider2.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
             await TestData.CreateApprenticeshipQASubmission(
-                provider2Id,
+                provider2.ProviderId,
                 submittedOn: new DateTime(2019, 5, 3, 15, 01, 23),
-                submittedByUserId: provider2UserId,
+                submittedByUserId: provider2User.UserId,
                 providerMarketingInformation: "Provider 2 overview",
                 apprenticeshipIds: new[] { provider2ApprenticeshipId });
 
-            var provider3Ukprn = 345678;
-            var provider3UserId = $"user-{provider3Ukprn}";
-            var provider3Id = await TestData.CreateProvider(
-                ukprn: provider3Ukprn,
+            var provider3 = await TestData.CreateProvider(
                 providerName: "Provider 3",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
-            await TestData.CreateUser(provider3UserId, "guy@provider3.com", "Provider 3", "User", provider3Id);
-            await TestData.CreateUserSignIn(provider3UserId, new DateTime(2019, 2, 6, 7, 22, 9));
+            var provider3User = await TestData.CreateUser(providerId: provider3.ProviderId);
+            await TestData.CreateUserSignIn(provider3User.UserId, new DateTime(2019, 2, 6, 7, 22, 9));
 
             // TODO Add more here once we have a way of modelling other statuses
 
@@ -93,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var firstNewProviderRow = newProviderRows[0];
             Assert.Equal("Provider 3", firstNewProviderRow.QuerySelector(":nth-child(1)").TextContent);
-            Assert.Equal("345678", firstNewProviderRow.QuerySelector(":nth-child(2)").TextContent);
+            Assert.Equal(provider3.Ukprn.ToString(), firstNewProviderRow.QuerySelector(":nth-child(2)").TextContent);
             Assert.Equal("06 Feb 2019", firstNewProviderRow.QuerySelector(":nth-child(3)").TextContent);
 
             var submitted = doc.QuerySelector("#submitted");
@@ -101,12 +92,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var firstSubmittedRow = submittedRows[0];
             Assert.Equal("Provider 2", firstSubmittedRow.QuerySelector(":nth-child(1)").TextContent);
-            Assert.Equal("23456", firstSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
+            Assert.Equal(provider2.Ukprn.ToString(), firstSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
             Assert.Equal("03 May 2019", firstSubmittedRow.QuerySelector(":nth-child(3)").TextContent);
 
             var secondSubmittedRow = submittedRows[1];
             Assert.Equal("Provider 1", secondSubmittedRow.QuerySelector(":nth-child(1)").TextContent);
-            Assert.Equal("12345", secondSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
+            Assert.Equal(provider1.Ukprn.ToString(), secondSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
             Assert.Equal("01 Apr 2018", secondSubmittedRow.QuerySelector(":nth-child(3)").TextContent);
         }
 

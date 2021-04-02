@@ -29,11 +29,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
         public async Task ProviderSearch_Get_WithNonAdminUser_ReturnsForbidden(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/provider-search");
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -48,11 +48,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
         public async Task ProviderSearch_Get_WithAdminUser_ReturnsExpectedContent(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/provider-search");
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -154,10 +154,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
         public async Task OnboardProvider_Post_WithNonAdminUser_ReturnsForbidden(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add(nameof(OnboardProviderCommand.ProviderId), providerId)
+                .Add(nameof(OnboardProviderCommand.ProviderId), provider.ProviderId)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/provider-search/onboard")
@@ -165,7 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
                 Content = requestContent
             };
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -180,10 +180,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
         public async Task OnboardProvider_Post_WithAdminUser_OnboardsProviderAndRedirects(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(status: ProviderStatus.Registered);
+            var provider = await TestData.CreateProvider(status: ProviderStatus.Registered);
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .Add(nameof(OnboardProviderCommand.ProviderId), providerId)
+                .Add(nameof(OnboardProviderCommand.ProviderId), provider.ProviderId)
                 .ToContent();
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/provider-search/onboard")
@@ -191,14 +191,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
                 Content = requestContent
             };
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
 
             //Assert
             response.StatusCode.Should().Be(StatusCodes.Status302Found);
-            response.Headers.Location.OriginalString.Should().Be($"/dashboard?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/dashboard?providerId={provider.ProviderId}");
         }
 
         [Fact]

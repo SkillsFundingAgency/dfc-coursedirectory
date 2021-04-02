@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         public async Task Get_StoresPassedStandardInState()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"new-apprenticeship-provider/standard-selected?" +
-                $"providerId={providerId}&" +
+                $"providerId={provider.ProviderId}&" +
                 $"ffiid={mptxInstance.InstanceId}&" +
                 $"standardCode=123&version=1");
 
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be(
-                $"/new-apprenticeship-provider/apprenticeship-details?ffiid={mptxInstance.InstanceId}&providerId={providerId}");
+                $"/new-apprenticeship-provider/apprenticeship-details?ffiid={mptxInstance.InstanceId}&providerId={provider.ProviderId}");
 
             using (new AssertionScope())
             {

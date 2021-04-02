@@ -27,12 +27,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
         public async Task List_Get_ProviderIsNotTLevelsProvider_ReturnsForbidden(ProviderType providerType)
         {
             //Arange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels?providerId={providerId}");
+                $"/t-levels?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -45,12 +45,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
         public async Task List_Get_WithNoTLevels_ReturnsExpectedContent()
         {
             //Arange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels?providerId={providerId}");
+                $"/t-levels?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -70,22 +70,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
 
             var providerTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: providerTLevelDefinitionIds);
 
-            var venue1 = await TestData.CreateVenue(providerId, venueName: "TestVenue1");
-            var venue2 = await TestData.CreateVenue(providerId, venueName: "TestVenue2");
+            var venue1 = await TestData.CreateVenue(provider.ProviderId, venueName: "TestVenue1");
+            var venue2 = await TestData.CreateVenue(provider.ProviderId, venueName: "TestVenue2");
 
             var user = await TestData.CreateUser();
 
-            var tLevel1 = await CreateTLevel(providerId, tLevelDefinitions.First().TLevelDefinitionId, new[] { venue1.Id }, user, DateTime.UtcNow.AddMonths(1).Date, 1);
-            var tLevel2 = await CreateTLevel(providerId, tLevelDefinitions.Skip(1).First().TLevelDefinitionId, new[] { venue1.Id, venue2.Id }, user, DateTime.UtcNow.AddMonths(2).Date, 2);
-            var tLevel3 = await CreateTLevel(providerId, tLevelDefinitions.First().TLevelDefinitionId, new[] { venue2.Id }, user, DateTime.UtcNow.AddMonths(6).Date, 3);
+            var tLevel1 = await CreateTLevel(provider.ProviderId, tLevelDefinitions.First().TLevelDefinitionId, new[] { venue1.Id }, user, DateTime.UtcNow.AddMonths(1).Date, 1);
+            var tLevel2 = await CreateTLevel(provider.ProviderId, tLevelDefinitions.Skip(1).First().TLevelDefinitionId, new[] { venue1.Id, venue2.Id }, user, DateTime.UtcNow.AddMonths(2).Date, 2);
+            var tLevel3 = await CreateTLevel(provider.ProviderId, tLevelDefinitions.First().TLevelDefinitionId, new[] { venue2.Id }, user, DateTime.UtcNow.AddMonths(6).Date, 3);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels?providerId={providerId}");
+                $"/t-levels?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

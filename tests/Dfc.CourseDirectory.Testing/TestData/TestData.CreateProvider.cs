@@ -7,13 +7,13 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 using Xunit;
+using Provider = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Provider;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<Guid> CreateProvider(
-            int ukprn = 12345,
+        public async Task<Provider> CreateProvider(
             string providerName = "Test Provider",
             ProviderType providerType = ProviderType.FE | ProviderType.Apprenticeships,
             string providerStatus = "Active",
@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Testing
             }
 
             var providerId = Guid.NewGuid();
+            var ukprn = _uniqueIdHelper.GenerateProviderUkprn();
 
             var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateProvider()
             {
@@ -107,7 +108,8 @@ namespace Dfc.CourseDirectory.Testing
                 await SetProviderTLevelDefinitions(providerId, tLevelDefinitionIds);
             }
 
-            return providerId;
+            return await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetProviderById() { ProviderId = providerId }));
         }
     }
 

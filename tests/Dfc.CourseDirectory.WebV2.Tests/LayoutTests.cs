@@ -89,14 +89,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task AdminUserWithFEOnlyProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -134,14 +134,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task AdminUserWithApprenticeshipsOnlyProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -179,14 +179,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task AdminUserWithTLevelsOnlyProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -222,14 +222,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task AdminUserWithFEAndApprenticeshipsAndTLevelsProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -269,11 +269,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUserForFEOnlyProvider_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE,
                 providerName: "Test Provider");
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
@@ -306,11 +306,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUserForApprenticeshipsOnlyProvider_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 providerName: "Test Provider");
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
@@ -343,11 +343,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUserForTLevelsOnlyProvider_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 providerName: "Test Provider");
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
@@ -378,11 +378,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUserForFEAndApprenticeshipsAndTLevels_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels,
                 providerName: "Test Provider");
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
@@ -419,14 +419,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             string expectedHref)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 providerName: "Test Provider");
 
             await User.AsDeveloper();
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -445,11 +445,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             string expectedHref)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 providerName: "Test Provider");
 
-            await User.AsProviderUser(providerId, providerType);
+            await User.AsProviderUser(provider.ProviderId, providerType);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
@@ -468,12 +468,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Test Provider",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
@@ -491,12 +491,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task AdminUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Test Provider",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync($"/tests/empty-provider-context");

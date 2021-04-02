@@ -2,14 +2,16 @@ using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.BulkUpload
 {
-    public class BulkUploadTests :MvcTestBase
+    public class BulkUploadTests : MvcTestBase
     {
-        public BulkUploadTests(CourseDirectoryApplicationFactory factory) : base(factory) { }
+        public BulkUploadTests(CourseDirectoryApplicationFactory factory)
+            : base(factory)
+        {
+        }
 
         [Theory]
         [InlineData(1,"1 course")]
@@ -17,12 +19,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.BulkUpload
         public async Task Get_PublishYourFile_RendersPendingCount(int courseCount, string expectedCourseCountText)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, providerId);
-            var providerUser = await TestData.CreateUser(providerId: providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
             for (var i = 0; i < courseCount; i++)
             {
-                await TestData.CreateCourse(providerId, createdBy: providerUser, courseStatus: CourseStatus.BulkUploadReadyToGoLive);
+                await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser, courseStatus: CourseStatus.BulkUploadReadyToGoLive);
             }
 
             // Act

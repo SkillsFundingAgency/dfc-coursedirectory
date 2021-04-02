@@ -49,9 +49,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
             // Arrange
             var providerType = ProviderType.FE;
 
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
-            await User.AsProviderUser(providerId, providerType);
+            await User.AsProviderUser(provider.ProviderId, providerType);
 
             var request = new HttpRequestMessage(HttpMethod.Get, "ProviderTypeAuthorizationHandlerTests/FeOnly");
 
@@ -68,9 +68,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
             // Arrange
             var providerType = ProviderType.Apprenticeships | ProviderType.FE;
 
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
-            await User.AsProviderUser(providerId, providerType);
+            await User.AsProviderUser(provider.ProviderId, providerType);
 
             var request = new HttpRequestMessage(HttpMethod.Get, "ProviderTypeAuthorizationHandlerTests/FeOnly");
 
@@ -88,9 +88,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
         public async Task MultipleProviderTypesPermitted_AllowsEither(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
-            await User.AsProviderUser(providerId, providerType);
+            await User.AsProviderUser(provider.ProviderId, providerType);
 
             var request = new HttpRequestMessage(HttpMethod.Get, "ProviderTypeAuthorizationHandlerTests/FeOrApprenticeship");
 

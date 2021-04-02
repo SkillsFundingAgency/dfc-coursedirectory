@@ -39,18 +39,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_UserCannotAccessProvider_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
-                ukprn: 12345,
+            var provider = await TestData.CreateProvider(
                 providerName: "My Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Active",
                 alias: "My Trading Name");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
+            var anotherProvider = await TestData.CreateProvider();
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -67,16 +66,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ValidRequest_RendersExpectedContent(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
-                ukprn: 12345,
+            var provider = await TestData.CreateProvider(
                 providerName: "My Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Active",
                 alias: "My Trading Name");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -87,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
             Assert.Equal("My Provider", doc.GetElementByTestId("ProviderName").TextContent);
             Assert.Equal("Active", doc.GetSummaryListValueWithKey("Course directory status"));
-            Assert.Equal("12345", doc.GetSummaryListValueWithKey("UKPRN"));
+            Assert.Equal(provider.Ukprn.ToString(), doc.GetSummaryListValueWithKey("UKPRN"));
             Assert.Equal("My Trading Name", doc.GetSummaryListValueWithKey("Trading name"));
             Assert.Equal("FE Courses", doc.GetSummaryListValueWithKey("Provider type"));
         }
@@ -99,15 +97,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(TestUserType.ProviderUser)]
         public async Task Get_ValidRequestWithTLevelsProviderWithSelectedTLevelsDefinitions_RendersExpectedContent(TestUserType userType)
         {
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.TLevels);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.TLevels);
 
             var tLevelDefinitionIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => Guid.NewGuid()).Select(id => TestData.CreateTLevelDefinition(tLevelDefinitionId: id, name: $"Name-{id}")));
             var selectedTLevelDefinitionIds = tLevelDefinitionIds.OrderBy(_ => Guid.NewGuid()).Take(2).ToArray();
-            await TestData.SetProviderTLevelDefinitions(providerId, selectedTLevelDefinitionIds);
+            await TestData.SetProviderTLevelDefinitions(provider.ProviderId, selectedTLevelDefinitionIds);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -139,16 +137,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_UserIsAdmin_DoesRenderChangeProviderTypeLink(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
-                ukprn: 12345,
+            var provider = await TestData.CreateProvider(
                 providerName: "My Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Active",
                 alias: "My Trading Name");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -166,16 +163,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_UserIsNotAdmin_DoesNotRenderChangeProviderTypeLink(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
-                ukprn: 12345,
+            var provider = await TestData.CreateProvider(
                 providerName: "My Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Active",
                 alias: "My Trading Name");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -194,11 +190,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ApprenticeshipProviderType_RendersMarketingInformation(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 marketingInformation: "Marketing information");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
             await User.AsHelpdesk();
 
@@ -218,11 +214,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_NotApprenticeshipProviderType_DoesNotRenderMarketingInformation(ProviderType providerType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: providerType,
                 marketingInformation: "Marketing information");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
             await User.AsHelpdesk();
 
@@ -242,13 +238,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_UserIsAdmin_DoesRenderChangeMarketingInformationLink(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 marketingInformation: "Marketing information");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -266,13 +262,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_UserIsNotAdmin_DoesNotRenderChangeMarketingInformationLink(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships,
                 marketingInformation: "Marketing information");
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -292,12 +288,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             string expectedDisplayName)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerName: "My Provider",
                 alias: "My Trading Name",
                 displayNameSource: displayNameSource);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -315,12 +311,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ProviderHasAlias_RendersChangeDisplayNameLink(ProviderDisplayNameSource displayNameSource)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerName: "My Provider",
                 alias: "My Trading Name",
                 displayNameSource: displayNameSource);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -339,15 +335,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             ProviderDisplayNameSource displayNameSource)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "My Provider",
                 alias: "My Trading Name",
                 displayNameSource: displayNameSource);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={providerId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.SendAsync(request);

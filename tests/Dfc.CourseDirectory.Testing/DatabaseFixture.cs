@@ -71,6 +71,7 @@ namespace Dfc.CourseDirectory.Testing
             services.AddSingleton<IClock, MutableClock>();
             services.AddSingleton<InMemoryDocumentStore>();
             services.AddTransient<TestData>();
+            services.AddSingleton<UniqueIdHelper>();
             services.AddSingleton<SqlQuerySpy>();
             services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
             services.AddTransient<SqlDataSync>();

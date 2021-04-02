@@ -21,21 +21,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            await TestData.CreateVenue(providerId, venueName: "Venue 1");
-            await TestData.CreateVenue(providerId, venueName: "Venue 2");
+            await TestData.CreateVenue(provider.ProviderId, venueName: "Venue 1");
+            await TestData.CreateVenue(provider.ProviderId, venueName: "Venue 2");
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -56,18 +56,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Post_MissingVenueId_RendersErrorMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Radius", 15)
@@ -91,20 +91,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Post_InvalidVenueId_RendersErrorMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var invalidVenueId = Guid.NewGuid();
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", invalidVenueId)
@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Post_BlockedVenueId_RendersErrorMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var venueId = Guid.NewGuid();
 
@@ -140,13 +140,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 });
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
@@ -171,20 +171,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Post_NotNationalMissingRadius_RendersErrorMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
@@ -208,20 +208,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Post_MissingDeliveryModes_RendersErrorMessage()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
@@ -244,20 +244,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task Post_ValidRequest_UpdatesParentStateAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
@@ -285,20 +285,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task GetRemove_ModeNotEdit_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            await TestData.CreateVenue(providerId, venueName: "The Venue");
+            await TestData.CreateVenue(provider.ProviderId, venueName: "The Venue");
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -312,15 +312,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task GetRemove_ValidRequest_ReturnsExpectedContent()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            var venueId = (await TestData.CreateVenue(providerId, venueName: "The Venue")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, venueName: "The Venue")).Id;
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
                 FlowModel.Edit(
-                    providerId,
+                    provider.ProviderId,
                     venueId,
                     radius: 5,
                     new[] { ApprenticeshipDeliveryMode.BlockRelease }),
@@ -329,7 +329,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -346,18 +346,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task PostRemove_ModeNotEdit_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
-                FlowModel.Add(providerId, cancelable: true),
+                FlowModel.Add(provider.ProviderId, cancelable: true),
                 new Dictionary<string, object>()
                 {
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -374,15 +374,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         public async Task PostRemove_ValidRequest_UpdatesParentStateAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
             var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
                 parentMptxInstance.InstanceId,
                 FlowModel.Edit(
-                    providerId,
+                    provider.ProviderId,
                     venueId,
                     radius: 5,
                     new[] { ApprenticeshipDeliveryMode.BlockRelease }),
@@ -391,7 +391,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                     { "ReturnUrl", "callback" }
                 });
 
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
