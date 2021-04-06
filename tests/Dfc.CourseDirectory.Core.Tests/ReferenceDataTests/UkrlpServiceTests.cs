@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
-using UkrlpService;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
@@ -16,34 +17,48 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         [Fact]
         public async Task DeserializesSingleProvider()
         {
+            // Arrange
+
+            if (!int.TryParse(Environment.GetEnvironmentVariable("UkrlpTestServerPort"), out var port))
+            {
+                port = 49178;
+            }
+
+            var host = $"http://localhost:{port}";
+            var endpoint = "UkrlpProviderQueryWS6/ProviderQueryServiceV6";
+
+            using var server = WebHost.CreateDefaultBuilder()
+                .UseUrls(host)
+                .Configure(app =>
+                {
+                    app.UseRouting();
+
+                    app.UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapPost(endpoint, async httpContext =>
+                        {
+                            var response = File.ReadAllBytes("ReferenceDataTests/UkrlpResponse.xml");
+
+                            httpContext.Response.Headers["Content-Type"] = "text/xml;charset=utf-8";
+                            await httpContext.Response.Body.WriteAsync(response);
+                        });
+                    });
+                })
+                .Build();
+
+            await server.StartAsync();
+
             var ukrlpWcfClientBuilder = new TestUkrlpWcfClientFactory
             {
-                Endpoint = GetEndpoint()
+                Endpoint = $"{host}/{endpoint}"
             };
-            using var server = BuildServer(ukrlpWcfClientBuilder.Endpoint);
-            var requestListener = MakeRequestListener(server);
-
-            // Theoretically backgrounding the listener like this could result in a race if the server
-            // isn't ready for the first request; but it hasn't come up yet. I haven't come up with
-            // a nice way of preventing it because the HttpListener works by blocking till a request arrives.
-            requestListener.Start();
 
             var ukrlpService = new ReferenceData.Ukrlp.UkrlpService(ukrlpWcfClientBuilder, NullLogger<ReferenceData.Ukrlp.UkrlpService>.Instance);
-            ProviderRecordStructure returnedProviderData;
-            try
-            {
-                returnedProviderData = (await ukrlpService.GetProviderData(new[] { 10040271 })).Values.SingleOrDefault();
-            }
-            catch (TimeoutException)
-            {
-                // TimeoutException is thrown if there's an exception thrown within the test HttpListener.
-                // The actual exception in the Listener is only thrown when Wait is called, which
-                // then allows us to see it in our test results.
-                requestListener.Wait();
 
-                // If Wait didn't throw then something else went wrong, re-throw the timeout:
-                throw;
-            }
+            // Act
+            var returnedProviderData = (await ukrlpService.GetProviderData(new[] { 10040271 })).Values.SingleOrDefault();
+
+            // Assert
             returnedProviderData.Should().NotBeNull();
             using (new AssertionScope())
             {
@@ -115,56 +130,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 contactP.ContactWebsiteAddress.Should().BeNull();
                 // contactP.LastUpdated  - ignoring, not in use
             }
-        }
-
-        private static string GetEndpoint()
-        {
-            int port = 49178; // doesn't seem to be an easy way of finding a free port so picked a port in the dynamic port range
-            // Allow overriding port number in case we have a clash (particularly in CI).
-            if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("UkrlpTestServerPort")))
-            {
-                port = int.Parse(Environment.GetEnvironmentVariable("UkrlpTestServerPort"));
-            }
-
-            return $"http://localhost:{port}/";
-        }
-
-        /// <param name="listenerAddress">e.g. http://localhost:9999/</param>
-        private static HttpListener BuildServer(string listenerAddress)
-        {
-            var server = new HttpListener();
-            server.Prefixes.Add(listenerAddress);
-            if (!HttpListener.IsSupported)
-            {
-                throw new Exception("HttpListener.IsSupported returned 'false'. The tests rely on this being available.");
-            }
-            server.Start();
-            return server;
-        }
-
-        private static Task MakeRequestListener(HttpListener server)
-        {
-            return new Task(() =>
-            {
-                var context = WaitForRequest(server);
-                RespondToRequest(context);
-            });
-        }
-
-        private static void RespondToRequest(HttpListenerContext context)
-        {
-            var response = context.Response;
-            response.AddHeader("Content-Type", "text/xml;charset=utf-8");
-            var buffer = File.ReadAllBytes("ReferenceDataTests/UkrlpResponse.xml");
-            response.ContentLength64 = buffer.Length;
-            var output = response.OutputStream;
-            output.Write(buffer, 0, buffer.Length);
-            output.Close();
-        }
-
-        private static HttpListenerContext WaitForRequest(HttpListener server)
-        {
-            return server.GetContext();
         }
     }
 }
