@@ -21,8 +21,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task AdminUsers_AreNotBlocked(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -43,14 +43,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUsersForSameProviderAsVenue_AreNotBlocked(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/AuthorizeVenueAttributeTests/{venueId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -65,15 +65,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUsersForDifferentProviderAsVenue_AreBlocked(TestUserType userType)
         {
             // Arrange
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var anotherProvider = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/AuthorizeVenueAttributeTests/{venueId}");
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -86,8 +86,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task UnauthenticatedUser_IsBlocked()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,

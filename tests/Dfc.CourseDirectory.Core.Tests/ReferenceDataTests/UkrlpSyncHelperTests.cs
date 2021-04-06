@@ -55,10 +55,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
             // Arrange
-            const int ukprn = 1234567;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Test Provider",
                 providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerStatus: "Provider deactivated, not verified",
@@ -83,23 +80,23 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                     }
                 });
 
-            var ukrlpData = GenerateUkrlpProviderData(ukprn);
+            var ukrlpData = GenerateUkrlpProviderData(provider.Ukprn);
             var ukrlpContact = ukrlpData.ProviderContact.Single();
 
-            var ukrlpSyncHelper = SetupUkrlpSyncHelper(ukprn, ukrlpData);
+            var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
 
             ICollection<UpdateProviderFromUkrlpData> capturedUpdateCommands = new List<UpdateProviderFromUkrlpData>();
             CosmosDbQueryDispatcher.Setup(mock => mock.ExecuteQuery(Capture.In(capturedUpdateCommands)));
 
             // Act
-            await ukrlpSyncHelper.SyncProviderData(ukprn);
+            await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
 
             // Assert
             var updateCommand = capturedUpdateCommands.Should().ContainSingle().Subject;
             updateCommand.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
             updateCommand.DateUpdated.Should().Be(Clock.UtcNow);
             updateCommand.ProviderName.Should().Be(ukrlpData.ProviderName);
-            updateCommand.ProviderId.Should().Be(providerId);
+            updateCommand.ProviderId.Should().Be(provider.ProviderId);
             updateCommand.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
             var actualContact = updateCommand.Contacts.Should().ContainSingle().Subject;
             AssertContactMapping(actualContact, ukrlpContact);

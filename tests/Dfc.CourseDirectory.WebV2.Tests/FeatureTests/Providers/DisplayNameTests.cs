@@ -22,16 +22,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ProviderUser_ReturnsForbidden()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Provider name",
                 alias: "Trading name");
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"providers/display-name?providerId={providerId}");
+                $"providers/display-name?providerId={provider.ProviderId}");
 
-            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -61,13 +61,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Get_ProviderHasNoTradingName_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider name",
                 alias: null);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"providers/display-name?providerId={providerId}");
+                $"providers/display-name?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -84,14 +84,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             string expectedCheckedElementId)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider name",
                 alias: "Trading name",
                 displayNameSource: displayNameSource);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"providers/display-name?providerId={providerId}");
+                $"providers/display-name?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ProviderUser_ReturnsForbidden()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.FE | ProviderType.Apprenticeships,
                 providerName: "Provider name",
                 alias: "Trading name");
@@ -118,12 +118,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"providers/display-name?providerId={providerId}")
+                $"providers/display-name?providerId={provider.ProviderId}")
             {
                 Content = content
             };
 
-            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ProviderHasNoTradingName_ReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider name",
                 alias: null);
 
@@ -170,7 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"providers/display-name?providerId={providerId}")
+                $"providers/display-name?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -186,7 +186,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ValidRequest_UpdatesDisplayNameSourceAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider name",
                 alias: "Trading name");
 
@@ -196,7 +196,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"providers/display-name?providerId={providerId}")
+                $"providers/display-name?providerId={provider.ProviderId}")
             {
                 Content = content
             };
@@ -206,10 +206,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             // Assert
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
-            Assert.Equal($"/providers?providerId={providerId}", response.Headers.Location.OriginalString);
+            Assert.Equal($"/providers?providerId={provider.ProviderId}", response.Headers.Location.OriginalString);
 
             SqlQuerySpy.VerifyQuery<SetProviderDisplayNameSource, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == providerId && q.DisplayNameSource == Core.Models.ProviderDisplayNameSource.TradingName);
+                q.ProviderId == provider.ProviderId && q.DisplayNameSource == ProviderDisplayNameSource.TradingName);
         }
     }
 }

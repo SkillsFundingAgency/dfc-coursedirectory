@@ -26,24 +26,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task Post_ProviderUserCannotAccess(TestUserType testUserType)
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -55,12 +51,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            await User.AsTestUser(testUserType, providerId);
+            await User.AsTestUser(testUserType, provider.ProviderId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
             // Act
-            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/complete", requestContent);
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{provider.ProviderId}/complete", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -92,26 +88,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task Post_StatusNotInProgressReturnsBadRequest(ApprenticeshipQAStatus status)
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: status);
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             if (status != ApprenticeshipQAStatus.NotStarted)
             {
                 var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                    providerId,
+                    provider.ProviderId,
                     submittedOn: Clock.UtcNow,
-                    submittedByUserId: providerUserId,
+                    submittedByUserId: providerUser.UserId,
                     providerMarketingInformation: "The overview",
                     apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -134,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
             // Act
-            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/complete", requestContent);
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{provider.ProviderId}/complete", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -144,24 +136,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         public async Task Post_SubmissionOutcomeNotKnownReturnsBadRequest()
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -170,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
             // Act
-            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/complete", requestContent);
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{provider.ProviderId}/complete", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -185,24 +173,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             bool expectApprenticeshipToBeMadeLive)
         {
             // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
+            var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
 
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
+                provider.ProviderId,
                 submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
+                submittedByUserId: providerUser.UserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
@@ -219,7 +203,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
             // Act
-            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/complete", requestContent);
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{provider.ProviderId}/complete", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -230,12 +214,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var newStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetProviderApprenticeshipQAStatus()
             {
-                ProviderId = providerId
+                ProviderId = provider.ProviderId
             }));
             Assert.Equal(expectedStatus, newStatus);
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateApprenticeshipStatus, OneOf<NotFound, Success>>(
-                q => q.ApprenticeshipId == apprenticeshipId && q.ProviderUkprn == ukprn && q.Status == 1,
+                q => q.ApprenticeshipId == apprenticeshipId && q.ProviderUkprn == provider.Ukprn && q.Status == 1,
                 expectApprenticeshipToBeMadeLive ? Times.Once() : Times.Never());
         }
     }

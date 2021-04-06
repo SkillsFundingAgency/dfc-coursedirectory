@@ -22,8 +22,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId, email: "person@provider.com")).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, email: "person@provider.com")).Id;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/email");
 
@@ -43,8 +43,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Get_NewEmailAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId, email: "person@provider.com")).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, email: "person@provider.com")).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state => state.Email = existingValue);
@@ -67,10 +67,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_UserCannotAccessVenue_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
+            var anotherProvider = await TestData.CreateProvider();
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Email", "user@provider.com")
@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 Content = requestContent
             };
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -116,8 +116,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_InvalidEmail_RendersError()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Email", "bademail")
@@ -144,8 +144,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_ValidRequest_UpdatesJourneyInstanceAndRedirects(string email)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Email", email)

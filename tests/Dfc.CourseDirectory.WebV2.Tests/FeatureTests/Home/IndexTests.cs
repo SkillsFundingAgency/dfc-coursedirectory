@@ -56,9 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Home
         public async Task ProviderUser_RedirectsToProviderDashboard(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             var request = new HttpRequestMessage(HttpMethod.Get, "/");
 

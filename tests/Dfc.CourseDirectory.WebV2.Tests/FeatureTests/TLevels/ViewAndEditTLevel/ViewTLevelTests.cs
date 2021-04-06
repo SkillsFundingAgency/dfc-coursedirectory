@@ -23,18 +23,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
         public async Task Get_UserCannotAccessTLevel_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456, providerType: ProviderType.TLevels);
+            var anotherProvider = await TestData.CreateProvider(providerType: ProviderType.TLevels);
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(providerId, venueName: "T Level venue");
-            var anotherVenue = await TestData.CreateVenue(providerId, venueName: "Another T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var anotherVenue = await TestData.CreateVenue(provider.ProviderId, venueName: "Another T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
             var website = "http://example.com/tlevel";
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinition.TLevelDefinitionId,
                 whoFor: whoFor,
                 entryRequirements: entryRequirements,
@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/t-levels/{tLevel.TLevelId}");
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -96,12 +96,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(providerId, venueName: "T Level venue");
-            var anotherVenue = await TestData.CreateVenue(providerId, venueName: "Another T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var anotherVenue = await TestData.CreateVenue(provider.ProviderId, venueName: "Another T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
             var website = "http://example.com/tlevel";
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinition.TLevelDefinitionId,
                 whoFor: whoFor,
                 entryRequirements: entryRequirements,

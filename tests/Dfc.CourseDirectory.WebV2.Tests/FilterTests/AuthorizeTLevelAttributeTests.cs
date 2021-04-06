@@ -25,16 +25,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitions.First().TLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -60,16 +60,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitions.First().TLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 HttpMethod.Get,
                 $"/AuthorizeTLevelAttributeTests/{tLevel.TLevelId}");
 
-            await User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -93,20 +93,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUsersForDifferentProviderAsCourse_AreBlocked(TestUserType userType)
         {
             // Arrange
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
+            var anotherProvider = await TestData.CreateProvider();
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitions.First().TLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 HttpMethod.Get,
                 $"/AuthorizeTLevelAttributeTests/{tLevel.TLevelId}");
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -130,16 +130,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray());
 
-            var providerUser = await TestData.CreateUser("provider-user", "user@provider.com", "Test", "User", providerId);
+            var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var tLevel = await TestData.CreateTLevel(
-                providerId,
+                provider.ProviderId,
                 tLevelDefinitions.First().TLevelDefinitionId,
                 locationVenueIds: new[] { venueId },
                 createdBy: User.ToUserInfo());

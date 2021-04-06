@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
@@ -22,9 +20,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderStatusNotPermitted_ReturnsProviderDeactivatedView(string providerStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            var provider = await TestData.CreateProvider();
 
-            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -41,9 +39,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderStatusPermitted_ReturnsOk(string providerStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            var provider = await TestData.CreateProvider();
 
-            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -57,9 +55,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderStatusIgnored_ReturnsOk(string providerStatus)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            var provider = await TestData.CreateProvider();
 
-            await User.AsProviderUser(providerId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-allowed");

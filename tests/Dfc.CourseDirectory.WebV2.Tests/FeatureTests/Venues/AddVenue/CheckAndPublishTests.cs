@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Get_ReturnsExpectedOutput(bool addressIsOutsideOfEngland)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var website = "example.com";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     AddressLine1 = addressLine1,
@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/check-publish?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/check-publish?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -91,8 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Post_ValidRequest_CreatesVenueCompletesJourneyAndRedirects()
         {
             // Arrange
-            var ukprn = 12345;
-            var providerId = await TestData.CreateProvider(ukprn: ukprn);
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -107,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var longitude = 43M;
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     AddressLine1 = addressLine1,
@@ -127,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/publish?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/publish?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -136,12 +135,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should().Be(
-                $"/venues/add/success?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/success?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId).Completed.Should().BeTrue();
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<CreateVenue, Success>(q =>
-                q.ProviderUkprn == ukprn &&
+                q.ProviderUkprn == provider.Ukprn &&
                 q.Name == name &&
                 q.Email == email &&
                 q.Telephone == telephone &&

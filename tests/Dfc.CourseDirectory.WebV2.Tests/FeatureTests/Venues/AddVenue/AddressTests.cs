@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Get_JourneyIsCompleted_ReturnsConflict()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var postcode = "AB1 2DE";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     AddressLine1 = addressLine1,
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -68,13 +68,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             string expectedPostcodeInputValue)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={requestPostcode}");
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}&postcode={requestPostcode}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var postcode = "AB1 2DE";
 
             var journeyInstance = CreateJourneyInstance(
-                providerId,
+                provider.ProviderId,
                 new AddVenueJourneyModel()
                 {
                     AddressLine1 = addressLine1,
@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Post_JourneyIsCompleted_ReturnsConflict()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -172,13 +172,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     }
                 });
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId).Complete();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("AddressLine1", addressLine1)
@@ -208,7 +208,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             string expectedErrorMessage)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var postcodeLatitude = 42M;
             var postcodeLongitude = 43M;
@@ -232,11 +232,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     }
                 });
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("AddressLine1", addressLine1)
@@ -265,7 +265,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             bool expectedNewAddressIsOutsideOfEnglandValue)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var addressLine1 = "Test Venue line 1";
             var addressLine2 = "Test Venue line 2";
@@ -295,11 +295,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     }
                 });
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("AddressLine1", addressLine1)
@@ -317,7 +317,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should()
-                .Be($"/venues/add/details?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                .Be($"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             using (new AssertionScope())
             {
@@ -337,7 +337,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         public async Task Post_ValidRequest_NormalizesPostcode()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
 
             var inputPostcode = "ab12de";
 
@@ -370,11 +370,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     }
                 });
 
-            var journeyInstance = CreateJourneyInstance(providerId);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/venues/add/address?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+                $"/venues/add/address?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("AddressLine1", addressLine1)
@@ -392,7 +392,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should()
-                .Be($"/venues/add/details?providerId={providerId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+                .Be($"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             journeyInstance = GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId);
             journeyInstance.State.Postcode.Should().Be(normalizedPostcode);

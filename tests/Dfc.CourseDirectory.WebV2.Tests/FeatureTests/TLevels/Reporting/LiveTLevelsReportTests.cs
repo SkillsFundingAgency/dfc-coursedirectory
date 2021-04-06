@@ -25,8 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
         public async Task LiveTLevelsReport_WithProviderUser_ReturnsForbidden(TestUserType userType)
         {
             //Arange
-            var providerId = await TestData.CreateProvider();
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -51,9 +51,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
             {
                 var providerName = $"TestProvider{i}";
 
-                var providerId = await TestData.CreateProvider(ukprn: i, providerName: providerName, providerType: ProviderType.TLevels, tLevelDefinitionIds: tLevelDefinitions.Select(d => d.TLevelDefinitionId).ToArray());
+                var provider = await TestData.CreateProvider(providerName: providerName, providerType: ProviderType.TLevels, tLevelDefinitionIds: tLevelDefinitions.Select(d => d.TLevelDefinitionId).ToArray());
 
-                return new { ProviderId = providerId, Ukprn = i, ProviderName = providerName };
+                return new { ProviderId = provider.ProviderId, Ukprn = provider.Ukprn, ProviderName = providerName };
             }));
 
             var tLevels = (await Task.WhenAll(providers.Select(async (p, i) =>

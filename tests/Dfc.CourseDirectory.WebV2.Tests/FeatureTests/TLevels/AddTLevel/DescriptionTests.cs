@@ -34,9 +34,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
 
@@ -53,12 +53,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 selectedTLevel.Name,
                 exemplarContent);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -85,11 +85,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
 
@@ -97,12 +97,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -119,11 +119,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
 
@@ -140,12 +140,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 selectedTLevel.Name,
                 exemplarContent);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -178,9 +178,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(providerType: providerType);
+            var provider = await TestData.CreateProvider(providerType: providerType);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -196,12 +196,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 selectedTLevel.TLevelDefinitionId,
                 selectedTLevel.Name);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}")
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoFor", whoFor)
@@ -255,11 +255,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -273,12 +273,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             journeyState.CompletedStages.Should().Be(AddTLevelJourneyCompletedStages.None);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}")
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoFor", whoFor)
@@ -314,11 +314,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
 
@@ -328,12 +328,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 selectedTLevel.TLevelDefinitionId,
                 selectedTLevel.Name);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}")
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoFor", whoFor)
@@ -366,11 +366,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
 
             var authorizedTLevelDefinitionIds = tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray();
 
-            var providerId = await TestData.CreateProvider(
+            var provider = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venueId = await TestData.CreateVenue(providerId);
+            var venueId = await TestData.CreateVenue(provider.ProviderId);
 
             var selectedTLevel = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -386,12 +386,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                 selectedTLevel.TLevelDefinitionId,
                 selectedTLevel.Name);
 
-            var journeyInstance = CreateJourneyInstance(providerId, journeyState);
+            var journeyInstance = CreateJourneyInstance(provider.ProviderId, journeyState);
             var journeyInstanceId = journeyInstance.InstanceId;
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/t-levels/add/description?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}")
+                $"/t-levels/add/description?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoFor", whoFor)
@@ -409,7 +409,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString
-                .Should().Be($"/t-levels/add/details?providerId={providerId}&ffiid={journeyInstanceId.UniqueKey}");
+                .Should().Be($"/t-levels/add/details?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}");
 
             journeyState = GetJourneyInstance<AddTLevelJourneyModel>(journeyInstanceId).State;
 

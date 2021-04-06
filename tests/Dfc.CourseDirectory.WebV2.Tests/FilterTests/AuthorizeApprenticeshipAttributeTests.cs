@@ -19,9 +19,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task DeveloperUser_CanAccess()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
             await User.AsDeveloper();
 
             // Act
@@ -35,9 +35,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task HelpdeskUser_CanAccess()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
             await User.AsHelpdesk();
 
             // Act
@@ -51,10 +51,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUserForApprenticeshipsProvider_CanAccess()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
-            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -67,10 +67,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderSuperUserForApprenticeshipsProvider_CanAccess()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
-            await User.AsProviderSuperUser(providerId, ProviderType.Apprenticeships);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            await User.AsProviderSuperUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -83,12 +83,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUserForDifferentProvider_CannotAccess()
         {
             // Arrange
-            var ukprn = 123456;
-            var providerId = await TestData.CreateProvider(ukprn);
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
+            var provider = await TestData.CreateProvider();
+            var anotherProvider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
-            await User.AsProviderUser(anotherProviderId, ProviderType.Apprenticeships);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            await User.AsProviderUser(anotherProvider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -101,12 +100,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderSuperUserForDifferentProvider_CannotAccess()
         {
             // Arrange
-            var ukprn = 123456;
-            var providerId = await TestData.CreateProvider(ukprn);
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
+            var provider = await TestData.CreateProvider();
+            var anotherProvider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo())).Id;
-            await User.AsProviderSuperUser(anotherProviderId, ProviderType.Apprenticeships);
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            await User.AsProviderSuperUser(anotherProvider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");

@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
         public async Task Get_ProviderUserCannotAccess(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             // Act
             var response = await HttpClient.GetAsync("helpdesk-dashboard");

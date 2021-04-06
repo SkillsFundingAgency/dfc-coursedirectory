@@ -28,10 +28,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_UserCannotAccessVenue_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(ukprn: 12345);
-            var venueId = (await TestData.CreateVenue(providerId, email: "person@provider.com")).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, email: "person@provider.com")).Id;
 
-            var anotherProviderId = await TestData.CreateProvider(ukprn: 67890);
+            var anotherProvider = await TestData.CreateProvider();
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 Content = requestContent
             };
 
-            await User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -91,8 +91,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         public async Task Post_ValidRequest_UpdatesDatabaseAndRedirects()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(providerId)).Id;
+            var provider = await TestData.CreateProvider();
+            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state =>
@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().Be($"/venues?providerId={providerId}");
+            response.Headers.Location.OriginalString.Should().Be($"/venues?providerId={provider.ProviderId}");
 
             CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateVenue, OneOf<NotFound, Venue>>(q =>
                 q.VenueId == venueId &&

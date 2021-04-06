@@ -26,8 +26,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         public async Task ProviderTypeReport_Get_WithProviderUser_ReturnsForbidden(TestUserType userType)
         {
             //Arange
-            var providerId = await TestData.CreateProvider();
-            await User.AsTestUser(userType, providerId);
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(userType, provider.ProviderId);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -178,15 +178,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         private async Task<(Guid ProviderId, int Ukprn, string Name, ProviderType ProviderType, ProviderStatus ProviderStatus, string UkrlpProviderStatusDescription)> CreateProvider(
-            int ukprn,
+            int index,
             ProviderType providerType,
             ProviderStatus providerStatus,
             string ukrlpProviderStatusDescription)
         {
-            var providerName = $"TestProvider{ukprn}";
-            var providerId = await TestData.CreateProvider(ukprn, providerName, providerType, ukrlpProviderStatusDescription, status: providerStatus);
+            var providerName = $"TestProvider{index}";
+            var provider = await TestData.CreateProvider(providerName, providerType, ukrlpProviderStatusDescription, status: providerStatus);
 
-            return (providerId, ukprn, providerName, providerType, providerStatus, ukrlpProviderStatusDescription);
+            return (provider.ProviderId, provider.Ukprn, providerName, providerType, providerStatus, ukrlpProviderStatusDescription);
         }
     }
 }
