@@ -9,6 +9,8 @@ namespace Dfc.CourseDirectory.Core.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public IReadOnlyCollection<Region> SubRegions { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         /// <summary>
         /// Combine sub regions into their parent region(s) when all sub regions for that parent region
