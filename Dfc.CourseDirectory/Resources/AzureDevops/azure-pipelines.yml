@@ -2,8 +2,6 @@ pool:
   name: NCS - CI and CD
   demands:
   - azureps
-  - npm
-  - node.js
 
 variables:
   ArmTemplateRoot: '$(Build.SourcesDirectory)\Dfc.CourseDirectory\Resources\ArmTemplates'
@@ -92,18 +90,6 @@ steps:
     mklink /D v2 ..\..\$(SolutionBaseName).WebV2\Content
   displayName: 'Restore v2 content symlink'
   workingDirectory: src/$(SolutionBaseName).Web/wwwroot
-
-- task: Npm@1
-  displayName: 'npm install'
-  inputs:
-    workingDir: 'src/$(SolutionBaseName).Web'
-    verbose: false
-
-- task: Gulp@0
-  displayName: 'Gulp '
-  inputs:
-    gulpFile: 'src/$(SolutionBaseName).Web/gulpfile.js'
-    targets: 'prod'
 
 - task: MSBuild@1
   displayName: Build database
