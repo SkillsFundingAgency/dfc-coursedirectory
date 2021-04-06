@@ -82,10 +82,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             using var client = _ukrlpWcfClientFactory.Build();
 
             var resultsByUkprn = new Dictionary<int, ProviderRecordStructure>();
+            var remainingUkprns = ukprns.ToList();
 
             foreach (var status in _statuses)
             {
-                var request = CreateRequest(ukprns, status);
+                if (remainingUkprns.Count == 0)
+                {
+                    break;
+                }
+
+                var request = CreateRequest(remainingUkprns, status);
 
                 var result = await client.retrieveAllProvidersAsync(request);
                 var response = result.ProviderQueryResponse;
@@ -97,7 +103,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
                 foreach (var r in response.MatchingProviderRecords)
                 {
-                    resultsByUkprn.Add(int.Parse(r.UnitedKingdomProviderReferenceNumber), r);
+                    var resultUkprn = int.Parse(r.UnitedKingdomProviderReferenceNumber);
+                    resultsByUkprn.Add(resultUkprn, r);
+                    remainingUkprns.Remove(resultUkprn);
                 }
             }
 
