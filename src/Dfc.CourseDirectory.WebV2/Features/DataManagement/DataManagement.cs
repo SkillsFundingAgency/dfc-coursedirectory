@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
-        public Guid? ProviderId { get; set; }
+        public Guid ProviderId { get; set; }
         public IFormFile File { get; set; }
     }
 
@@ -22,10 +22,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
     {
         private readonly CommandValidator _validator;
 
-        public Handler(
-            CommandValidator validator)
+        public Handler()
         {
-            _validator = validator;
+            _validator = new CommandValidator();
         }
 
         public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
@@ -41,10 +40,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         }
     }
 
-    public class CommandValidator : ValidatorBase<Command>
+    public class CommandValidator : AbstractValidator<Command>
     {
-        public CommandValidator(IActionContextAccessor actionContextAccessor)
-            : base(actionContextAccessor)
+        public CommandValidator()
         {
             RuleFor(x => x.File).NotNull().WithMessage("File cannot be null");
             RuleFor(x => x.File.ContentType).Equal("text/csv", StringComparer.OrdinalIgnoreCase).WithMessage("File must be a csv file");

@@ -167,7 +167,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
-            services.AddTransient<Features.DataManagement.Venues.CommandValidator>();
 
             if (!environment.IsTesting())
             {

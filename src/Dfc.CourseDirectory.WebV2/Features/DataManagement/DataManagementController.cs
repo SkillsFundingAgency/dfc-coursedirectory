@@ -33,15 +33,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement
                 new Venues.Command()
                 {
                     File = file,
-                    ProviderId = _providerContext?.ProviderInfo?.ProviderId
+                    ProviderId = _providerContext.ProviderInfo.ProviderId
                 },
                 response => response.Match<IActionResult>(
                     errors => RedirectToAction("Validation"),
-                    success => RedirectToAction(nameof(DataManagement))));
+                    success => RedirectToAction("CheckAndPublishVenues")));
         }
 
         [HttpGet("venues/validation")]
         public IActionResult Validation()
+        {
+            return View();
+        }
+
+        [HttpGet("venues/checkandpublish")]
+        public IActionResult CheckAndPublishVenues()
         {
             return View();
         }
