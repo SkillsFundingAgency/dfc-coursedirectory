@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Data Upload - Upload your venue data";
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <h1 class="govuk-heading-xl">Upload your venue data</h1>
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="DataManagement" asp-action="Upload">
+
+            <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
+            <p class="govuk-body">To ensure an upload is successful you must:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+                <li>include existing and new venues in the data file</li>
+                <li>follow the file <a asp-action="VenueFormatting" asp-controller="BulkUploadVenues" class="govuk-link">format requirements</a></li>
+            </ul>
+            <div class="govuk-form-group">
+                <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file" accept=".csv"
+                       val-required-message="Select a file to upload"
+                       val-file-extensions="csv"
+                       val-file-extensions-message="The selected file must be a csv"
+                       val-file-size-max="209715200"
+                       val-file-size-max-message="The selected file must be smaller than 200MB" />
+
+            </div>
+            <p>
+                <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
+            </p>
+        </form>
+
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <aside class="app-related-items" role="complementary">
+            <h2 class="govuk-heading-m" id="subsection-title">
+                Data file downloads
+            </h2>
+            <nav role="navigation" aria-labelledby="subsection-title">
+                <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
+                    <li>
+                        <a href="#" class="govuk-link govuk-link--blocked">Download your published venue data (CSV)</a>
+                    </li>
+                    <li>
+                        <a href="#" class="govuk-link govuk-link--blocked">Download an empty venue data template (CSV)</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+</div>
