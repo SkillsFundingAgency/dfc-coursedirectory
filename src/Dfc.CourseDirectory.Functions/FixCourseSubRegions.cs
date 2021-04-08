@@ -46,6 +46,11 @@ namespace Dfc.CourseDirectory.Functions
                 {
                     foreach (var courseRun in course.CourseRuns.Where(r => r.Regions?.Any() == true && r.SubRegions?.Any() != true))
                     {
+                        if (courseRun.DeliveryMode != CourseDeliveryMode.WorkBased)
+                        {
+                            continue;
+                        }
+
                         // Bulk upload historically hasn't populated `SubRegions` - fix that here.
                         // `Regions` can contain both regions and sub-regions. `SubRegions` should contain regions
                         // where every sub-region in that region is applicable and sub-regions otherwise.
