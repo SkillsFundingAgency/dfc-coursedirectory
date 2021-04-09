@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Testing
                 {
                     userId = Internet.UserName();
                 }
-                while (_userIds.Add(userId));
+                while (!_userIds.Add(userId));
             }
 
             return userId;
