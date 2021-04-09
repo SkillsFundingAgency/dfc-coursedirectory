@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         private FindACourseOfferingSearchQuery CapturedQuery { get; set; }
 
         [Fact]
-        public async Task SortByDistanceButEmptyPostcode_ReturnsError()
+        public async Task SortByDistanceButNoPostcodeOrLatLng_ReturnsError()
         {
             // Arrange
             var request = CreateRequest(new
@@ -109,6 +109,44 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 response,
                 title: "PostcodeRequired",
                 detail: "Postcode is required to sort by Distance.");
+        }
+
+        [Fact]
+        public async Task LatSpecifiedWithoutLng_ReturnsError()
+        {
+            // Arrange
+            var request = CreateRequest(new
+            {
+                latitude = 2D
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            await AssertHaveError(
+                response,
+                title: "InvalidLatLng",
+                detail: "Latitude & longitude must both be specified.");
+        }
+
+        [Fact]
+        public async Task LngSpecifiedWithoutLat_ReturnsError()
+        {
+            // Arrange
+            var request = CreateRequest(new
+            {
+                longitude = 2D
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            await AssertHaveError(
+                response,
+                title: "InvalidLatLng",
+                detail: "Latitude & longitude must both be specified.");
         }
 
         [Theory]
@@ -238,7 +276,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         }
 
         [Fact]
-        public async Task DistanceSpecified_AddsFilterToQuery()
+        public async Task DistanceSpecifiedWithPostcode_AddsFilterToQuery()
         {
             // Arrange
             var postcode = "AB1 2DE";
@@ -253,6 +291,66 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 sortBy = "Distance",
                 postcode = postcode,
+                distance = distance
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"geo.distance(Position, geography'POINT({lng} {lat})') le {distanceInKm}");
+        }
+
+        [Fact]
+        public async Task DistanceSpecifiedWithLatLng_AddsFilterToQuery()
+        {
+            // Arrange
+            var lat = 1m;
+            var lng = 2m;
+
+            var distance = 10;
+            var distanceInKm = GeoHelper.MilesToKilometers(10);
+
+            var request = CreateRequest(new
+            {
+                sortBy = "Distance",
+                latitude = lat,
+                longitude = lng,
+                distance = distance
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"geo.distance(Position, geography'POINT({lng} {lat})') le {distanceInKm}");
+        }
+
+        [Fact]
+        public async Task LatLngAndPostcodeSpecifiedUsesLatLngOverPostcode_AddsFilterToQuery()
+        {
+            // Arrange
+            var postcode = "AB1 2DE";
+            var postcodeLat = 1m;
+            var postcodeLng = 2m;
+            ConfigureOnspdSearchResultsForPostcode(postcode, coords: (postcodeLat, postcodeLng));
+
+            var lat = 5d;
+            var lng = 6d;
+
+            var distance = 10;
+            var distanceInKm = GeoHelper.MilesToKilometers(10);
+
+            var request = CreateRequest(new
+            {
+                sortBy = "Distance",
+                postcode = postcode,
+                latitude = lat,
+                longitude = lng,
                 distance = distance
             });
 
