@@ -2,18 +2,18 @@
 @model ViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Your locations");
+    ViewContext.SetLayoutData(title: "Your venues");
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         
-        <h1 class="govuk-heading-xl">Your locations</h1>
+        <h1 class="govuk-heading-xl">Your venues</h1>
 
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Location</th>
+                    <th scope="col" class="govuk-table__header">Venue</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Address</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Postcode</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">&nbsp;</th>
@@ -43,14 +43,14 @@
                 else
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="5">You have no locations</td>
+                        <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="5">You have no venues</td>
                     </tr>
                 }
 
             </tbody>
         </table>
 
-        <govuk-button asp-action="Index" asp-controller="AddVenue" asp-all-route-data="@ProviderContext.RouteValues">Add a location</govuk-button>
+        <govuk-button asp-action="Index" asp-controller="AddVenue" asp-all-route-data="@ProviderContext.RouteValues">Add a venue</govuk-button>
 
     </div>
 </div>

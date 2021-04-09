@@ -42,7 +42,7 @@
     {
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
-            NotificationTitle = "New location added:",
+            NotificationTitle = "New venue added:",
             NotificationMessage = newVenueDescription,
             ClassType = "success-summary"
         })
@@ -139,7 +139,7 @@
                         </h2>
                     </legend>
 
-                    <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a location">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
 
 
 
@@ -171,7 +171,7 @@
                 </fieldset>
             </div>
             <span class="">
-                <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">Add another location</a>
+                <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">Add another venue</a>
             </span>
         </div>
 

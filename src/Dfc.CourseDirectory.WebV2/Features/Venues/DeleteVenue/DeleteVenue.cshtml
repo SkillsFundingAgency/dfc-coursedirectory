@@ -34,11 +34,11 @@
 
             @Html.HiddenFor(m => m.ProviderId)
 
-            <h1 class="govuk-heading-xl">Delete location</h1>
+            <h1 class="govuk-heading-xl">Delete venue</h1>
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Location name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-key>Location venue</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
@@ -80,7 +80,7 @@
                         <govuk-details>
                             <govuk-details-summary>@Model.AffectedCourses.Count Course@(Pluralise(Model.AffectedCourses.Count > 1))</govuk-details-summary>
                             <govuk-details-text>
-                                <p class="govuk-body">The following courses are linked to this location</p>
+                                <p class="govuk-body">The following courses are linked to this venue</p>
                                 <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedCourseRun in Model.AffectedCourses.OrderBy(c => c.CourseName))
                                     {
@@ -108,7 +108,7 @@
                         <govuk-details>
                             <govuk-details-summary>@Model.AffectedApprenticeships.Count Apprenticeship@(Pluralise(Model.AffectedApprenticeships.Count > 1))</govuk-details-summary>
                             <govuk-details-text>
-                                <p class="govuk-body">The following apprenticeships are linked to this location</p>
+                                <p class="govuk-body">The following apprenticeships are linked to this venue</p>
                                 <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedApprenticeship in Model.AffectedApprenticeships.OrderBy(a => a.ApprenticeshipName))
                                     {
@@ -136,7 +136,7 @@
                         <govuk-details>
                             <govuk-details-summary>@Model.AffectedTLevels.Count T Level@(Pluralise(Model.AffectedTLevels.Count > 1))</govuk-details-summary>
                             <govuk-details-text>
-                                <p>The following T Levels are linked to this location</p>
+                                <p>The following T Levels are linked to this venue</p>
                                 <ul class="govuk-list govuk-list--bullet">
                                     @foreach (var affectedTLevel in Model.AffectedTLevels.OrderBy(t => t.TLevelName))
                                     {
@@ -159,7 +159,7 @@
                         </govuk-checkboxes-fieldset-legend>
                     </govuk-checkboxes-fieldset>
                     <govuk-checkboxes-item value="@(true)" checked="false">
-                        Yes, I want to delete this location
+                        Yes, I want to delete this venue
                     </govuk-checkboxes-item>
                 </govuk-checkboxes>
 
