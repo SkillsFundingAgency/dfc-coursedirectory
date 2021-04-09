@@ -1,72 +1,70 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 {
-    public class VenueUploadTests : MvcTestBase
+    public class UploadTests : MvcTestBase
     {
-        private string csvContentType => "text/csv";
-        public VenueUploadTests(CourseDirectoryApplicationFactory factory)
+        public UploadTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
 
         [Fact]
-        public async Task Post_DataManagement_ValidVenuesFileRedirectsToPublish()
+        public async Task Post_ValidVenuesFile_RedirectsToPublish()
         {
             // Arrange
-            HttpResponseMessage response;
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            var csvStream = CreateCsvStream(new List<CsvVenue>());
-            var requestContent = CreateMultiPartDataContent(csvContentType, csvStream);
+
+            var csvStream = CreateCsvStream(Enumerable.Empty<VenueRow>());
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
-            response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be("/data-upload/venues/checkandpublish");
+            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
         }
 
         [Fact]
-        public async Task Get_DataManagement_RendersPage()
+        public async Task Get_RendersPage()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
 
             // Act
-            var response = await HttpClient.GetAsync("/data-upload/venues");
+            var response = await HttpClient.GetAsync($"/data-upload/venues?providerId={provider.ProviderId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
-        public async Task Post_DataManagemen_MissingFileRedirectsToValidation()
+        public async Task Post_MissingFile_RedirectsToValidation()
         {
             // Arrange
-            HttpResponseMessage response;
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
+
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
             // Act
-            response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be("/data-upload/venues/validation");
+            response.Headers.Location.Should().Be($"/data-upload/venues/validation?providerId={provider.ProviderId}");
         }
 
         [Theory]
@@ -76,24 +74,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         public async Task Post_DataManagement_UnsupportedContentTypeFileRedirectsToValidationError(string contentType)
         {
             // Arrange
-            HttpResponseMessage response;
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            var csvStream = CreateCsvStream(new List<CsvVenue>());
+
+            var csvStream = CreateCsvStream(Enumerable.Empty<VenueRow>());
             var requestContent = CreateMultiPartDataContent(contentType, csvStream);
 
             // Act
-            response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be("/data-upload/venues/validation");
+            response.Headers.Location.Should().Be($"/data-upload/venues/validation?providerId={provider.ProviderId}");
         }
 
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, MemoryStream stream)
         {
-            var content = new MultipartFormDataContent("dfdfd");
+            var content = new MultipartFormDataContent();
             content.Headers.ContentType.MediaType = "multipart/form-data";
+
             using (var mem = new MemoryStream())
             using (var writer = new StreamWriter(mem))
             {
@@ -101,28 +99,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 {
                     var byteArrayContent = new ByteArrayContent(stream.ToArray());
                     byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
-                    content.Add(byteArrayContent, "Some Description", "someFileName.csv");
+                    content.Add(byteArrayContent, "File", "someFileName.csv");
                 }
             }
             return content;
         }
 
-        private MemoryStream CreateCsvStream(List<CsvVenue> rows)
+        private MemoryStream CreateCsvStream(IEnumerable<VenueRow> rows)
         {
             using (var mem = new MemoryStream())
             using (var writer = new StreamWriter(mem))
             using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csvWriter.WriteHeader<CsvVenue>();
+                csvWriter.WriteHeader<VenueRow>();
                 csvWriter.WriteRecords(rows);
                 csvWriter.Flush();
                 return mem;
             }
         }
-    }
-
-    public class CsvVenue
-    {
-        public string VenueName { get; set; }
     }
 }
