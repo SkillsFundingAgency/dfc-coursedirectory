@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         {
         }
 
+        [Fact]
         public async Task Post_DataManagement_ValidVenuesFileRedirectsToPublish()
         {
             // Arrange
