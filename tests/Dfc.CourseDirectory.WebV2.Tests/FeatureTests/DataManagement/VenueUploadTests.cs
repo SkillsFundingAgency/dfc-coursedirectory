@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -36,10 +38,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         public async Task Post_DataManagement_ValidVenuesFileRedirectsToPublish()
         {
             // Arrange
+            HttpResponseMessage response;
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            HttpResponseMessage response;
-            var requestContent = CreateMultiPartDataContent("text/csv");
+            var csvStream = CreateCsvStream(new List<CsvVenue>());
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
             response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
@@ -49,6 +52,34 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             response.Headers.Location.Should().Be("/data-upload/venues/checkandpublish");
         }
 
+        [Fact]
+        public async Task Get_DataManagement_AsHelpDeskReturnsRedirect()
+        {
+            // Arrange
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"/data-upload/venues");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_DataManagement_MissingProviderReturnsRedirect()
+        {
+            // Arrange
+            HttpResponseMessage response;
+            var csvStream = CreateCsvStream(new List<CsvVenue>());
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+        }
+
         [Theory]
         [InlineData("application/vnd.ms-excel")]
         [InlineData("application/json")]
@@ -56,10 +87,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         public async Task Post_DataManagement_UnsupportedContentTypeFileRedirectsToValidationError(string contentType)
         {
             // Arrange
+            HttpResponseMessage response;
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            HttpResponseMessage response;
-            var requestContent = CreateMultiPartDataContent(contentType);
+            var csvStream = CreateCsvStream(new List<CsvVenue>());
+            var requestContent = CreateMultiPartDataContent(contentType, csvStream);
 
             // Act
             response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
@@ -69,21 +101,34 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             response.Headers.Location.Should().Be("/data-upload/venues/validation");
         }
 
-        private MultipartFormDataContent CreateMultiPartDataContent(string contentType)
+        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, MemoryStream stream)
         {
             var content = new MultipartFormDataContent("dfdfd");
             content.Headers.ContentType.MediaType = "multipart/form-data";
             using (var mem = new MemoryStream())
             using (var writer = new StreamWriter(mem))
+            {
+                if (stream != null)
+                {
+                    var byteArrayContent = new ByteArrayContent(stream.ToArray());
+                    byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+                    content.Add(byteArrayContent, "Some Description", "someFileName.csv");
+                }
+            }
+            return content;
+        }
+
+        private MemoryStream CreateCsvStream(List<CsvVenue> rows)
+        {
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(mem))
             using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
                 csvWriter.WriteHeader<CsvVenue>();
+                csvWriter.WriteRecords(rows);
                 csvWriter.Flush();
-                var byteArrayContent = new ByteArrayContent(mem.ToArray());
-                byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
-                content.Add(byteArrayContent, "this is the name of the content", "someFileName.csv");
+                return mem;
             }
-            return content;
         }
     }
 

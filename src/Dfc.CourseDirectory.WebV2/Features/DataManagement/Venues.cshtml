@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Command;
+@{
     ViewBag.Title = "Data Upload - Upload your venue data";
 }
 
@@ -17,13 +18,16 @@
                 <li>include existing and new venues in the data file</li>
                 <li>follow the file <a asp-action="VenueFormatting" asp-controller="BulkUploadVenues" class="govuk-link">format requirements</a></li>
             </ul>
+
             <div class="govuk-form-group">
-                <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file" accept=".csv"
-                       val-required-message="Select a file to upload"
-                       val-file-extensions="csv"
-                       val-file-extensions-message="The selected file must be a csv"
-                       val-file-size-max="209715200"
-                       val-file-size-max-message="The selected file must be smaller than 200MB" />
+                <govuk-input type="file" asp-for="@Model.File" />
+
+                @*<input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file" accept=".csv"
+                    val-required-message="Select a file to upload"
+                    val-file-extensions="csv"
+                    val-file-extensions-message="The selected file must be a csv"
+                    val-file-size-max="209715200"
+                    val-file-size-max-message="The selected file must be smaller than 200MB" />*@
 
             </div>
             <p>
