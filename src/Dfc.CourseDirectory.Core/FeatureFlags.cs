@@ -2,5 +2,6 @@
 {
     public static class FeatureFlags
     {
+        public const string DataManagement = "DataManagement";
     }
 }
