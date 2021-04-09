@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,11 +22,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public async Task Get_DownloadsValidFile()
         {
             // Arrange
-            var provider = await TestData.CreateProvider();
+            var provider = await TestData.CreateProvider(providerName: "Test Provider");
 
             var venue1 = await TestData.CreateVenue(provider.ProviderId, venueName: Faker.Company.Name());
             var venue2 = await TestData.CreateVenue(provider.ProviderId, venueName: Faker.Company.Name());
             var venue3 = await TestData.CreateVenue(provider.ProviderId, venueName: Faker.Company.Name());
+
+            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
 
             // Act
             var response = await HttpClient.GetAsync($"/data-upload/venues/download?providerId={provider.ProviderId}");
@@ -33,10 +36,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.MediaType.Should().Be("text/csv");
+            response.Content.Headers.ContentDisposition.FileName.Should().Be("\"Test Provider_venues_202104091300.csv\"");
 
             using var responseBody = await response.Content.ReadAsStreamAsync();
             using var responseBodyReader = new StreamReader(responseBody);
             using var csvReader = new CsvReader(responseBodyReader, CultureInfo.InvariantCulture);
+
+            csvReader.Read();
+            csvReader.ReadHeader();
+            csvReader.Context.HeaderRecord.Should().BeEquivalentTo(new[]
+            {
+                "YOUR_VENUE_REFERENCE",
+                "VENUE_NAME",
+                "ADDRESS_LINE_1",
+                "ADDRESS_LINE_2",
+                "TOWN_OR_CITY",
+                "COUNTY",
+                "POSTCODE",
+                "EMAIL",
+                "PHONE",
+                "WEBSITE"
+            });
 
             var rows = csvReader.GetRecords<VenueRow>();
             rows.Should().BeEquivalentTo(
