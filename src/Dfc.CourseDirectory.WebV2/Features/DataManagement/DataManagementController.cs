@@ -27,10 +27,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(Venues.Command command)
         {
+            var file = Request.Form.Files?.FirstOrDefault();
+
             return await _mediator.SendAndMapResponse(
                 new Venues.Command()
                 {
-                    File = command?.File,
+                    File = file,
                     ProviderId = _providerContext.ProviderInfo.ProviderId
                 },
                 response => response.Match<IActionResult>(

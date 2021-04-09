@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -15,9 +14,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
 {
     public class VenueUploadTests : MvcTestBase
     {
+        private string csvContentType => "text/csv";
         public VenueUploadTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
+        }
+
+        public async Task Post_DataManagement_ValidVenuesFileRedirectsToPublish()
+        {
+            // Arrange
+            HttpResponseMessage response;
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
+            var csvStream = CreateCsvStream(new List<CsvVenue>());
+            var requestContent = CreateMultiPartDataContent(csvContentType, csvStream);
+
+            // Act
+            response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be("/data-upload/venues/checkandpublish");
         }
 
         [Fact]
@@ -35,49 +52,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         }
 
         [Fact]
-        public async Task Post_DataManagement_ValidVenuesFileRedirectsToPublish()
+        public async Task Post_DataManagemen_MissingFileRedirectsToValidation()
         {
             // Arrange
             HttpResponseMessage response;
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            var csvStream = CreateCsvStream(new List<CsvVenue>());
-            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
             // Act
             response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be("/data-upload/venues/checkandpublish");
-        }
-
-        [Fact]
-        public async Task Get_DataManagement_AsHelpDeskReturnsRedirect()
-        {
-            // Arrange
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task Post_DataManagement_MissingProviderReturnsRedirect()
-        {
-            // Arrange
-            HttpResponseMessage response;
-            var csvStream = CreateCsvStream(new List<CsvVenue>());
-            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
-
-            // Act
-            response = await HttpClient.PostAsync("/data-upload/upload", requestContent);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be("/data-upload/venues/validation");
         }
 
         [Theory]

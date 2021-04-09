@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         public CommandValidator()
         {
             RuleFor(x => x.File).NotNull().WithMessage("File cannot be null");
-            RuleFor(x => x.File.ContentType).Equal("text/csv", StringComparer.OrdinalIgnoreCase).WithMessage("File must be a csv file");
+            RuleFor(x => x.File.ContentType).Equal("text/csv", StringComparer.OrdinalIgnoreCase).Unless(item => item.File == null).WithMessage("File must be a csv file");
         }
     }
 }
