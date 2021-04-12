@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -16,6 +18,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 using Course = Dfc.CourseDirectory.Services.Models.Courses.Course;
@@ -30,6 +33,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly ISearchClient<Lars> _larsSearchClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IRegionCache _regionCache;
+        private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
 
         private List<Venue> cachedVenues;
 
@@ -38,13 +42,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             ICourseService courseService,
             ISearchClient<Lars> larsSearchClient,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IRegionCache regionCache)
+            IRegionCache regionCache,
+            IBackgroundWorkScheduler backgroundWorkScheduler)
         {
             _courseServiceSettings = courseServiceSettings?.Value ?? throw new ArgumentNullException(nameof(courseServiceSettings));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _regionCache = regionCache;
+            _backgroundWorkScheduler = backgroundWorkScheduler;
         }
 
         public int BulkUploadSecondsPerRecord
@@ -70,7 +76,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public async Task<List<string>> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
+        public async Task<List<string>> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool processInline)
         {
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
@@ -313,7 +319,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
-                if(uploadCourses)
+                if(processInline)
                 {
                     // Populate LARS data
                     bulkUploadcourses = PolulateLARSData(bulkUploadcourses, out errors);
@@ -332,6 +338,29 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 else
                 {
+                    await _backgroundWorkScheduler.Schedule(Worker, (bulkUploadcourses, userId));
+
+                    static Task Worker(object state, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+                    {
+                        var bulkUploadService = serviceProvider.GetRequiredService<IBulkUploadService>();
+
+                        var (bulkUploadcourses, userId) = ((List<BulkUploadCourse>, string))state;
+
+                        // Populate LARS data
+                        bulkUploadcourses = bulkUploadService.PolulateLARSData(bulkUploadcourses, out var errors);
+                        if (errors != null && errors.Count > 0)
+                        {
+                            // If we have invalid LARS we stop processing
+                        }
+                        else
+                        {
+                            // Mapping BulkUploadCourse to Course
+                            var courses = bulkUploadService.MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
+                        }
+
+                        return Task.CompletedTask;
+                    }
+
                     return errors;
                 }
             }

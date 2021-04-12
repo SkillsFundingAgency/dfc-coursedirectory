@@ -142,12 +142,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         _logger.LogInformation(
                             $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                        if (processInline)
-                        {
-                            bulkUploadFileNewName +=
-                                "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
-                                ".processed"; // stops the Azure trigger from processing the file
-                        }
+                        bulkUploadFileNewName +=
+                            "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
+                            ".processed"; // stops the Azure trigger from processing the file
 
                         Task task = _blobService.UploadFileAsync(
                             $"{UKPRN.ToString()}/Courses Bulk Upload/Files/{bulkUploadFileNewName}", ms);
