@@ -1,6 +1,7 @@
 ﻿using System;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
@@ -46,6 +47,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<VenueCorrector>();
             builder.Services.AddTransient<IVenueCorrectionFinder, VenueCorrectionFinder>();
             builder.Services.AddTransient<OnspdDataImporter>();
+            builder.Services.AddSingleton<IRegionCache, RegionCache>();
 
             builder.Services.AddSingleton(
                 _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));

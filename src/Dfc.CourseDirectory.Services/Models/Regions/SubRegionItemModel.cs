@@ -31,5 +31,13 @@ namespace Dfc.CourseDirectory.Services.Models.Regions
                 return SearchResultWeightings.High;
             return SearchResultWeightings.Low;
         }
+
+        public static SubRegionItemModel FromCoreModel(Core.Models.Region region) => new SubRegionItemModel()
+        {
+            Id = region.Id,
+            Latitude = region.Latitude,
+            Longitude = region.Longitude,
+            SubRegionName = region.Name
+        };
     }
 }

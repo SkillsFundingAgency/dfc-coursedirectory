@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -27,6 +29,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IRegionCache _regionCache;
 
         private List<Venue> cachedVenues;
 
@@ -34,12 +37,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
             ISearchClient<Lars> larsSearchClient,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IRegionCache regionCache)
         {
             _courseServiceSettings = courseServiceSettings?.Value ?? throw new ArgumentNullException(nameof(courseServiceSettings));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _regionCache = regionCache;
         }
 
         public int BulkUploadSecondsPerRecord
@@ -446,6 +451,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             var courses = new List<Course>();
             var listsCourseRuns = new List<BulkUploadCourseRun>();
 
+            var allRegions = _regionCache.GetAllRegions().GetAwaiter().GetResult();
+
             foreach (var bulkUploadCourse in bulkUploadCourses)
             {
                 if (bulkUploadCourse.IsCourseHeader)
@@ -588,6 +595,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             if (regionResult.IsSuccess)
                             {
                                 courseRun.Regions = regionResult.Value;
+                                courseRun.SubRegions = Region.Reduce(allRegions, regionResult.Value).Select(SubRegionItemModel.FromCoreModel);
                             }
                             else if (!regionResult.IsSuccess)
                             {

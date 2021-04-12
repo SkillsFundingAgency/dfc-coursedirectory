@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<IReadOnlyCollection<Region>> Execute(SqlTransaction transaction, GetAllRegions query)
         {
-            var sql = @"SELECT RegionId, Name, ParentRegionId FROM Pttcd.Regions";
+            var sql = @"SELECT RegionId, Name, ParentRegionId, Position.Lat Latitude, Position.Long Longitude FROM Pttcd.Regions";
 
             var rows = (await transaction.Connection.QueryAsync<Row>(sql, transaction: transaction)).AsList();
 
@@ -31,9 +31,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         {
                             Id = sr.RegionId,
                             Name = sr.Name,
-                            SubRegions = Array.Empty<Region>()
+                            SubRegions = Array.Empty<Region>(),
+                            Latitude = sr.Latitude,
+                            Longitude = sr.Longitude
                         })
-                        .ToList()
+                        .ToList(),
+                    Latitude = r.Latitude,
+                    Longitude = r.Longitude
                 })
                 .ToList();
         }
@@ -43,6 +47,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string RegionId { get; set; }
             public string Name { get; set; }
             public string ParentRegionId { get; set; }
+            public double Latitude { get; set; }
+            public double Longitude { get; set; }
         }
     }
 }
