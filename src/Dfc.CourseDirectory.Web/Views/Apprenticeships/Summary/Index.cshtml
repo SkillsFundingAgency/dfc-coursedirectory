@@ -122,9 +122,9 @@
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
                                                                                   == ApprenticeshipLocationType.ClassroomBased))
                         {
-                            <h3 class="govuk-heading-s">Classroom based locations</h3>
+                            <h3 class="govuk-heading-s">Classroom based venues</h3>
                             <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
-                                Change classroom based locations
+                                Change classroom based venues
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -138,9 +138,9 @@
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
                                                                                   == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
                         {
-                            <h3 class="govuk-heading-s">Employer and classroom based locations</h3>
+                            <h3 class="govuk-heading-s">Employer and classroom based venues</h3>
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">
-                                Change employer and classroom based locations
+                                Change employer and classroom based venues
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -153,7 +153,7 @@
 
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased))
                         {
-                            <h3 class="govuk-heading-s">Employer based locations:</h3>
+                            <h3 class="govuk-heading-s">Employer based venues:</h3>
 
                             var location = Model.Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
 
@@ -175,7 +175,7 @@
                             <table class="govuk-table">
                                 <thead class="govuk-table__head">
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header govuk-!-width-one-third">Venue</th>
+                                        <th class="govuk-table__header govuk-!-width-one-third">Location</th>
                                         <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
                                     </tr>
                                 </thead>

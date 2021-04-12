@@ -1,20 +1,20 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details.ViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Add location");
+    ViewContext.SetLayoutData(title: "Add venue");
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Details" asp-all-route-data="RouteValuesHelper.FromQueryString()">
             <h1 class="govuk-heading-xl">
-                Add location
+                Add venue
             </h1>
 
             <p class="govuk-body-l">This information will be linked with the courses you provide.</p>
 
             <govuk-input asp-for="Name" input-class="govuk-!-width-two-thirds">
-                <govuk-input-label class="govuk-label--s">Location name</govuk-input-label>
+                <govuk-input-label class="govuk-label--s">Venue name</govuk-input-label>
             </govuk-input>
 
             <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Address</h2>
