@@ -592,7 +592,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
                     populateLocationVenuesIds: false,
                     startDate: new DateTime(2021, 10, 1),
                     expectedErrorField: "LocationVenueIds",
-                    expectedErrorMessage: "Select a T Level location");
+                    expectedErrorMessage: "Select a T Level venue");
 
                 Add(
                     website: "tlevel",

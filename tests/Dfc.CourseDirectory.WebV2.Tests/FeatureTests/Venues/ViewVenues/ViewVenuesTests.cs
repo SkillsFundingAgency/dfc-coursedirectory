@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
 
             var doc = await response.GetDocument();
-            doc.Body.TextContent.Should().Contain("You have no locations");
+            doc.Body.TextContent.Should().Contain("You have no venues");
         }
 
         [Fact]

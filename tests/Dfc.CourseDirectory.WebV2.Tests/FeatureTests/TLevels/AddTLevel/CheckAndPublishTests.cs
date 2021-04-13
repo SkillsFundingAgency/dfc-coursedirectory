@@ -184,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
             {
                 doc.GetSummaryListValueWithKey("Your reference").Should().Be(yourReference);
                 doc.GetSummaryListValueWithKey("Start date").Should().Be($"{startDate:d MMMM yyyy}");
-                doc.GetSummaryListValueWithKey("T Level location").Should().Be(venueName);
+                doc.GetSummaryListValueWithKey("T Level venue").Should().Be(venueName);
                 doc.GetSummaryListValueWithKey("T Level webpage").Should().Be(website);
                 doc.GetSummaryListValueWithKey("Who this T Level is for").Should().Be(whoFor);
                 doc.GetSummaryListValueWithKey("Entry requirements").Should().Be(entryRequirements);

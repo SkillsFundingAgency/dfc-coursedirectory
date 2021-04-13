@@ -184,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()
-                        .WithMessage("Select a T Level location");
+                        .WithMessage("Select a T Level venue");
 
                 RuleFor(c => c.Website).Website();
 

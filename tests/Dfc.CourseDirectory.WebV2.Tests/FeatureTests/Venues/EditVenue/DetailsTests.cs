@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             using (new AssertionScope())
             {
                 var doc = await response.GetDocument();
-                doc.GetSummaryListValueWithKey("Location name").Should().Be("Test Venue");
+                doc.GetSummaryListValueWithKey("Venue name").Should().Be("Test Venue");
                 Assert.Equal(
                     "Test Venue line 1\nTown\nAB1 2DE",
                     doc.GetSummaryListValueWithKey("Address"));
@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             using (new AssertionScope())
             {
                 var doc = await response.GetDocument();
-                doc.GetSummaryListValueWithKey("Location name").Should().Be("Updated name");
+                doc.GetSummaryListValueWithKey("Venue name").Should().Be("Updated name");
                 Assert.Equal(
                     "Updated line 1\nUpdated line 2\nUpdated town\nUpdated county\nUP1 D8D",
                     doc.GetSummaryListValueWithKey("Address"));
