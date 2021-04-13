@@ -1,0 +1,34 @@
+﻿@model Dfc.CourseDirectory.Core.Models.UploadStatus
+@{
+    ViewBag.Title = "Uploading your venue data";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Uploading your venue data</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="pttcd-loading-spinner__container">
+
+            <div class="pttcd-loading-spinner"></div>
+
+            <div class="pttcd-loading-spinner__message govuk-!-margin-4" data-testid="StatusMessage">
+                @if (Model == Dfc.CourseDirectory.Core.Models.UploadStatus.Created)
+                {
+                    <text>Uploading file</text>
+                }
+                else
+                {
+                    <text>Processing data</text>
+                }
+            </div>
+
+            <a asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues">
+                Refresh <span class="govuk-visually-hidden">the page</span>
+            </a>
+        </div>
+    </div>
+</div>
