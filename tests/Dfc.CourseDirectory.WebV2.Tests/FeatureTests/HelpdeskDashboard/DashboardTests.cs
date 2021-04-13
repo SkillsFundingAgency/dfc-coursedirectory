@@ -63,6 +63,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             downloadProviderTypeReportLink.Attributes["href"].Value.Should().Be("/providers/reports/provider-type");
         }
 
+
+        [Fact]
+        public async Task Get_RendersDownloadProvidersMissingContactDetailsReportLink()
+        {
+            // Arrange
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync("helpdesk-dashboard");
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            var doc = await response.GetDocument();
+            var downloadProviderTypeReportLink = doc.GetElementByTestId("download-providers-missing-contact-details-link");
+
+            downloadProviderTypeReportLink.Should().NotBeNull();
+            downloadProviderTypeReportLink.TextContent.Should().Be("Providers missing contact details");
+            downloadProviderTypeReportLink.Attributes["href"].Value.Should().Be("/providers/reports/providers-missing-primary-contact");
+        }
+
+        
+
         [Fact]
         public async Task Get_RendersDownloadLiveTLevelsReportLink()
         {
