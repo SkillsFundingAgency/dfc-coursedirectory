@@ -13,6 +13,5 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string ProviderName { get; set; }
         public ProviderType ProviderType { get; set; }
         public ProviderStatus ProviderStatus { get; set; }
-        public string UkrlpProviderStatusDescription { get; set; }
     }
 }
