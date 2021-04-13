@@ -1,14 +1,14 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Published.ViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Venue added");
+    ViewContext.SetLayoutData(title: "Your venue has been added");
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <govuk-panel heading-level="1" class="govuk-!-margin-bottom-9">
             <govuk-panel-title>
-                Venue added
+                Your venue has been added
             </govuk-panel-title>
             <span data-testid="VenueName">@Model.Name</span>
         </govuk-panel>

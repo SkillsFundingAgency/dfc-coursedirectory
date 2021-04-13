@@ -1,7 +1,7 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish.ViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Add venue");
+    ViewContext.SetLayoutData(title: "Check your venue information");
 }
 
 @if (Model.NewAddressIsOutsideOfEngland)
@@ -15,7 +15,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Publish" asp-all-route-data="RouteValuesHelper.FromQueryString()">
             <h1 class="govuk-heading-xl">
-                Add venue
+                Check your venue information
             </h1>
 
             <govuk-summary-list>

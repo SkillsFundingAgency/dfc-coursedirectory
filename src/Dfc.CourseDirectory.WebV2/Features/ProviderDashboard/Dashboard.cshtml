@@ -268,7 +268,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
         <div class="pttcd-provider-dashboard__card">
             <div class="pttcd-provider-dashboard__card__content">
                 <h2 class="govuk-heading-s">Your venues</h2>
-                <p class="govuk-body-s">View and manage your learning and training venues.</p>
+                <p class="govuk-body-s">View and manage the venues for your learning and training.</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
                 <ul class="govuk-list pttcd-list--small">
@@ -278,7 +278,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                     @if (Model.VenueCount > 0)
                     {
                         <li>
-                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">View and edit venues</a>
+                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">View and edit venue</a>
                         </li>
                     }
                 </ul>

@@ -949,7 +949,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var selectVenue = new SelectVenueModel
             {
-                LabelText = "Course venue",
+                LabelText = "Venue",
                 AriaDescribedBy = "Select all that apply.",
                 Ukprn = ukprn
             };

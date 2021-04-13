@@ -122,7 +122,7 @@
             <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
                 @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
                 {
-                    LabelText = "Course venue",
+                    LabelText = "Venue",
                     AriaDescribedBy = "Venue",
                     HintText = null,
                     VenueId = Model.VenueId ?? (Guid?)null,

@@ -122,9 +122,9 @@
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
                                                                                   == ApprenticeshipLocationType.ClassroomBased))
                         {
-                            <h3 class="govuk-heading-s">Classroom based venues</h3>
+                            <h3 class="govuk-heading-s">Your venues</h3>
                             <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
-                                Change classroom based venues
+                                Change
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -167,7 +167,7 @@
                             else
                             {
                 <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Regions">
-                    Change employer based venue
+                    Change
                 </a>
                             }
 
