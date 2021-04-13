@@ -15,9 +15,6 @@ SELECT      p.Ukprn as ProviderUkprn,
             p.ProviderName,
             p.ProviderType,
             p.ProviderStatus,
-		    cu.LiveCourseCount,
-			tl.LiveTLevelCount,
-			ap.LiveApprenticeshipCount,
             p.ProviderStatus
 FROM        Pttcd.Providers p
 LEFT JOIN [Pttcd].[ProviderContacts] pc on p.ProviderID = pc.ProviderId
