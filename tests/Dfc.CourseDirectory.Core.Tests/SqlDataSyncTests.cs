@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
@@ -81,10 +82,10 @@ namespace Dfc.CourseDirectory.Core.Tests
             };
 
             var sqlDataSync = new SqlDataSync(
-                Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
+                SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
                 Clock,
-                new NullLogger<SqlDataSync>());
+                new NullLogger<SqlDataSync>());;
 
             // Act
             await sqlDataSync.SyncProvider(provider);
@@ -161,7 +162,7 @@ namespace Dfc.CourseDirectory.Core.Tests
             };
 
             var sqlDataSync = new SqlDataSync(
-                Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
+                SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
                 Clock,
                 new NullLogger<SqlDataSync>());
@@ -272,7 +273,7 @@ namespace Dfc.CourseDirectory.Core.Tests
             };
 
             var sqlDataSync = new SqlDataSync(
-                Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
+                SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
                 Clock,
                 new NullLogger<SqlDataSync>());
@@ -400,7 +401,7 @@ namespace Dfc.CourseDirectory.Core.Tests
             };
 
             var sqlDataSync = new SqlDataSync(
-                Fixture.Services.GetRequiredService<IServiceScopeFactory>(),
+                SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
                 Clock,
                 new NullLogger<SqlDataSync>());

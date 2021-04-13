@@ -4,22 +4,18 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Core.DataStore
 {
     public class RegionCache : IRegionCache
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
 
         private Task<IReadOnlyCollection<Region>> _regions;
 
-        public RegionCache(IServiceScopeFactory serviceScopeFactory)
+        public RegionCache(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory)
         {
-            // Can't inject an ISqlQueryDispatcher directly here since this type needs to have Singleton lifetime
-            // and ISqlQueryDispatcher holds onto a SqlTransaction
-
-            _serviceScopeFactory = serviceScopeFactory;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
         public Task<IReadOnlyCollection<Region>> GetAllRegions()
@@ -36,12 +32,8 @@ namespace Dfc.CourseDirectory.Core.DataStore
 
         private async Task<IReadOnlyCollection<Region>> LoadRegions()
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var sqlDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-
-                return await sqlDispatcher.ExecuteQuery(new GetAllRegions());
-            }
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            return await dispatcher.ExecuteQuery(new GetAllRegions());
         }
     }
 }

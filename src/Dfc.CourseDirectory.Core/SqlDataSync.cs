@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
 
@@ -19,18 +18,18 @@ namespace Dfc.CourseDirectory.Core
     {
         private const int BatchSize = 150;
 
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IClock _clock;
         private readonly ILogger _logger;
 
         public SqlDataSync(
-            IServiceScopeFactory serviceScopeFactory,
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             ILogger<SqlDataSync> logger)
         {
-            _serviceScopeFactory = serviceScopeFactory;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _logger = logger;
@@ -282,9 +281,7 @@ namespace Dfc.CourseDirectory.Core
             // Note that commiting this transaction is not necessary.
             // If the lock cannot be grabbed immediately then log & bail.
 
-            using var scope = _serviceScopeFactory.CreateScope();
-
-            var sqlDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+            var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
             var result = await sqlDispatcher.ExecuteQuery(new GetExclusiveLock()
             {
@@ -303,11 +300,8 @@ namespace Dfc.CourseDirectory.Core
 
         private async Task WithSqlDispatcher(Func<ISqlQueryDispatcher, Task> action)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
+            using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
-                var sqlDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-                sqlDispatcher.CreateTransaction(System.Data.IsolationLevel.ReadCommitted);
-
                 await action(sqlDispatcher);
 
                 sqlDispatcher.Transaction.Commit();
