@@ -18,8 +18,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
 
-            services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
-            services.AddScoped<SqlConnection>(_ => new SqlConnection(connectionString));
+            services.AddTransient<SqlConnection>(_ => new SqlConnection(connectionString));
+            services.AddSingleton<ISqlQueryDispatcherFactory, ServiceProviderSqlDispatcherFactory>();
+            services.AddScoped<ISqlQueryDispatcher>(serviceProvider =>
+            {
+                var factory = serviceProvider.GetRequiredService<ISqlQueryDispatcherFactory>();
+                var scopeMarker = serviceProvider.GetRequiredService<SqlTransactionMarker>();
+
+                var dispatcher = factory.CreateDispatcher();
+                scopeMarker.OnTransactionCreated(dispatcher.Transaction);
+
+                return dispatcher;
+            });
             services.AddScoped<SqlTransactionMarker>();
 
             return services;

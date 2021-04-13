@@ -70,6 +70,8 @@ namespace Dfc.CourseDirectory.Testing
 
         public IServiceProvider Services => Fixture.Services;
 
+        public ISqlQueryDispatcherFactory SqlQueryDispatcherFactory => Fixture.DatabaseFixture.SqlQueryDispatcherFactory;
+
         public TestData TestData { get; }
 
         public Task DisposeAsync() => Task.CompletedTask;

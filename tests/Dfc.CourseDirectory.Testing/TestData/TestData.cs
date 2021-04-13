@@ -4,29 +4,28 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly SqlDataSync _sqlDataSync;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IClock _clock;
         private readonly UniqueIdHelper _uniqueIdHelper;
         private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
 
         public TestData(
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             SqlDataSync sqlDataSync,
-            IServiceProvider serviceProvider,
             IClock clock,
             UniqueIdHelper uniqueIdHelper)
         {
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlDataSync = sqlDataSync;
-            _serviceProvider = serviceProvider;
             _clock = clock;
             _uniqueIdHelper = uniqueIdHelper;
         }
@@ -45,17 +44,10 @@ namespace Dfc.CourseDirectory.Testing
 
             try
             {
-                var serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
-                using (var scope = serviceScopeFactory.CreateScope())
-                {
-                    var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-
-                    var result = await action(queryDispatcher);
-
-                    queryDispatcher.Transaction.Commit();
-
-                    return result;
-                }
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                var result = await action(dispatcher);
+                dispatcher.Transaction.Commit();
+                return result;
             }
             finally
             {

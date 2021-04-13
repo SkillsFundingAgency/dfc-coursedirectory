@@ -61,6 +61,8 @@ namespace Dfc.CourseDirectory.Testing
 
         public InMemoryDocumentStore InMemoryDocumentStore => _services.GetRequiredService<InMemoryDocumentStore>();
 
+        public ISqlQueryDispatcherFactory SqlQueryDispatcherFactory => _services.GetRequiredService<ISqlQueryDispatcherFactory>();
+
         public SqlQuerySpy SqlQuerySpy => _services.GetRequiredService<SqlQuerySpy>();
 
         private string ConnectionString => _configuration["ConnectionStrings:DefaultConnection"];
@@ -73,7 +75,7 @@ namespace Dfc.CourseDirectory.Testing
             services.AddTransient<TestData>();
             services.AddSingleton<UniqueIdHelper>();
             services.AddSingleton<SqlQuerySpy>();
-            services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
+            services.Decorate<ISqlQueryDispatcherFactory, SqlQuerySpyDispatcherFactoryDecorator>();
             services.AddTransient<SqlDataSync>();
             services.AddLogging();
         }
@@ -114,17 +116,10 @@ namespace Dfc.CourseDirectory.Testing
         public async Task<TResult> WithSqlQueryDispatcher<TResult>(
             Func<ISqlQueryDispatcher, Task<TResult>> action)
         {
-            var serviceScopeFactory = _services.GetRequiredService<IServiceScopeFactory>();
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-
-                var result = await action(queryDispatcher);
-
-                queryDispatcher.Transaction.Commit();
-
-                return result;
-            }
+            using var dispatcher = SqlQueryDispatcherFactory.CreateDispatcher();
+            var result = await action(dispatcher);
+            dispatcher.Transaction.Commit();
+            return result;
         }
 
         private void AcquireLock()

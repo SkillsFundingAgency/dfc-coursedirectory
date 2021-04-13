@@ -23,21 +23,21 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private const string DownloadLocation = "https://findalearningaimbeta.fasst.org.uk/DownloadData/GetDownloadFileAsync?fileName=published%2F007%2FLearningDelivery_V007_CSV.Zip";
 
         private readonly HttpClient _httpClient;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IClock _clock;
         private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
             HttpClient httpClient,
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IServiceScopeFactory serviceScopeFactory,
             IClock clock,
             ILogger<LarsDataImporter> logger)
         {
             _httpClient = httpClient;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _serviceScopeFactory = serviceScopeFactory;
             _clock = clock;
             _logger = logger;
         }
@@ -336,11 +336,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             async Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action)
             {
-                using var scope = _serviceScopeFactory.CreateScope();
-                var dispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
                 await action(dispatcher);
-
                 await dispatcher.Transaction.CommitAsync();
             }
         }

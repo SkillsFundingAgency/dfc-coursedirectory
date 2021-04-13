@@ -31,8 +31,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var importer = new LarsDataImporter(
                 client,
+                SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
-                Services.GetRequiredService<IServiceScopeFactory>(),
                 Clock,
                 GetLogger());
 
