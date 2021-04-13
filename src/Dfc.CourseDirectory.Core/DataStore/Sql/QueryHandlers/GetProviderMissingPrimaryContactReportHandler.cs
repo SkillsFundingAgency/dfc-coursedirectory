@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT      p.Ukprn as ProviderUkprn,
             p.ProviderName,
             p.ProviderType,
-            p.ProviderStatus,
+            p.UkrlpProviderStatusDescription,
             p.ProviderStatus
 FROM        Pttcd.Providers p
 LEFT JOIN [Pttcd].[ProviderContacts] pc on p.ProviderID = pc.ProviderId
