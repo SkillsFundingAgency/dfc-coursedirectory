@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
-        public async Task Post_ValidVenuesFile_CreatesRecordAndRedirectsToPublish()
+        public async Task Post_ValidVenuesFile_CreatesRecordAndRedirectsToInProgress()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
+            response.Headers.Location.Should().Be($"/data-upload/venues/in-progress?providerId={provider.ProviderId}");
 
             SqlQuerySpy.VerifyQuery<CreateVenueUpload, Success>(q =>
                 q.CreatedBy.UserId == User.UserId &&
