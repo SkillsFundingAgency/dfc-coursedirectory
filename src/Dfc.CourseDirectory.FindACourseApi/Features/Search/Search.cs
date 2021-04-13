@@ -27,6 +27,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         public IEnumerable<int> DeliveryModes { get; set; }
         public string Town { get; set; }
         public string Postcode { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public SearchSortBy? SortBy { get; set; }
         public DateTime? StartDateFrom { get; set; }
         public DateTime? StartDateTo { get; set; }
@@ -63,7 +65,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         {
             var filters = new List<string>();
 
-            if (request.SortBy == SearchSortBy.Distance && string.IsNullOrWhiteSpace(request.Postcode))
+            // If either lat or lng is specified then both must be specified
+            if (request.Latitude.HasValue != request.Longitude.HasValue)
+            {
+                return new ProblemDetails()
+                {
+                    Detail = "Latitude & longitude must both be specified.",
+                    Status = 400,
+                    Title = "InvalidLatLng"
+                };
+            }
+
+            if (request.SortBy == SearchSortBy.Distance &&
+                (string.IsNullOrWhiteSpace(request.Postcode) && (!request.Latitude.HasValue || !request.Longitude.HasValue)))
             {
                 return new ProblemDetails()
                 {
@@ -88,12 +102,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 }
             }
 
-            var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 && postcode != null;
+            var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 &&
+                (postcode != null || (request.Latitude.HasValue && request.Longitude.HasValue));
 
             // lat/lng required if Distance filter is specified *or* sorting by Distance
-            var getPostcodeCoords = geoFilterRequired || request.SortBy == SearchSortBy.Distance;
-            float? latitude = null;
-            float? longitude = null;
+            var getPostcodeCoords = (geoFilterRequired || request.SortBy == SearchSortBy.Distance) && !request.Latitude.HasValue;
+            double? latitude = request.Latitude;
+            double? longitude = request.Longitude;
             if (getPostcodeCoords)
             {
                 var coords = await TryGetCoordinatesForPostcode(postcode);

@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Core.Models
             return true;
         }
 
-        public static bool operator ==(Postcode a, Postcode b) => a.Equals(b);
+        public static bool operator ==(Postcode a, Postcode b) => (a is null && b is null) || a.Equals(b);
 
         public static bool operator !=(Postcode a, Postcode b) => !(a == b);
 
