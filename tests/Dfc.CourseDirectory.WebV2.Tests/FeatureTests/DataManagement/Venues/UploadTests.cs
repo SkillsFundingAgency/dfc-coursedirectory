@@ -92,6 +92,52 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
+        public async Task Post_ValidVenuesFileProcessingCompletedWithinThreshold_CreatesRecordAndRedirectsToCheckAndPublish()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var row1 = new VenueRow()
+            {
+                AddressLine1 = Faker.Address.StreetAddress(),
+                Postcode = Faker.Address.UkPostCode(),
+                VenueName = Faker.Company.Name()
+            };
+
+            var csvStream = CreateCsvStream(new[] { row1 });
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Override the VenueUploadProcessor so that
+            //  a) we can set the UploadStatus to Processed immediately after the record has been created;
+            //  b) we can intercept the call to WaitForProcessingToComplete to ensure it doesn't return before we've done (a).
+
+            Guid venueUploadId = default;
+            Task updatedStatusTask = default;
+
+            SqlQuerySpy.Callback<CreateVenueUpload, Success>(q =>
+            {
+                venueUploadId = q.VenueUploadId;
+
+                updatedStatusTask = Task.Run(() => WithSqlQueryDispatcher(
+                    dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    {
+                        VenueUploadId = venueUploadId,
+                        ChangedOn = Clock.UtcNow,
+                        UploadStatus = Core.Models.UploadStatus.Processed
+                    })));
+            });
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            await updatedStatusTask;
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
+        }
+
+        [Fact]
         public async Task Post_MissingFile_RendersError()
         {
             // Arrange

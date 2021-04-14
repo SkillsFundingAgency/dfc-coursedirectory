@@ -1,7 +1,9 @@
-﻿using Dfc.CourseDirectory.Core;
+﻿using System;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.ValidationTests;
@@ -73,6 +75,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
             services.AddTransient<ValidatorBaseTestsValidator>();
+
+            services.Configure<DataManagementOptions>(
+                options => options.ProcessedImmediatelyThreshold = TimeSpan.FromMilliseconds(500));
 
             DatabaseFixture.ConfigureServices(services);
         }

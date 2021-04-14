@@ -4,6 +4,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement
 {
     public class DataManagementOptions
     {
-        public TimeSpan ProcessedImmediatelyThresholdMilliseconds { get; set; }
+        public TimeSpan ProcessedImmediatelyThreshold { get; set; } = TimeSpan.FromSeconds(5);
     }
 }
