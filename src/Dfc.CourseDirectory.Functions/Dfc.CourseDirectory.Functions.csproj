@@ -5,6 +5,14 @@
     <UserSecretsId>CourseDirectoryFunctions</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="UkprnsNotOnRoatp.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UkprnsNotOnRoatp.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <FunctionsPreservedDependencies Include="System.Interactive.Async.dll" />  <!-- https://github.com/Azure/azure-functions-host/issues/6336 -->
   </ItemGroup>
   <ItemGroup>
@@ -26,9 +34,6 @@
     <None Update="local.settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
-    <None Update="UkprnsNotOnRoatp.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>
