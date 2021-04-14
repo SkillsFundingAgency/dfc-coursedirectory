@@ -10,18 +10,19 @@
 <div class="govuk-grid-row">
     <h1 class="govuk-heading-xl">Upload your venue data</h1>
     <div class="govuk-grid-column-two-thirds">
-        <form method="post" enctype="multipart/form-data" asp-controller="DataManagement" asp-action="Upload">
-
+        <form asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" enctype="multipart/form-data">
             <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
             <p class="govuk-body">To ensure an upload is successful you must:</p>
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
                 <li>include existing and new venues in the data file</li>
-                <li>follow the file <a asp-action="VenueFormatting" asp-controller="BulkUploadVenues" class="govuk-link">format requirements</a></li>
+                <li>follow the <a href="#" class="govuk-link">file format requirements</a></li>
             </ul>
-            <govuk-file-upload asp-for="File" />
-            <p>
-                <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
-            </p>
+
+            <govuk-file-upload asp-for="File" input-accept=".csv">
+                <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
+            </govuk-file-upload>
+
+            <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
         </form>
 
     </div>
