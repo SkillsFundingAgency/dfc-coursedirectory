@@ -5,12 +5,17 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
+using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
+using Moq;
 using OneOf.Types;
 using Xunit;
 
@@ -21,7 +26,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public UploadTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
+            DataUploadsContainerClient = new Mock<BlobContainerClient>();
+
+            DataUploadsContainerClient
+                .Setup(mock => mock.CreateIfNotExistsAsync(
+                    It.IsAny<PublicAccessType>(),
+                    It.IsAny<IDictionary<string, string>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(CreateMockResponse(BlobsModelFactory.BlobContainerInfo(new ETag(), Clock.UtcNow)));
+
+            BlobServiceClient
+                .Setup(mock => mock.GetBlobContainerClient("data-uploads"))
+                .Returns(DataUploadsContainerClient.Object);
+
+            static Response<T> CreateMockResponse<T>(T value)
+            {
+                var mock = new Mock<Response<T>>();
+                mock.SetupGet(mock => mock.Value).Returns(value);
+                return mock.Object;
+            }
         }
+
+        private Mock<BlobContainerClient> DataUploadsContainerClient { get; }
 
         [Fact]
         public async Task Get_RendersPage()

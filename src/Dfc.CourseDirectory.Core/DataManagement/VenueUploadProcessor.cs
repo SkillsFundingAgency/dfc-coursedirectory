@@ -3,6 +3,7 @@ using System.Buffers;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -11,16 +12,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public class VenueUploadProcessor : IVenueUploadProcessor
     {
+        private const string ContainerName = "data-uploads";
+
         private static readonly byte[] _bom = new byte[] { 0xEF, 0xBB, 0xBF };
 
+        private static bool _containerIsKnownToExist;
+
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
+        private readonly BlobContainerClient _blobContainerClient;
         private readonly IClock _clock;
 
         public VenueUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
+            BlobServiceClient blobServiceClient,
             IClock clock)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
+            _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _clock = clock;
         }
 
@@ -36,24 +44,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 throw new ArgumentException("Stream must be seekable.", nameof(stream));
             }
 
-            // Check the stream is not empty
-            if (stream.Length == 0)
+            if (await FileIsEmpty(stream))
             {
                 return SaveFileResult.EmptyFile();
-            }
-
-            // The file could be empty except for BOM. Check for that too.
-            if (stream.Length == 3)
-            {
-                var buffer = new byte[3];
-                await stream.ReadAsync(buffer, 0, 3);
-
-                if (buffer.SequenceEqual(_bom))
-                {
-                    return SaveFileResult.EmptyFile();
-                }
-
-                stream.Seek(0L, SeekOrigin.Begin);
             }
 
             if (!await LooksLikeCsv(stream))
@@ -61,22 +54,67 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidFile();
             }
 
-            var venueUploadId = Guid.NewGuid();
+            var venueUploadId = await CreateDatabaseRecord();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                await dispatcher.ExecuteQuery(new CreateVenueUpload()
-                {
-                    CreatedBy = uploadedBy,
-                    CreatedOn = _clock.UtcNow,
-                    ProviderId = providerId,
-                    VenueUploadId = venueUploadId
-                });
-
-                await dispatcher.Transaction.CommitAsync();
-            }
+            await UploadToBlobStorage();
 
             return SaveFileResult.Success(venueUploadId, UploadStatus.Created);
+
+            async Task<Guid> CreateDatabaseRecord()
+            {
+                var venueUploadId = Guid.NewGuid();
+
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await dispatcher.ExecuteQuery(new CreateVenueUpload()
+                    {
+                        CreatedBy = uploadedBy,
+                        CreatedOn = _clock.UtcNow,
+                        ProviderId = providerId,
+                        VenueUploadId = venueUploadId
+                    });
+
+                    await dispatcher.Transaction.CommitAsync();
+                }
+
+                return venueUploadId;
+            }
+
+            async Task UploadToBlobStorage()
+            {
+                if (!_containerIsKnownToExist)
+                {
+                    await _blobContainerClient.CreateIfNotExistsAsync();
+                    _containerIsKnownToExist = true;
+                }
+
+                var blobName = $"venues/{venueUploadId}.csv";
+                await _blobContainerClient.UploadBlobAsync(blobName, stream);
+            }
+        }
+
+        private static async Task<bool> FileIsEmpty(Stream stream)
+        {
+            if (stream.Length == 0)
+            {
+                return true;
+            }
+
+            // The file could be empty except for BOM. Check for that too.
+            if (stream.Length == 3)
+            {
+                var buffer = new byte[3];
+
+                await stream.ReadAsync(buffer, 0, 3);
+                stream.Seek(-3, SeekOrigin.Current);
+
+                if (buffer.SequenceEqual(_bom))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static async Task<bool> LooksLikeCsv(Stream stream)
