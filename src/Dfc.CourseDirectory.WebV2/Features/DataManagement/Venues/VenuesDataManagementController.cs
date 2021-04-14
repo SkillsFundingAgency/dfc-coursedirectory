@@ -46,7 +46,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 },
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(nameof(InProgress))
+                    result =>
+                        RedirectToAction(
+                            result == Venues.Upload.UploadResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 

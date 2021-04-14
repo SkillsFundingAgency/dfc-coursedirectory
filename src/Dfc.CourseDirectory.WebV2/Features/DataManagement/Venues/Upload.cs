@@ -9,33 +9,42 @@ using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
 {
-    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
+    public class Command : IRequest<OneOf<ModelWithErrors<Command>, UploadResult>>
     {
         public IFormFile File { get; set; }
     }
 
-    public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
+    public enum UploadResult
+    {
+        ProcessingInProgress,
+        ProcessingCompleted
+    }
+
+    public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, UploadResult>>
     {
         private readonly IVenueUploadProcessor _venueUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IOptions<DataManagementOptions> _optionsAccessor;
 
         public Handler(
             IVenueUploadProcessor venueUploadProcessor,
             IProviderContextProvider providerContextProvider,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IOptions<DataManagementOptions> optionsAccessor)
         {
             _venueUploadProcessor = venueUploadProcessor;
             _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
+            _optionsAccessor = optionsAccessor;
         }
 
-        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
+        public async Task<OneOf<ModelWithErrors<Command>, UploadResult>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
@@ -74,7 +83,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
 
             Debug.Assert(saveFileResult.Status == SaveFileResultStatus.Success);
 
-            return new Success();
+            // Wait for a little bit to see if the file gets processed quickly
+            // (so we can skip the In Progress UI)
+
+            try
+            {
+                using var cts = new CancellationTokenSource(_optionsAccessor.Value.ProcessedImmediatelyThreshold);
+                await _venueUploadProcessor.WaitForProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
+                return UploadResult.ProcessingCompleted;
+            }
+            catch (OperationCanceledException)
+            {
+                return UploadResult.ProcessingInProgress;
+            }
 
             static ValidationResult CreateValidationResultFromError(string message) =>
                 new ValidationResult(new[]

@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -119,6 +120,35 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var blobName = $"{Constants.VenuesFolder}/{venueUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
+            }
+        }
+
+        public async Task WaitForProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken)
+        {
+            // The IsolationLevel override here is important - our default Snapshot would never seen data change
+            // since since it's happening in another transaction.
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+            {
+                while (true)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+
+                    if (venueUpload == null)
+                    {
+                        throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
+                    }
+
+                    if (venueUpload.UploadStatus == UploadStatus.Processed ||
+                        venueUpload.UploadStatus == UploadStatus.Published ||
+                        venueUpload.UploadStatus == UploadStatus.Abandoned)
+                    {
+                        return;
+                    }
+
+                    await Task.Delay(250, cancellationToken);
+                }
             }
         }
 
