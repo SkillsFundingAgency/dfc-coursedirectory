@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.WebV2.Filters;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
     [Route("data-upload/venues")]
-    [RequireProviderContext]
     [RequireFeatureFlag(FeatureFlags.DataManagement)]
     public class VenuesDataManagementController : Controller
     {
@@ -23,17 +23,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         }
 
         [HttpGet("")]
+        [RequireProviderContext]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpGet("download")]
+        [RequireProviderContext]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
             new Download.Query(),
             result => new CsvResult<VenueRow>(result.FileName, result.Rows));
 
         [HttpPost("upload")]
+        [RequireProviderContext]
         public async Task<IActionResult> Upload(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
@@ -51,15 +54,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         }
 
         [HttpGet("validation")]
+        [RequireProviderContext]
         public IActionResult Validation()
         {
             return View();
         }
 
         [HttpGet("check-publish")]
+        [RequireProviderContext]
         public IActionResult CheckAndPublish()
         {
             return View();
         }
+
+        [HttpGet("template")]
+        public IActionResult Template() =>
+           new CsvResult<VenueRow>("venues-template.csv", Enumerable.Empty<VenueRow>());
     }
 }
