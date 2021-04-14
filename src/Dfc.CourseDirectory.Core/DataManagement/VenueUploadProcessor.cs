@@ -12,8 +12,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public class VenueUploadProcessor : IVenueUploadProcessor
     {
-        private const string ContainerName = "data-uploads";
-
         private static readonly byte[] _bom = new byte[] { 0xEF, 0xBB, 0xBF };
 
         private static bool _containerIsKnownToExist;
@@ -28,8 +26,39 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             IClock clock)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
+            _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
             _clock = clock;
+        }
+
+        public async Task ProcessFile(Guid venueUploadId, Stream stream)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                {
+                    ChangedOn = _clock.UtcNow,
+                    UploadStatus = UploadStatus.InProgress,
+                    VenueUploadId = venueUploadId
+                });
+
+                await dispatcher.Transaction.CommitAsync();
+            }
+
+            // TODO Actually process the file
+            // TEMP status changes with delay for testing
+            await Task.Delay(new Random().Next(0, 10000));
+
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                {
+                    ChangedOn = _clock.UtcNow,
+                    UploadStatus = UploadStatus.Processed,
+                    VenueUploadId = venueUploadId
+                });
+
+                await dispatcher.Transaction.CommitAsync();
+            }
         }
 
         public async Task<SaveFileResult> SaveFile(Guid providerId, Stream stream, UserInfo uploadedBy)
@@ -88,7 +117,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     _containerIsKnownToExist = true;
                 }
 
-                var blobName = $"venues/{venueUploadId}.csv";
+                var blobName = $"{Constants.VenuesFolder}/{venueUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
             }
         }
