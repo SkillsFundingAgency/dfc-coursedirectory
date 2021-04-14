@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
@@ -39,6 +40,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         public Mock<IAddressSearchService> AddressSearchService { get; } = new Mock<IAddressSearchService>();
+
+        public Mock<BlobServiceClient> BlobServiceClient { get; } = new Mock<BlobServiceClient>();
 
         public MutableClock Clock => DatabaseFixture.Clock;
 
@@ -132,11 +135,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 services.AddSingleton(ProviderSearchClient.Object);
                 services.AddSingleton(BinaryStorageProvider.Object);
                 services.AddSingleton(AddressSearchService.Object);
+                services.AddSingleton(BlobServiceClient.Object);
             });
 
         private void ResetMocks()
         {
             AddressSearchService.Reset();
+            BlobServiceClient.Reset();
             ProviderSearchClient.Reset();
             BinaryStorageProvider.Reset();
         }

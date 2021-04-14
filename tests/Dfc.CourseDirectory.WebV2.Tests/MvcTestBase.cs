@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -35,6 +36,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         protected Mock<IAddressSearchService> AddressSearchService => Factory.AddressSearchService;
+
+        protected Mock<BlobServiceClient> BlobServiceClient => Factory.BlobServiceClient;
 
         protected MutableClock Clock => Factory.Clock;
 
