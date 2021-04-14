@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public interface IVenueUploadProcessor
     {
+        Task ProcessFile(Guid venueUploadId, Stream stream);
         Task<SaveFileResult> SaveFile(Guid providerId, Stream stream, UserInfo uploadedBy);
     }
 }
