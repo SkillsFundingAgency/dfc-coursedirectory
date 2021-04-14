@@ -13,6 +13,7 @@ using Azure.Storage.Blobs.Models;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Moq;
@@ -63,6 +64,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
+        public async Task Post_ProviderAlreadyHasUnprocessedUpload_ReturnsBadRequest()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new CreateVenueUpload()
+            {
+                CreatedBy = User.ToUserInfo(),
+                CreatedOn = Clock.UtcNow,
+                ProviderId = provider.ProviderId,
+                VenueUploadId = Guid.NewGuid()
+            }));
+
+            var row1 = new VenueRow()
+            {
+                AddressLine1 = Faker.Address.StreetAddress(),
+                Postcode = Faker.Address.UkPostCode(),
+                VenueName = Faker.Company.Name()
+            };
+
+            var csvStream = CreateCsvStream(new[] { row1 });
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
         public async Task Post_ValidVenuesFile_CreatesRecordAndRedirectsToInProgress()
         {
             // Arrange
@@ -89,6 +121,35 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 q.CreatedBy.UserId == User.UserId &&
                 q.CreatedOn == Clock.UtcNow &&
                 q.ProviderId == provider.ProviderId);
+        }
+
+        [Fact]
+        public async Task Post_ValidUpload_AbandonsExistingUnpublishedUpload()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var oldUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.Processed);
+
+            var row1 = new VenueRow()
+            {
+                AddressLine1 = Faker.Address.StreetAddress(),
+                Postcode = Faker.Address.UkPostCode(),
+                VenueName = Faker.Company.Name()
+            };
+
+            var csvStream = CreateCsvStream(new[] { row1 });
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            oldUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = oldUpload.VenueUploadId }));
+            oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
         }
 
         [Fact]

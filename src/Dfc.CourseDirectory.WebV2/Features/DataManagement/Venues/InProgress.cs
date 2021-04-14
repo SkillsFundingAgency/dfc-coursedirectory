@@ -30,9 +30,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.InProgress
         {
             var providerId = _providerContextProvider.GetProviderId();
 
-            var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestIncompleteVenueUploadForProvider()
+            var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
             {
-                ProviderId = providerId
+                ProviderId = providerId,
+                Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
             });
 
             if (venueUpload == null)
