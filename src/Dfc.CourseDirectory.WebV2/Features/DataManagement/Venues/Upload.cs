@@ -80,6 +80,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
                     request,
                     CreateValidationResultFromError("The selected file is empty"));
             }
+            else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
+            {
+                // UI Should stop us getting here so a generic error is sufficient
+                throw new InvalidStateException();
+            }
 
             Debug.Assert(saveFileResult.Status == SaveFileResultStatus.Success);
 

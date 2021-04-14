@@ -84,31 +84,55 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidFile();
             }
 
-            var venueUploadId = await CreateDatabaseRecord();
+            var venueUploadId = Guid.NewGuid();
+
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                // Check there isn't an existing unprocessed upload for this provider
+
+                var existingUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
+                {
+                    ProviderId = providerId,
+                    Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress }
+                });
+
+                if (existingUpload != null)
+                {
+                    return SaveFileResult.ExistingFileInFlight();
+                }
+
+                // Abandon any existing un-published upload (there will be one at most)
+
+                var unpublishedUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
+                {
+                    ProviderId = providerId,
+                    Statuses = new[] { UploadStatus.Processed }
+                });
+
+                if (unpublishedUpload != null)
+                {
+                    await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    {
+                        ChangedOn = _clock.UtcNow,
+                        UploadStatus = UploadStatus.Abandoned,
+                        VenueUploadId = unpublishedUpload.VenueUploadId
+                    });
+                }
+
+                await dispatcher.ExecuteQuery(new CreateVenueUpload()
+                {
+                    CreatedBy = uploadedBy,
+                    CreatedOn = _clock.UtcNow,
+                    ProviderId = providerId,
+                    VenueUploadId = venueUploadId
+                });
+
+                await dispatcher.Transaction.CommitAsync();
+            }
 
             await UploadToBlobStorage();
 
             return SaveFileResult.Success(venueUploadId, UploadStatus.Created);
-
-            async Task<Guid> CreateDatabaseRecord()
-            {
-                var venueUploadId = Guid.NewGuid();
-
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-                {
-                    await dispatcher.ExecuteQuery(new CreateVenueUpload()
-                    {
-                        CreatedBy = uploadedBy,
-                        CreatedOn = _clock.UtcNow,
-                        ProviderId = providerId,
-                        VenueUploadId = venueUploadId
-                    });
-
-                    await dispatcher.Transaction.CommitAsync();
-                }
-
-                return venueUploadId;
-            }
 
             async Task UploadToBlobStorage()
             {

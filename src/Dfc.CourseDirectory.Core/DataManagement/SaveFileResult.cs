@@ -18,6 +18,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Status = SaveFileResultStatus.EmptyFile
             };
 
+        public static SaveFileResult ExistingFileInFlight() =>
+            new SaveFileResult()
+            {
+                MissingHeaders = Array.Empty<string>(),
+                Status = SaveFileResultStatus.ExistingFileInFlight
+            };
+
         public static SaveFileResult InvalidFile() =>
             new SaveFileResult()
             {
@@ -41,5 +48,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         InvalidFile,
         InvalidHeader,
         EmptyFile,
+        ExistingFileInFlight
     }
 }
