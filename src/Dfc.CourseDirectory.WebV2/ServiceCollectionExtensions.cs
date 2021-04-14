@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -167,6 +168,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
+            services.AddTransient<IVenueUploadProcessor, VenueUploadProcessor>();
 
             if (!environment.IsTesting())
             {
