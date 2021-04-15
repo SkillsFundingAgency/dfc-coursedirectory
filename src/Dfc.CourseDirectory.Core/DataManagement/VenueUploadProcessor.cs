@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -20,16 +21,60 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly BlobContainerClient _blobContainerClient;
         private readonly IClock _clock;
+        private readonly TimeSpan _pollInterval;
 
         public VenueUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             BlobServiceClient blobServiceClient,
-            IClock clock)
+            IClock clock) : this(
+                sqlQueryDispatcherFactory, blobServiceClient, clock, TimeSpan.FromMilliseconds(500))
+        {
+        }
+
+        // Constructor for overriding pollInterval for testing
+        internal VenueUploadProcessor(
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
+            BlobServiceClient blobServiceClient,
+            IClock clock,
+            TimeSpan pollInterval)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
             _clock = clock;
+            _pollInterval = pollInterval;
         }
+
+        public IObservable<UploadStatus> GetUploadStatusUpdates(Guid venueUploadId) =>
+            Observable.Create<UploadStatus>(async (observer, cancellationToken) =>
+            {
+                // The IsolationLevel override here is important - our default Snapshot would never see data changes
+                // since since they happen in other transactions.
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+                {
+                    while (true)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+
+                        if (venueUpload == null)
+                        {
+                            observer.OnError(new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId)));
+                            return;
+                        }
+
+                        observer.OnNext(venueUpload.UploadStatus);
+
+                        if (venueUpload.UploadStatus.IsTerminal())
+                        {
+                            observer.OnCompleted();
+                            return;
+                        }
+
+                        await Task.Delay(_pollInterval, cancellationToken);
+                    }
+                }
+            }).DistinctUntilChanged();
 
         public async Task ProcessFile(Guid venueUploadId, Stream stream)
         {
@@ -147,34 +192,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task WaitForProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken)
-        {
-            // The IsolationLevel override here is important - our default Snapshot would never seen data change
-            // since since it's happening in another transaction.
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
-            {
-                while (true)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
-
-                    if (venueUpload == null)
-                    {
-                        throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
-                    }
-
-                    if (venueUpload.UploadStatus == UploadStatus.Processed ||
-                        venueUpload.UploadStatus == UploadStatus.Published ||
-                        venueUpload.UploadStatus == UploadStatus.Abandoned)
-                    {
-                        return;
-                    }
-
-                    await Task.Delay(250, cancellationToken);
-                }
-            }
-        }
+        public Task WaitForProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken) =>
+            GetUploadStatusUpdates(venueUploadId)
+                .TakeUntil(status => status == UploadStatus.Processed || status.IsTerminal())
+                .ForEachAsync(_ => { }, cancellationToken);
 
         private static async Task<bool> FileIsEmpty(Stream stream)
         {
