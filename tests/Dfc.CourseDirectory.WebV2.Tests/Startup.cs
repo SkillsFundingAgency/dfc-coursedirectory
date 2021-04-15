@@ -46,6 +46,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapV2Hubs();
             });
         }
 
@@ -55,6 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<ISessionStore, SingletonSessionStore>();
 
             services.AddRouting();
+            services.AddSignalR();
 
             services.AddSingleton<IUserInstanceStateStore, TestUserInstanceStateStore>();
 

@@ -97,6 +97,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddCourseDirectory(_env, Configuration);
+            services.AddSignalR();
 
             var mvcBuilder = services
                 .AddMvc(options =>
@@ -264,6 +265,8 @@ namespace Dfc.CourseDirectory.Web
                     pattern: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
 
                 endpoints.MapControllers();
+
+                endpoints.MapV2Hubs();
             });
         }
     }
