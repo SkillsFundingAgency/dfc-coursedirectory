@@ -36,7 +36,7 @@ LEFT OUTER JOIN ( SELECT    COUNT(1) AS LiveApprenticeshipCount,
             ) ap on ap.ProviderId = p.ProviderId
 WHERE (pc.AddressPostcode IS NULL OR pc.AddressSaonDescription IS NULL)
 AND   pc.ContactType = 'P'
-AND	  p.ProviderStatus = 1
+AND	  p.ProviderStatus = ${(int)ProviderStatus.Onboarded}
 AND    (
 		cu.LiveCourseCount			  > 0 
         OR tl.LiveTLevelCount         > 0 
