@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Testing
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
                 var result = await action(dispatcher);
-                dispatcher.Transaction.Commit();
+                await dispatcher.Commit();
                 return result;
             }
             finally
