@@ -30,7 +30,7 @@
 
     public static class UploadStatusExtensions
     {
-        public static bool IsComplete(this UploadStatus status) => status switch
+        public static bool IsTerminal(this UploadStatus status) => status switch
         {
             UploadStatus.Published => true,
             UploadStatus.Abandoned => true,
