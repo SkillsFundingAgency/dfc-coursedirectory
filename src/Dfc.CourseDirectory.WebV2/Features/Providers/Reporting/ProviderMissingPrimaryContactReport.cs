@@ -23,14 +23,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderMissing
         [Name("Provider Name")]
         public string ProviderName { get; set; }
 
+        [Name("Provider Status")]
+        public int ProviderStatus { get; set; }
+
         [Name("Provider Type")]
         public int ProviderType { get; set; }
 
         [Name("Provider Type Description")]
         public string ProviderTypeDescription { get; set; }
-
-        [Name("Provider Status")]
-        public int ProviderStatus { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -54,9 +54,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderMissing
                     {
                         ProviderUkprn = result.ProviderUkprn,
                         ProviderName = result.ProviderName,
+                        ProviderStatus = (int)result.ProviderStatus,
                         ProviderType = (int)result.ProviderType,
                         ProviderTypeDescription = string.Join("; ", result.ProviderType.SplitFlags().DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescription())),
-                        ProviderStatus = (int)result.ProviderStatus,
                     };
                 }
             }
