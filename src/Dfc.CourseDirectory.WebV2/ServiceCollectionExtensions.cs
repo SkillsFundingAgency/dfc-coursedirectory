@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2
                 AddImportsToHtml = false
             });
             services.AddMediatR(typeof(ServiceCollectionExtensions));
-            services.AddScoped<IClock, FrozenSystemClock>();
+            services.AddTransient<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();
             services.TryAddScoped<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();

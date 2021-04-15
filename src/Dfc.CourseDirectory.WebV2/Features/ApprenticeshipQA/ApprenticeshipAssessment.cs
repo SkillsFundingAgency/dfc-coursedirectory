@@ -319,6 +319,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             var providerId = _journeyInstance.State.ProviderId;
 
             var currentUserId = _currentUserProvider.GetCurrentUser().UserId;
+            var now = _clock.UtcNow;
 
             var submission = await GetSubmission();
 
@@ -337,7 +338,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
                     ApprenticeshipId = apprenticeshipId,
                     AssessedByUserId = currentUserId,
-                    AssessedOn = _clock.UtcNow,
+                    AssessedOn = now,
                     ComplianceComments = _journeyInstance.State.ComplianceComments,
                     ComplianceFailedReasons = _journeyInstance.State.ComplianceFailedReasons.Value,
                     CompliancePassed = _journeyInstance.State.CompliancePassed.Value,
@@ -353,7 +354,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
                     Passed = overallPassed,
                     LastAssessedByUserId = currentUserId,
-                    LastAssessedOn = _clock.UtcNow,
+                    LastAssessedOn = now,
                     ProviderAssessmentPassed = submission.ProviderAssessmentPassed,
                     ApprenticeshipAssessmentsPassed = _journeyInstance.State.IsApprenticeshipAssessmentPassed()
                 });
