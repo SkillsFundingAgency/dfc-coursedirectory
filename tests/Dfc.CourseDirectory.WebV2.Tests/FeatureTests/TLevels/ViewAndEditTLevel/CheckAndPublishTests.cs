@@ -158,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 doc.GetElementByTestId("TLevelName").TextContent.Trim().Should().Be(tLevelDefinition.Name);
                 doc.GetSummaryListValueWithKey("Your reference").Should().Be(yourReference);
                 doc.GetSummaryListValueWithKey("Start date").Should().Be($"{startDate:d MMMM yyyy}");
-                doc.GetSummaryListValueWithKey("T Level location").Should().Be(venue.VenueName);
+                doc.GetSummaryListValueWithKey("Venue").Should().Be(venue.VenueName);
                 doc.GetSummaryListValueWithKey("T Level webpage").Should().Be(website);
                 doc.GetSummaryListValueWithKey("Who this T Level is for").Should().Be(whoFor);
                 doc.GetSummaryListValueWithKey("Entry requirements").Should().Be(entryRequirements);

@@ -1,7 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Core.Validation.VenueValidation
 @model Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Name.Command
 @{
-    ViewContext.SetLayoutData(title: "Location name");
+    ViewContext.SetLayoutData(title: "Venue name");
 }
 
 <govuk-error-summary>
@@ -12,7 +12,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Name" asp-route-venueId="@Model.VenueId">
             <govuk-character-count asp-for="Name" max-length="@Constants.NameMaxLength" rows="1">
-                <govuk-character-count-label class="govuk-label--l">Location name</govuk-character-count-label>
+                <govuk-character-count-label class="govuk-label--l">Venue name</govuk-character-count-label>
             </govuk-character-count>
 
             <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>

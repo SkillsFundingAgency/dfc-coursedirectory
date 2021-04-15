@@ -122,9 +122,9 @@
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
                                                                                   == ApprenticeshipLocationType.ClassroomBased))
                         {
-                            <h3 class="govuk-heading-s">Classroom based locations</h3>
+                            <h3 class="govuk-heading-s">Your venues</h3>
                             <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
-                                Change classroom based locations
+                                Change
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -138,9 +138,9 @@
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
                                                                                   == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
                         {
-                            <h3 class="govuk-heading-s">Employer and classroom based locations</h3>
+                            <h3 class="govuk-heading-s">Your venues</h3>
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">
-                                Change employer and classroom based locations
+                                Change
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -153,7 +153,7 @@
 
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased))
                         {
-                            <h3 class="govuk-heading-s">Employer based locations:</h3>
+                            <h3 class="govuk-heading-s">Employer locations:</h3>
 
                             var location = Model.Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
 
@@ -161,13 +161,13 @@
                             {
 
                                 <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection">
-                                    Change employer based location
+                                    Change
                                 </a>
                             }
                             else
                             {
                                 <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Regions">
-                                    Change employer based location
+                                    Change
                                 </a>
                             }
 

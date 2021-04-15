@@ -13,12 +13,12 @@
         </span>
     }
 
-    <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select location"></select>
+    <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select venue"></select>
 
     @if (Model.DisplayLink)
     {
         <p class="govuk-body govuk-!-margin-top-3">
-            <a href="#" class="govuk-link--no-visited-state-!-margin-top-3 govuk-link" id="addNewVenue">Add another location</a>
+            <a href="#" class="govuk-link--no-visited-state-!-margin-top-3 govuk-link" id="addNewVenue">Add another venue</a>
         </p>
     }
 </div>

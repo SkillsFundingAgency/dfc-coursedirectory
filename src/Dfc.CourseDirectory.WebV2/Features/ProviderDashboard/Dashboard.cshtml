@@ -252,14 +252,14 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <h2 class="govuk-heading-m section-heading">Locations</h2>
+        <h2 class="govuk-heading-m section-heading">Venues</h2>
     </div>
 </div>
 
 <div class="govuk-grid-row govuk-!-margin-bottom-4 pttcd-provider-dashboard__row">
     <div class="govuk-grid-column-one-third">
         <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
-            <h2 class="govuk-heading-s">Locations</h2>
+            <h2 class="govuk-heading-s">Venues</h2>
             <p class="pttcd-provider-dashboard__card__number" data-testid="venue-count">@Model.VenueCount</p>
         </div>
     </div>
@@ -267,18 +267,18 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
     <div class="govuk-grid-column-one-third">
         <div class="pttcd-provider-dashboard__card">
             <div class="pttcd-provider-dashboard__card__content">
-                <h2 class="govuk-heading-s">Your locations</h2>
-                <p class="govuk-body-s">View and manage your learning and training venues.</p>
+                <h2 class="govuk-heading-s">Your venues</h2>
+                <p class="govuk-body-s">View and manage the venues for your learning and training.</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
                 <ul class="govuk-list pttcd-list--small">
                     <li>
-                        <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a location</a>
+                        <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a venue</a>
                     </li>
                     @if (Model.VenueCount > 0)
                     {
                         <li>
-                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">View and edit locations</a>
+                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">View and edit venue</a>
                         </li>
                     }
                 </ul>

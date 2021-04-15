@@ -17,8 +17,8 @@
     <h1 class="govuk-heading-l">Select delivery options</h1>
 
     <govuk-select asp-for="VenueId">
-        <govuk-select-label>Location</govuk-select-label>
-        <govuk-select-hint>Select a location you can travel from to delivery training</govuk-select-hint>
+        <govuk-select-label>Venue</govuk-select-label>
+        <govuk-select-hint>Select a venue you can travel from to delivery training</govuk-select-hint>
         <govuk-select-item value="">Please select</govuk-select-item>
         @foreach (var venue in Model.Venues)
         {
@@ -29,18 +29,18 @@
     </govuk-select>
 
     <div class="pttcd-apprenticeships__classroom-location__add-new-venue">
-        <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-returnUrl="@addVenueCallback" class="govuk-link">I need to add a location to this list</a>
+        <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-returnUrl="@addVenueCallback" class="govuk-link">Add another venue</a>
     </div>
 
     <govuk-input asp-for="Radius" inputmode="numeric" pattern="[0-9]*" input-class="govuk-input--width-4">
-        <govuk-input-label>How far are you willing to travel from the selected location?</govuk-input-label>
+        <govuk-input-label>How far are you willing to travel from the selected venue?</govuk-input-label>
         <govuk-input-hint>Enter number of miles</govuk-input-hint>
     </govuk-input>
 
     <govuk-checkboxes asp-for="DeliveryModes" class="govuk-checkboxes--small">
         <govuk-checkboxes-fieldset>
             <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
-                <h2 class="govuk-fieldset__heading">How is the training delivered at this location?</h2>
+                <h2 class="govuk-fieldset__heading">How is the training delivered at this venue?</h2>
             </govuk-checkboxes-fieldset-legend>
         </govuk-checkboxes-fieldset>
         <govuk-checkboxes-hint>Select all that apply</govuk-checkboxes-hint>

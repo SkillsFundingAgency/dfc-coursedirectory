@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             using (new AssertionScope())
             {
                 var doc = await response.GetDocument();
-                doc.GetSummaryListValueWithKey("Location name").Should().Be(name);
+                doc.GetSummaryListValueWithKey("Venue name").Should().Be(name);
                 doc.GetSummaryListValueWithKey("Address").Should().Be($"{addressLine1}\n{addressLine2}\n{town}\n{county}\n{postcode}");
                 doc.GetSummaryListValueWithKey("Email").Should().Be(email);
                 doc.GetSummaryListValueWithKey("Telephone").Should().Be(telephone);

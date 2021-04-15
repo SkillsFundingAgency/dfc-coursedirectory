@@ -41,7 +41,7 @@
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
 
-            NotificationTitle = Model.Updated ? "Your location updated:" : "New location added:",
+            NotificationTitle = Model.Updated ? "Your venue updated:" : "New venue added:",
             NotificationMessage = message,
             ClassType = "success-summary"
         });
@@ -49,7 +49,7 @@
     }
 }
 
-<h1 class="govuk-heading-xl">Your locations</h1>
+<h1 class="govuk-heading-xl">Your venues</h1>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -57,7 +57,7 @@
         <table class="govuk-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">Location</th>
+                    <th class="govuk-table__header" scope="col">Venue</th>
                     <th class="govuk-table__header" scope="col">Address</th>
                     <th class="govuk-table__header" scope="col">Postcode</th>
                     @if (adminLogin.Succeeded || providerLogin.Succeeded)
@@ -102,7 +102,7 @@
                 else
                 {
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="5">You have no locations</td>
+                        <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="5">You have no venues</td>
                     </tr>
                 }
 
@@ -111,7 +111,7 @@
 
         @if (adminLogin.Succeeded || providerLogin.Succeeded)
         {
-            <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button">Add a location</a>
+    <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button">Add a venue</a>
         }
     </div>
 </div>

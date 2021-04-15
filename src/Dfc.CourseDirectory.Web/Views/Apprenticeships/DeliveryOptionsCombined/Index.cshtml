@@ -48,7 +48,7 @@
                     <fieldset class="govuk-fieldset govuk-!-margin-bottom-6">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                             <h3 class="govuk-fieldset__heading">
-                                How is the training delivered at this location?
+                                How is the training delivered at this venue?
                             </h3>
                         </legend>
                         <span id="govuk-label-deliveryoptions" class="govuk-hint">
@@ -86,8 +86,8 @@
                     @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
                     {
-                        LabelText = "Location",
-                        HintText = "Select a location you can travel from to deliver training",
+                        LabelText = "Venue",
+                        HintText = "Select a venue you can travel from to deliver training",
                         LocationId = Model.LocationId ?? (Guid?)null,
                         DisplayLink = true,
                         DeliveryLocations = Model.Locations,
@@ -101,13 +101,13 @@
                         </legend>
                         <div id="hiderange">
                             <span id="govuk-label-Radius" class="govuk-hint">
-                                How far are you willing to travel from the selected location?
+                                How far are you willing to travel from the selected venue?
 
                             </span>
                             <div class="govuk-form-group">
 
                                 <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text"
-                                       val-required-message="Select How far you are willing to travel from selected location"
+                                       val-required-message="Select How far you are willing to travel from selected venue"
                                        val-range-min="1"
                                        val-range-max="999"
                                        val-range-message="Miles must be  between 1 and 999" />

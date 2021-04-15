@@ -1,6 +1,6 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Details.ViewModel
 @{
-    ViewContext.SetLayoutData(title: "Check your location details before saving");
+    ViewContext.SetLayoutData(title: "Check your venue information");
 }
 
 @if (Model.NewAddressIsOutsideOfEngland)
@@ -13,11 +13,11 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Save" asp-route-venueId="@Model.VenueId">
-            <h1 class="govuk-heading-xl">Check your location details before saving</h1>
+            <h1 class="govuk-heading-xl">Check your venue information</h1>
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Location name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-key>Venue name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.LocationName</govuk-summary-list-row-value>
                     <govuk-summary-list-row-action asp-action="Name" asp-route-venueId="@Model.VenueId" visually-hidden-text="location name">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>

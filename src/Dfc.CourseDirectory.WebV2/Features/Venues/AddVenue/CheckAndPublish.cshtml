@@ -1,7 +1,7 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish.ViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Add location");
+    ViewContext.SetLayoutData(title: "Check your venue information");
 }
 
 @if (Model.NewAddressIsOutsideOfEngland)
@@ -15,12 +15,12 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Publish" asp-all-route-data="RouteValuesHelper.FromQueryString()">
             <h1 class="govuk-heading-xl">
-                Add location
+                Check your venue information
             </h1>
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Location name</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-key>Venue name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Name</govuk-summary-list-row-value>
                     <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Name)" visually-hidden-text="location name">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
@@ -51,7 +51,7 @@
                 </govuk-summary-list-row>
             </govuk-summary-list>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-3">Save location</govuk-button>
+            <govuk-button type="submit" class="govuk-!-margin-right-3">Save venue</govuk-button>
             <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
         </form>
     </div>

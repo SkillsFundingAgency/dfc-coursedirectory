@@ -14,12 +14,12 @@
             @Model.HintText
         </span>
     }
-    <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location" aria-labelledby="LocationId">
+    <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select venue" aria-labelledby="LocationId">
         <option selected value="">Please select</option>
     </select>
     @if (Model.DisplayLink)
     {
-        <a href="#" class="govuk-link" id="addNewLocation">I need to add a location to this list</a>
+<a href="#" class="govuk-link" id="addNewLocation">Add another venue</a>
     }
 </div>
 
