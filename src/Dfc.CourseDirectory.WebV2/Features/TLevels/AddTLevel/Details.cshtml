@@ -41,7 +41,7 @@
             <govuk-checkboxes asp-for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-label--m">
-                        T Level venue
+                        Venue
                     </govuk-checkboxes-fieldset-legend>
                 </govuk-checkboxes-fieldset>
                 @foreach (var item in Model.ProviderVenues)
@@ -55,7 +55,7 @@
             @* TODO move this inside the LocationVenueIds formgroup above when tag helper library supports it? *@
             <div class="pttcd-tlevel__add-another-location">
                 <govuk-button type="submit" asp-action="AddAnotherLocation" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" class="govuk-button--secondary">
-                    Add another location
+                    Add another venue
                 </govuk-button>
             </div>
 

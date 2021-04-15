@@ -44,7 +44,7 @@
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>
-                        T Level venue@(Model.LocationVenueNames.Count != 1 ? "s" : "")
+                        Venue@(Model.LocationVenueNames.Count != 1 ? "s" : "")
                     </govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>
                         <ul class="govuk-list">
@@ -54,7 +54,7 @@
                             }
                         </ul>
                     </govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-fromPublishPage="true" asp-fragment="LocationVenueIds" visually-hidden-text="T Level venue@(Model.LocationVenueNames.Count != 1 ? "s" : "")">
+                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-fromPublishPage="true" asp-fragment="LocationVenueIds" visually-hidden-text="Venue@(Model.LocationVenueNames.Count != 1 ? "s" : "")">
                         Change
                     </govuk-summary-list-row-action>
                 </govuk-summary-list-row>
