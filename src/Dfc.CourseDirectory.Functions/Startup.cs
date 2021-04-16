@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Functions
 
             builder.Services.AddTransient<LarsDataImporter>();
             builder.Services.AddTransient<IUkrlpWcfClientFactory, UkrlpWcfClientFactory>();
-            builder.Services.AddTransient<IClock, FrozenSystemClock>();
+            builder.Services.AddTransient<IClock, SystemClock>();
             builder.Services.Decorate<IJobActivator, FunctionInstanceServicesCatalog>();
             builder.Services.AddSingleton(sp => (FunctionInstanceServicesCatalog)sp.GetRequiredService<IJobActivator>());
 #pragma warning disable CS0618 // Type or member is obsolete
