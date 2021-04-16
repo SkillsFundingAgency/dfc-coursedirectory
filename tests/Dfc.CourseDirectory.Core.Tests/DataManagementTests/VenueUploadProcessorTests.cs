@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 },
                 onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
 
-            SqlQueryDispatcher.QueueResult<GetVenueUpload, VenueUpload>(
+            SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(
                 new VenueUpload()
                 {
                     VenueUploadId = venueUploadId,
