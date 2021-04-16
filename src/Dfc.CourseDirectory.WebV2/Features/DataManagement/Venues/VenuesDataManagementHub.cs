@@ -1,0 +1,92 @@
+﻿using System;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+
+namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
+{
+    [Authorize]
+    public class VenuesDataManagementHub : Hub
+    {
+        private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
+        private readonly IVenueUploadProcessor _venueUploadProcessor;
+        private readonly ILogger<VenuesDataManagementHub> _logger;
+
+        public VenuesDataManagementHub(
+            IProviderContextProvider providerContextProvider,
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
+            IVenueUploadProcessor venueUploadProcessor,
+            ILogger<VenuesDataManagementHub> logger)
+        {
+            _providerContextProvider = providerContextProvider;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
+            _venueUploadProcessor = venueUploadProcessor;
+            _logger = logger;
+        }
+
+        public ChannelReader<UploadStatus> StatusUpdates(CancellationToken cancellationToken)
+        {
+            var providerId = _providerContextProvider.GetProviderId();
+
+            var channel = Channel.CreateUnbounded<UploadStatus>();
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    Guid latestVenueUploadId;
+
+                    using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                    {
+                        var latestVenueUpload = await dispatcher.ExecuteQuery(
+                            new GetLatestVenueUploadForProviderWithStatus()
+                            {
+                                ProviderId = providerId,
+                                Statuses = new[]
+                                {
+                                    UploadStatus.Created,
+                                    UploadStatus.InProgress,
+                                    UploadStatus.Processed
+                                }
+                            });
+
+                        if (latestVenueUpload == null)
+                        {
+                            channel.Writer.Complete();
+                            return;
+                        }
+
+                        latestVenueUploadId = latestVenueUpload.VenueUploadId;
+                    }
+
+                    var obs = _venueUploadProcessor.GetUploadStatusUpdates(latestVenueUploadId)
+                        .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.InProgress);
+
+                    var subscription = obs.Subscribe(
+                        v => channel.Writer.WriteAsync(v),
+                        onCompleted: () => channel.Writer.Complete());
+
+                    cancellationToken.Register(() => subscription.Dispose());
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed querying venue upload status updates.");
+
+                    channel.Writer.Complete();
+                }
+            });
+
+            return channel.Reader;
+        }
+    }
+}

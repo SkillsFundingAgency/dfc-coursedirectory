@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             var doc = await response.GetDocument();
             doc.GetElementsByClassName("h1").SingleOrDefault()?.TextContent.Should().Be("Uploading your venue data");
-            doc.GetElementByTestId("StatusMessage").TextContent.Trim().Should().Be(expectedMessage);
+            doc.GetElementById("StatusMessage").TextContent.Trim().Should().Be(expectedMessage);
         }
 
         [Fact]
