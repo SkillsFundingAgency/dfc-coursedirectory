@@ -83,11 +83,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             }
         }
 
+        public Interceptor<T> GetInterceptor<T>() where T : class => Services.GetRequiredService<Interceptor<T>>();
+
         public void OnTestStarting()
         {
             DatabaseFixture.OnTestStarting();
 
-            ResetMocks();
+            ResetTestScopedServices();
 
             MemoryCache.Clear();
 
@@ -137,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 services.AddSingleton(AddressSearchService.Object);
             });
 
-        private void ResetMocks()
+        private void ResetTestScopedServices()
         {
             AddressSearchService.Reset();
             OnspdSearchClient.Reset();
