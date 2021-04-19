@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
                 // REVIEW: Is there a better way of doing this?
                 var sqlQueryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-                sqlQueryDispatcher.Transaction.Commit();
+                await sqlQueryDispatcher.Commit();
             }
         }
     }

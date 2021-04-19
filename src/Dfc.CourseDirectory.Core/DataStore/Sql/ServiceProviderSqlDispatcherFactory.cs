@@ -46,6 +46,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             public SqlTransaction Transaction { get; }
 
+            public Task Commit() => Transaction.CommitAsync();
+
             public void Dispose()
             {
                 Transaction.Dispose();

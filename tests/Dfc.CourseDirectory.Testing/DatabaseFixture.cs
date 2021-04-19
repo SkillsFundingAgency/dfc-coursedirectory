@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.Testing
         {
             using var dispatcher = SqlQueryDispatcherFactory.CreateDispatcher();
             var result = await action(dispatcher);
-            dispatcher.Transaction.Commit();
+            await dispatcher.Commit();
             return result;
         }
 

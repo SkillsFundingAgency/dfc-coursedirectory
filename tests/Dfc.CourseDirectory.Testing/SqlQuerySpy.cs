@@ -68,6 +68,8 @@ namespace Dfc.CourseDirectory.Testing
 
             public SqlTransaction Transaction => _inner.Transaction;
 
+            public Task Commit() => _inner.Commit();
+
             public void Dispose() => _inner.Dispose();
 
             public Task<T> ExecuteQuery<T>(ISqlQuery<T> query)

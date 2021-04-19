@@ -338,7 +338,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
                 await action(dispatcher);
-                await dispatcher.Transaction.CommitAsync();
+                await dispatcher.Commit();
             }
         }
 

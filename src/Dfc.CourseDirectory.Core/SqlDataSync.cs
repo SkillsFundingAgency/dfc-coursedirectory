@@ -303,8 +303,7 @@ namespace Dfc.CourseDirectory.Core
             using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await action(sqlDispatcher);
-
-                sqlDispatcher.Transaction.Commit();
+                await sqlDispatcher.Commit();
             }
         }
     }
