@@ -1,0 +1,45 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.Command;
+@{
+    ViewBag.Title = "Data Upload - Upload course data";
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <h1 class="govuk-heading-xl">Upload your course data</h1>
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post" enctype="multipart/form-data" asp-controller="DataManagement" asp-action="Upload">
+
+            <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
+            <p class="govuk-body">To ensure an upload is successful you must:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+                <li>add new venues <a asp-action="Index" asp-controller="AddVenue" class="govuk-link">on screen</a> or by <a asp-action="Index" asp-controller="VenuesDataManagement" class="govuk-link">venue upload</a> prior to a course upload</li>
+                <li>follow the <a href="#">file format requirements</a></li>
+            </ul>
+            <govuk-file-upload asp-for="File" />
+            <p>
+                <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
+            </p>
+        </form>
+
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <aside class="app-related-items" role="complementary">
+            <h2 class="govuk-heading-m" id="subsection-title">
+                Data file downloads
+            </h2>
+            <nav role="navigation" aria-labelledby="subsection-title">
+                <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
+                    <li>
+                        <a href="#" class="govuk-link">Download your published course data (CSV)</a>
+                    </li>
+                    <li>
+                        <a href="#" class="govuk-link">Download an empty course data template (CSV)</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+</div>
