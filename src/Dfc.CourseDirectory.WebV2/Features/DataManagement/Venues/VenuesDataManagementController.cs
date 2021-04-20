@@ -24,10 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("")]
         [RequireProviderContext]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View("Upload");
 
         [HttpGet("download")]
         [RequireProviderContext]
@@ -46,18 +43,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 {
                     File = file
                 },
-                response => response.Match(
-                    errors => RedirectToAction(nameof(Validation))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    success => RedirectToAction(nameof(CheckAndPublish)))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()));
-        }
-
-        [HttpGet("validation")]
-        [RequireProviderContext]
-        public IActionResult Validation()
-        {
-            return View();
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
         [HttpGet("check-publish")]

@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using OneOf;
@@ -17,6 +21,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
 
     public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
+        private readonly IVenueUploadProcessor _venueUploadProcessor;
+        private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ICurrentUserProvider _currentUserProvider;
+
+        public Handler(
+            IVenueUploadProcessor venueUploadProcessor,
+            IProviderContextProvider providerContextProvider,
+            ICurrentUserProvider currentUserProvider)
+        {
+            _venueUploadProcessor = venueUploadProcessor;
+            _providerContextProvider = providerContextProvider;
+            _currentUserProvider = currentUserProvider;
+        }
+
         public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
             Command request,
             CancellationToken cancellationToken)
@@ -28,10 +46,41 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
             {
                 return new ModelWithErrors<Command>(request, result);
             }
-            else
+
+            using var stream = request.File.OpenReadStream();
+
+            var saveFileResult = await _venueUploadProcessor.SaveFile(
+                _providerContextProvider.GetProviderId(),
+                stream,
+                _currentUserProvider.GetCurrentUser());
+
+            if (saveFileResult.Status == SaveFileResultStatus.InvalidFile)
             {
-                return new Success();
+                return new ModelWithErrors<Command>(
+                    request,
+                    CreateValidationResultFromError("The selected file must be a CSV"));
             }
+            else if (saveFileResult.Status == SaveFileResultStatus.InvalidHeader)
+            {
+                // TODO PTCD-920
+                throw new NotImplementedException();
+            }
+            else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
+            {
+                return new ModelWithErrors<Command>(
+                    request,
+                    CreateValidationResultFromError("The selected file is empty"));
+            }
+
+            Debug.Assert(saveFileResult.Status == SaveFileResultStatus.Success);
+
+            return new Success();
+
+            static ValidationResult CreateValidationResultFromError(string message) =>
+                new ValidationResult(new[]
+                {
+                    new ValidationFailure(nameof(request.File), message)
+                });
         }
     }
 
@@ -40,7 +89,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
         public CommandValidator()
         {
             RuleFor(x => x.File).NotNull().WithMessage("Select a CSV");
-            RuleFor(x => x.File.ContentType).Equal("text/csv", StringComparer.OrdinalIgnoreCase).Unless(item => item.File == null).WithMessage("File must be a csv file");
         }
     }
 }
