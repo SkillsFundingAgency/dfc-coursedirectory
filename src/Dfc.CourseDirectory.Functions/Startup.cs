@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<IVenueCorrectionFinder, VenueCorrectionFinder>();
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
-            builder.Services.AddTransient<IVenueUploadProcessor, VenueUploadProcessor>();
+            builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
 
             builder.Services.AddSingleton(
                 _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));

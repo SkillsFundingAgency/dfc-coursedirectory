@@ -8,11 +8,11 @@ namespace Dfc.CourseDirectory.Functions
 {
     public class ProcessVenueUpload
     {
-        private readonly IVenueUploadProcessor _venueUploadProcessor;
+        private readonly IFileUploadProcessor _fileUploadProcessor;
 
-        public ProcessVenueUpload(IVenueUploadProcessor venueUploadProcessor)
+        public ProcessVenueUpload(IFileUploadProcessor fileUploadProcessor)
         {
-            _venueUploadProcessor = venueUploadProcessor;
+            _fileUploadProcessor = fileUploadProcessor;
         }
 
         [FunctionName(nameof(ProcessVenueUpload))]
@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Functions
             [BlobTrigger("%DataUploadsContainerName%/%VenueUploadsFolderName%/{venueUploadId}.csv")] Stream file,
             Guid venueUploadId)
         {
-            return _venueUploadProcessor.ProcessFile(venueUploadId, file);
+            return _fileUploadProcessor.ProcessVenueFile(venueUploadId, file);
         }
     }
 }
