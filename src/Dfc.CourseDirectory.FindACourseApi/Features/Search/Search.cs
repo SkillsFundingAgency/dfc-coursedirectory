@@ -239,7 +239,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     CourseText = i.Record.CourseDescription,
                     DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
                     DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
-                    Distance = GetDistanceFromPostcodeForResult(i),
+                    Distance = GetDistanceFromLatLngForResult(i),
                     DurationUnit = i.Record.DurationUnit ?? 0,
                     DurationValue = i.Record.DurationValue,
                     FlexibleStartDate = i.Record.FlexibleStartDate,
@@ -275,8 +275,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 }).ToList()
             };
 
-            double? GetDistanceFromPostcodeForResult(SearchResultItem<FindACourseOffering> item) =>
-                getPostcodeCoords && item.Record.Position != null && item.Record.National != true ?
+            double? GetDistanceFromLatLngForResult(SearchResultItem<FindACourseOffering> item) =>
+                latitude.HasValue && longitude.HasValue && item.Record.Position != null && item.Record.National != true ?
                     Math.Round(
                         GeoHelper.KilometersToMiles(
                             GeoHelper.GetDistanceTo(
