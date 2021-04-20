@@ -19,18 +19,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
-        private readonly IVenueUploadProcessor _venueUploadProcessor;
+        private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ILogger<VenuesDataManagementHub> _logger;
 
         public VenuesDataManagementHub(
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            IVenueUploadProcessor venueUploadProcessor,
+            IFileUploadProcessor fileUploadProcessor,
             ILogger<VenuesDataManagementHub> logger)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _venueUploadProcessor = venueUploadProcessor;
+            _fileUploadProcessor = fileUploadProcessor;
             _logger = logger;
         }
 
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                         latestVenueUploadId = latestVenueUpload.VenueUploadId;
                     }
 
-                    var obs = _venueUploadProcessor.GetUploadStatusUpdates(latestVenueUploadId)
+                    var obs = _fileUploadProcessor.GetVenueUploadStatusUpdates(latestVenueUploadId)
                         .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.InProgress);
 
                     var subscription = obs.Subscribe(

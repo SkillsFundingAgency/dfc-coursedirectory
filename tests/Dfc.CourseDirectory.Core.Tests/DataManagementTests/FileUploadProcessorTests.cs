@@ -19,9 +19,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 {
-    public class VenueUploadProcessorTests
+    public class FileUploadProcessorTests
     {
-        public VenueUploadProcessorTests()
+        public FileUploadProcessorTests()
         {
             SqlQueryDispatcher = new TestableSqlQueryDispatcher();
 
@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             Clock = new MutableClock();
 
-            VenueUploadProcessor = new VenueUploadProcessor(
+            VenueUploadProcessor = new FileUploadProcessor(
                 sqlQueryDispatcherFactory.Object,
                 blobServiceClient.Object,
                 Clock,
@@ -45,17 +45,17 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
         private TestableSqlQueryDispatcher SqlQueryDispatcher { get; }
 
-        private VenueUploadProcessor VenueUploadProcessor { get; }
+        private FileUploadProcessor VenueUploadProcessor { get; }
 
         [Fact]
-        public void GetUploadStatusUpdates_VenueUploadDoesNotExist_ReturnsArgumentException()
+        public void GetVenueUploadStatusUpdates_VenueUploadDoesNotExist_ReturnsArgumentException()
         {
             // Arrange
             var venueUploadId = Guid.NewGuid();
 
             SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(null);
 
-            var statusUpdates = VenueUploadProcessor.GetUploadStatusUpdates(venueUploadId);
+            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId);
 
             var errored = new ManualResetEventSlim(false);
             Exception error = default;
@@ -77,7 +77,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task GetUploadStatusUpdates_EmitsInitialStatus()
+        public async Task GetVenueUploadStatusUpdates_EmitsInitialStatus()
         {
             // Arrange
             var venueUploadId = Guid.NewGuid();
@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 },
                 onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
 
-            var statusUpdates = VenueUploadProcessor.GetUploadStatusUpdates(venueUploadId)
+            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
                 .SubscribeOn(NewThreadScheduler.Default);
 
             var results = new List<UploadStatus>();
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task GetUploadStatusUpdates_EmitsChangedStatus()
+        public async Task GetVenueUploadStatusUpdates_EmitsChangedStatus()
         {
             // Arrange
             var venueUploadId = Guid.NewGuid();
@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 },
                 onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
 
-            var statusUpdates = VenueUploadProcessor.GetUploadStatusUpdates(venueUploadId)
+            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
                 .SubscribeOn(NewThreadScheduler.Default);
 
             var results = new List<UploadStatus>();
@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task GetUploadStatusUpdates_DoesNotEmitDuplicateStatuses()
+        public async Task GetVenueUploadStatusUpdates_DoesNotEmitDuplicateStatuses()
         {
             // Arrange
             var venueUploadId = Guid.NewGuid();
@@ -190,7 +190,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 },
                 onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
 
-            var statusUpdates = VenueUploadProcessor.GetUploadStatusUpdates(venueUploadId)
+            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
                 .SubscribeOn(NewThreadScheduler.Default);
 
             var results = new List<UploadStatus>();
@@ -208,7 +208,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData(UploadStatus.Abandoned)]
         [InlineData(UploadStatus.Published)]
-        public void GetUploadStatusUpdates_CompletesWhenStatusIsTerminal(UploadStatus uploadStatus)
+        public void GetVenueUploadStatusUpdates_CompletesWhenStatusIsTerminal(UploadStatus uploadStatus)
         {
             // Arrange
             var venueUploadId = Guid.NewGuid();
@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 },
                 onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
 
-            var statusUpdates = VenueUploadProcessor.GetUploadStatusUpdates(venueUploadId)
+            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
                 .SubscribeOn(NewThreadScheduler.Default);
 
             var completed = new ManualResetEventSlim(false);

@@ -27,18 +27,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
 
     public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, UploadResult>>
     {
-        private readonly IVenueUploadProcessor _venueUploadProcessor;
+        private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IOptions<DataManagementOptions> _optionsAccessor;
 
         public Handler(
-            IVenueUploadProcessor venueUploadProcessor,
+            IFileUploadProcessor fileUploadProcessor,
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IOptions<DataManagementOptions> optionsAccessor)
         {
-            _venueUploadProcessor = venueUploadProcessor;
+            _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
             _optionsAccessor = optionsAccessor;
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
 
             using var stream = request.File.OpenReadStream();
 
-            var saveFileResult = await _venueUploadProcessor.SaveFile(
+            var saveFileResult = await _fileUploadProcessor.SaveVenueFile(
                 _providerContextProvider.GetProviderId(),
                 stream,
                 _currentUserProvider.GetCurrentUser());
@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
             try
             {
                 using var cts = new CancellationTokenSource(_optionsAccessor.Value.ProcessedImmediatelyThreshold);
-                await _venueUploadProcessor.WaitForProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
+                await _fileUploadProcessor.WaitForVenueProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
                 return UploadResult.ProcessingCompleted;
             }
             catch (OperationCanceledException)
