@@ -35,8 +35,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private readonly IRegionCache _regionCache;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
 
-        private List<Venue> cachedVenues;
-
         public BulkUploadService(
             IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
@@ -85,9 +83,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             string previousLearnAimRef = string.Empty;
 
             try {
-                cachedVenues = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUKPRN }))
-                    .ToList();
-
                 string missingFieldsError = string.Empty;
                 int missingFieldsErrorCount = 0;
                 stream.Position = 0;
@@ -332,19 +327,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     else
                     {
                         // Mapping BulkUploadCourse to Course
-                        var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
+                        var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, providerUKPRN, userId, out errors);
                         return errors;
                     }
                 }
                 else
                 {
-                    await _backgroundWorkScheduler.Schedule(Worker, (bulkUploadcourses, userId));
+                    await _backgroundWorkScheduler.Schedule(Worker, (bulkUploadcourses, providerUKPRN, userId));
 
                     static Task Worker(object state, IServiceProvider serviceProvider, CancellationToken cancellationToken)
                     {
                         var bulkUploadService = serviceProvider.GetRequiredService<IBulkUploadService>();
 
-                        var (bulkUploadcourses, userId) = ((List<BulkUploadCourse>, string))state;
+                        var (bulkUploadcourses, providerUKPRN, userId) = ((List<BulkUploadCourse>, int, string))state;
 
                         // Populate LARS data
                         bulkUploadcourses = bulkUploadService.PolulateLARSData(bulkUploadcourses, out var errors);
@@ -355,7 +350,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         else
                         {
                             // Mapping BulkUploadCourse to Course
-                            var courses = bulkUploadService.MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
+                            var courses = bulkUploadService.MappingBulkUploadCourseToCourse(bulkUploadcourses, providerUKPRN, userId, out errors);
                         }
 
                         return Task.CompletedTask;
@@ -472,13 +467,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return errorList;
         }
 
-        public List<Course> MappingBulkUploadCourseToCourse(List<BulkUploadCourse> bulkUploadCourses, string userId, out List<string> errors)
+        public List<Course> MappingBulkUploadCourseToCourse(
+            List<BulkUploadCourse> bulkUploadCourses,
+            int providerUkprn,
+            string userId,
+            out List<string> errors)
         {
             errors = new List<string>();
             var validationMessages = new List<string>();
 
             var courses = new List<Course>();
             var listsCourseRuns = new List<BulkUploadCourseRun>();
+
+            var cachedVenues = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUkprn })
+                .GetAwaiter().GetResult().ToList();
 
             var allRegions = _regionCache.GetAllRegions().GetAwaiter().GetResult();
 
