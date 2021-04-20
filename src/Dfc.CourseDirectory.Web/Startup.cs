@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
@@ -95,6 +96,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<QueueBackgroundWorkScheduler>();
             services.AddHostedService(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
+
+            services.AddSingleton(new BlobServiceClient(Configuration["BlobStorageSettings:ConnectionString"]));
 
             services.AddCourseDirectory(_env, Configuration);
             services.AddSignalR();

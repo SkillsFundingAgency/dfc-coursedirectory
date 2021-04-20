@@ -146,9 +146,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
                             ".processed"; // stops the Azure trigger from processing the file
 
-                        Task task = _blobService.UploadFileAsync(
-                            $"{UKPRN.ToString()}/Courses Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                        task.Wait();
+                        await _blobService.UploadFileAsync(
+                            $"{UKPRN}/Courses Bulk Upload/Files/{bulkUploadFileNewName}", ms);
 
                         var errors = await _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
 
