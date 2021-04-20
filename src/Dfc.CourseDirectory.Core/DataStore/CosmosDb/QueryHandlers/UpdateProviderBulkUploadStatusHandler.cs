@@ -26,7 +26,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 
                 provider.BulkUploadStatus ??= new ProviderBulkUploadStatus();
 
-                provider.BulkUploadStatus.PublishInProgress = request.PublishInProgress;
+                request.PublishInProgress.Switch(_ => { }, v => provider.BulkUploadStatus.PublishInProgress = v);
+                request.InProgress.Switch(_ => { }, v => provider.BulkUploadStatus.InProgress = v);
+                request.TotalRowCount.Switch(_ => { }, v => provider.BulkUploadStatus.TotalRowCount = v);
+                request.StartedTimestamp.Switch(_ => { }, v => provider.BulkUploadStatus.StartedTimestamp = v);
 
                 await client.ReplaceDocumentAsync(documentUri, provider);
 
