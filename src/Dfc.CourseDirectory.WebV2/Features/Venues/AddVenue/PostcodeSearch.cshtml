@@ -2,7 +2,7 @@
 @inject FormFlow.JourneyInstanceProvider JourneyInstanceProvider
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Add venue");
+    ViewContext.SetLayoutData(title: "Add a venue");
 }
 
 <govuk-error-summary>
@@ -13,7 +13,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="PostcodeSearch" method="get">
             <h1 class="govuk-heading-xl">
-                Add venue
+                Add a venue
             </h1>
 
             <input name="ffiid" type="hidden" value="@JourneyInstanceProvider.GetInstance().InstanceId.UniqueKey" />

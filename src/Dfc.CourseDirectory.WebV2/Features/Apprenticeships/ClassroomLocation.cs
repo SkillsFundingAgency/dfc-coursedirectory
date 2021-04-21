@@ -250,11 +250,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             {
                 RuleFor(c => c.VenueId)
                     .Must(id => providerVenues.Select(v => v.Id).Except(blockedVenueIds).Contains(id.GetValueOrDefault()))
-                    .WithMessageForAllRules("Select the location");
+                    .WithMessageForAllRules("Select the venue");
 
                 RuleFor(c => c.Radius)
                     .NotEmpty()
-                    .WithMessage("Enter how far you are willing to travel from the selected location");
+                    .WithMessage("Enter how far you are willing to travel from the selected venue");
 
                 RuleFor(c => c.DeliveryModes)
                     .NotEmpty()

@@ -94,9 +94,9 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .NotEmpty()
-                    .WithMessage("Enter location name")
+                    .WithMessage("Enter a venue name")
                 .MaximumLength(Constants.NameMaxLength)
-                    .WithMessage($"Location name must be {Constants.NameMaxLength} characters or fewer")
+                    .WithMessage($"Venue name must be {Constants.NameMaxLength} characters or fewer")
                 .MustAsync(async (name, _) =>
                 {
                     // Venue name must be distinct for this provider
@@ -112,7 +112,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 
                     return !otherVenuesWithSameName.Any();
                 })
-                    .WithMessage("Location name must not already exist");
+                    .WithMessage("Venue name must not already exist");
         }
 
         public static void Website<T>(this IRuleBuilderInitial<T, string> field)

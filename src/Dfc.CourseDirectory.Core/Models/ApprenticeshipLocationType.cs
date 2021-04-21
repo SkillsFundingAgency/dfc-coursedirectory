@@ -15,9 +15,9 @@ namespace Dfc.CourseDirectory.Core.Models
         public static string ToDescription(this ApprenticeshipLocationType apprenticeshipLocationType) =>
             apprenticeshipLocationType switch
             {
-                ApprenticeshipLocationType.EmployerBased => "Employer based venues",
-                ApprenticeshipLocationType.ClassroomBased => "Your locations",
-                ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Your location and employer locations",
+                ApprenticeshipLocationType.EmployerBased => "Employer locations",
+                ApprenticeshipLocationType.ClassroomBased => "Your venues",
+                ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Your venues and employer locations",
                 _ => throw new NotImplementedException($"Unknown value: '{apprenticeshipLocationType}'.")
             };
     }
