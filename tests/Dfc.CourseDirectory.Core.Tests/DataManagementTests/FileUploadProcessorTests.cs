@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
@@ -19,58 +17,30 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 {
-    public class FileUploadProcessorTests
+    public class FileUploadProcessorTests : DatabaseTestBase
     {
-        public FileUploadProcessorTests()
+        public FileUploadProcessorTests(DatabaseTestBaseFixture fixture) : base(fixture)
         {
-            SqlQueryDispatcher = new TestableSqlQueryDispatcher();
-
-            var sqlQueryDispatcherFactory = new Mock<ISqlQueryDispatcherFactory>();
-            sqlQueryDispatcherFactory
-                .Setup(mock => mock.CreateDispatcher(It.IsAny<IsolationLevel>()))
-                .Returns(SqlQueryDispatcher);
-
-            var blobServiceClient = new Mock<BlobServiceClient>();
-
-            Clock = new MutableClock();
-
-            VenueUploadProcessor = new FileUploadProcessor(
-                sqlQueryDispatcherFactory.Object,
-                blobServiceClient.Object,
-                Clock,
-                pollInterval: TimeSpan.Zero);
         }
 
-        private MutableClock Clock { get; }
-
-        private TestableSqlQueryDispatcher SqlQueryDispatcher { get; }
-
-        private FileUploadProcessor VenueUploadProcessor { get; }
-
         [Fact]
-        public void GetVenueUploadStatusUpdates_VenueUploadDoesNotExist_ReturnsArgumentException()
+        public async Task GetVenueUploadStatusUpdates_VenueUploadDoesNotExist_ReturnsArgumentException()
         {
             // Arrange
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+
             var venueUploadId = Guid.NewGuid();
 
-            SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(null);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUploadId);
 
-            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId);
-
-            var errored = new ManualResetEventSlim(false);
-            Exception error = default;
+            using var cts = new CancellationTokenSource();
 
             // Act
-            using var subscription = statusUpdates.Subscribe(
-                _ => { },
-                onError: ex =>
-                {
-                    error = ex;
-                    errored.Set();
-                });
-
-            // Assert
-            errored.Wait(200);
+            cts.CancelAfter(500);
+            var completed = statusUpdates.ForEachAsync(v => { }, cts.Token);
+            uploadProcessor.ReleaseUploadStatusCheck();
+            uploadProcessor.OnComplete();
+            var error = await Record.ExceptionAsync(() => completed);
 
             error.Should().BeOfType<ArgumentException>()
                 .Subject.Message.Should().StartWith("Specified venue upload does not exist.");
@@ -80,31 +50,23 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetVenueUploadStatusUpdates_EmitsInitialStatus()
         {
             // Arrange
-            var venueUploadId = Guid.NewGuid();
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
 
-            var queryExecutedCounter = new QueryExecutedCounter();
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var createdOn = Clock.UtcNow;
-
-            SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.Created,
-                    CreatedOn = createdOn
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
-                .SubscribeOn(NewThreadScheduler.Default);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
             var results = new List<UploadStatus>();
+            using var cts = new CancellationTokenSource();
 
             // Act
-            using (var subscription = statusUpdates.Subscribe(v => results.Add(v)))
-            {
-                await queryExecutedCounter.WaitForExecutions(1);
-            }
+            cts.CancelAfter(500);
+            var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
+            uploadProcessor.ReleaseUploadStatusCheck();
+            uploadProcessor.OnComplete();
+            await completed;
 
             // Assert
             results.First().Should().Be(UploadStatus.Created);
@@ -113,93 +75,68 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Fact]
         public async Task GetVenueUploadStatusUpdates_EmitsChangedStatus()
         {
-            // Arrange
-            var venueUploadId = Guid.NewGuid();
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
 
-            var queryExecutedCounter = new QueryExecutedCounter();
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var createdOn = Clock.UtcNow;
-
-            Clock.UtcNow += TimeSpan.FromMinutes(1);
-            var processingOn = Clock.UtcNow;
-
-            Clock.UtcNow += TimeSpan.FromMinutes(1);
-            var completedOn = Clock.UtcNow;
-
-            SqlQueryDispatcher.QueueResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.Created,
-                    CreatedOn = createdOn
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            SqlQueryDispatcher.QueueResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.InProgress,
-                    CreatedOn = createdOn,
-                    ProcessingStartedOn = processingOn
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.Processed,
-                    CreatedOn = createdOn,
-                    ProcessingStartedOn = processingOn,
-                    ProcessingCompletedOn = completedOn
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
-                .SubscribeOn(NewThreadScheduler.Default);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
             var results = new List<UploadStatus>();
+            using var cts = new CancellationTokenSource();
 
             // Act
-            using (var subscription = statusUpdates.Subscribe(v => results.Add(v)))
-            {
-                await queryExecutedCounter.WaitForExecutions(3);
-            }
+            cts.CancelAfter(500);
+            var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
+            uploadProcessor.ReleaseUploadStatusCheck();  // Created
+            await UpdateStatusAndReleaseStatusCheck(UploadStatus.InProgress);
+            await UpdateStatusAndReleaseStatusCheck(UploadStatus.Processed);
+            uploadProcessor.OnComplete();
+            await completed;
 
             // Assert
             results.Should().BeEquivalentTo(new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed });
+
+            async Task UpdateStatusAndReleaseStatusCheck(UploadStatus uploadStatus)
+            {
+                Clock.UtcNow += TimeSpan.FromMinutes(1);
+                var updatedOn = Clock.UtcNow;
+
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                {
+                    VenueUploadId = venueUpload.VenueUploadId,
+                    UploadStatus = uploadStatus,
+                    ChangedOn = updatedOn
+                }));
+
+                uploadProcessor.ReleaseUploadStatusCheck();
+            }
         }
 
         [Fact]
         public async Task GetVenueUploadStatusUpdates_DoesNotEmitDuplicateStatuses()
         {
             // Arrange
-            var venueUploadId = Guid.NewGuid();
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
 
-            var queryExecutedCounter = new QueryExecutedCounter();
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var createdOn = Clock.UtcNow;
-
-            SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.Created,
-                    CreatedOn = createdOn
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
-                .SubscribeOn(NewThreadScheduler.Default);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
             var results = new List<UploadStatus>();
+            using var cts = new CancellationTokenSource();
 
             // Act
-            using (var subscription = statusUpdates.Subscribe(v => results.Add(v)))
-            {
-                await queryExecutedCounter.WaitForExecutions(3);
-            }
+            cts.CancelAfter(500);
+            var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
+            uploadProcessor.ReleaseUploadStatusCheck();
+            uploadProcessor.ReleaseUploadStatusCheck();
+            uploadProcessor.ReleaseUploadStatusCheck();
+            uploadProcessor.OnComplete();
+            await completed;
 
             // Assert
             results.Should().BeEquivalentTo(new[] { UploadStatus.Created });
@@ -208,78 +145,66 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData(UploadStatus.Abandoned)]
         [InlineData(UploadStatus.Published)]
-        public void GetVenueUploadStatusUpdates_CompletesWhenStatusIsTerminal(UploadStatus uploadStatus)
+        public async Task GetVenueUploadStatusUpdates_CompletesWhenStatusIsTerminal(UploadStatus uploadStatus)
         {
-            // Arrange
-            var venueUploadId = Guid.NewGuid();
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
 
-            var queryExecutedCounter = new QueryExecutedCounter();
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var createdOn = Clock.UtcNow;
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
-            Clock.UtcNow += TimeSpan.FromMinutes(1);
-            var processingOn = Clock.UtcNow;
-
-            Clock.UtcNow += TimeSpan.FromMinutes(1);
-            var completedOn = Clock.UtcNow;
-
-            Clock.UtcNow += TimeSpan.FromMinutes(1);
-            var terminatedOn = Clock.UtcNow;
-
-            SqlQueryDispatcher.QueueResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.Processed,
-                    CreatedOn = createdOn,
-                    ProcessingStartedOn = processingOn,
-                    ProcessingCompletedOn = completedOn
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            SqlQueryDispatcher.SpecifyResult<GetVenueUpload, VenueUpload>(
-                new VenueUpload()
-                {
-                    VenueUploadId = venueUploadId,
-                    UploadStatus = UploadStatus.Processed,
-                    CreatedOn = createdOn,
-                    ProcessingStartedOn = processingOn,
-                    ProcessingCompletedOn = completedOn,
-                    AbandonedOn = uploadStatus == UploadStatus.Abandoned ? terminatedOn : (DateTime?)null,
-                    PublishedOn = uploadStatus == UploadStatus.Published ? terminatedOn : (DateTime?)null
-                },
-                onResultEmitted: () => queryExecutedCounter.OnQueryExecuted());
-
-            var statusUpdates = VenueUploadProcessor.GetVenueUploadStatusUpdates(venueUploadId)
-                .SubscribeOn(NewThreadScheduler.Default);
-
-            var completed = new ManualResetEventSlim(false);
+            var results = new List<UploadStatus>();
+            using var cts = new CancellationTokenSource();
 
             // Act
-            using var subscription = statusUpdates.Subscribe(_ => { }, onCompleted: () => completed.Set());
+            cts.CancelAfter(500);
+            var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
+            uploadProcessor.ReleaseUploadStatusCheck();  // Created
+            await UpdateStatusAndReleaseStatusCheck(uploadStatus);
+            uploadProcessor.OnComplete();
+            await completed;
 
-            // Assert
-            completed.Wait(200);
+            async Task UpdateStatusAndReleaseStatusCheck(UploadStatus uploadStatus)
+            {
+                Clock.UtcNow += TimeSpan.FromMinutes(1);
+                var updatedOn = Clock.UtcNow;
+
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                {
+                    VenueUploadId = venueUpload.VenueUploadId,
+                    UploadStatus = uploadStatus,
+                    ChangedOn = updatedOn
+                }));
+
+                uploadProcessor.ReleaseUploadStatusCheck();
+            }
         }
 
-        private class QueryExecutedCounter
+        /// <summary>
+        /// A version of <see cref="FileUploadProcessor"/> that overrides <see cref="GetPollingVenueUploadStatusUpdates(Guid)"/>
+        /// to only query the database when it's triggered by <see cref="ReleaseUploadStatusCheck"/> instead of polling on a timer.
+        /// </summary>
+        private sealed class TriggerableVenueUploadStatusUpdatesFileUploadProcessor : FileUploadProcessor, IDisposable
         {
-            private readonly AutoResetEvent _autoResetEvent = new AutoResetEvent(false);
-            private int _executions = 0;
+            // There's no un-typed Subject so we use Subject<object>. The values are never consumed.
+            private readonly Subject<object> _subject;
 
-            public void OnQueryExecuted()
+            public TriggerableVenueUploadStatusUpdatesFileUploadProcessor(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock)
+                : base(sqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), clock)
             {
-                _executions++;
-                _autoResetEvent.Set();
+                _subject = new Subject<object>();
             }
 
-            public Task WaitForExecutions(int count, int millisecondsTimeout = 200) => Task.Run(() =>
-            {
-                while (_executions < count)
-                {
-                    _autoResetEvent.WaitOne(millisecondsTimeout);
-                }
-            });
+            public void ReleaseUploadStatusCheck() => _subject.OnNext(null);
+
+            public void OnComplete() => _subject.OnCompleted();
+
+            protected override IObservable<UploadStatus> GetPollingVenueUploadStatusUpdates(Guid venueUploadId) => _subject
+                .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
+
+            public void Dispose() => _subject.Dispose();
         }
     }
 }

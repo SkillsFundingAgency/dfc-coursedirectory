@@ -12,33 +12,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     public partial class FileUploadProcessor : IFileUploadProcessor
     {
         private static readonly byte[] _bom = new byte[] { 0xEF, 0xBB, 0xBF };
+        private static readonly TimeSpan _statusUpdatesPollInterval = TimeSpan.FromMilliseconds(500);
 
         private static bool _containerIsKnownToExist;
 
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly BlobContainerClient _blobContainerClient;
         private readonly IClock _clock;
-        private readonly TimeSpan _pollInterval;
 
         public FileUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             BlobServiceClient blobServiceClient,
-            IClock clock) : this(
-                sqlQueryDispatcherFactory, blobServiceClient, clock, TimeSpan.FromMilliseconds(500))
-        {
-        }
-
-        // Constructor for overriding pollInterval for testing
-        internal FileUploadProcessor(
-            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            BlobServiceClient blobServiceClient,
-            IClock clock,
-            TimeSpan pollInterval)
+            IClock clock)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
             _clock = clock;
-            _pollInterval = pollInterval;
         }
 
         private static async Task<bool> FileIsEmpty(Stream stream)
