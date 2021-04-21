@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Telephone: "",
                     Website: "",
                     ExpectedErrorInputId: "Name",
-                    ExpectedErrorMessage: "Location name must not already exist"
+                    ExpectedErrorMessage: "Venue name must not already exist"
                 ),
                 // Invalid Email
                 (

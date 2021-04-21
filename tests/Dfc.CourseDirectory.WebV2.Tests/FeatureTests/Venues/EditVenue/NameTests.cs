@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Name", "Enter location name");
+            doc.AssertHasError("Name", "Enter a venue name");
         }
 
         [Fact]
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Name", "Location name must be 250 characters or fewer");
+            doc.AssertHasError("Name", "Venue name must be 250 characters or fewer");
         }
 
         [Fact]
@@ -188,7 +188,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Name", "Location name must not already exist");
+            doc.AssertHasError("Name", "Venue name must not already exist");
         }
 
         [Fact]

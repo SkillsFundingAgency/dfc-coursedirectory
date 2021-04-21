@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("VenueId", "Select the location");
+            doc.AssertHasError("VenueId", "Select the venue");
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("VenueId", "Select the location");
+            doc.AssertHasError("VenueId", "Select the venue");
         }
 
         [Fact]
@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("VenueId", "Select the location");
+            doc.AssertHasError("VenueId", "Select the venue");
         }
 
         [Fact]
@@ -201,7 +201,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Radius", "Enter how far you are willing to travel from the selected location");
+            doc.AssertHasError("Radius", "Enter how far you are willing to travel from the selected venue");
         }
 
         [Fact]
