@@ -238,15 +238,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             doc.AssertHasError("File", "The selected file must be a CSV");
         }
 
-        [Theory]
-        [InlineData("")]
-        [InlineData("77u/")]  // UTF-8 BOM
-        public async Task Post_EmptyFile_RendersError(string base64Content)
+        [Fact]
+        public async Task Post_EmptyFile_RendersError()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = new MemoryStream(Convert.FromBase64String(base64Content));
+            var csvStream = new MemoryStream(Convert.FromBase64String(""));
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act

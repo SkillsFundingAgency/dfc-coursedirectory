@@ -30,8 +30,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _clock = clock;
         }
 
-        private static async Task<bool> FileIsEmpty(Stream stream)
+        protected internal async Task<bool> FileIsEmpty(Stream stream)
         {
+            CheckStreamIsProcessable(stream);
+
             if (stream.Length == 0)
             {
                 return true;
@@ -54,13 +56,15 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return false;
         }
 
-        private static async Task<bool> LooksLikeCsv(Stream stream)
+        protected internal async Task<bool> LooksLikeCsv(Stream stream)
         {
+            CheckStreamIsProcessable(stream);
+
             // Check the file looks like a CSV. CsvReader will read whatever data it's given until it finds column and
             // row separators, even if the file is binary, so we can't use it and get meaningful errors out.
             // The check here tries to read a line of data, up to 512 bytes. (512 bytes is ample to fit a row of our
             // headers + some custom ones). If we can successfully read a line and its contents are valid ASCII
-            // then that's a good enough signal.
+            // and there is at least one comma then that's a good enough signal.
 
             const int readBufferSize = 512;
 
@@ -72,6 +76,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 // Restore the Stream's position
                 stream.Seek(-bytesRead, SeekOrigin.Current);
+
+                var foundAComma = false;
 
                 for (int i = 0; i < bytesRead; i++)
                 {
@@ -85,8 +91,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                     if (c == '\n' && i > 1)
                     {
-                        // We've hit the end of the line without errors
-                        return true;
+                        // We've hit the end of the line
+                        return foundAComma;
+                    }
+                    else if (c == ',')
+                    {
+                        foundAComma = true;
                     }
                 }
 
@@ -96,6 +106,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             finally
             {
                 ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+
+        private void CheckStreamIsProcessable(Stream stream)
+        {
+            if (!stream.CanRead)
+            {
+                throw new ArgumentException("Stream must be readable.", nameof(stream));
+            }
+
+            if (!stream.CanSeek)
+            {
+                throw new ArgumentException("Stream must be seekable.", nameof(stream));
             }
         }
     }

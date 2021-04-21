@@ -48,15 +48,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
-            if (!stream.CanRead)
-            {
-                throw new ArgumentException("Stream must be readable.", nameof(stream));
-            }
-
-            if (!stream.CanSeek)
-            {
-                throw new ArgumentException("Stream must be seekable.", nameof(stream));
-            }
+            CheckStreamIsProcessable(stream);
 
             if (await FileIsEmpty(stream))
             {
