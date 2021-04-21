@@ -1,7 +1,7 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch.SearchViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData(title: "Add venue");
+    ViewContext.SetLayoutData(title: "Add a venue");
 }
 
 <govuk-error-summary>
@@ -12,7 +12,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="SelectPostcode" asp-all-route-data="@RouteValuesHelper.FromQueryString()">
             <h1 class="govuk-heading-xl">
-                Add venue
+                Add a venue
             </h1>
 
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Postcode</h2>
