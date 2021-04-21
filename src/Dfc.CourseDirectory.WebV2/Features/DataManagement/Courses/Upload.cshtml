@@ -1,0 +1,46 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.Command;
+@{
+    ViewBag.Title = "Data Upload - Upload your venue data";
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <h1 class="govuk-heading-xl">Upload your venue data</h1>
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" enctype="multipart/form-data">
+            <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
+            <p class="govuk-body">To ensure an upload is successful you must:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+                <li>include existing and new venues in the data file</li>
+                <li>follow the <a href="#" class="govuk-link">file format requirements</a></li>
+            </ul>
+
+            <govuk-file-upload asp-for="File" input-accept=".csv">
+                <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
+            </govuk-file-upload>
+
+            <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
+        </form>
+
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <aside class="app-related-items" role="complementary">
+            <h2 class="govuk-heading-m" id="subsection-title">
+                Data file downloads
+            </h2>
+            <nav role="navigation" aria-labelledby="subsection-title">
+                <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
+                    <li>
+                        <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published venue data (CSV)</a>
+                    </li>
+                    <li>
+                        <a asp-action="Template" class="govuk-link">Download an empty venue data template (CSV)</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+</div>
