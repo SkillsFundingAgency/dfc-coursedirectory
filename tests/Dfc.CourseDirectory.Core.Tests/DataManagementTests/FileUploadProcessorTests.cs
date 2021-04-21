@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -21,6 +23,51 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
     {
         public FileUploadProcessorTests(DatabaseTestBaseFixture fixture) : base(fixture)
         {
+        }
+
+        public static TheoryData<byte[], bool> LooksLikeCsvData { get; } = new TheoryData<byte[], bool>()
+        {
+            { Encoding.UTF8.GetBytes("first,second,third\n1,2,3"), true },
+            { Encoding.UTF8.GetBytes("abc\n"), false },
+
+            // This data is a small PNG file
+            { Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAABcAAAAbCAIAAAAYioOMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAEkSURBVEhLY/hPDTBqCnYwgkz5tf/ge0sHIPqxai1UCDfAacp7Q8u3MipA9E5ZGyoEA7+vXPva0IJsB05TgJohpgARVOj//++LlgF1wsWBCGIHTlO+TZkBVwoV6Z0IF0FGQCkUU36fPf8pJgkeEMjqcBkBVA+URZjy99UruC+ADgGKwJV+a++GsyEIGGpfK2t/HTsB0YswBRhgcEUQ38K5yAhrrCFMgUcKBAGdhswFIjyxjjAFTc87LSMUrrL2n9t3oUoxAE5T0BAkpHABqCmY7kdGn5MzIcpwAagpyEGLiSBq8AAGzOQIQT937IKzoWpxAwa4UmQESUtwLkQpHgA1BS0VQQBppgBt/vfjB1QACZBmClYjgIA0UwgiqFrcgBqm/P8PAGN09WCiWJ70AAAAAElFTkSuQmCC"), false },
+        };
+
+        [Theory]
+        [InlineData("", true)]
+        [InlineData("77u/", true)]  // UTF-8 BOM
+        [InlineData("Zmlyc3Qsc2Vjb25kLHRoaXJk", false)]  // "first,second,third"
+        public async Task FileIsEmpty_ReturnsExpectedResult(string base64Content, bool expectedResult)
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var stream = new MemoryStream(Convert.FromBase64String(base64Content));
+            stream.Seek(0L, SeekOrigin.Begin);
+
+            // Act
+            var result = await fileUploadProcessor.FileIsEmpty(stream);
+
+            // Assert
+            result.Should().Be(expectedResult);
+        }
+
+        [Theory]
+        [MemberData(nameof(LooksLikeCsvData))]
+        public async Task LooksLikeCsv_ReturnsExpectedResult(byte[] content, bool expectedResult)
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var stream = new MemoryStream(content);
+            stream.Seek(0L, SeekOrigin.Begin);
+
+            // Act
+            var result = await fileUploadProcessor.LooksLikeCsv(stream);
+
+            // Assert
+            result.Should().Be(expectedResult);
         }
 
         [Fact]
