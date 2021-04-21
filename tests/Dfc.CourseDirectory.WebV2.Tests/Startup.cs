@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddTransient<ValidatorBaseTestsValidator>();
 
             services.Configure<DataManagementOptions>(
-                options => options.ProcessedImmediatelyThreshold = TimeSpan.FromMilliseconds(500));
+                options => options.ProcessedImmediatelyThreshold = TimeSpan.FromMilliseconds(2000));
 
             DatabaseFixture.ConfigureServices(services);
         }

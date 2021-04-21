@@ -152,7 +152,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
         }
 
-        [Fact(Skip = "Flaky on CI")]
+        [Fact]
         public async Task Post_ValidVenuesFileProcessingCompletedWithinThreshold_CreatesRecordAndRedirectsToCheckAndPublish()
         {
             // Arrange
@@ -168,30 +168,30 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var csvStream = CreateCsvStream(new[] { row1 });
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
-            // Override the VenueUploadProcessor so that
-            //  a) we can set the UploadStatus to Processed immediately after the record has been created;
-            //  b) we can intercept the call to WaitForProcessingToComplete to ensure it doesn't return before we've done (a).
+            // We need to hook into the SaveVenueFile method on IFileUploadProcessor so that we can update the
+            // VenueUpload's status to be Processed before the WaitForVenueProcessingToComplete method is called.
+            // We use SqlQuerySpy.Callback to capture the ID from the Create call then wait for the Blob Storage
+            // upload to run. At that point we know the VenueUpload has been commited to the DB and we can update it.
 
             Guid venueUploadId = default;
-            Task updatedStatusTask = default;
 
-            SqlQuerySpy.Callback<CreateVenueUpload, Success>(q =>
-            {
-                venueUploadId = q.VenueUploadId;
+            SqlQuerySpy.Callback<CreateVenueUpload, Success>(q => venueUploadId = q.VenueUploadId);
 
-                updatedStatusTask = Task.Run(() => WithSqlQueryDispatcher(
-                    dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
-                    {
-                        VenueUploadId = venueUploadId,
-                        ChangedOn = Clock.UtcNow,
-                        UploadStatus = Core.Models.UploadStatus.Processed
-                    })));
-            });
+            DataUploadsContainerClient
+                .Setup(mock => mock.UploadBlobAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Callback(() =>
+                {
+                    WithSqlQueryDispatcher(
+                        dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                        {
+                            VenueUploadId = venueUploadId,
+                            ChangedOn = Clock.UtcNow,
+                            UploadStatus = UploadStatus.Processed
+                        })).GetAwaiter().GetResult();
+                });
 
             // Act
             var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
-
-            await updatedStatusTask;
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
