@@ -11,36 +11,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     public partial class FileUploadProcessor
     {
         public IObservable<UploadStatus> GetVenueUploadStatusUpdates(Guid venueUploadId) =>
-            Observable.Create<UploadStatus>(async (observer, cancellationToken) =>
-            {
-                // The IsolationLevel override here is important - our default Snapshot would never see data changes
-                // since since they happen in other transactions.
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
-                {
-                    while (true)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
-
-                        if (venueUpload == null)
-                        {
-                            observer.OnError(new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId)));
-                            return;
-                        }
-
-                        observer.OnNext(venueUpload.UploadStatus);
-
-                        if (venueUpload.UploadStatus.IsTerminal())
-                        {
-                            observer.OnCompleted();
-                            return;
-                        }
-
-                        await Task.Delay(_pollInterval, cancellationToken);
-                    }
-                }
-            }).DistinctUntilChanged();
+            GetPollingVenueUploadStatusUpdates(venueUploadId)
+                .DistinctUntilChanged()
+                .TakeUntil(status => status.IsTerminal());
 
         public async Task ProcessVenueFile(Guid venueUploadId, Stream stream)
         {
@@ -162,5 +135,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             GetVenueUploadStatusUpdates(venueUploadId)
                 .TakeUntil(status => status == UploadStatus.Processed || status.IsTerminal())
                 .ForEachAsync(_ => { }, cancellationToken);
+
+        protected async Task<UploadStatus> GetVenueUploadStatus(Guid venueUploadId)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+
+            if (venueUpload == null)
+            {
+                throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
+            }
+
+            return venueUpload.UploadStatus;
+        }
+
+        // virtual for testing
+        protected virtual IObservable<UploadStatus> GetPollingVenueUploadStatusUpdates(Guid venueUploadId) =>
+            Observable.Interval(_statusUpdatesPollInterval)
+                .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
     }
 }
