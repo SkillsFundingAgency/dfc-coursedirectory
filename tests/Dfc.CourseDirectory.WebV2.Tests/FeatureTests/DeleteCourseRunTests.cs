@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("Test Venue", doc.GetSummaryListValueWithKey("Course venue"));
+            Assert.Equal("Test Venue", doc.GetSummaryListValueWithKey("Venue"));
         }
 
         [Fact]
