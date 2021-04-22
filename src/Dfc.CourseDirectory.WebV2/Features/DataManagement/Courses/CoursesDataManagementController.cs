@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
@@ -24,10 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("")]
         [RequireProviderContext]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View("Upload");
 
         [HttpGet("download")]
         [RequireProviderContext]
@@ -46,19 +44,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 {
                     File = file
                 },
-                response => response.Match(
-                    errors => RedirectToAction(nameof(Validation))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    success => RedirectToAction(nameof(CheckAndPublish)))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()));
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    result =>
+                        RedirectToAction(
+                            result == Courses.Upload.UploadResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
-        [HttpGet("validation")]
+        [HttpGet("in-progress")]
         [RequireProviderContext]
-        public IActionResult Validation()
-        {
-            return View();
-        }
+        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query(),
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.Processed => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    _ => View(status)
+                }));
 
         [HttpGet("check-publish")]
         [RequireProviderContext]
