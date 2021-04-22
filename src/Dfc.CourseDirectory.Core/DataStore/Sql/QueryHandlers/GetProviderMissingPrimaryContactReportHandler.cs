@@ -34,7 +34,7 @@ LEFT OUTER JOIN ( SELECT    COUNT(1) AS LiveApprenticeshipCount,
                 WHERE       a.ApprenticeshipStatus = ${(int)ApprenticeshipStatus.Live}
 				GROUP BY    [ProviderId]
             ) ap on ap.ProviderId = p.ProviderId
-WHERE (pc.AddressPostcode IS NULL OR pc.AddressSaonDescription IS NULL)
+WHERE (pc.AddressPostcode IS NULL OR (pc.AddressSaonDescription IS NULL AND pc.AddressPaonDescription IS NULL AND pc.AddressStreetDescription IS NULL))
 AND   pc.ContactType = 'P'
 AND	  p.ProviderStatus = ${(int)ProviderStatus.Onboarded}
 AND    (

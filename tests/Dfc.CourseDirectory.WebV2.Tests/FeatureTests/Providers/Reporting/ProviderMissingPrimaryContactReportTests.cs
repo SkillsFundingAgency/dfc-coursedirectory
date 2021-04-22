@@ -76,14 +76,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Theory]
-        [InlineData(null, "street")]
-        [InlineData("CV17 9AD", null)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveApprenticeships_ReturnsExpectedCsv(string postcode, string addressLine1)
+        [InlineData(null, "street", null)]
+        [InlineData("CV17 9AD", null, null)]
+        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveApprenticeships_ReturnsExpectedCsv(string postcode, string saonDescription, string paonDescription)
         {
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
-                CreateContact(postcode, addressLine1)
+                CreateContact(postcode, saonDescription, paonDescription)
             });
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             await TestData.CreateApprenticeship(provider.ProviderId, standardOrFramework: standard, createdBy: User.ToUserInfo(), status: ApprenticeshipStatus.Live);
@@ -124,9 +124,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Theory]
-        [InlineData(null, "street")]
-        [InlineData("CV17 9AD", null)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveTLevels_ReturnsExpectedCsv(string postcode, string addressLine1)
+        [InlineData(null, "street", null)]
+        [InlineData("CV17 9AD", null, null)]
+        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveTLevels_ReturnsExpectedCsv(string postcode, string saonDescription, string paonDescription)
         {
             //Arange
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
                 {
-                    CreateContact(postcode, addressLine1)
+                    CreateContact(postcode, saonDescription,paonDescription)
                 });
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
@@ -184,14 +184,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Theory]
-        [InlineData(null, "street")]
-        [InlineData("CV17 9AD", null)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveCourse_ReturnsExpectedCsv(string postcode, string addressLine1)
+        [InlineData(null, "street", null)]
+        [InlineData("CV17 9AD", null, null)]
+        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveCourse_ReturnsExpectedCsv(string postcode, string saonDescription, string paonDescription)
         {
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
                 {
-                    CreateContact(postcode, addressLine1)
+                    CreateContact(postcode, saonDescription, paonDescription)
                 });
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsHelpdesk();
@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
                 {
-                    CreateContact("CV12 1AA", "Some street1")
+                    CreateContact("CV12 1AA", "Some street1","some street")
                 });
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsHelpdesk();
@@ -269,7 +269,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
                 {
-                    CreateContact("CV1 1AA", "SOME STREET")
+                    CreateContact("CV1 1AA", "SOME STREET", "some street")
                 });
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsHelpdesk();
@@ -303,7 +303,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
                 {
-                    CreateContact("CV1 1AA", "Some road")
+                    CreateContact("CV1 1AA", "Some road", "some street")
                 });
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
@@ -344,7 +344,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
             {
-                CreateContact("CV1 1AA", "Some Street")
+                CreateContact("CV1 1AA", "Some Street","Some Street")
             });
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             await TestData.CreateApprenticeship(provider.ProviderId, standardOrFramework: standard, createdBy: User.ToUserInfo());
@@ -376,7 +376,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider1 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
-                CreateContact("CV1 1AA", null)
+                CreateContact("CV1 1AA", null, null)
             });
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
@@ -387,7 +387,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
                 {
-                    CreateContact("CV2 1AA", null)
+                    CreateContact("CV2 1AA", null, null)
                 });
 
             var venueId = (await TestData.CreateVenue(provider2.ProviderId)).Id;
@@ -403,7 +403,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
 
             var provider3 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
-                    CreateContact(null, "SOME STREET3")
+                    CreateContact(null, "SOME STREET3",null)
             });
             await TestData.CreateCourse(provider3.ProviderId, createdBy: User.ToUserInfo());
             await User.AsHelpdesk();
@@ -434,7 +434,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
             {
-                CreateContact("CV4 1AA", null)
+                CreateContact("CV4 1AA", null,"some street")
             });
             var standard1 = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             await TestData.CreateApprenticeship(provider.ProviderId, standardOrFramework: standard1, createdBy: User.ToUserInfo(), status: apprenticeshipStatus);
@@ -470,7 +470,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
             {
-                CreateContact("CV4 1AA", null)
+                CreateContact("CV4 1AA", null, "some Street")
             });
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), courseStatus: courseStatus);
 
@@ -504,7 +504,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
                 {
-                    CreateContact("CV1 1AA", null)
+                    CreateContact("CV1 1AA", null, "some Street")
                 });
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
@@ -545,7 +545,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             //Arange
             var provider1 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
-                CreateContact("CV1 1AA", null)
+                CreateContact("CV1 1AA", null, null)
             });
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
@@ -558,7 +558,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: tLevelDefinitions1.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
                 {
-                    CreateContact("CV2 1AA", null)
+                    CreateContact("CV2 1AA", null, null)
                 });
             var venueId1 = (await TestData.CreateVenue(provider2.ProviderId)).Id;
             var keepingTLevelDefinitionId1 = tLevelDefinitions1.First().TLevelDefinitionId;
@@ -584,7 +584,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
 
             var provider3 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
-                    CreateContact(null, "SOME STREET3")
+                    CreateContact(null, "SOME STREET3", null)
             });
             await TestData.CreateCourse(provider3.ProviderId, createdBy: User.ToUserInfo());
             await TestData.CreateCourse(provider3.ProviderId, createdBy: User.ToUserInfo());
@@ -610,13 +610,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
 
-        private CreateProviderContact CreateContact(string postcode, string addressLine1)
+        private CreateProviderContact CreateContact(string postcode, string saonDescription, string paonDescription)
         {
             return new CreateProviderContact()
             {
                 ContactType = "P",
-                AddressSaonDescription = addressLine1,
-                AddressPaonDescription = "2nd Line of Address",
+                AddressSaonDescription = saonDescription,
+                AddressPaonDescription = paonDescription,
                 AddressStreetDescription = "The Street",
                 AddressLocality = "The Town",
                 AddressItems = new List<string>()
