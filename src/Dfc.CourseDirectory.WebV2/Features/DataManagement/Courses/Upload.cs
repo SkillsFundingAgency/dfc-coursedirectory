@@ -9,33 +9,42 @@ using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 {
-    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
+    public class Command : IRequest<OneOf<ModelWithErrors<Command>, UploadResult>>
     {
         public IFormFile File { get; set; }
     }
 
-    public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
+    public enum UploadResult
     {
-        private readonly ICourseUploadProcessor _courseUploadProcessor;
+        ProcessingInProgress,
+        ProcessingCompleted
+    }
+
+    public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, UploadResult>>
+    {
+        private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IOptions<DataManagementOptions> _optionsAccessor;
 
         public Handler(
-            ICourseUploadProcessor courseUploadProcessor,
+            IFileUploadProcessor fileUploadProcessor,
             IProviderContextProvider providerContextProvider,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IOptions<DataManagementOptions> optionsAccessor)
         {
-            _courseUploadProcessor = courseUploadProcessor;
+            _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
+            _optionsAccessor = optionsAccessor;
         }
 
-        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
+        public async Task<OneOf<ModelWithErrors<Command>, UploadResult>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
@@ -49,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 
             using var stream = request.File.OpenReadStream();
 
-            var saveFileResult = await _courseUploadProcessor.SaveFile(
+            var saveFileResult = await _fileUploadProcessor.SaveVenueFile(
                 _providerContextProvider.GetProviderId(),
                 stream,
                 _currentUserProvider.GetCurrentUser());
@@ -71,10 +80,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     request,
                     CreateValidationResultFromError("The selected file is empty"));
             }
+            else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
+            {
+                // UI Should stop us getting here so a generic error is sufficient
+                throw new InvalidStateException();
+            }
 
             Debug.Assert(saveFileResult.Status == SaveFileResultStatus.Success);
 
-            return new Success();
+            // Wait for a little bit to see if the file gets processed quickly
+            // (so we can skip the In Progress UI)
+
+            try
+            {
+                using var cts = new CancellationTokenSource(_optionsAccessor.Value.ProcessedImmediatelyThreshold);
+                await _fileUploadProcessor.WaitForVenueProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
+                return UploadResult.ProcessingCompleted;
+            }
+            catch (OperationCanceledException)
+            {
+                return UploadResult.ProcessingInProgress;
+            }
 
             static ValidationResult CreateValidationResultFromError(string message) =>
                 new ValidationResult(new[]

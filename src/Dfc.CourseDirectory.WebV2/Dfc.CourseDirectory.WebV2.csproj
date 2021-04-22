@@ -27,6 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\DataManagement\DataManagement.cs" />
+    <Compile Remove="Features\DataManagement\DataManagementController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Content\components\cookie-banner.css" />
     <None Remove="Content\components\cookie-banner.js" />
     <None Remove="Content\components\inset-text.css" />
