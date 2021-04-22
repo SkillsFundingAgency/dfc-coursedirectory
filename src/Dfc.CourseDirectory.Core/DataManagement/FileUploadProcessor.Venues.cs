@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -17,32 +23,74 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessVenueFile(Guid venueUploadId, Stream stream)
         {
+            // N.B. Every part of this method needs to be idempotent
+
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                await dispatcher.ExecuteQuery(new SetVenueUploadInProgress()
                 {
-                    ChangedOn = _clock.UtcNow,
-                    UploadStatus = UploadStatus.InProgress,
-                    VenueUploadId = venueUploadId
+                    VenueUploadId = venueUploadId,
+                    ProcessingStartedOn = _clock.UtcNow
                 });
 
-                await dispatcher.Transaction.CommitAsync();
+                await dispatcher.Commit();
             }
 
-            // TODO Actually process the file
-            // TEMP status changes with delay for testing
-            await Task.Delay(new Random().Next(0, 10000));
+            // At this point `stream` should be a CSV that's already known to conform to `VenueRow`'s schema.
+            // We read all the rows upfront because validation needs to do duplicate checking.
+            // We also don't expect massive files here so reading everything into memory is ok.
+            List<VenueRow> rows;
+            using (var streamReader = new StreamReader(stream))
+            using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            {
+                rows = await csvReader.GetRecordsAsync<VenueRow>().ToListAsync();
+            }
+
+            var uploadIsValid = true;
+            var validator = new VenueUploadRowValidator();
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                await dispatcher.ExecuteQuery(new UpsertVenueUploadRows()
                 {
-                    ChangedOn = _clock.UtcNow,
-                    UploadStatus = UploadStatus.Processed,
-                    VenueUploadId = venueUploadId
+                    VenueUploadId = venueUploadId,
+                    CreatedOn = _clock.UtcNow,
+                    Records = rows.Select((row, i) =>
+                    {
+                        // `i` is zero-based and the headers take up one row;
+                        // we want a row number that aligns with the row number as it appears when viewing the CSV in Excel
+                        var rowNumber = i + 2;
+
+                        var rowIsValid = validator.Validate(row).IsValid;
+
+                        uploadIsValid &= rowIsValid;
+
+                        return new UpsertVenueUploadRowsRecord()
+                        {
+                            RowNumber = rowNumber,
+                            IsValid = rowIsValid,
+                            ProviderVenueRef = row.ProviderVenueRef,
+                            VenueName = row.VenueName,
+                            AddressLine1 = row.AddressLine1,
+                            AddressLine2 = row.AddressLine2,
+                            Town = row.Town,
+                            County = row.County,
+                            Postcode = row.Postcode,
+                            Email = row.Email,
+                            Telephone = row.Telephone,
+                            Website = row.Website
+                        };
+                    })
+                });
+                
+                await dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
+                {
+                    VenueUploadId = venueUploadId,
+                    ProcessingCompletedOn = _clock.UtcNow,
+                    IsValid = uploadIsValid
                 });
 
-                await dispatcher.Transaction.CommitAsync();
+                await dispatcher.Commit();
             }
         }
 
@@ -87,11 +135,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 if (unpublishedUpload != null)
                 {
-                    await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    await dispatcher.ExecuteQuery(new SetVenueUploadAbandoned()
                     {
-                        ChangedOn = _clock.UtcNow,
-                        UploadStatus = UploadStatus.Abandoned,
-                        VenueUploadId = unpublishedUpload.VenueUploadId
+                        VenueUploadId = unpublishedUpload.VenueUploadId,
+                        AbandonedOn = _clock.UtcNow
                     });
                 }
 
@@ -145,5 +192,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         protected virtual IObservable<UploadStatus> GetPollingVenueUploadStatusUpdates(Guid venueUploadId) =>
             Observable.Interval(_statusUpdatesPollInterval)
                 .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
+
+        private class VenueUploadRowValidator : AbstractValidator<VenueRow>
+        { }
     }
 }
