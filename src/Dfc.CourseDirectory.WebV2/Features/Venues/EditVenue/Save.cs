@@ -53,8 +53,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Save
                 Town = _journeyInstance.State.Town,
                 County = _journeyInstance.State.County,
                 Postcode = _journeyInstance.State.Postcode,
-                Latitude = _journeyInstance.State.Latitude,
-                Longitude = _journeyInstance.State.Longitude,
+                Latitude = Convert.ToDecimal(_journeyInstance.State.Latitude),
+                Longitude = Convert.ToDecimal(_journeyInstance.State.Longitude),
                 UpdatedDate = _clock.UtcNow,
                 UpdatedBy = _currentUserProvider.GetCurrentUser()
             });

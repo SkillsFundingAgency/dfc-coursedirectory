@@ -30,8 +30,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
         protected Mock<ISearchClient<Lars>> LarsSearchClient => Factory.LarsSearchClient;
 
-        protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
-
         protected Mock<IRegionCache> RegionCache => Factory.RegionCache;
 
         protected Mock<ISqlQueryDispatcher> SqlQueryDispatcher => Factory.SqlQueryDispatcher;

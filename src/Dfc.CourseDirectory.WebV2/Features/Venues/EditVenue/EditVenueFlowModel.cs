@@ -19,8 +19,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         public string Town { get; set; }
         public string County { get; set; }
         public string Postcode { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public bool NewAddressIsOutsideOfEngland { get; set; }
     }
 
@@ -53,8 +53,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
                 Town = venue.Town,
                 County = venue.County,
                 Postcode = venue.Postcode,
-                Latitude = venue.Latitude,
-                Longitude = venue.Longitude
+                Latitude = Convert.ToDouble(venue.Latitude),
+                Longitude = Convert.ToDouble(venue.Longitude)
             };
         }
     }

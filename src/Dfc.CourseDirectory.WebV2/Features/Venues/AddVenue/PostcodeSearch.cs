@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using FluentValidation;
@@ -43,16 +43,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
         IRequestHandler<SelectCommand, OneOf<ModelWithErrors<SearchViewModel>, Success>>
     {
         private readonly IAddressSearchService _addressSearchService;
-        private readonly ISearchClient<Onspd> _onspdSearchClient;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
             IAddressSearchService addressSearchService,
-            ISearchClient<Onspd> onspdSearchClient,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             JourneyInstanceProvider journeyInstanceProvider)
         {
             _addressSearchService = addressSearchService;
-            _onspdSearchClient = onspdSearchClient;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstanceProvider = journeyInstanceProvider;
         }
 
@@ -77,9 +77,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             // We need the postcode to exist in ONSPD so we can resolve a lat/lng.
             // Check it's present before we do an address search so we can output an error early.
 
-            var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = postcode });
+            var postcodeInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = postcode });
 
-            if (onspdSearchResult.Items.Count == 0)
+            if (postcodeInfo == null)
             {
                 return CreateInvalidPostcodeResponse();
             }
@@ -145,9 +145,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             }
 
             // SearchCommand has already checked that there is an ONSPD entry for this postcode
-            // so there is no valid case where `.Single()` should blow up
-            var onspdSearchResult = await _onspdSearchClient.Search(new OnspdSearchQuery() { Postcode = addressDetail.Postcode });
-            var onspdPostcodeRecord = onspdSearchResult.Items.Single();
+            // so there is no valid case where `postcodeInfo` should blow up
+            var postcodeInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = addressDetail.Postcode });
 
             journeyInstance.UpdateState(state =>
             {
@@ -156,9 +155,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                 state.Town = addressDetail.PostTown;
                 state.County = addressDetail.County;
                 state.Postcode = addressDetail.Postcode;
-                state.Latitude = onspdPostcodeRecord.Record.lat;
-                state.Longitude = onspdPostcodeRecord.Record.@long;
-                state.AddressIsOutsideOfEngland = !onspdPostcodeRecord.Record.IsInEngland;
+                state.Latitude = postcodeInfo.Latitude;
+                state.Longitude = postcodeInfo.Longitude;
+                state.AddressIsOutsideOfEngland = !postcodeInfo.InEngland;
                 state.ValidStages |= AddVenueCompletedStages.Address;
             });
 

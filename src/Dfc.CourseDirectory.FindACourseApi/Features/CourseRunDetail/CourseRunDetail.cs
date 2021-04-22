@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
@@ -72,8 +73,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 ? venues.Single(v => v.Id == courseRun.VenueId)
                 : null;
 
-            var providerContact = provider.ProviderContact
-                .SingleOrDefault(c => c.ContactType == "P");
+            var providerContact = provider.ProviderContact.SingleOrDefault(c => c.ContactType == "P");
+            var providerAddressLines = NormalizeAddress(providerContact?.ContactAddress);
 
             var alternativeCourseRuns = course.CourseRuns
                 .Where(r => r.Id != request.CourseRunId && r.RecordStatus == CourseStatus.Live)
@@ -136,11 +137,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     CourseDirectoryName = provider.CourseDirectoryName,
                     Alias = provider.Alias,
                     Ukprn = provider.UnitedKingdomProviderReferenceNumber,
-                    AddressLine1 = providerContact?.ContactAddress?.SAON?.Description,
-                    AddressLine2 = providerContact?.ContactAddress?.PAON?.Description,
-                    Town = providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString(),
+                    AddressLine1 = providerAddressLines.AddressLine1,
+                    AddressLine2 = providerAddressLines.AddressLine2,
+                    Town = providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString(),
                     Postcode = providerContact?.ContactAddress?.PostCode,
-                    County = providerContact?.ContactAddress?.Locality,
+                    County = providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Locality,
                     Telephone = providerContact?.ContactTelephone1,
                     Fax = providerContact?.ContactFax,
                     Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
@@ -204,6 +205,29 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                         }
                     }).ToArray()
             };
+
+            static (string AddressLine1, string AddressLine2) NormalizeAddress(ProviderContactAddress address)
+            {
+                if (address == null)
+                {
+                    return (null, null);
+                }
+
+                var parts = new[]
+                {
+                    address?.SAON?.Description,
+                    address?.PAON?.Description,
+                    address?.StreetDescription
+                }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
+
+                // Join all parts except the last into a single line and make that line 1
+                // then the final part is line 2.
+
+                var line1 = string.Join(" ", parts.SkipLast(1));
+                var line2 = parts.Skip(1).LastOrDefault();
+
+                return (line1, line2);
+            }
         }
     }
 }

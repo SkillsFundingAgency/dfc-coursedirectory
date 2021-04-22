@@ -27,8 +27,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
         public Mock<ISearchClient<Lars>> LarsSearchClient { get; } = new Mock<ISearchClient<Lars>>();
 
-        public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
-
         public Mock<IRegionCache> RegionCache { get; } = new Mock<IRegionCache>();
 
         public Mock<ISqlQueryDispatcher> SqlQueryDispatcher { get; } = new Mock<ISqlQueryDispatcher>();
@@ -45,7 +43,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
                 services.AddSingleton(CosmosDbQueryDispatcher.Object);
                 services.AddSingleton(FindACourseOfferingSearchClient.Object);
                 services.AddSingleton(LarsSearchClient.Object);
-                services.AddSingleton(OnspdSearchClient.Object);
                 services.AddSingleton(RegionCache.Object);
                 services.AddSingleton(SqlQueryDispatcher.Object);
             });
@@ -55,7 +52,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
             CosmosDbQueryDispatcher.Reset();
             FindACourseOfferingSearchClient.Reset();
             LarsSearchClient.Reset();
-            OnspdSearchClient.Reset();
             RegionCache.Reset();
             SqlQueryDispatcher.Reset();
 

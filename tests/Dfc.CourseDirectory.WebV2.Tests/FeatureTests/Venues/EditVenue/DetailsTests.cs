@@ -115,8 +115,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
                 state.Town = "Glasgow";
                 state.County = "";
                 state.Postcode = "G2 1DU";
-                state.Latitude = 55.861038M;
-                state.Longitude = -4.245402M;
+                state.Latitude = 55.861038D;
+                state.Longitude = -4.245402D;
                 state.NewAddressIsOutsideOfEngland = true;
             });
 

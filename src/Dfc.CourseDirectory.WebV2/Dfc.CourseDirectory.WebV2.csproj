@@ -32,6 +32,7 @@
     <None Remove="Content\components\inset-text.css" />
     <None Remove="Content\components\link-button.css" />
     <None Remove="Content\components\list.css" />
+    <None Remove="Content\components\loading-spinner.css" />
     <None Remove="Content\components\pager.css" />
     <None Remove="Content\components\related-content.css" />
     <None Remove="Content\components\search-input.css" />

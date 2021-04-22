@@ -87,11 +87,6 @@ namespace Dfc.CourseDirectory.FindACourseApi
                     endpoint: new Uri(Configuration["CosmosDbSettings:EndpointUri"]),
                     key: Configuration["CosmosDbSettings:PrimaryKey"]);
 
-                services.AddAzureSearchClient<Onspd>(
-                    new Uri(Configuration["AzureSearchUrl"]),
-                    Configuration["AzureSearchQueryKey"],
-                    indexName: "onspd");
-
                 services.AddAzureSearchClient<FindACourseOffering>(
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],

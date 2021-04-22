@@ -1,7 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Services.Models
 @using Dfc.CourseDirectory.Web.Helpers
 @{
-    ViewData["Title"] = "Can you deliver this training at employers’ locations anywhere in England?"; 
+    ViewData["Title"] = "Can you deliver this training at employers’ locations anywhere in England?";
     Layout = "_Layout_Your_Courses";
 }
 
@@ -10,9 +10,10 @@
 
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipLocationChoiceSelectionForm" asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" method="post">
-    <h1 class="govuk-heading-l">Can you deliver this training at employers’ locations anywhere in England?</h1>
-    <span class="govuk-caption-l">This will flag you as a national provider to people searching for apprenticeship training</span>
-    <br />
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Can you deliver this training at employers’ locations anywhere in England?</h1>
+    <div class="govuk-hint">
+        This will flag you as a national provider for this apprenticeship training course.
+    </div>
     <div class="govuk-form-group">
         <fieldset class="govuk-fieldset">
 
@@ -29,7 +30,6 @@
             </div>
         </fieldset>
     </div>
-    <br />
     <button type="submit" class="govuk-button" id="next">Continue</button>
 </form>
 

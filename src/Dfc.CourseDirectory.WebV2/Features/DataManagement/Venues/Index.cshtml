@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Command;
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.Command;
 @{
     ViewBag.Title = "Data Upload - Upload your venue data";
 }
@@ -10,7 +10,7 @@
 <div class="govuk-grid-row">
     <h1 class="govuk-heading-xl">Upload your venue data</h1>
     <div class="govuk-grid-column-two-thirds">
-        <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="DataManagement" asp-action="Upload">
+        <form method="post" enctype="multipart/form-data" asp-controller="DataManagement" asp-action="Upload">
 
             <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
             <p class="govuk-body">To ensure an upload is successful you must:</p>
@@ -33,10 +33,10 @@
             <nav role="navigation" aria-labelledby="subsection-title">
                 <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
                     <li>
-                        <a href="#" class="govuk-link govuk-link--blocked">Download your published venue data (CSV)</a>
+                        <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published venue data (CSV)</a>
                     </li>
                     <li>
-                        <a href="#" class="govuk-link govuk-link--blocked">Download an empty venue data template (CSV)</a>
+                        <a asp-action="Template" class="govuk-link">Download an empty venue data template (CSV)</a>
                     </li>
                 </ul>
             </nav>

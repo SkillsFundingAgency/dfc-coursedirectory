@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -48,11 +50,11 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<IVenueCorrectionFinder, VenueCorrectionFinder>();
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
+            builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
 
             builder.Services.AddSingleton(
                 _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
         }
-
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
@@ -62,6 +64,12 @@ namespace Dfc.CourseDirectory.Functions
             {
                 builder.ConfigurationBuilder.AddUserSecrets(typeof(Startup).Assembly);
             }
+
+            builder.ConfigurationBuilder.AddInMemoryCollection(new Dictionary<string, string>()
+            {
+                { "DataUploadsContainerName", Core.DataManagement.Constants.ContainerName },
+                { "VenueUploadsFolderName", Core.DataManagement.Constants.VenuesFolder }
+            });
         }
     }
 }

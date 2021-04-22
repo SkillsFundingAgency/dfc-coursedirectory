@@ -5,12 +5,18 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
+using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
+using Moq;
 using OneOf.Types;
 using Xunit;
 
@@ -21,7 +27,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public UploadTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
+            DataUploadsContainerClient = new Mock<BlobContainerClient>();
+
+            DataUploadsContainerClient
+                .Setup(mock => mock.CreateIfNotExistsAsync(
+                    It.IsAny<PublicAccessType>(),
+                    It.IsAny<IDictionary<string, string>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(CreateMockResponse(BlobsModelFactory.BlobContainerInfo(new ETag(), Clock.UtcNow)));
+
+            BlobServiceClient
+                .Setup(mock => mock.GetBlobContainerClient("data-uploads"))
+                .Returns(DataUploadsContainerClient.Object);
+
+            static Response<T> CreateMockResponse<T>(T value)
+            {
+                var mock = new Mock<Response<T>>();
+                mock.SetupGet(mock => mock.Value).Returns(value);
+                return mock.Object;
+            }
         }
+
+        private Mock<BlobContainerClient> DataUploadsContainerClient { get; }
 
         [Fact]
         public async Task Get_RendersPage()
@@ -37,7 +64,38 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
-        public async Task Post_ValidVenuesFile_CreatesRecordAndRedirectsToPublish()
+        public async Task Post_ProviderAlreadyHasUnprocessedUpload_ReturnsBadRequest()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new CreateVenueUpload()
+            {
+                CreatedBy = User.ToUserInfo(),
+                CreatedOn = Clock.UtcNow,
+                ProviderId = provider.ProviderId,
+                VenueUploadId = Guid.NewGuid()
+            }));
+
+            var row1 = new VenueRow()
+            {
+                AddressLine1 = Faker.Address.StreetAddress(),
+                Postcode = Faker.Address.UkPostCode(),
+                VenueName = Faker.Company.Name()
+            };
+
+            var csvStream = CreateCsvStream(new[] { row1 });
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Post_ValidVenuesFile_CreatesRecordAndRedirectsToInProgress()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -57,12 +115,87 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
+            response.Headers.Location.Should().Be($"/data-upload/venues/in-progress?providerId={provider.ProviderId}");
 
             SqlQuerySpy.VerifyQuery<CreateVenueUpload, Success>(q =>
                 q.CreatedBy.UserId == User.UserId &&
                 q.CreatedOn == Clock.UtcNow &&
                 q.ProviderId == provider.ProviderId);
+        }
+
+        [Fact]
+        public async Task Post_ValidUpload_AbandonsExistingUnpublishedUpload()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var oldUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.Processed);
+
+            var row1 = new VenueRow()
+            {
+                AddressLine1 = Faker.Address.StreetAddress(),
+                Postcode = Faker.Address.UkPostCode(),
+                VenueName = Faker.Company.Name()
+            };
+
+            var csvStream = CreateCsvStream(new[] { row1 });
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            oldUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = oldUpload.VenueUploadId }));
+            oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
+        }
+
+        [Fact]
+        public async Task Post_ValidVenuesFileProcessingCompletedWithinThreshold_CreatesRecordAndRedirectsToCheckAndPublish()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var row1 = new VenueRow()
+            {
+                AddressLine1 = Faker.Address.StreetAddress(),
+                Postcode = Faker.Address.UkPostCode(),
+                VenueName = Faker.Company.Name()
+            };
+
+            var csvStream = CreateCsvStream(new[] { row1 });
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // We need to hook into the SaveVenueFile method on IFileUploadProcessor so that we can update the
+            // VenueUpload's status to be Processed before the WaitForVenueProcessingToComplete method is called.
+            // We use SqlQuerySpy.Callback to capture the ID from the Create call then wait for the Blob Storage
+            // upload to run. At that point we know the VenueUpload has been commited to the DB and we can update it.
+
+            Guid venueUploadId = default;
+
+            SqlQuerySpy.Callback<CreateVenueUpload, Success>(q => venueUploadId = q.VenueUploadId);
+
+            DataUploadsContainerClient
+                .Setup(mock => mock.UploadBlobAsync(It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Callback(() =>
+                {
+                    WithSqlQueryDispatcher(
+                        dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                        {
+                            VenueUploadId = venueUploadId,
+                            ChangedOn = Clock.UtcNow,
+                            UploadStatus = UploadStatus.Processed
+                        })).GetAwaiter().GetResult();
+                });
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
         }
 
         [Fact]
@@ -105,15 +238,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             doc.AssertHasError("File", "The selected file must be a CSV");
         }
 
-        [Theory]
-        [InlineData("")]
-        [InlineData("77u/")]  // UTF-8 BOM
-        public async Task Post_EmptyFile_RendersError(string base64Content)
+        [Fact]
+        public async Task Post_EmptyFile_RendersError()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = new MemoryStream(Convert.FromBase64String(base64Content));
+            var csvStream = new MemoryStream(Convert.FromBase64String(""));
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act

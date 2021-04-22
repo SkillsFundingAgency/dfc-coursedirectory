@@ -3,8 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue;
@@ -56,13 +54,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var town = "Town";
             var postcode = "AB1 2DE";
 
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == postcode)))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = Array.Empty<SearchResultItem<Onspd>>()
-                });
-
             ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
             var journeyInstance = CreateJourneyInstance(provider.ProviderId);
@@ -91,10 +82,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var country = "England";
             var postcode = "AB1 2DE";
 
-            var postcodeLatitude = 42M;
-            var postcodeLongitude = 43M;
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
 
-            ConfigureOnspdLookupForPostcode(postcode, country, postcodeLatitude, postcodeLongitude);
+            await TestData.CreatePostcodeInfo(postcode, postcodeLatitude, postcodeLongitude, country == "England");
 
             ConfigureAddressSearchServiceResults(postcode, town, resultCount: 0);
 
@@ -124,10 +115,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var country = "England";
             var postcode = "AB1 2DE";
 
-            var postcodeLatitude = 42M;
-            var postcodeLongitude = 43M;
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
 
-            ConfigureOnspdLookupForPostcode(postcode, country, postcodeLatitude, postcodeLongitude);
+            await TestData.CreatePostcodeInfo(postcode, postcodeLatitude, postcodeLongitude, country == "England");
 
             ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
@@ -174,10 +165,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var country = "England";
             var normalizedPostcode = "AB1 2DE";
 
-            var postcodeLatitude = 42M;
-            var postcodeLongitude = 43M;
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
 
-            ConfigureOnspdLookupForPostcode(normalizedPostcode, country, postcodeLatitude, postcodeLongitude);
+            await TestData.CreatePostcodeInfo(normalizedPostcode, postcodeLatitude, postcodeLongitude, country == "England");
 
             ConfigureAddressSearchServiceResults(normalizedPostcode, town, resultCount: 3);
 
@@ -210,10 +201,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var country = "England";
             var postcode = "AB1 2DE";
 
-            var postcodeLatitude = 42M;
-            var postcodeLongitude = 43M;
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
 
-            ConfigureOnspdLookupForPostcode(postcode, country, postcodeLatitude, postcodeLongitude);
+            await TestData.CreatePostcodeInfo(postcode, postcodeLatitude, postcodeLongitude, country == "England");
 
             var postcodeSearchResults = ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
@@ -254,10 +245,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var country = "England";
             var postcode = "AB1 2DE";
 
-            var postcodeLatitude = 42M;
-            var postcodeLongitude = 43M;
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
 
-            ConfigureOnspdLookupForPostcode(postcode, country, postcodeLatitude, postcodeLongitude);
+            await TestData.CreatePostcodeInfo(postcode, postcodeLatitude, postcodeLongitude, country == "England");
 
             var postcodeSearchResults = ConfigureAddressSearchServiceResults(postcode, town, resultCount: 3);
 
@@ -302,10 +293,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             var county = "County";
             var postcode = "AB1 2DE";
 
-            var postcodeLatitude = 42M;
-            var postcodeLongitude = 43M;
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
 
-            ConfigureOnspdLookupForPostcode(postcode, onspdRecordCountry, postcodeLatitude, postcodeLongitude);
+            await TestData.CreatePostcodeInfo(postcode, postcodeLatitude, postcodeLongitude, onspdRecordCountry == "England");
 
             var postcodeSearchResults = new[]
             {
@@ -385,28 +376,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 .ReturnsAsync(results);
 
             return results;
-        }
-
-        private void ConfigureOnspdLookupForPostcode(string postcode, string country, decimal latitude, decimal longitude)
-        {
-            OnspdSearchClient
-                .Setup(c => c.Search(It.Is<OnspdSearchQuery>(q => q.Postcode == postcode)))
-                .ReturnsAsync(new SearchResult<Onspd>()
-                {
-                    Items = new[]
-                    {
-                        new SearchResultItem<Onspd>()
-                        {
-                            Record = new Onspd()
-                            {
-                                pcds = postcode,
-                                Country = country,
-                                lat = latitude,
-                                @long = longitude
-                            }
-                        }
-                    }
-                });
         }
 
         private JourneyInstance<AddVenueJourneyModel> CreateJourneyInstance(Guid providerId, AddVenueJourneyModel state = null)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
@@ -40,6 +41,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Mock<IAddressSearchService> AddressSearchService { get; } = new Mock<IAddressSearchService>();
 
+        public Mock<BlobServiceClient> BlobServiceClient { get; } = new Mock<BlobServiceClient>();
+
         public MutableClock Clock => DatabaseFixture.Clock;
 
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
@@ -58,8 +61,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
-
-        public Mock<ISearchClient<Onspd>> OnspdSearchClient { get; } = new Mock<ISearchClient<Onspd>>();
 
         public IRegionCache RegionCache => Services.GetRequiredService<IRegionCache>();
 
@@ -131,16 +132,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             {
                 ConfigureServices(services);
 
-                services.AddSingleton(OnspdSearchClient.Object);
                 services.AddSingleton(ProviderSearchClient.Object);
                 services.AddSingleton(BinaryStorageProvider.Object);
                 services.AddSingleton(AddressSearchService.Object);
+                services.AddSingleton(BlobServiceClient.Object);
             });
 
         private void ResetMocks()
         {
             AddressSearchService.Reset();
-            OnspdSearchClient.Reset();
+            BlobServiceClient.Reset();
             ProviderSearchClient.Reset();
             BinaryStorageProvider.Reset();
         }

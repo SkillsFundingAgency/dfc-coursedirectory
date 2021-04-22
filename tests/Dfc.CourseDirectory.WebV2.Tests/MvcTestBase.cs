@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -36,6 +37,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected Mock<IAddressSearchService> AddressSearchService => Factory.AddressSearchService;
 
+        protected Mock<BlobServiceClient> BlobServiceClient => Factory.BlobServiceClient;
+
         protected MutableClock Clock => Factory.Clock;
 
         protected TestCookieSettingsProvider CookieSettingsProvider => Factory.CookieSettingsProvider;
@@ -51,8 +54,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected MptxManager MptxManager => Factory.MptxManager;
 
-        protected Mock<ISearchClient<Onspd>> OnspdSearchClient => Factory.OnspdSearchClient;
-        
         protected IRegionCache RegionCache => Factory.RegionCache;
 
         protected Mock<ISearchClient<Provider>> ProviderSearchClient => Factory.ProviderSearchClient;

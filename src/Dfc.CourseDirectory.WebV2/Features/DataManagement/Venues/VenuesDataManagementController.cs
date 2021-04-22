@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
@@ -45,9 +46,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 },
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(nameof(CheckAndPublish))
+                    result =>
+                        RedirectToAction(
+                            result == Venues.Upload.UploadResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
+
+        [HttpGet("in-progress")]
+        [RequireProviderContext]
+        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query(),
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.Processed => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    _ => View(status)
+                }));
 
         [HttpGet("check-publish")]
         [RequireProviderContext]

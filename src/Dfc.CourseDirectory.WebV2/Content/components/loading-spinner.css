@@ -1,0 +1,43 @@
+﻿.pttcd-loading-spinner__container {
+    align-items: center;
+    justify-content: center;
+    background: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    margin: 1em 0;
+    padding: 4em 4em 2em 4em;
+}
+
+.pttcd-loading-spinner {
+    border: 12px solid #DEE0E2;
+    border-radius: 50%;
+    border-top-color: #207E77;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.pttcd-loading-spinner__message {
+    text-align: center;
+}

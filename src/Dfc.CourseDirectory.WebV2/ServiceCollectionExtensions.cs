@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataManagement;
@@ -168,7 +169,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
-            services.AddTransient<IVenueUploadProcessor, VenueUploadProcessor>();
+            services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
 
             if (!environment.IsTesting())
             {
@@ -182,11 +183,6 @@ namespace Dfc.CourseDirectory.WebV2
                     configuration["AzureSearchQueryKey"],
                     configuration["LarsAzureSearchIndexName"]);
 
-                services.AddAzureSearchClient<Onspd>(
-                    new Uri(configuration["AzureSearchUrl"]),
-                    configuration["AzureSearchQueryKey"],
-                    indexName: "onspd");
-
                 services.AddSingleton<IAddressSearchService>(s =>
                 {
                     var getAddressOptions = s.GetRequiredService<IOptions<GetAddressAddressSearchServiceOptions>>();
@@ -198,6 +194,8 @@ namespace Dfc.CourseDirectory.WebV2
 
                     return new LoqateAddressSearchService(s.GetRequiredService<HttpClient>(), s.GetRequiredService<AddressSearch.Options>());
                 });
+
+                services.AddSingleton(new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
             }
 
 #if DEBUG
