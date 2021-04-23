@@ -108,6 +108,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidFile();
             }
 
+            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<VenueRow>(stream);
+            if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+            {
+                return SaveFileResult.InvalidHeader(missingHeaders);
+            }
+            else if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidRows)
+            {
+                return SaveFileResult.InvalidRows();
+            }
+
             var venueUploadId = Guid.NewGuid();
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())

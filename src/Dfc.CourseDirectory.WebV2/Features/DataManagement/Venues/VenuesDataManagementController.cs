@@ -45,10 +45,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     File = file
                 },
                 response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
+                    errors =>
+                    {
+                        ViewBag.MissingHeaders = errors.MissingHeaders;
+                        return this.ViewFromErrors(errors);
+                    },
                     result =>
                         RedirectToAction(
-                            result == Venues.Upload.UploadResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
+                            result == Venues.Upload.UploadSucceededResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 

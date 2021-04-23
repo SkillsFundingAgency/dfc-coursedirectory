@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using CsvHelper;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
@@ -77,14 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 VenueUploadId = Guid.NewGuid()
             }));
 
-            var row1 = new VenueRow()
-            {
-                AddressLine1 = Faker.Address.StreetAddress(),
-                Postcode = Faker.Address.UkPostCode(),
-                VenueName = Faker.Company.Name()
-            };
-
-            var csvStream = CreateCsvStream(new[] { row1 });
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -100,14 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var row1 = new VenueRow()
-            {
-                AddressLine1 = Faker.Address.StreetAddress(),
-                Postcode = Faker.Address.UkPostCode(),
-                VenueName = Faker.Company.Name()
-            };
-
-            var csvStream = CreateCsvStream(new[] { row1 });
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -131,14 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             var oldUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.Processed);
 
-            var row1 = new VenueRow()
-            {
-                AddressLine1 = Faker.Address.StreetAddress(),
-                Postcode = Faker.Address.UkPostCode(),
-                VenueName = Faker.Company.Name()
-            };
-
-            var csvStream = CreateCsvStream(new[] { row1 });
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -158,14 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var row1 = new VenueRow()
-            {
-                AddressLine1 = Faker.Address.StreetAddress(),
-                Postcode = Faker.Address.UkPostCode(),
-                VenueName = Faker.Company.Name()
-            };
-
-            var csvStream = CreateCsvStream(new[] { row1 });
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // We need to hook into the SaveVenueFile method on IFileUploadProcessor so that we can update the
@@ -257,7 +227,72 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             doc.AssertHasError("File", "The selected file is empty");
         }
 
-        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, MemoryStream stream)
+        [Fact]
+        public async Task Post_FileHasMissingHeaders_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+                csvWriter =>
+                {
+                    // Miss out VENUE_NAME, POSTCODE
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("ADDRESS_LINE_1");
+                    csvWriter.WriteField("ADDRESS_LINE_2");
+                    csvWriter.WriteField("TOWN_OR_CITY");
+                    csvWriter.WriteField("COUNTY");
+                    csvWriter.WriteField("EMAIL");
+                    csvWriter.WriteField("PHONE");
+                    csvWriter.WriteField("WEBSITE");
+                    csvWriter.NextRecord();
+                },
+                writeHeader: false);
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+            
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "Enter headings in the correct format");
+            doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "VENUE_NAME",
+                "POSTCODE"
+            });
+        }
+
+        [Fact]
+        public async Task Post_FileHasRowsWithInvalidColumns_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+                csvWriter =>
+                {
+                    csvWriter.WriteField("One column");
+                    csvWriter.NextRecord();
+                },
+                writeHeader: true);
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file must use the template");
+        }
+
+        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
             content.Headers.ContentType.MediaType = "multipart/form-data";
@@ -265,27 +300,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             using (var mem = new MemoryStream())
             using (var writer = new StreamWriter(mem))
             {
-                if (stream != null)
+                if (csvStream != null)
                 {
-                    var byteArrayContent = new ByteArrayContent(stream.ToArray());
+                    var byteArrayContent = new StreamContent(csvStream);
                     byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
                     content.Add(byteArrayContent, "File", "someFileName.csv");
                 }
             }
             return content;
-        }
-
-        private MemoryStream CreateCsvStream(IEnumerable<VenueRow> rows)
-        {
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(mem))
-            using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csvWriter.WriteHeader<VenueRow>();
-                csvWriter.WriteRecords(rows);
-                csvWriter.Flush();
-                return mem;
-            }
         }
     }
 }
