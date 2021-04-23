@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
@@ -58,7 +59,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUKPRN });
             var getQualification = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery { LearnAimRef = course.LearnAimRef });
             var getVenues = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider { ProviderUkprn = course.ProviderUKPRN });
-            var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUKPRN });
+            var getFeChoice = _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetFeChoiceForProvider { ProviderUkprn = course.ProviderUKPRN });
 
             await Task.WhenAll(getProvider, getQualification, getVenues, getFeChoice);
 

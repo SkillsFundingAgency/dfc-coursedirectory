@@ -52,8 +52,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
             var sqlProvider = await getSqlProvider;
             var venues = await getVenues;
 
-            var feChoice = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetFeChoiceForProvider() { ProviderUkprn = provider.Ukprn });
+            var feChoice = await _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetFeChoiceForProvider { ProviderUkprn = provider.Ukprn });
 
             var providerContact = provider.ProviderContact
                 .SingleOrDefault(c => c.ContactType == "P");

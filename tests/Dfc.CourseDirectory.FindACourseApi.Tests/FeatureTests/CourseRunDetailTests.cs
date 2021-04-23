@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 DisplayNameSource = ProviderDisplayNameSource.ProviderName
             };
 
-            var feChoice = new FeChoice
+            var feChoice = new Dfc.CourseDirectory.Core.DataStore.Sql.Models.FeChoice
             {
                 UKPRN = course.ProviderUKPRN,
                 EmployerSatisfaction = 1.2M,
@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
                 .ReturnsAsync(new[] { venue });
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoiceForProvider>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Dfc.CourseDirectory.Core.DataStore.Sql.Queries.GetFeChoiceForProvider>()))
                 .ReturnsAsync(feChoice);
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderById>()))

@@ -52,8 +52,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
             var sqlProviders = await getSqlProviders;
             var venues = await getVenues;
 
-            var feChoices = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new CosmosQueries.GetFeChoicesByProviderUkprns { ProviderUkprns = providers.Values.Select(p => p.Ukprn) });
+            var feChoices = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetFeChoicesByProviderUkprns { ProviderUkprns = providers.Values.Select(p => p.Ukprn) });
 
             return new ViewModel
             {

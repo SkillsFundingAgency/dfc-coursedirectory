@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByIds>()))
                 .ReturnsAsync(new[] { provider1Venue1, provider1Venue2, provider2Venue1 }.ToDictionary(v => v.VenueId, v => v));
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CosmosQueries.GetFeChoicesByProviderUkprns>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Dfc.CourseDirectory.Core.DataStore.Sql.Queries.GetFeChoicesByProviderUkprns>()))
                 .ReturnsAsync(new[] { provider1FeChoice }.ToDictionary(f => f.UKPRN, f => f));
 
             // Act
@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel2, provider1FeChoice);
             AssertHasTLevel(tLevels, provider2, sqlProvider2, new[] { provider2Venue1 }, provider2TLevel1, null);
 
-            static void AssertHasTLevel(JToken[] tLevels, CosmosModels.Provider provider, Provider sqlProvider, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel, CosmosModels.FeChoice feChoice)
+            static void AssertHasTLevel(JToken[] tLevels, CosmosModels.Provider provider, Provider sqlProvider, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel, Dfc.CourseDirectory.Core.DataStore.Sql.Models.FeChoice feChoice)
             {
                 var tLevel = tLevels.SingleOrDefault(t => t["tLevelId"].ToObject<Guid>() == expectedTLevel.TLevelId);
                 tLevel.Should().NotBeNull();
@@ -278,8 +278,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 VenueName = $"TestVenueName{seed}"
             };
 
-        private static CosmosModels.FeChoice CreateFeChoice(int seed, int ukprn) =>
-            new CosmosModels.FeChoice
+        private static Dfc.CourseDirectory.Core.DataStore.Sql.Models.FeChoice CreateFeChoice(int seed, int ukprn) =>
+            new Dfc.CourseDirectory.Core.DataStore.Sql.Models.FeChoice
             {
                 Id = Guid.NewGuid(),
                 UKPRN = ukprn,

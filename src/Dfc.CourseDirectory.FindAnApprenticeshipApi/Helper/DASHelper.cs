@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 
         [Obsolete("Please don't use this any more, instead replace with a mapper class using something like AutoMapper",
             false)]
-        public DasProvider CreateDasProviderFromProvider(int exportKey, Provider provider, Core.DataStore.CosmosDb.Models.FeChoice feChoice)
+        public DasProvider CreateDasProviderFromProvider(int exportKey, Provider provider, Core.DataStore.Sql.Models.FeChoice feChoice)
         {
             if (!int.TryParse(provider.UnitedKingdomProviderReferenceNumber, out var ukprn))
                 throw new InvalidUkprnException(provider.UnitedKingdomProviderReferenceNumber);
