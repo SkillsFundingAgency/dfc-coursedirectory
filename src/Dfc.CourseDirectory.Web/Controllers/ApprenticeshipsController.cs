@@ -852,7 +852,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
             return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships",
-                new { message = "Location " + model.LocationName + " deleted"});
+                new { message = "Venue " + model.LocationName + " deleted"});
         }
 
         [Authorize]
