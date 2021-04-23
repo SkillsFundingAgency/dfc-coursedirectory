@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public Guid VenueId { get; set; }
         public int ProviderUkprn { get; set; }
         public string Name { get; set; }
+        public string ProviderVenueRef { get; set; }
         public string Email { get; set; }
         public string Telephone { get; set; }
         public string Website { get; set; }

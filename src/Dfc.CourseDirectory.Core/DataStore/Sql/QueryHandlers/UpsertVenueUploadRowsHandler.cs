@@ -19,6 +19,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             table.Columns.Add("VenueUploadRowStatus", typeof(byte));
             table.Columns.Add("IsValid", typeof(bool));
             table.Columns.Add("Errors", typeof(string));
+            table.Columns.Add("IsSupplementary", typeof(bool));
+            table.Columns.Add("VenueId", typeof(Guid));
             table.Columns.Add("LastUpdated", typeof(DateTime));
             table.Columns.Add("LastValidated", typeof(DateTime));
             table.Columns.Add("ProviderVenueRef", typeof(string));
@@ -40,6 +42,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     VenueUploadRowStatus.Default,
                     record.IsValid,
                     string.Join(";", record.Errors ?? Enumerable.Empty<string>()), // Errors
+                    record.IsSupplementary,
+                    record.VenueId,
                     query.CreatedOn,  // LastUpdated
                     query.CreatedOn,  // LastValidated
                     record.ProviderVenueRef,
