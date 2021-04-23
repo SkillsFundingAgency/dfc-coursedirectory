@@ -113,22 +113,24 @@
 
             <div class="section" id="sectionStartDate">
                 @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-                {
-                    StartDateType = Model.StartDateType,
-                    Day = Model.Day,
-                    Month = Model.Month,
-                    Year = Model.Year,
-                    DayAriaDescribedBy = "",
-                    DayLabelText = "Day",
-                    MonthAriaDescribedBy = "",
-                    MonthLabelText = "Month",
-                    YearAriaDescribedBy = "",
-                    YearLabelText = "Year",
-                    AriaDescribedBy = "",
-                    SpecifiedDateHintText = "e.g. For example, 30 9 2019",
-                    FlexibleDateHintText = "Or select a flexible start date:",
-                    LabelText = "Start date"
-                })
+           {
+               StartDateType = Model.StartDateType,
+               Day = Model.Day,
+               Month = Model.Month,
+               Year = Model.Year,
+               DayAriaDescribedBy = "",
+               DayLabelText = "Day",
+               MonthAriaDescribedBy = "",
+               MonthLabelText = "Month",
+               YearAriaDescribedBy = "",
+               YearLabelText = "Year",
+               AriaDescribedBy = "",
+               SpecifiedDateHintText = "e.g. For example, 30 9 2019",
+               FlexibleDateHintText = "Or select a flexible start date:",
+               LabelText = "Start date",                
+               ValPastDateRef = DateTime.Now,
+               ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+           })
             </div>
 
             <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
