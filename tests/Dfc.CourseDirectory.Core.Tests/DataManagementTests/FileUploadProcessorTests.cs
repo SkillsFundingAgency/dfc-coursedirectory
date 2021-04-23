@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -9,8 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -19,6 +18,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using Xunit;
+using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
 
 namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 {
@@ -71,6 +71,64 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             // Assert
             result.Should().Be(expectedResult);
+        }
+
+        [Fact]
+        public async Task FileMatchesSchema_HeaderHasMissingColumn_ReturnsInvalidHeaderResult()
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
+            {
+                // Miss out VENUE_NAME, POSTCODE
+                csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                csvWriter.WriteField("ADDRESS_LINE_1");
+                csvWriter.WriteField("ADDRESS_LINE_2");
+                csvWriter.WriteField("TOWN_OR_CITY");
+                csvWriter.WriteField("COUNTY");
+                csvWriter.WriteField("EMAIL");
+                csvWriter.WriteField("PHONE");
+                csvWriter.WriteField("WEBSITE");
+                csvWriter.NextRecord();
+            },
+            writeHeader: false);
+
+            // Act
+            var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<VenueRow>(stream);
+
+            // Assert
+            result.Should().Be(FileMatchesSchemaResult.InvalidHeader);
+            missingHeaders.Should().BeEquivalentTo(new[]
+            {
+                "VENUE_NAME",
+                "POSTCODE"
+            });
+        }
+
+        [Theory]
+        [InlineData(1)]  // Less than valid row
+        //[InlineData(99]  // More than valid row - we don't have a way of checking this currently
+        public async Task FileMatchesSchema_RowHasIncorrectColumnCount_ReturnsInvalidRows(int columnCount)
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
+            {
+                for (int i = 0; i < columnCount; i++)
+                {
+                    csvWriter.WriteField("value");
+                }
+
+                csvWriter.NextRecord();
+            });
+
+            // Act
+            var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<VenueRow>(stream);
+
+            // Assert
+            result.Should().Be(FileMatchesSchemaResult.InvalidRows);
         }
 
         [Fact]
@@ -212,7 +270,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var stream = CreateVenueUploadCsvStream(recordCount: 3);
+            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 3);
 
             // Act
             await fileUploadProcessor.ProcessVenueFile(venueUpload.VenueUploadId, stream);
@@ -229,59 +287,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 venueUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
                 venueUpload.ProcessingStartedOn.Should().NotBeNull();
             }
-        }
-
-        private Stream CreateVenueUploadCsvStream(int recordCount)
-        {
-            // N.B. We deliberately do not use the VenueRow class here to ensure we notice if any columns change name
-
-            var stream = new MemoryStream();
-
-            using (var streamWriter = new StreamWriter(stream, leaveOpen: true))
-            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
-            {
-                csvWriter.WriteField("YOUR_VENUE_REFERENCE");
-                csvWriter.WriteField("VENUE_NAME");
-                csvWriter.WriteField("ADDRESS_LINE_1");
-                csvWriter.WriteField("ADDRESS_LINE_2");
-                csvWriter.WriteField("TOWN_OR_CITY");
-                csvWriter.WriteField("COUNTY");
-                csvWriter.WriteField("POSTCODE");
-                csvWriter.WriteField("EMAIL");
-                csvWriter.WriteField("PHONE");
-                csvWriter.WriteField("WEBSITE");
-                csvWriter.NextRecord();
-
-                var venueNames = new HashSet<string>();
-
-                for (int i = 0; i < recordCount; i++)
-                {
-                    // Venue names have to be unique
-                    string venueName;
-                    do
-                    {
-                        venueName = Faker.Company.Name();
-                    }
-                    while (!venueNames.Add(venueName));
-
-                    csvWriter.WriteField(Guid.NewGuid().ToString());
-                    csvWriter.WriteField(venueName);
-                    csvWriter.WriteField(Faker.Address.StreetAddress());
-                    csvWriter.WriteField(Faker.Address.SecondaryAddress());
-                    csvWriter.WriteField(Faker.Address.City());
-                    csvWriter.WriteField(Faker.Address.UkCounty());
-                    csvWriter.WriteField(Faker.Address.UkPostCode());
-                    csvWriter.WriteField(Faker.Internet.Email());
-                    csvWriter.WriteField(string.Empty); // There's no Faker method for a UK phone number
-                    csvWriter.WriteField(Faker.Internet.Url());
-
-                    csvWriter.NextRecord();
-                }
-            }
-
-            stream.Seek(0L, SeekOrigin.Begin);
-
-            return stream;
         }
 
         private async Task UpdateStatusAndReleaseStatusCheck(
