@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
@@ -46,48 +48,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 rows = await csvReader.GetRecordsAsync<VenueRow>().ToListAsync();
             }
 
-            var uploadIsValid = true;
-            var validator = new VenueUploadRowValidator();
-
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await dispatcher.ExecuteQuery(new UpsertVenueUploadRows()
-                {
-                    VenueUploadId = venueUploadId,
-                    CreatedOn = _clock.UtcNow,
-                    Records = rows.Select((row, i) =>
-                    {
-                        // `i` is zero-based and the headers take up one row;
-                        // we want a row number that aligns with the row number as it appears when viewing the CSV in Excel
-                        var rowNumber = i + 2;
+                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+                var providerId = venueUpload.ProviderId;
 
-                        var rowIsValid = validator.Validate(row).IsValid;
+                var isValid = await ValidateAndUpsertVenueRows(dispatcher, venueUploadId, providerId, rows);
 
-                        uploadIsValid &= rowIsValid;
-
-                        return new UpsertVenueUploadRowsRecord()
-                        {
-                            RowNumber = rowNumber,
-                            IsValid = rowIsValid,
-                            ProviderVenueRef = row.ProviderVenueRef,
-                            VenueName = row.VenueName,
-                            AddressLine1 = row.AddressLine1,
-                            AddressLine2 = row.AddressLine2,
-                            Town = row.Town,
-                            County = row.County,
-                            Postcode = row.Postcode,
-                            Email = row.Email,
-                            Telephone = row.Telephone,
-                            Website = row.Website
-                        };
-                    })
-                });
-                
                 await dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
                 {
                     VenueUploadId = venueUploadId,
                     ProcessingCompletedOn = _clock.UtcNow,
-                    IsValid = uploadIsValid
+                    IsValid = isValid
                 });
 
                 await dispatcher.Commit();
@@ -202,6 +174,125 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         protected virtual IObservable<UploadStatus> GetPollingVenueUploadStatusUpdates(Guid venueUploadId) =>
             Observable.Interval(_statusUpdatesPollInterval)
                 .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
+
+        // internal for testing
+        internal async Task<bool> ValidateAndUpsertVenueRows(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            Guid venueUploadId,
+            Guid providerId,
+            IReadOnlyList<VenueRow> rows)
+        {
+            // We need to ensure that any venues that have live offerings attached are not removed when publishing this
+            // upload. We do that by adding an additional row to this upload for any venues that are not included in
+            // this file that have live offerings attached. This must be done *before* validation so that duplicate
+            // checks consider these additional added rows.
+
+            var originalRowCount = rows.Count;
+
+            var existingVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenueMatchInfoForProvider() { ProviderId = providerId });
+
+            // For each row in the file try to match it to an existing venue
+            var rowVenueIdMapping = MatchRowsToExistingVenues(rows, existingVenues);
+
+            // Add a row for any existing venues that are linked to live offerings and haven't been matched
+            var matchedVenueIds = rowVenueIdMapping.Where(m => m.HasValue).Select(m => m.Value).ToArray();
+            var venuesWithLiveOfferingsNotInFile = existingVenues
+                .Where(v => v.HasLiveOfferings && !matchedVenueIds.Contains(v.VenueId))
+                .ToArray();
+            rows = rows.Concat(venuesWithLiveOfferingsNotInFile.Select(VenueRow.FromModel)).ToArray();
+            rowVenueIdMapping = rowVenueIdMapping.Concat(venuesWithLiveOfferingsNotInFile.Select(v => (Guid?)v.VenueId)).ToArray();
+
+            var uploadIsValid = true;
+            var validator = new VenueUploadRowValidator();
+
+            var upsertRecords = new List<UpsertVenueUploadRowsRecord>();
+
+            for (int i = 0; i < rows.Count; i++)
+            {
+                var row = rows[i];
+
+                // `i` is zero-based and the headers take up one row;
+                // we want a row number that aligns with the row number as it appears when viewing the CSV in Excel
+                var rowNumber = i + 2;
+
+                var venueId = rowVenueIdMapping[i];
+                var isSupplementaryRow = i >= originalRowCount;
+
+                var rowValidatonResult = validator.Validate(row);
+                var errors = rowValidatonResult.Errors.Select(e => e.ErrorCode).ToArray();
+                var rowIsValid = rowValidatonResult.IsValid;
+                uploadIsValid &= rowIsValid;
+
+                upsertRecords.Add(new UpsertVenueUploadRowsRecord()
+                {
+                    RowNumber = rowNumber,
+                    IsValid = rowIsValid,
+                    Errors = errors,
+                    IsSupplementary = isSupplementaryRow,
+                    VenueId = venueId,
+                    ProviderVenueRef = row.ProviderVenueRef,
+                    VenueName = row.VenueName,
+                    AddressLine1 = row.AddressLine1,
+                    AddressLine2 = row.AddressLine2,
+                    Town = row.Town,
+                    County = row.County,
+                    Postcode = row.Postcode,
+                    Email = row.Email,
+                    Telephone = row.Telephone,
+                    Website = row.Website
+                });
+            }
+
+            await sqlQueryDispatcher.ExecuteQuery(new UpsertVenueUploadRows()
+            {
+                VenueUploadId = venueUploadId,
+                CreatedOn = _clock.UtcNow,
+                Records = upsertRecords
+            });
+
+            return uploadIsValid;
+        }
+
+        // internal for testing
+        internal Guid?[] MatchRowsToExistingVenues(IReadOnlyList<VenueRow> rows, IEnumerable<Venue> existingVenues)
+        {
+            var rowVenueIdMapping = new Guid?[rows.Count];
+
+            var remainingCandidates = existingVenues.ToList();
+
+            // First try to match on ProviderVenueRef..
+            MatchOnPredicate((row, venue) => !string.IsNullOrWhiteSpace(row.ProviderVenueRef) &&
+                row.ProviderVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase));
+
+            // ..then on VenueName
+            MatchOnPredicate((row, venue) => row.VenueName.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase));
+
+            return rowVenueIdMapping;
+
+            void MatchOnPredicate(Func<VenueRow, Venue, bool> matches)
+            {
+                for (int i = 0; i < rows.Count; i++)
+                {
+                    var row = rows[i];
+
+                    if (rowVenueIdMapping[i].HasValue)
+                    {
+                        // Already got a match
+                        continue;
+                    }
+
+                    foreach (var candidate in remainingCandidates.ToArray())
+                    {
+                        if (matches(row, candidate))
+                        {
+                            remainingCandidates.Remove(candidate);
+                            rowVenueIdMapping[i] = candidate.VenueId;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
 
         private class VenueUploadRowValidator : AbstractValidator<VenueRow>
         { }

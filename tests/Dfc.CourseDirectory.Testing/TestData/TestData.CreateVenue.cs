@@ -12,6 +12,7 @@ namespace Dfc.CourseDirectory.Testing
             Guid providerId,
             UserInfo createdBy,
             string venueName = "Test Venue",
+            string providerVenueRef = null,
             string addressLine1 = "Venue address line 1",
             string addressLine2 = "",
             string town = "",
@@ -42,6 +43,7 @@ namespace Dfc.CourseDirectory.Testing
                 {
                     VenueId = venueId,
                     ProviderUkprn = provider.Ukprn,
+                    ProviderVenueRef = providerVenueRef,
                     Name = venueName,
                     Email = email,
                     Telephone = telephone,

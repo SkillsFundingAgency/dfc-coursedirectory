@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
@@ -15,5 +17,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public DateTime? AbandonedOn { get; set; }
         public DateTime? LastValidated { get; set; }
         public bool? IsValid { get; set; }
+    }
+
+    public class VenueUploadRow : VenueRow
+    {
+        public int RowNumber { get; set; }
+        public bool IsValid { get; set; }
+        public IReadOnlyCollection<string> Errors { get; set; }
+        public bool IsSupplementary { get; set; }
+        public Guid? VenueId { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public DateTime LastValidated { get; set; }
     }
 }
