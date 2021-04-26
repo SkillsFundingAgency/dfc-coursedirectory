@@ -20,8 +20,8 @@ LEFT JOIN [Pttcd].[ProviderContacts] pc on (p.ProviderID = pc.ProviderId AND pc.
 LEFT OUTER JOIN (SELECT COUNT(1) as LiveCourseCount, 
                  ProviderUkprn
                  FROM [Pttcd].[Courses] c
-			     WHERE c.[CourseStatus] = ${(int)CourseStatus.Live}
-			     GROUP BY ProviderUkprn) cu on cu.ProviderUkprn = p.Ukprn
+                 WHERE c.[CourseStatus] = ${(int)CourseStatus.Live}
+                 GROUP BY ProviderUkprn) cu on cu.ProviderUkprn = p.Ukprn
 LEFT OUTER JOIN (SELECT COUNT(1) AS LiveTLevelCount, 
                  [ProviderId]
                 FROM Pttcd.TLevels t
