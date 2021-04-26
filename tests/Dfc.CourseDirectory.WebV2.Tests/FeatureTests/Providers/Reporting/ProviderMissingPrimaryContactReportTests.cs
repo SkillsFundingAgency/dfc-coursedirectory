@@ -135,13 +135,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 });
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
-
-            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
-            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
-            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
-            var tLevel1 = await TestData.CreateTLevel(
+            var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var tLevel = await TestData.CreateTLevel(
                provider.ProviderId,
-               keepingTLevelDefinitionId,
+               tLevelDefinitionId,
                locationVenueIds: new[] { venueId },
                createdBy: User.ToUserInfo());
 
@@ -314,16 +311,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 });
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
-
-            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
-            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
-            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
-            var tLevel1 = await TestData.CreateTLevel(
+            var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var tLevel = await TestData.CreateTLevel(
                provider.ProviderId,
-               keepingTLevelDefinitionId,
+               tLevelDefinitionId,
                locationVenueIds: new[] { venueId },
                createdBy: User.ToUserInfo());
-            await User.AsHelpdesk();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -405,13 +398,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 });
 
             var venueId = (await TestData.CreateVenue(provider2.ProviderId)).Id;
-
-            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
-            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
-            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
-            var tLevel1 = await TestData.CreateTLevel(
+            var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var tLevel = await TestData.CreateTLevel(
                provider2.ProviderId,
-               keepingTLevelDefinitionId,
+               tLevelDefinitionId,
                locationVenueIds: new[] { venueId },
                createdBy: User.ToUserInfo());
 
@@ -561,15 +551,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 });
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
-            var keepingTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
-            var removingTLevelDefinitionId = tLevelDefinitions.Last().TLevelDefinitionId;
-            keepingTLevelDefinitionId.Should().NotBe(removingTLevelDefinitionId);
-            var tLevel1 = await TestData.CreateTLevel(
+            var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var tLevel = await TestData.CreateTLevel(
                provider.ProviderId,
-               keepingTLevelDefinitionId,
+               tLevelDefinitionId,
                locationVenueIds: new[] { venueId },
                createdBy: User.ToUserInfo());
-            await TestData.DeleteTLevel(tLevel1.TLevelId, User.ToUserInfo());
 
             await User.AsHelpdesk();
             var request = new HttpRequestMessage(
@@ -606,33 +593,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             var standard1 = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             await TestData.CreateApprenticeship(provider1.ProviderId, standardOrFramework: standard1, createdBy: User.ToUserInfo());
 
-            var tLevelDefinitions1 = await TestData.CreateInitialTLevelDefinitions();
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var provider2 = await TestData.CreateProvider(
                 providerType: ProviderType.TLevels,
-                tLevelDefinitionIds: tLevelDefinitions1.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
+                tLevelDefinitionIds: tLevelDefinitions.Select(tld => tld.TLevelDefinitionId).ToArray(), contacts: new[]
                 {
                     CreateContact("CV2 1AA", null, null,null)
                 });
-            var venueId1 = (await TestData.CreateVenue(provider2.ProviderId)).Id;
-            var keepingTLevelDefinitionId1 = tLevelDefinitions1.First().TLevelDefinitionId;
-            var removingTLevelDefinitionId1 = tLevelDefinitions1.Last().TLevelDefinitionId;
-            keepingTLevelDefinitionId1.Should().NotBe(removingTLevelDefinitionId1);
-            var tLevel1 = await TestData.CreateTLevel(
+            var venueId2= (await TestData.CreateVenue(provider2.ProviderId)).Id;
+            var tLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
+            var tLevel = await TestData.CreateTLevel(
                provider2.ProviderId,
-               keepingTLevelDefinitionId1,
-               locationVenueIds: new[] { venueId1 },
-               createdBy: User.ToUserInfo());
-             
-            var venueId2 = (await TestData.CreateVenue(provider2.ProviderId)).Id;
-            var keepingTLevelDefinitionId2 = tLevelDefinitions1.First().TLevelDefinitionId;
-            var removingTLevelDefinitionId2 = tLevelDefinitions1.Last().TLevelDefinitionId;
-            keepingTLevelDefinitionId2.Should().NotBe(removingTLevelDefinitionId2);
-            var tLevel2 = await TestData.CreateTLevel(
-               provider2.ProviderId,
-               keepingTLevelDefinitionId2,
+               tLevelDefinitionId,
                locationVenueIds: new[] { venueId2 },
                createdBy: User.ToUserInfo());
-
 
             var provider3 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
