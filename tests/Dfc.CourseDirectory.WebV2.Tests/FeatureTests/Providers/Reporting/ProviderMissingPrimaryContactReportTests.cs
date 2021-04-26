@@ -42,7 +42,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
         }
 
-
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
@@ -70,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
             var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
-            records.Length.Should().Be(0);
+            records.Length.Should().Be(1);
         }
 
         [Theory]
@@ -383,7 +382,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             records.Length.Should().Be(0);
         }
 
-
         [Theory]
         [InlineData("CV17 9AD", null, null, null)]
         [InlineData(null, null, "street", null)]
@@ -512,6 +510,45 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Fact]
+        public async Task ProvidersMissingPrimaryContactReport_Get_ProviderDetailsAreCorrect()
+        {
+            //Arange
+            var provider = await TestData.CreateProvider("Some Provider Name", Core.Models.ProviderType.FE, "ProviderType");
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            await User.AsHelpdesk();
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/providers/reports/providers-missing-primary-contact");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=ProviderMissingPrimaryContactReport-{Clock.UtcNow:yyyyMMddHHmmss}.csv");
+
+            using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
+            using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+            await csvReader.ReadAsync();
+            csvReader.ReadHeader().Should().BeTrue();
+            var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
+            using (new AssertionScope())
+            {
+                foreach (var record in records)
+                {
+                    provider.Should().NotBeNull();
+                    record.ProviderUkprn.Should().Be(provider.Ukprn);
+                    record.ProviderName.Should().Be(provider.ProviderName);
+                    record.ProviderType.Should().Be((int)provider.ProviderType);
+                    record.ProviderTypeDescription.Should().Be(string.Join("; ", Enum.GetValues(typeof(ProviderType)).Cast<ProviderType>().Where(p => p != ProviderType.None && provider.ProviderType.HasFlag(p)).DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescription())));
+                    record.ProviderStatus.Should().Be((int)ProviderStatus.Onboarded);
+                }
+            }
+        }
+
+        [Fact]
         public async Task ProvidersMissingPrimaryContactReport_Get_LiveProvidersWithDeletedTLevel_ReturnsEmptyCsv()
         {
             //Arange
@@ -556,7 +593,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Fact]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MultipleProvidersWithMultipleApprenticeshipsCoursesAndTLevels_ReturnsExpectedCsv()
+        public async Task ProvidersMissingPrimaryContactReport_Get_MultipleProvidersWithMultipleApprenticeshipsCoursesAndTLevels_ReturnsExpectedCsvOrdedByUkprnAscending()
         {
             //Arange
             var provider1 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
@@ -585,8 +622,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                keepingTLevelDefinitionId1,
                locationVenueIds: new[] { venueId1 },
                createdBy: User.ToUserInfo());
-
-
+             
             var venueId2 = (await TestData.CreateVenue(provider2.ProviderId)).Id;
             var keepingTLevelDefinitionId2 = tLevelDefinitions1.First().TLevelDefinitionId;
             var removingTLevelDefinitionId2 = tLevelDefinitions1.Last().TLevelDefinitionId;
@@ -623,8 +659,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             csvReader.ReadHeader().Should().BeTrue();
             var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
             records.Length.Should().Be(3);
+            records.Should().BeInAscendingOrder(x => x.ProviderUkprn);
         }
-
 
         private CreateProviderContact CreateContact(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
         {

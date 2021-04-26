@@ -16,9 +16,9 @@ SELECT DISTINCT p.Ukprn as ProviderUkprn,
                 p.ProviderType,
                 p.ProviderStatus
 FROM        Pttcd.Providers p
-LEFT JOIN [Pttcd].[ProviderContacts] pc on p.ProviderID = pc.ProviderId
+LEFT JOIN [Pttcd].[ProviderContacts] pc on (p.ProviderID = pc.ProviderId AND pc.ContactType = 'P')
 LEFT OUTER JOIN (SELECT	COUNT(1) as LiveCourseCount, 
-							ProviderUkprn
+                 ProviderUkprn
                  FROM		[Pttcd].[Courses] c
 			     WHERE		c.[CourseStatus] = ${(int)CourseStatus.Live}
 			     GROUP BY	ProviderUkprn) cu on cu.ProviderUkprn = p.Ukprn
@@ -35,7 +35,6 @@ LEFT OUTER JOIN ( SELECT    COUNT(1) AS LiveApprenticeshipCount,
 				GROUP BY    [ProviderId]
             ) ap on ap.ProviderId = p.ProviderId
 WHERE (pc.AddressPostcode IS NULL OR (pc.AddressSaonDescription IS NULL AND pc.AddressPaonDescription IS NULL AND pc.AddressStreetDescription IS NULL))
-AND   pc.ContactType = 'P'
 AND	  p.ProviderStatus = ${(int)ProviderStatus.Onboarded}
 AND    (
 		cu.LiveCourseCount			  > 0 
