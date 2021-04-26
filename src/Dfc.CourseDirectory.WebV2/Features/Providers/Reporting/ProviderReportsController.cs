@@ -26,5 +26,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting
         public Task<IActionResult> ProviderTypeReport() =>
             _mediator.SendAndMapResponse<IAsyncEnumerable<ProviderTypeReport.Csv>, IActionResult>(new ProviderTypeReport.Query(),
                 records => new CsvResult<ProviderTypeReport.Csv>($"{nameof(ProviderTypeReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+
+
+        [HttpGet("providers-missing-primary-contact")]
+        public Task<IActionResult> ProvidersMissingPrimaryContact() =>
+            _mediator.SendAndMapResponse<IAsyncEnumerable<ProviderMissingPrimaryContactReport.Csv>, IActionResult>(new ProviderMissingPrimaryContactReport.Query(),
+                records => new CsvResult<ProviderMissingPrimaryContactReport.Csv>($"{nameof(ProviderMissingPrimaryContactReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
     }
 }
