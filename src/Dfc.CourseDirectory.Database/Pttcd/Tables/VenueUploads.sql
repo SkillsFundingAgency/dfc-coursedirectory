@@ -9,6 +9,5 @@
 	[ProcessingCompletedOn] DATETIME,
 	[PublishedOn] DATETIME,
 	[AbandonedOn] DATETIME,
-	[LastValidated] DATETIME,
-	[IsValid] BIT
+	[LastValidated] DATETIME
 )

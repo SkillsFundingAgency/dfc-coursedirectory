@@ -12,20 +12,21 @@ namespace Dfc.CourseDirectory.Testing
         public async Task<VenueUpload> CreateVenueUpload(
             Guid providerId,
             UserInfo createdBy,
-            UploadStatus uploadStatus,
-            bool? isValid = null)
+            UploadStatus uploadStatus)
         {
             var createdOn = _clock.UtcNow;
 
-            DateTime? processingStartedOn = uploadStatus >= UploadStatus.InProgress ? createdOn.AddSeconds(3) : (DateTime?)null;
-            DateTime? processingCompletedOn = uploadStatus >= UploadStatus.Processed ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null; 
+            DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
+            DateTime? processingCompletedOn = uploadStatus >= UploadStatus.ProcessedWithErrors ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null;
             DateTime? publishedOn = uploadStatus == UploadStatus.Published ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
             DateTime? abandonedOn = uploadStatus == UploadStatus.Abandoned ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
 
-            if (processingCompletedOn.HasValue && !isValid.HasValue)
+            var isValid = uploadStatus switch
             {
-                isValid = true;
-            }
+                UploadStatus.ProcessedWithErrors => false,
+                UploadStatus.Created | UploadStatus.Processing => (bool?)null,
+                _ => true
+            };
 
             var venueUpload = await CreateVenueUpload(
                 providerId,
@@ -72,7 +73,7 @@ namespace Dfc.CourseDirectory.Testing
 
                 if (processingStartedOn.HasValue)
                 {
-                    await dispatcher.ExecuteQuery(new SetVenueUploadInProgress()
+                    await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
                     {
                         VenueUploadId = venueUploadId,
                         ProcessingStartedOn = processingStartedOn.Value

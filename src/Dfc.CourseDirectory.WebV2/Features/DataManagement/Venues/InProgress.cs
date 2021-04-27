@@ -33,7 +33,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.InProgress
             var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
             {
                 ProviderId = providerId,
-                Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
+                Statuses = new[]
+                {
+                    UploadStatus.Created,
+                    UploadStatus.Processing,
+                    UploadStatus.ProcessedSuccessfully,
+                    UploadStatus.ProcessedWithErrors
+                }
             });
 
             if (venueUpload == null)

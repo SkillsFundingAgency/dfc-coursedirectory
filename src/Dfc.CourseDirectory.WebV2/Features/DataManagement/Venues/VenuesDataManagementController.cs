@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.Processed => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));

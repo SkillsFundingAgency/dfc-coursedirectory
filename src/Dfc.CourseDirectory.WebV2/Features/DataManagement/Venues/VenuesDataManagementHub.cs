@@ -55,8 +55,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                                 Statuses = new[]
                                 {
                                     UploadStatus.Created,
-                                    UploadStatus.InProgress,
-                                    UploadStatus.Processed
+                                    UploadStatus.Processing,
+                                    UploadStatus.ProcessedSuccessfully
                                 }
                             });
 
@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     }
 
                     var obs = _fileUploadProcessor.GetVenueUploadStatusUpdates(latestVenueUploadId)
-                        .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.InProgress);
+                        .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.Processing);
 
                     var subscription = obs.Subscribe(
                         v => channel.Writer.WriteAsync(v),

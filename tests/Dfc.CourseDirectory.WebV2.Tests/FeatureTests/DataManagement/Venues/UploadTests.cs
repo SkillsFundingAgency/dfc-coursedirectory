@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var oldUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.Processed);
+            var oldUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
             var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);

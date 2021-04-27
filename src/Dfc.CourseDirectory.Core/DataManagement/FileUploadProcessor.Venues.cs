@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await dispatcher.ExecuteQuery(new SetVenueUploadInProgress()
+                await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
                 {
                     VenueUploadId = venueUploadId,
                     ProcessingStartedOn = _clock.UtcNow
@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
                 {
                     ProviderId = providerId,
-                    Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress }
+                    Statuses = new[] { UploadStatus.Created, UploadStatus.Processing }
                 });
 
                 if (existingUpload != null)
@@ -112,7 +112,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var unpublishedUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
                 {
                     ProviderId = providerId,
-                    Statuses = new[] { UploadStatus.Processed }
+                    Statuses = new[] { UploadStatus.ProcessedSuccessfully, UploadStatus.ProcessedWithErrors }
                 });
 
                 if (unpublishedUpload != null)
@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public Task WaitForVenueProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken) =>
             GetVenueUploadStatusUpdates(venueUploadId)
-                .TakeUntil(status => status == UploadStatus.Processed || status.IsTerminal())
+                .TakeUntil(status => status != UploadStatus.Created && status != UploadStatus.Processing)
                 .ForEachAsync(_ => { }, cancellationToken);
 
         protected async Task<UploadStatus> GetVenueUploadStatus(Guid venueUploadId)
