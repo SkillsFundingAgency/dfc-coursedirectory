@@ -41,5 +41,20 @@
     <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\ArchiveCoursesForProvider.js" />
     <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\UpdateRecordStatuses.js" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Content.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Content.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Content.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Content.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   
 </Project>
