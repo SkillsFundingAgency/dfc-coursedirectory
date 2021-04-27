@@ -59,5 +59,167 @@ namespace Dfc.CourseDirectory.Core {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Address line 1 must only include letters a to z, numbers, hyphens and spaces.
+        /// </summary>
+        public static string ERROR_VENUE_ADDRESS_LINE1_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_ADDRESS_LINE1_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Address line 1 must be {0} characters or less.
+        /// </summary>
+        public static string ERROR_VENUE_ADDRESS_LINE1_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_ADDRESS_LINE1_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter address line 1.
+        /// </summary>
+        public static string ERROR_VENUE_ADDRESS_LINE1_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_ADDRESS_LINE1_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Address line 2 must only include letters a to z, numbers, hyphens and spaces.
+        /// </summary>
+        public static string ERROR_VENUE_ADDRESS_LINE2_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_ADDRESS_LINE2_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Address line 2 must be {0} characters or less.
+        /// </summary>
+        public static string ERROR_VENUE_ADDRESS_LINE2_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_ADDRESS_LINE2_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to County must only include letters a to z, numbers, hyphens and spaces.
+        /// </summary>
+        public static string ERROR_VENUE_COUNTY_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_COUNTY_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to County must be {0} characters or less.
+        /// </summary>
+        public static string ERROR_VENUE_COUNTY_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_COUNTY_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter an email address in the correct format.
+        /// </summary>
+        public static string ERROR_VENUE_EMAIL_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_EMAIL_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Venue name must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_VENUE_NAME_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_NAME_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter venue name.
+        /// </summary>
+        public static string ERROR_VENUE_NAME_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_NAME_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Venue name must not already exist.
+        /// </summary>
+        public static string ERROR_VENUE_NAME_UNIQUE {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_NAME_UNIQUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a real postcode.
+        /// </summary>
+        public static string ERROR_VENUE_POSTCODE_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_POSTCODE_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a postcode.
+        /// </summary>
+        public static string ERROR_VENUE_POSTCODE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_POSTCODE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a telephone number in the correct format.
+        /// </summary>
+        public static string ERROR_VENUE_TELEPHONE_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_TELEPHONE_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Town or city must only include letters a to z, numbers, hyphens and spaces.
+        /// </summary>
+        public static string ERROR_VENUE_TOWN_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_TOWN_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Town or city must be {0} characters or less.
+        /// </summary>
+        public static string ERROR_VENUE_TOWN_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_TOWN_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a town or city.
+        /// </summary>
+        public static string ERROR_VENUE_TOWN_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_TOWN_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a website in the correct format.
+        /// </summary>
+        public static string ERROR_VENUE_WEBSITE_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_WEBSITE_FORMAT", resourceCulture);
+            }
+        }
     }
 }
