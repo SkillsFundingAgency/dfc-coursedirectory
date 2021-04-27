@@ -236,7 +236,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     AddressLine2 = row.AddressLine2,
                     Town = row.Town,
                     County = row.County,
-                    Postcode = row.Postcode,
+                    Postcode = Postcode.TryParse(row.Postcode, out var postcode) ? postcode : row.Postcode,
                     Email = row.Email,
                     Telephone = row.Telephone,
                     Website = row.Website

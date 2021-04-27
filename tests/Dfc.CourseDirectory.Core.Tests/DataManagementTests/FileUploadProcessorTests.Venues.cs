@@ -371,6 +371,72 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             }
         }
 
+        [Fact]
+        public async Task ValidateAndUpsertVenueRows_NormalizesValidPostcode()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var row = new VenueRow()
+            {
+                Postcode = "ab12de",
+            };
+
+            var uploadRows = new[] { row };
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                // Act
+                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    uploadRows);
+
+                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+                rows.Count.Should().Be(1);
+                rows.Last().Postcode.Should().Be("AB1 2DE");
+            });
+        }
+
+        [Fact]
+        public async Task ValidateAndUpsertVenueRows_DoesNotNormalizeInvalidPostcode()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var row = new VenueRow()
+            {
+                Postcode = "xxxx",
+            };
+
+            var uploadRows = new[] { row };
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                // Act
+                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    uploadRows);
+
+                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+                rows.Count.Should().Be(1);
+                rows.Last().Postcode.Should().Be(row.Postcode);
+            });
+        }
+
         private async Task UpdateStatusAndReleaseStatusCheck(
             TriggerableVenueUploadStatusUpdatesFileUploadProcessor uploadProcessor,
             Guid venueUploadId,
