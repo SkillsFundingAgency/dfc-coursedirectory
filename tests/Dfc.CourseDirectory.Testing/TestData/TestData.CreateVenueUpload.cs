@@ -12,7 +12,8 @@ namespace Dfc.CourseDirectory.Testing
         public async Task<VenueUpload> CreateVenueUpload(
             Guid providerId,
             UserInfo createdBy,
-            UploadStatus uploadStatus)
+            UploadStatus uploadStatus,
+            bool? isValid = null)
         {
             var createdOn = _clock.UtcNow;
 
@@ -21,7 +22,21 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? publishedOn = uploadStatus == UploadStatus.Published ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
             DateTime? abandonedOn = uploadStatus == UploadStatus.Abandoned ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
 
-            var venueUpload = await CreateVenueUpload(providerId, createdBy, createdOn, processingStartedOn, processingCompletedOn, publishedOn, abandonedOn);
+            if (processingCompletedOn.HasValue && !isValid.HasValue)
+            {
+                isValid = true;
+            }
+
+            var venueUpload = await CreateVenueUpload(
+                providerId,
+                createdBy,
+                createdOn,
+                processingStartedOn,
+                processingCompletedOn,
+                publishedOn,
+                abandonedOn,
+                isValid);
+
             Assert.Equal(uploadStatus, venueUpload.UploadStatus);
 
             return venueUpload;
@@ -34,8 +49,14 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? processingStartedOn = null,
             DateTime? processingCompletedOn = null,
             DateTime? publishedOn = null,
-            DateTime? abandonedOn = null)
+            DateTime? abandonedOn = null,
+            bool? isValid = null)
         {
+            if (publishedOn.HasValue && abandonedOn.HasValue)
+            {
+                throw new ArgumentException($"A {nameof(VenueUpload)} cannot be both {UploadStatus.Abandoned} and {UploadStatus.Published}.");
+            }
+
             var venueUploadId = Guid.NewGuid();
             createdOn ??= _clock.UtcNow;
 
@@ -51,11 +72,10 @@ namespace Dfc.CourseDirectory.Testing
 
                 if (processingStartedOn.HasValue)
                 {
-                    await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    await dispatcher.ExecuteQuery(new SetVenueUploadInProgress()
                     {
                         VenueUploadId = venueUploadId,
-                        ChangedOn = processingStartedOn.Value,
-                        UploadStatus = UploadStatus.InProgress
+                        ProcessingStartedOn = processingStartedOn.Value
                     });
                 }
 
@@ -66,11 +86,16 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingStartedOn));
                     }
 
-                    await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    if (!isValid.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(isValid));
+                    }
+
+                    await dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
                     {
                         VenueUploadId = venueUploadId,
-                        ChangedOn = processingCompletedOn.Value,
-                        UploadStatus = UploadStatus.Processed
+                        ProcessingCompletedOn = processingCompletedOn.Value,
+                        IsValid = isValid.Value
                     });
                 }
 
@@ -81,11 +106,10 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingCompletedOn));
                     }
 
-                    await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    await dispatcher.ExecuteQuery(new SetVenueUploadPublished()
                     {
                         VenueUploadId = venueUploadId,
-                        ChangedOn = publishedOn.Value,
-                        UploadStatus = UploadStatus.Published
+                        PublishedOn = publishedOn.Value
                     });
                 }
                 else if (abandonedOn.HasValue)
@@ -95,11 +119,10 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingCompletedOn));
                     }
 
-                    await dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                    await dispatcher.ExecuteQuery(new SetVenueUploadAbandoned()
                     {
                         VenueUploadId = venueUploadId,
-                        ChangedOn = abandonedOn.Value,
-                        UploadStatus = UploadStatus.Abandoned
+                        AbandonedOn = abandonedOn.Value
                     });
                 }
 

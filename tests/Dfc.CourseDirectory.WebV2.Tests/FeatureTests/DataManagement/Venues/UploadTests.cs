@@ -182,11 +182,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 .Callback(() =>
                 {
                     WithSqlQueryDispatcher(
-                        dispatcher => dispatcher.ExecuteQuery(new UpdateVenueUploadStatus()
+                        dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
                         {
                             VenueUploadId = venueUploadId,
-                            ChangedOn = Clock.UtcNow,
-                            UploadStatus = UploadStatus.Processed
+                            IsValid = true,
+                            ProcessingCompletedOn = Clock.UtcNow
                         })).GetAwaiter().GetResult();
                 });
 
