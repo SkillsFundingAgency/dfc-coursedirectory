@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -153,10 +154,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public Task WaitForVenueProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken) =>
+        public Task<UploadStatus> WaitForVenueProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken) =>
             GetVenueUploadStatusUpdates(venueUploadId)
                 .TakeUntil(status => status != UploadStatus.Created && status != UploadStatus.Processing)
-                .ForEachAsync(_ => { }, cancellationToken);
+                .LastAsync()
+                .ToTask(cancellationToken);
 
         protected async Task<UploadStatus> GetVenueUploadStatus(Guid venueUploadId)
         {

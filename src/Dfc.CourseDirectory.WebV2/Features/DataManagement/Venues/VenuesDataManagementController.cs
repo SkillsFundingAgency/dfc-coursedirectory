@@ -52,7 +52,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     },
                     result =>
                         RedirectToAction(
-                            result == Venues.Upload.UploadSucceededResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
+                            result switch
+                            {
+                                Venues.Upload.UploadSucceededResult.ProcessingCompletedSuccessfully => nameof(CheckAndPublish),
+                                Venues.Upload.UploadSucceededResult.ProcessingCompletedWithErrors => nameof(Errors),
+                                _ => nameof(InProgress)
+                            })
                         .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
@@ -66,8 +71,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 {
                     UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
+
+        [HttpGet("errors")]
+        [RequireProviderContext]
+        public IActionResult Errors()
+        {
+            return View();
+        }
 
         [HttpGet("check-publish")]
         [RequireProviderContext]
