@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
@@ -24,7 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
     public enum UploadSucceededResult
     {
         ProcessingInProgress,
-        ProcessingCompleted
+        ProcessingCompletedWithErrors,
+        ProcessingCompletedSuccessfully
     }
 
     public class UploadFailedResult : ModelWithErrors<Command>
@@ -127,8 +129,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
             try
             {
                 using var cts = new CancellationTokenSource(_optionsAccessor.Value.ProcessedImmediatelyThreshold);
-                await _fileUploadProcessor.WaitForVenueProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
-                return UploadSucceededResult.ProcessingCompleted;
+                var uploadStatus = await _fileUploadProcessor.WaitForVenueProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
+
+                return uploadStatus == UploadStatus.ProcessedWithErrors ?
+                    UploadSucceededResult.ProcessingCompletedWithErrors :
+                    UploadSucceededResult.ProcessingCompletedSuccessfully;
             }
             catch (OperationCanceledException)
             {

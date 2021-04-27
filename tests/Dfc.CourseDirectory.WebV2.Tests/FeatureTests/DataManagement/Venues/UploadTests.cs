@@ -129,8 +129,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
         }
 
-        [Fact]
-        public async Task Post_ValidVenuesFileProcessingCompletedWithinThreshold_CreatesRecordAndRedirectsToCheckAndPublish()
+        [Theory]
+        [InlineData(true, "check-publish")]
+        [InlineData(false, "errors")]
+        public async Task Post_ValidVenuesFileProcessingCompletedWithinThreshold_CreatesRecordAndRedirectsToCheckAndPublish(
+            bool processedSuccessfully,
+            string expectedRedirectPath)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -155,7 +159,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                         dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
                         {
                             VenueUploadId = venueUploadId,
-                            IsValid = true,
+                            IsValid = processedSuccessfully,
                             ProcessingCompletedOn = Clock.UtcNow
                         })).GetAwaiter().GetResult();
                 });
@@ -165,7 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
+            response.Headers.Location.Should().Be($"/data-upload/venues/{expectedRedirectPath}?providerId={provider.ProviderId}");
         }
 
         [Fact]

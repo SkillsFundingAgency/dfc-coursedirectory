@@ -63,13 +63,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             doc.GetElementById("StatusMessage").TextContent.Trim().Should().Be(expectedMessage);
         }
 
-        [Fact]
-        public async Task Get_UploadProcessingIsCompleted_RedirectsToCheckAndPublish()
+        [Theory]
+        [InlineData(UploadStatus.ProcessedSuccessfully, "check-publish")]
+        [InlineData(UploadStatus.ProcessedWithErrors, "errors")]
+        public async Task Get_UploadProcessingIsCompleted_Redirects(UploadStatus processedStatus, string expectedRedirectPath)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
+            await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), processedStatus);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/venues/in-progress?providerId={provider.ProviderId}");
 
@@ -78,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.OriginalString.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
+            response.Headers.Location.OriginalString.Should().Be($"/data-upload/venues/{expectedRedirectPath}?providerId={provider.ProviderId}");
         }
     }
 }
