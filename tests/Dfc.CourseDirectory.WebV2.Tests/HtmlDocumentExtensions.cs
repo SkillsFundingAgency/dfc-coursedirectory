@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using Dfc.CourseDirectory.Core;
 using Xunit;
 using Xunit.Sdk;
 
@@ -21,6 +22,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var vht = errorElement.GetElementsByTagName("span")[0];
             var errorMessage = errorElement.InnerHtml.Substring(vht.OuterHtml.Length);
             Assert.Equal(expectedMessage, errorMessage);
+        }
+
+        public static void AssertHasErrorWithCode(this IHtmlDocument doc, string fieldName, string errorCode, params object[] args)
+        {
+            var message = ContentExtensions.GetMessageForErrorCode(errorCode, args);
+
+            AssertHasError(doc, fieldName, message);
         }
 
         public static IReadOnlyList<IElement> GetAllElementsByTestId(this IHtmlDocument doc, string testId) =>
