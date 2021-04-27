@@ -16,5 +16,17 @@ namespace Dfc.CourseDirectory.Core.Validation
 
             return rule;
         }
+
+        public static IRuleBuilderOptions<T, TProperty> WithMessageFromErrorCode<T, TProperty>(
+            this IRuleBuilderOptions<T, TProperty> rule,
+            string errorCode,
+            params object[] args)
+        {
+            var message = ContentExtensions.GetMessageForErrorCode(errorCode, args);
+
+            return rule
+                .WithErrorCode(errorCode)
+                .WithMessage(message);
+        }
     }
 }
