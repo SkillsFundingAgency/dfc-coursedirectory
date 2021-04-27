@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
@@ -134,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Name", "Enter a venue name");
+            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_REQUIRED");
         }
 
         [Fact]
@@ -160,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Name", "Venue name must be 250 characters or fewer");
+            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_MAXLENGTH", Constants.NameMaxLength);
         }
 
         [Fact]
@@ -188,7 +189,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Name", "Venue name must not already exist");
+            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_UNIQUE");
         }
 
         [Fact]

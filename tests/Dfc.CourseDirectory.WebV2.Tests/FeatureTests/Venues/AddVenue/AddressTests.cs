@@ -4,14 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Search;
-using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FormFlow;
-using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
@@ -341,7 +340,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine1",
-                    ExpectedErrorMessage: "Enter address line 1"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 ),
                 // Address line 1 too long
                 (
@@ -351,7 +350,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine1",
-                    ExpectedErrorMessage: "Address line 1 must be 100 characters or less"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE1_MAXLENGTH", Constants.AddressLine1MaxLength)
                 ),
                 // Address line 1 has invalid characters
                 (
@@ -361,7 +360,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine1",
-                    ExpectedErrorMessage: "Address line 1 must only include letters a to z, numbers, hyphens and spaces"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE1_FORMAT")
                 ),
                 // Address line 2 too long
                 (
@@ -371,7 +370,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine2",
-                    ExpectedErrorMessage: "Address line 2 must be 100 characters or less"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH", Constants.AddressLine2MaxLength)
                 ),
                 // Address line 2 has invalid characters
                 (
@@ -381,7 +380,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine2",
-                    ExpectedErrorMessage: "Address line 2 must only include letters a to z, numbers, hyphens and spaces"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE2_FORMAT")
                 ),
                 // Town missing
                 (
@@ -391,7 +390,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "Town",
-                    ExpectedErrorMessage: "Enter a town or city"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_TOWN_REQUIRED")
                 ),
                 // Town is too long
                 (
@@ -401,7 +400,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "Town",
-                    ExpectedErrorMessage: "Town or city must be 75 characters or less"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_TOWN_MAXLENGTH", Constants.TownMaxLength)
                 ),
                 // Town has invalid characters
                 (
@@ -411,7 +410,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "Town",
-                    ExpectedErrorMessage: "Town or city must only include letters a to z, numbers, hyphens and spaces"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_TOWN_FORMAT")
                 ),
                 // Postcode is not valid
                 (
@@ -421,7 +420,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "X",
                     ExpectedErrorInputId: "Postcode",
-                    ExpectedErrorMessage: "Enter a real postcode"
+                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_POSTCODE_FORMAT")
                 )
             }
             .Select(t => new object[] { t.AddressLine1, t.AddressLine2, t.Town, t.County, t.Postcode, t.ExpectedErrorInputId, t.ExpectedErrorMessage })

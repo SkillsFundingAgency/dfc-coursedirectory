@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Postcode", "Enter a real postcode");
+            doc.AssertHasErrorWithCode("Postcode", "VENUE_POSTCODE_FORMAT");
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Postcode", "Enter a real postcode");
+            doc.AssertHasErrorWithCode("Postcode", "VENUE_POSTCODE_FORMAT");
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Postcode", "Enter a real postcode");
+            doc.AssertHasErrorWithCode("Postcode", "VENUE_POSTCODE_FORMAT");
         }
 
         [Fact]

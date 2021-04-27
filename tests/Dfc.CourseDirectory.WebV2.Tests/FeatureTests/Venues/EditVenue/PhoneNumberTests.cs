@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("PhoneNumber", "Enter a telephone number in the correct format");
+            doc.AssertHasErrorWithCode("PhoneNumber", "VENUE_TELEPHONE_FORMAT");
         }
 
         [Theory]
