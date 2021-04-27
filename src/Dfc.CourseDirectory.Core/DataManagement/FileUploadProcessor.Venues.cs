@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
@@ -203,7 +204,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             rowVenueIdMapping = rowVenueIdMapping.Concat(venuesWithLiveOfferingsNotInFile.Select(v => (Guid?)v.VenueId)).ToArray();
 
             var uploadIsValid = true;
-            var validator = new VenueUploadRowValidator();
+            var validator = new VenueUploadRowValidator(rows);
+            await validator.Initialize(sqlQueryDispatcher);
 
             var upsertRecords = new List<UpsertVenueUploadRowsRecord>();
 
@@ -217,6 +219,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var venueId = rowVenueIdMapping[i];
                 var isSupplementaryRow = i >= originalRowCount;
+
+                row.ProviderVenueRef = row.ProviderVenueRef?.Trim();
+                row.Postcode = Postcode.TryParse(row.Postcode, out var postcode) ? postcode : row.Postcode;
 
                 var rowValidatonResult = validator.Validate(row);
                 var errors = rowValidatonResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -236,7 +241,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     AddressLine2 = row.AddressLine2,
                     Town = row.Town,
                     County = row.County,
-                    Postcode = Postcode.TryParse(row.Postcode, out var postcode) ? postcode : row.Postcode,
+                    Postcode = row.Postcode,
                     Email = row.Email,
                     Telephone = row.Telephone,
                     Website = row.Website
@@ -295,6 +300,73 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         private class VenueUploadRowValidator : AbstractValidator<VenueRow>
-        { }
+        {
+            private readonly VenueRow[] _allRows;
+            private bool _initialized = false;
+            private Dictionary<Postcode, PostcodeInfo> _postcodeInfo;
+
+            public VenueUploadRowValidator(IEnumerable<VenueRow> allRows)
+            {
+                _allRows = allRows.ToArray();
+
+                // N.B. The rule order here is important; we want errors to be emitted in the same order as the columns
+                // appear in the file.
+
+                RuleFor(r => r.ProviderVenueRef)
+                    .ProviderVenueRef(getOtherVenueProviderVenueRefs:
+                        row => Task.FromResult(_allRows
+                            .Where(r => r != row && !string.IsNullOrEmpty(r.ProviderVenueRef))
+                            .Select(r => r.ProviderVenueRef)));
+
+                RuleFor(r => r.VenueName)
+                    .VenueName(getOtherVenueNames:
+                        row => Task.FromResult(_allRows
+                            .Where(r => r != row)
+                            .Select(r => r.VenueName)));
+
+                RuleFor(r => r.AddressLine1).AddressLine1();
+                RuleFor(r => r.AddressLine2).AddressLine2();
+                RuleFor(r => r.Town).Town();
+                RuleFor(r => r.County).County();
+                RuleFor(r => r.Postcode).Postcode(postcode => _postcodeInfo.GetValueOrDefault(postcode));
+                RuleFor(r => r.Email).Email();
+                RuleFor(r => r.Telephone).PhoneNumber();
+                RuleFor(r => r.Website).Website();
+            }
+
+            public async Task Initialize(ISqlQueryDispatcher sqlQueryDispatcher)
+            {
+                // Lookup PostcodeInfo for every postcode specified in the input rows
+
+                var validPostcodes = _allRows
+                    .Select(r => Postcode.TryParse(r.Postcode, out var postcode) ? postcode.ToString() : null)
+                    .Where(pc => pc != null)
+                    .Distinct();
+
+                var postcodeInfo = await sqlQueryDispatcher.ExecuteQuery(
+                    new GetPostcodeInfos() { Postcodes = validPostcodes });
+
+                _postcodeInfo = postcodeInfo.ToDictionary(kvp => new Postcode(kvp.Key), kvp => kvp.Value);
+
+                _initialized = true;
+            }
+
+            public override Task<FluentValidation.Results.ValidationResult> ValidateAsync(
+                ValidationContext<VenueRow> context,
+                CancellationToken cancellation = default)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override FluentValidation.Results.ValidationResult Validate(ValidationContext<VenueRow> context)
+            {
+                if (!_initialized)
+                {
+                    throw new InvalidOperationException("Validator has not been initialized.");
+                }
+
+                return base.Validate(context);
+            }
+        }
     }
 }

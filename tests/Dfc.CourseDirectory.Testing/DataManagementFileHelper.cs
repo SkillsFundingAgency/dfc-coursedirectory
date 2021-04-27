@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -40,11 +41,49 @@ namespace Dfc.CourseDirectory.Testing
             return stream;
         }
 
-        public static Stream CreateVenueUploadCsvStream(int recordCount) => CreateVenueUploadCsvStream(csvWriter =>
+        public static Stream CreateVenueUploadCsvStream(params VenueRow[] rows) => CreateVenueUploadCsvStream(csvWriter =>
+        {
+            foreach (var row in rows)
+            {
+                csvWriter.WriteField(row.ProviderVenueRef);
+                csvWriter.WriteField(row.VenueName);
+                csvWriter.WriteField(row.AddressLine1);
+                csvWriter.WriteField(row.AddressLine2);
+                csvWriter.WriteField(row.Town);
+                csvWriter.WriteField(row.County);
+                csvWriter.WriteField(row.Postcode);
+                csvWriter.WriteField(row.Email);
+                csvWriter.WriteField(row.Telephone);
+                csvWriter.WriteField(row.Website);
+
+                csvWriter.NextRecord();
+            }
+        });
+
+        public static Stream CreateVenueUploadCsvStream(int rowCount) => CreateVenueUploadCsvStream(csvWriter =>
+        {
+            foreach (var row in CreateVenueUploadRows(rowCount))
+            {
+                csvWriter.WriteField(row.ProviderVenueRef);
+                csvWriter.WriteField(row.VenueName);
+                csvWriter.WriteField(row.AddressLine1);
+                csvWriter.WriteField(row.AddressLine2);
+                csvWriter.WriteField(row.Town);
+                csvWriter.WriteField(row.County);
+                csvWriter.WriteField(row.Postcode);
+                csvWriter.WriteField(row.Email);
+                csvWriter.WriteField(row.Telephone);
+                csvWriter.WriteField(row.Website);
+
+                csvWriter.NextRecord();
+            }
+        });
+
+        public static IEnumerable<VenueRow> CreateVenueUploadRows(int rowCount)
         {
             var venueNames = new HashSet<string>();
 
-            for (int i = 0; i < recordCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
                 // Venue names have to be unique
                 string venueName;
@@ -54,19 +93,20 @@ namespace Dfc.CourseDirectory.Testing
                 }
                 while (!venueNames.Add(venueName));
 
-                csvWriter.WriteField(Guid.NewGuid().ToString());
-                csvWriter.WriteField(venueName);
-                csvWriter.WriteField(Faker.Address.StreetAddress());
-                csvWriter.WriteField(Faker.Address.SecondaryAddress());
-                csvWriter.WriteField(Faker.Address.City());
-                csvWriter.WriteField(Faker.Address.UkCounty());
-                csvWriter.WriteField(Faker.Address.UkPostCode());
-                csvWriter.WriteField(Faker.Internet.Email());
-                csvWriter.WriteField(string.Empty); // There's no Faker method for a UK phone number
-                csvWriter.WriteField(Faker.Internet.Url());
-
-                csvWriter.NextRecord();
+                yield return new VenueRow()
+                {
+                    ProviderVenueRef = Guid.NewGuid().ToString(),
+                    VenueName = venueName,
+                    AddressLine1 = Faker.Address.StreetAddress(),
+                    AddressLine2 = Faker.Address.SecondaryAddress(),
+                    Town = Faker.Address.City(),
+                    County = Faker.Address.UkCounty(),
+                    Postcode = "AB1 2DE",  // Faker's method sometimes produces invalid postcodes :-/
+                    Email = Faker.Internet.Email(),
+                    Telephone = "01234 567890",  // There's no Faker method for a UK phone number
+                    Website = Faker.Internet.Url()
+                };
             }
-        });
+        }
     }
 }

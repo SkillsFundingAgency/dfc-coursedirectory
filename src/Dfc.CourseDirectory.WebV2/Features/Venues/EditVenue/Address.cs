@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Address
                 RuleFor(c => c.AddressLine2).AddressLine2();
                 RuleFor(c => c.Town).Town();
                 RuleFor(c => c.County).County();
-                RuleFor(c => c.Postcode).Postcode(postcodeInfo);
+                RuleFor(c => c.Postcode).Postcode(_ => postcodeInfo);
             }
         }
     }

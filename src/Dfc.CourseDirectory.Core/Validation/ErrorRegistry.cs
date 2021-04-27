@@ -22,6 +22,8 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("VENUE_NAME_UNIQUE"),
             new Error("VENUE_POSTCODE_FORMAT"),
             new Error("VENUE_POSTCODE_REQUIRED"),
+            new Error("VENUE_PROVIDER_VENUE_REF_MAXLENGTH", VenueConstants.ProviderVenueRefMaxLength),
+            new Error("VENUE_PROVIDER_VENUE_REF_UNIQUE"),
             new Error("VENUE_TELEPHONE_FORMAT"),
             new Error("VENUE_TOWN_FORMAT"),
             new Error("VENUE_TOWN_MAXLENGTH", VenueConstants.TownMaxLength),

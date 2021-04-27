@@ -3,8 +3,14 @@ using FluentValidation.Internal;
 
 namespace Dfc.CourseDirectory.Core.Validation
 {
-    public static class RuleBuilderOptionsExtensions
+    public static class RuleBuilderExtensions
     {
+        public static IRuleBuilderInitial<T, string> NormalizeWhitespace<T>(this IRuleBuilderInitial<T, string> rule)
+        {
+            // Convert empty strings and whitespace to null
+            return rule.Transform(v => string.IsNullOrWhiteSpace(v) ? null : v);
+        }
+
         public static IRuleBuilderOptions<T, TProperty> WithMessageForAllRules<T, TProperty>(
             this IRuleBuilderOptions<T, TProperty> rule,
             string errorMessage)

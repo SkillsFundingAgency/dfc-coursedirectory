@@ -6,6 +6,7 @@
         public const int AddressLine2MaxLength = 100;
         public const int CountyMaxLength = 75;
         public const int NameMaxLength = 250;
+        public const int ProviderVenueRefMaxLength = 255;
         public const int TownMaxLength = 75;
     }
 }
