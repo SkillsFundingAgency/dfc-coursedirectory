@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 VenueUploadId = Guid.NewGuid()
             }));
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             var oldUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 1);
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // We need to hook into the SaveVenueFile method on IFileUploadProcessor so that we can update the

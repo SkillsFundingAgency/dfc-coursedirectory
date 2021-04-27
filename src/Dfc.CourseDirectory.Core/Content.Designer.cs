@@ -178,6 +178,24 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your venue reference must be {0} characters or less.
+        /// </summary>
+        public static string ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your venue reference must be unique.
+        /// </summary>
+        public static string ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a telephone number in the correct format.
         /// </summary>
         public static string ERROR_VENUE_TELEPHONE_FORMAT {

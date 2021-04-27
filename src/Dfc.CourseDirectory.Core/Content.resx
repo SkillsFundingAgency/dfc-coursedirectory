@@ -156,6 +156,12 @@
   <data name="ERROR_VENUE_POSTCODE_REQUIRED" xml:space="preserve">
     <value>Enter a postcode</value>
   </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH" xml:space="preserve">
+    <value>Your venue reference must be {0} characters or less</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE" xml:space="preserve">
+    <value>Your venue reference must be unique</value>
+  </data>
   <data name="ERROR_VENUE_TELEPHONE_FORMAT" xml:space="preserve">
     <value>Enter a telephone number in the correct format</value>
   </data>

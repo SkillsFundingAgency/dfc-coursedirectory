@@ -223,6 +223,66 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
+        public async Task ProcessVenueFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+
+            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 3).ToArray();
+            await WithSqlQueryDispatcher(dispatcher => AddPostcodeInfoForRows(dispatcher, uploadRows));
+            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(uploadRows);
+
+            // Act
+            await fileUploadProcessor.ProcessVenueFile(venueUpload.VenueUploadId, stream);
+
+            // Assert
+            venueUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUpload.VenueUploadId }));
+
+            using (new AssertionScope())
+            {
+                venueUpload.UploadStatus.Should().Be(UploadStatus.ProcessedSuccessfully);
+                venueUpload.LastValidated.Should().Be(Clock.UtcNow);
+                venueUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
+                venueUpload.ProcessingStartedOn.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task ProcessVenueFile_RowHasErrors_SetStatusToProcessedWithErrors()
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+
+            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+                // Empty record will always yield errors
+                new VenueRow());
+
+            // Act
+            await fileUploadProcessor.ProcessVenueFile(venueUpload.VenueUploadId, stream);
+
+            // Assert
+            venueUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUpload.VenueUploadId }));
+
+            using (new AssertionScope())
+            {
+                venueUpload.UploadStatus.Should().Be(UploadStatus.ProcessedWithErrors);
+                venueUpload.LastValidated.Should().Be(Clock.UtcNow);
+                venueUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
+                venueUpload.ProcessingStartedOn.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
         public async Task ValidateAndUpsertVenueRows_InsertsRowsIntoDb()
         {
             // Arrange
@@ -323,8 +383,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 rows.Last().Should().BeEquivalentTo(new VenueUploadRow()
                 {
                     RowNumber = 3,
-                    IsValid = true,
-                    Errors = new string[0],
                     LastUpdated = Clock.UtcNow,
                     LastValidated = Clock.UtcNow,
                     IsSupplementary = true,
@@ -339,36 +397,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     Town = venue.Town,
                     VenueName = venue.VenueName,
                     Website = venue.Website
-                });
+                }, config => config.Excluding(r => r.IsValid).Excluding(r => r.Errors));
             });
-        }
-
-        [Fact]
-        public async Task ProcessVenueFile_SetStatusToProcessed()
-        {
-            // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
-
-            var provider = await TestData.CreateProvider();
-            var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
-
-            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(recordCount: 3);
-
-            // Act
-            await fileUploadProcessor.ProcessVenueFile(venueUpload.VenueUploadId, stream);
-
-            // Assert
-            venueUpload = await WithSqlQueryDispatcher(
-                dispatcher => dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUpload.VenueUploadId }));
-
-            using (new AssertionScope())
-            {
-                venueUpload.UploadStatus.Should().Be(UploadStatus.ProcessedSuccessfully);
-                venueUpload.LastValidated.Should().Be(Clock.UtcNow);
-                venueUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
-                venueUpload.ProcessingStartedOn.Should().NotBeNull();
-            }
         }
 
         [Fact]
@@ -437,6 +467,70 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             });
         }
 
+        [Theory]
+        [MemberData(nameof(GetInvalidRowsTestData))]
+        public async Task ValidateAndUpsertVenueRows_RowsHasErrors_InsertsExpectedErrorCodesIntoDb(
+            VenueRow row,
+            IEnumerable<string> expectedErrorCodes,
+            IEnumerable<VenueRow> additionalRows)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var uploadRows = new[] { row }.Concat(additionalRows ?? Enumerable.Empty<VenueRow>()).ToList();
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                // Add a row into Postcodes table to ensure we don't have errors due to it missing
+                // (ValidateAndUpsertVenueRows_PostcodeIsNotInDb_InsertsExpectedErrorCodesIntoDb tests that scenario)
+                await AddPostcodeInfoForRows(dispatcher, uploadRows);
+
+                // Act
+                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    uploadRows);
+
+                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+                rows.First().IsValid.Should().BeFalse();
+                rows.First().Errors.Should().BeEquivalentTo(expectedErrorCodes);
+            });
+        }
+
+        [Fact]
+        public async Task ValidateAndUpsertVenueRows_PostcodeIsNotInDb_InsertsExpectedErrorCodesIntoDb()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToArray();
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                // Act
+                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    uploadRows);
+
+                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+                rows.First().IsValid.Should().BeFalse();
+                rows.First().Errors.Should().BeEquivalentTo(new[] { "VENUE_POSTCODE_FORMAT" });
+            });
+        }
+
         private async Task UpdateStatusAndReleaseStatusCheck(
             TriggerableVenueUploadStatusUpdatesFileUploadProcessor uploadProcessor,
             Guid venueUploadId,
@@ -493,6 +587,113 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             }
 
             uploadProcessor.ReleaseUploadStatusCheck();
+        }
+
+        public static TheoryData<VenueRow, IEnumerable<string>, IEnumerable<VenueRow>> GetInvalidRowsTestData()
+        {
+            // Generic args correspond to:
+            //   the row under test;
+            //   the expected error codes for the row under test;
+            //   any additional rows to create in the same upload (e.g. for testing duplicate validation)
+            var result = new TheoryData<VenueRow, IEnumerable<string>, IEnumerable<VenueRow>>();
+
+            // Name is missing
+            AddSingleErrorTestCase(row => row.VenueName = null, "VENUE_NAME_REQUIRED");
+
+            // Name is too long
+            AddSingleErrorTestCase(row => row.VenueName = new string('x', 251), "VENUE_NAME_MAXLENGTH");
+
+            // Name must be unique
+            result.Add(
+                CreateRow(row => row.VenueName = "Name"),
+                new[] { "VENUE_NAME_UNIQUE" },
+                new[] { CreateRow(row => row.VenueName = "NAME") });
+
+            // Your venue reference is too long
+            AddSingleErrorTestCase(row => row.ProviderVenueRef = new string('x', 256), "VENUE_PROVIDER_VENUE_REF_MAXLENGTH");
+
+            // Your venue reference must be unique
+            result.Add(
+                CreateRow(row => row.ProviderVenueRef = "Ref"),
+                new[] { "VENUE_PROVIDER_VENUE_REF_UNIQUE" },
+                new[] { CreateRow(row => row.ProviderVenueRef = "REF") });
+
+            // Address line 1 is missing
+            AddSingleErrorTestCase(row => row.AddressLine1 = null, "VENUE_ADDRESS_LINE1_REQUIRED");
+
+            // Address line 1 is too long
+            AddSingleErrorTestCase(row => row.AddressLine1 = new string('x', 101), "VENUE_ADDRESS_LINE1_MAXLENGTH");
+
+            // Address line 1 contains invalid characters
+            AddSingleErrorTestCase(row => row.AddressLine1 = "%", "VENUE_ADDRESS_LINE1_FORMAT");
+
+            // Address line 2 is too long
+            AddSingleErrorTestCase(row => row.AddressLine2 = new string('x', 101), "VENUE_ADDRESS_LINE2_MAXLENGTH");
+
+            // Address line 2 contains invalid characters
+            AddSingleErrorTestCase(row => row.AddressLine2 = "%", "VENUE_ADDRESS_LINE2_FORMAT");
+
+            // Town is missing
+            AddSingleErrorTestCase(row => row.Town = null, "VENUE_TOWN_REQUIRED");
+
+            // Town is too long
+            AddSingleErrorTestCase(row => row.Town = new string('x', 76), "VENUE_TOWN_MAXLENGTH");
+
+            // Town contains invalid characters
+            AddSingleErrorTestCase(row => row.Town = "%", "VENUE_TOWN_FORMAT");
+
+            // County is too long
+            AddSingleErrorTestCase(row => row.County = new string('x', 76), "VENUE_COUNTY_MAXLENGTH");
+
+            // County contains invalid characters
+            AddSingleErrorTestCase(row => row.County = "%", "VENUE_COUNTY_FORMAT");
+
+            // Postcode is missing
+            AddSingleErrorTestCase(row => row.Postcode = "", "VENUE_POSTCODE_REQUIRED");
+
+            // Postcode is not valid
+            AddSingleErrorTestCase(row => row.Postcode = "x", "VENUE_POSTCODE_FORMAT");
+
+            // Email is not valid
+            AddSingleErrorTestCase(row => row.Email = "x", "VENUE_EMAIL_FORMAT");
+
+            // Telephone is not valid
+            AddSingleErrorTestCase(row => row.Telephone = "x", "VENUE_TELEPHONE_FORMAT");
+
+            // Website is not valid
+            AddSingleErrorTestCase(row => row.Website = "x", "VENUE_WEBSITE_FORMAT");
+
+            return result;
+
+            static VenueRow CreateRow(Action<VenueRow> configureRow)
+            {
+                var row = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).Single();
+                configureRow(row);
+                return row;
+            }
+
+            void AddSingleErrorTestCase(Action<VenueRow> configureRow, string errorCode) =>
+                result.Add(
+                    CreateRow(configureRow),
+                    new[] { errorCode },
+                    Enumerable.Empty<VenueRow>());
+        }
+
+        private static Task AddPostcodeInfoForRows(ISqlQueryDispatcher sqlQueryDispatcher, IEnumerable<VenueRow> rows)
+        {
+            return sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+            {
+                Records = rows
+                    .Select(r => r.Postcode)
+                    .Where(r => Postcode.TryParse(r, out _))
+                    .Distinct()
+                    .Select(pc => new UpsertPostcodesRecord()
+                    {
+                        Postcode = pc,
+                        Position = (1d, 1d),
+                        InEngland = true
+                    })
+            });
         }
 
         /// <summary>
