@@ -25,29 +25,29 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .NotEmpty()
-                    .WithMessage("Enter address line 1")
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .MaximumLength(Constants.AddressLine1MaxLength)
-                    .WithMessage($"Address line 1 must be {Constants.AddressLine1MaxLength} characters or less")
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_MAXLENGTH", Constants.AddressLine1MaxLength)
                 .Matches(_addressLinePattern)
-                    .WithMessage("Address line 1 must only include letters a to z, numbers, hyphens and spaces");
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_FORMAT");
         }
 
         public static void AddressLine2<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.AddressLine2MaxLength)
-                    .WithMessage($"Address line 2 must be {Constants.AddressLine2MaxLength} characters or less")
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH", Constants.AddressLine2MaxLength)
                 .Matches(_addressLinePattern)
-                    .WithMessage("Address line 2 must only include letters a to z, numbers, hyphens and spaces");
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_FORMAT");
         }
 
         public static void County<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.CountyMaxLength)
-                    .WithMessage($"County must be {Constants.CountyMaxLength} characters or less")
+                    .WithMessageFromErrorCode("VENUE_COUNTY_MAXLENGTH", Constants.CountyMaxLength)
                 .Matches(_countyPattern)
-                    .WithMessage("County must only include letters a to z, numbers, hyphens and spaces");
+                    .WithMessageFromErrorCode("VENUE_COUNTY_FORMAT");
         }
 
         public static void Email<T>(this IRuleBuilderInitial<T, string> field)
@@ -56,34 +56,34 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 
             field
                 .Matches(emailRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture)
-                    .WithMessage("Enter an email address in the correct format");
+                    .WithMessageFromErrorCode("VENUE_EMAIL_FORMAT");
         }
 
         public static void PhoneNumber<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .Apply(Rules.PhoneNumber)
-                    .WithMessage("Enter a telephone number in the correct format");
+                    .WithMessageFromErrorCode("VENUE_TELEPHONE_FORMAT");
         }
 
         public static void Postcode<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .NotEmpty()
-                    .WithMessage("Enter a postcode")
+                    .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
                 .Apply(Rules.Postcode)
-                    .WithMessage("Enter a real postcode");
+                    .WithMessageFromErrorCode("VENUE_POSTCODE_FORMAT");
         }
 
         public static void Town<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .NotEmpty()
-                    .WithMessage("Enter a town or city")
+                    .WithMessageFromErrorCode("VENUE_TOWN_REQUIRED")
                 .MaximumLength(Constants.TownMaxLength)
-                    .WithMessage($"Town or city must be {Constants.TownMaxLength} characters or less")
+                    .WithMessageFromErrorCode("VENUE_TOWN_MAXLENGTH")
                 .Matches(_townPattern)
-                    .WithMessage("Town or city must only include letters a to z, numbers, hyphens and spaces");
+                    .WithMessageFromErrorCode("VENUE_TOWN_FORMAT");
         }
 
         public static void VenueName<T>(
@@ -94,9 +94,9 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .NotEmpty()
-                    .WithMessage("Enter a venue name")
+                    .WithMessageFromErrorCode("VENUE_NAME_REQUIRED")
                 .MaximumLength(Constants.NameMaxLength)
-                    .WithMessage($"Venue name must be {Constants.NameMaxLength} characters or fewer")
+                    .WithMessageFromErrorCode("VENUE_NAME_MAXLENGTH", Constants.NameMaxLength)
                 .MustAsync(async (name, _) =>
                 {
                     // Venue name must be distinct for this provider
@@ -112,14 +112,14 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 
                     return !otherVenuesWithSameName.Any();
                 })
-                    .WithMessage("Venue name must not already exist");
+                    .WithMessageFromErrorCode("VENUE_NAME_UNIQUE");
         }
 
         public static void Website<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .Apply(Rules.Website)
-                    .WithMessage("Enter a website in the correct format");
+                    .WithMessageFromErrorCode("VENUE_WEBSITE_FORMAT");
         }
     }
 }

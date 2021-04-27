@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Website", "Enter a website in the correct format");
+            doc.AssertHasErrorWithCode("Website", "VENUE_WEBSITE_FORMAT");
         }
 
         [Theory]

@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             string telephone,
             string website,
             string expectedErrorInputId,
-            string expectedErrorMessage)
+            string expectedErrorCode)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError(expectedErrorInputId, expectedErrorMessage);
+            doc.AssertHasErrorWithCode(expectedErrorInputId, expectedErrorCode);
         }
 
         [Fact]
@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Telephone: "",
                     Website: "",
                     ExpectedErrorInputId: "Name",
-                    ExpectedErrorMessage: "Venue name must not already exist"
+                    ExpectedErrorCode: "VENUE_NAME_UNIQUE"
                 ),
                 // Invalid Email
                 (
@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Telephone: "",
                     Website: "",
                     ExpectedErrorInputId: "Email",
-                    ExpectedErrorMessage: "Enter an email address in the correct format"
+                    ExpectedErrorCode: "VENUE_EMAIL_FORMAT"
                 ),
                 // Invalid PhoneNumber
                 (
@@ -184,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Telephone: "xxx",
                     Website: "",
                     ExpectedErrorInputId: "Telephone",
-                    ExpectedErrorMessage: "Enter a telephone number in the correct format"
+                    ExpectedErrorCode: "VENUE_TELEPHONE_FORMAT"
                 ),
                 // Invalid Website
                 (
@@ -193,10 +193,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     Telephone: "",
                     Website: ":bad/website",
                     ExpectedErrorInputId: "Website",
-                    ExpectedErrorMessage: "Enter a website in the correct format"
+                    ExpectedErrorCode: "VENUE_WEBSITE_FORMAT"
                 )
             }
-            .Select(t => new object[] { t.Name, t.Email, t.Telephone, t.Website, t.ExpectedErrorInputId, t.ExpectedErrorMessage })
+            .Select(t => new object[] { t.Name, t.Email, t.Telephone, t.Website, t.ExpectedErrorInputId, t.ExpectedErrorCode })
             .ToArray();
 
         private JourneyInstance<AddVenueJourneyModel> CreateJourneyInstance(Guid providerId, AddVenueJourneyModel state = null)
