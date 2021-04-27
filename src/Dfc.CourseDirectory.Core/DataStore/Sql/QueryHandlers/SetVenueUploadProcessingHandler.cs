@@ -8,13 +8,13 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class SetVenueUploadInProgressHandler : ISqlQueryHandler<SetVenueUploadInProgress, OneOf<NotFound, Success>>
+    public class SetVenueUploadProcessingHandler : ISqlQueryHandler<SetVenueUploadProcessing, OneOf<NotFound, Success>>
     {
-        public async Task<OneOf<NotFound, Success>> Execute(SqlTransaction transaction, SetVenueUploadInProgress query)
+        public async Task<OneOf<NotFound, Success>> Execute(SqlTransaction transaction, SetVenueUploadProcessing query)
         {
             var sql = $@"
 UPDATE Pttcd.VenueUploads
-SET UploadStatus = {(int)UploadStatus.InProgress}, ProcessingStartedOn = @ProcessingStartedOn
+SET UploadStatus = {(int)UploadStatus.Processing}, ProcessingStartedOn = @ProcessingStartedOn
 WHERE VenueUploadId = @VenueUploadId";
 
             var paramz = new

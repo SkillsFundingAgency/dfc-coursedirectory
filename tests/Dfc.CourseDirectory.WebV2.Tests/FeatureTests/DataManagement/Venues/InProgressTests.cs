@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
         [Theory]
         [InlineData(UploadStatus.Created, "Uploading file")]
-        [InlineData(UploadStatus.InProgress, "Processing data")]
+        [InlineData(UploadStatus.Processing, "Processing data")]
         public async Task Get_UploadProcessingIsIncomplete_ReturnsLoadingView(
             UploadStatus uploadStatus,
             string expectedMessage)
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.Processed);
+            await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/venues/in-progress?providerId={provider.ProviderId}");
 

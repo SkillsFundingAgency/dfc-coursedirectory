@@ -89,13 +89,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
             uploadProcessor.ReleaseUploadStatusCheck();  // Created
-            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.InProgress);
-            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.Processed);
+            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.Processing);
+            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.ProcessedSuccessfully);
             uploadProcessor.OnComplete();
             await completed;
 
             // Assert
-            results.Should().BeEquivalentTo(new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed });
+            results.Should().BeEquivalentTo(new[] { UploadStatus.Created, UploadStatus.Processing, UploadStatus.ProcessedSuccessfully });
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.InProgress);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
@@ -287,7 +287,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.InProgress);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Venue 1");
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -364,8 +364,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             using (new AssertionScope())
             {
-                venueUpload.UploadStatus.Should().Be(UploadStatus.Processed);
-                venueUpload.IsValid.Should().NotBeNull();
+                venueUpload.UploadStatus.Should().Be(UploadStatus.ProcessedSuccessfully);
                 venueUpload.LastValidated.Should().Be(Clock.UtcNow);
                 venueUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
                 venueUpload.ProcessingStartedOn.Should().NotBeNull();
@@ -380,21 +379,30 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             Clock.UtcNow += TimeSpan.FromMinutes(1);
             var updatedOn = Clock.UtcNow;
 
-            if (uploadStatus == UploadStatus.InProgress)
+            if (uploadStatus == UploadStatus.Processing)
             {
-                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadInProgress()
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
                 {
                     VenueUploadId = venueUploadId,
                     ProcessingStartedOn = updatedOn
                 }));
             }
-            else if (uploadStatus == UploadStatus.Processed)
+            else if (uploadStatus == UploadStatus.ProcessedSuccessfully)
             {
                 await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
                 {
                     VenueUploadId = venueUploadId,
                     ProcessingCompletedOn = updatedOn,
                     IsValid = true
+                }));
+            }
+            else if (uploadStatus == UploadStatus.ProcessedWithErrors)
+            {
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadProcessed()
+                {
+                    VenueUploadId = venueUploadId,
+                    ProcessingCompletedOn = updatedOn,
+                    IsValid = false
                 }));
             }
             else if (uploadStatus == UploadStatus.Abandoned)

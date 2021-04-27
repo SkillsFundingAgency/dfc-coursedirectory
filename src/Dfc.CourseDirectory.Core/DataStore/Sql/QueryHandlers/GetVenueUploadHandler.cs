@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT VenueUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
-ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn, LastValidated, IsValid
+ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn, LastValidated
 FROM Pttcd.VenueUploads
 WHERE VenueUploadId = @VenueUploadId";
 
