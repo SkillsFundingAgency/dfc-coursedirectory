@@ -24,6 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public bool IsValid { get; set; }
         public IReadOnlyCollection<string> Errors { get; set; }
         public bool IsSupplementary { get; set; }
+        public bool? OutsideOfEngland { get; set; }
         public Guid? VenueId { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }

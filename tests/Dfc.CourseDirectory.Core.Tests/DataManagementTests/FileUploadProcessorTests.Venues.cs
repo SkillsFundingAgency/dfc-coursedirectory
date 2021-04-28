@@ -528,6 +528,37 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
                 rows.First().IsValid.Should().BeFalse();
                 rows.First().Errors.Should().BeEquivalentTo(new[] { "VENUE_POSTCODE_FORMAT" });
+                rows.First().OutsideOfEngland.Should().BeNull();
+            });
+        }
+
+        [Fact]
+        public async Task ValidateAndUpsertVenueRows_PostcodeIsNotInEngland_InsertsExpectedOutsideOfEnglandValueIntoDb()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToArray();
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                await AddPostcodeInfoForRows(dispatcher, uploadRows, inEngland: false);
+
+                // Act
+                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    uploadRows);
+
+                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+                rows.First().IsValid.Should().BeTrue();
+                rows.First().OutsideOfEngland.Should().BeTrue();
             });
         }
 
@@ -679,7 +710,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     Enumerable.Empty<VenueRow>());
         }
 
-        private static Task AddPostcodeInfoForRows(ISqlQueryDispatcher sqlQueryDispatcher, IEnumerable<VenueRow> rows)
+        private static Task AddPostcodeInfoForRows(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IEnumerable<VenueRow> rows,
+            bool inEngland = true)
         {
             return sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
             {
@@ -691,7 +725,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     {
                         Postcode = pc,
                         Position = (1d, 1d),
-                        InEngland = true
+                        InEngland = inEngland
                     })
             });
         }

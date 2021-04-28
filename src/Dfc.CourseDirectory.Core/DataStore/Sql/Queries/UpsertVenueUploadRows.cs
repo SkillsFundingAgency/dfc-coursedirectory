@@ -17,6 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public bool IsValid { get; set; }
         public IEnumerable<string> Errors { get; set; }
         public bool IsSupplementary { get; set; }
+        public bool? OutsideOfEngland { get; set; }
         public Guid? VenueId { get; set; }
         public string ProviderVenueRef { get; set; }
         public string VenueName { get; set; }

@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT
-    RowNumber, IsValid, Errors AS ErrorList, IsSupplementary, VenueId, LastUpdated, LastValidated,
+    RowNumber, IsValid, Errors AS ErrorList, IsSupplementary, OutsideOfEngland, VenueId, LastUpdated, LastValidated,
     VenueName, ProviderVenueRef, AddressLine1, AddressLine2, Town, County, Postcode, Telephone, Email, Website
 FROM Pttcd.VenueUploadRows
 WHERE VenueUploadId = @VenueUploadId

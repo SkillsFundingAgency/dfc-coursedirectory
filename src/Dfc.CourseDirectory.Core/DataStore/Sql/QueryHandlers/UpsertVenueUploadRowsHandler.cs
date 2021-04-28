@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             table.Columns.Add("IsValid", typeof(bool));
             table.Columns.Add("Errors", typeof(string));
             table.Columns.Add("IsSupplementary", typeof(bool));
+            table.Columns.Add("OutsideOfEngland", typeof(bool));
             table.Columns.Add("VenueId", typeof(Guid));
             table.Columns.Add("LastUpdated", typeof(DateTime));
             table.Columns.Add("LastValidated", typeof(DateTime));
@@ -43,6 +44,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     record.IsValid,
                     string.Join(";", record.Errors ?? Enumerable.Empty<string>()), // Errors
                     record.IsSupplementary,
+                    record.OutsideOfEngland,
                     record.VenueId,
                     query.CreatedOn,  // LastUpdated
                     query.CreatedOn,  // LastValidated
