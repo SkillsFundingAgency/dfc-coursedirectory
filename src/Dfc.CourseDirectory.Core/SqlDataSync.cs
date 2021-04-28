@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,13 +11,12 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.Logging;
-using Polly;
 
 namespace Dfc.CourseDirectory.Core
 {
     public class SqlDataSync
     {
-        private const int BatchSize = 150;
+        private const int InitialBatchSize = 150;
 
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -48,15 +48,15 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllApprenticeships()
                 {
-                    ProcessChunk = GetSyncWithBatchingHandler<Apprenticeship>(SyncApprenticeships)
+                    ProcessChunk = GetProcessHandlerWithDynamicBatchSizing<Apprenticeship>(SyncApprenticeshipsCore)
                 }));
-			
+
         public Task SyncAllCourses() => WithExclusiveSqlLock(
             nameof(SyncAllCourses),
-            () =>_cosmosDbQueryDispatcher.ExecuteQuery(
+            () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllCourses()
                 {
-                    ProcessChunk = GetSyncWithBatchingHandler<Course>(SyncCourses)
+                    ProcessChunk = GetProcessHandlerWithDynamicBatchSizing<Course>(SyncCoursesCore)
                 }));
 
         public Task SyncAllProviders() => WithExclusiveSqlLock(
@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllProviders()
                 {
-                    ProcessChunk = GetSyncWithBatchingHandler<Provider>(SyncProviders)
+                    ProcessChunk = GetProcessHandlerWithDynamicBatchSizing<Provider>(SyncProvidersCore)
                 }));
 
         public Task SyncAllVenues() => WithExclusiveSqlLock(
@@ -72,12 +72,85 @@ namespace Dfc.CourseDirectory.Core
             () => _cosmosDbQueryDispatcher.ExecuteQuery(
                 new ProcessAllVenues()
                 {
-                    ProcessChunk = GetSyncWithBatchingHandler<Venue>(SyncVenues)
+                    ProcessChunk = GetProcessHandlerWithDynamicBatchSizing<Venue>(SyncVenuesCore)
                 }));
 
         public Task SyncApprenticeship(Apprenticeship apprenticeship) => SyncApprenticeships(new[] { apprenticeship });
 
-        public Task SyncApprenticeships(IEnumerable<Apprenticeship> apprenticeships) => WithSqlDispatcher(dispatcher =>
+        public Task SyncApprenticeships(IReadOnlyCollection<Apprenticeship> apprenticeships) => ProcessWithRetries(apprenticeships, SyncApprenticeshipsCore);
+			
+        public Task SyncCourse(Course course) => SyncCourses(new[] { course });
+
+        public Task SyncCourses(IReadOnlyCollection<Course> courses) => ProcessWithRetries(courses, SyncCoursesCore);
+
+        public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
+
+        public Task SyncProviders(IReadOnlyCollection<Provider> providers) => ProcessWithRetries(providers, SyncProvidersCore);
+
+        public Task SyncVenue(Venue venue) => SyncVenues(new[] { venue });
+
+        public Task SyncVenues(IReadOnlyCollection<Venue> venues) => ProcessWithRetries(venues, SyncVenuesCore);
+
+        private Func<IReadOnlyCollection<T>, Task> GetProcessHandlerWithDynamicBatchSizing<T>(Func<IEnumerable<T>, Task> processChunk)
+        {
+            var nextBatchSize = InitialBatchSize;
+            var maxSucceededBatchSize = 0;
+
+            return async chunk =>
+            {
+                var successBatchSize = await ProcessWithRetries(chunk, processChunk, nextBatchSize);
+
+                if (successBatchSize > maxSucceededBatchSize)
+                {
+                    maxSucceededBatchSize = successBatchSize;
+                }
+
+                // If this batch size succeeded increase it a little for next time
+                nextBatchSize = Math.Max(
+                    successBatchSize < InitialBatchSize ? (int)(nextBatchSize * 1.1) : nextBatchSize,
+                    maxSucceededBatchSize);
+            };
+        }
+
+        private async Task<int> ProcessWithRetries<T>(
+            IReadOnlyCollection<T> records,
+            Func<IList<T>, Task> processChunk,
+            int initialBatchSize = InitialBatchSize)
+        {
+            var batchSize = initialBatchSize;
+            var processed = 0;
+            var attempts = 0;
+
+            while (true)
+            {
+                attempts++;
+
+                foreach (var chunk in records.Skip(processed).Buffer(batchSize))
+                {
+                    try
+                    {
+                        await processChunk(chunk);
+                        processed += chunk.Count;
+                        _logger.LogDebug("Successfully processed {processedCount}", chunk.Count);
+                    }
+                    catch (Exception ex) when ((ex is SqlException || ex is Win32Exception) && attempts <= 5)
+                    {
+                        // We see SqlException and Win32Exception when we get lock contention.
+                        // Wait then try again, halving the batch size to try to reduce the contention.
+                        await Task.Delay(1000);
+
+                        batchSize /= 2;
+                        _logger.LogDebug(ex, "Reducing batch size to {batchSize}", batchSize);
+
+                        break;
+                    }
+
+                    return batchSize;
+                }
+            }
+        }
+
+        private Task SyncApprenticeshipsCore(IEnumerable<Apprenticeship> apprenticeships) => WithSqlDispatcher(dispatcher =>
             dispatcher.ExecuteQuery(new UpsertApprenticeshipsFromCosmos()
             {
                 Records = apprenticeships.Select(apprenticeship => new UpsertApprenticeshipRecord()
@@ -127,10 +200,8 @@ namespace Dfc.CourseDirectory.Core
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
-			
-        public Task SyncCourse(Course course) => SyncCourses(new[] { course });
 
-        public Task SyncCourses(IEnumerable<Course> courses) => WithSqlDispatcher(dispatcher =>
+        private Task SyncCoursesCore(IEnumerable<Course> courses) => WithSqlDispatcher(dispatcher =>
             dispatcher.ExecuteQuery(new UpsertCoursesFromCosmos()
             {
                 Records = courses.Select(course => new UpsertCoursesRecord()
@@ -182,9 +253,7 @@ namespace Dfc.CourseDirectory.Core
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
 
-        public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
-
-        public Task SyncProviders(IEnumerable<Provider> providers) => WithSqlDispatcher(dispatcher =>
+        private Task SyncProvidersCore(IEnumerable<Provider> providers) => WithSqlDispatcher(dispatcher =>
             dispatcher.ExecuteQuery(new UpsertProvidersFromCosmos()
             {
                 Records = providers.Select(provider => new UpsertProvidersRecord()
@@ -232,9 +301,7 @@ namespace Dfc.CourseDirectory.Core
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
 
-        public Task SyncVenue(Venue venue) => SyncVenues(new[] { venue });
-
-        public Task SyncVenues(IEnumerable<Venue> venues) => WithSqlDispatcher(dispatcher =>
+        private Task SyncVenuesCore(IEnumerable<Venue> venues) => WithSqlDispatcher(dispatcher =>
             dispatcher.ExecuteQuery(new UpsertVenuesFromCosmos()
             {
                 Records = venues.Select(venue => new UpsertVenuesRecord()
@@ -261,18 +328,6 @@ namespace Dfc.CourseDirectory.Core
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
-
-        private static Func<IReadOnlyCollection<T>, Task> GetSyncWithBatchingHandler<T>(
-            Func<IReadOnlyCollection<T>, Task> processChunk) => async records =>
-            {
-                foreach (IReadOnlyCollection<T> c in records.Buffer(BatchSize))
-                {
-                    await Policy
-                        .Handle<SqlException>()
-                        .WaitAndRetryAsync(3, retry => TimeSpan.FromSeconds(retry))
-                        .ExecuteAsync(() => processChunk(c));
-                }
-            };
 
         private async Task WithExclusiveSqlLock(string lockName, Func<Task> action)
         {

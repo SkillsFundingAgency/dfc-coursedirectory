@@ -28,7 +28,9 @@ namespace Dfc.CourseDirectory.Functions
             CreateLeaseCollectionIfNotExists = true,
             MaxItemsPerInvocation = 50)]IReadOnlyList<Document> documents)
         {
-            var courses = documents.Select(d => JsonConvert.DeserializeObject<Course>(d.ToString()));
+            var courses = documents
+                .Select(d => JsonConvert.DeserializeObject<Course>(d.ToString()))
+                .ToArray();
 
             await _sqlDataSync.SyncCourses(courses);
         }
