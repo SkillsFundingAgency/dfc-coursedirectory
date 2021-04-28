@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
@@ -66,12 +69,14 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                     .WithMessageFromErrorCode("VENUE_TELEPHONE_FORMAT");
         }
 
-        public static void Postcode<T>(this IRuleBuilderInitial<T, string> field)
+        public static void Postcode<T>(this IRuleBuilderInitial<T, string> field, PostcodeInfo postcodeInfo)
         {
             field
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
                 .Apply(Rules.Postcode)
+                    .WithMessageFromErrorCode("VENUE_POSTCODE_FORMAT")
+                .Must(postcode => postcodeInfo != null)  // i.e. a known postcode we can retrieve lat/lng for
                     .WithMessageFromErrorCode("VENUE_POSTCODE_FORMAT");
         }
 
