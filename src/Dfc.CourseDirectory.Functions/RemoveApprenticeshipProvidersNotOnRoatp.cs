@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Azure.WebJobs;
 
 namespace Dfc.CourseDirectory.Functions
@@ -32,28 +33,23 @@ namespace Dfc.CourseDirectory.Functions
                 lines.Add(line);
             }
 
-            var ukprnsToRemoveProviderStatusFrom = new HashSet<int>(lines
+            var ukprnsToRemoveProviderTypeFrom = new HashSet<int>(lines
                 .Where(line => !string.IsNullOrWhiteSpace(line))
                 .Select(line => int.Parse(line)));
 
-            await _cosmosDbQueryDispatcher.ExecuteQuery(new ProcessAllProviders()
+            foreach (var ukprn in ukprnsToRemoveProviderTypeFrom)
             {
-                ProcessChunk = async providers =>
+                var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
+
+                if (provider.ProviderType.HasFlag(ProviderType.Apprenticeships))
                 {
-                    foreach (var provider in providers)
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType()
                     {
-                        if (provider.ProviderType.HasFlag(Core.Models.ProviderType.Apprenticeships) &&
-                            ukprnsToRemoveProviderStatusFrom.Contains(provider.Ukprn))
-                        {
-                            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType()
-                            {
-                                ProviderId = provider.Id,
-                                ProviderType = provider.ProviderType & (~Core.Models.ProviderType.Apprenticeships)
-                            });
-                        }
-                    }
+                        ProviderId = provider.Id,
+                        ProviderType = provider.ProviderType & (~ProviderType.Apprenticeships)
+                    });
                 }
-            });
+            }
         }
     }
 }
