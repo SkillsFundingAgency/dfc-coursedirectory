@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 table.Rows.Add(row);
             }
 
-            return table.AsTableValuedParameter(typeName: "Pttcd.GuidIdTable");
+            return table.AsTableValuedParameter(typeName: "Pttcd.IntIdTable");
         }
     }
 }

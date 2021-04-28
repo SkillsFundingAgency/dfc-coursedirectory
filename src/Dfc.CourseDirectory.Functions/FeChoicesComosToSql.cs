@@ -36,8 +36,7 @@ namespace Dfc.CourseDirectory.Functions
 CREATE TABLE #FeChoices (
    Ukprn int NOT NULL,
    LearnerSatisfaction DECIMAL(18,1) NULL,
-   EmployerSatisfaction DECIMAL(18,1) NULL,
-   CreatedDateTimeUtc DATETIME NOT NULL
+   EmployerSatisfaction DECIMAL(18,1) NULL
 )";
                     await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
 
@@ -47,18 +46,17 @@ CREATE TABLE #FeChoices (
                             Ukprn = r.UKPRN,
                             r.LearnerSatisfaction,
                             r.EmployerSatisfaction,
-                            r.CreatedDateTimeUtc
                         }),
                         tableName: "#FeChoices",
                         transaction);
                     var mergeSql = @"
-MERGE Pttcd.FeChoices AS target
+MERGE Pttcd.Providers AS target
 USING (
-   SELECT Ukprn, LearnerSatisfaction, EmployerSatisfaction, CreatedDateTimeUtc FROM #FeChoices
+   SELECT Ukprn, LearnerSatisfaction, EmployerSatisfaction FROM #FeChoices
 ) AS source
 ON target.Ukprn = source.Ukprn
-WHEN NOT MATCHED THEN
-   INSERT (ID, Ukprn, LearnerSatisfaction, EmployerSatisfaction, CreatedDateTimeUtc) VALUES (newid(), source.Ukprn, source.LearnerSatisfaction, source.EmployerSatisfaction,source.CreatedDateTimeUtc);";
+WHEN MATCHED THEN
+   UPDATE SET LearnerSatisfaction=source.LearnerSatisfaction, EmployerSatisfaction=source.EmployerSatisfaction;";
 
                     await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
 

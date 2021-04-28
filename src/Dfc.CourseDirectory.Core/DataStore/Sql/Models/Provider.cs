@@ -16,6 +16,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public bool? BulkUploadPublishInProgress { get; set; }
         public DateTime? BulkUploadStartedDateTime { get; set; }
         public int? BulkUploadTotalRowCount { get; set; }
+        public decimal? LearnerSatisfaction { get; set; }
+        public decimal? EmployerSatisfaction { get; set; }
 
         public string DisplayName => DisplayNameSource switch
         {
