@@ -25,7 +25,8 @@ namespace Dfc.CourseDirectory.Functions
             ConnectionStringSetting = "CosmosDbSettings:ConnectionString",
             LeaseCollectionName = "ukrlp-lease",
             LeaseCollectionPrefix = "SyncCosmosUkrlpToSql",
-            CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> documents)
+            CreateLeaseCollectionIfNotExists = true,
+            MaxItemsPerInvocation = 50)]IReadOnlyList<Document> documents)
         {
             var providers = documents.Select(d => JsonConvert.DeserializeObject<Provider>(d.ToString()));
 
