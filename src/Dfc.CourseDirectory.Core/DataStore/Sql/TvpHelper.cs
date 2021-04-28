@@ -19,18 +19,5 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             return table.AsTableValuedParameter(typeName: "Pttcd.GuidIdTable");
         }
-
-        public static SqlMapper.ICustomQueryParameter CreateIntIdTable(IEnumerable<int> rows)
-        {
-            var table = new DataTable();
-            table.Columns.Add("Id", typeof(int));
-
-            foreach (var row in rows)
-            {
-                table.Rows.Add(row);
-            }
-
-            return table.AsTableValuedParameter(typeName: "Pttcd.IntIdTable");
-        }
     }
 }
