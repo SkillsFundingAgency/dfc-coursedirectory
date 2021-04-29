@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using OneOf.Types;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpsertVenueUploadRows : ISqlQuery<Success>
+    public class UpsertVenueUploadRows : ISqlQuery<IReadOnlyCollection<VenueUploadRow>>
     {
         public Guid VenueUploadId { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+        public DateTime ValidatedOn { get; set; }
         public IEnumerable<UpsertVenueUploadRowsRecord> Records { get; set; }
     }
 
