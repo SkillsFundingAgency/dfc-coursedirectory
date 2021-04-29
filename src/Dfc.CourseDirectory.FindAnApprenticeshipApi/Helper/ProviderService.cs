@@ -99,7 +99,9 @@ where p.ProviderStatus = 1 and p.UkrlpProviderStatusDescription = 'Active'";
                             MarketingInformation = p.MarketingInformation,
                             Alias = p.Alias,
                             ProviderType = (ProviderType?)p.ProviderType ?? default,
-                            DisplayNameSource = (ProviderDisplayNameSource)p.DisplayNameSource
+                            DisplayNameSource = (ProviderDisplayNameSource)p.DisplayNameSource,
+                            LearnerSatisfaction = p.LearnerSatisfaction,
+                            EmployerSatisfaction = p.EmployerSatisfaction
                         })
                         .ToArray();
                 }
@@ -124,6 +126,8 @@ where p.ProviderStatus = 1 and p.UkrlpProviderStatusDescription = 'Active'";
             public int DisplayNameSource { get; set; }
             public bool NationalApprenticeshipProvider { get; set; }
             public int? TribalProviderId { get; set; }
+            public decimal? LearnerSatisfaction { get; set; }
+            public decimal? EmployerSatisfaction { get; set; }
         }
 
         private class ProviderContactDataRecord

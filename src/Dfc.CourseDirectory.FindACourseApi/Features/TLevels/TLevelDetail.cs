@@ -51,10 +51,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
             var provider = await getProvider;
             var sqlProvider = await getSqlProvider;
             var venues = await getVenues;
-
-            var feChoice = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetFeChoiceForProvider() { ProviderUkprn = provider.Ukprn });
-
             var providerContact = provider.ProviderContact
                 .SingleOrDefault(c => c.ContactType == "P");
 
@@ -82,8 +78,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     Telephone = providerContact?.ContactTelephone1,
                     Fax = providerContact?.ContactFax,
                     Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
-                    LearnerSatisfaction = feChoice?.LearnerSatisfaction,
-                    EmployerSatisfaction = feChoice?.EmployerSatisfaction
+                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
+                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction
                 },
                 WhoFor = tLevel.WhoFor,
                 EntryRequirements = tLevel.EntryRequirements,

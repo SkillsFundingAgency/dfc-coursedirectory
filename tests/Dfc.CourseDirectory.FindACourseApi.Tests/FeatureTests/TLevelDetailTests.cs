@@ -125,7 +125,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     ProviderId = providerId,
                     ProviderType = ProviderType.TLevels,
                     ProviderName = providerName,
-                    Ukprn = providerUkprn
+                    Ukprn = providerUkprn,
+                    LearnerSatisfaction = providerLearnerSatisfaction,
+                    EmployerSatisfaction = providerEmployerSatisfaction
                 });
 
             SqlQueryDispatcher
@@ -168,17 +170,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                         }
                     },
                     ProviderAliases = Array.Empty<Core.DataStore.CosmosDb.Models.ProviderAlias>()
-                });
-
-            CosmosDbQueryDispatcher
-                .Setup(d => d.ExecuteQuery(It.Is<Core.DataStore.CosmosDb.Queries.GetFeChoiceForProvider>(q => q.ProviderUkprn == providerUkprn)))
-                .ReturnsAsync(new Core.DataStore.CosmosDb.Models.FeChoice()
-                {
-                    UKPRN = providerUkprn,
-                    Id = Guid.NewGuid(),
-                    EmployerSatisfaction = providerEmployerSatisfaction,
-                    LearnerSatisfaction = providerLearnerSatisfaction,
-                    CreatedDateTimeUtc = now
                 });
 
             // Act

@@ -59,14 +59,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUKPRN });
             var getQualification = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery { LearnAimRef = course.LearnAimRef });
             var getVenues = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider { ProviderUkprn = course.ProviderUKPRN });
-            var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUKPRN });
-
-            await Task.WhenAll(getProvider, getQualification, getVenues, getFeChoice);
+            await Task.WhenAll(getProvider, getQualification, getVenues);
 
             var provider = await getProvider;
             var qualification = (await getQualification).Items.SingleOrDefault();
             var venues = await getVenues;
-            var feChoice = await getFeChoice;
             var sqlProvider = await _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = provider.Id });
 
             var venue = courseRun.VenueId.HasValue
@@ -146,8 +143,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     Fax = providerContact?.ContactFax,
                     Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
                     Email = providerContact?.ContactEmail,
-                    EmployerSatisfaction = feChoice?.EmployerSatisfaction,
-                    LearnerSatisfaction = feChoice?.LearnerSatisfaction,
+                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction,
+                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
                 },
                 Qualification = new QualificationViewModel
                 {
