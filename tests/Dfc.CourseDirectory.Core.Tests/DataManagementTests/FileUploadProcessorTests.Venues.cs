@@ -283,7 +283,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateAndUpsertVenueRows_InsertsRowsIntoDb()
+        public async Task ValidateVenueUploadRows_InsertsRowsIntoDb()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -311,7 +311,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await WithSqlQueryDispatcher(async dispatcher =>
             {
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
@@ -342,7 +342,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateAndUpsertVenueRows_FileIsMissingVenuesWithLiveOfferings_AddsSupplementaryRowsToFile()
+        public async Task ValidateVenueUploadRows_FileIsMissingVenuesWithLiveOfferings_AddsSupplementaryRowsToFile()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -371,7 +371,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await WithSqlQueryDispatcher(async dispatcher =>
             {
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
@@ -402,7 +402,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateAndUpsertVenueRows_NormalizesValidPostcode()
+        public async Task ValidateVenueUploadRows_NormalizesValidPostcode()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -421,7 +421,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await WithSqlQueryDispatcher(async dispatcher =>
             {
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
@@ -435,7 +435,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateAndUpsertVenueRows_DoesNotNormalizeInvalidPostcode()
+        public async Task ValidateVenueUploadRows_DoesNotNormalizeInvalidPostcode()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -454,7 +454,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await WithSqlQueryDispatcher(async dispatcher =>
             {
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
@@ -469,7 +469,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
         [Theory]
         [MemberData(nameof(GetInvalidRowsTestData))]
-        public async Task ValidateAndUpsertVenueRows_RowsHasErrors_InsertsExpectedErrorCodesIntoDb(
+        public async Task ValidateVenueUploadRows_RowsHasErrors_InsertsExpectedErrorCodesIntoDb(
             VenueRow row,
             IEnumerable<string> expectedErrorCodes,
             IEnumerable<VenueRow> additionalRows)
@@ -486,11 +486,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await WithSqlQueryDispatcher(async dispatcher =>
             {
                 // Add a row into Postcodes table to ensure we don't have errors due to it missing
-                // (ValidateAndUpsertVenueRows_PostcodeIsNotInDb_InsertsExpectedErrorCodesIntoDb tests that scenario)
+                // (ValidateVenueUploadRows_PostcodeIsNotInDb_InsertsExpectedErrorCodesIntoDb tests that scenario)
                 await AddPostcodeInfoForRows(dispatcher, uploadRows);
 
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
@@ -504,7 +504,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateAndUpsertVenueRows_PostcodeIsNotInDb_InsertsExpectedErrorCodesIntoDb()
+        public async Task ValidateVenueUploadRows_PostcodeIsNotInDb_InsertsExpectedErrorCodesIntoDb()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -518,7 +518,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await WithSqlQueryDispatcher(async dispatcher =>
             {
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
@@ -533,7 +533,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateAndUpsertVenueRows_PostcodeIsNotInEngland_InsertsExpectedOutsideOfEnglandValueIntoDb()
+        public async Task ValidateVenueUploadRows_PostcodeIsNotInEngland_InsertsExpectedOutsideOfEnglandValueIntoDb()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -549,7 +549,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 await AddPostcodeInfoForRows(dispatcher, uploadRows, inEngland: false);
 
                 // Act
-                await fileUploadProcessor.ValidateAndUpsertVenueRows(
+                await fileUploadProcessor.ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
