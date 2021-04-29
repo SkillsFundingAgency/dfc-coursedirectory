@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper
                         : contactDetails.ContactTelephone2;
 
                 // Act
-                var result = _sut.CreateDasProviderFromProvider(123, provider, null);
+                var result = _sut.CreateDasProviderFromProvider(123, provider);
                 var actual = result.Phone;
 
                 // Assert

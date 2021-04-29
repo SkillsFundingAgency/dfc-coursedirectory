@@ -56,8 +56,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         public async Task TLevels_Get_WithTLevels_ReturnsOkWithExpectedTLevelsCollection()
         {
             var provider1 = CreateProvider(1);
-            var sqlProvider1 = CreateSqlProvider(provider1);
-            var provider1FeChoice = CreateFeChoice(1, provider1.Ukprn);
+            var sqlProvider1 = CreateSqlProvider(provider1, 1.1m, 2.1m);
             var provider1Venue1 = CreateVenue(1);
             var provider1Venue2 = CreateVenue(2);
             var provider1TLevelLocation1 = CreateTLevelLocation(1, provider1Venue1.VenueId);
@@ -70,7 +69,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var provider1TLevel2 = CreateTLevel(2, provider1, new[] { provider1TLevelLocation2, provider1TLevelLocation3 });
 
             var provider2 = CreateProvider(2);
-            var sqlProvider2 = CreateSqlProvider(provider2);
+            var sqlProvider2 = CreateSqlProvider(provider2,3.1m, 4.4m);
             var provider2Venue1 = CreateVenue(3);
             var provider2TLevelLocation1 = CreateTLevelLocation(4, provider2Venue1.VenueId);
             
@@ -89,8 +88,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByIds>()))
                 .ReturnsAsync(new[] { provider1Venue1, provider1Venue2, provider2Venue1 }.ToDictionary(v => v.VenueId, v => v));
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CosmosQueries.GetFeChoicesByProviderUkprns>()))
-                .ReturnsAsync(new[] { provider1FeChoice }.ToDictionary(f => f.UKPRN, f => f));
 
             // Act
             var response = await HttpClient.GetAsync($"tlevels");
@@ -104,11 +101,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             tLevels.Should().NotBeNullOrEmpty();
             tLevels.Length.Should().Be(3);
 
-            AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel1, provider1FeChoice);
-            AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel2, provider1FeChoice);
-            AssertHasTLevel(tLevels, provider2, sqlProvider2, new[] { provider2Venue1 }, provider2TLevel1, null);
+            AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel1);
+            AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel2);
+            AssertHasTLevel(tLevels, provider2, sqlProvider2, new[] { provider2Venue1 }, provider2TLevel1);
 
-            static void AssertHasTLevel(JToken[] tLevels, CosmosModels.Provider provider, Provider sqlProvider, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel, CosmosModels.FeChoice feChoice)
+            static void AssertHasTLevel(JToken[] tLevels, CosmosModels.Provider provider, Provider sqlProvider, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel)
             {
                 var tLevel = tLevels.SingleOrDefault(t => t["tLevelId"].ToObject<Guid>() == expectedTLevel.TLevelId);
                 tLevel.Should().NotBeNull();
@@ -134,8 +131,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     tLevel["provider"]["telephone"].ToObject<string>().Should().Be(providerContact?.ContactTelephone1);
                     tLevel["provider"]["fax"].ToObject<string>().Should().Be(providerContact?.ContactFax);
                     tLevel["provider"]["website"].ToObject<string>().Should().Be($"http://{providerContact?.ContactWebsiteAddress}");
-                    tLevel["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(feChoice?.LearnerSatisfaction);
-                    tLevel["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(feChoice?.EmployerSatisfaction);
+                    tLevel["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(sqlProvider?.LearnerSatisfaction);
+                    tLevel["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(sqlProvider?.EmployerSatisfaction);
                     tLevel["whoFor"].ToObject<string>().Should().Be(expectedTLevel.WhoFor);
                     tLevel["entryRequirements"].ToObject<string>().Should().Be(expectedTLevel.EntryRequirements);
                     tLevel["whatYoullLearn"].ToObject<string>().Should().Be(expectedTLevel.WhatYoullLearn);
@@ -214,12 +211,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 }
             };
 
-        private static Provider CreateSqlProvider(CosmosModels.Provider provider) =>
+        private static Provider CreateSqlProvider(CosmosModels.Provider provider , decimal? learnerSatisfaction, decimal? employerSatisfaction) =>
             new Provider
             {
                 ProviderId = provider.Id,
                 Ukprn = provider.Ukprn,
-                ProviderName = provider.ProviderName
+                ProviderName = provider.ProviderName,
+                LearnerSatisfaction = learnerSatisfaction,
+                EmployerSatisfaction = employerSatisfaction
             };
 
         private static Venue CreateVenue(int seed) =>

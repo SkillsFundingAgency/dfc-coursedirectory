@@ -11,6 +11,7 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.FindAnApprenticeship.Tests.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
@@ -42,7 +43,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
         private readonly Mock<IBlobStorageClient> _blobStorageClient;
         private readonly Mock<ICosmosDbHelper> _cosmosDbHelper;
         private readonly IOptions<CosmosDbCollectionSettings> _cosmosSettings;
-
+        private readonly Mock<ISqlQueryDispatcher> _sqlQueryDispatcher;
         private readonly Mock<IProviderService> _providerService;
         private readonly IProviderServiceClient _providerServiceClient;
         private readonly IDASHelper _DASHelper;
@@ -62,10 +63,11 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
             _providerService = new Mock<IProviderService>();
             _providerServiceClient = new ProviderServiceClient(_providerService.Object);
             _cosmosDbQueryDispatcher = new Mock<ICosmosDbQueryDispatcher>();
-            
+            _sqlQueryDispatcher = new Mock<ISqlQueryDispatcher>();
+
             var telemetryClient = MockTelemetryHelper.Initialize();
             _DASHelper = new DASHelper(telemetryClient);
-            _apprenticeshipService = new ApprenticeshipService(_cosmosDbHelper.Object, _cosmosSettings, _DASHelper, _providerServiceClient, telemetryClient, _cosmosDbQueryDispatcher.Object);
+            _apprenticeshipService = new ApprenticeshipService(_cosmosDbHelper.Object, _cosmosSettings, _DASHelper, _providerServiceClient, telemetryClient, _cosmosDbQueryDispatcher.Object, _sqlQueryDispatcher.Object);
 
             _generateProviderExportFunction = new GenerateProviderExportFunction(_apprenticeshipService, _blobStorageClient.Object);
             _getApprenticeshipAsProviderFunction = new GetApprenticeshipsAsProvider(_blobStorageClient.Object, _nowUtc.Object);
@@ -81,11 +83,6 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
 
             _providerService.Setup(s => s.GetActiveProvidersAsync())
                 .Returns(async () => JsonConvert.DeserializeObject<IEnumerable<Provider>>(await File.ReadAllTextAsync("Integration/providers.json")));
-
-            _cosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoicesByProviderUkprns>()))
-                .Returns<GetFeChoicesByProviderUkprns>(async r =>
-                    JsonConvert.DeserializeObject<IEnumerable<Core.DataStore.CosmosDb.Models.FeChoice>>(await File.ReadAllTextAsync("Integration/fechoices.json"))
-                        .Where(f => r.ProviderUkprns.Contains(f.UKPRN)).ToDictionary(f => f.UKPRN, f => f));
 
             _cosmosDbHelper.Setup(s => s.GetLiveApprenticeships(It.IsAny<DocumentClient>(), It.IsAny<string>()))
                 .Returns(() => JsonConvert.DeserializeObject<List<Apprenticeship>>(File.ReadAllText("Integration/apprenticeships.json")));
@@ -130,6 +127,8 @@ namespace Dfc.CourseDirectory.FindAnApprenticeship.Tests.Integration
             using var sr = new StreamReader(contentResult.FileStream);
             var resultJToken = JToken.Parse(await sr.ReadToEndAsync());
             var expectedResultJToken = JToken.Parse(await File.ReadAllTextAsync("Integration/expectedresults.json"));
+
+            await File.WriteAllTextAsync("SomeResults.json", JsonConvert.SerializeObject(resultJToken, Formatting.Indented));
 
             var resultIsExpected = JToken.DeepEquals(resultJToken, expectedResultJToken);
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
@@ -31,6 +32,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
         private readonly IProviderServiceClient _providerServiceClient;
         private readonly TelemetryClient _telemetryClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public ApprenticeshipService(
             ICosmosDbHelper cosmosDbHelper,
@@ -38,7 +40,8 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
             IDASHelper DASHelper,
             IProviderServiceClient providerServiceClient,
             TelemetryClient telemetryClient,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _cosmosDbHelper = cosmosDbHelper ?? throw new ArgumentNullException(nameof(cosmosDbHelper));
             _cosmosSettings = cosmosSettings?.Value ?? throw new ArgumentNullException(nameof(cosmosSettings));
@@ -46,6 +49,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
             _providerServiceClient = providerServiceClient ?? throw new ArgumentNullException(nameof(providerServiceClient));
             _telemetryClient = telemetryClient ?? throw new ArgumentNullException(nameof(telemetryClient));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
         }
 
         public async Task<IEnumerable<IApprenticeship>> GetApprenticeshipCollection()
@@ -110,8 +114,6 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
                 var providers = (await _providerServiceClient.GetAllProviders())
                     .ToArray();
 
-                var feChoices = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoicesByProviderUkprns { ProviderUkprns = apprenticeshipsByUKPRN.Select(a => a.Key) });
-
                 evt.Metrics.TryAdd("Apprenticeships", apprenticeships.Count);
                 evt.Metrics.TryAdd("Providers", apprenticeshipsByUKPRN.Length);
 
@@ -128,8 +130,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
                             p.UKPRN,
                             p.Index + 1000,
                             providers.Where(pp => pp.UnitedKingdomProviderReferenceNumber == p.UKPRN.ToString()),
-                            p.Apprenticeships,
-                            feChoices.GetValueOrDefault(p.UKPRN));
+                            p.Apprenticeships);
 
                         results.Add(DasProviderResult.Succeeded(p.UKPRN, provider));
 
@@ -173,8 +174,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
             int ukprn,
             int exportKey,
             IEnumerable<Provider> providers,
-            List<Apprenticeship> apprenticeships,
-            Core.DataStore.CosmosDb.Models.FeChoice feChoice)
+            List<Apprenticeship> apprenticeships)
         {
             var evt = new EventTelemetry {Name = "ComposeProviderForExport"};
 
@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Services
 
             try
             {
-                var dasProvider = _DASHelper.CreateDasProviderFromProvider(exportKey, providers.First(), feChoice);
+                var dasProvider = _DASHelper.CreateDasProviderFromProvider(exportKey, providers.First());
 
                 if (dasProvider != null)
                 {
