@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 
             using var stream = request.File.OpenReadStream();
 
-            var saveFileResult = await _fileUploadProcessor.SaveVenueFile(
+            var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
                 _providerContextProvider.GetProviderId(),
                 stream,
                 _currentUserProvider.GetCurrentUser());
@@ -94,7 +94,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             try
             {
                 using var cts = new CancellationTokenSource(_optionsAccessor.Value.ProcessedImmediatelyThreshold);
-                await _fileUploadProcessor.WaitForVenueProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
                 return UploadResult.ProcessingCompleted;
             }
             catch (OperationCanceledException)

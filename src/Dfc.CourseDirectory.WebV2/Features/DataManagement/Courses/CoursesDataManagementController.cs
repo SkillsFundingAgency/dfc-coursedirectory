@@ -27,12 +27,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [RequireProviderContext]
         public IActionResult Index() => View("Upload");
 
-        [HttpGet("download")]
-        [RequireProviderContext]
-        public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
-            new Download.Query(),
-            result => new CsvResult<CourseRow>(result.FileName, result.Rows));
-
         [HttpPost("upload")]
         [RequireProviderContext]
         public async Task<IActionResult> Upload(Upload.Command command)
@@ -47,23 +41,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     result =>
-                        RedirectToAction(
-                            result == Courses.Upload.UploadResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext())));
+                        RedirectToAction("Index", nameof(ProviderDashboard))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext())
+                        ));
         }
 
-        [HttpGet("in-progress")]
-        [RequireProviderContext]
-        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
-            new InProgress.Query(),
-            result => result.Match(
-                notFound => NotFound(),
-                status => status switch
-                {
-                    UploadStatus.Processed => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    _ => View(status)
-                }));
+
 
         [HttpGet("check-publish")]
         [RequireProviderContext]
