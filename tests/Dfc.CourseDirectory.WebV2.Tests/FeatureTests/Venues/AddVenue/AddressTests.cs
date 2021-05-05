@@ -4,8 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue;
 using FluentAssertions;
@@ -340,7 +339,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine1",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_ADDRESS_LINE1_REQUIRED"]
                 ),
                 // Address line 1 too long
                 (
@@ -350,7 +349,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine1",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE1_MAXLENGTH", Constants.AddressLine1MaxLength)
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_ADDRESS_LINE1_MAXLENGTH"]
                 ),
                 // Address line 1 has invalid characters
                 (
@@ -360,7 +359,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine1",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE1_FORMAT")
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_ADDRESS_LINE1_FORMAT"]
                 ),
                 // Address line 2 too long
                 (
@@ -370,7 +369,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine2",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH", Constants.AddressLine2MaxLength)
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_ADDRESS_LINE2_MAXLENGTH"]
                 ),
                 // Address line 2 has invalid characters
                 (
@@ -380,7 +379,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "AddressLine2",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_ADDRESS_LINE2_FORMAT")
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_ADDRESS_LINE2_FORMAT"]
                 ),
                 // Town missing
                 (
@@ -390,7 +389,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "Town",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_TOWN_REQUIRED")
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_TOWN_REQUIRED"]
                 ),
                 // Town is too long
                 (
@@ -400,7 +399,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "Town",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_TOWN_MAXLENGTH", Constants.TownMaxLength)
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_TOWN_MAXLENGTH"]
                 ),
                 // Town has invalid characters
                 (
@@ -410,7 +409,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "CV1 2AA",
                     ExpectedErrorInputId: "Town",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_TOWN_FORMAT")
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_TOWN_FORMAT"]
                 ),
                 // Postcode is not valid
                 (
@@ -420,7 +419,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                     County: "Updated county",
                     Postcode: "X",
                     ExpectedErrorInputId: "Postcode",
-                    ExpectedErrorMessage: ContentExtensions.GetMessageForErrorCode("VENUE_POSTCODE_FORMAT")
+                    ExpectedErrorMessage: ErrorRegistry.All["VENUE_POSTCODE_FORMAT"]
                 )
             }
             .Select(t => new object[] { t.AddressLine1, t.AddressLine2, t.Town, t.County, t.Postcode, t.ExpectedErrorInputId, t.ExpectedErrorMessage })
