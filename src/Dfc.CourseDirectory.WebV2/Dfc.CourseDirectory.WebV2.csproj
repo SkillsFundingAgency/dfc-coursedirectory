@@ -47,6 +47,7 @@
     <None Remove="Content\pages\apprenticeship-qa\provider-selected.css" />
     <None Remove="Content\pages\apprenticeships\classroom-location.js" />
     <None Remove="Content\pages\apprenticeships\find-standard-or-framework.css" />
+    <None Remove="Content\pages\data-upload.css" />
     <None Remove="Content\pages\helpdesk-dashboard.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-classroom-locations.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-employer-locations.css" />
@@ -56,6 +57,7 @@
     <None Remove="Content\pages\new-apprenticeship-provider\provider-detail.css" />
     <None Remove="Content\pages\provider-dashboard.css" />
     <None Remove="Content\pages\providers\provider-details.css" />
+    <None Remove="Content\pages\data-upload.css" />
     <None Remove="Content\pages\start.css" />
     <None Remove="Content\utilities\focus-formgroup.js" />
     <None Remove="Content\utilities\needs-js.css" />

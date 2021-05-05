@@ -18,15 +18,16 @@
                 <li>add new venues <a asp-action="Index" asp-controller="AddVenue" class="govuk-link">on screen</a> or by <a asp-action="Index" asp-controller="VenuesDataManagement" class="govuk-link">venue upload</a> prior to a course upload</li>
                 <li>follow the <a href="#">file format requirements</a></li>
             </ul>
-            <govuk-file-upload asp-for="File" />
-            <p>
-                <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
-            </p>
+            <govuk-file-upload asp-for="File" input-accept=".csv">
+                <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
+            </govuk-file-upload>
+
+            <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
         </form>
 
     </div>
     <div class="govuk-grid-column-one-third">
-        <aside class="app-related-items" role="complementary">
+        <aside class="pttcd-provider-data-upload__download-panel" role="complementary">
             <h2 class="govuk-heading-m" id="subsection-title">
                 Data file downloads
             </h2>
