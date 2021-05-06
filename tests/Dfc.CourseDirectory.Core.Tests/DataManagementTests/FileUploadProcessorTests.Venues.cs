@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
 
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, providerVenueRef: "ref");
 
-            var rows = new[] { new VenueRow() { ProviderVenueRef = "REF", VenueName = "NAME" } };
+            var rows = new[] { new CsvVenueRow() { ProviderVenueRef = "REF", VenueName = "NAME" } };
 
             var existingVenues = new[] { venue1 };
 
@@ -182,7 +182,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "name");
 
-            var rows = new[] { new VenueRow() { VenueName = "NAME" } };
+            var rows = new[] { new CsvVenueRow() { VenueName = "NAME" } };
 
             var existingVenues = new[] { venue1 };
 
@@ -206,8 +206,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var rows = new[]
             {
-                new VenueRow() { VenueName = "NAME2", ProviderVenueRef = "REF" },
-                new VenueRow() { VenueName = "NAME" },
+                new CsvVenueRow() { VenueName = "NAME2", ProviderVenueRef = "REF" },
+                new CsvVenueRow() { VenueName = "NAME" },
             };
 
             var existingVenues = new[] { venue1 };
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 3).ToArray();
             await WithSqlQueryDispatcher(dispatcher => AddPostcodeInfoForRows(dispatcher, uploadRows));
@@ -260,11 +260,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(
                 // Empty record will always yield errors
-                new VenueRow());
+                new CsvVenueRow());
 
             // Act
             await fileUploadProcessor.ProcessVenueFile(venueUpload.VenueUploadId, stream);
@@ -288,11 +288,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var row = new VenueRow()
+            var row = new CsvVenueRow()
             {
                 ProviderVenueRef = "REF",
                 VenueName = "Place",
@@ -347,7 +347,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Venue 1");
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
@@ -362,7 +362,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var uploadRows = new[]
             {
-                new VenueRow()
+                new CsvVenueRow()
                 {
                     VenueName = "Upload venue 1"
                 }
@@ -407,11 +407,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var row = new VenueRow()
+            var row = new CsvVenueRow()
             {
                 Postcode = "ab12de",
             };
@@ -440,11 +440,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var row = new VenueRow()
+            var row = new CsvVenueRow()
             {
                 Postcode = "xxxx",
             };
@@ -470,18 +470,18 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [MemberData(nameof(GetInvalidRowsTestData))]
         public async Task ValidateVenueUploadRows_RowsHasErrors_InsertsExpectedErrorCodesIntoDb(
-            VenueRow row,
+            CsvVenueRow row,
             IEnumerable<string> expectedErrorCodes,
-            IEnumerable<VenueRow> additionalRows)
+            IEnumerable<CsvVenueRow> additionalRows)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var uploadRows = new[] { row }.Concat(additionalRows ?? Enumerable.Empty<VenueRow>()).ToList();
+            var uploadRows = new[] { row }.Concat(additionalRows ?? Enumerable.Empty<CsvVenueRow>()).ToList();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -509,7 +509,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
@@ -538,7 +538,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var venueUpload = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
@@ -620,13 +620,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             uploadProcessor.ReleaseUploadStatusCheck();
         }
 
-        public static TheoryData<VenueRow, IEnumerable<string>, IEnumerable<VenueRow>> GetInvalidRowsTestData()
+        public static TheoryData<CsvVenueRow, IEnumerable<string>, IEnumerable<CsvVenueRow>> GetInvalidRowsTestData()
         {
             // Generic args correspond to:
             //   the row under test;
             //   the expected error codes for the row under test;
             //   any additional rows to create in the same upload (e.g. for testing duplicate validation)
-            var result = new TheoryData<VenueRow, IEnumerable<string>, IEnumerable<VenueRow>>();
+            var result = new TheoryData<CsvVenueRow, IEnumerable<string>, IEnumerable<CsvVenueRow>>();
 
             // Name is missing
             AddSingleErrorTestCase(row => row.VenueName = null, "VENUE_NAME_REQUIRED");
@@ -696,23 +696,23 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             return result;
 
-            static VenueRow CreateRow(Action<VenueRow> configureRow)
+            static CsvVenueRow CreateRow(Action<CsvVenueRow> configureRow)
             {
                 var row = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).Single();
                 configureRow(row);
                 return row;
             }
 
-            void AddSingleErrorTestCase(Action<VenueRow> configureRow, string errorCode) =>
+            void AddSingleErrorTestCase(Action<CsvVenueRow> configureRow, string errorCode) =>
                 result.Add(
                     CreateRow(configureRow),
                     new[] { errorCode },
-                    Enumerable.Empty<VenueRow>());
+                    Enumerable.Empty<CsvVenueRow>());
         }
 
         private static Task AddPostcodeInfoForRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IEnumerable<VenueRow> rows,
+            IEnumerable<CsvVenueRow> rows,
             bool inEngland = true)
         {
             return sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()

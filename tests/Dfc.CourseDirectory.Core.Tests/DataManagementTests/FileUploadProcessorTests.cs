@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             writeHeader: false);
 
             // Act
-            var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<VenueRow>(stream);
+            var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<CsvVenueRow>(stream);
 
             // Assert
             result.Should().Be(FileMatchesSchemaResult.InvalidHeader);
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             });
 
             // Act
-            var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<VenueRow>(stream);
+            var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<CsvVenueRow>(stream);
 
             // Assert
             result.Should().Be(FileMatchesSchemaResult.InvalidRows);

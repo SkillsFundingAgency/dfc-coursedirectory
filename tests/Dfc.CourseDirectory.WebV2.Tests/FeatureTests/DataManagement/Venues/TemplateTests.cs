@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 "WEBSITE"
             });
 
-            var rows = csvReader.GetRecords<VenueRow>();
+            var rows = csvReader.GetRecords<CsvVenueRow>();
             rows.Should().BeEmpty();
         }
     }

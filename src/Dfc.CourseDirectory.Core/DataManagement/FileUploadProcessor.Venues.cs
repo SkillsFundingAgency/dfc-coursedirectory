@@ -20,6 +20,33 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        public async Task<IReadOnlyCollection<VenueUploadRow>> GetVenueUploadRows(Guid venueUploadId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+
+                if (venueUpload == null)
+                {
+                    throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
+                }
+
+                if (venueUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    venueUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidOperationException("Venue upload status is not valid.");
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                var (_, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUploadId);
+
+                // rows will only be non-null if revalidation was done above
+                rows ??= await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
+
+                return rows;
+            }
+        }
+
         public IObservable<UploadStatus> GetVenueUploadStatusUpdates(Guid venueUploadId) =>
             GetPollingVenueUploadStatusUpdates(venueUploadId)
                 .DistinctUntilChanged()
@@ -43,11 +70,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             // At this point `stream` should be a CSV that's already known to conform to `VenueRow`'s schema.
             // We read all the rows upfront because validation needs to do duplicate checking.
             // We also don't expect massive files here so reading everything into memory is ok.
-            List<VenueRow> rows;
+            List<CsvVenueRow> rows;
             using (var streamReader = new StreamReader(stream))
             using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
-                rows = await csvReader.GetRecordsAsync<VenueRow>().ToListAsync();
+                rows = await csvReader.GetRecordsAsync<CsvVenueRow>().ToListAsync();
             }
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -75,7 +102,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidFile();
             }
 
-            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<VenueRow>(stream);
+            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvVenueRow>(stream);
             if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
             {
                 return SaveFileResult.InvalidHeader(missingHeaders);
@@ -176,7 +203,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             ISqlQueryDispatcher sqlQueryDispatcher,
             Guid venueUploadId,
             Guid providerId,
-            IReadOnlyList<VenueRow> rows)
+            IReadOnlyList<CsvVenueRow> rows)
         {
             // We need to ensure that any venues that have live offerings attached are not removed when publishing this
             // upload. We do that by adding an additional row to this upload for any venues that are not included in
@@ -195,7 +222,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var venuesWithLiveOfferingsNotInFile = existingVenues
                 .Where(v => v.HasLiveOfferings && !matchedVenueIds.Contains(v.VenueId))
                 .ToArray();
-            rows = rows.Concat(venuesWithLiveOfferingsNotInFile.Select(VenueRow.FromModel)).ToArray();
+            rows = rows.Concat(venuesWithLiveOfferingsNotInFile.Select(CsvVenueRow.FromModel)).ToArray();
             rowVenueIdMapping = rowVenueIdMapping.Concat(venuesWithLiveOfferingsNotInFile.Select(v => (Guid?)v.VenueId)).ToArray();
 
             // Grab PostcodeInfo for all of the valid postcodes in the file.
@@ -271,7 +298,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         // internal for testing
-        internal Guid?[] MatchRowsToExistingVenues(IReadOnlyList<VenueRow> rows, IEnumerable<Venue> existingVenues)
+        internal Guid?[] MatchRowsToExistingVenues(IReadOnlyList<CsvVenueRow> rows, IEnumerable<Venue> existingVenues)
         {
             var rowVenueIdMapping = new Guid?[rows.Count];
 
@@ -288,7 +315,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             return rowVenueIdMapping;
 
-            void MatchOnPredicate(Func<VenueRow, Venue, bool> matches)
+            void MatchOnPredicate(Func<CsvVenueRow, Venue, bool> matches)
             {
                 for (int i = 0; i < rows.Count; i++)
                 {
@@ -338,7 +365,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         private async Task<IDictionary<Postcode, PostcodeInfo>> GetPostcodeInfoForRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IEnumerable<VenueRow> rows)
+            IEnumerable<CsvVenueRow> rows)
         {
             var validPostcodes = rows
                 .Select(r => Postcode.TryParse(r.Postcode, out var postcode) ? postcode.ToString() : null)
@@ -375,17 +402,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 sqlQueryDispatcher,
                 venueUploadId,
                 venueUpload.ProviderId,
-                rows.ToList());
+                rows.Select(CsvVenueRow.FromModel).ToList());
 
             return (Revalidated: true, ValidatedRows: revalidatedRows);
         }
 
-        private class VenueUploadRowValidator : AbstractValidator<VenueRow>
+        private class VenueUploadRowValidator : AbstractValidator<CsvVenueRow>
         {
-            private readonly VenueRow[] _allRows;
+            private readonly CsvVenueRow[] _allRows;
             private readonly IDictionary<Postcode, PostcodeInfo> _postcodeInfo;
 
-            public VenueUploadRowValidator(IEnumerable<VenueRow> allRows, IDictionary<Postcode, PostcodeInfo> postcodeInfo)
+            public VenueUploadRowValidator(IEnumerable<CsvVenueRow> allRows, IDictionary<Postcode, PostcodeInfo> postcodeInfo)
             {
                 _allRows = allRows.ToArray();
                 _postcodeInfo = postcodeInfo;

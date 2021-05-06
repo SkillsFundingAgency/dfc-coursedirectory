@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -10,14 +9,9 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using CsvHelper;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Moq;
-using OneOf.Types;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
@@ -158,19 +152,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 }
             }
             return content;
-        }
-
-        private MemoryStream CreateCsvStream(IEnumerable<VenueRow> rows)
-        {
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(mem))
-            using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csvWriter.WriteHeader<VenueRow>();
-                csvWriter.WriteRecords(rows);
-                csvWriter.Flush();
-                return mem;
-            }
         }
     }
 }

@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<VenueUpload> CreateVenueUpload(
+        public async Task<(VenueUpload VenueUpload, VenueUploadRow[] Rows)> CreateVenueUpload(
             Guid providerId,
             UserInfo createdBy,
-            UploadStatus uploadStatus)
+            UploadStatus uploadStatus,
+            Action<VenueUploadRowBuilder> configureRows = null)
         {
             var createdOn = _clock.UtcNow;
 
@@ -28,7 +32,7 @@ namespace Dfc.CourseDirectory.Testing
                 _ => true
             };
 
-            var venueUpload = await CreateVenueUpload(
+            var (venueUpload, rows) = await CreateVenueUpload(
                 providerId,
                 createdBy,
                 createdOn,
@@ -36,14 +40,15 @@ namespace Dfc.CourseDirectory.Testing
                 processingCompletedOn,
                 publishedOn,
                 abandonedOn,
-                isValid);
+                isValid,
+                configureRows);
 
             Assert.Equal(uploadStatus, venueUpload.UploadStatus);
 
-            return venueUpload;
+            return (venueUpload, rows);
         }
 
-        public Task<VenueUpload> CreateVenueUpload(
+        public Task<(VenueUpload VenueUpload, VenueUploadRow[] Rows)> CreateVenueUpload(
             Guid providerId,
             UserInfo createdBy,
             DateTime? createdOn = null,
@@ -51,7 +56,8 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? processingCompletedOn = null,
             DateTime? publishedOn = null,
             DateTime? abandonedOn = null,
-            bool? isValid = null)
+            bool? isValid = null,
+            Action<VenueUploadRowBuilder> configureRows = null)
         {
             if (publishedOn.HasValue && abandonedOn.HasValue)
             {
@@ -63,6 +69,8 @@ namespace Dfc.CourseDirectory.Testing
 
             return WithSqlQueryDispatcher(async dispatcher =>
             {
+                VenueUploadRow[] rows = null;
+
                 await dispatcher.ExecuteQuery(new CreateVenueUpload()
                 {
                     VenueUploadId = venueUploadId,
@@ -98,6 +106,36 @@ namespace Dfc.CourseDirectory.Testing
                         ProcessingCompletedOn = processingCompletedOn.Value,
                         IsValid = isValid.Value
                     });
+
+                    var rowBuilder = new VenueUploadRowBuilder();
+
+                    if (configureRows != null)
+                    {
+                        configureRows(rowBuilder);
+                    }
+                    else
+                    {
+                        if (isValid.Value)
+                        {
+                            rowBuilder.AddValidRows(3);
+                        }
+                        else
+                        {
+                            rowBuilder.AddRow(record =>
+                            {
+                                record.VenueName = string.Empty;
+                                record.Errors = new[] { ErrorRegistry.All["VENUE_NAME_REQUIRED"].ErrorCode };
+                            });
+                        }
+                    }
+
+                    rows = (await dispatcher.ExecuteQuery(new UpsertVenueUploadRows()
+                    {
+                        VenueUploadId = venueUploadId,
+                        Records = rowBuilder.GetUpsertQueryRows(),
+                        UpdatedOn = processingCompletedOn.Value,
+                        ValidatedOn = processingCompletedOn.Value
+                    })).ToArray();
                 }
 
                 if (publishedOn.HasValue)
@@ -127,11 +165,147 @@ namespace Dfc.CourseDirectory.Testing
                     });
                 }
 
-                return await dispatcher.ExecuteQuery(new GetVenueUpload()
+                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload()
                 {
                     VenueUploadId = venueUploadId
                 });
+
+                return (venueUpload, rows);
             });
+        }
+
+        public class VenueUploadRowBuilder
+        {
+            private readonly List<UpsertVenueUploadRowsRecord> _records = new List<UpsertVenueUploadRowsRecord>();
+
+            public VenueUploadRowBuilder AddRow(Action<UpsertVenueUploadRowsRecord> configureRecord)
+            {
+                var record = CreateValidRecord();
+                configureRecord(record);
+                _records.Add(record);
+                return this;
+            }
+
+            public VenueUploadRowBuilder AddRow(
+                string providerVenueRef,
+                string venueName,
+                string addressLine1,
+                string addressLine2,
+                string town,
+                string county,
+                string postcode,
+                string email,
+                string telephone,
+                string website,
+                IEnumerable<string> errors = null,
+                bool isSupplementary = false,
+                Guid? venueId = null)
+            {
+                var record = CreateRecord(
+                    providerVenueRef,
+                    venueName,
+                    addressLine1,
+                    addressLine2,
+                    town,
+                    county,
+                    postcode,
+                    email,
+                    telephone,
+                    website,
+                    errors,
+                    isSupplementary,
+                    venueId);
+
+                _records.Add(record);
+
+                return this;
+            }
+
+            public VenueUploadRowBuilder AddValidRow(bool isSupplementary = false, Guid? venueId = null)
+            {
+                var record = CreateValidRecord(isSupplementary, venueId);
+                _records.Add(record);
+                return this;
+            }
+
+            public VenueUploadRowBuilder AddValidRows(int count)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    AddValidRow();
+                }
+
+                return this;
+            }
+
+            internal IReadOnlyCollection<UpsertVenueUploadRowsRecord> GetUpsertQueryRows() => _records;
+
+            private UpsertVenueUploadRowsRecord CreateRecord(
+                string providerVenueRef,
+                string venueName,
+                string addressLine1,
+                string addressLine2,
+                string town,
+                string county,
+                string postcode,
+                string email,
+                string telephone,
+                string website,
+                IEnumerable<string> errors = null,
+                bool isSupplementary = false,
+                Guid? venueId = null)
+            {
+                if (isSupplementary && venueId.HasValue)
+                {
+                    throw new ArgumentException($"A supplementary row cannot have a {nameof(venueId)}.", nameof(isSupplementary));
+                }
+
+                var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
+                var isValid = !errorsArray.Any();
+
+                return new UpsertVenueUploadRowsRecord()
+                {
+                    RowNumber = _records.Count + 2,
+                    IsValid = isValid,
+                    Errors = errorsArray,
+                    IsSupplementary = isSupplementary,
+                    VenueId = venueId,
+                    ProviderVenueRef = providerVenueRef,
+                    VenueName = venueName,
+                    AddressLine1 = addressLine1,
+                    AddressLine2 = addressLine2,
+                    Town = town,
+                    County = county,
+                    Postcode = postcode,
+                    Email = email,
+                    Telephone = telephone,
+                    Website = website
+                };
+            }
+
+            private UpsertVenueUploadRowsRecord CreateValidRecord(bool isSupplementary = false, Guid? venueId = null)
+            {
+                string venueName;
+                do
+                {
+                    venueName = Faker.Company.Name();
+                }
+                while (_records.Any(r => r.VenueName == venueName));
+
+                return CreateRecord(
+                    providerVenueRef: Guid.NewGuid().ToString(),
+                    venueName,
+                    addressLine1: Faker.Address.StreetAddress(),
+                    addressLine2: Faker.Address.SecondaryAddress(),
+                    town: Faker.Address.City(),
+                    county: Faker.Address.UkCounty(),
+                    postcode: "AB1 2DE",  // Faker's method sometimes produces invalid postcodes :-/
+                    email: Faker.Internet.Email(),
+                    telephone: "01234 567890",  // There's no Faker method for a UK phone number
+                    website: Faker.Internet.Url(),
+                    isSupplementary: isSupplementary,
+                    venueId: venueId);
+            }
         }
     }
 }

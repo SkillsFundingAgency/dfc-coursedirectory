@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
@@ -18,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public DateTime? LastValidated { get; set; }
     }
 
-    public class VenueUploadRow : VenueRow
+    public class VenueUploadRow
     {
         public int RowNumber { get; set; }
         public bool IsValid { get; set; }
@@ -28,5 +27,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public Guid? VenueId { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }
+        public string ProviderVenueRef { get; set; }
+        public string VenueName { get; set; }
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+        public string Town { get; set; }
+        public string County { get; set; }
+        public string Postcode { get; set; }
+        public string Email { get; set; }
+        public string Telephone { get; set; }
+        public string Website { get; set; }
     }
 }
