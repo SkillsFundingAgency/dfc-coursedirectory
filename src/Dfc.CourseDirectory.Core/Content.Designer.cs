@@ -187,6 +187,15 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter your venue reference.
+        /// </summary>
+        public static string ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your venue reference must be unique.
         /// </summary>
         public static string ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE {

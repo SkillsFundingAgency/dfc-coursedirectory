@@ -114,6 +114,8 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .NormalizeWhitespace()
+                .NotEmpty()
+                    .WithMessageFromErrorCode("VENUE_PROVIDER_VENUE_REF_REQUIRED")
                 .MaximumLength(Constants.ProviderVenueRefMaxLength)
                     .WithMessageFromErrorCode("VENUE_PROVIDER_VENUE_REF_MAXLENGTH")
                 .MustAsync(async (obj, providerVenueRef, _) =>
