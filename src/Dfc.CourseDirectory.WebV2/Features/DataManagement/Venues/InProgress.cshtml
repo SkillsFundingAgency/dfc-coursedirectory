@@ -26,17 +26,17 @@
                 }
             </div>
 
-            <noscript>
-                <a asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" id="RefreshLink">
-                    Refresh <span class="govuk-visually-hidden">the page</span>
-                </a>
-            </noscript>
+            <a asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" id="RefreshLink">
+                Refresh <span class="govuk-visually-hidden">the page</span>
+            </a>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script type="text/javascript">
+        $('#RefreshLink').hide();
+
         const onRealtimeUpdateFailed = function() {
             // Fall back to non-JS solution
             $('#RefreshLink').show();
