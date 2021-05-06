@@ -23,7 +23,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             Email = row.Email,
             Telephone = row.Telephone,
             Website = row.Website,
-            Errors = string.Join("\n", row.Errors.Select(errorCode => ErrorRegistry.All[errorCode].GetMessage()))
+            Errors = string.Join(
+                "\n",
+                row.Errors.Select(errorCode => ErrorRegistry.All[errorCode].GetMessage(ErrorMessageContext.DataManagement)))
         };
     }
 }

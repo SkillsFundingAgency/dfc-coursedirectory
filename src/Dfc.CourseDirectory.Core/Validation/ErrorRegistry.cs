@@ -46,10 +46,39 @@ namespace Dfc.CourseDirectory.Core.Validation
 
         public static implicit operator string(Error error) => error.GetMessage();
 
-        public string GetMessage() =>
-            Content.ResourceManager.GetString(string.Format($"ERROR_{ErrorCode}", FormatArgs)) ??
+        public string GetMessage(ErrorMessageContext context = ErrorMessageContext.Default)
+        {
+            if (context == ErrorMessageContext.DataManagement &&
+                TryGetFormattedMessage($"ERROR_DM_{ErrorCode}", out var message))
+            {
+                return message;
+            }
+
+            return TryGetFormattedMessage($"ERROR_{ErrorCode}", out message) ?
+                message :
                 throw new InvalidOperationException($"Cannot find error message for error code: {ErrorCode}.");
 
+            bool TryGetFormattedMessage(string name, out string message)
+            {
+                var result = Content.ResourceManager.GetString(name);
+
+                if (result == null)
+                {
+                    message = default;
+                    return false;
+                }
+
+                message = string.Format(result, FormatArgs);
+                return true;
+            }
+        }
+
         public override string ToString() => GetMessage();
+    }
+
+    public enum ErrorMessageContext
+    {
+        Default = 0,
+        DataManagement = 1
     }
 }
