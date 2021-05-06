@@ -278,11 +278,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var remainingCandidates = existingVenues.ToList();
 
             // First try to match on ProviderVenueRef..
-            MatchOnPredicate((row, venue) => !string.IsNullOrWhiteSpace(row.ProviderVenueRef) &&
-                row.ProviderVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase));
+            MatchOnPredicate((row, venue) =>
+                row.ProviderVenueRef?.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase) == true);
 
-            // ..then on VenueName
-            MatchOnPredicate((row, venue) => row.VenueName.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase));
+            // ..then on VenueName, only where the existing venue does not have a ref
+            MatchOnPredicate((row, venue) =>
+                string.IsNullOrEmpty(venue.ProviderVenueRef) &&
+                    row.VenueName?.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase) == true);
 
             return rowVenueIdMapping;
 

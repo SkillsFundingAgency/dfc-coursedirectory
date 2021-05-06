@@ -159,6 +159,9 @@
   <data name="ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH" xml:space="preserve">
     <value>Your venue reference must be {0} characters or less</value>
   </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED" xml:space="preserve">
+    <value>Enter your venue reference</value>
+  </data>
   <data name="ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE" xml:space="preserve">
     <value>Your venue reference must be unique</value>
   </data>
