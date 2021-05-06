@@ -292,6 +292,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             doc.AssertHasError("File", "The selected file must use the template");
         }
 
+        [Fact]
+        public async Task Post_FileIsTooLarge_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = new MemoryStream(new byte[1048576 + 1]);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/venues/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file must be smaller than 1MB");
+        }
+
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();

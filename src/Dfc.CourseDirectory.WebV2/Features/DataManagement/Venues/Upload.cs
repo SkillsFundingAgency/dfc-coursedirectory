@@ -141,7 +141,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
     {
         public CommandValidator()
         {
-            RuleFor(x => x.File).NotNull().WithMessage("Select a CSV");
+            RuleFor(x => x.File)
+                .NotNull()
+                    .WithMessage("Select a CSV")
+                .Must(file => file == null || file.Length <= Constants.VenueFileMaxSizeBytes)
+                    .WithMessage($"The selected file must be smaller than {Constants.VenueFileMaxSizeLabel}");
         }
     }
 }
