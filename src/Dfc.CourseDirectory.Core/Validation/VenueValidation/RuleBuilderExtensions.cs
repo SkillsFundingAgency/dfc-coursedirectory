@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .MaximumLength(Constants.AddressLine1MaxLength)
-                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_MAXLENGTH", Constants.AddressLine1MaxLength)
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_MAXLENGTH")
                 .Matches(_addressLinePattern)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_FORMAT");
         }
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .MaximumLength(Constants.AddressLine2MaxLength)
-                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH", Constants.AddressLine2MaxLength)
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH")
                 .Matches(_addressLinePattern)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_FORMAT");
         }
@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         {
             field
                 .MaximumLength(Constants.CountyMaxLength)
-                    .WithMessageFromErrorCode("VENUE_COUNTY_MAXLENGTH", Constants.CountyMaxLength)
+                    .WithMessageFromErrorCode("VENUE_COUNTY_MAXLENGTH")
                 .Matches(_countyPattern)
                     .WithMessageFromErrorCode("VENUE_COUNTY_FORMAT");
         }
@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_NAME_REQUIRED")
                 .MaximumLength(Constants.NameMaxLength)
-                    .WithMessageFromErrorCode("VENUE_NAME_MAXLENGTH", Constants.NameMaxLength)
+                    .WithMessageFromErrorCode("VENUE_NAME_MAXLENGTH")
                 .MustAsync(async (name, _) =>
                 {
                     // Venue name must be distinct for this provider

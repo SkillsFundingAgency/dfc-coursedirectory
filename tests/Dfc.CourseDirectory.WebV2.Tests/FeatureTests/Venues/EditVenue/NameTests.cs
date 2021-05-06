@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
@@ -161,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_MAXLENGTH", Constants.NameMaxLength);
+            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_MAXLENGTH");
         }
 
         [Fact]
