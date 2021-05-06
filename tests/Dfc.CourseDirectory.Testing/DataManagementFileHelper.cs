@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.Testing
             return stream;
         }
 
-        public static Stream CreateVenueUploadCsvStream(params VenueRow[] rows) => CreateVenueUploadCsvStream(csvWriter =>
+        public static Stream CreateVenueUploadCsvStream(params CsvVenueRow[] rows) => CreateVenueUploadCsvStream(csvWriter =>
         {
             foreach (var row in rows)
             {
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Testing
             }
         });
 
-        public static IEnumerable<VenueRow> CreateVenueUploadRows(int rowCount)
+        public static IEnumerable<CsvVenueRow> CreateVenueUploadRows(int rowCount)
         {
             var venueNames = new HashSet<string>();
 
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Testing
                 }
                 while (!venueNames.Add(venueName));
 
-                yield return new VenueRow()
+                yield return new CsvVenueRow()
                 {
                     ProviderVenueRef = Guid.NewGuid().ToString(),
                     VenueName = venueName,

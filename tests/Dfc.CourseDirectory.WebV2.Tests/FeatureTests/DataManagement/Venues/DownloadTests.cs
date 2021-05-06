@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 "WEBSITE"
             });
 
-            var rows = csvReader.GetRecords<VenueRow>();
+            var rows = csvReader.GetRecords<CsvVenueRow>();
             rows.Should().BeEquivalentTo(
                 new[]
                 {
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 }
                 .OrderBy(v => v.ProviderVenueRef)
                 .ThenBy(v => v.VenueName)
-                .Select(v => new VenueRow()
+                .Select(v => new CsvVenueRow()
                 {
                     AddressLine1 = v.AddressLine1,
                     AddressLine2 = v.AddressLine2,

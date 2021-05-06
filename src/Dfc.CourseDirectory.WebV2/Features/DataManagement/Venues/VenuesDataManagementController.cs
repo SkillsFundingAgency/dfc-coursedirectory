@@ -31,7 +31,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
             new Download.Query(),
-            result => new CsvResult<VenueRow>(result.FileName, result.Rows));
+            result => new CsvResult<CsvVenueRow>(result.FileName, result.Rows));
+
+        [HttpGet("download-errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
+            new DownloadErrors.Query(),
+            result => new CsvResult<CsvVenueRowWithErrors>(result.FileName, result.Rows));
 
         [HttpPost("upload")]
         [RequireProviderContext]
@@ -92,6 +98,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("template")]
         public IActionResult Template() =>
-           new CsvResult<VenueRow>("venues-template.csv", Enumerable.Empty<VenueRow>());
+           new CsvResult<CsvVenueRow>("venues-template.csv", Enumerable.Empty<CsvVenueRow>());
     }
 }

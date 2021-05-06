@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
-    public class VenueRow
+    public class CsvVenueRow
     {
         [Index(0), Name("YOUR_VENUE_REFERENCE")]
         public string ProviderVenueRef { get; set; }
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(9), Name("WEBSITE")]
         public string Website { get; set; }
 
-        public static VenueRow FromModel(Venue venue) => new VenueRow()
+        public static CsvVenueRow FromModel(Venue venue) => new CsvVenueRow()
         {
             ProviderVenueRef = venue.ProviderVenueRef,
             VenueName = venue.VenueName,
@@ -48,6 +48,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             Email = venue.Email,
             Telephone = venue.Telephone,
             Website = venue.Website
+        };
+
+        public static CsvVenueRow FromModel(VenueUploadRow row) => new CsvVenueRow()
+        {
+            ProviderVenueRef = row.ProviderVenueRef,
+            VenueName = row.VenueName,
+            AddressLine1 = row.AddressLine1,
+            AddressLine2 = row.AddressLine2,
+            Town = row.Town,
+            County = row.County,
+            Postcode = row.Postcode,
+            Email = row.Email,
+            Telephone = row.Telephone,
+            Website = row.Website
         };
     }
 }
