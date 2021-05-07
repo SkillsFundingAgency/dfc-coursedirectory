@@ -91,10 +91,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("check-publish")]
         [RequireProviderContext]
-        public IActionResult CheckAndPublish()
+        public async Task<IActionResult> CheckAndPublish()
         {
-            return View();
+            var query = new CheckAndPublish.Query();
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    hasErrors => RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    command => View(command)));
         }
+
+        [HttpPost("check-publish")]
+        [RequireProviderContext]
+        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
+                        RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                        RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("success")]
+        [RequireProviderContext]
+        public IActionResult Published() => View();
 
         [HttpGet("template")]
         public IActionResult Template() =>

@@ -1,0 +1,16 @@
+﻿.pttcd-dm-publish-summary {
+    margin-bottom: 30px;
+}
+
+.pttcd-dm-publish-summary__row {
+    margin-bottom: 5px;
+}
+
+.pttcd-dm-publish-summary__row__header {
+    display: flex;
+}
+
+.pttcd-dm-publish-summary__row__label {
+    font-weight: 700;
+    width: 50%;
+}

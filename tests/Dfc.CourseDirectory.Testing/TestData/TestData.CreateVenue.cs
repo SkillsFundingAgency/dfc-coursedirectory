@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Testing
             string providerVenueRef = null,
             string addressLine1 = "Venue address line 1",
             string addressLine2 = "",
-            string town = "",
+            string town = "Town",
             string county = "",
             string postcode = "AB1 2DE",
             decimal latitude = 1,

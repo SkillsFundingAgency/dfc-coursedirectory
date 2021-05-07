@@ -145,9 +145,10 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingCompletedOn));
                     }
 
-                    await dispatcher.ExecuteQuery(new SetVenueUploadPublished()
+                    await dispatcher.ExecuteQuery(new PublishVenueUpload()
                     {
                         VenueUploadId = venueUploadId,
+                        PublishedBy = createdBy,
                         PublishedOn = publishedOn.Value
                     });
                 }
@@ -187,6 +188,7 @@ namespace Dfc.CourseDirectory.Testing
             }
 
             public VenueUploadRowBuilder AddRow(
+                Guid venueId,
                 string providerVenueRef,
                 string venueName,
                 string addressLine1,
@@ -198,10 +200,10 @@ namespace Dfc.CourseDirectory.Testing
                 string telephone,
                 string website,
                 IEnumerable<string> errors = null,
-                bool isSupplementary = false,
-                Guid? venueId = null)
+                bool isSupplementary = false)
             {
                 var record = CreateRecord(
+                    venueId,
                     providerVenueRef,
                     venueName,
                     addressLine1,
@@ -213,8 +215,7 @@ namespace Dfc.CourseDirectory.Testing
                     telephone,
                     website,
                     errors,
-                    isSupplementary,
-                    venueId);
+                    isSupplementary);
 
                 _records.Add(record);
 
@@ -241,6 +242,7 @@ namespace Dfc.CourseDirectory.Testing
             internal IReadOnlyCollection<UpsertVenueUploadRowsRecord> GetUpsertQueryRows() => _records;
 
             private UpsertVenueUploadRowsRecord CreateRecord(
+                Guid venueId,
                 string providerVenueRef,
                 string venueName,
                 string addressLine1,
@@ -252,14 +254,8 @@ namespace Dfc.CourseDirectory.Testing
                 string telephone,
                 string website,
                 IEnumerable<string> errors = null,
-                bool isSupplementary = false,
-                Guid? venueId = null)
+                bool isSupplementary = false)
             {
-                if (isSupplementary && venueId.HasValue)
-                {
-                    throw new ArgumentException($"A supplementary row cannot have a {nameof(venueId)}.", nameof(isSupplementary));
-                }
-
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
                 var isValid = !errorsArray.Any();
 
@@ -293,6 +289,7 @@ namespace Dfc.CourseDirectory.Testing
                 while (_records.Any(r => r.VenueName == venueName));
 
                 return CreateRecord(
+                    venueId: venueId ?? Guid.NewGuid(),
                     providerVenueRef: Guid.NewGuid().ToString(),
                     venueName,
                     addressLine1: Faker.Address.StreetAddress(),
@@ -303,8 +300,7 @@ namespace Dfc.CourseDirectory.Testing
                     email: Faker.Internet.Email(),
                     telephone: "01234 567890",  // There's no Faker method for a UK phone number
                     website: Faker.Internet.Url(),
-                    isSupplementary: isSupplementary,
-                    venueId: venueId);
+                    isSupplementary: isSupplementary);
             }
         }
     }
