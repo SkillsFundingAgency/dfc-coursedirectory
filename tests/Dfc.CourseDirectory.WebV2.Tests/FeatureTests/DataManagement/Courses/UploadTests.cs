@@ -123,6 +123,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             doc.AssertHasError("File", "The selected file is empty");
         }
 
+        [Fact]
+        public async Task Post_FileIsTooLarge_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = new MemoryStream(new byte[3145728 + 1]);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file must be smaller than 1MB");
+        }
+
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, MemoryStream stream)
         {
             var content = new MultipartFormDataContent();
