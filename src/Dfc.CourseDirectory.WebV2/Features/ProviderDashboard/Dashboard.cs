@@ -43,9 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int BulkUploadFileCount { get; set; }
         public bool BulkUploadInProgress { get; set; }
         public bool IsNewProvider { get; set; }
-
         public bool VenueUploadInProgress { get; set; }
-        public bool VenueUploadProcessed { get; set; }
         public int UnpublishedVenueCount { get; set; }
     }
 
