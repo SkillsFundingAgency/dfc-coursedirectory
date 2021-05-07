@@ -43,6 +43,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int BulkUploadFileCount { get; set; }
         public bool BulkUploadInProgress { get; set; }
         public bool IsNewProvider { get; set; }
+
+        public bool VenueUploadInProgress { get; set; }
+        public bool VenueUploadProcessed { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -81,6 +84,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
 
             var bulkUploadFiles = await _binaryStorageProvider.ListFiles($"{provider.Ukprn}/Bulk Upload/Files/");
 
+            var venueUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+            new GetLatestVenueUploadForProviderWithStatus()
+            {
+                ProviderId = request.ProviderId,
+                Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
+            });
+
             var vm = new ViewModel()
             {
                 ProviderName = provider.ProviderName,
@@ -104,7 +114,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 VenueCount = dashboardCounts.VenueCount,
                 BulkUploadFileCount = bulkUploadFiles.Count(),
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
-                IsNewProvider = provider.ProviderType == ProviderType.None
+                IsNewProvider = provider.ProviderType == ProviderType.None,
+                VenueUploadInProgress = venueUploadStatus.UploadStatus == UploadStatus.InProgress,
+                VenueUploadProcessed = venueUploadStatus.UploadStatus == UploadStatus.Processed
             };
 
             return vm;

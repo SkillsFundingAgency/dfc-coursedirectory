@@ -297,8 +297,16 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
                         <li>
+                            @if (Model.VenueUploadInProgress)
+                            {
+                            <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Upload in progress</a>
+                            }
+                            else
+                            {
                             <a asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
-                        </li>
+                            }
+</li>
                         <li>
                             <a asp-action="Download" asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published venue data (CSV)</a>
                         </li>
