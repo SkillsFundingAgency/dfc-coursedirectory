@@ -89,8 +89,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
             uploadProcessor.ReleaseUploadStatusCheck();  // Created
-            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.Processing);
-            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.ProcessedSuccessfully);
+            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.Processing, user);
+            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.ProcessedSuccessfully, user);
             uploadProcessor.OnComplete();
             await completed;
 
@@ -146,7 +146,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
             uploadProcessor.ReleaseUploadStatusCheck();  // Created
-            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, uploadStatus);
+            await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, uploadStatus, user);
             uploadProcessor.OnComplete();
             await completed;
         }
@@ -283,6 +283,229 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
+        public async Task PublishVenueUpload_StatusIsProcessedWithErrors_ReturnsUploadHasErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var (venueUpload, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedWithErrors);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            // Act
+            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
+        }
+
+        [Fact]
+        public async Task PublishVenueUpload_StatusIsProcessedWithErrorsAfterRevalidation_ReturnsUploadHasErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var oldVenue1 = await TestData.CreateVenue(
+                provider.ProviderId,
+                createdBy: user,
+                venueName: "Old venue name",
+                providerVenueRef: "VENUE1");
+
+            var (venueUpload, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.VenueName = "Venue";
+                        record.ProviderVenueRef = "VENUE1";
+                        record.VenueId = oldVenue1.VenueId;
+                    });
+                });
+
+            // Ensure we have a record in the Postcodes table for extracting lat/lng
+            var postcodePosition = (Latitude: 1d, Longitude: 2d);
+            foreach (var postcode in venueUploadRows.Select(r => r.Postcode).Distinct())
+            {
+                await TestData.CreatePostcodeInfo(postcode, postcodePosition.Latitude, postcodePosition.Longitude);
+            }
+
+            // Add a new venue for the provider and link a T-Level to it (so the venue cannot be removed by the publish).
+            // Induce an error by having this venue's name clash with the name of a row in the upload.
+
+            Clock.UtcNow += TimeSpan.FromDays(1);
+
+            var oldVenue2 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Venue", providerVenueRef: "VENUE2");
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            await TestData.CreateTLevel(
+                provider.ProviderId,
+                tLevelDefinitions.First().TLevelDefinitionId,
+                new[] { oldVenue2.VenueId },
+                createdBy: user);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            
+            // Act
+            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
+        }
+
+        [Fact]
+        public async Task PublishVenueUpload_RevalidationAddsSupplementaryRows_PublishesSuccessfully()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var (venueUpload, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.VenueName = "Venue1";
+                        record.ProviderVenueRef = "VENUE1";
+                    });
+                });
+
+            // Ensure we have a record in the Postcodes table for extracting lat/lng
+            var postcodePosition = (Latitude: 1d, Longitude: 2d);
+            foreach (var postcode in venueUploadRows.Select(r => r.Postcode).Distinct())
+            {
+                await TestData.CreatePostcodeInfo(postcode, postcodePosition.Latitude, postcodePosition.Longitude);
+            }
+
+            // Add a new venue for the provider and link a T-Level to it (so the venue cannot be removed by the publish).
+            // Revalidation should kick in and add a supplementary row (without any validation errors).
+
+            Clock.UtcNow += TimeSpan.FromDays(1);
+
+            var oldVenue2 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Venue2", providerVenueRef: "VENUE2");
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+
+            await TestData.CreateTLevel(
+                provider.ProviderId,
+                tLevelDefinitions.First().TLevelDefinitionId,
+                new[] { oldVenue2.VenueId },
+                createdBy: user);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            // Act
+            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.Success);
+            result.PublishedCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishVenueUpload_CanBePublished_UpsertsRowsArchivesUnmatchedVenuesAndSetsStatusToPublished()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var oldVenue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Venue 1", providerVenueRef: "VENUE1");
+            var oldVenue2 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Venue 2");
+
+            var (venueUpload, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder =>
+                {
+                    // Add two rows; one matching `oldVenue` and one that doesn't match an existing venue
+
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.VenueName = "Venue 1";
+                        record.ProviderVenueRef = "VENUE1";
+                        record.VenueId = oldVenue1.VenueId;
+                    });
+
+                    rowBuilder.AddRow(record => record.VenueName = "New venue 1");
+                });
+
+            // Ensure we have a record in the Postcodes table for extracting lat/lng
+            var postcodePosition = (Latitude: 1d, Longitude: 2d);
+            foreach (var postcode in venueUploadRows.Select(r => r.Postcode).Distinct())
+            {
+                await TestData.CreatePostcodeInfo(postcode, postcodePosition.Latitude, postcodePosition.Longitude);
+            }
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            // Act
+            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.Success);
+            result.PublishedCount.Should().Be(2);
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUpload.VenueUploadId });
+                venueUpload.UploadStatus.Should().Be(UploadStatus.Published);
+                venueUpload.PublishedOn.Should().Be(Clock.UtcNow);
+
+                var providerVenues = await dispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = provider.ProviderId });
+
+                providerVenues.Should().BeEquivalentTo(new[]
+                {
+                    new Venue()
+                    {
+                        VenueId = oldVenue1.VenueId,
+                        VenueName = venueUploadRows[0].VenueName,
+                        ProviderId = provider.ProviderId,
+                        ProviderVenueRef = venueUploadRows[0].ProviderVenueRef,
+                        AddressLine1 = venueUploadRows[0].AddressLine1,
+                        AddressLine2 = venueUploadRows[0].AddressLine2,
+                        Town = venueUploadRows[0].Town,
+                        County = venueUploadRows[0].County,
+                        Postcode = venueUploadRows[0].Postcode,
+                        Latitude = postcodePosition.Latitude,
+                        Longitude = postcodePosition.Longitude,
+                        Email = venueUploadRows[0].Email,
+                        Telephone = venueUploadRows[0].Telephone,
+                        Website = venueUploadRows[0].Website
+                    },
+                    new Venue()
+                    {
+                        VenueId = venueUploadRows[1].VenueId,
+                        VenueName = venueUploadRows[1].VenueName,
+                        ProviderId = provider.ProviderId,
+                        ProviderVenueRef = venueUploadRows[1].ProviderVenueRef,
+                        AddressLine1 = venueUploadRows[1].AddressLine1,
+                        AddressLine2 = venueUploadRows[1].AddressLine2,
+                        Town = venueUploadRows[1].Town,
+                        County = venueUploadRows[1].County,
+                        Postcode = venueUploadRows[1].Postcode,
+                        Latitude = postcodePosition.Latitude,
+                        Longitude = postcodePosition.Longitude,
+                        Email = venueUploadRows[1].Email,
+                        Telephone = venueUploadRows[1].Telephone,
+                        Website = venueUploadRows[1].Website
+                    },
+                });
+            });
+        }
+
+        [Fact]
         public async Task ValidateVenueUploadRows_InsertsRowsIntoDb()
         {
             // Arrange
@@ -326,7 +549,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     LastUpdated = Clock.UtcNow,
                     LastValidated = Clock.UtcNow,
                     IsSupplementary = false,
-                    VenueId = null,
                     AddressLine1 = row.AddressLine1,
                     AddressLine2 = row.AddressLine2,
                     County = row.County,
@@ -337,7 +559,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     Town = row.Town,
                     VenueName = row.VenueName,
                     Website = row.Website
-                }, config => config.Excluding(r => r.IsValid).Excluding(r => r.Errors));
+                }, config => config.Excluding(r => r.IsValid).Excluding(r => r.Errors).Excluding(r => r.VenueId));
             });
         }
 
@@ -565,7 +787,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         private async Task UpdateStatusAndReleaseStatusCheck(
             TriggerableVenueUploadStatusUpdatesFileUploadProcessor uploadProcessor,
             Guid venueUploadId,
-            UploadStatus uploadStatus)
+            UploadStatus uploadStatus,
+            UserInfo user)
         {
             Clock.UtcNow += TimeSpan.FromMinutes(1);
             var updatedOn = Clock.UtcNow;
@@ -606,9 +829,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             }
             else if (uploadStatus == UploadStatus.Published)
             {
-                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new SetVenueUploadPublished()
+                await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new PublishVenueUpload()
                 {
                     VenueUploadId = venueUploadId,
+                    PublishedBy = user,
                     PublishedOn = updatedOn
                 }));
             }

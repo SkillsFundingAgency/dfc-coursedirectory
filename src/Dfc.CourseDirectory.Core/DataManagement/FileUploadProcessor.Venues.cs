@@ -88,6 +88,53 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<PublishResult> PublishVenueUpload(Guid venueUploadId, UserInfo publishedBy)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload()
+                {
+                    VenueUploadId = venueUploadId
+                });
+
+                if (venueUpload == null)
+                {
+                    throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
+                }
+
+                if (venueUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    venueUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidOperationException("Venue upload status is not valid.");
+                }
+
+                if (venueUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var (revalidated, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUploadId);
+
+                if (revalidated && rows.Any(r => !r.IsValid))
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var publishedOn = _clock.UtcNow;
+
+                var publishResult = await dispatcher.ExecuteQuery(new PublishVenueUpload()
+                {
+                    VenueUploadId = venueUploadId,
+                    PublishedBy = publishedBy,
+                    PublishedOn = publishedOn
+                });
+
+                await dispatcher.Commit();
+
+                return PublishResult.Success(publishResult.AsT1.PublishedCount);
+            }
+        }
+
         public async Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
@@ -242,7 +289,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // we want a row number that aligns with the row number as it appears when viewing the CSV in Excel
                 var rowNumber = i + 2;
 
-                var venueId = rowVenueIdMapping[i];
+                var venueId = rowVenueIdMapping[i] ?? Guid.NewGuid();
                 var isSupplementaryRow = i >= originalRowCount;
 
                 row.ProviderVenueRef = row.ProviderVenueRef?.Trim();

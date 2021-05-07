@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public IEnumerable<string> Errors { get; set; }
         public bool IsSupplementary { get; set; }
         public bool? OutsideOfEngland { get; set; }
-        public Guid? VenueId { get; set; }
+        public Guid VenueId { get; set; }
         public string ProviderVenueRef { get; set; }
         public string VenueName { get; set; }
         public string AddressLine1 { get; set; }
