@@ -117,7 +117,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
                 VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processing,
-                //VenueUploadProcessed = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processed,
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount
             };
 
