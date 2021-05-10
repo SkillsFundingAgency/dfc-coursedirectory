@@ -1,0 +1,22 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Published.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Venue data published");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel heading-level="1">
+            <govuk-panel-title>
+                <span data-testid="PublishedCount">@Model.PublishedCount</span>
+                venues have been published
+            </govuk-panel-title>
+        </govuk-panel>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+        <ul class="govuk-list">
+            <li><a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">View and edit venues</a></li>
+            <li><a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to data upload</a></li>
+            <li><a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to the home screen</a></li>
+        </ul>
+    </div>
+</div>

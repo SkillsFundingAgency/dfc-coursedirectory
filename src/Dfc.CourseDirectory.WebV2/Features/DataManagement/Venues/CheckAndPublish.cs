@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using FluentValidation.Results;
+using FormFlow;
 using MediatR;
 using OneOf;
 
@@ -52,17 +53,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
             ICurrentUserProvider currentUserProvider,
-            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory)
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
+            JourneyInstanceProvider journeyInstanceProvider)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _currentUserProvider = currentUserProvider;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
+            _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -123,7 +127,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
                 venueUploadId = venueUpload.VenueUploadId;
             }
 
-            return await _fileUploadProcessor.PublishVenueUpload(venueUploadId, _currentUserProvider.GetCurrentUser());
+            var publishResult = await _fileUploadProcessor.PublishVenueUpload(venueUploadId, _currentUserProvider.GetCurrentUser());
+
+            if (publishResult.Status == PublishResultStatus.Success)
+            {
+                var journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new PublishJourneyModel());
+                journeyInstance.UpdateState(state => state.VenuesPublished = publishResult.PublishedCount);
+            }
+
+            return publishResult;
         }
 
         private async Task<ViewModel> CreateViewModel(Guid venueUploadId, ISqlQueryDispatcher dispatcher)
