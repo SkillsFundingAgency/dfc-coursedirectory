@@ -117,8 +117,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             RuleFor(x => x.File)
                 .NotNull()
                     .WithMessage("Select a CSV")
-                .Must(file => file == null || file.Length <= Constants.VenueFileMaxSizeBytes)
-                    .WithMessage($"The selected file must be smaller than {Constants.VenueFileMaxSizeLabel}");
+                .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
+                    .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
         }
     }
 }
