@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -200,7 +201,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var (venueUpload, _) = await TestData.CreateVenueUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                UploadStatus.ProcessedSuccessfully);
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder => rowBuilder.AddValidRows(3));
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/venues/check-publish?providerId={provider.ProviderId}")
             {
@@ -221,6 +223,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 dispatcher => dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUpload.VenueUploadId }));
             venueUpload.UploadStatus.Should().Be(UploadStatus.Published);
             venueUpload.PublishedOn.Should().Be(Clock.UtcNow);
+
+            var journeyInstance = GetJourneyInstance<PublishJourneyModel>(
+                "PublishVenueUpload",
+                keys => keys.With("providerId", provider.ProviderId));
+            journeyInstance.State.VenuesPublished.Should().Be(3);
         }
     }
 }

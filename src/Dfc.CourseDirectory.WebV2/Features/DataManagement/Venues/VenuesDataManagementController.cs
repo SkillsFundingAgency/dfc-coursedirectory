@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -16,11 +17,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
     {
         private readonly IMediator _mediator;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
-        public VenuesDataManagementController(IMediator mediator, IProviderContextProvider providerContextProvider)
+        public VenuesDataManagementController(
+            IMediator mediator,
+            IProviderContextProvider providerContextProvider,
+            JourneyInstanceProvider journeyInstanceProvider)
         {
             _mediator = mediator;
             _providerContextProvider = providerContextProvider;
+            _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         [HttpGet("")]
@@ -103,6 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpPost("check-publish")]
         [RequireProviderContext]
+        [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
         public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
@@ -114,7 +121,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("success")]
         [RequireProviderContext]
-        public IActionResult Published() => View();
+        [RequireJourneyInstance]
+        [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm));
 
         [HttpGet("template")]
         public IActionResult Template() =>
