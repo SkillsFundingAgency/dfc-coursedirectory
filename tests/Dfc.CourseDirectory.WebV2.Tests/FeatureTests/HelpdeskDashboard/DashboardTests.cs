@@ -59,10 +59,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var downloadProviderTypeReportLink = doc.GetElementByTestId("download-provider-type-report-link");
 
             downloadProviderTypeReportLink.Should().NotBeNull();
-            downloadProviderTypeReportLink.TextContent.Should().Be("Download provider type report");
+            downloadProviderTypeReportLink.TextContent.Should().Be("Provider type report");
             downloadProviderTypeReportLink.Attributes["href"].Value.Should().Be("/providers/reports/provider-type");
         }
-
 
         [Fact]
         public async Task Get_RendersDownloadProvidersMissingContactDetailsReportLink()
@@ -84,8 +83,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             downloadProviderTypeReportLink.Attributes["href"].Value.Should().Be("/providers/reports/providers-missing-primary-contact");
         }
 
-        
-
         [Fact]
         public async Task Get_RendersDownloadLiveTLevelsReportLink()
         {
@@ -102,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var downloadLiveTLevelsReportLink = doc.GetElementByTestId("download-live-tlevels-report-link");
 
             downloadLiveTLevelsReportLink.Should().NotBeNull();
-            downloadLiveTLevelsReportLink.TextContent.Should().Be("Download live T Levels report");
+            downloadLiveTLevelsReportLink.TextContent.Should().Be("Live T Levels report");
             downloadLiveTLevelsReportLink.Attributes["href"].Value.Should().Be("/t-levels/reports/live-t-levels");
         }
     }

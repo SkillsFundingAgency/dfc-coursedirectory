@@ -1,0 +1,100 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Data upload");
+}
+
+<h1 class="govuk-heading-xl">Data upload</h1>
+
+<p class="govuk-body-m">You can upload a CSV file to update your data in Publish to the course directory.</p>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+    @if (Model.ShowCourses)
+    {
+        <div class="govuk-grid-column-one-third" data-testid="CoursesCard">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-m">Courses</h2>
+                    <p class="govuk-body-s">You have <strong data-testid="PublishedCourseCount">@Model.PublishedCourseCount</strong> published courses</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Upload new course data
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Download your published course data (CSV)
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="CoursesDataManagement" asp-action="Template" class="govuk-link">
+                                Download course data template (CSV)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.ShowApprenticeships)
+    {
+        <div class="govuk-grid-column-one-third" data-testid="ApprenticeshipsCard">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-m">Apprenticeships</h2>
+                    <p class="govuk-body-s">You have <strong data-testid="PublishedCourseCount">@Model.PublishedApprenticeshipsCount</strong> published apprenticeships</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Upload new apprenticeship data
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="BlobStorage" asp-action="GetCurrentApprenticeshipsTemplateFile" class="govuk-link">
+                                Download your published apprenticeship data (CSV)
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">
+                                Download apprenticeship data template (CSV)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-column-one-third" data-testid="VenuesCard">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-m">Venues</h2>
+                <p class="govuk-body-s">You have <strong data-testid="PublishedVenueCount">@Model.PublishedVenueCount</strong> published venues</p>
+            </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                <ul class="govuk-list pttcd-list--small">
+                    <li>
+                        <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                            Upload new venue data
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="VenuesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                            Download your published venue data (CSV)
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="VenuesDataManagement" asp-action="Template" class="govuk-link">
+                            Download venue data template (CSV)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

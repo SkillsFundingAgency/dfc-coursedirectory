@@ -7,8 +7,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     public class GetProviderDashboardCounts : ISqlQuery<DashboardCounts>
     {
         public Guid ProviderId { get; set; }
-
-        public DateTimeOffset Date { get; set; }
+        public DateTime Date { get; set; }
     }
 
     public class DashboardCounts

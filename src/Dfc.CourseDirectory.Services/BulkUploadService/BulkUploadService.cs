@@ -4,8 +4,12 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -16,6 +20,9 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.WebV2;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using static Dfc.CourseDirectory.Services.Models.AlternativeName;
 using Course = Dfc.CourseDirectory.Services.Models.Courses.Course;
@@ -25,26 +32,35 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
     public class BulkUploadService : IBulkUploadService
     {
+        private const string ContainerName = "provider-files";
+
         private readonly CourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
         private readonly ISearchClient<Lars> _larsSearchClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IRegionCache _regionCache;
-
-        private List<Venue> cachedVenues;
+        private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
+        private readonly IProviderInfoCache _providerInfoCache;
+        private readonly BlobContainerClient _blobContainerClient;
 
         public BulkUploadService(
             IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
             ISearchClient<Lars> larsSearchClient,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IRegionCache regionCache)
+            IRegionCache regionCache,
+            IBackgroundWorkScheduler backgroundWorkScheduler,
+            BlobServiceClient blobServiceClient,
+            IProviderInfoCache providerInfoCache)
         {
             _courseServiceSettings = courseServiceSettings?.Value ?? throw new ArgumentNullException(nameof(courseServiceSettings));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _regionCache = regionCache;
+            _backgroundWorkScheduler = backgroundWorkScheduler;
+            _providerInfoCache = providerInfoCache;
+            _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
         }
 
         public int BulkUploadSecondsPerRecord
@@ -70,7 +86,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public async Task<List<string>> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
+        public async Task<List<string>> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool processInline)
         {
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
@@ -79,9 +95,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             string previousLearnAimRef = string.Empty;
 
             try {
-                cachedVenues = (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUKPRN }))
-                    .ToList();
-
                 string missingFieldsError = string.Empty;
                 int missingFieldsErrorCount = 0;
                 stream.Position = 0;
@@ -313,7 +326,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
-                if(uploadCourses)
+                if(processInline)
                 {
                     // Populate LARS data
                     bulkUploadcourses = PolulateLARSData(bulkUploadcourses, out errors);
@@ -326,15 +339,102 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     else
                     {
                         // Mapping BulkUploadCourse to Course
-                        var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
+                        var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, providerUKPRN, userId, out errors);
+
+                        // Push the courses to the CourseService
+                        foreach (var course in courses)
+                        {
+                            var courseResult = await _courseService.AddCourseAsync(course);
+
+                            if (courseResult.IsSuccess)
+                            {
+                                // Do nothing. Eventually we could have a count on successfully uploaded courses
+                            }
+                            else
+                            {
+                                errors.Add($"The course is NOT BulkUploaded, LARS_QAN = { course.LearnAimRef }. Error -  { courseResult.Error }");
+                            }
+                        }
+
                         return errors;
                     }
                 }
                 else
                 {
+                    await _backgroundWorkScheduler.Schedule(Worker, (bulkUploadcourses, providerUKPRN, userId));
+
+                    static async Task Worker(object state, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+                    {
+                        var bulkUploadService = (BulkUploadService)serviceProvider.GetRequiredService<IBulkUploadService>();
+                        var courseService = serviceProvider.GetRequiredService<ICourseService>();
+
+                        var (bulkUploadcourses, providerUKPRN, userId) = ((List<BulkUploadCourse>, int, string))state;
+
+                        List<string> errors;
+
+                        await bulkUploadService.SetBulkUploadStatus(providerUKPRN, bulkUploadcourses.Count);
+
+                        bulkUploadcourses = bulkUploadService.PolulateLARSData(bulkUploadcourses, out errors);
+                        if (null != errors && errors.Any())
+                        {
+                            await bulkUploadService.CreateErrorFileAsync(providerUKPRN, errors);
+                            await bulkUploadService.SetBulkUploadStatus(providerUKPRN, 0);
+                            return;   // Per the web app inline code - if we have invalid LARS we stop processing
+                        }
+
+                        var courses = bulkUploadService.MappingBulkUploadCourseToCourse(bulkUploadcourses, providerUKPRN, userId, out errors);
+                        if (null != errors && errors.Any())
+                        {
+                            await bulkUploadService.CreateErrorFileAsync(providerUKPRN, errors);
+                        }
+
+                        var result = await courseService.DeleteBulkUploadCourses(providerUKPRN);
+                        if (!result.IsSuccess)
+                        {
+                            errors.Add($"Failed to delete the existing bulk-uploaded courses.");
+                        }
+
+                        foreach (var course in courses)
+                        {
+                            await courseService.AddCourseAsync(course);
+                        }
+
+                        await bulkUploadService.SetBulkUploadStatus(providerUKPRN, 0);
+                    }
+
                     return errors;
                 }
             }
+        }
+
+        private Task CreateErrorFileAsync(int providerUkprn, IEnumerable<string> errors)
+        {
+            var fileName = $"{providerUkprn}/Courses Bulk Upload/Files/{DateTime.UtcNow:yyyyMMddHHmmss}.error";
+
+            using var stream = new MemoryStream();
+            using var streamWriter = new StreamWriter(stream);
+            foreach (var line in errors)
+            {
+                streamWriter.WriteLine(line);
+            }
+
+            stream.Seek(0L, SeekOrigin.Begin);
+
+            return _blobContainerClient.UploadBlobAsync(fileName, stream);
+        }
+
+        private async Task SetBulkUploadStatus(int providerUkprn, int rowCount = 0)
+        {
+            var providerId = (await _providerInfoCache.GetProviderIdForUkprn(providerUkprn)).Value;
+
+            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderBulkUploadStatus()
+            {
+                ProviderId = providerId,
+                InProgress = rowCount > 0,
+                StartedTimestamp = rowCount > 0 ? DateTime.Now : default,
+                TotalRowCount = rowCount,
+                PublishInProgress = false
+            });
         }
 
         public List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors)
@@ -443,13 +543,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return errorList;
         }
 
-        public List<Course> MappingBulkUploadCourseToCourse(List<BulkUploadCourse> bulkUploadCourses, string userId, out List<string> errors)
+        public List<Course> MappingBulkUploadCourseToCourse(
+            List<BulkUploadCourse> bulkUploadCourses,
+            int providerUkprn,
+            string userId,
+            out List<string> errors)
         {
             errors = new List<string>();
             var validationMessages = new List<string>();
 
             var courses = new List<Course>();
             var listsCourseRuns = new List<BulkUploadCourseRun>();
+
+            var cachedVenues = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = providerUkprn })
+                .GetAwaiter().GetResult().ToList();
 
             var allRegions = _regionCache.GetAllRegions().GetAwaiter().GetResult();
 
@@ -646,21 +753,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             //    File.WriteAllText(string.Format(@"{0}\{1}", jsonBulkUploadCoursesFilesPath, jsonFileName), courseJson);
             //    courseNumber++;
             //}
-
-            // Push the courses to the CourseService
-            foreach (var course in courses)
-            {
-                var courseResult = Task.Run(async () => await _courseService.AddCourseAsync(course)).Result;
-
-                if (courseResult.IsSuccess)
-                {
-                    // Do nothing. Eventually we could have a count on successfully uploaded courses
-                }
-                else
-                {
-                    errors.Add($"The course is NOT BulkUploaded, LARS_QAN = { course.LearnAimRef }. Error -  { courseResult.Error }");
-                }
-            }
 
             return courses;
         }
