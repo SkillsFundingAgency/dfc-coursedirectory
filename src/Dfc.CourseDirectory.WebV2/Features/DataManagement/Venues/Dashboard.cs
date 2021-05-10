@@ -20,6 +20,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int PublishedApprenticeshipsCount { get; set; }
         public int PublishedCourseCount { get; set; }
         public int PublishedVenueCount { get; set; }
+        public bool VenueUploadInProgress { get; set; }
+        public bool VenueUploadProcessed { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -49,6 +51,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
             });
 
             var providerType = providerContext.ProviderInfo.ProviderType;
+
+            var venueUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestVenueUploadForProviderWithStatus()
+                {
+                    ProviderId = providerContext.ProviderInfo.ProviderId,
+                    Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
+                });
 
             return new ViewModel()
             {

@@ -79,9 +79,16 @@
             <div class="pttcd-provider-dashboard__card__actions">
                 <ul class="govuk-list pttcd-list--small">
                     <li>
-                        <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                            Upload new venue data
-                        </a>
+                        @if (Model.VenueUploadInProgress)
+                        {
+                            <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Upload in progress
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="VenuesDataManagement" asp-action="Index"  asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
+                        }
                     </li>
                     <li>
                         <a asp-controller="VenuesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
