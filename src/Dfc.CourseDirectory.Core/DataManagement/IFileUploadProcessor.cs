@@ -12,5 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);
         Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task WaitForVenueProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken);
+
+        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
     }
 }
