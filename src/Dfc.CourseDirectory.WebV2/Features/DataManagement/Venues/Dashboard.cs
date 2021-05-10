@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int PublishedCourseCount { get; set; }
         public int PublishedVenueCount { get; set; }
         public bool VenueUploadInProgress { get; set; }
-        public int UnpublishedVenueCount { get; set; }
+        public bool VenueUploadProcessed { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 new GetLatestVenueUploadForProviderWithStatus()
                 {
                     ProviderId = providerContext.ProviderInfo.ProviderId,
-                    Statuses = new[] { UploadStatus.Created, UploadStatus.Processing }
+                    Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
                 });
 
             return new ViewModel()
@@ -65,9 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 PublishedCourseCount = counts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live, 0),
                 PublishedVenueCount = counts.VenueCount,
                 ShowApprenticeships = providerType.HasFlag(ProviderType.Apprenticeships),
-                ShowCourses = providerType.HasFlag(ProviderType.FE),
-                VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processing,
-                UnpublishedVenueCount = counts.UnpublishedVenueCount
+                ShowCourses = providerType.HasFlag(ProviderType.FE)
             };
         }
     }
