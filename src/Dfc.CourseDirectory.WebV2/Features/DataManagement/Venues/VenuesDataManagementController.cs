@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
@@ -8,6 +9,7 @@ using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FormFlow;
+using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -90,10 +92,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("errors")]
         [RequireProviderContext]
-        public IActionResult Errors()
-        {
-            return View();
-        }
+        public async Task<IActionResult> Errors() =>
+            await _mediator.SendAndMapResponse(
+                new Errors.Query(),
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
+
+        [HttpPost("errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Errors(Errors.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => (command.WhatNext switch
+                    {
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(Resolve)),
+                        ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
+                        _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("resolve")]
+        [RequireProviderContext]
+        public IActionResult Resolve() => Ok();
+
+        [HttpGet("delete")]
+        [RequireProviderContext]
+        public IActionResult DeleteUpload() => Ok();
 
         [HttpGet("check-publish")]
         [RequireProviderContext]
