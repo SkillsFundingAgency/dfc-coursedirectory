@@ -108,14 +108,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 Course = new CourseViewModel
                 {
                     AdvancedLearnerLoan = course.AdvancedLearnerLoan,
-                    AwardOrgCode = course.AwardOrgCode,
+                    AwardOrgCode = qualification.Record.AwardOrgCode,
                     CourseDescription = course.CourseDescription,
                     CourseId = course.Id,
                     EntryRequirements = course.EntryRequirements,
                     HowYoullBeAssessed = course.HowYoullBeAssessed,
                     HowYoullLearn = course.HowYoullLearn,
                     LearnAimRef = course.LearnAimRef,
-                    QualificationLevel = course.NotionalNVQLevelv2,
+                    QualificationLevel = qualification.Record.NotionalNVQLevelv2,
                     WhatYoullLearn = course.WhatYoullLearn,
                     WhatYoullNeed = course.WhatYoullNeed,
                     WhereNext = course.WhereNext
