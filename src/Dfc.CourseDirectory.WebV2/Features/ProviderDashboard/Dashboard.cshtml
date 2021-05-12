@@ -259,9 +259,20 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
 <div class="govuk-grid-row govuk-!-margin-bottom-4 pttcd-provider-dashboard__row">
     <div class="govuk-grid-column-one-third">
         <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
-            <h2 class="govuk-heading-s">Venues</h2>
-            <p class="pttcd-provider-dashboard__card__number" data-testid="venue-count">@Model.VenueCount</p>
+            
+                <h2 class="govuk-heading-s">Published venues</h2>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="venue-count">@Model.VenueCount</p>
+                @if (Model.UnpublishedVenueCount > 0)
+                {
+                    <h2 class="govuk-heading-s govuk-!-padding-top-2">Unpublished venues</h2>
+                    <p class="pttcd-provider-dashboard__card__number">@Model.UnpublishedVenueCount</p>
+                }
+
+            
+
+
         </div>
+
     </div>
 
     <div class="govuk-grid-column-one-third">
@@ -296,15 +307,22 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
+                        @if (Model.UnpublishedVenueCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">Your unpublished venues</a>
+                            </li>
+                        }
                         <li>
                             @if (Model.VenueUploadInProgress)
                             {
-                            <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                Upload in progress</a>
+                                <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Upload in progress
+                                </a>
                             }
                             else
                             {
-                            <a asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
+                                <a asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
                             }
                         </li>
                         <li>
