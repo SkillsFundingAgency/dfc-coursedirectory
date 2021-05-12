@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
@@ -66,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Mvc
                 }.ToString());
 
             await using (var stream = context.HttpContext.Response.Body)
-            await using (var writer = new StreamWriter(stream))
+            await using (var writer = new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true)))
             await using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
                 csvWriter.WriteHeader<T>();
