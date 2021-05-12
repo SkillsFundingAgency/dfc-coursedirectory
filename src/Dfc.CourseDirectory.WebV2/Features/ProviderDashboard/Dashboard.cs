@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
 
         public bool VenueUploadInProgress { get; set; }
         public bool VenueUploadProcessed { get; set; }
+        public int UnpublishedVenueCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -115,8 +116,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 BulkUploadFileCount = bulkUploadFiles.Count(),
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
-                VenueUploadInProgress = venueUploadStatus.UploadStatus == UploadStatus.InProgress,
-                VenueUploadProcessed = venueUploadStatus.UploadStatus == UploadStatus.Processed
+                VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.InProgress,
+                VenueUploadProcessed = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processed,
+                UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount
             };
 
             return vm;

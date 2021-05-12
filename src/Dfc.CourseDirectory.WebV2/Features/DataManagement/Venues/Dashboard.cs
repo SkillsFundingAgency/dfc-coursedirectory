@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int PublishedVenueCount { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public bool VenueUploadProcessed { get; set; }
+        public int UnpublishedVenueCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -65,7 +66,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 PublishedCourseCount = counts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live, 0),
                 PublishedVenueCount = counts.VenueCount,
                 ShowApprenticeships = providerType.HasFlag(ProviderType.Apprenticeships),
-                ShowCourses = providerType.HasFlag(ProviderType.FE)
+                ShowCourses = providerType.HasFlag(ProviderType.FE),
+                 UnpublishedVenueCount = counts.UnpublishedVenueCount
             };
         }
     }
