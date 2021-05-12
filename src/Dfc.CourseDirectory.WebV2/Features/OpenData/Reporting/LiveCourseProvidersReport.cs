@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvidersReport
@@ -13,7 +14,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
     public class Query : IRequest<IAsyncEnumerable<Csv>>
     {
         public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
     }
 
     public class Csv
@@ -63,6 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
 
             public Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
             {
+                
                 return Task.FromResult(Process(_sqlQueryDispatcher.ExecuteQuery(new GetLiveCourseProvidersReport
                 {
                     FromDate = request.FromDate
