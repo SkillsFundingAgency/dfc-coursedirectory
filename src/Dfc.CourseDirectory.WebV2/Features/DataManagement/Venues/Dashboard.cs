@@ -21,7 +21,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int PublishedCourseCount { get; set; }
         public int PublishedVenueCount { get; set; }
         public bool VenueUploadInProgress { get; set; }
-        public bool VenueUploadProcessed { get; set; }
         public int UnpublishedVenueCount { get; set; }
     }
 
