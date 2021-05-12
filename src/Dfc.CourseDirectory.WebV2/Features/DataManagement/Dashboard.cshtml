@@ -75,9 +75,16 @@
             <div class="pttcd-provider-dashboard__card__content">
                 <h2 class="govuk-heading-m">Venues</h2>
                 <p class="govuk-body-s">You have <strong data-testid="PublishedVenueCount">@Model.PublishedVenueCount</strong> published venues</p>
+                <p class="govuk-body-s">You have <strong data-testid="UnpublishedVenueCount">@Model.UnpublishedVenueCount</strong> unpublished venues</p>            
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
                 <ul class="govuk-list pttcd-list--small">
+                    @if (Model.UnpublishedVenueCount > 0)
+                    {
+                        <li>
+                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">Your unpublished venues</a>
+                        </li>
+                    }
                     <li>
                         @if (Model.VenueUploadInProgress)
                         {
@@ -87,7 +94,7 @@
                         }
                         else
                         {
-                            <a asp-controller="VenuesDataManagement" asp-action="Index"  asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
+                            <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
                         }
                     </li>
                     <li>
