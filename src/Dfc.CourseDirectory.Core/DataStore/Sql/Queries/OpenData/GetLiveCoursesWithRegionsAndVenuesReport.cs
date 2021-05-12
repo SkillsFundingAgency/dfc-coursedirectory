@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
+namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
 {
     public class GetLiveCoursesWithRegionsAndVenuesReport : ISqlQuery<IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem>>
     {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using Dapper;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Search.Models;
 
-namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
+namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
     public class GetLiveCourseProvidersReportHandler
         : ISqlAsyncEnumerableQueryHandler<GetLiveCourseProvidersReport, LiveCourseProvidersReportItem>
@@ -34,7 +34,8 @@ WHERE       p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
                 AND         c.Live = 1
-                AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{string.Format("dd-MM-yyyy", query.FromDate)}'));
+                AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
+            )
 ORDER BY    p.Ukprn ASC";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))

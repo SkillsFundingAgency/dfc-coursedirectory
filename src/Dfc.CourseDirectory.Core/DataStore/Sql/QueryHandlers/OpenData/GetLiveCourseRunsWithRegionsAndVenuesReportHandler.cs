@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using Dapper;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Search.Models;
 
-namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
+namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
     public class GetLiveCourseRunsWithRegionsAndVenuesReportHandler
-        : ISqlAsyncEnumerableQueryHandler<GetLiveCourseProvidersReport, LiveCourseProvidersReportItem>
+        : ISqlAsyncEnumerableQueryHandler<GetLiveCoursesWithRegionsAndVenuesReport, LiveCoursesWithRegionsAndVenuesReportItem>
     {
-        public async IAsyncEnumerable<LiveCourseProvidersReportItem> Execute(SqlTransaction transaction, GetLiveCourseProvidersReport query)
+        public async IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> Execute(SqlTransaction transaction, GetLiveCoursesWithRegionsAndVenuesReport query)
         {
             var sql = @$"
 WITH 
@@ -34,12 +34,12 @@ SELECT
                 cr.FlexibleStartDate,
                 cr.StartDate,        
                 c.EntryRequirements,
-                c.HowYoullBeAssessed AS HowYouWillBeAssessed,
+                c.HowYoullBeAssessed,
                 cr.DeliveryMode,
                 cr.AttendancePattern,
                 cr.StudyMode,
                 cr.DurationUnit,
-                cr.DurationValue,    
+                cr.DurationValue,                
                 ISNULL(cr.[National], 0) AS [National],
                 r.regionList AS Regions,
                 v.VenueName,
@@ -48,9 +48,9 @@ SELECT
                 v.County AS VenueCounty,
                 v.Postcode AS VenuePostcode,
                 v.Town AS VenueTown,
-                v.Position.Lat AS VenueLatitude, 
-                v.Position.Lon AS VenueLongitude,
-                v.[Telephone] AS VenueTelephone,
+                v.Position.Lat AS VenueLatitude,
+                v.Position.Long AS VenueLongitude,
+                v.Telephone AS VenueTelephone,
                 v.Email AS VenueEmail,
                 v.Website AS VenueWebsite,
                 cr.UpdatedOn
@@ -59,16 +59,16 @@ INNER JOIN      [Pttcd].[Courses] c ON c.CourseId = cr.CourseId
 LEFT OUTER JOIN [Pttcd].[Venues] v with (nolock) ON cr.VenueId = v.VenueId
 LEFT OUTER JOIN cte_course_run_regions r with (nolock) ON cr.CourseRunId = r.CourseRunId
 WHERE           cr.CourseRunId IN (
-                SELECT      DISTINCT c.CourseRunId FROM [Pttcd].[FindACourseIndex] c
-                WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
-                AND         c.Live = 1
-                AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{string.Format("dd-MM-yyyy", query.FromDate)}'));
-)
-ORDER BY        cr.StartDate, c.ProviderUkprn, c.LearnAimRef";
+                    SELECT      DISTINCT c.CourseRunId FROM [Pttcd].[FindACourseIndex] c
+                    WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
+                    AND         c.Live = 1
+                    AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
+                )
+ORDER BY        c.ProviderUkprn, c.LearnAimRef, cr.StartDate";
 
-            using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
+            using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
             {
-                var parser = reader.GetRowParser<LiveCourseProvidersReportItem>();
+                var parser = reader.GetRowParser<LiveCoursesWithRegionsAndVenuesReportItem>();
                 while (await reader.ReadAsync())
                 {
                     yield return parser(reader);

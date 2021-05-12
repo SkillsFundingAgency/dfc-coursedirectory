@@ -24,6 +24,11 @@
                         {
                             <li><a asp-controller="TLevelsReports" asp-action="LiveTLevelsReport" class="govuk-link" data-testid="download-live-tlevels-report-link">Download live T Levels report</a></li>
                         }
+                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.OpenData))
+                        {
+                            <li><a asp-controller="OpenDataReports" asp-action="LiveCourseProviders" class="govuk-link" data-testid="download-live-course-providers-report-link">Download live course providers report</a></li>
+                            <li><a asp-controller="OpenDataReports" asp-action="LiveCoursesWithRegionsAndVenues" class="govuk-link" data-testid="download-live-courses-regions-venues-report-link">Download live courses report</a></li>
+                        }
                     </ul>
                 </div>
             </div>

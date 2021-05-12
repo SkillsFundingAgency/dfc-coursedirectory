@@ -1,18 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvidersReport;
-using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
-using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
 {
-    [RequireFeatureFlag(FeatureFlags.OpenData)]
-    [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("opendata/reports")]
     public class OpenDataReportsController : Controller
     {
@@ -26,14 +19,43 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
         }
 
         [HttpGet("live-course-providers-report")]
-        public async Task<IActionResult> LiveCourseProviders() =>
-            await _mediator.SendAndMapResponse(new LiveCourseProvidersReport.Query { FromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1)  * -1), }, // TODO: allow any cut-off date.
-                records => new CsvResult<LiveCourseProvidersReport.Csv>($"{nameof(LiveCourseProvidersReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+        public async Task<IActionResult> LiveCourseProviders()
+        {
+            var fromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1);
+
+            return await _mediator.SendAndMapResponse(
+                new LiveCourseProvidersReport.Query
+                {
+                    FromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1),
+                }, // TODO: allow any cut-off date.
+                records => new CsvResult<LiveCourseProvidersReport.Csv>(
+                    $"{nameof(LiveCourseProvidersReport)}-{fromDate.ToFileTimeUtc()}.csv", records));
+        }
+
 
         [HttpGet("live-courses-with-regions-and-venues-report")]
-        public async Task<IActionResult> LiveCoursesWithRegionsAndVenues() =>
-            await _mediator.SendAndMapResponse(new LiveCoursesWithRegionsAndVenuesReport.Query { FromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1), }, // TODO: allow any cut-off date.
-                records => new CsvResult<LiveCoursesWithRegionsAndVenuesReport.Csv>($"{nameof(LiveCoursesWithRegionsAndVenuesReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
-    }
+        public async Task<IActionResult> LiveCoursesWithRegionsAndVenues()
+        {
+            var fromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1);
 
+            return await _mediator.SendAndMapResponse(
+                new LiveCoursesWithRegionsAndVenuesReport.Query
+                {
+                    FromDate = fromDate,
+                }, // TODO: allow any cut-off date.
+                records => new CsvResult<LiveCoursesWithRegionsAndVenuesReport.Csv>(
+                    $"{nameof(LiveCoursesWithRegionsAndVenuesReport)}-{fromDate.ToFileTimeUtc()}.csv", records));
+        }
+
+        [HttpGet("live-regions-report")]
+        public async Task<IActionResult> LiveRegions()
+        {
+            var fromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1);
+
+            return await _mediator.SendAndMapResponse(
+                new LiveRegionsReport.Query(),
+                records => new CsvResult<LiveRegionsReport.Csv>(
+                    $"{nameof(LiveRegionsReport)}-{fromDate.ToFileTimeUtc()}.csv", records));
+        }
+    }
 }
