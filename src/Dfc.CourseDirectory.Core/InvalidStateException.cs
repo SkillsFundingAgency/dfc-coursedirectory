@@ -27,6 +27,8 @@ namespace Dfc.CourseDirectory.Core
         InvalidProviderType,
         InvalidApprenticeshipQAStatus,
         InvalidApprenticeshipQASubmission,
-        NoValidApprenticeshipQASubmission
+        NoValidApprenticeshipQASubmission,
+        InvalidUploadStatus,
+        NoUnpublishedVenueUpload
     }
 }

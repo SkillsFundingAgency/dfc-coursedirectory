@@ -84,10 +84,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
                 return new UploadFailedResult(request, result);
             }
 
+            var providerId = _providerContextProvider.GetProviderId();
+
             using var stream = request.File.OpenReadStream();
 
             var saveFileResult = await _fileUploadProcessor.SaveVenueFile(
-                _providerContextProvider.GetProviderId(),
+                providerId,
                 stream,
                 _currentUserProvider.GetCurrentUser());
 
@@ -130,7 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
             try
             {
                 using var cts = new CancellationTokenSource(_optionsAccessor.Value.ProcessedImmediatelyThreshold);
-                var uploadStatus = await _fileUploadProcessor.WaitForVenueProcessingToComplete(saveFileResult.VenueUploadId, cts.Token);
+                var uploadStatus = await _fileUploadProcessor.WaitForVenueProcessingToCompleteForProvider(providerId, cts.Token);
 
                 return uploadStatus == UploadStatus.ProcessedWithErrors ?
                     UploadSucceededResult.ProcessingCompletedWithErrors :

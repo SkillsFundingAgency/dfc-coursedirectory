@@ -138,7 +138,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         [InlineData(null)]
         [InlineData(UploadStatus.Created)]
         [InlineData(UploadStatus.Processing)]
-        [InlineData(UploadStatus.ProcessedWithErrors)]
         [InlineData(UploadStatus.Published)]
         [InlineData(UploadStatus.Abandoned)]
         public async Task Post_ProviderHasNoVenueUploadAtProcessedStatus_ReturnsError(UploadStatus? uploadStatus)

@@ -10,13 +10,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public interface IFileUploadProcessor
     {
-        Task<IReadOnlyCollection<VenueUploadRow>> GetVenueUploadRows(Guid venueUploadId);
-        IObservable<UploadStatus> GetVenueUploadStatusUpdates(Guid venueUploadId);
+        Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId);
+        IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);
-        Task<PublishResult> PublishVenueUpload(Guid venueUploadId, UserInfo publishedBy);
+        Task<PublishResult> PublishVenueUploadForProvider(Guid providerId, UserInfo publishedBy);
         Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
-        Task<UploadStatus> WaitForVenueProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken);
+        Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
 
-        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task<SaveFileResult> SaveCourseFileForProvider(Guid providerId, Stream stream, UserInfo uploadedBy);
     }
 }

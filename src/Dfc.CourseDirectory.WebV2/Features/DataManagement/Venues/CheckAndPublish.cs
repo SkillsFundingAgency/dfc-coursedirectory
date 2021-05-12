@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -53,82 +49,49 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
             ICurrentUserProvider currentUserProvider,
-            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             JourneyInstanceProvider journeyInstanceProvider)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _currentUserProvider = currentUserProvider;
-            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(_providerContextProvider.GetProviderId());
+
+            if (uploadStatus == UploadStatus.ProcessedWithErrors)
             {
-                var providerId = _providerContextProvider.GetProviderId();
-
-                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
-                {
-                    ProviderId = providerId,
-                    Statuses = new[] { UploadStatus.ProcessedSuccessfully, UploadStatus.ProcessedWithErrors }
-                });
-
-                if (venueUpload == null)
-                {
-                    throw new InvalidStateException();
-                }
-
-                if (venueUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
-                {
-                    return new UploadHasErrors();
-                }
-
-                return await CreateViewModel(venueUpload.VenueUploadId, dispatcher);
+                return new UploadHasErrors();
             }
+
+            return CreateViewModel(uploadRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, PublishResult>> Handle(Command request, CancellationToken cancellationToken)
         {
-            Guid venueUploadId;
+            var providerId = _providerContextProvider.GetProviderId();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            if (!request.Confirm)
             {
-                var providerId = _providerContextProvider.GetProviderId();
+                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(providerId);
 
-                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
+                var vm = CreateViewModel(uploadRows);
+                var validationResult = new ValidationResult(new[]
                 {
-                    ProviderId = providerId,
-                    Statuses = new[] { UploadStatus.ProcessedSuccessfully }
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to publish these venues")
                 });
-
-                if (venueUpload == null)
-                {
-                    throw new InvalidStateException();
-                }
-
-                if (!request.Confirm)
-                {
-                    var vm = await CreateViewModel(venueUpload.VenueUploadId, dispatcher);
-                    var validationResult = new ValidationResult(new[]
-                    {
-                        new ValidationFailure(nameof(request.Confirm), "Confirm you want to publish these venues")
-                    });
-                    return new ModelWithErrors<ViewModel>(vm, validationResult);
-                }
-
-                venueUploadId = venueUpload.VenueUploadId;
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var publishResult = await _fileUploadProcessor.PublishVenueUpload(venueUploadId, _currentUserProvider.GetCurrentUser());
+            var publishResult = await _fileUploadProcessor.PublishVenueUploadForProvider(providerId, _currentUserProvider.GetCurrentUser());
 
             if (publishResult.Status == PublishResultStatus.Success)
             {
@@ -139,13 +102,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
             return publishResult;
         }
 
-        private async Task<ViewModel> CreateViewModel(Guid venueUploadId, ISqlQueryDispatcher dispatcher)
+        private ViewModel CreateViewModel(IReadOnlyCollection<VenueUploadRow> rows)
         {
-            var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows()
-            {
-                VenueUploadId = venueUploadId
-            });
-
             var uploadedRows = rows.Where(r => !r.IsSupplementary).Select(MapRow).ToArray();
             var supplementaryRows = rows.Where(r => r.IsSupplementary).Select(MapRow).ToArray();
 
@@ -164,12 +122,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
                 VenueName = row.VenueName,
                 AddressParts = new[]
                 {
-                        row.AddressLine1,
-                        row.AddressLine2,
-                        row.Town,
-                        row.County,
-                        row.Postcode
-                    }
+                    row.AddressLine1,
+                    row.AddressLine2,
+                    row.Town,
+                    row.County,
+                    row.Postcode
+                }
                 .Where(part => !string.IsNullOrWhiteSpace(part))
                 .ToArray()
             };

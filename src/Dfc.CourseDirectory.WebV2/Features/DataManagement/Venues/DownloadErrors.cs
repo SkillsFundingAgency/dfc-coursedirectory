@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
@@ -26,18 +24,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DownloadError
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
-            ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
-            _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
         }
 
@@ -45,18 +40,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DownloadError
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
-            {
-                ProviderId = providerContext.ProviderInfo.ProviderId,
-                Statuses = new[] { UploadStatus.ProcessedWithErrors }
-            });
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(providerContext.ProviderInfo.ProviderId);
 
-            if (venueUpload == null)
+            if (uploadStatus != UploadStatus.ProcessedWithErrors)
             {
-                throw new InvalidStateException();
+                throw new InvalidUploadStatusException(uploadStatus, UploadStatus.ProcessedWithErrors);
             }
 
-            var rows = (await _fileUploadProcessor.GetVenueUploadRows(venueUpload.VenueUploadId))
+            var rows = uploadRows
                 .Select(CsvVenueRowWithErrors.FromModel)
                 .ToList();
 
