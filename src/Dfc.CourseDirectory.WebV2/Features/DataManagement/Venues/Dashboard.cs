@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 new GetLatestVenueUploadForProviderWithStatus()
                 {
                     ProviderId = providerContext.ProviderInfo.ProviderId,
-                    Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
+                    Statuses = new[] { UploadStatus.Created, UploadStatus.Processing }
                 });
 
             return new ViewModel()
@@ -67,7 +67,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 PublishedVenueCount = counts.VenueCount,
                 ShowApprenticeships = providerType.HasFlag(ProviderType.Apprenticeships),
                 ShowCourses = providerType.HasFlag(ProviderType.FE),
-                 UnpublishedVenueCount = counts.UnpublishedVenueCount
+                VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processing,
+                UnpublishedVenueCount = counts.UnpublishedVenueCount
             };
         }
     }
