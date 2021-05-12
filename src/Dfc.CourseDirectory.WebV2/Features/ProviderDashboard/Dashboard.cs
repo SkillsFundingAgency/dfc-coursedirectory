@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
             new GetLatestVenueUploadForProviderWithStatus()
             {
                 ProviderId = request.ProviderId,
-                Statuses = new[] { UploadStatus.Created, UploadStatus.InProgress, UploadStatus.Processed }
+                Statuses = new[] { UploadStatus.Created, UploadStatus.Processing }
             });
 
             var vm = new ViewModel()
@@ -116,8 +116,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 BulkUploadFileCount = bulkUploadFiles.Count(),
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
-                VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.InProgress,
-                VenueUploadProcessed = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processed,
+                VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processing,
+                //VenueUploadProcessed = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processed,
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount
             };
 
