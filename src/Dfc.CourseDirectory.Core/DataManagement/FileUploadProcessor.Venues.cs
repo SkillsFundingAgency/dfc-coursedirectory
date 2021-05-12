@@ -20,37 +20,59 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-        public async Task<IReadOnlyCollection<VenueUploadRow>> GetVenueUploadRows(Guid venueUploadId)
+        public async Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
 
                 if (venueUpload == null)
                 {
-                    throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedVenueUpload);
                 }
 
                 if (venueUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
                     venueUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
                 {
-                    throw new InvalidOperationException("Venue upload status is not valid.");
+                    throw new InvalidUploadStatusException(
+                        venueUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var (_, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUploadId);
+                var (_, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
 
                 // rows will only be non-null if revalidation was done above
-                rows ??= await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
+                rows ??= await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
-                return rows;
+                return (rows, venueUpload.UploadStatus);
             }
         }
 
-        public IObservable<UploadStatus> GetVenueUploadStatusUpdates(Guid venueUploadId) =>
-            GetPollingVenueUploadStatusUpdates(venueUploadId)
+        public IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId)
+        {
+            return GetVenueUploadId().ToObservable()
+                .SelectMany(venueUploadId => GetVenueUploadStatusUpdates(venueUploadId))
                 .DistinctUntilChanged()
                 .TakeUntil(status => status.IsTerminal());
+
+            async Task<Guid> GetVenueUploadId()
+            {
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider() { ProviderId = providerId });
+
+                if (venueUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedVenueUpload);
+                }
+
+                return venueUpload.VenueUploadId;
+            }
+        }
 
         public async Task ProcessVenueFile(Guid venueUploadId, Stream stream)
         {
@@ -88,24 +110,26 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<PublishResult> PublishVenueUpload(Guid venueUploadId, UserInfo publishedBy)
+        public async Task<PublishResult> PublishVenueUploadForProvider(Guid providerId, UserInfo publishedBy)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload()
+                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
                 {
-                    VenueUploadId = venueUploadId
+                    ProviderId = providerId
                 });
 
                 if (venueUpload == null)
                 {
-                    throw new ArgumentException("Specified venue upload does not exist.", nameof(venueUploadId));
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedVenueUpload);
                 }
 
-                if (venueUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
-                    venueUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                if (venueUpload.UploadStatus.IsUnprocessed())
                 {
-                    throw new InvalidOperationException("Venue upload status is not valid.");
+                    throw new InvalidUploadStatusException(
+                        venueUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
                 }
 
                 if (venueUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
@@ -113,7 +137,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return PublishResult.UploadHasErrors();
                 }
 
-                var (revalidated, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUploadId);
+                var (revalidated, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
 
                 if (revalidated && rows.Any(r => !r.IsValid))
                 {
@@ -124,7 +148,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var publishResult = await dispatcher.ExecuteQuery(new PublishVenueUpload()
                 {
-                    VenueUploadId = venueUploadId,
+                    VenueUploadId = venueUpload.VenueUploadId,
                     PublishedBy = publishedBy,
                     PublishedOn = publishedOn
                 });
@@ -165,30 +189,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 // Check there isn't an existing unprocessed upload for this provider
 
-                var existingUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
+                var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
                 {
-                    ProviderId = providerId,
-                    Statuses = new[] { UploadStatus.Created, UploadStatus.Processing }
+                    ProviderId = providerId
                 });
 
-                if (existingUpload != null)
+                if (existingUpload != null && existingUpload.UploadStatus.IsUnprocessed())
                 {
                     return SaveFileResult.ExistingFileInFlight();
                 }
 
                 // Abandon any existing un-published upload (there will be one at most)
-
-                var unpublishedUpload = await dispatcher.ExecuteQuery(new GetLatestVenueUploadForProviderWithStatus()
-                {
-                    ProviderId = providerId,
-                    Statuses = new[] { UploadStatus.ProcessedSuccessfully, UploadStatus.ProcessedWithErrors }
-                });
-
-                if (unpublishedUpload != null)
+                if (existingUpload != null)
                 {
                     await dispatcher.ExecuteQuery(new SetVenueUploadAbandoned()
                     {
-                        VenueUploadId = unpublishedUpload.VenueUploadId,
+                        VenueUploadId = existingUpload.VenueUploadId,
                         AbandonedOn = _clock.UtcNow
                     });
                 }
@@ -221,8 +237,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public Task<UploadStatus> WaitForVenueProcessingToComplete(Guid venueUploadId, CancellationToken cancellationToken) =>
-            GetVenueUploadStatusUpdates(venueUploadId)
+        public Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken) =>
+            GetVenueUploadStatusUpdatesForProvider(providerId)
                 .TakeUntil(status => status != UploadStatus.Created && status != UploadStatus.Processing)
                 .LastAsync()
                 .ToTask(cancellationToken);
@@ -241,7 +257,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         // virtual for testing
-        protected virtual IObservable<UploadStatus> GetPollingVenueUploadStatusUpdates(Guid venueUploadId) =>
+        protected virtual IObservable<UploadStatus> GetVenueUploadStatusUpdates(Guid venueUploadId) =>
             Observable.Interval(_statusUpdatesPollInterval)
                 .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
 

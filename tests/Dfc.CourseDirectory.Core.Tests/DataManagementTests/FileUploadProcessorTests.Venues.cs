@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -30,19 +31,17 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var venueUploadId = Guid.NewGuid();
 
-            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUploadId);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdatesForProvider(venueUploadId);
 
             using var cts = new CancellationTokenSource();
 
             // Act
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => { }, cts.Token);
-            uploadProcessor.ReleaseUploadStatusCheck();
             uploadProcessor.OnComplete();
             var error = await Record.ExceptionAsync(() => completed);
 
-            error.Should().BeOfType<ArgumentException>()
-                .Subject.Message.Should().StartWith("Specified venue upload does not exist.");
+            error.Should().BeOfType<InvalidStateException>().Subject.Reason.Should().Be(InvalidStateReason.NoUnpublishedVenueUpload);
         }
 
         [Fact]
@@ -53,9 +52,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
+            await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdatesForProvider(provider.ProviderId);
 
             var results = new List<UploadStatus>();
             using var cts = new CancellationTokenSource();
@@ -63,7 +62,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Act
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
-            uploadProcessor.ReleaseUploadStatusCheck();
+            await uploadProcessor.ReleaseUploadStatusCheck();
             uploadProcessor.OnComplete();
             await completed;
 
@@ -80,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdatesForProvider(provider.ProviderId);
 
             var results = new List<UploadStatus>();
             using var cts = new CancellationTokenSource();
@@ -88,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Act
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
-            uploadProcessor.ReleaseUploadStatusCheck();  // Created
+            await uploadProcessor.ReleaseUploadStatusCheck();  // Created
             await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.Processing, user);
             await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, UploadStatus.ProcessedSuccessfully, user);
             uploadProcessor.OnComplete();
@@ -108,7 +107,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdatesForProvider(provider.ProviderId);
 
             var results = new List<UploadStatus>();
             using var cts = new CancellationTokenSource();
@@ -116,9 +115,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Act
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
-            uploadProcessor.ReleaseUploadStatusCheck();
-            uploadProcessor.ReleaseUploadStatusCheck();
-            uploadProcessor.ReleaseUploadStatusCheck();
+            await uploadProcessor.ReleaseUploadStatusCheck();
+            await uploadProcessor.ReleaseUploadStatusCheck();
+            await uploadProcessor.ReleaseUploadStatusCheck();
             uploadProcessor.OnComplete();
             await completed;
 
@@ -137,7 +136,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdates(venueUpload.VenueUploadId);
+            var statusUpdates = uploadProcessor.GetVenueUploadStatusUpdatesForProvider(provider.ProviderId);
 
             var results = new List<UploadStatus>();
             using var cts = new CancellationTokenSource();
@@ -145,7 +144,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Act
             cts.CancelAfter(500);
             var completed = statusUpdates.ForEachAsync(v => results.Add(v), cts.Token);
-            uploadProcessor.ReleaseUploadStatusCheck();  // Created
+            await uploadProcessor.ReleaseUploadStatusCheck();  // Created
             await UpdateStatusAndReleaseStatusCheck(uploadProcessor, venueUpload.VenueUploadId, uploadStatus, user);
             uploadProcessor.OnComplete();
             await completed;
@@ -297,7 +296,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
             // Act
-            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+            var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
@@ -355,7 +354,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
             
             // Act
-            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+            var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
@@ -406,7 +405,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
             // Act
-            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+            var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.Success);
@@ -451,7 +450,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
             // Act
-            var result = await fileUploadProcessor.PublishVenueUpload(venueUpload.VenueUploadId, user);
+            var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.Success);
@@ -841,7 +840,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 throw new ArgumentException();
             }
 
-            uploadProcessor.ReleaseUploadStatusCheck();
+            await uploadProcessor.ReleaseUploadStatusCheck();
         }
 
         public static TheoryData<CsvVenueRow, IEnumerable<string>, IEnumerable<CsvVenueRow>> GetInvalidRowsTestData()
@@ -955,28 +954,46 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         /// <summary>
-        /// A version of <see cref="FileUploadProcessor"/> that overrides <see cref="GetPollingVenueUploadStatusUpdates(Guid)"/>
+        /// A version of <see cref="FileUploadProcessor"/> that overrides <see cref="GetVenueUploadStatusUpdates(Guid)"/>
         /// to only query the database when it's triggered by <see cref="ReleaseUploadStatusCheck"/> instead of polling on a timer.
         /// </summary>
         private sealed class TriggerableVenueUploadStatusUpdatesFileUploadProcessor : FileUploadProcessor, IDisposable
         {
-            // There's no un-typed Subject so we use Subject<object>. The values are never consumed.
-            private readonly Subject<object> _subject;
+            private readonly ReplaySubject<UploadStatus> _subject;
+
+            private readonly TaskCompletionSource<Guid> _venueUploadIdTcs;
 
             public TriggerableVenueUploadStatusUpdatesFileUploadProcessor(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock)
                 : base(sqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), clock)
             {
-                _subject = new Subject<object>();
+                _subject = new ReplaySubject<UploadStatus>();
+                _venueUploadIdTcs = new TaskCompletionSource<Guid>();
             }
 
-            public void ReleaseUploadStatusCheck() => _subject.OnNext(null);
+            public async Task ReleaseUploadStatusCheck()
+            {
+                var venueUploadId = await _venueUploadIdTcs.Task;
+
+                try
+                {
+                    _subject.OnNext(await GetVenueUploadStatus(venueUploadId));
+                }
+                catch (Exception ex)
+                {
+                    _subject.OnError(ex);
+                }
+            }
 
             public void OnComplete() => _subject.OnCompleted();
 
-            protected override IObservable<UploadStatus> GetPollingVenueUploadStatusUpdates(Guid venueUploadId) => _subject
-                .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
-
             public void Dispose() => _subject.Dispose();
+
+            protected override IObservable<UploadStatus> GetVenueUploadStatusUpdates(Guid venueUploadId)
+            {
+                _venueUploadIdTcs.SetResult(venueUploadId);
+
+                return _subject;
+            }
         }
     }
 }

@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 
             using var stream = request.File.OpenReadStream();
 
-            var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
+            var saveFileResult = await _fileUploadProcessor.SaveCourseFileForProvider(
                 _providerContextProvider.GetProviderId(),
                 stream,
                 _currentUserProvider.GetCurrentUser());

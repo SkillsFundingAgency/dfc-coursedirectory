@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
@@ -19,7 +20,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
     {
         public FileUploadProcessorTests(DatabaseTestBaseFixture fixture) : base(fixture)
         {
+            SqlQuerySpy = fixture.Services.GetRequiredService<SqlQuerySpy>();
         }
+
+        public SqlQuerySpy SqlQuerySpy { get; }
 
         public static TheoryData<byte[], bool> LooksLikeCsvData { get; } = new TheoryData<byte[], bool>()
         {

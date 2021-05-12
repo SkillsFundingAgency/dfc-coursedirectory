@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.Core.Models
+﻿using System.Collections.Generic;
+
+namespace Dfc.CourseDirectory.Core.Models
 {
     public enum UploadStatus
     {
@@ -35,10 +37,25 @@
 
     public static class UploadStatusExtensions
     {
+        public static IReadOnlyCollection<UploadStatus> UnpublishedStatuses { get; } = new[]
+        {
+            UploadStatus.Created,
+            UploadStatus.Processing,
+            UploadStatus.ProcessedWithErrors,
+            UploadStatus.ProcessedSuccessfully
+        };
+
         public static bool IsTerminal(this UploadStatus status) => status switch
         {
             UploadStatus.Published => true,
             UploadStatus.Abandoned => true,
+            _ => false
+        };
+
+        public static bool IsUnprocessed(this UploadStatus status) => status switch
+        {
+            UploadStatus.Created => true,
+            UploadStatus.Processing => true,
             _ => false
         };
     }
