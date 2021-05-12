@@ -20,8 +20,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int PublishedApprenticeshipsCount { get; set; }
         public int PublishedCourseCount { get; set; }
         public int PublishedVenueCount { get; set; }
-        public bool VenueUploadInProgress { get; set; }
-        public int UnpublishedVenueCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
