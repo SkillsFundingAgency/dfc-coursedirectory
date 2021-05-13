@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 
 namespace Dfc.CourseDirectory.Testing
@@ -107,6 +109,15 @@ namespace Dfc.CourseDirectory.Testing
                     Website = Faker.Internet.Url()
                 };
             }
+        }
+
+        public static VenueDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvVenueRow> rows)
+        {
+            var rowsArray = rows.ToArray();
+
+            return new VenueDataUploadRowInfoCollection(
+                lastRowNumber: rowsArray.Length + 1,
+                rows.Select((r, i) => new VenueDataUploadRowInfo(r, rowNumber: i + 2, isSupplementary: false)));
         }
     }
 }
