@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     errors => this.ViewFromErrors(errors),
                     success => (command.WhatNext switch
                     {
-                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(Resolve)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
                         ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
                         ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
@@ -116,7 +116,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("resolve")]
         [RequireProviderContext]
-        public IActionResult Resolve() => Ok();
+        public async Task<IActionResult> ResolveList() =>
+            await _mediator.SendAndMapResponse(
+                new ResolveList.Query(),
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
 
         [HttpGet("resolve/{rowNumber}")]
         public async Task<IActionResult> ResolveRowErrors(ResolveRowErrors.Query query) =>
@@ -138,7 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     uploadStatus => (uploadStatus switch
                     {
                         UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
-                        _ => RedirectToAction(nameof(Resolve))
+                        _ => RedirectToAction(nameof(ResolveList))
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
