@@ -1,0 +1,55 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveList.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Resolve errors in your venue data");
+}
+
+@section BackLink
+{
+    <govuk-back-link asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues">Back to Data Upload</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Resolve errors in your venue data</h1>
+
+        <table class="govuk-table" data-testid="ErrorRows">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header" style="width: 185px">Your venue reference</th>
+                    <th scope="col" class="govuk-table__header" style="width: 150px">Venue name</th>
+                    <th scope="col" class="govuk-table__header">Address</th>
+                    <th scope="col" class="govuk-table__header" style="width: 230px">Error(s)</th>
+                    <th scope="col" class="govuk-table__header" colspan="2"></th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var row in Model.ErrorRows)
+                {
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__cell">@row.ProviderVenueReference</th>
+                        <td class="govuk-table__cell govuk-body-s">@row.VenueName</td>
+                        <td class="govuk-table__cell govuk-body-s">@string.Join(", ", row.AddressParts)</td>
+                        <td class="govuk-table__cell govuk-body-s pttcd-dm-error">
+                            @for (var i = 0; i < row.ErrorFields.Count; i++)
+                            {
+                                <span class="govuk-!-display-inline-block">
+                                    @row.ErrorFields.ElementAt(i)@(i != row.ErrorFields.Count - 1 ? "," : "")
+                                </span>
+                            }
+                        </td>
+                        <td class="govuk-table__cell govuk-body-s">
+                            <a asp-action="ResolveRowErrors" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
+                                Resolve
+                            </a>
+                        </td>
+                        <td class="govuk-table__cell govuk-body-s">
+                            <a asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
