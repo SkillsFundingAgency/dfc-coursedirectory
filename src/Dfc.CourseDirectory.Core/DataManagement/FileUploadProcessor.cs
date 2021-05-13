@@ -129,11 +129,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // Restore the Stream's position
                 stream.Seek(-bytesRead, SeekOrigin.Current);
 
+                var position = 0;
+
+                // Check for BOM
+                if (bytesRead >= _bom.Length)
+                {
+                    if (buffer.Take(_bom.Length).SequenceEqual(_bom))
+                    {
+                        position += _bom.Length;
+                    }
+                }
+
                 var foundAComma = false;
 
-                for (int i = 0; i < bytesRead; i++)
+                for (; position < bytesRead; position++)
                 {
-                    byte c = buffer[i];
+                    byte c = buffer[position];
 
                     if (c > 127)
                     {
@@ -141,7 +152,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         return false;
                     }
 
-                    if (c == '\n' && i > 1)
+                    if (c == '\n' && position > 1)
                     {
                         // We've hit the end of the line
                         return foundAComma;
