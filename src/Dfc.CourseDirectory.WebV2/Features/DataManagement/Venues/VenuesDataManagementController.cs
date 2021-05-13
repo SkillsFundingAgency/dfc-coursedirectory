@@ -118,6 +118,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public IActionResult Resolve() => Ok();
 
+        [HttpGet("resolve/{rowNumber}")]
+        public async Task<IActionResult> ResolveRowErrors(ResolveRowErrors.Query query) =>
+            await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    vm => this.ViewFromErrors(vm, statusCode: System.Net.HttpStatusCode.OK)));
+
+        [HttpPost("resolve/{rowNumber}")]
+        public async Task<IActionResult> ResolveRowErrors([FromRoute] int rowNumber, ResolveRowErrors.Command command)
+        {
+            command.RowNumber = rowNumber;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(Resolve))
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
         [HttpGet("delete")]
         [RequireProviderContext]
         public IActionResult DeleteUpload() => Ok();

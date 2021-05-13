@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var (_, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
+                var (_, _, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
 
                 // rows will only be non-null if revalidation was done above
                 rows ??= (await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId })).Rows;
@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return PublishResult.UploadHasErrors();
                 }
 
-                var (revalidated, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
+                var (revalidated, _, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
 
                 if (revalidated && rows.Any(r => !r.IsValid))
                 {
@@ -241,6 +241,48 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+            {
+                ProviderId = providerId
+            });
+
+            if (venueUpload == null)
+            {
+                throw new InvalidStateException(InvalidStateReason.NoUnpublishedVenueUpload);
+            }
+
+            if (venueUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+            {
+                throw new InvalidUploadStatusException(venueUpload.UploadStatus, UploadStatus.ProcessedWithErrors);
+            }
+
+            var (rows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+            var row = rows.SingleOrDefault(r => r.RowNumber == rowNumber);
+
+            if (row == null)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.VenueUploadRow, rowNumber);
+            }
+
+            var updatedRows = new VenueDataUploadRowInfoCollection(
+                lastRowNumber: lastRowNumber,
+                rows
+                    .Where(r => r.RowNumber != rowNumber)
+                    .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary))
+                    .Append(new VenueDataUploadRowInfo(updatedRow, rowNumber, row.IsSupplementary)));
+
+            var (uploadStatus, _) = await ValidateVenueUploadRows(dispatcher, venueUpload.VenueUploadId, venueUpload.ProviderId, updatedRows);
+
+            await dispatcher.Commit();
+
+            return uploadStatus;
+        }
+
         public Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken) =>
             GetVenueUploadStatusUpdatesForProvider(providerId)
                 .TakeUntil(status => status != UploadStatus.Created && status != UploadStatus.Processing)
@@ -266,7 +308,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 .SelectMany(_ => Observable.FromAsync(() => GetVenueUploadStatus(venueUploadId)));
 
         // internal for testing
-        internal async Task<IReadOnlyCollection<VenueUploadRow>> ValidateVenueUploadRows(
+        internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<VenueUploadRow> Rows)> ValidateVenueUploadRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
             Guid venueUploadId,
             Guid providerId,
@@ -364,7 +406,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IsValid = uploadIsValid
             });
 
-            return updatedRows;
+            var uploadStatus = uploadIsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
+
+            return (uploadStatus, updatedRows);
         }
 
         // internal for testing
@@ -448,7 +492,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return postcodeInfo.ToDictionary(kvp => new Postcode(kvp.Key), kvp => kvp.Value);
         }
 
-        private async Task<(bool Revalidated, IReadOnlyCollection<VenueUploadRow> ValidatedRows)> RevalidateVenueUploadIfRequired(
+        private async Task<(bool Revalidated, UploadStatus uploadStatus, IReadOnlyCollection<VenueUploadRow> ValidatedRows)> RevalidateVenueUploadIfRequired(
             ISqlQueryDispatcher sqlQueryDispatcher,
             Guid venueUploadId)
         {
@@ -463,7 +507,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             if (!revalidate)
             {
-                return (Revalidated: false, ValidatedRows: null);
+                return (Revalidated: false, venueUpload.UploadStatus, ValidatedRows: null);
             }
 
             var (rows, lastRowNumber) = await sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
@@ -472,13 +516,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 lastRowNumber,
                 rows.Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
 
-            var revalidatedRows = await ValidateVenueUploadRows(
+            var (uploadStatus, revalidatedRows) = await ValidateVenueUploadRows(
                 sqlQueryDispatcher,
                 venueUploadId,
                 venueUpload.ProviderId,
                 rowCollection);
 
-            return (Revalidated: true, ValidatedRows: revalidatedRows);
+            return (Revalidated: true, uploadStatus, ValidatedRows: revalidatedRows);
         }
 
         private class VenueUploadRowValidator : AbstractValidator<CsvVenueRow>
