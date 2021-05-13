@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -159,7 +158,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, providerVenueRef: "ref");
 
-            var rows = new[] { new CsvVenueRow() { ProviderVenueRef = "REF", VenueName = "NAME" } };
+            var rows = new[] { new CsvVenueRow() { ProviderVenueRef = "REF", VenueName = "NAME" } }.ToDataUploadRowCollection();
 
             var existingVenues = new[] { venue1 };
 
@@ -181,7 +180,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "name");
 
-            var rows = new[] { new CsvVenueRow() { VenueName = "NAME" } };
+            var rows = new[] { new CsvVenueRow() { VenueName = "NAME" } }.ToDataUploadRowCollection();
 
             var existingVenues = new[] { venue1 };
 
@@ -207,7 +206,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 new CsvVenueRow() { VenueName = "NAME2", ProviderVenueRef = "REF" },
                 new CsvVenueRow() { VenueName = "NAME" },
-            };
+            }.ToDataUploadRowCollection();
 
             var existingVenues = new[] { venue1 };
 
@@ -232,7 +231,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 3).ToArray();
-            await WithSqlQueryDispatcher(dispatcher => AddPostcodeInfoForRows(dispatcher, uploadRows));
+            await WithSqlQueryDispatcher(dispatcher => AddPostcodeInfoForRows(dispatcher, uploadRows.ToDataUploadRowCollection()));
             var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(uploadRows);
 
             // Act
@@ -528,7 +527,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Website = "provider.com/place"
             };
 
-            var uploadRows = new[] { row };
+            var uploadRows = new[] { row }.ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -539,7 +538,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.Count.Should().Be(1);
                 rows.Last().Should().BeEquivalentTo(new VenueUploadRow()
@@ -587,7 +586,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 {
                     VenueName = "Upload venue 1"
                 }
-            };
+            }.ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -598,7 +597,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.Count.Should().Be(2);  // One from upload, one retained
                 rows.Last().Should().BeEquivalentTo(new VenueUploadRow()
@@ -637,7 +636,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Postcode = "ab12de",
             };
 
-            var uploadRows = new[] { row };
+            var uploadRows = new[] { row }.ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -648,7 +647,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.Count.Should().Be(1);
                 rows.Last().Postcode.Should().Be("AB1 2DE");
@@ -670,7 +669,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Postcode = "xxxx",
             };
 
-            var uploadRows = new[] { row };
+            var uploadRows = new[] { row }.ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -681,7 +680,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.Count.Should().Be(1);
                 rows.Last().Postcode.Should().Be(row.Postcode);
@@ -702,7 +701,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var uploadRows = new[] { row }.Concat(additionalRows ?? Enumerable.Empty<CsvVenueRow>()).ToList();
+            var uploadRows = new[] { row }.Concat(additionalRows ?? Enumerable.Empty<CsvVenueRow>()).ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -717,7 +716,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.First().IsValid.Should().BeFalse();
                 rows.First().Errors.Should().BeEquivalentTo(expectedErrorCodes);
@@ -734,7 +733,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToArray();
+            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -745,7 +744,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.First().IsValid.Should().BeFalse();
                 rows.First().Errors.Should().BeEquivalentTo(new[] { "VENUE_POSTCODE_FORMAT" });
@@ -763,7 +762,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToArray();
+            var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToDataUploadRowCollection();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -776,7 +775,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     venueUpload.ProviderId,
                     uploadRows);
 
-                var rows = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
 
                 rows.First().IsValid.Should().BeTrue();
                 rows.First().OutsideOfEngland.Should().BeTrue();
@@ -935,13 +934,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
         private static Task AddPostcodeInfoForRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IEnumerable<CsvVenueRow> rows,
+            VenueDataUploadRowInfoCollection rows,
             bool inEngland = true)
         {
             return sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
             {
                 Records = rows
-                    .Select(r => r.Postcode)
+                    .Select(r => r.Data.Postcode)
                     .Where(r => Postcode.TryParse(r, out _))
                     .Distinct()
                     .Select(pc => new UpsertPostcodesRecord()

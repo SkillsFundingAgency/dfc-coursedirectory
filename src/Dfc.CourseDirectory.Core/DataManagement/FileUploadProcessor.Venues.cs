@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var (_, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
 
                 // rows will only be non-null if revalidation was done above
-                rows ??= await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                rows ??= (await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId })).Rows;
 
                 return (rows, venueUpload.UploadStatus);
             }
@@ -99,12 +99,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 rows = await csvReader.GetRecordsAsync<CsvVenueRow>().ToListAsync();
             }
 
+            var rowsCollection = new VenueDataUploadRowInfoCollection(
+                lastRowNumber: rows.Count + 1,
+                rows: rows.Select((r, i) => new VenueDataUploadRowInfo(r, rowNumber: i + 2, isSupplementary: false)));
+
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
                 var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
                 var providerId = venueUpload.ProviderId;
 
-                await ValidateVenueUploadRows(dispatcher, venueUploadId, providerId, rows);
+                await ValidateVenueUploadRows(dispatcher, venueUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
             }
@@ -266,7 +270,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             ISqlQueryDispatcher sqlQueryDispatcher,
             Guid venueUploadId,
             Guid providerId,
-            IReadOnlyList<CsvVenueRow> rows)
+            VenueDataUploadRowInfoCollection rows)
         {
             // We need to ensure that any venues that have live offerings attached are not removed when publishing this
             // upload. We do that by adding an additional row to this upload for any venues that are not included in
@@ -285,7 +289,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var venuesWithLiveOfferingsNotInFile = existingVenues
                 .Where(v => v.HasLiveOfferings && !matchedVenueIds.Contains(v.VenueId))
                 .ToArray();
-            rows = rows.Concat(venuesWithLiveOfferingsNotInFile.Select(CsvVenueRow.FromModel)).ToArray();
+
+            rows = new VenueDataUploadRowInfoCollection(
+                lastRowNumber: rows.LastRowNumber + venuesWithLiveOfferingsNotInFile.Length,
+                rows: rows.Concat(
+                    venuesWithLiveOfferingsNotInFile.Select((v, i) =>
+                        new VenueDataUploadRowInfo(CsvVenueRow.FromModel(v), rowNumber: rows.LastRowNumber + i + 1, isSupplementary: true))));
+
             rowVenueIdMapping = rowVenueIdMapping.Concat(venuesWithLiveOfferingsNotInFile.Select(v => (Guid?)v.VenueId)).ToArray();
 
             // Grab PostcodeInfo for all of the valid postcodes in the file.
@@ -299,11 +309,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             for (int i = 0; i < rows.Count; i++)
             {
-                var row = rows[i];
-
-                // `i` is zero-based and the headers take up one row;
-                // we want a row number that aligns with the row number as it appears when viewing the CSV in Excel
-                var rowNumber = i + 2;
+                var row = rows[i].Data;
+                var rowNumber = rows[i].RowNumber;
 
                 var venueId = rowVenueIdMapping[i] ?? Guid.NewGuid();
                 var isSupplementaryRow = i >= originalRowCount;
@@ -361,7 +368,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         // internal for testing
-        internal Guid?[] MatchRowsToExistingVenues(IReadOnlyList<CsvVenueRow> rows, IEnumerable<Venue> existingVenues)
+        internal Guid?[] MatchRowsToExistingVenues(VenueDataUploadRowInfoCollection rows, IEnumerable<Venue> existingVenues)
         {
             var rowVenueIdMapping = new Guid?[rows.Count];
 
@@ -392,7 +399,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                     foreach (var candidate in remainingCandidates.ToArray())
                     {
-                        if (matches(row, candidate))
+                        if (matches(row.Data, candidate))
                         {
                             remainingCandidates.Remove(candidate);
                             rowVenueIdMapping[i] = candidate.VenueId;
@@ -428,10 +435,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         private async Task<IDictionary<Postcode, PostcodeInfo>> GetPostcodeInfoForRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IEnumerable<CsvVenueRow> rows)
+            VenueDataUploadRowInfoCollection rows)
         {
             var validPostcodes = rows
-                .Select(r => Postcode.TryParse(r.Postcode, out var postcode) ? postcode.ToString() : null)
+                .Select(r => Postcode.TryParse(r.Data.Postcode, out var postcode) ? postcode.ToString() : null)
                 .Where(pc => pc != null)
                 .Distinct();
 
@@ -459,25 +466,29 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return (Revalidated: false, ValidatedRows: null);
             }
 
-            var rows = await sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
+            var (rows, lastRowNumber) = await sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
+
+            var rowCollection = new VenueDataUploadRowInfoCollection(
+                lastRowNumber,
+                rows.Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
 
             var revalidatedRows = await ValidateVenueUploadRows(
                 sqlQueryDispatcher,
                 venueUploadId,
                 venueUpload.ProviderId,
-                rows.Select(CsvVenueRow.FromModel).ToList());
+                rowCollection);
 
             return (Revalidated: true, ValidatedRows: revalidatedRows);
         }
 
         private class VenueUploadRowValidator : AbstractValidator<CsvVenueRow>
         {
-            private readonly CsvVenueRow[] _allRows;
+            private readonly VenueDataUploadRowInfoCollection _allRows;
             private readonly IDictionary<Postcode, PostcodeInfo> _postcodeInfo;
 
-            public VenueUploadRowValidator(IEnumerable<CsvVenueRow> allRows, IDictionary<Postcode, PostcodeInfo> postcodeInfo)
+            public VenueUploadRowValidator(VenueDataUploadRowInfoCollection allRows, IDictionary<Postcode, PostcodeInfo> postcodeInfo)
             {
-                _allRows = allRows.ToArray();
+                _allRows = allRows;
                 _postcodeInfo = postcodeInfo;
 
                 // N.B. The rule order here is important; we want errors to be emitted in the same order as the columns
@@ -486,12 +497,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(r => r.ProviderVenueRef)
                     .ProviderVenueRef(getOtherVenueProviderVenueRefs:
                         row => Task.FromResult(_allRows
+                            .Select(r => r.Data)
                             .Where(r => r != row && !string.IsNullOrEmpty(r.ProviderVenueRef))
                             .Select(r => r.ProviderVenueRef)));
 
                 RuleFor(r => r.VenueName)
                     .VenueName(getOtherVenueNames:
                         row => Task.FromResult(_allRows
+                            .Select(r => r.Data)
                             .Where(r => r != row)
                             .Select(r => r.VenueName)));
 
