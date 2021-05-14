@@ -17,5 +17,6 @@
 	[Website] NVARCHAR(MAX),
 	[VenueId] UNIQUEIDENTIFIER,
 	[OutsideOfEngland] BIT,
-	[IsSupplementary] BIT NOT NULL
+	[IsSupplementary] BIT NOT NULL,
+	[IsDeletable] BIT NOT NULL
 )
