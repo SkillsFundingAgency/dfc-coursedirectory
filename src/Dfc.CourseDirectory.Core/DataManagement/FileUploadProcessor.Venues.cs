@@ -406,6 +406,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venueId = rowVenueIdMapping[i] ?? Guid.NewGuid();
                 var isSupplementaryRow = i >= originalRowCount;
 
+                // A row is deletable if it is *not* matched to an existing venue that has attached offerings
+                var isDeletable = rowVenueIdMapping[i] is null ||
+                    !existingVenues.Single(v => v.VenueId == rowVenueIdMapping[i]).HasLiveOfferings;
+
                 row.ProviderVenueRef = row.ProviderVenueRef?.Trim();
                 row.Postcode = Postcode.TryParse(row.Postcode, out var postcode) ? postcode : row.Postcode;
 
@@ -428,6 +432,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     IsSupplementary = isSupplementaryRow,
                     OutsideOfEngland = postcodeInfo != null ? !postcodeInfo.InEngland : (bool?)null,
                     VenueId = venueId,
+                    IsDeletable = isDeletable,
                     ProviderVenueRef = row.ProviderVenueRef,
                     VenueName = row.VenueName,
                     AddressLine1 = row.AddressLine1,
