@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using MediatR;
@@ -58,19 +59,24 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
             var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUKPRN });
             var getQualification = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery { LearnAimRef = course.LearnAimRef });
-            var getVenues = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider { ProviderUkprn = course.ProviderUKPRN });
             var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUKPRN });
 
-            await Task.WhenAll(getProvider, getQualification, getVenues, getFeChoice);
+            await Task.WhenAll(getProvider, getQualification, getFeChoice);
 
-            var provider = await getProvider;
-            var qualification = (await getQualification).Items.SingleOrDefault();
-            var venues = await getVenues;
-            var feChoice = await getFeChoice;
-            var sqlProvider = await _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = provider.Id });
+            var provider = getProvider.Result;
+            var qualification = getQualification.Result.Items.SingleOrDefault();
+            var feChoice = getFeChoice.Result;
+
+            var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = provider.Id });
+            var getProviderVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = provider.Id });
+
+            await Task.WhenAll(getSqlProvider, getProviderVenues);
+
+            var sqlProvider = getSqlProvider.Result;
+            var venues = getProviderVenues.Result;
 
             var venue = courseRun.VenueId.HasValue
-                ? venues.Single(v => v.Id == courseRun.VenueId)
+                ? venues.Single(v => v.VenueId == courseRun.VenueId)
                 : null;
 
             var providerContact = provider.ProviderContact.SingleOrDefault(c => c.ContactType == "P");
@@ -78,7 +84,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
             var alternativeCourseRuns = course.CourseRuns
                 .Where(r => r.Id != request.CourseRunId && r.RecordStatus == CourseStatus.Live)
-                .Select(r => new { CourseRun = r, Venue = venues.SingleOrDefault(v => v.Id == r.VenueId) });
+                .Select(r => new { CourseRun = r, Venue = venues.SingleOrDefault(v => v.VenueId == r.VenueId) });
 
             var regions = await _regionCache.GetAllRegions();
 
@@ -102,14 +108,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 Course = new CourseViewModel
                 {
                     AdvancedLearnerLoan = course.AdvancedLearnerLoan,
-                    AwardOrgCode = course.AwardOrgCode,
+                    AwardOrgCode = qualification.Record.AwardOrgCode,
                     CourseDescription = course.CourseDescription,
                     CourseId = course.Id,
                     EntryRequirements = course.EntryRequirements,
                     HowYoullBeAssessed = course.HowYoullBeAssessed,
                     HowYoullLearn = course.HowYoullLearn,
                     LearnAimRef = course.LearnAimRef,
-                    QualificationLevel = course.NotionalNVQLevelv2,
+                    QualificationLevel = qualification.Record.NotionalNVQLevelv2,
                     WhatYoullLearn = course.WhatYoullLearn,
                     WhatYoullNeed = course.WhatYoullNeed,
                     WhereNext = course.WhereNext
@@ -122,12 +128,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                         County = venue.County,
                         Email = venue.Email,
                         Postcode = venue.Postcode,
-                        Telephone = venue.PHONE,
+                        Telephone = venue.Telephone,
                         Town = venue.Town,
                         VenueName = venue.VenueName,
                         Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website),
-                        Latitude = venue.Latitude,
-                        Longitude = venue.Longitude
+                        Latitude = Convert.ToDecimal(venue.Latitude),
+                        Longitude = Convert.ToDecimal(venue.Longitude)
                     }
                     : null,
                 Provider = new ProviderViewModel
@@ -183,12 +189,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                             County = c.Venue.County,
                             Email = c.Venue.Email,
                             Postcode = c.Venue.Postcode,
-                            Telephone = c.Venue.PHONE,
+                            Telephone = c.Venue.Telephone,
                             Town = c.Venue.Town,
                             VenueName = c.Venue.VenueName,
                             Website = ViewModelFormatting.EnsureHttpPrefixed(c.Venue.Website),
-                            Latitude = c.Venue.Latitude,
-                            Longitude = c.Venue.Longitude
+                            Latitude = Convert.ToDecimal(c.Venue.Latitude),
+                            Longitude = Convert.ToDecimal(c.Venue.Longitude)
                         }
                         : null
                 }).ToArray(),

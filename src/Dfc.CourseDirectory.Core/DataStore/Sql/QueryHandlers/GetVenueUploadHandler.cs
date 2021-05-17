@@ -12,8 +12,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT VenueUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
-ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn, LastValidated, IsValid
-FROM Pttcd.VenueUploads
+ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn, LastValidated
+FROM Pttcd.VenueUploads WITH (HOLDLOCK)
 WHERE VenueUploadId = @VenueUploadId";
 
             return transaction.Connection.QuerySingleOrDefaultAsync<VenueUpload>(sql, new { query.VenueUploadId }, transaction);

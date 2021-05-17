@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -67,23 +68,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
                 request.Postcode = postcode;
             }
 
-            var validator = new CommandValidator();
+            var postcodeInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = request.Postcode });
+
+            var validator = new CommandValidator(postcodeInfo);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
-                return new ModelWithErrors<Command>(request, validationResult);
-            }
-
-            var postcodeInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = request.Postcode });
-
-            if (postcodeInfo == null)
-            {
-                validationResult = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(request.Postcode), "Enter a valid postcode")
-                });
-
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
@@ -105,13 +96,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator()
+            public CommandValidator(PostcodeInfo postcodeInfo)
             {
                 RuleFor(c => c.AddressLine1).AddressLine1();
                 RuleFor(c => c.AddressLine2).AddressLine2();
                 RuleFor(c => c.Town).Town();
                 RuleFor(c => c.County).County();
-                RuleFor(c => c.Postcode).Postcode();
+                RuleFor(c => c.Postcode).Postcode(_ => postcodeInfo);
             }
         }
     }

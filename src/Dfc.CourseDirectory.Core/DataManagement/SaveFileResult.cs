@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
@@ -32,6 +33,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Status = SaveFileResultStatus.InvalidFile
             };
 
+        public static SaveFileResult InvalidHeader(IEnumerable<string> missingHeaders) =>
+            new SaveFileResult()
+            {
+                MissingHeaders = missingHeaders.ToArray(),
+                Status = SaveFileResultStatus.InvalidHeader
+            };
+
+        public static SaveFileResult InvalidRows() =>
+            new SaveFileResult()
+            {
+                MissingHeaders = Array.Empty<string>(),
+                Status = SaveFileResultStatus.InvalidRows
+            };
+
         public static SaveFileResult Success(Guid venueUploadId, UploadStatus uploadStatus) =>
             new SaveFileResult()
             {
@@ -47,6 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Success,
         InvalidFile,
         InvalidHeader,
+        InvalidRows,
         EmptyFile,
         ExistingFileInFlight
     }

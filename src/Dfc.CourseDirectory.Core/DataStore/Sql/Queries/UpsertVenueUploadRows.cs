@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using OneOf.Types;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpsertVenueUploadRows : ISqlQuery<Success>
+    public class UpsertVenueUploadRows : ISqlQuery<IReadOnlyCollection<VenueUploadRow>>
     {
         public Guid VenueUploadId { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+        public DateTime ValidatedOn { get; set; }
         public IEnumerable<UpsertVenueUploadRowsRecord> Records { get; set; }
     }
 
@@ -16,6 +17,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public int RowNumber { get; set; }
         public bool IsValid { get; set; }
         public IEnumerable<string> Errors { get; set; }
+        public bool IsSupplementary { get; set; }
+        public bool? OutsideOfEngland { get; set; }
+        public Guid VenueId { get; set; }
         public string ProviderVenueRef { get; set; }
         public string VenueName { get; set; }
         public string AddressLine1 { get; set; }

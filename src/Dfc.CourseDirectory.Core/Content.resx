@@ -117,11 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ERROR_DM_VENUE_ADDRESS_LINE1_REQUIRED" xml:space="preserve">
+    <value>You must enter an address for your venue</value>
+  </data>
+  <data name="ERROR_DM_VENUE_NAME_REQUIRED" xml:space="preserve">
+    <value>You must enter a name for your venue</value>
+  </data>
+  <data name="ERROR_DM_VENUE_POSTCODE_FORMAT" xml:space="preserve">
+    <value>You must enter a real postcode for your venue</value>
+  </data>
+  <data name="ERROR_DM_VENUE_POSTCODE_REQUIRED" xml:space="preserve">
+    <value>You must enter a postcode for your venue</value>
+  </data>
+  <data name="ERROR_DM_VENUE_PROVIDER_VENUE_REF_REQUIRED" xml:space="preserve">
+    <value>You must enter a reference for your venue</value>
+  </data>
+  <data name="ERROR_DM_VENUE_TOWN_REQUIRED" xml:space="preserve">
+    <value>You must enter a town or city</value>
+  </data>
   <data name="ERROR_VENUE_ADDRESS_LINE1_FORMAT" xml:space="preserve">
     <value>Address line 1 must only include letters a to z, numbers, hyphens and spaces</value>
   </data>
   <data name="ERROR_VENUE_ADDRESS_LINE1_MAXLENGTH" xml:space="preserve">
-    <value>Address line 1 must be {0} characters or less</value>
+    <value>Address line 1 must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_VENUE_ADDRESS_LINE1_REQUIRED" xml:space="preserve">
     <value>Enter address line 1</value>
@@ -130,13 +148,13 @@
     <value>Address line 2 must only include letters a to z, numbers, hyphens and spaces</value>
   </data>
   <data name="ERROR_VENUE_ADDRESS_LINE2_MAXLENGTH" xml:space="preserve">
-    <value>Address line 2 must be {0} characters or less</value>
+    <value>Address line 2 must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_VENUE_COUNTY_FORMAT" xml:space="preserve">
     <value>County must only include letters a to z, numbers, hyphens and spaces</value>
   </data>
   <data name="ERROR_VENUE_COUNTY_MAXLENGTH" xml:space="preserve">
-    <value>County must be {0} characters or less</value>
+    <value>County must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_VENUE_EMAIL_FORMAT" xml:space="preserve">
     <value>Enter an email address in the correct format</value>
@@ -148,13 +166,22 @@
     <value>Enter venue name</value>
   </data>
   <data name="ERROR_VENUE_NAME_UNIQUE" xml:space="preserve">
-    <value>Venue name must not already exist</value>
+    <value>Your venue name must be unique</value>
   </data>
   <data name="ERROR_VENUE_POSTCODE_FORMAT" xml:space="preserve">
     <value>Enter a real postcode</value>
   </data>
   <data name="ERROR_VENUE_POSTCODE_REQUIRED" xml:space="preserve">
     <value>Enter a postcode</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH" xml:space="preserve">
+    <value>Your venue reference must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED" xml:space="preserve">
+    <value>Enter your venue reference</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE" xml:space="preserve">
+    <value>Your venue reference must be unique</value>
   </data>
   <data name="ERROR_VENUE_TELEPHONE_FORMAT" xml:space="preserve">
     <value>Enter a telephone number in the correct format</value>
@@ -163,7 +190,7 @@
     <value>Town or city must only include letters a to z, numbers, hyphens and spaces</value>
   </data>
   <data name="ERROR_VENUE_TOWN_MAXLENGTH" xml:space="preserve">
-    <value>Town or city must be {0} characters or less</value>
+    <value>Town or city must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_VENUE_TOWN_REQUIRED" xml:space="preserve">
     <value>Enter a town or city</value>

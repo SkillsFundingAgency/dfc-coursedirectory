@@ -14,11 +14,11 @@ namespace Dfc.CourseDirectory.Core.Validation
 
         public static IRuleBuilderOptions<T, string> PhoneNumber<T>(IRuleBuilder<T, string> field) =>
             field
-                .Must(v => string.IsNullOrEmpty(v) || PhoneNumberHelper.IsValid(v));
+                .Must(v => v == null || PhoneNumberHelper.IsValid(v));
 
         public static IRuleBuilderOptions<T, string> Postcode<T>(IRuleBuilder<T, string> field) =>
             field
-                .Must(v => Models.Postcode.TryParse(v, out _));
+                .Must(v => v == null || Models.Postcode.TryParse(v, out _));
 
         public static IRuleBuilderOptions<T, string> Website<T>(IRuleBuilder<T, string> field) =>
             field

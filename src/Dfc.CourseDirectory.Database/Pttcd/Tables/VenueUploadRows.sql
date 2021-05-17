@@ -16,5 +16,8 @@
 	[Postcode] NVARCHAR(MAX),
 	[Email] NVARCHAR(MAX),
 	[Telephone] NVARCHAR(MAX),
-	[Website] NVARCHAR(MAX)
+	[Website] NVARCHAR(MAX),
+	[VenueId] UNIQUEIDENTIFIER,
+	[OutsideOfEngland] BIT,
+	[IsSupplementary] BIT NOT NULL CONSTRAINT [DF_VenueUploadRows_IsSupplementary] DEFAULT (0)
 )

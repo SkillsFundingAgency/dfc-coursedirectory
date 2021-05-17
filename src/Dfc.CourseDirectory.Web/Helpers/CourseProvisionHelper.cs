@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -21,6 +23,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICSVHelper _CSVHelper;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -29,11 +32,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             ICSVHelper CSVHelper)
         {
             _contextAccessor = contextAccessor ?? throw new ArgumentNullException(nameof(contextAccessor));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _CSVHelper = CSVHelper ?? throw new ArgumentNullException(nameof(CSVHelper));
         }
 
@@ -120,8 +125,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 };
                 if(firstCourseRun.VenueId.HasValue)
                 {
-                    var result = _cosmosDbQueryDispatcher.ExecuteQuery(
-                        new GetVenueById() { VenueId = firstCourseRun.VenueId.Value }).Result;
+                    var result = _sqlQueryDispatcher.ExecuteQuery(
+                        new GetVenue() { VenueId = firstCourseRun.VenueId.Value }).Result;
                     
                     if (!string.IsNullOrWhiteSpace(result?.VenueName))
                     {
@@ -171,7 +176,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
                     if (courseRun.VenueId.HasValue)
                     {
-                        var result = _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenueById() { VenueId = courseRun.VenueId.Value }).Result;
+                        var result = _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = courseRun.VenueId.Value }).Result;
 
                         if (!string.IsNullOrWhiteSpace(result?.VenueName))
                         {

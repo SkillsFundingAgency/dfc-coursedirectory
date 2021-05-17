@@ -7,6 +7,33 @@
     <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
 }
 
+<govuk-error-summary>
+    @* The message when headers are missing is unusual; this summary needs to list the missing headers
+       whereas the inline message below does not.
+       The list of missing headers is in ViewData; if they're not empty we use them to construct the message. *@
+    @if (ViewBag.MissingHeaders is IReadOnlyCollection<string> missingHeaders && missingHeaders.Count != 0)
+    {
+        <govuk-error-summary-item>
+            <a href="#@(Html.IdFor(m => m.File))">@Html.ValidationMessageFor(m => m.File)</a>
+            <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+                <govuk-details-summary>CSV headings</govuk-details-summary>
+                <govuk-details-text>
+                    <ul class="govuk-list govuk-!-margin-0">
+                        @foreach (var header in missingHeaders)
+                        {
+                            <li data-testid="MissingHeader">@header</li>
+                        }
+                    </ul>
+                </govuk-details-text>
+            </govuk-details>
+        </govuk-error-summary-item>
+    }
+    else
+    {
+        <govuk-error-summary-item asp-for="File" />
+    }
+</govuk-error-summary>
+
 <div class="govuk-grid-row">
     <h1 class="govuk-heading-xl">Upload your venue data</h1>
     <div class="govuk-grid-column-two-thirds">
@@ -28,7 +55,7 @@
 
     </div>
     <div class="govuk-grid-column-one-third">
-        <aside class="app-related-items" role="complementary">
+        <aside class="pttcd-provider-data-upload__download-panel" role="complementary">
             <h2 class="govuk-heading-m" id="subsection-title">
                 Data file downloads
             </h2>

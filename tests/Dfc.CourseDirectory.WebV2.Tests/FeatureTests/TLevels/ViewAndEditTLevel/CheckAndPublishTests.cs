@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: startDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: startDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -185,7 +185,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: startDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -263,7 +263,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -287,7 +287,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: startDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -320,7 +320,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -344,7 +344,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: startDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -364,7 +364,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: updatedStartDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -397,7 +397,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var whoFor = "Who for";
@@ -421,7 +421,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: whatYouCanDoNext,
                 yourReference: yourReference,
                 startDate: startDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: website,
                 createdBy: User.ToUserInfo());
 
@@ -448,7 +448,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 q.EntryRequirements == entryRequirements &&
                 q.HowYoullBeAssessed == howYoullBeAssessed &&
                 q.HowYoullLearn == howYoullLearn &&
-                q.LocationVenueIds.Single() == venue.Id &&
+                q.LocationVenueIds.Single() == venue.VenueId &&
                 q.StartDate == startDate &&
                 q.Website == website &&
                 q.WhatYouCanDoNext == whatYouCanDoNext &&

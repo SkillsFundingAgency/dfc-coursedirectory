@@ -5,6 +5,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
     public class Venue
     {
         public Guid VenueId { get; set; }
+        public Guid ProviderId { get; set; }
         public string VenueName { get; set; }
         public string ProviderVenueRef { get; set; }
         public string AddressLine1 { get; set; }

@@ -2,6 +2,7 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 using Xunit.Sdk;
 
@@ -24,9 +25,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(expectedMessage, errorMessage);
         }
 
-        public static void AssertHasErrorWithCode(this IHtmlDocument doc, string fieldName, string errorCode, params object[] args)
+        public static void AssertHasErrorWithCode(this IHtmlDocument doc, string fieldName, string errorCode)
         {
-            var message = ContentExtensions.GetMessageForErrorCode(errorCode, args);
+            var message = ErrorRegistry.All[errorCode];
 
             AssertHasError(doc, fieldName, message);
         }

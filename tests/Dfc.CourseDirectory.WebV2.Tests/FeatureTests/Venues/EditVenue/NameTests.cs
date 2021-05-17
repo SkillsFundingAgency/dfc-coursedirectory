@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
@@ -24,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, venueName: "Test Venue")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue")).VenueId;
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"venues/{venueId}/name");
 
@@ -44,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId, venueName: "Test Venue")).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue")).VenueId;
 
             var journeyInstance = await CreateJourneyInstance(venueId);
             journeyInstance.UpdateState(state => state.Name = existingValue);
@@ -68,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var anotherProvider = await TestData.CreateProvider();
 
@@ -117,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Name", "")
@@ -143,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Name", new string('x', 251))  // limit is 250
@@ -161,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_MAXLENGTH", Constants.NameMaxLength);
+            doc.AssertHasErrorWithCode("Name", "VENUE_NAME_MAXLENGTH");
         }
 
         [Fact]
@@ -169,9 +168,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
-            await TestData.CreateVenue(provider.ProviderId, venueName: "Venue B");
+            await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Venue B");
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Name", "Venue B")
@@ -197,7 +196,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Name", "Another Venue")
@@ -221,8 +220,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         private async Task<JourneyInstance<EditVenueJourneyModel>> CreateJourneyInstance(Guid venueId)
         {
-            var state = await Factory.Services.GetRequiredService<EditVenueJourneyModelFactory>()
-                .CreateModel(venueId);
+            var state = await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                var modelFactory = CreateInstance<EditVenueJourneyModelFactory>(dispatcher);
+                return await modelFactory.CreateModel(venueId);
+            });
 
             return CreateJourneyInstance(
                 journeyName: "EditVenue",

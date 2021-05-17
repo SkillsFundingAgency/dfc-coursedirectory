@@ -6,6 +6,8 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -32,6 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         private ISession Session => HttpContext.Session;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -44,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             HtmlEncoder htmlEncoder,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             if (courseSearchSettings == null)
@@ -58,6 +62,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             _courseService = courseService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _htmlEncoder = htmlEncoder;
             _providerContextProvider = providerContextProvider;
         }
@@ -125,7 +130,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             List<SelectListItem> courseRunVenues = new List<SelectListItem>();
 
-            var venues = await GetVenuesByUkprn(UKPRN.Value);
+            var venues = await GetVenuesForProvider();
 
             foreach (var venue in venues.VenueItems)
             {
@@ -244,7 +249,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             List<SelectListItem> courseRunVenues = new List<SelectListItem>();
 
             //VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
-            var venues = await GetVenuesByUkprn(UKPRN.Value);
+            var venues = await GetVenuesForProvider();
 
             foreach (var venue in venues.VenueItems)
             {
@@ -578,21 +583,23 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        private async Task<SelectVenueModel> GetVenuesForProvider()
         {
+            var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
+
             var selectVenue = new SelectVenueModel
             {
                 LabelText = "Select course venue",
                 HintText = "Select all that apply.",
                 AriaDescribedBy = "Select all that apply.",
-                Ukprn = ukprn
+                Ukprn = providerContext.ProviderInfo.Ukprn
             };
 
-            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerContext.ProviderInfo.ProviderId });
 
             selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                Id = v.Id.ToString(),
+                Id = v.VenueId.ToString(),
                 VenueName = v.VenueName
             }).ToList();
 

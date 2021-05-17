@@ -5,6 +5,8 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -39,6 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private ISession Session => HttpContext.Session;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProviderContextProvider _providerContextProvider;
 
@@ -53,12 +56,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public AddCourseController(HtmlEncoder htmlEncoder,
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider)
         {
             _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
             _providerContextProvider = providerContextProvider;
         }
@@ -219,7 +224,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
                 CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
-                SelectVenue = await GetVenuesByUkprn(UKPRN),
+                SelectVenue = await GetVenuesForProvider(),
                 ChooseRegion = new ChooseRegionModel {
                     Regions = _courseService.GetRegions(),
                     National = null
@@ -945,20 +950,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         #region Private methods
-        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        private async Task<SelectVenueModel> GetVenuesForProvider()
         {
+            var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
+
             var selectVenue = new SelectVenueModel
             {
                 LabelText = "Venue",
                 AriaDescribedBy = "Select all that apply.",
-                Ukprn = ukprn
+                Ukprn = providerContext.ProviderInfo.Ukprn
             };
 
-            var venues = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = ukprn });
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerContext.ProviderInfo.ProviderId });
 
             selectVenue.VenueItems = venues.Select(v => new VenueItemModel()
             {
-                Id = v.Id.ToString(),
+                Id = v.VenueId.ToString(),
                 VenueName = v.VenueName
             }).ToList();
 
@@ -1087,7 +1094,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ChooseRegion = new ChooseRegionModel()
             };
 
-            viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+            viewModel.SelectVenue = await GetVenuesForProvider();
             viewModel.ChooseRegion.Regions = _courseService.GetRegions();
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);

@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={provider.ProviderId}");
 
-            var venues = await Task.WhenAll(Enumerable.Range(0, 3).Select(i => TestData.CreateVenue(provider.ProviderId, venueName: $"TestVenue{i}")));
+            var venues = await Task.WhenAll(Enumerable.Range(0, 3).Select(i => TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: $"TestVenue{i}")));
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -59,14 +59,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
             {
                 foreach (var venue in venues)
                 {
-                    var venueRow = doc.GetElementByTestId($"venue-row-{venue.Id}");
+                    var venueRow = doc.GetElementByTestId($"venue-row-{venue.VenueId}");
                     venueRow.Should().NotBeNull();
 
                     venueRow.GetElementByTestId("venue-name").TextContent.Should().Be(venue.VenueName);
-                    venueRow.GetElementByTestId("venue-address").TextContent.Trim().Should().Be(string.Join(Environment.NewLine, new[] { venue.AddressLine1, venue.AddressLine2, venue.Town, venue.County }.Where(part => !string.IsNullOrWhiteSpace(part))));
+                    venueRow.GetElementByTestId("venue-address").TextContent.Trim().Should().Be(string.Join("\n", new[] { venue.AddressLine1, venue.AddressLine2, venue.Town, venue.County }.Where(part => !string.IsNullOrWhiteSpace(part))));
                     venueRow.GetElementByTestId("venue-postcode").TextContent.Should().Be(venue.Postcode);
-                    venueRow.GetElementByTestId("venue-view-link").Attributes["href"].Value.Should().Be($"/venues/{venue.Id}");
-                    venueRow.GetElementByTestId("venue-delete-link").Attributes["href"].Value.Should().Be($"/venues/{venue.Id}/delete");
+                    venueRow.GetElementByTestId("venue-view-link").Attributes["href"].Value.Should().Be($"/venues/{venue.VenueId}");
+                    venueRow.GetElementByTestId("venue-delete-link").Attributes["href"].Value.Should().Be($"/venues/{venue.VenueId}/delete");
                 }
             }
         }

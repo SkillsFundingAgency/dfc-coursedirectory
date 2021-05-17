@@ -61,6 +61,60 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must enter an address for your venue.
+        /// </summary>
+        public static string ERROR_DM_VENUE_ADDRESS_LINE1_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_DM_VENUE_ADDRESS_LINE1_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a name for your venue.
+        /// </summary>
+        public static string ERROR_DM_VENUE_NAME_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_DM_VENUE_NAME_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a real postcode for your venue.
+        /// </summary>
+        public static string ERROR_DM_VENUE_POSTCODE_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_DM_VENUE_POSTCODE_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a postcode for your venue.
+        /// </summary>
+        public static string ERROR_DM_VENUE_POSTCODE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_DM_VENUE_POSTCODE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a reference for your venue.
+        /// </summary>
+        public static string ERROR_DM_VENUE_PROVIDER_VENUE_REF_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_DM_VENUE_PROVIDER_VENUE_REF_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a town or city.
+        /// </summary>
+        public static string ERROR_DM_VENUE_TOWN_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_DM_VENUE_TOWN_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Address line 1 must only include letters a to z, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE1_FORMAT {
@@ -70,7 +124,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Address line 1 must be {0} characters or less.
+        ///   Looks up a localized string similar to Address line 1 must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE1_MAXLENGTH {
             get {
@@ -97,7 +151,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Address line 2 must be {0} characters or less.
+        ///   Looks up a localized string similar to Address line 2 must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE2_MAXLENGTH {
             get {
@@ -115,7 +169,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to County must be {0} characters or less.
+        ///   Looks up a localized string similar to County must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_VENUE_COUNTY_MAXLENGTH {
             get {
@@ -151,7 +205,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Venue name must not already exist.
+        ///   Looks up a localized string similar to Your venue name must be unique.
         /// </summary>
         public static string ERROR_VENUE_NAME_UNIQUE {
             get {
@@ -178,6 +232,33 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your venue reference must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter your venue reference.
+        /// </summary>
+        public static string ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your venue reference must be unique.
+        /// </summary>
+        public static string ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE {
+            get {
+                return ResourceManager.GetString("ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a telephone number in the correct format.
         /// </summary>
         public static string ERROR_VENUE_TELEPHONE_FORMAT {
@@ -196,7 +277,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Town or city must be {0} characters or less.
+        ///   Looks up a localized string similar to Town or city must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_VENUE_TOWN_MAXLENGTH {
             get {

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Buffers;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
@@ -56,6 +58,56 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return false;
         }
 
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingHeaders)> FileMatchesSchema<TRow>(Stream stream)
+        {
+            // Check file conforms to schema
+            // There are two parts to this check; the first is to check we have all the required headers.
+            // We don't care about the order and we don't care if there are additional columns.
+            // If this fails we need to output the headers that are missing.
+            // The second part is to check that each row has the correct column count
+            // e.g. if there are 10 headers but a row has 9 columns then that's not valid.
+            // If we encounter this we return SaveFileResult.InvalidFile, since that's not a valid CSV.
+            // CsvHelper doesn't blow up if too many columns are provided so we don't bother checking for that.
+
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    var expectedHeaders = csvReader.Context.ReaderConfiguration.AutoMap<TRow>().MemberMaps
+                        .Where(m => !m.Data.Ignore)
+                        .Select(m => m.Data.Names.Single())
+                        .ToArray();
+
+                    var missingHeaders = expectedHeaders.Except(csvReader.Context.HeaderRecord).ToArray();
+                    if (missingHeaders.Length != 0)
+                    {
+                        return (FileMatchesSchemaResult.InvalidHeader, missingHeaders);
+                    }
+
+                    try
+                    {
+                        await csvReader.GetRecordsAsync<TRow>().ToListAsync();
+                    }
+                    catch (CsvHelper.MissingFieldException)
+                    {
+                        return (FileMatchesSchemaResult.InvalidRows, Array.Empty<string>());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
         protected internal async Task<bool> LooksLikeCsv(Stream stream)
         {
             CheckStreamIsProcessable(stream);
@@ -77,11 +129,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // Restore the Stream's position
                 stream.Seek(-bytesRead, SeekOrigin.Current);
 
+                var position = 0;
+
+                // Check for BOM
+                if (bytesRead >= _bom.Length)
+                {
+                    if (buffer.Take(_bom.Length).SequenceEqual(_bom))
+                    {
+                        position += _bom.Length;
+                    }
+                }
+
                 var foundAComma = false;
 
-                for (int i = 0; i < bytesRead; i++)
+                for (; position < bytesRead; position++)
                 {
-                    byte c = buffer[i];
+                    byte c = buffer[position];
 
                     if (c > 127)
                     {
@@ -89,7 +152,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         return false;
                     }
 
-                    if (c == '\n' && i > 1)
+                    if (c == '\n' && position > 1)
                     {
                         // We've hit the end of the line
                         return foundAComma;
@@ -120,6 +183,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 throw new ArgumentException("Stream must be seekable.", nameof(stream));
             }
+        }
+
+        protected internal enum FileMatchesSchemaResult
+        {
+            Ok,
+            InvalidHeader,
+            InvalidRows
         }
     }
 }

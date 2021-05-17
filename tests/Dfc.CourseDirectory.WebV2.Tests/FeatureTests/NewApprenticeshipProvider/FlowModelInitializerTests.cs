@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
 using Xunit;
@@ -271,9 +272,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
             var adminUser = await TestData.CreateUser();
             var framework = await TestData.CreateFramework(1, 1, 1, "Test Framework");
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: providerUser)).VenueId;
 
-            var venue = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetVenueById() { VenueId = venueId });
+            var venue = await WithSqlQueryDispatcher(sqlDispatcher => sqlDispatcher.ExecuteQuery(new GetVenue() { VenueId = venueId }));
 
             var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId,
                 framework,

@@ -24,9 +24,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider(providerName: "Test Provider");
 
-            var venue1 = await TestData.CreateVenue(provider.ProviderId, venueName: Faker.Company.Name());
-            var venue2 = await TestData.CreateVenue(provider.ProviderId, venueName: Faker.Company.Name());
-            var venue3 = await TestData.CreateVenue(provider.ProviderId, venueName: Faker.Company.Name());
+            var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: Faker.Company.Name());
+            var venue2 = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: Faker.Company.Name());
+            var venue3 = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: Faker.Company.Name());
 
             Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
 
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 "WEBSITE"
             });
 
-            var rows = csvReader.GetRecords<VenueRow>();
+            var rows = csvReader.GetRecords<CsvVenueRow>();
             rows.Should().BeEquivalentTo(
                 new[]
                 {
@@ -66,17 +66,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                     venue2,
                     venue3
                 }
-                .OrderBy(v => v.ProvVenueID)
+                .OrderBy(v => v.ProviderVenueRef)
                 .ThenBy(v => v.VenueName)
-                .Select(v => new VenueRow()
+                .Select(v => new CsvVenueRow()
                 {
                     AddressLine1 = v.AddressLine1,
                     AddressLine2 = v.AddressLine2,
                     County = v.County,
                     Email = v.Email,
                     Postcode = v.Postcode,
-                    ProviderVenueRef = v.ProvVenueID ?? string.Empty,
-                    Telephone = v.PHONE,
+                    ProviderVenueRef = v.ProviderVenueRef ?? string.Empty,
+                    Telephone = v.Telephone,
                     Town = v.Town,
                     VenueName = v.VenueName,
                     Website = v.Website

@@ -12,19 +12,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<OneOf<NotFound, Success>> Execute(SqlTransaction transaction, SetVenueUploadProcessed query)
         {
-            var sql = $@"
+            var sql = @"
 UPDATE Pttcd.VenueUploads SET
-    UploadStatus = {(int)UploadStatus.Processed},
-    ProcessingCompletedOn = @ProcessingCompletedOn,
-    LastValidated = @ProcessingCompletedOn,
-    IsValid = @IsValid
+    UploadStatus = @UploadStatus,
+    ProcessingCompletedOn = ISNULL(ProcessingCompletedOn, @ProcessingCompletedOn),
+    LastValidated = @ProcessingCompletedOn
 WHERE VenueUploadId = @VenueUploadId";
 
             var paramz = new
             {
                 query.VenueUploadId,
                 query.ProcessingCompletedOn,
-                query.IsValid
+                UploadStatus = query.IsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors
             };
 
             var updated = await transaction.Connection.ExecuteAsync(sql, paramz, transaction);

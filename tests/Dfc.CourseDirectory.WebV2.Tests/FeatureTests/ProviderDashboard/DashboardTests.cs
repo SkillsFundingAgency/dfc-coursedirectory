@@ -479,9 +479,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             }
         }
 
-        private async Task<IReadOnlyCollection<Core.DataStore.CosmosDb.Models.Venue>> CreateVenues(Guid providerId, int count) =>
+        private async Task<IReadOnlyCollection<Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
-                TestData.CreateVenue(providerId, venueName: $"Test {i}")));
+                TestData.CreateVenue(providerId, createdBy: User.ToUserInfo(), venueName: $"Test {i}")));
 
         private async Task CreateCourses(Guid providerId, int count)
         {
@@ -495,12 +495,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             }
         }
 
-        private async Task CreateTLevels(Guid providerId, IEnumerable<Core.DataStore.Sql.Models.TLevelDefinition> tLevelDefinitions, IEnumerable<Core.DataStore.CosmosDb.Models.Venue> venues, int count) =>
+        private async Task CreateTLevels(Guid providerId, IEnumerable<Core.DataStore.Sql.Models.TLevelDefinition> tLevelDefinitions, IEnumerable<Core.DataStore.Sql.Models.Venue> venues, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
                 TestData.CreateTLevel(
                     providerId,
                     tLevelDefinitions.OrderBy(_ => Guid.NewGuid()).First().TLevelDefinitionId,
-                    new[] { venues.OrderBy(_ => Guid.NewGuid()).First().Id },
+                    new[] { venues.OrderBy(_ => Guid.NewGuid()).First().VenueId },
                     User.ToUserInfo(),
                     startDate: Clock.UtcNow.AddMonths(i).Date,
                     yourReference: $"YourReference{i}")));

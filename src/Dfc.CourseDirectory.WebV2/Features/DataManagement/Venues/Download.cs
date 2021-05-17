@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
     public class Response
     {
         public string FileName { get; set; }
-        public IReadOnlyCollection<VenueRow> Rows { get; set; }
+        public IReadOnlyCollection<CsvVenueRow> Rows { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, Response>
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesForProvider()
+            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
             {
                 ProviderId = providerContext.ProviderInfo.ProviderId
             });
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
             var rows = venues
                 .OrderBy(v => v.ProviderVenueRef)
                 .ThenBy(v => v.VenueName)
-                .Select(VenueRow.FromModel)
+                .Select(CsvVenueRow.FromModel)
                 .ToList();
 
             var fileName = FileNameHelper.SanitizeFileName(

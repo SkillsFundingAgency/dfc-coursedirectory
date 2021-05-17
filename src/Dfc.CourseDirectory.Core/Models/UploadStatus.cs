@@ -10,22 +10,27 @@
         /// <summary>
         /// Processing of the upload's contents is currently in progress.
         /// </summary>
-        InProgress = 1,
+        Processing = 1,
 
         /// <summary>
-        /// Processing the upload's contents is completed.
+        /// Processing the upload's contents completed with validation errors.
         /// </summary>
-        Processed = 2,
+        ProcessedWithErrors = 2,
+
+        /// <summary>
+        /// Processing the upload's contents completed without validation errors.
+        /// </summary>
+        ProcessedSuccessfully = 3,
 
         /// <summary>
         /// The contents of the upload have been published.
         /// </summary>
-        Published = 3,
+        Published = 4,
 
         /// <summary>
         /// The upload has been replaced with another without its contents published.
         /// </summary>
-        Abandoned = 4
+        Abandoned = 5
     }
 
     public static class UploadStatusExtensions

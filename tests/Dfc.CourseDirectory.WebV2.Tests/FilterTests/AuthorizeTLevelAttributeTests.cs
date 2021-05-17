@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var tLevel = await TestData.CreateTLevel(
                 provider.ProviderId,
@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var tLevel = await TestData.CreateTLevel(
                 provider.ProviderId,
@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var tLevel = await TestData.CreateTLevel(
                 provider.ProviderId,
@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venueId = (await TestData.CreateVenue(provider.ProviderId)).Id;
+            var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             var tLevel = await TestData.CreateTLevel(
                 provider.ProviderId,

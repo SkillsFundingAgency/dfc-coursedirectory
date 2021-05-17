@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -16,11 +17,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
     {
         private readonly IMediator _mediator;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
-        public VenuesDataManagementController(IMediator mediator, IProviderContextProvider providerContextProvider)
+        public VenuesDataManagementController(
+            IMediator mediator,
+            IProviderContextProvider providerContextProvider,
+            JourneyInstanceProvider journeyInstanceProvider)
         {
             _mediator = mediator;
             _providerContextProvider = providerContextProvider;
+            _journeyInstanceProvider = journeyInstanceProvider;
         }
 
         [HttpGet("")]
@@ -31,7 +37,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
             new Download.Query(),
-            result => new CsvResult<VenueRow>(result.FileName, result.Rows));
+            result => new CsvResult<CsvVenueRow>(result.FileName, result.Rows));
+
+        [HttpGet("download-errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
+            new DownloadErrors.Query(),
+            result => new CsvResult<CsvVenueRowWithErrors>(result.FileName, result.Rows));
 
         [HttpPost("upload")]
         [RequireProviderContext]
@@ -45,10 +57,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     File = file
                 },
                 response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
+                    errors =>
+                    {
+                        ViewBag.MissingHeaders = errors.MissingHeaders;
+                        return this.ViewFromErrors(errors);
+                    },
                     result =>
                         RedirectToAction(
-                            result == Venues.Upload.UploadResult.ProcessingCompleted ? nameof(CheckAndPublish) : nameof(InProgress))
+                            result switch
+                            {
+                                Venues.Upload.UploadSucceededResult.ProcessingCompletedSuccessfully => nameof(CheckAndPublish),
+                                Venues.Upload.UploadSucceededResult.ProcessingCompletedWithErrors => nameof(Errors),
+                                _ => nameof(InProgress)
+                            })
                         .WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
@@ -60,17 +81,49 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.Processed => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
 
-        [HttpGet("check-publish")]
+        [HttpGet("errors")]
         [RequireProviderContext]
-        public IActionResult CheckAndPublish()
+        public IActionResult Errors()
         {
             return View();
         }
+
+        [HttpGet("check-publish")]
+        [RequireProviderContext]
+        public async Task<IActionResult> CheckAndPublish()
+        {
+            var query = new CheckAndPublish.Query();
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    hasErrors => RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    command => View(command)));
+        }
+
+        [HttpPost("check-publish")]
+        [RequireProviderContext]
+        [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
+                        RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                        RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("success")]
+        [RequireProviderContext]
+        [RequireJourneyInstance]
+        [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm));
 
         [HttpGet("template")]
         public IActionResult Template() =>
@@ -82,5 +135,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         {
             return View();
         }
+
     }
 }

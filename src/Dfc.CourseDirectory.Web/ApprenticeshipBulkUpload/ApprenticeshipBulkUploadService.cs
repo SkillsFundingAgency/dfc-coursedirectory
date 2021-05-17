@@ -14,6 +14,8 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -22,7 +24,7 @@ using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Venue = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Venue;
+using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 {
@@ -87,23 +89,23 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
-            private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+            private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
             private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
             private readonly AuthenticatedUserInfo _authUserDetails;
-            private readonly int _ukprn;
+            private readonly Guid _providerId;
 
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(
-                ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+                ISqlQueryDispatcher sqlQueryDispatcher,
                 IStandardsAndFrameworksCache standardsAndFrameworksCache,
                 AuthenticatedUserInfo userInfo,
-                int ukprn)
+                Guid providerId)
             {
-                _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+                _sqlQueryDispatcher = sqlQueryDispatcher;
                 _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
                 _authUserDetails = userInfo ?? throw new ArgumentNullException(nameof(userInfo));
-                _ukprn = ukprn;
+                _providerId = providerId;
 
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
@@ -338,7 +340,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     if (_cachedVenues == null)
                     {
-                        _cachedVenues = Task.Run(() => _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderUkprn = _ukprn }))
+                        _cachedVenues = Task.Run(() => _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerId }))
                             .Result
                             .ToList();
                     }
@@ -929,6 +931,8 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         private readonly IBinaryStorageProvider _binaryStorageProvider;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderInfoCache _providerInfoCache;
         private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
@@ -936,12 +940,16 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             IBinaryStorageProvider binaryStorageProvider,
             IBackgroundWorkScheduler backgroundWorkScheduler,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderInfoCache providerInfoCache,
             IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
             _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerInfoCache = providerInfoCache;
             _settings = (settings ?? throw new ArgumentNullException(nameof(settings))).Value;
         }
 
@@ -965,6 +973,8 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             {
                 throw new ArgumentException("Stream must be seekable.", nameof(stream));
             }
+
+            var providerId = (await _providerInfoCache.GetProviderIdForUkprn(ukprn)).Value;
 
             var csvLineCount = CsvUtil.CountLines(stream);
             stream.Seek(0L, SeekOrigin.Begin);
@@ -994,10 +1004,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         ValidateHeader(csv);
 
                         var classMap = new ApprenticeshipCsvRecordMap(
-                            _cosmosDbQueryDispatcher,
+                            _sqlQueryDispatcher,
                             _standardsAndFrameworksCache,
                             userInfo,
-                            ukprn);
+                            providerId);
 
                         csv.Configuration.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
@@ -1256,8 +1266,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 RecordStatus = record.ErrorsList.Any() ? ApprenticeshipStatus.BulkUploadPending : ApprenticeshipStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
                 National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
-                LocationId = venue?.LocationId,
-                VenueId = venue?.Id,
+                VenueId = venue?.VenueId,
                 Address = venue != null
                     ? new ApprenticeshipLocationAddress
                     {
@@ -1267,13 +1276,13 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         County = venue.County,
                         Postcode = venue.Postcode,
                         Email = venue.Email,
-                        Phone = venue.PHONE,
+                        Phone = venue.Telephone,
                         Website = venue.Website,
-                        Latitude = venue.Latitude,
-                        Longitude = venue.Longitude
+                        Latitude = Convert.ToDecimal(venue.Latitude),
+                        Longitude = Convert.ToDecimal(venue.Longitude)
                     }
                     : null,
-                LocationGuidId = venue?.Id,
+                LocationGuidId = venue?.VenueId,
                 Radius = record.RADIUS,
                 DeliveryModes = record.DELIVERY_MODE
             };

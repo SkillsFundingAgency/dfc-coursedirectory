@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
@@ -29,26 +29,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
 
     public class Handler : IRequestHandler<Query, ViewModel>
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IProviderInfoCache _providerInfoCache;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public Handler(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IProviderInfoCache providerInfoCache)
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _providerInfoCache = providerInfoCache;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var provider = await _providerInfoCache.GetProviderInfo(request.ProviderId);
-
-            var results = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetVenuesByProvider { ProviderUkprn = provider.Ukprn });
+            var results = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider { ProviderId = request.ProviderId });
 
             return new ViewModel
             {
                 Venues = results.Select(r => new VenueViewModel
                 {
-                    VenueId = r.Id,
+                    VenueId = r.VenueId,
                     VenueName = r.VenueName,
                     AddressParts = new[]
                     {

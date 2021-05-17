@@ -36,8 +36,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
-            var venue2 = await TestData.CreateVenue(provider.ProviderId, venueName: "Another T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
+            var venue2 = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Another T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var initialWhoFor = "Who for";
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: initialWhatYouCanDoNext,
                 yourReference: initialYourReference,
                 startDate: initialStartDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: initialWebsite,
                 createdBy: User.ToUserInfo());
 
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                     .Add("StartDate.Day", updatedStartDate.Day)
                     .Add("StartDate.Month", updatedStartDate.Month)
                     .Add("StartDate.Year", updatedStartDate.Year)
-                    .Add("LocationVenueIds", venue2.Id)
+                    .Add("LocationVenueIds", venue2.VenueId)
                     .Add("Website", updatedWebsite)
                     .Add("WhoFor", updatedWhoFor)
                     .Add("EntryRequirements", updatedEntryRequirements)
@@ -139,8 +139,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 providerType: ProviderType.TLevels,
                 tLevelDefinitionIds: authorizedTLevelDefinitionIds);
 
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "T Level venue");
-            var venue2 = await TestData.CreateVenue(provider.ProviderId, venueName: "Another T Level venue");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "T Level venue");
+            var venue2 = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Another T Level venue");
 
             var tLevelDefinition = tLevelDefinitions.First();
             var initialWhoFor = "Who for";
@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                 whatYouCanDoNext: initialWhatYouCanDoNext,
                 yourReference: initialYourReference,
                 startDate: initialStartDate,
-                locationVenueIds: new[] { venue.Id },
+                locationVenueIds: new[] { venue.VenueId },
                 website: initialWebsite,
                 createdBy: User.ToUserInfo());
 
@@ -190,7 +190,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
                     .Add("StartDate.Day", updatedStartDate.Day)
                     .Add("StartDate.Month", updatedStartDate.Month)
                     .Add("StartDate.Year", updatedStartDate.Year)
-                    .Add("LocationVenueIds", venue2.Id)
+                    .Add("LocationVenueIds", venue2.VenueId)
                     .Add("Website", updatedWebsite)
                     .Add("WhoFor", updatedWhoFor)
                     .Add("EntryRequirements", updatedEntryRequirements)
@@ -214,7 +214,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
             {
                 journeyState.YourReference.Should().Be(updatedYourReference);
                 journeyState.StartDate.Should().Be(updatedStartDate);
-                journeyState.LocationVenueIds.Should().OnlyContain(id => id == venue2.Id);
+                journeyState.LocationVenueIds.Should().OnlyContain(id => id == venue2.VenueId);
                 journeyState.Website.Should().Be(updatedWebsite);
                 journeyState.WhoFor.Should().Be(updatedWhoFor);
                 journeyState.EntryRequirements.Should().Be(updatedEntryRequirements);

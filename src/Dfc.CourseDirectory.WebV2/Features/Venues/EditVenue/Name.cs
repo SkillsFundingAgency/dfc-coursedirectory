@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
@@ -29,19 +29,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Name
     {
         private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
-        private readonly IProviderInfoCache _providerInfoCache;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             JourneyInstance<EditVenueJourneyModel> journeyInstance,
             IProviderOwnershipCache providerOwnershipCache,
-            IProviderInfoCache providerInfoCache,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _journeyInstance = journeyInstance;
             _providerOwnershipCache = providerOwnershipCache;
-            _providerInfoCache = providerInfoCache;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
@@ -58,9 +55,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Name
             CancellationToken cancellationToken)
         {
             var providerId = await _providerOwnershipCache.GetProviderForVenue(request.VenueId);
-            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId.Value);
 
-            var validator = new CommandValidator(providerInfo.Ukprn, request.VenueId, _cosmosDbQueryDispatcher);
+            var validator = new CommandValidator(providerId.Value, request.VenueId, _sqlQueryDispatcher);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -76,12 +72,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Name
         private class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator(
-                int providerUkprn,
+                Guid providerId,
                 Guid venueId,
-                ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+                ISqlQueryDispatcher sqlQueryDispatcher)
             {
                 RuleFor(c => c.Name)
-                    .VenueName(providerUkprn, venueId, cosmosDbQueryDispatcher);
+                    .VenueName(providerId, venueId, sqlQueryDispatcher);
             }
         }
     }

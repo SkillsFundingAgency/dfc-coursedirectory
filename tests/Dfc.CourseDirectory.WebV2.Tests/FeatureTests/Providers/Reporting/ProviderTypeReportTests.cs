@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         public async Task ProviderTypeReport_Get_WithCounts_ReturnsExpectedCsv()
         {
             var provider = await CreateProvider(12345678, ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels, ProviderStatus.Onboarded, "Active");
-            var venue = await TestData.CreateVenue(provider.ProviderId, venueName: "TestVenue1");
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "TestVenue1");
 
             var liveCourseIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo())));
             var pendingCourseIds = await Task.WhenAll(Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), courseStatus: CourseStatus.Pending)));
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var tLevels = await Task.WhenAll(Enumerable.Range(0, 5).Select(i =>
-                TestData.CreateTLevel(provider.ProviderId, tLevelDefinitions.OrderBy(_ => Guid.NewGuid()).Select(d => d.TLevelDefinitionId).First(), new[] { venue.Id }, User.ToUserInfo(), startDate: Clock.UtcNow.AddDays(i).Date)));
+                TestData.CreateTLevel(provider.ProviderId, tLevelDefinitions.OrderBy(_ => Guid.NewGuid()).Select(d => d.TLevelDefinitionId).First(), new[] { venue.VenueId }, User.ToUserInfo(), startDate: Clock.UtcNow.AddDays(i).Date)));
 
             var deletedTLevels = tLevels.OrderBy(_ => Guid.NewGuid()).Take(2).ToArray();
             await Task.WhenAll(deletedTLevels.Select(t => TestData.DeleteTLevel(t.TLevelId, User.ToUserInfo())));

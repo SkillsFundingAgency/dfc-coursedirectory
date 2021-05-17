@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Functions;
-using Dfc.CourseDirectory.Functions.FixVenues;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
@@ -45,9 +44,6 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<UkrlpSyncHelper>();
             builder.Services.AddTransient<SqlDataSync>();
             builder.Services.AddHttpClient<LarsDataImporter>();
-            builder.Services.AddTransient<VenueAnalyser>();
-            builder.Services.AddTransient<VenueCorrector>();
-            builder.Services.AddTransient<IVenueCorrectionFinder, VenueCorrectionFinder>();
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
             builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();

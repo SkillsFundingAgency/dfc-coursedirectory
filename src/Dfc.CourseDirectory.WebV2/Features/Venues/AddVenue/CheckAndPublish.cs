@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Security;
 using FormFlow;
 using MediatR;
@@ -35,20 +35,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, Success>
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IProviderContextProvider _providerContextProvider;
 
         public Handler(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             JourneyInstanceProvider journeyInstanceProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             IProviderContextProvider providerContextProvider)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstanceProvider = journeyInstanceProvider;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
             var venueId = Guid.NewGuid();
             var providerUkprn = _providerContextProvider.GetProviderContext().ProviderInfo.Ukprn;
 
-            await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateVenue()
+            await _sqlQueryDispatcher.ExecuteQuery(new CreateVenue()
             {
                 VenueId = venueId,
                 ProviderUkprn = providerUkprn,
@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
                 Latitude = Convert.ToDecimal(journeyInstance.State.Latitude),
                 Longitude = Convert.ToDecimal(journeyInstance.State.Longitude),
                 CreatedBy = _currentUserProvider.GetCurrentUser(),
-                CreatedDate = _clock.UtcNow
+                CreatedOn = _clock.UtcNow
             });
 
             journeyInstance.UpdateState(state => state.VenueId = venueId);
