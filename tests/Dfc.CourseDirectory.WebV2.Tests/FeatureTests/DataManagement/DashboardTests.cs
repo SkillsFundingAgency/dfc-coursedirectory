@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            var venueUpload = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), isValid: false);
+            var venueUpload = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors);
             //Create some venue upload rows to test new data in UI
             await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId,2);
             await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId,3);
