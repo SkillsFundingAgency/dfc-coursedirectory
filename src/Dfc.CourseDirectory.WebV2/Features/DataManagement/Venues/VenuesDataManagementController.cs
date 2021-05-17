@@ -128,7 +128,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [HttpGet("template")]
         public IActionResult Template() =>
            new CsvResult<CsvVenueRow>("venues-template.csv", Enumerable.Empty<CsvVenueRow>());
-           new CsvResult<VenueRow>("venues-template.csv", Enumerable.Empty<VenueRow>());
 
         [HttpGet("formatting")]
         [RequireProviderContext]
