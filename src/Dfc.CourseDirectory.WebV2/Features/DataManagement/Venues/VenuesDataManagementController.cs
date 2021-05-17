@@ -149,7 +149,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("delete")]
         [RequireProviderContext]
-        public IActionResult DeleteUpload() => Ok();
+        public async Task<IActionResult> DeleteUpload() =>
+            await _mediator.SendAndMapResponse(
+                new DeleteUpload.Query(),
+                command => View(command));
+
+        [HttpPost("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction("Index", "ProviderDashboard").WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("check-publish")]
         [RequireProviderContext]

@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public interface IFileUploadProcessor
     {
+        Task DeleteVenueUploadForProvider(Guid providerId);
         Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId);
         IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);
