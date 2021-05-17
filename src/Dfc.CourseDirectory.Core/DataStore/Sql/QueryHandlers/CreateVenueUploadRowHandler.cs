@@ -80,14 +80,9 @@ INSERT INTO [Pttcd].[VenueUploadRows]
                 query.VenueId,
                 query.OutsideOfEngland,
                 query.IsSupplementary
-            };
-
-            //await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
-            
+            };       
 
             return transaction.Connection.QuerySingleOrDefaultAsync<int>(sql, paramz, transaction);
-
-            //return new int();
         }
     }
 }
