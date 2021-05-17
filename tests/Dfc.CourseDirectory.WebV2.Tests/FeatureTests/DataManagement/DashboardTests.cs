@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             // Arrange
             var provider = await TestData.CreateProvider(providerType: providerType);
 
-            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
+            await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
             await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
             await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
 
@@ -80,10 +80,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
 
             var venueUpload = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors);
             //Create some venue upload rows to test new data in UI
-            var rowOne = await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 2);
-            var rowTwo = await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 3);
-            var rowThree = await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 4);
-            var rowFour = await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 5);
+            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 2);
+            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 3);
+            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 4);
+            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 5);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
 
