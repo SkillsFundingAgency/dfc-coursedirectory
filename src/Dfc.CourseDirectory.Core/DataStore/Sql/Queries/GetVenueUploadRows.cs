@@ -6,6 +6,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     public class GetVenueUploadRows : ISqlQuery<(IReadOnlyCollection<VenueUploadRow> Rows, int LastRowNumber)>
     {
-        public Guid VenueUploadId { get; set; }
+        public int VenueUploadRowId { get; set; }
     }
 }

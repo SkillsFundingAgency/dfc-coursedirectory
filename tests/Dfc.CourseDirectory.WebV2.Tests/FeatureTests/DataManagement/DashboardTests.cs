@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             // Arrange
             var provider = await TestData.CreateProvider(providerType: providerType);
 
-            await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
             await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
             await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
 
