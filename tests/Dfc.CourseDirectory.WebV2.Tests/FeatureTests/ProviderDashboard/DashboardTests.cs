@@ -447,6 +447,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             var provider = await TestData.CreateProvider(
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
+
             //Create some venue upload rows to test new data in UI
             var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
@@ -455,7 +456,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                     rowBuilder.AddRow(record => record.IsValid = false);
                     rowBuilder.AddRow(record => record.IsValid = false);
                 });
-
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 

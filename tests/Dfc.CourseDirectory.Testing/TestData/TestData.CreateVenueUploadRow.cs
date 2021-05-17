@@ -7,7 +7,6 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-
         public Task<VenueUploadRow> CreateVenueUploadRow(
         Guid VenueUploadId,
         int RowNumber = 2,
