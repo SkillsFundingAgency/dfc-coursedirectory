@@ -315,6 +315,35 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             doc.AssertHasError("File", "The selected file must be smaller than 1MB");
         }
 
+        //[Fact]
+        //public async Task UnpublishedVenueCountDiplayedOnDashboard()
+        //{
+        //    // Arrange
+        //    var provider = await TestData.CreateProvider();
+
+        //    var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 4);
+        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+        //    var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard");
+
+        //    // Act
+        //    var response = await HttpClient.SendAsync(request);
+
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+
+
+        //    SqlQuerySpy.VerifyQuery<CreateVenueUpload, Success>(q =>
+        //        q.CreatedBy.UserId == User.UserId &&
+        //        q.CreatedOn == Clock.UtcNow &&
+        //        q.ProviderId == provider.ProviderId);
+
+
+        //    var doc = await response.GetDocument();
+        //    doc.Body.TextContent.Should().Contain("You have no venues");
+        //}
+
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
