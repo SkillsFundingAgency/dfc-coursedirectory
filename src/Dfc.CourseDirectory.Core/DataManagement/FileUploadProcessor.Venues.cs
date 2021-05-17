@@ -20,6 +20,40 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        public async Task DeleteVenueUploadForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (venueUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedVenueUpload);
+                }
+
+                if (venueUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
+                    venueUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
+                {
+                    throw new InvalidUploadStatusException(
+                        venueUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                await dispatcher.ExecuteQuery(
+                    new SetVenueUploadAbandoned()
+                    {
+                        VenueUploadId = venueUpload.VenueUploadId,
+                        AbandonedOn = _clock.UtcNow
+                    });
+
+                await dispatcher.Commit();
+            }
+        }
+
         public async Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
