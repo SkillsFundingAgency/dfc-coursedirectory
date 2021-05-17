@@ -1,25 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
-using Xunit;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
 
-        public async Task<VenueUploadRow> CreateVenueUploadRow(
+        public Task<VenueUploadRow> CreateVenueUploadRow(
         Guid VenueUploadId,
         int RowNumber = 2,
         bool IsValid = false,
         bool IsSupplementary = false,
         bool OutsideOfEngland = false)
         {
-            return await WithSqlQueryDispatcher(async dispatcher =>
+            return WithSqlQueryDispatcher(async dispatcher =>
              {
                  var rowUpload = await dispatcher.ExecuteQuery(new CreateVenueUploadRow()
                  {
