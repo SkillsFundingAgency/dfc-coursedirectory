@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "VENUE_PROVIDER_VENUE_REF_UNIQUE":
                     return "Your venue reference";
                 case "VENUE_TELEPHONE_FORMAT":
-                    return "Telephone";
+                    return "Phone";
                 case "VENUE_WEBSITE_FORMAT":
                     return "Website";
             }
