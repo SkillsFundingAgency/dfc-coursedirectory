@@ -42,7 +42,8 @@
             <p class="govuk-body">To ensure an upload is successful you must:</p>
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
                 <li>include existing and new venues in the data file</li>
-                <li>follow the <a asp-action="Formatting" class="govuk-link">file format requirements</a></li>
+                <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues"
+                                  class="govuk-link">file format requirements</a></li>
             </ul>
 
             <govuk-file-upload asp-for="File" input-accept=".csv">
