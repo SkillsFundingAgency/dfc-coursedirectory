@@ -806,37 +806,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<Result> UpdateStatus(Guid courseId, Guid courseRunId, int statusToUpdateTo)
-        {
-            if (statusToUpdateTo < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(statusToUpdateTo), $"{nameof(statusToUpdateTo)} cannot be less than 0.");
-            }
-
-            var maxRecordStatus = Enum.GetValues(typeof(RecordStatus)).Cast<int>().Max();
-
-            if (statusToUpdateTo > maxRecordStatus)
-            {
-                throw new ArgumentOutOfRangeException(nameof(statusToUpdateTo), $"{nameof(statusToUpdateTo)} cannot be greater than {nameof(maxRecordStatus)}.");
-            }
-
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-
-            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
-                + "?CourseId=" + courseId
-                + "&CourseRunId=" + courseRunId
-                + "&Status=" + statusToUpdateTo));
-
-            if (response.IsSuccessStatusCode)
-            {
-                return Result.Ok();
-            }
-            else
-            {
-                return Result.Fail("Update course unsuccessful http response");
-            }
-        }
-
         public async Task<Result> DeleteBulkUploadCourses(int UKPRN)
         {
             if (UKPRN < 0)

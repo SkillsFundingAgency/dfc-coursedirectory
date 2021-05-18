@@ -139,37 +139,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize("Admin")]
-        public async Task<IActionResult> DeleteCourseRun(Guid courseId, Guid courseRunId)
-        {
-            int? sUKPRN = Session.GetInt32("UKPRN");
-            if (!sUKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
-            var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId));
-
-            if (!course.IsSuccess)
-            {
-                throw new Exception($"Unable to find Course with id {courseId}");
-            }
-
-            var courseRun = course.Value.CourseRuns.SingleOrDefault(x => x.id == courseRunId);
-
-            if (courseRun == null) throw new Exception($"Unable to find course run:{courseRunId} for course: {course.Value.id}");
-
-            var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Archived);
-
-            if (!result.IsSuccess)
-            {
-                throw new Exception($"Unable to delete Course run with id {courseRunId}");
-            }
-
-            return View("CourseRunDeleted/index", new DeleteCourseRunViewModel() {  CourseName = courseRun.CourseName});
-        }
-
-        [HttpGet]
         public async Task<IActionResult> Report()
         {
             var ukprn = Session.GetInt32("UKPRN");
