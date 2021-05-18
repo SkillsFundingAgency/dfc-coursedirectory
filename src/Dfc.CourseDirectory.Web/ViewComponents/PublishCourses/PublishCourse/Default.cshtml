@@ -151,7 +151,7 @@
                         {
                             @if (Model.PublishMode == Dfc.CourseDirectory.Services.Models.PublishMode.Migration)
                             {
-                                <a asp-action="DeleteCourseRun" asp-controller="Migration"
+                                <a asp-action="Get" asp-controller="DeleteCourseRun"
                                    asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                             }
                         }
