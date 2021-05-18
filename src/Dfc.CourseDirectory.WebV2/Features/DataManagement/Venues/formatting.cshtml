@@ -1,0 +1,262 @@
+﻿@{
+    ViewBag.Title = "Data Upload - Venue file format requirements";
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back to venue data upload</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Venue file format requirements</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <p class="govuk-body">The tables below show information about each field in the data upload file and how to complete it correctly.</p><p>
+        </p><div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number">
+                    <li><a class="govuk-link" href="#REF">Your venue reference</a></li>
+                    <li><a class="govuk-link" href="#VENUE_NAME">Venue name</a></li>
+                    <li><a class="govuk-link" href="#ADDRESS_LINE_1">Address line 1</a></li>
+                    <li><a class="govuk-link" href="#ADDRESS_LINE_2">Address line 2</a></li>
+                    <li><a class="govuk-link" href="#TOWN_CITY">Town or City</a></li>
+                </ol>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number" start="6">
+                    <li><a class="govuk-link" href="#COUNTY">County</a></li>
+                    <li><a class="govuk-link" href="#POSTCODE">Postcode</a></li>
+                    <li><a class="govuk-link" href="#EMAIL">Email</a></li>
+                    <li><a class="govuk-link" href="#TELEPHONE">Phone</a></li>
+                    <li><a class="govuk-link" href="#WEBSITE">Website</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="REF"> YOUR_VENUE_REFERENCE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    A unique reference that will help you identify this venue in your internal systems.
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="VENUE_NAME">VENUE_NAME</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    250
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    This information will be visible when linked with the courses you provide.
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="ADDRESS_LINE_1">ADDRESS_LINE_1</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    100
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="ADDRESS_LINE_2">ADDRESS_LINE_2</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    100
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="TOWN_CITY">TOWN_CITY</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    75
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="COUNTY">COUNTY</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    75
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="POSTCODE">POSTCODE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="EMAIL">EMAIL</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    name@example.com
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="TELEPHONE">PHONE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    11
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    01632 960 001<br>
+                    07700 900 982
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="WEBSITE">WEBSITE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    https://www.venue.com
+                </dd>
+            </div>
+        </dl>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+    </div>
+</div>
