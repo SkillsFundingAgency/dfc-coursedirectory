@@ -259,16 +259,16 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
 <div class="govuk-grid-row govuk-!-margin-bottom-4 pttcd-provider-dashboard__row">
     <div class="govuk-grid-column-one-third">
         <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
-            
-                <h2 class="govuk-heading-s">Published venues</h2>
-                <p class="pttcd-provider-dashboard__card__number" data-testid="venue-count">@Model.VenueCount</p>
-                @if (Model.UnpublishedVenueCount > 0)
-                {
-                    <h2 class="govuk-heading-s govuk-!-padding-top-2">Unpublished venues</h2>
-                    <p class="pttcd-provider-dashboard__card__number" data-testid="UnpublishedVenueCount">@Model.UnpublishedVenueCount</p>
-                }
 
-            
+            <h2 class="govuk-heading-s">Published venues</h2>
+            <p class="pttcd-provider-dashboard__card__number" data-testid="venue-count">@Model.VenueCount</p>
+            @if (Model.UnpublishedVenueCount > 0)
+            {
+                <h2 class="govuk-heading-s govuk-!-padding-top-2">Unpublished venues</h2>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="UnpublishedVenueCount">@Model.UnpublishedVenueCount</p>
+            }
+
+
 
 
         </div>
@@ -337,8 +337,8 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
         </div>
     }
 
-    </div>
-    
+</div>
+
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">

@@ -86,11 +86,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
             var bulkUploadFiles = await _binaryStorageProvider.ListFiles($"{provider.Ukprn}/Bulk Upload/Files/");
 
             var venueUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
-            new GetLatestVenueUploadForProviderWithStatus()
-            {
-                ProviderId = request.ProviderId,
-                Statuses = new[] { UploadStatus.Created, UploadStatus.Processing }
-            });
+                new GetLatestUnpublishedVenueUploadForProvider()
+                {
+                    ProviderId = request.ProviderId
+                });
 
             var vm = new ViewModel()
             {

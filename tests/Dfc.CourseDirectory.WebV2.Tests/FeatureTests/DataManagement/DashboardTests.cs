@@ -78,12 +78,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            var venueUpload = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors);
             //Create some venue upload rows to test new data in UI
-            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 2);
-            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 3);
-            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 4);
-            await TestData.CreateVenueUploadRow(venueUpload.VenueUploadId, 5);
+            var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
 
