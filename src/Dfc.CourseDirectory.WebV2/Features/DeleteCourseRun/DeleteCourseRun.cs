@@ -3,10 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -15,7 +13,7 @@ using FluentValidation.Results;
 using FormFlow;
 using MediatR;
 using OneOf;
-using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries.DeleteCourseRun;
+using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteCourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
@@ -25,7 +23,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
     {
         public string CourseName { get; set; }
         public Guid ProviderId { get; set; }
-        public int ProviderUkprn { get; set; }
     }
 
     public class Request : IRequest<ViewModel>
@@ -74,26 +71,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, SuccessViewModel>>,
         IRequestHandler<ConfirmedQuery, ConfirmedViewModel>
     {
-        private readonly IProviderInfoCache _providerInfoCache;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstance<JourneyModel> _journeyInstance;
         private readonly IClock _clock;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
-            IProviderInfoCache providerInfoCache,
             IProviderOwnershipCache providerOwnershipCache,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             JourneyInstance<JourneyModel> journeyInstance,
             IClock clock,
             ICurrentUserProvider currentUserProvider)
         {
-            _providerInfoCache = providerInfoCache;
             _providerOwnershipCache = providerOwnershipCache;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstance = journeyInstance;
             _clock = clock;
@@ -102,15 +93,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            var ukprn = await GetUkprnForCourse(request.CourseId);
-            var (course, courseRun) = await GetCourseAndCourseRun(request.CourseId, request.CourseRunId, ukprn);
+            var (course, courseRun) = await GetCourseAndCourseRun(request.CourseId, request.CourseRunId);
             return await CreateViewModel(course, courseRun);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, SuccessViewModel>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var ukprn = await GetUkprnForCourse(request.CourseId);
-            var (course, courseRun) = await GetCourseAndCourseRun(request.CourseId, request.CourseRunId, ukprn);
+            var (course, courseRun) = await GetCourseAndCourseRun(request.CourseId, request.CourseRunId);
 
             if (!request.Confirm)
             {
@@ -122,13 +111,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            await _cosmosDbQueryDispatcher.ExecuteQuery(new DeleteCourseRunQuery()
+            var providerId = (await _providerOwnershipCache.GetProviderForCourse(request.CourseId)).Value;
+
+            await _sqlQueryDispatcher.ExecuteQuery(new DeleteCourseRunQuery()
             {
                 CourseId = request.CourseId,
                 CourseRunId = request.CourseRunId,
-                ProviderUkprn = ukprn,
-                UpdatedBy = _currentUserProvider.GetCurrentUser().UserId,
-                UpdatedDate = _clock.UtcNow,
+                DeletedBy = _currentUserProvider.GetCurrentUser(),
+                DeletedOn = _clock.UtcNow,
             });
 
             // The next page needs this info - stash it in the JourneyModel
@@ -136,8 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             _journeyInstance.UpdateState(new JourneyModel()
             {
                 CourseName = courseRun.CourseName,
-                ProviderId = (await _providerInfoCache.GetProviderIdForUkprn(ukprn)).Value,
-                ProviderUkprn = ukprn
+                ProviderId = providerId
             });
 
             _journeyInstance.Complete();
@@ -152,12 +141,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         public async Task<ConfirmedViewModel> Handle(ConfirmedQuery request, CancellationToken cancellationToken)
         {
-            var ukprn = _journeyInstance.State.ProviderUkprn;
+            var providerId = _journeyInstance.State.ProviderId;
 
-            var liveCourses = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllCoursesForProvider()
+            var liveCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
             {
-                CourseStatuses = CourseStatus.Live,
-                ProviderUkprn = ukprn
+                ProviderId = providerId
             });
 
             return new ConfirmedViewModel()
@@ -178,31 +166,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
             return new ViewModel()
             {
-                CourseId = course.Id,
-                CourseRunId = courseRun.Id,
+                CourseId = course.CourseId,
+                CourseRunId = courseRun.CourseRunId,
                 CourseName = courseRun.CourseName,
                 DeliveryMode = courseRun.DeliveryMode,
                 FlexibleStartDate = courseRun.FlexibleStartDate,
                 StartDate = courseRun.StartDate,
                 VenueName = venue?.VenueName,
-                YourReference = courseRun.ProviderCourseID
+                YourReference = courseRun.ProviderCourseId
             };
         }
 
-        private async Task<(Course Course, CourseRun CourseRun)> GetCourseAndCourseRun(Guid courseId, Guid courseRunId, int ukprn)
+        private async Task<(Course Course, CourseRun CourseRun)> GetCourseAndCourseRun(Guid courseId, Guid courseRunId)
         {
-            (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCoursesByIds()
-            {
-                CourseIds = new[] { courseId },
-                Ukprn = ukprn
-            })).TryGetValue(courseId, out var course);
+            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
 
             if (course == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.Course, courseId);
             }
 
-            var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.Id == courseRunId);
+            var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == courseRunId);
 
             if (courseRun == null)
             {
@@ -210,19 +194,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             }
 
             return (course, courseRun);
-        }
-
-        private async Task<int> GetUkprnForCourse(Guid courseId)
-        {
-            var providerId = await _providerOwnershipCache.GetProviderForCourse(courseId);
-
-            if (!providerId.HasValue)
-            {
-                throw new ResourceDoesNotExistException(ResourceType.Course, courseId);
-            }
-
-            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId.Value);
-            return providerInfo.Ukprn;
         }
     }
 }

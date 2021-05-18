@@ -7,14 +7,11 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using FormFlow;
-using Moq;
 using OneOf;
 using OneOf.Types;
 using Xunit;
-using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries.DeleteCourseRun;
+using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteCourseRun;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 {
@@ -482,9 +479,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             CreateJourneyInstance(course.CourseId, courseRunId);
 
-            DeleteCourseRunQuery capturedDeleteCourseRunQuery = null;
-            CosmosDbQueryDispatcher.Callback<DeleteCourseRunQuery, OneOf<NotFound, Success>>(q => capturedDeleteCourseRunQuery = q);
-
             // Act
             var response = await HttpClient.SendAsync(request);
 
@@ -495,16 +489,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 $"/courses/{course.CourseId}/course-runs/{courseRunId}/delete/confirmed",
                 response.Headers.Location.OriginalString);
 
-            CosmosDbQueryDispatcher.Verify(d => d.ExecuteQuery(It.IsAny<DeleteCourseRunQuery>()), Times.Once);
-            using (new AssertionScope())
-            {
-                capturedDeleteCourseRunQuery.Should().NotBeNull();
-                capturedDeleteCourseRunQuery.CourseId.Should().Be(course.CourseId);
-                capturedDeleteCourseRunQuery.CourseRunId.Should().Be(courseRunId);
-                capturedDeleteCourseRunQuery.ProviderUkprn.Should().Be(provider.Ukprn);
-                capturedDeleteCourseRunQuery.UpdatedBy.Should().Be(TestUserInfo.DefaultUserId);
-                capturedDeleteCourseRunQuery.UpdatedDate.Should().Be(MutableClock.Start);
-            }
+            SqlQuerySpy.VerifyQuery<DeleteCourseRunQuery, OneOf<NotFound, Success>>(q =>
+                q.CourseId == course.CourseId &&
+                q.CourseRunId == courseRunId &&
+                q.DeletedBy.UserId == User.ToUserInfo().UserId &&
+                q.DeletedOn == Clock.UtcNow);
         }
 
         [Fact]
@@ -522,12 +511,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
-            await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new DeleteCourseRunQuery()
             {
                 CourseId = course.CourseId,
                 CourseRunId = courseRunId,
-                ProviderUkprn = provider.Ukprn
-            });
+                DeletedBy = User.ToUserInfo(),
+                DeletedOn = Clock.UtcNow
+            }));
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -541,8 +531,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 new JourneyModel()
                 {
                     CourseName = "Maths",
-                    ProviderId = provider.ProviderId,
-                    ProviderUkprn = provider.Ukprn
+                    ProviderId = provider.ProviderId
                 });
 
             // Act
@@ -570,12 +559,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
-            await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new DeleteCourseRunQuery()
             {
                 CourseId = course.CourseId,
                 CourseRunId = courseRunId,
-                ProviderUkprn = provider.Ukprn
-            });
+                DeletedBy = User.ToUserInfo(),
+                DeletedOn = Clock.UtcNow
+            }));
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -589,8 +579,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 new JourneyModel()
                 {
                     CourseName = "Maths",
-                    ProviderId = provider.ProviderId,
-                    ProviderUkprn = provider.Ukprn
+                    ProviderId = provider.ProviderId
                 });
 
             // Act
@@ -621,12 +610,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Create another live course
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
-            await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new DeleteCourseRunQuery()
             {
                 CourseId = course.CourseId,
                 CourseRunId = courseRunId,
-                ProviderUkprn = provider.Ukprn
-            });
+                DeletedBy = User.ToUserInfo(),
+                DeletedOn = Clock.UtcNow
+            }));
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
@@ -640,8 +630,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 new JourneyModel()
                 {
                     CourseName = "Maths",
-                    ProviderId = provider.ProviderId,
-                    ProviderUkprn = provider.Ukprn
+                    ProviderId = provider.ProviderId
                 });
 
             // Act

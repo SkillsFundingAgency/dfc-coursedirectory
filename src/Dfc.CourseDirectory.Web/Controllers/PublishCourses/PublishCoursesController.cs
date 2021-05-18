@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -11,9 +13,11 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 {
@@ -21,20 +25,23 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
     {
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         public PublishCoursesController(
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         [Authorize]
@@ -214,10 +221,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         [HttpGet]
         public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId,string courseName)
         {
-            string notificationTitle = string.Empty;
-            var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new DeleteCourseRun()
+            {
+                CourseId = courseId,
+                CourseRunId = courseRunId,
+                DeletedBy = _currentUserProvider.GetCurrentUser(),
+                DeletedOn = _clock.UtcNow
+            });
 
-            if (result.IsSuccess)
+            string notificationTitle;
+            if (result.Value is Success)
                 notificationTitle = courseName + " was successfully deleted";
             else
                 notificationTitle = "Error " + courseName + " was not deleted";

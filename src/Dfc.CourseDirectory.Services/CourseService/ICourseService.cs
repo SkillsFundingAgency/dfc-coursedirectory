@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -19,7 +18,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         Task<Result<CourseSearchResult>> GetCoursesByLevelForUKPRNAsync(CourseSearchCriteria criteria);
         IList<KeyValuePair<string, string>> ValidateCourse(Course course);
         IList<KeyValuePair<string, string>> ValidateCourseRun(CourseRun courseRun, ValidationMode validationMode);
-        Task<Result> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
         Result<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<Course> courses, ValidationMode mode);
         Task<Result<IEnumerable<CourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(CourseSearchCriteria criteria);
         Task<Result> DeleteBulkUploadCourses(int UKPRN);
