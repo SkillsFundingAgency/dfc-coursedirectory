@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             Website = row.Website,
             Errors = string.Join(
                 "\n",
-                row.Errors.Select(errorCode => ErrorRegistry.All[errorCode].GetMessage(ErrorMessageContext.DataManagement)))
+                row.Errors.Select(errorCode => ErrorRegistry.All[errorCode].GetMessage()))
         };
     }
 }

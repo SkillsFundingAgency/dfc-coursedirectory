@@ -48,13 +48,7 @@ namespace Dfc.CourseDirectory.Core.Validation
 
         public string GetMessage(ErrorMessageContext context = ErrorMessageContext.Default)
         {
-            if (context == ErrorMessageContext.DataManagement &&
-                TryGetFormattedMessage($"ERROR_DM_{ErrorCode}", out var message))
-            {
-                return message;
-            }
-
-            return TryGetFormattedMessage($"ERROR_{ErrorCode}", out message) ?
+            return TryGetFormattedMessage($"ERROR_{ErrorCode}", out var message) ?
                 message :
                 throw new InvalidOperationException($"Cannot find error message for error code: {ErrorCode}.");
 
@@ -78,7 +72,6 @@ namespace Dfc.CourseDirectory.Core.Validation
 
     public enum ErrorMessageContext
     {
-        Default = 0,
-        DataManagement = 1
+        Default = 0
     }
 }

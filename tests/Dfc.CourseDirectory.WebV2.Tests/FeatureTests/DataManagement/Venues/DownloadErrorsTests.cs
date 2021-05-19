@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -119,8 +117,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                     Email = venueUploadRows[0].Email,
                     Telephone = venueUploadRows[0].Telephone,
                     Website = venueUploadRows[0].Website,
-                    Errors = ErrorRegistry.All["VENUE_NAME_REQUIRED"].GetMessage(ErrorMessageContext.DataManagement) + "\n"
-                        + ErrorRegistry.All["VENUE_POSTCODE_FORMAT"].GetMessage(ErrorMessageContext.DataManagement)
+                    Errors = ErrorRegistry.All["VENUE_NAME_REQUIRED"].GetMessage() + "\n"
+                        + ErrorRegistry.All["VENUE_POSTCODE_FORMAT"].GetMessage()
                 });
         }
     }

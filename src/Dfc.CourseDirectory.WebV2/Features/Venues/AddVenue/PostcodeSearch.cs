@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
                     request,
                     new ValidationResult(new[]
                     {
-                        new ValidationFailure(nameof(SearchCommand.Postcode), "Enter a real postcode")
+                        new ValidationFailure(nameof(SearchCommand.Postcode), ErrorRegistry.All["VENUE_POSTCODE_FORMAT"].GetMessage())
                     }));
         }
 
@@ -183,8 +183,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
             public SearchCommandValidator()
             {
                 RuleFor(c => c.Postcode)
-                    .NotEmpty().WithMessage("Enter a postcode")
-                    .Apply(Rules.Postcode).WithMessage("Enter a real postcode");
+                    .NotEmpty().WithMessage(ErrorRegistry.All["VENUE_POSTCODE_REQUIRED"].GetMessage())
+                    .Apply(Rules.Postcode).WithMessage(ErrorRegistry.All["VENUE_POSTCODE_FORMAT"].GetMessage());
             }
         }
 
