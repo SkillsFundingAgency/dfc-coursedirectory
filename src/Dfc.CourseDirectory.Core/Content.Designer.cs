@@ -61,61 +61,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You must enter an address for your venue.
-        /// </summary>
-        public static string ERROR_DM_VENUE_ADDRESS_LINE1_REQUIRED {
-            get {
-                return ResourceManager.GetString("ERROR_DM_VENUE_ADDRESS_LINE1_REQUIRED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a name for your venue.
-        /// </summary>
-        public static string ERROR_DM_VENUE_NAME_REQUIRED {
-            get {
-                return ResourceManager.GetString("ERROR_DM_VENUE_NAME_REQUIRED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a real postcode for your venue.
-        /// </summary>
-        public static string ERROR_DM_VENUE_POSTCODE_FORMAT {
-            get {
-                return ResourceManager.GetString("ERROR_DM_VENUE_POSTCODE_FORMAT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a postcode for your venue.
-        /// </summary>
-        public static string ERROR_DM_VENUE_POSTCODE_REQUIRED {
-            get {
-                return ResourceManager.GetString("ERROR_DM_VENUE_POSTCODE_REQUIRED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a reference for your venue.
-        /// </summary>
-        public static string ERROR_DM_VENUE_PROVIDER_VENUE_REF_REQUIRED {
-            get {
-                return ResourceManager.GetString("ERROR_DM_VENUE_PROVIDER_VENUE_REF_REQUIRED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must enter a town or city.
-        /// </summary>
-        public static string ERROR_DM_VENUE_TOWN_REQUIRED {
-            get {
-                return ResourceManager.GetString("ERROR_DM_VENUE_TOWN_REQUIRED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Address line 1 must only include letters a to z, numbers, hyphens and spaces.
+        ///   Looks up a localized string similar to Address line 1 must only include letters, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE1_FORMAT {
             get {
@@ -133,7 +79,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter address line 1.
+        ///   Looks up a localized string similar to You must enter an address for your venue.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE1_REQUIRED {
             get {
@@ -142,7 +88,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Address line 2 must only include letters a to z, numbers, hyphens and spaces.
+        ///   Looks up a localized string similar to Address line 2 must only include letters, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE2_FORMAT {
             get {
@@ -160,7 +106,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to County must only include letters a to z, numbers, hyphens and spaces.
+        ///   Looks up a localized string similar to County must only include letters, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_COUNTY_FORMAT {
             get {
@@ -196,7 +142,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter venue name.
+        ///   Looks up a localized string similar to You must enter a name for your venue.
         /// </summary>
         public static string ERROR_VENUE_NAME_REQUIRED {
             get {
@@ -205,7 +151,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your venue name must be unique.
+        ///   Looks up a localized string similar to Venue name must be unique.
         /// </summary>
         public static string ERROR_VENUE_NAME_UNIQUE {
             get {
@@ -214,7 +160,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a real postcode.
+        ///   Looks up a localized string similar to You must enter a real postcode for your venue.
         /// </summary>
         public static string ERROR_VENUE_POSTCODE_FORMAT {
             get {
@@ -223,7 +169,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a postcode.
+        ///   Looks up a localized string similar to You must enter a postcode for your venue.
         /// </summary>
         public static string ERROR_VENUE_POSTCODE_REQUIRED {
             get {
@@ -241,7 +187,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter your venue reference.
+        ///   Looks up a localized string similar to You must enter a reference for your venue.
         /// </summary>
         public static string ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED {
             get {
@@ -259,7 +205,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a telephone number in the correct format.
+        ///   Looks up a localized string similar to Enter a phone number in the correct format.
         /// </summary>
         public static string ERROR_VENUE_TELEPHONE_FORMAT {
             get {
@@ -268,7 +214,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Town or city must only include letters a to z, numbers, hyphens and spaces.
+        ///   Looks up a localized string similar to Town or city must only include letters, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_TOWN_FORMAT {
             get {
@@ -286,7 +232,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a town or city.
+        ///   Looks up a localized string similar to You must enter a town or city.
         /// </summary>
         public static string ERROR_VENUE_TOWN_REQUIRED {
             get {
