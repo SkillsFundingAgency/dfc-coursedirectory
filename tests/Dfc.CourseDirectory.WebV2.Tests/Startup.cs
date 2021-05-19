@@ -74,6 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
             services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
             services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
+            services.Decorate<IFeatureFlagProvider, DataManagementFeatureFlagProvider>();
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
