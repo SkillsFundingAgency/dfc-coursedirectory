@@ -18,21 +18,42 @@
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
-                        <li>
-                            <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                Upload new course data
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                Download your published course data (CSV)
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="CoursesDataManagement" asp-action="Template" class="govuk-link">
-                                Download course data template (CSV)
-                            </a>
-                        </li>
+                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
+                        {
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Upload new course data
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Download your published course data (CSV)
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="Template" class="govuk-link">
+                                    Download course data template (CSV)
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-controller="BulkUpload" asp-action="Courses" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Upload new course data
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetCurrentCoursesTemplateFile" class="govuk-link">
+                                    Download your published course data (CSV)
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetBulkUploadTemplateFile" class="govuk-link">
+                                    Download course data template (CSV)
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -70,31 +91,34 @@
         </div>
     }
 
-    <div class="govuk-grid-column-one-third" data-testid="VenuesCard">
-        <div class="pttcd-provider-dashboard__card">
-            <div class="pttcd-provider-dashboard__card__content">
-                <h2 class="govuk-heading-m">Venues</h2>
-                <p class="govuk-body-s">You have <strong data-testid="PublishedVenueCount">@Model.PublishedVenueCount</strong> published venues</p>
-            </div>
-            <div class="pttcd-provider-dashboard__card__actions">
-                <ul class="govuk-list pttcd-list--small">
-                    <li>
-                        <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                            Upload new venue data
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="VenuesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                            Download your published venue data (CSV)
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="VenuesDataManagement" asp-action="Template" class="govuk-link">
-                            Download venue data template (CSV)
-                        </a>
-                    </li>
-                </ul>
+    @if (FeatureFlagProvider.HaveFeature(FeatureFlags.VenuesDataManagement))
+    {
+        <div class="govuk-grid-column-one-third" data-testid="VenuesCard">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-m">Venues</h2>
+                    <p class="govuk-body-s">You have <strong data-testid="PublishedVenueCount">@Model.PublishedVenueCount</strong> published venues</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Upload new venue data
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="VenuesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Download your published venue data (CSV)
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="VenuesDataManagement" asp-action="Template" class="govuk-link">
+                                Download venue data template (CSV)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>

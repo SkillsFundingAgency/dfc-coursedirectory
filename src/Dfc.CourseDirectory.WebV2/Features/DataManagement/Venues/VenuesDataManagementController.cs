@@ -14,7 +14,7 @@ using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
     [Route("data-upload/venues")]
-    [RequireFeatureFlag(FeatureFlags.DataManagement)]
+    [RequireFeatureFlag(FeatureFlags.VenuesDataManagement)]
     public class VenuesDataManagementController : Controller
     {
         private readonly IMediator _mediator;

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 {
     [Route("data-upload/courses")]
-    [RequireFeatureFlag(FeatureFlags.DataManagement)]
+    [RequireFeatureFlag(FeatureFlags.CoursesDataManagement)]
     public class CoursesDataManagementController : Controller
     {
         private readonly IMediator _mediator;
