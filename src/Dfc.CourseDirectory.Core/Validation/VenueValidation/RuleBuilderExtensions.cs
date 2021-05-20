@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                     var otherVenueRefs = await getOtherVenueProviderVenueRefs(obj);
 
                     var otherVenuesWithSameRef = otherVenueRefs
-                        .Where(v => v.Equals(providerVenueRef, StringComparison.OrdinalIgnoreCase));
+                        .Where(v => (v ?? string.Empty).Equals(providerVenueRef, StringComparison.OrdinalIgnoreCase));
 
                     return !otherVenuesWithSameRef.Any();
                 })
@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                     var otherVenueNames = await getOtherVenueNames(obj);
 
                     var otherVenuesWithSameName = otherVenueNames
-                        .Where(v => v.Equals(name, StringComparison.OrdinalIgnoreCase));
+                        .Where(v => (v ?? string.Empty).Equals(name, StringComparison.OrdinalIgnoreCase));
 
                     return !otherVenuesWithSameName.Any();
                 })
