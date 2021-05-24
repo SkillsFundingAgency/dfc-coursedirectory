@@ -111,13 +111,11 @@
                     <li>
                         @if (Model.VenueUploadInProgress)
                         {
-                            <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                Upload in progress
-                            </a>
+                            <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link"  data-testid="venues-in-progress-link">Upload in progress</a>
                         }
                         else
                         {
-                            <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
+                            <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link"  data-testid="venues-upload-new-link">Upload new venue data</a>
                         }
                     </li>
                     <li>
