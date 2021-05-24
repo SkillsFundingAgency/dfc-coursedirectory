@@ -67,7 +67,7 @@ SELECT COUNT(*)
 FROM Pttcd.VenueUploads vu
 INNER JOIN Pttcd.VenueUploadRows vr
 ON vu.VenueUploadId = vr.VenueUploadId
-WHERE(vu.UploadStatus = 2 OR vu.UploadStatus = 3)
+WHERE vu.UploadStatus IN ({(int)UploadStatus.ProcessedWithErrors}, {(int)UploadStatus.ProcessedSuccessfully})
 AND vr.VenueUploadRowStatus = 0 
 AND vu.ProviderId = @{ nameof(query.ProviderId)}";
 
