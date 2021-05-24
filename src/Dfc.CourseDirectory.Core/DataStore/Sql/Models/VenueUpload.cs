@@ -19,8 +19,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 
     public class VenueUploadRow
     {
-        public int VenueUploadRowId { get; set; }
-        public Guid VenueUploadId { get; set; }
         public int RowNumber { get; set; }
         public bool IsValid { get; set; }
         public IReadOnlyCollection<string> Errors { get; set; }

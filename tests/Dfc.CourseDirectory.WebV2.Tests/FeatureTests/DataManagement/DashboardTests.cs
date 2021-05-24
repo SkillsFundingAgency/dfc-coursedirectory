@@ -100,8 +100,39 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             using (new AssertionScope())
             {
                 doc.GetElementByTestId("UnpublishedVenueCount").TextContent.Should().Be("4");
+                doc.GetElementByTestId("venues-upload-new-link").TextContent.Should().Be("Upload new venue data");
             }
 
+        }
+
+        [Fact]
+        public async Task TestVenueUploadInProgress()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.FE);
+
+            //Create some venue upload rows to test new data in UI
+            var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("venues-in-progress-link").TextContent.Should().Be("Upload in progress");
+            }
         }
     }
 }
