@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Testing
                         }
                     }
 
-                    rows = (await dispatcher.ExecuteQuery(new UpsertVenueUploadRows()
+                    rows = (await dispatcher.ExecuteQuery(new SetVenueUploadRows()
                     {
                         VenueUploadId = venueUploadId,
                         Records = rowBuilder.GetUpsertQueryRows(),
@@ -177,9 +177,9 @@ namespace Dfc.CourseDirectory.Testing
 
         public class VenueUploadRowBuilder
         {
-            private readonly List<UpsertVenueUploadRowsRecord> _records = new List<UpsertVenueUploadRowsRecord>();
+            private readonly List<SetVenueUploadRowsRecord> _records = new List<SetVenueUploadRowsRecord>();
 
-            public VenueUploadRowBuilder AddRow(Action<UpsertVenueUploadRowsRecord> configureRecord)
+            public VenueUploadRowBuilder AddRow(Action<SetVenueUploadRowsRecord> configureRecord)
             {
                 var record = CreateValidRecord();
                 configureRecord(record);
@@ -239,9 +239,9 @@ namespace Dfc.CourseDirectory.Testing
                 return this;
             }
 
-            internal IReadOnlyCollection<UpsertVenueUploadRowsRecord> GetUpsertQueryRows() => _records;
+            internal IReadOnlyCollection<SetVenueUploadRowsRecord> GetUpsertQueryRows() => _records;
 
-            private UpsertVenueUploadRowsRecord CreateRecord(
+            private SetVenueUploadRowsRecord CreateRecord(
                 Guid venueId,
                 string providerVenueRef,
                 string venueName,
@@ -259,7 +259,7 @@ namespace Dfc.CourseDirectory.Testing
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
                 var isValid = !errorsArray.Any();
 
-                return new UpsertVenueUploadRowsRecord()
+                return new SetVenueUploadRowsRecord()
                 {
                     RowNumber = _records.Count + 2,
                     IsValid = isValid,
@@ -279,7 +279,7 @@ namespace Dfc.CourseDirectory.Testing
                 };
             }
 
-            private UpsertVenueUploadRowsRecord CreateValidRecord(bool isSupplementary = false, Guid? venueId = null)
+            private SetVenueUploadRowsRecord CreateValidRecord(bool isSupplementary = false, Guid? venueId = null)
             {
                 string venueName;
                 do

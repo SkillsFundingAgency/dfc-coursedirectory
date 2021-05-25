@@ -7,7 +7,9 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -183,6 +185,32 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 throw new ArgumentException("Stream must be seekable.", nameof(stream));
             }
+        }
+
+        public async Task<bool> DeleteVenueUploadRow(Guid venueUploadId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var (existingRows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
+                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+                var rowToDelete = existingRows.FirstOrDefault(x => x.RowNumber == rowNumber);
+                if (rowToDelete == null)
+                    return false;
+                var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();
+
+                var rowCollection =  new VenueDataUploadRowInfoCollection(
+                lastRowNumber: lastRowNumber,
+                nonDeletedRows
+                    .Where(r => r.RowNumber != rowNumber)
+                    .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+                await ValidateVenueUploadRows(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    rowCollection);
+                await dispatcher.Commit();
+            }
+            return true;
         }
 
         protected internal enum FileMatchesSchemaResult
