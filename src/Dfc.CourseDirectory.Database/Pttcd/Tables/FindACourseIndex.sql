@@ -32,5 +32,6 @@
 	[VenueTown] NVARCHAR(MAX),
 	[Position] GEOGRAPHY,
 	[RegionName] NVARCHAR(100),
-	[ScoreBoost] FLOAT NOT NULL
+	[ScoreBoost] FLOAT NOT NULL,
+	[VenueId] UNIQUEIDENTIFIER
 )
