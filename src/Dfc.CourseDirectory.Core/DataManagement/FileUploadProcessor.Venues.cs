@@ -381,7 +381,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var uploadIsValid = true;
             var validator = new VenueUploadRowValidator(rows, allPostcodeInfo);
 
-            var upsertRecords = new List<UpsertVenueUploadRowsRecord>();
+            var upsertRecords = new List<SetVenueUploadRowsRecord>();
 
             for (int i = 0; i < rows.Count; i++)
             {
@@ -405,7 +405,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowIsValid = rowValidatonResult.IsValid;
                 uploadIsValid &= rowIsValid;
 
-                upsertRecords.Add(new UpsertVenueUploadRowsRecord()
+                upsertRecords.Add(new SetVenueUploadRowsRecord()
                 {
                     RowNumber = rowNumber,
                     IsValid = rowIsValid,
@@ -426,7 +426,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 });
             }
 
-            var updatedRows = await sqlQueryDispatcher.ExecuteQuery(new UpsertVenueUploadRows()
+            var updatedRows = await sqlQueryDispatcher.ExecuteQuery(new SetVenueUploadRows()
             {
                 VenueUploadId = venueUploadId,
                 ValidatedOn = _clock.UtcNow,

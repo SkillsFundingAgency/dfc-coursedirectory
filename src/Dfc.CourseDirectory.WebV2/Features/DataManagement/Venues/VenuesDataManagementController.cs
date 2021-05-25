@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FormFlow;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors.WhatNext;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -202,6 +203,41 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         public IActionResult Formatting()
         {
             return View();
+        }
+
+        [HttpPost("resolve/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Delete(Command request)
+        {
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    _ => NotFound(),
+                    success => (success switch
+                    {
+                        DeleteVenueResult.VenueDeletedUploadHasMoreErrors => RedirectToAction(nameof(ResolveList)),
+                        DeleteVenueResult.VenueDeletedUploadHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => throw new NotSupportedException($"Unknown value.")
+                    }))); ;
+        }
+
+        [HttpGet("resolve/delete/success")]
+        [RequireProviderContext]
+        public IActionResult DeleteUploadSuccess()
+        {
+            return View();
+        }
+
+        [HttpGet("resolve/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Delete(Delete.Query request)
+        {
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    _ => NotFound(),
+                    venue => View("Delete", venue)));
         }
     }
 }
