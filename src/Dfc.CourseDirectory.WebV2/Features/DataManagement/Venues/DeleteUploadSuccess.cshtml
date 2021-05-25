@@ -13,10 +13,10 @@
         <h2 class="govuk-heading-m">What next?</h2>
         <ul class="govuk-list">
             <li>
-                <a asp-action="Index" asp-controller="VenuesDataManagement" class="govuk-link">View and edit venues</a>
+                <a asp-action="Index" asp-controller="VenuesDataManagement" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">View and edit venues</a>
             </li>
             <li>
-                <a asp-action="Dashboard" asp-controller="DataManagement" class="govuk-link">Back to data upload</a>
+                <a asp-action="Dashboard" asp-controller="DataManagement" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">Back to data upload</a>
             </li>
             <li>
                 <a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">
