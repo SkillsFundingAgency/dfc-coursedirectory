@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
@@ -438,39 +437,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             var doc = await response.GetDocument();
             doc.GetElementByTestId("NewProvider").Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task Get_UnpublishedVenueUploads()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
-                providerType: ProviderType.FE);
-
-            //Create some venue upload rows to test new data in UI
-            var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
-                rowBuilder =>
-                {
-                    rowBuilder.AddRow(record => record.IsValid = false);
-                    rowBuilder.AddRow(record => record.IsValid = false);
-                    rowBuilder.AddRow(record => record.IsValid = false);
-                });
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("UnpublishedVenueCount").TextContent.Should().Be("3");
-            }
-
         }
 
         [Theory]

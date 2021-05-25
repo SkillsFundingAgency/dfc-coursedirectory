@@ -21,6 +21,5 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
 
         Task<SaveFileResult> SaveCourseFileForProvider(Guid providerId, Stream stream, UserInfo uploadedBy);
-        Task<bool> DeleteVenueUploadRow(Guid venueUploadId, int rowNumber);
     }
 }

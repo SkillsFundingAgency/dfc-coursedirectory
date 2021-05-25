@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.OriginalString.Should().Be($"/data-upload/venues/resolve/delete/success?providerId={provider.ProviderId}");
+            response.Headers.Location.OriginalString.Should().Be($"/dashboard?providerId={provider.ProviderId}");
 
             SqlQuerySpy.VerifyQuery<SetVenueUploadAbandoned, OneOf<NotFound, Success>>(
                 q => q.VenueUploadId == venueUpload.VenueUploadId && q.AbandonedOn == Clock.UtcNow);
