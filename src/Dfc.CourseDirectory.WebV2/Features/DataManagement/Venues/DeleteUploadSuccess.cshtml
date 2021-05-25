@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Data Upload - Venue data upload cancelled";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-panel govuk-panel--confirmation govuk-!-margin-bottom-5">
+            <h1 class="govuk-panel__title">
+                Venue data upload deleted
+            </h1>
+        </div>
+        <p class="govuk-body">The unpublished venues now been deleted.</p>
+        <h2 class="govuk-heading-m">What next?</h2>
+        <ul class="govuk-list">
+            <li>
+                <a asp-action="Index" asp-controller="Venues" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">View and edit venues</a>
+            </li>
+            <li>
+                <a asp-action="Dashboard" asp-controller="DataManagement" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">Back to data upload</a>
+            </li>
+            <li>
+                <a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
