@@ -264,7 +264,6 @@
     <Build Include="Pttcd\Tables\FindACourseIndex.sql" />
     <Build Include="Pttcd\Triggers\TRG_Providers_UpdateFindACourseIndex.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseRuns_Status.sql" />
-    <Build Include="Pttcd\Triggers\TRG_Venues_UpdateFindACourseIndex.sql" />
     <Build Include="Pttcd\StoredProcedures\RefreshFindACourseIndexForTLevels.sql" />
     <Build Include="Pttcd\Views\vwProviderSearchIndex.sql" />
     <Build Include="Pttcd\Tables\Standards.sql" />
