@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestData\TestData.CreateVenueUploadRow.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="appsettings.Testing.json" />
   </ItemGroup>
 
