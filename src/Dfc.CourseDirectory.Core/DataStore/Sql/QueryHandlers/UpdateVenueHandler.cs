@@ -10,6 +10,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class UpdateVenueHandler : ISqlQueryHandler<UpdateVenue, OneOf<NotFound, Success>>
     {
+        private readonly ISqlQueryHandler<UpdateFindACourseIndexForVenues, Success> _updateFindACourseIndexHandler;
+
+        public UpdateVenueHandler(ISqlQueryHandler<UpdateFindACourseIndexForVenues, Success> updateFindACourseIndexHandler)
+        {
+            _updateFindACourseIndexHandler = updateFindACourseIndexHandler;
+        }
+
         public async Task<OneOf<NotFound, Success>> Execute(SqlTransaction transaction, UpdateVenue query)
         {
             var sql = $@"
@@ -51,6 +58,14 @@ AND VenueStatus = {(int)VenueStatus.Live}";
 
             if (updated)
             {
+                await _updateFindACourseIndexHandler.Execute(
+                    transaction,
+                    new UpdateFindACourseIndexForVenues()
+                    {
+                        VenueIds = new[] { query.VenueId },
+                        Now = query.UpdatedOn
+                    });
+
                 return new Success();
             }
             else

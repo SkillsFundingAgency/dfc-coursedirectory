@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -10,6 +11,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class PublishVenueUploadHandler : ISqlQueryHandler<PublishVenueUpload, OneOf<NotFound, PublishVenueUploadResult>>
     {
+        private readonly ISqlQueryHandler<UpdateFindACourseIndexForVenues, Success> _updateFindACourseIndexHandler;
+
+        public PublishVenueUploadHandler(ISqlQueryHandler<UpdateFindACourseIndexForVenues, Success> updateFindACourseIndexHandler)
+        {
+            _updateFindACourseIndexHandler = updateFindACourseIndexHandler;
+        }
+
         public async Task<OneOf<NotFound, PublishVenueUploadResult>> Execute(SqlTransaction transaction, PublishVenueUpload query)
         {
             var sql = $@"
@@ -94,7 +102,9 @@ WHEN NOT MATCHED BY SOURCE AND target.ProviderUkprn = @ProviderUkprn AND target.
     VenueStatus = {(int)VenueStatus.Archived}
 ;
 
-SELECT 1 AS Status, COUNT(*) PublishedCount FROM Pttcd.VenueUploadRows r
+SELECT 1 AS Status
+
+SELECT r.VenueId FROM Pttcd.VenueUploadRows r
 WHERE r.VenueUploadId = @VenueUploadId
 AND r.VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
 ";
@@ -106,25 +116,31 @@ AND r.VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
                 PublishedByUserId = query.PublishedBy.UserId
             };
 
-            var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);
+            using var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
-            if (result.Status == 1)
+            var status = await reader.ReadSingleAsync<int>();
+
+            if (status == 1)
             {
+                var publishedVenueIds = (await reader.ReadAsync<Guid>()).AsList();
+
+                await _updateFindACourseIndexHandler.Execute(
+                    transaction,
+                    new UpdateFindACourseIndexForVenues()
+                    {
+                        VenueIds = publishedVenueIds,
+                        Now = query.PublishedOn
+                    });
+
                 return new PublishVenueUploadResult()
                 {
-                    PublishedCount = result.PublishedCount
+                    PublishedCount = publishedVenueIds.Count
                 };
             }
             else
             {
                 return new NotFound();
             }
-        }
-
-        private class Result
-        {
-            public int Status { get; set; }
-            public int PublishedCount { get; set; }
         }
     }
 }
