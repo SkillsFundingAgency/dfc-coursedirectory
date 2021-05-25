@@ -43,8 +43,10 @@ BEGIN
 			v.Position,
 			NULL RegionName,
 
-		--	-- Magic numbers and logic from https://github.com/SkillsFundingAgency/dfc-providerportal-changefeedlistener/commit/608340dcfaa5c74ee8b1ae422ad902ee0c529c01#diff-5f9ef9c9ca0b0bc9af8b5c7926cfcfe31fa7e8367b9104357104ad568fbe0302R103-R104
-		1 AS ScoreBoost
+			--	-- Magic numbers and logic from https://github.com/SkillsFundingAgency/dfc-providerportal-changefeedlistener/commit/608340dcfaa5c74ee8b1ae422ad902ee0c529c01#diff-5f9ef9c9ca0b0bc9af8b5c7926cfcfe31fa7e8367b9104357104ad568fbe0302R103-R104
+			1 AS ScoreBoost,
+
+			v.VenueId
 		FROM @TLevelIds d
 		INNER JOIN Pttcd.TLevels t ON d.Id = t.TLevelId
 		INNER JOIN Pttcd.TLevelLocations tll ON t.TLevelId = tll.TLevelId
@@ -84,7 +86,8 @@ BEGIN
 		VenueTown = source.VenueTown,
 		Position = source.Position,
 		RegionName = source.RegionName,
-		ScoreBoost = source.ScoreBoost
+		ScoreBoost = source.ScoreBoost,
+		VenueId = source.VenueId
 	WHEN NOT MATCHED THEN INSERT (
 		Id,
 		LastSynced,
@@ -116,7 +119,8 @@ BEGIN
 		VenueTown,
 		Position,
 		RegionName,
-		ScoreBoost)
+		ScoreBoost,
+		VenueId)
 	VALUES (
 		source.Id,
 		@Now,
@@ -148,7 +152,8 @@ BEGIN
 		source.VenueTown,
 		source.Position,
 		source.RegionName,
-		source.ScoreBoost)
+		source.ScoreBoost,
+		source.VenueId)
 	WHEN NOT MATCHED BY SOURCE AND target.TLevelId IN (SELECT Id FROM @TLevelIds) THEN UPDATE SET
 		Live = 0,
 		LastSynced = @Now;
