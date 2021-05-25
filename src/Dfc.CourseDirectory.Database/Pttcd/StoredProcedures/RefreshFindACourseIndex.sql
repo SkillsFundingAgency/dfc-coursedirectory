@@ -48,7 +48,9 @@ BEGIN
 				WHEN r.RegionId IS NULL THEN 1
 				WHEN r.ParentRegionId IS NOT NULL THEN 4.5  -- Sub region
 				ELSE 2.3  -- Region
-				END AS float) AS ScoreBoost
+				END AS float) AS ScoreBoost,
+
+			v.VenueId
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr WITH (UPDLOCK) ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
@@ -92,7 +94,8 @@ BEGIN
 		VenueTown = source.VenueTown,
 		Position = source.Position,
 		RegionName = source.RegionName,
-		ScoreBoost = source.ScoreBoost
+		ScoreBoost = source.ScoreBoost,
+		VenueId = source.VenueId
 	WHEN NOT MATCHED THEN INSERT (
 		Id,
 		LastSynced,
@@ -124,7 +127,8 @@ BEGIN
 		VenueTown,
 		Position,
 		RegionName,
-		ScoreBoost)
+		ScoreBoost,
+		VenueId)
 	VALUES (
 		source.Id,
 		@Now,
@@ -156,7 +160,8 @@ BEGIN
 		source.VenueTown,
 		source.Position,
 		source.RegionName,
-		source.ScoreBoost)
+		source.ScoreBoost,
+		source.VenueId)
 	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET
 		Live = 0,
 		LastSynced = @Now;
