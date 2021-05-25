@@ -19,7 +19,7 @@
                 <a asp-action="Dashboard" asp-controller="DataManagement" class="govuk-link">Back to data upload</a>
             </li>
             <li>
-                <a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link">
+                <a asp-controller="ProviderDashboard" asp-action="Index" class="govuk-link" asp-all-route-data="@ProviderContext.RouteValues">
                     Back to the home screen
                 </a>
             </li>
