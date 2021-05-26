@@ -161,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("Index", "ProviderDashboard").WithProviderContext(_providerContextProvider.GetProviderContext())));
+                    success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("check-publish")]
         [RequireProviderContext]
@@ -196,6 +196,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [HttpGet("template")]
         public IActionResult Template() =>
            new CsvResult<CsvVenueRow>("venues-template.csv", Enumerable.Empty<CsvVenueRow>());
+
+        [HttpGet("resolve/delete/success")]
+        [RequireProviderContext]
+        public IActionResult DeleteUploadSuccess()
+        {
+            return View();
+        }
 
         [HttpGet("formatting")]
         [RequireProviderContext]
