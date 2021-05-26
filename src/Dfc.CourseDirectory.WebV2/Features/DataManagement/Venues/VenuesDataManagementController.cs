@@ -222,12 +222,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     }))); ;
         }
 
-        [HttpGet("resolve/delete/success")]
-        [RequireProviderContext]
-        public IActionResult DeleteUploadSuccess()
-        {
-            return View();
-        }
+        //[HttpGet("resolve/delete/success")]
+        //[RequireProviderContext]
+        //public IActionResult DeleteUploadSuccess()
+        //{
+        //    return View();
+        //}
 
         [HttpGet("resolve/delete")]
         [RequireProviderContext]
