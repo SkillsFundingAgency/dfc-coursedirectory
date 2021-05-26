@@ -40,7 +40,7 @@ WHERE VenueUploadId = @VenueUploadId
 MERGE Pttcd.Venues AS target
 USING (
     SELECT r.*, pc.Position FROM Pttcd.VenueUploadRows r
-    JOIN Pttcd.Postcodes pc ON r.Postcode = pc.Postcode
+    JOIN Pttcd.Postcodes pc ON CONVERT(VARCHAR(8), r.Postcode) = pc.Postcode
     WHERE r.VenueUploadId = @VenueUploadId
     AND r.VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
 ) AS source
