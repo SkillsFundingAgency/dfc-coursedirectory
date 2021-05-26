@@ -14,7 +14,7 @@
 </div>
 
 <div class="govuk-grid-row">
-    <form asp-action="delete" asp-route-row="@Model.Row" asp-route-venueUploadId="@Model.VenueUploadId">
+    <form asp-action="delete" asp-all-route-data="@ProviderContext.RouteValues" asp-route-row="@Model.Row" asp-route-venueUploadId="@Model.VenueUploadId"  >
         <div class="govuk-grid-column-full">
             <table class="govuk-table">
                 <thead class="govuk-table__head">
