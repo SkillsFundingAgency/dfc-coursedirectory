@@ -312,7 +312,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.Should().Be("/data-upload/venues/check-publish");
+            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.Should().Be("/data-upload/venues/check-publish");
+            response.Headers.Location.Should().Be($"/data-upload/venues/check-publish?providerId={provider.ProviderId}");
         }
 
 

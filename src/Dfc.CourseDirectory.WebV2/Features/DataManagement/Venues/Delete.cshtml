@@ -36,25 +36,20 @@
                 </tbody>
             </table>
 
-            <div class="govuk-form-group govuk-form-group--error">
-                <span id="Areyousure-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Confirm you want to delete the venue
-                </span>
-                <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
-                    <govuk-checkboxes-fieldset>
-                        <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m" id="areyousure">
-                            <h2 class="govuk-fieldset__heading">
-                                Are you sure?
-                            </h2>
-                        </govuk-checkboxes-fieldset-legend>
-                    </govuk-checkboxes-fieldset>
-                    <govuk-checkboxes-item value="@(true)">
-                        Yes, I want to delete this unpublished venue
-                    </govuk-checkboxes-item>
-                </govuk-checkboxes>
-                <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-venue__delete-btn">Delete</govuk-button>
-                <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
-            </div>
+            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m" id="areyousure">
+                        <h2 class="govuk-fieldset__heading">
+                            Are you sure?
+                        </h2>
+                    </govuk-checkboxes-fieldset-legend>
+                </govuk-checkboxes-fieldset>
+                <govuk-checkboxes-item value="@(true)">
+                    Yes, I want to delete this unpublished venue
+                </govuk-checkboxes-item>
+            </govuk-checkboxes>
+            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-venue__delete-btn">Delete</govuk-button>
+            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
         </div>
     </form>
 </div>

@@ -216,8 +216,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     _ => NotFound(),
                     success => (success switch
                     {
-                        DeleteVenueResult.VenueDeletedUploadHasMoreErrors => RedirectToAction(nameof(ResolveList)),
-                        DeleteVenueResult.VenueDeletedUploadHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)),
+                        DeleteVenueResult.VenueDeletedUploadHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        DeleteVenueResult.VenueDeletedUploadHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                         _ => throw new NotSupportedException($"Unknown value.")
                     }))); ;
         }
