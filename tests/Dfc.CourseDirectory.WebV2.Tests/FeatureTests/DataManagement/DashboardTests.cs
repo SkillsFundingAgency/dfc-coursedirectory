@@ -1,7 +1,9 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -65,6 +67,71 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 {
                     card.Should().BeNull();
                 }
+            }
+        }
+
+        [Fact]
+        public async Task Get_UnpublishedVenueUploads()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.FE);
+
+            //Create some venue upload rows to test new data in UI
+            var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("UnpublishedVenueCount").TextContent.Should().Be("4");
+                doc.GetElementByTestId("venues-upload-new-link").TextContent.Should().Be("Upload new venue data");
+            }
+
+        }
+
+        [Fact]
+        public async Task TestVenueUploadInProgress()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.FE);
+
+            //Create some venue upload rows to test new data in UI
+            var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("venues-in-progress-link").TextContent.Should().Be("Upload in progress");
             }
         }
     }
