@@ -12,7 +12,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<None> Execute(SqlTransaction transaction, UpsertCoursesFromCosmos query)
         {
             await UpsertCourses();
+            await UpsertCourseBulkUploadErrors();
             await UpsertCourseRuns();
+            await UpsertCourseRunBulkUploadErrors();
             await UpsertCourseRunRegions();
             await UpsertCourseRunSubRegions();
             await UpdateFindACourseIndex();
@@ -61,7 +63,7 @@ CREATE TABLE #Courses (
                         r.WhatYoullNeed,
                         r.HowYoullBeAssessed,
                         r.WhereNext,
-                        r.BulkUploadErrorCount
+                        BulkUploadErrorCount = r.BulkUploadErrors.Count()
                     }),
                     tableName: "#Courses",
                     transaction);
@@ -156,6 +158,47 @@ WHEN MATCHED THEN
                     transaction: transaction);
             }
 
+            async Task UpsertCourseBulkUploadErrors()
+            {
+                var createTableSql = @"
+CREATE TABLE #CourseBulkUploadErrors (
+    CourseId UNIQUEIDENTIFIER,
+	CourseBulkUploadErrorIndex INT NOT NULL,
+	LineNumber INT,
+	Header NVARCHAR(MAX),
+	Error NVARCHAR(MAX),
+)";
+
+                await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
+
+                await BulkCopyHelper.WriteRecords(
+                    query.Records.SelectMany(cr => cr.BulkUploadErrors.Select((e, i) => new
+                    {
+                        cr.CourseId,
+                        CourseBulkUploadErrorIndex = i,
+                        e.LineNumber,
+                        e.Header,
+                        e.Error
+                    })),
+                    tableName: "#CourseBulkUploadErrors",
+                    transaction);
+
+                var mergeSql = @"
+MERGE Pttcd.CourseBulkUploadErrors AS target
+USING (
+    SELECT * FROM #CourseBulkUploadErrors
+) AS source
+ON target.CourseId = source.CourseId AND target.CourseBulkUploadErrorIndex = source.CourseBulkUploadErrorIndex
+WHEN MATCHED THEN
+    UPDATE SET LineNumber = source.LineNumber, Header = source.Header, Error = source.Error
+WHEN NOT MATCHED THEN
+    INSERT (CourseId, CourseBulkUploadErrorIndex, LineNumber, Header, Error)
+    VALUES (source.CourseId, source.CourseBulkUploadErrorIndex, source.LineNumber, source.Header, source.Error)
+WHEN NOT MATCHED BY SOURCE AND target.CourseId IN (SELECT CourseId FROM #CourseBulkUploadErrors) THEN DELETE;";
+
+                await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
+            }
+
             async Task UpsertCourseRuns()
             {
                 var createTableSql = @"
@@ -210,7 +253,7 @@ CREATE TABLE #CourseRuns (
                         cr.StudyMode,
                         AttendancePattern = (byte)cr.AttendancePattern,
                         cr.National,
-                        cr.BulkUploadErrorCount
+                        BulkUploadErrorCount = cr.BulkUploadErrors.Count()
                     })),
                     tableName: "#CourseRuns",
                     transaction);
@@ -316,6 +359,47 @@ WHEN MATCHED THEN
         [National] = source.[National],
         BulkUploadErrorCount = source.BulkUploadErrorCount
 WHEN NOT MATCHED BY SOURCE AND target.CourseId IN (SELECT CourseId FROM #Courses) THEN DELETE;";
+
+                await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
+            }
+
+            async Task UpsertCourseRunBulkUploadErrors()
+            {
+                var createTableSql = @"
+CREATE TABLE #CourseRunBulkUploadErrors (
+    CourseRunId UNIQUEIDENTIFIER,
+	CourseRunBulkUploadErrorIndex INT NOT NULL,
+	LineNumber INT,
+	Header NVARCHAR(MAX),
+	Error NVARCHAR(MAX),
+)";
+
+                await transaction.Connection.ExecuteAsync(createTableSql, transaction: transaction);
+
+                await BulkCopyHelper.WriteRecords(
+                    query.Records.SelectMany(c => c.CourseRuns).SelectMany(cr => cr.BulkUploadErrors.Select((e, i) => new
+                    {
+                        cr.CourseRunId,
+                        CourseRunBulkUploadErrorIndex = i,
+                        e.LineNumber,
+                        e.Header,
+                        e.Error
+                    })),
+                    tableName: "#CourseRunBulkUploadErrors",
+                    transaction);
+
+                var mergeSql = @"
+MERGE Pttcd.CourseRunBulkUploadErrors AS target
+USING (
+    SELECT * FROM #CourseRunBulkUploadErrors
+) AS source
+ON target.CourseRunId = source.CourseRunId AND target.CourseRunBulkUploadErrorIndex = source.CourseRunBulkUploadErrorIndex
+WHEN MATCHED THEN
+    UPDATE SET LineNumber = source.LineNumber, Header = source.Header, Error = source.Error
+WHEN NOT MATCHED THEN
+    INSERT (CourseRunId, CourseRunBulkUploadErrorIndex, LineNumber, Header, Error)
+    VALUES (source.CourseRunId, source.CourseRunBulkUploadErrorIndex, source.LineNumber, source.Header, source.Error)
+WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT CourseRunId FROM #CourseRunBulkUploadErrors) THEN DELETE;";
 
                 await transaction.Connection.ExecuteAsync(mergeSql, transaction: transaction);
             }

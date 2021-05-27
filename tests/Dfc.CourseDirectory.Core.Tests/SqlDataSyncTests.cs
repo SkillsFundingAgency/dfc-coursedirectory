@@ -222,9 +222,9 @@ namespace Dfc.CourseDirectory.Core.Tests
                 AdvancedLearnerLoan = true,
                 BulkUploadErrors = new[]
                 {
-                    new BulkUploadError { Error = "TestCourseBulkUploadError1" },
-                    new BulkUploadError { Error = "TestCourseBulkUploadError2" },
-                    new BulkUploadError { Error = "TestCourseBulkUploadError3" }
+                    new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseBulkUploadError1" },
+                    new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseBulkUploadError2" },
+                    new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseBulkUploadError3" }
                 },
                 CourseRuns = new[]
                 {
@@ -258,10 +258,10 @@ namespace Dfc.CourseDirectory.Core.Tests
                         UpdatedBy = "Tests",
                         BulkUploadErrors = new[]
                         {
-                            new BulkUploadError { Error = "TestCourseRunBulkUploadError1" },
-                            new BulkUploadError { Error = "TestCourseRunBulkUploadError2" },
-                            new BulkUploadError { Error = "TestCourseRunBulkUploadError3" },
-                            new BulkUploadError { Error = "TestCourseRunBulkUploadError4" }
+                            new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseRunBulkUploadError1" },
+                            new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseRunBulkUploadError2" },
+                            new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseRunBulkUploadError3" },
+                            new BulkUploadError { LineNumber = 2, Header = "Header", Error = "TestCourseRunBulkUploadError4" }
                         },
                     }
                 },
@@ -312,7 +312,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                     record.WhatYoullNeed == "What you'll need" &&
                     record.HowYoullBeAssessed == "How you'll be assessed" &&
                     record.WhereNext == "Where next" &&
-                    record.BulkUploadErrorCount == 3 &&
+                    record.BulkUploadErrors.Count() == 3 &&
                     recordCourseRun.CourseRunId == course.CourseRuns.Single().Id &&
                     recordCourseRun.VenueId == course.CourseRuns.Single().VenueId &&
                     recordCourseRun.CourseName == "Maths" &&
@@ -335,7 +335,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                     recordCourseRun.CreatedBy == "Tests" &&
                     recordCourseRun.UpdatedOn == Clock.UtcNow &&
                     recordCourseRun.UpdatedBy == "Tests" &&
-                    recordCourseRun.BulkUploadErrorCount == 4;
+                    recordCourseRun.BulkUploadErrors.Count() == 4;
             });
         }
 
