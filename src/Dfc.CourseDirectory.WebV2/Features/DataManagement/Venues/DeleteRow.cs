@@ -120,29 +120,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
 
         public async Task<OneOf<ModelWithErrors<Response>, NotFound, DeleteVenueResult>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
-            {
-                ProviderId = _providerContextProvider.GetProviderId()
-            });
-
-            if (venueUpload == null)
-            {
-                return new NotFound();
-            }
-
-            var (venueUploadRows, _) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows()
-            {
-                VenueUploadId = venueUpload.VenueUploadId
-            });
-
-            var row = venueUploadRows.SingleOrDefault(x => x.RowNumber == request.Row);
-            if (row == null)
-            {
-                return new NotFound();
-            }
-
             if (!request.Confirm)
             {
+                var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+                {
+                    ProviderId = _providerContextProvider.GetProviderId()
+                });
+                var (venueUploadRows, _) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows()
+                {
+                    VenueUploadId = venueUpload.VenueUploadId
+                });
+                var row = venueUploadRows.SingleOrDefault(x => x.RowNumber == request.Row);
+
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this venue")
@@ -162,7 +151,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
             if (!deleted)
                 return new NotFound();
 
-            var (existingRows, lastRowNumber) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+            var venueUpl = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+            {
+                ProviderId = _providerContextProvider.GetProviderId()
+            });
+            var (existingRows, lastRowNumber) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpl.VenueUploadId });
             if (existingRows.Any(x => x.Errors.Count > 0))
                 return DeleteVenueResult.VenueDeletedUploadHasMoreErrors;
             else

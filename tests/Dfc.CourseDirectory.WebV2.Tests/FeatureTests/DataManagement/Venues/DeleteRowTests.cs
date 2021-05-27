@@ -13,9 +13,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 {
-    public class DeleteVenueTests : MvcTestBase
+    public class DeleteRowTests : MvcTestBase
     {
-        public DeleteVenueTests(CourseDirectoryApplicationFactory factory)
+        public DeleteRowTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
