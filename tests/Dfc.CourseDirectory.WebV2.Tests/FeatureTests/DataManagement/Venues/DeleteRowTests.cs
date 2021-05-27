@@ -311,7 +311,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public async Task Post_DeleteLastVenueInError_RedirectsToResolveErrorList()
         {
             // Arrange
-            var inputPostcode = "ab12de";
             var addressLine1 = "Test Venue line 1";
             var town = "Coventry";
             var county = "Coventry";
@@ -367,7 +366,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public async Task Post_DeletedRow_ReturnsError()
         {
             // Arrange
-            var inputPostcode = "ab12de";
             var addressLine1 = "Test Venue line 1";
             var town = "Coventry";
             var county = "Coventry";
