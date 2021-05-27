@@ -49,7 +49,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
         public string Address { get; set; }
         public string Errors { get; set; }
         public bool Confirm { get; set; }
-        public Guid? VenueUploadId { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, OneOf<NotFound, Response>>,
@@ -101,7 +100,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
                 VenueName = row.VenueName,
                 Errors = GetUniqueErrorMessages(row),
                 Address = FormatAddress(row),
-                VenueUploadId = venueUpload.VenueUploadId
             };
         }
 
@@ -122,15 +120,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
         {
             if (!request.Confirm)
             {
-                var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
-                {
-                    ProviderId = _providerContextProvider.GetProviderId()
-                });
-                var (venueUploadRows, _) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows()
-                {
-                    VenueUploadId = venueUpload.VenueUploadId
-                });
-                var row = venueUploadRows.SingleOrDefault(x => x.RowNumber == request.Row);
+                var (uploadRows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(
+                    _providerContextProvider.GetProviderId());
+                var row = uploadRows.SingleOrDefault(x => x.RowNumber == request.Row);
 
                 var validationResult = new ValidationResult(new[]
                 {
@@ -143,7 +135,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
                     VenueName = row.VenueName,
                     Errors = GetUniqueErrorMessages(row),
                     Address = FormatAddress(row),
-                    VenueUploadId = venueUpload.VenueUploadId
                 }, validationResult);
             }
 
@@ -151,11 +142,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
             if (!deleted)
                 return new NotFound();
 
-            var venueUpl = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
-            {
-                ProviderId = _providerContextProvider.GetProviderId()
-            });
-            var (existingRows, lastRowNumber) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpl.VenueUploadId });
+            var (existingRows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(
+                    _providerContextProvider.GetProviderId());
             if (existingRows.Any(x => x.Errors.Count > 0))
                 return DeleteVenueResult.VenueDeletedUploadHasMoreErrors;
             else

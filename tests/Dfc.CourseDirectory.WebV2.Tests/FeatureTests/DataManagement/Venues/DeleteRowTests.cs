@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Act
             var getResponse1 = await HttpClient.GetAsync($"/data-upload/venues/resolve/{errorRow.RowNumber}/delete");
             var postRequest = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow}/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
                 .Add("Confirm", "true")
@@ -311,8 +311,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public async Task Post_DeleteLastVenueInError_RedirectsToResolveErrorList()
         {
             // Arrange
+            var inputPostcode = "ab12de";
+            var addressLine1 = "Test Venue line 1";
+            var town = "Coventry";
+            var county = "Coventry";
+            var country = "England";
+            var normalizedPostcode = "CV1 1BB";
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
+            await TestData.CreatePostcodeInfo(normalizedPostcode, postcodeLatitude, postcodeLongitude, country == "England");
+
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
+
             var (venueUpload, venueUploadRows) = await TestData.CreateVenueUpload(
             provider.ProviderId,
             createdBy: User.ToUserInfo(),
@@ -326,8 +337,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 });
                 rowBuilder.AddRow(record =>
                 {
-                    record.VenueName = "someVenuffffe";
-                    record.IsValid = false;
+                    record.VenueName = "somevenue1";
+                    record.IsValid = true;
+                    record.Postcode = normalizedPostcode;
+                    record.AddressLine1 = addressLine1;
+                    record.Town = town;
+                    record.County = county;
                 });
             });
             var errorRow = venueUploadRows.FirstOrDefault();
@@ -352,6 +367,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         public async Task Post_DeletedRow_ReturnsError()
         {
             // Arrange
+            var inputPostcode = "ab12de";
+            var addressLine1 = "Test Venue line 1";
+            var town = "Coventry";
+            var county = "Coventry";
+            var country = "England";
+            var normalizedPostcode = "CV1 1BB";
+            var postcodeLatitude = 42D;
+            var postcodeLongitude = 43D;
+            await TestData.CreatePostcodeInfo(normalizedPostcode, postcodeLatitude, postcodeLongitude, country == "England");
+
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
             var (venueUpload, venueUploadRows) = await TestData.CreateVenueUpload(
@@ -362,8 +387,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             {
                 rowBuilder.AddRow(record =>
                 {
-                    record.VenueName = "someVenue";
+                    record.VenueName = "somevenue1";
                     record.IsValid = true;
+                    record.Postcode = normalizedPostcode;
+                    record.AddressLine1 = addressLine1;
+                    record.Town = town;
+                    record.County = county;
                 });
             });
             var errorRow = venueUploadRows.FirstOrDefault();
@@ -373,7 +402,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", errorRow.RowNumber)
+                .Add("Confirm", "true")
                 .ToContent()
             };
             var response1 = await HttpClient.SendAsync(request1);
