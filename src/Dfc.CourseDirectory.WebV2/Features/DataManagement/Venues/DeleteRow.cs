@@ -13,11 +13,11 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete
+namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
 {
     public class Query : IRequest<OneOf<NotFound, Response>>
     {
-        public int Row { get; set; }
+        public int RowNumber { get; set; }
     }
 
     public enum DeleteVenueResult
@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete
     public class Command : IRequest<OneOf<ModelWithErrors<Response>, NotFound, DeleteVenueResult>>
     {
         public bool Confirm { get; set; }
-        public Guid VenueUploadId { get; set; }
         public int Row { get; set; }
     }
 
@@ -89,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete
                 VenueUploadId = venueUpload.VenueUploadId
             });
 
-            var row = venueUploadRows.FirstOrDefault(x => x.RowNumber == request.Row);
+            var row = venueUploadRows.FirstOrDefault(x => x.RowNumber == request.RowNumber);
             if (row == null)
             {
                 return new NotFound();
@@ -121,12 +120,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete
 
         public async Task<OneOf<ModelWithErrors<Response>, NotFound, DeleteVenueResult>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var (venueUploadRows, _) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows()
+            var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
             {
-                VenueUploadId = request.VenueUploadId
+                ProviderId = _providerContextProvider.GetProviderId()
             });
 
-            var row = venueUploadRows.FirstOrDefault(x => x.RowNumber == request.Row);
+            if (venueUpload == null)
+            {
+                return new NotFound();
+            }
+
+            var (venueUploadRows, _) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows()
+            {
+                VenueUploadId = venueUpload.VenueUploadId
+            });
+
+            var row = venueUploadRows.SingleOrDefault(x => x.RowNumber == request.Row);
             if (row == null)
             {
                 return new NotFound();
@@ -145,15 +154,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete
                     VenueName = row.VenueName,
                     Errors = GetUniqueErrorMessages(row),
                     Address = FormatAddress(row),
-                    VenueUploadId = request.VenueUploadId
+                    VenueUploadId = venueUpload.VenueUploadId
                 }, validationResult);
             }
 
-            var deleted = await _fileUploadProcessor.DeleteVenueUploadRow(request.VenueUploadId, request.Row);
+            var deleted = await _fileUploadProcessor.DeleteVenueUploadRowForProvider(_providerContextProvider.GetProviderId(), request.Row);
             if (!deleted)
                 return new NotFound();
 
-            var (existingRows, lastRowNumber) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = request.VenueUploadId });
+            var (existingRows, lastRowNumber) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
             if (existingRows.Any(x => x.Errors.Count > 0))
                 return DeleteVenueResult.VenueDeletedUploadHasMoreErrors;
             else

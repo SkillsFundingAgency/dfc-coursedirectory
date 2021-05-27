@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FormFlow;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors.WhatNext;
-using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Delete;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -205,12 +205,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
             return View();
         }
 
-        [HttpPost("resolve/delete")]
+        [HttpPost("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
-        public async Task<IActionResult> Delete(Command request)
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, Command command)
         {
+            command.Row = rowNumber;
             return await _mediator.SendAndMapResponse(
-                request,
+                command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     _ => NotFound(),
@@ -222,15 +223,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     }))); ;
         }
 
-        [HttpGet("resolve/delete")]
+        [HttpGet("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
-        public async Task<IActionResult> Delete(Delete.Query request)
+        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
         {
             return await _mediator.SendAndMapResponse(
                 request,
                 result => result.Match<IActionResult>(
                     _ => NotFound(),
-                    venue => View("Delete", venue)));
+                    venue => View("DeleteRow", venue)));
         }
     }
 }

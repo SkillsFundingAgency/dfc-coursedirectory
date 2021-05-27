@@ -187,13 +187,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<bool> DeleteVenueUploadRow(Guid venueUploadId, int rowNumber)
+        public async Task<bool> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                var (existingRows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUploadId });
-                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
-                var rowToDelete = existingRows.FirstOrDefault(x => x.RowNumber == rowNumber);
+                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+                var (existingRows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+                var rowToDelete = existingRows.SingleOrDefault(x => x.RowNumber == rowNumber);
                 if (rowToDelete == null)
                     return false;
                 var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();

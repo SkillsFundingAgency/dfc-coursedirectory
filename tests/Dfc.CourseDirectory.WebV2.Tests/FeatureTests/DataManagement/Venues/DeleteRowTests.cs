@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var (_, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedWithErrors);
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={rowNumber}");
+            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/{rowNumber}/delete");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row=1");
+            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/1/delete");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var errorRow = rows.FirstOrDefault();
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={errorRow.RowNumber}");
+            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/{errorRow.RowNumber}/delete");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -87,18 +87,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var errorRow = rows.FirstOrDefault();
 
             // Act
-            var getResponse1 = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={errorRow.RowNumber}");
+            var getResponse1 = await HttpClient.GetAsync($"/data-upload/venues/resolve/{errorRow.RowNumber}/delete");
             var postRequest = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", errorRow.RowNumber)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
                 .Add("Confirm", "true")
                 .ToContent()
             };
             var postResponse = await HttpClient.SendAsync(postRequest);
-            var getResponse2 = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={errorRow.RowNumber}");
+            var getResponse2 = await HttpClient.GetAsync($"/data-upload/venues/resolve/{errorRow.RowNumber}/delete");
 
             // Assert
             getResponse1.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -134,7 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var errorRow = venueUploadRows.FirstOrDefault();
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={errorRow.RowNumber}");
+            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/{errorRow.RowNumber}/delete");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -185,7 +183,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var errorRow = venueUploadRows.FirstOrDefault();
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={errorRow.RowNumber}");
+            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/{errorRow.RowNumber}/delete");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -211,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var row = rows.FirstOrDefault();
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/delete?row={row.RowNumber}");
+            var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/{row.RowNumber}/delete");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -228,11 +226,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Act
             var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", errorRow.RowNumber)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
                 .Add("Confirm", "true")
                 .ToContent()
             };
@@ -264,11 +260,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Act
             var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", errorRow.RowNumber)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
                 .Add("Confirm", "true")
                 .ToContent()
             };
@@ -300,11 +294,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Act
             var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", errorRow.RowNumber)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
                 .Add("Confirm", "true")
                 .ToContent()
             };
@@ -342,11 +334,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Act
             var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", errorRow.RowNumber)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
                 .Add("Confirm", "true")
                 .ToContent()
             };
@@ -380,21 +370,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Act
             var request1 = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
                 .Add("Row", errorRow.RowNumber)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
-                .Add("Confirm", "true")
                 .ToContent()
             };
             var response1 = await HttpClient.SendAsync(request1);
             var request2 = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-               .Add("Row", errorRow.RowNumber)
-               .Add("VenueUploadId", venueUpload.VenueUploadId)
                .Add("Confirm", "true")
                .ToContent()
             };
@@ -425,11 +411,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             });
             var errorRow = venueUploadRows.FirstOrDefault();
             var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/{errorRow.RowNumber}/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-               .Add("Row", errorRow.RowNumber)
-               .Add("VenueUploadId", venueUpload.VenueUploadId)
                .Add("Confirm", "false")
                .ToContent()
             };
@@ -455,11 +439,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Act
             var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/venues/resolve/delete")
+            HttpMethod.Post, $"/data-upload/venues/resolve/242/delete")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Row", 232)
-                .Add("VenueUploadId", venueUpload.VenueUploadId)
                 .Add("Confirm", "true")
                 .ToContent()
             };
