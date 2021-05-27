@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FormFlow;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors.WhatNext;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -209,6 +210,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         public IActionResult Formatting()
         {
             return View();
+        }
+
+        [HttpPost("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, Command command)
+        {
+            command.Row = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    _ => NotFound(),
+                    success => (success switch
+                    {
+                        DeleteVenueResult.VenueDeletedUploadHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        DeleteVenueResult.VenueDeletedUploadHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => throw new NotSupportedException($"Unknown value.")
+                    }))); ;
+        }
+
+        [HttpGet("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
+        {
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    _ => NotFound(),
+                    venue => View("DeleteRow", venue)));
         }
     }
 }

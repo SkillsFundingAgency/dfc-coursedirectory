@@ -4,15 +4,15 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpsertVenueUploadRows : ISqlQuery<IReadOnlyCollection<VenueUploadRow>>
+    public class SetVenueUploadRows : ISqlQuery<IReadOnlyCollection<VenueUploadRow>>
     {
         public Guid VenueUploadId { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public DateTime ValidatedOn { get; set; }
-        public IEnumerable<UpsertVenueUploadRowsRecord> Records { get; set; }
+        public IEnumerable<SetVenueUploadRowsRecord> Records { get; set; }
     }
 
-    public class UpsertVenueUploadRowsRecord
+    public class SetVenueUploadRowsRecord
     {
         public int RowNumber { get; set; }
         public bool IsValid { get; set; }
