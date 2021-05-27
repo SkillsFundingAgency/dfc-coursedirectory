@@ -151,7 +151,6 @@ namespace Dfc.CourseDirectory.Core
                     WhatYoullNeed = course.WhatYoullNeed,
                     HowYoullBeAssessed = course.HowYoullBeAssessed,
                     WhereNext = course.WhereNext,
-                    BulkUploadErrorCount = course.BulkUploadErrors?.Count() ?? 0,
                     CourseRuns = course.CourseRuns.Select(courseRun => new UpsertCoursesRecordCourseRun()
                     {
                         CourseRunId = courseRun.Id,
@@ -176,8 +175,21 @@ namespace Dfc.CourseDirectory.Core
                         National = courseRun.National,
                         RegionIds = courseRun.Regions ?? Array.Empty<string>(),
                         SubRegionIds = courseRun.SubRegions?.Select(r => r.Id) ?? Array.Empty<string>(),
-                        BulkUploadErrorCount = courseRun.BulkUploadErrors?.Count() ?? 0
-                    })
+                        BulkUploadErrors = (courseRun.BulkUploadErrors ?? Enumerable.Empty<BulkUploadError>())
+                            .Select(e => new UpsertCoursesRecordBulkUploadError()
+                            {
+                                LineNumber = e.LineNumber,
+                                Header = e.Header,
+                                Error = e.Error
+                            })
+                    }),
+                    BulkUploadErrors = (course.BulkUploadErrors ?? Enumerable.Empty<BulkUploadError>())
+                        .Select(e => new UpsertCoursesRecordBulkUploadError()
+                        {
+                            LineNumber = e.LineNumber,
+                            Header = e.Header,
+                            Error = e.Error
+                        })
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
