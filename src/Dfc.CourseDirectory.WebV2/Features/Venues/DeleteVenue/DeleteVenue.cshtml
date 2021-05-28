@@ -38,7 +38,7 @@
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Location venue</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-key>Venue name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
@@ -60,11 +60,11 @@
                || Model.AffectedApprenticeships.Count > 0
                || Model.AffectedTLevels.Count > 0)
             {
-                <govuk-warning-text icon-fallback-text="Warning">
-                    You cannot delete this location
-                </govuk-warning-text>
+            <govuk-warning-text icon-fallback-text="Warning">
+                You cannot delete this venue
+            </govuk-warning-text>
 
-                <p class="govuk-body">You will need to change the location or delete the following before this location can be deleted.</p>
+            <p class="govuk-body">You will need to change the venue or delete the following before this venue can be deleted.</p>
 
                 @if (Model.AffectedCourses.Count > 0)
                 {
