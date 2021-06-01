@@ -1,0 +1,41 @@
+﻿<govuk-details>
+    <govuk-details-summary>Help with venue data upload</govuk-details-summary>
+    <govuk-details-text>
+        <p class="govuk-body">
+            You can upload a CSV file to update multiple venues in Publish to the course directory.
+            If you have more than one option when saving as a CSV, choose CSV UTF-8 (Comma delimited) (.csv).
+        </p>
+
+        <h6 class="govuk-heading-s govuk-!-margin-bottom-0">Download your published venue data</h6>
+        <p class="govuk-body">
+            This will ensure all your existing venues and venue references will be included in the data file.
+        </p>
+
+        <h6 class="govuk-heading-s govuk-!-margin-bottom-0">Add new venues</h6>
+        <p class="govuk-body">
+            Follow the <a asp-action="Formatting" class="govuk-link">file format requirements</a> for each of the fields.
+        </p>
+
+        <h6 class="govuk-heading-s govuk-!-margin-bottom-0">Add a venue reference</h6>
+        <p class="govuk-body">
+            An existing venue reference should not be edited or removed.
+        </p>
+
+        <h6 class="govuk-heading-s govuk-!-margin-bottom-0">Delete a venue</h6>
+        <p class="govuk-body">
+            You can delete a venue from your data file by deleting all data within the row.
+        </p>
+        <p class="govuk-body">
+            You cannot delete a venue that is linked to a course, apprenticeship or T Level in data upload.
+        </p>
+        <p class="govuk-body">
+            A venue linked to a course, apprenticeship or T Level that is deleted from the data file or missing will be added to your data upload.
+        </p>
+
+        <h6 class="govuk-heading-s govuk-!-margin-bottom-0">How to delete a venue that is linked to a course, apprenticeship or T Level</h6>
+        <p class="govuk-body">
+            You will need to edit or delete the courses, apprenticeships and T Levels that this venue is linked to by selecting view and edit from the
+            <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">home screen</a>
+        </p>
+    </govuk-details-text>
+</govuk-details>

@@ -42,8 +42,8 @@
             <p class="govuk-body">To ensure an upload is successful you must:</p>
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
                 <li>include existing and new venues in the data file</li>
-                <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues"
-                                  class="govuk-link">file format requirements</a></li>
+                <li>include <a asp-action="Formatting" asp-fragment="REF" class="govuk-link">a venue reference</a> for each venue</li>
+                <li>follow the <a asp-action="Formatting" class="govuk-link">file format requirements</a></li>
             </ul>
 
             <govuk-file-upload asp-for="File" input-accept=".csv">
@@ -52,7 +52,6 @@
 
             <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
         </form>
-
     </div>
     <div class="govuk-grid-column-one-third">
         <aside class="pttcd-provider-data-upload__download-panel" role="complementary">
@@ -77,3 +76,5 @@
         </aside>
     </div>
 </div>
+
+<vc:venues-data-management-help />

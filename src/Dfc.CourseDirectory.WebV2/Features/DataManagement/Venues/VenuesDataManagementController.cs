@@ -207,11 +207,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         }
 
         [HttpGet("formatting")]
-        [RequireProviderContext]
-        public IActionResult Formatting()
-        {
-            return View();
-        }
+        public IActionResult Formatting() => View();
 
         [HttpPost("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
