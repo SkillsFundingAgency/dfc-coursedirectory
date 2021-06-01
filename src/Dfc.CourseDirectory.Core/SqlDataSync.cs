@@ -50,14 +50,28 @@ namespace Dfc.CourseDirectory.Core
                 {
                     ProcessChunk = GetSyncWithBatchingHandler<Apprenticeship>(SyncApprenticeships)
                 }));
-			
+
         public Task SyncAllCourses() => WithExclusiveSqlLock(
             nameof(SyncAllCourses),
-            () =>_cosmosDbQueryDispatcher.ExecuteQuery(
-                new ProcessAllCourses()
-                {
-                    ProcessChunk = GetSyncWithBatchingHandler<Course>(SyncCourses)
-                }));
+            async () =>
+            {
+                // Sync all non-deleted courses then delete anything left over that wasn't updated
+                // (as it must have been deleted).
+                // This is significantly cheaper than syncing deleted courses.
+
+                var initialSyncTime = _clock.UtcNow;
+
+                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new ProcessAllCourses()
+                    {
+                        ProcessChunk = GetSyncWithBatchingHandler<Course>(SyncCourses),
+                        Filter = course => course.CourseStatus != CourseStatus.Archived
+                    });
+
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                await dispatcher.ExecuteQuery(new DeleteCoursesNotSyncedSince() { SyncedSince = initialSyncTime });
+                await dispatcher.Commit();
+            });
 
         public Task SyncAllProviders() => WithExclusiveSqlLock(
             nameof(SyncAllProviders),
