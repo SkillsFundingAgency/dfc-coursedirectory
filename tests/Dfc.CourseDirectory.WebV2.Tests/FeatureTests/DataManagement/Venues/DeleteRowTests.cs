@@ -52,6 +52,48 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
+        public async Task Get_VenueHasLiveOfferings_ReturnsBadRequest()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+            await TestData.CreateTLevel(
+                provider.ProviderId,
+                tLevelDefinitionId: tLevelDefinitions.First().TLevelDefinitionId,
+                locationVenueIds: new[] { venue.VenueId },
+                createdBy: User.ToUserInfo());
+
+            var (_, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.VenueName = string.Empty;
+                        record.VenueId = venue.VenueId;
+                        record.IsValid = false;
+                        record.IsDeletable = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["VENUE_NAME_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"/data-upload/venues/resolve/{venueUploadRows.Single().RowNumber}/delete?providerId={provider.ProviderId}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
         public async Task Get_DeleteExistingRowWithErrors_ReturnsOK()
         {
             // Arrange
@@ -476,6 +518,51 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task Post_VenueHasLiveOfferings_ReturnsBadRequest()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+            await TestData.CreateTLevel(
+                provider.ProviderId,
+                tLevelDefinitionId: tLevelDefinitions.First().TLevelDefinitionId,
+                locationVenueIds: new[] { venue.VenueId },
+                createdBy: User.ToUserInfo());
+
+            var (_, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.VenueName = string.Empty;
+                        record.VenueId = venue.VenueId;
+                        record.IsValid = false;
+                        record.IsDeletable = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["VENUE_NAME_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"/data-upload/venues/resolve/{venueUploadRows.Single().RowNumber}/delete?providerId={provider.ProviderId}",
+                new FormUrlEncodedContentBuilder()
+                    .Add("Confirm", "true")
+                    .ToContent());
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         private string FormatAddress(VenueUploadRow row)

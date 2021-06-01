@@ -200,7 +200,8 @@ namespace Dfc.CourseDirectory.Testing
                 string telephone,
                 string website,
                 IEnumerable<string> errors = null,
-                bool isSupplementary = false)
+                bool isSupplementary = false,
+                bool isDeletable = true)
             {
                 var record = CreateRecord(
                     venueId,
@@ -215,7 +216,8 @@ namespace Dfc.CourseDirectory.Testing
                     telephone,
                     website,
                     errors,
-                    isSupplementary);
+                    isSupplementary,
+                    isDeletable);
 
                 _records.Add(record);
 
@@ -254,7 +256,8 @@ namespace Dfc.CourseDirectory.Testing
                 string telephone,
                 string website,
                 IEnumerable<string> errors = null,
-                bool isSupplementary = false)
+                bool isSupplementary = false,
+                bool isDeletable = true)
             {
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
                 var isValid = !errorsArray.Any();
@@ -266,6 +269,7 @@ namespace Dfc.CourseDirectory.Testing
                     Errors = errorsArray,
                     IsSupplementary = isSupplementary,
                     VenueId = venueId,
+                    IsDeletable = isDeletable,
                     ProviderVenueRef = providerVenueRef,
                     VenueName = venueName,
                     AddressLine1 = addressLine1,
@@ -279,7 +283,10 @@ namespace Dfc.CourseDirectory.Testing
                 };
             }
 
-            private SetVenueUploadRowsRecord CreateValidRecord(bool isSupplementary = false, Guid? venueId = null)
+            private SetVenueUploadRowsRecord CreateValidRecord(
+                bool isSupplementary = false,
+                Guid? venueId = null,
+                bool isDeletable = true)
             {
                 string venueName;
                 do
@@ -300,7 +307,8 @@ namespace Dfc.CourseDirectory.Testing
                     email: Faker.Internet.Email(),
                     telephone: "01234 567890",  // There's no Faker method for a UK phone number
                     website: Faker.Internet.Url(),
-                    isSupplementary: isSupplementary);
+                    isSupplementary: isSupplementary,
+                    isDeletable: isDeletable);
             }
         }
     }

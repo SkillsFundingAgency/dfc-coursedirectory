@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.Core
         InvalidApprenticeshipQASubmission,
         NoValidApprenticeshipQASubmission,
         InvalidUploadStatus,
-        NoUnpublishedVenueUpload
+        NoUnpublishedVenueUpload,
+        VenueUploadRowCannotBeDeleted
     }
 }

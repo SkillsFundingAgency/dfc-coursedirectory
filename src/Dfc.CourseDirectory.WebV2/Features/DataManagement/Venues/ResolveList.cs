@@ -27,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveList
         public string VenueName { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
+        public bool IsDeletable { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, OneOf<UploadHasNoErrors, ViewModel>>
@@ -70,7 +71,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveList
                             }
                             .Where(part => !string.IsNullOrWhiteSpace(part))
                             .ToArray(),
-                        ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapVenueErrorToFieldGroup(e)).Distinct().ToArray()
+                        ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapVenueErrorToFieldGroup(e)).Distinct().ToArray(),
+                        IsDeletable = row.IsDeletable
                     })
                     .ToArray()
             };

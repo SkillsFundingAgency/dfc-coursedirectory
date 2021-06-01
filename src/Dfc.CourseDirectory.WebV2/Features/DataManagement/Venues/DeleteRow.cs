@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -68,7 +69,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
             _fileUploadProcessor = fileUploadProcessor;
         }
 
-
         public async Task<OneOf<NotFound, Response>> Handle(Query request, CancellationToken cancellationToken)
         {
             var providerId = _providerContextProvider.GetProviderId();
@@ -91,6 +91,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
             if (row == null)
             {
                 return new NotFound();
+            }
+
+            if (!row.IsDeletable)
+            {
+                throw new InvalidStateException(InvalidStateReason.VenueUploadRowCannotBeDeleted);
             }
 
             return new Response

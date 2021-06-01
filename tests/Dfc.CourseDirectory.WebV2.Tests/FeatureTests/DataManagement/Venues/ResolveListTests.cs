@@ -120,5 +120,53 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 });
             }
         }
+
+        [Fact]
+        public async Task Venue_HasLiveOfferingAttached_DoesNotRenderDeleteLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
+            await TestData.CreateTLevel(
+                provider.ProviderId,
+                tLevelDefinitionId: tLevelDefinitions.First().TLevelDefinitionId,
+                locationVenueIds: new[] { venue.VenueId },
+                createdBy: User.ToUserInfo());
+
+            var (_, venueUploadRows) = await TestData.CreateVenueUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddValidRows(1);
+
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.VenueName = string.Empty;
+                        record.VenueId = venue.VenueId;
+                        record.IsValid = false;
+                        record.IsDeletable = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["VENUE_NAME_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/venues/resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetAllElementsByTestId("Delete").Count().Should().Be(0);
+        }
     }
 }
