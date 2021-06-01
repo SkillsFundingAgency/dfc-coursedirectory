@@ -114,11 +114,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
+                var setProcessingResult = await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
                 {
                     VenueUploadId = venueUploadId,
                     ProcessingStartedOn = _clock.UtcNow
                 });
+
+                if (setProcessingResult != SetVenueUploadProcessingResult.Success)
+                {
+                    await DeleteBlob();
+
+                    return;
+                }
 
                 await dispatcher.Commit();
             }
@@ -145,6 +152,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 await ValidateVenueUploadRows(dispatcher, venueUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
+            }
+
+            await DeleteBlob();
+
+            Task DeleteBlob()
+            {
+                var blobName = $"{Constants.VenuesFolder}/{venueUploadId}.csv";
+                return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
             }
         }
 

@@ -3,19 +3,25 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class SetVenueUploadProcessingHandler : ISqlQueryHandler<SetVenueUploadProcessing, OneOf<NotFound, Success>>
+    public class SetVenueUploadProcessingHandler : ISqlQueryHandler<SetVenueUploadProcessing, SetVenueUploadProcessingResult>
     {
-        public async Task<OneOf<NotFound, Success>> Execute(SqlTransaction transaction, SetVenueUploadProcessing query)
+        public Task<SetVenueUploadProcessingResult> Execute(SqlTransaction transaction, SetVenueUploadProcessing query)
         {
             var sql = $@"
 UPDATE Pttcd.VenueUploads
 SET UploadStatus = {(int)UploadStatus.Processing}, ProcessingStartedOn = @ProcessingStartedOn
-WHERE VenueUploadId = @VenueUploadId";
+WHERE VenueUploadId = @VenueUploadId
+AND UploadStatus IN ({(int)UploadStatus.Created}, {(int)UploadStatus.Processing})
+
+IF @@ROWCOUNT = 1
+    SELECT 0 AS Result
+ELSE IF NOT EXISTS (SELECT 1 FROM Pttcd.VenueUploads WHERE VenueUploadId = @VenueUploadId)
+    SELECT 1 AS Result
+ELSE
+    SELECT 2 AS Result";
 
             var paramz = new
             {
@@ -23,16 +29,7 @@ WHERE VenueUploadId = @VenueUploadId";
                 query.ProcessingStartedOn
             };
 
-            var updated = await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
-
-            if (updated == 1)
-            {
-                return new Success();
-            }
-            else
-            {
-                return new NotFound();
-            }
+            return transaction.Connection.QuerySingleAsync<SetVenueUploadProcessingResult>(sql, paramz, transaction);
         }
     }
 }
