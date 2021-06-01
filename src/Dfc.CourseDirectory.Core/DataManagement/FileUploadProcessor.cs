@@ -203,24 +203,37 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 {
                     ProviderId = providerId
                 });
+
                 var (existingRows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
                 var rowToDelete = existingRows.SingleOrDefault(x => x.RowNumber == rowNumber);
                 if (rowToDelete == null)
+                {
                     return false;
+                }
+
+                if (!rowToDelete.IsDeletable)
+                {
+                    throw new InvalidStateException(InvalidStateReason.VenueUploadRowCannotBeDeleted);
+                }
+
                 var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();
 
                 var rowCollection =  new VenueDataUploadRowInfoCollection(
-                lastRowNumber: lastRowNumber,
-                nonDeletedRows
-                    .Where(r => r.RowNumber != rowNumber)
-                    .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+                    lastRowNumber: lastRowNumber,
+                    nonDeletedRows
+                        .Where(r => r.RowNumber != rowNumber)
+                        .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+
                 await ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
                     rowCollection);
+
                 await dispatcher.Commit();
             }
+
             return true;
         }
 
