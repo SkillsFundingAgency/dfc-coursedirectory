@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.Command;
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.ViewModel;
 @{
     ViewBag.Title = "Data Upload - Upload your venue data";
 }
@@ -61,9 +61,14 @@
             </h2>
             <nav role="navigation" aria-labelledby="subsection-title">
                 <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
-                    <li>
-                        <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published venue data (CSV)</a>
-                    </li>
+                    @if (Model.VenueCount > 0)
+                    {
+                        <li>
+                            <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadLink">
+                                Download your published venue data (CSV)
+                            </a>
+                        </li>
+                    }
                     <li>
                         <a asp-action="Template" class="govuk-link">Download an empty venue data template (CSV)</a>
                     </li>
