@@ -224,7 +224,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessVenueFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, blobServiceClient.Object, Clock);
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -254,7 +257,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessVenueFile_RowHasErrors_SetStatusToProcessedWithErrors()
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, blobServiceClient.Object, Clock);
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
