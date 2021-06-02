@@ -39,14 +39,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     File = file
                 },
                 response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
+                    errors =>
+                    {
+                        ViewBag.MissingHeaders = errors.MissingHeaders;
+                        return this.ViewFromErrors(errors);
+                    },
                     result =>
                         RedirectToAction("Index", nameof(ProviderDashboard))
                         .WithProviderContext(_providerContextProvider.GetProviderContext())
                         ));
         }
-
-
 
         [HttpGet("check-publish")]
         [RequireProviderContext]

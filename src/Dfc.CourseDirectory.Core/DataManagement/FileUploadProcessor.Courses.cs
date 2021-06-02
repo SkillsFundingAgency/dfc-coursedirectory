@@ -23,11 +23,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidFile();
             }
 
+            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CourseRow>(stream);
+            if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+            {
+                return SaveFileResult.InvalidHeader(missingHeaders);
+            }
+
+
             //This is just a placeholder until the next ticket completes this part
             return SaveFileResult.Success(new Guid(), UploadStatus.ProcessedSuccessfully);
         }
 
         private class CourseUploadRowValidator : AbstractValidator<CourseRow>
-        { }
+        { 
+        
+        }
     }
 }

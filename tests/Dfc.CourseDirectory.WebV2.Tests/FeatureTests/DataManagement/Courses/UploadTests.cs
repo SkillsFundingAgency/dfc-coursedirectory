@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -118,6 +119,59 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Fact]
+        public async Task Post_FileHasMissingHeaders_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+                csvWriter =>
+                {
+                    // Miss out WHO_THIS_COURSE_IS_FOR, YOUR_REFERENCE
+                    csvWriter.WriteField("LARS_QAN");
+                    csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                    csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                    csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                    csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                    csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                    csvWriter.WriteField("WHERE_NEXT");
+                    csvWriter.WriteField("COURSE_NAME");
+                    csvWriter.WriteField("DELIVERY_MODE");
+                    csvWriter.WriteField("START_DATE");
+                    csvWriter.WriteField("FLEXIBLE_START_DATE");
+                    csvWriter.WriteField("VENUE_NAME");
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("NATIONAL_DELIVERY");
+                    csvWriter.WriteField("SUB_REGION");
+                    csvWriter.WriteField("COURSE_WEBPAGE");
+                    csvWriter.WriteField("COST");
+                    csvWriter.WriteField("COST_DESCRIPTION");
+                    csvWriter.WriteField("DURATION");
+                    csvWriter.WriteField("DURATION_UNIT");
+                    csvWriter.WriteField("STUDY_MODE");
+                    csvWriter.WriteField("ATTENDANCE_PATTERN");
+                    csvWriter.NextRecord();
+                },
+                writeHeader: false);
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "Enter headings in the correct format");
+            doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "WHO_THIS_COURSE_IS_FOR",
+                "YOUR_REFERENCE"
+            });
+        }
+
+        [Fact]
         public async Task Post_FileIsTooLarge_RendersError()
         {
             // Arrange
@@ -136,7 +190,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             doc.AssertHasError("File", "The selected file must be smaller than 3MB");
         }
 
-        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, MemoryStream stream)
+        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
             content.Headers.ContentType.MediaType = "multipart/form-data";
@@ -144,9 +198,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (var mem = new MemoryStream())
             using (var writer = new StreamWriter(mem))
             {
-                if (stream != null)
+                if (csvStream != null)
                 {
-                    var byteArrayContent = new ByteArrayContent(stream.ToArray());
+                    var byteArrayContent = new StreamContent(csvStream);
                     byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
                     content.Add(byteArrayContent, "File", "someFileName.csv");
                 }
