@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     {
         // Courses
         Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task ProcessCourseFile(Guid courseUploadId, Stream stream);
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);

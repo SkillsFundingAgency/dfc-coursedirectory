@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Moq;
+using OneOf.Types;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
@@ -56,6 +58,68 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task Post_ProviderAlreadyHasUnprocessedUpload_ReturnsBadRequest()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+
+            await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), createdOn: Clock.UtcNow);
+
+            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact(Skip = "No in progress page yet")]
+        public async Task Post_ValidCoursesFile_CreatesRecordAndRedirectsToInProgress()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(rowCount: 1);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be($"/data-upload/courses/in-progress?providerId={provider.ProviderId}");
+
+            SqlQuerySpy.VerifyQuery<CreateCourseUpload, Success>(q =>
+                q.CreatedBy.UserId == User.UserId &&
+                q.CreatedOn == Clock.UtcNow &&
+                q.ProviderId == provider.ProviderId);
+        }
+
+        [Fact]
+        public async Task Post_ValidCoursesFile_AbandonsExistingUnpublishedUpload()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+
+            var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
+
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(rowCount: 1);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            oldUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = oldUpload.CourseUploadId }));
+            oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
         }
 
         [Fact]
@@ -136,7 +200,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             doc.AssertHasError("File", "The selected file must be smaller than 3MB");
         }
 
-        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, MemoryStream stream)
+        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
             content.Headers.ContentType.MediaType = "multipart/form-data";
@@ -144,9 +208,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (var mem = new MemoryStream())
             using (var writer = new StreamWriter(mem))
             {
-                if (stream != null)
+                if (csvStream != null)
                 {
-                    var byteArrayContent = new ByteArrayContent(stream.ToArray());
+                    var byteArrayContent = new StreamContent(csvStream);
                     byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
                     content.Add(byteArrayContent, "File", "someFileName.csv");
                 }

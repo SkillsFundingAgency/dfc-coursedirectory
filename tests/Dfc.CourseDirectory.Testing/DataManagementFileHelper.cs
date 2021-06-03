@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Testing
                 // N.B. We deliberately do not use the CsvCourseRow class here to ensure we notice if any columns change name
 
                 csvWriter.WriteField("LARS_QAN");
-                csvWriter.WriteField("WHO_IS_THIS_COURSE_FOR");
+                csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
                 csvWriter.WriteField("ENTRY_REQUIREMENTS");
                 csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
                 csvWriter.WriteField("HOW_YOU_WILL_LEARN");
@@ -200,6 +200,15 @@ namespace Dfc.CourseDirectory.Testing
                     Website = Faker.Internet.Url()
                 };
             }
+        }
+
+        public static CourseDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvCourseRow> rows)
+        {
+            var rowsArray = rows.ToArray();
+
+            return new CourseDataUploadRowInfoCollection(
+                lastRowNumber: rowsArray.Length + 1,
+                rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
         }
 
         public static VenueDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvVenueRow> rows)
