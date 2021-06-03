@@ -177,7 +177,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = new MemoryStream(new byte[3145728 + 1]);
+            var csvStream = new MemoryStream(new byte[5242880 + 1]);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
