@@ -432,7 +432,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
+            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Data upload");
             bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
         }
 
@@ -458,7 +458,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
+            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Data upload");
             bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
         }
 
