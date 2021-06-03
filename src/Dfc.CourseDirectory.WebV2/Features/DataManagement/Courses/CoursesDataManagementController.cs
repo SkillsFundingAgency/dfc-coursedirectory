@@ -12,6 +12,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 {
     [Route("data-upload/courses")]
     [RequireFeatureFlag(FeatureFlags.CoursesDataManagement)]
+    [RequireProviderContext]
+    [RestrictProviderTypes(ProviderType.FE)]
     public class CoursesDataManagementController : Controller
     {
         private readonly IMediator _mediator;
@@ -24,11 +26,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("")]
-        [RequireProviderContext]
         public IActionResult Index() => View("Upload");
 
         [HttpPost("upload")]
-        [RequireProviderContext]
         public async Task<IActionResult> Upload(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
@@ -49,7 +49,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
 
         [HttpGet("check-publish")]
-        [RequireProviderContext]
         public IActionResult CheckAndPublish()
         {
             return View();
