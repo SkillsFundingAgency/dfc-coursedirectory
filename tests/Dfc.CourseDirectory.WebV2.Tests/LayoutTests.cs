@@ -123,8 +123,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[0].TestId.Should().Be("adminsubnav-home");
                 subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[3].Href.Should().Be("/BulkUpload");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[3].Href.Should().Be("/data-upload");
             }
         }
 
@@ -168,8 +168,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[0].TestId.Should().Be("adminsubnav-home");
                 subNavLinks[1].TestId.Should().Be("adminsubnav-apprenticeships");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[3].Href.Should().Be("/BulkUploadApprenticeships");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[3].Href.Should().Be("/data-upload");
             }
         }
 
@@ -258,8 +258,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[2].TestId.Should().Be("adminsubnav-apprenticeships");
                 subNavLinks[3].TestId.Should().Be("adminsubnav-tlevels");
                 subNavLinks[4].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[5].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[5].Href.Should().Be("/BulkUpload/LandingOptions");
+                subNavLinks[5].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[5].Href.Should().Be("/data-upload");
             }
         }
 
@@ -292,8 +292,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-courses");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[3].Href.Should().Be("/BulkUpload");
+                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[3].Href.Should().Be("/data-upload");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -329,8 +329,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-apprenticeships");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[3].Href.Should().Be("/BulkUploadApprenticeships");
+                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[3].Href.Should().Be("/data-upload");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -403,8 +403,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[2].TestId.Should().Be("topnav-apprenticeships");
                 topLevelLinks[3].TestId.Should().Be("topnav-tlevels");
                 topLevelLinks[4].TestId.Should().Be("topnav-locations");
-                topLevelLinks[5].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[5].Href.Should().Be("/BulkUpload/LandingOptions");
+                topLevelLinks[5].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[5].Href.Should().Be("/data-upload");
                 topLevelLinks[6].TestId.Should().Be("topnav-signout");
             }
 
@@ -412,8 +412,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         [Theory]
-        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/BulkUpload/LandingOptions")]
+        [InlineData(ProviderType.Apprenticeships, "/data-upload")]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/data-upload")]
         public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
              ProviderType providerType,
             string expectedHref)
@@ -437,9 +437,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         [Theory]
-        [InlineData(ProviderType.FE, "/BulkUpload")]
-        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/BulkUpload/LandingOptions")]
+        [InlineData(ProviderType.FE, "/data-upload")]
+        [InlineData(ProviderType.Apprenticeships, "/data-upload")]
+        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/data-upload")]
         public async Task ProviderTopNavBulkUploadLinksAreCorrect(
             ProviderType providerType,
             string expectedHref)

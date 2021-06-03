@@ -41,29 +41,40 @@
                 Venues
             </a>
         </li>
-        @if (Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks)
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement) && ((Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks) || Model.ShowApprenticeshipsLinks || Model.ShowCoursesLinks))
         {
-            <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link" data-testid="adminsubnav-bulkupload">
+            <li class="pttcd-subnav__item@(currentController == "DataManagement" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="Dashboard" asp-controller="DataManagement" class="pttcd-subnav__item__link" data-testid="adminsubnav-datamanagement">
                     Data upload
                 </a>
             </li>
         }
-        else if (Model.ShowApprenticeshipsLinks)
+        else
         {
-            <li class="pttcd-subnav__item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link" data-testid="adminsubnav-bulkupload">
-                    Data upload
-                </a>
-            </li>
-        }
-        else if (Model.ShowCoursesLinks)
-        {
-            <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="Index" asp-controller="BulkUpload" class="pttcd-subnav__item__link" data-testid="adminsubnav-bulkupload">
-                    Data upload
-                </a>
-            </li>
+            @if (Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks)
+            {
+                <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link" data-testid="adminsubnav-bulkupload">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+            else if (Model.ShowApprenticeshipsLinks)
+            {
+                <li class="pttcd-subnav__item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link" data-testid="adminsubnav-bulkupload">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+            else if (Model.ShowCoursesLinks)
+            {
+                <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="Index" asp-controller="BulkUpload" class="pttcd-subnav__item__link" data-testid="adminsubnav-bulkupload">
+                        Bulk upload
+                    </a>
+                </li>
+            }
         }
     </ul>
 </div>
