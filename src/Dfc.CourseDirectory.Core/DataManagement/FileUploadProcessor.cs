@@ -174,7 +174,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 // We've read the entire file but haven't got an LF;
                 // e.g. a single row of headers - could be valid
-                return true;
+                return foundAComma;
             }
             finally
             {

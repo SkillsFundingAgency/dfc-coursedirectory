@@ -11,30 +11,13 @@ namespace Dfc.CourseDirectory.Testing
 {
     public static class DataManagementFileHelper
     {
-        public static Stream CreateVenueUploadCsvStream(Action<CsvWriter> writeRows, bool writeHeader = true)
+        public static Stream CreateCsvStream(Action<CsvWriter> writeRows)
         {
-            // N.B. We deliberately do not use the VenueRow class here to ensure we notice if any columns change name
-
             var stream = new MemoryStream();
 
             using (var streamWriter = new StreamWriter(stream, leaveOpen: true))
             using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
             {
-                if (writeHeader)
-                {
-                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
-                    csvWriter.WriteField("VENUE_NAME");
-                    csvWriter.WriteField("ADDRESS_LINE_1");
-                    csvWriter.WriteField("ADDRESS_LINE_2");
-                    csvWriter.WriteField("TOWN_OR_CITY");
-                    csvWriter.WriteField("COUNTY");
-                    csvWriter.WriteField("POSTCODE");
-                    csvWriter.WriteField("EMAIL");
-                    csvWriter.WriteField("PHONE");
-                    csvWriter.WriteField("WEBSITE");
-                    csvWriter.NextRecord();
-                }
-
                 writeRows(csvWriter);
             }
 
@@ -42,6 +25,26 @@ namespace Dfc.CourseDirectory.Testing
 
             return stream;
         }
+
+        public static Stream CreateVenueUploadCsvStream(Action<CsvWriter> writeRows) =>
+            CreateCsvStream(csvWriter =>
+            {
+                // N.B. We deliberately do not use the VenueRow class here to ensure we notice if any columns change name
+
+                csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                csvWriter.WriteField("VENUE_NAME");
+                csvWriter.WriteField("ADDRESS_LINE_1");
+                csvWriter.WriteField("ADDRESS_LINE_2");
+                csvWriter.WriteField("TOWN_OR_CITY");
+                csvWriter.WriteField("COUNTY");
+                csvWriter.WriteField("POSTCODE");
+                csvWriter.WriteField("EMAIL");
+                csvWriter.WriteField("PHONE");
+                csvWriter.WriteField("WEBSITE");
+                csvWriter.NextRecord();
+
+                writeRows(csvWriter);
+            });
 
         public static Stream CreateVenueUploadCsvStream(params CsvVenueRow[] rows) => CreateVenueUploadCsvStream(csvWriter =>
         {
