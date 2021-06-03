@@ -22,7 +22,7 @@ MERGE Pttcd.VenueUploadRows AS target
 USING (SELECT * FROM @Rows) AS source
     ON target.VenueUploadId = @VenueUploadId AND target.RowNumber = source.RowNumber
 WHEN NOT MATCHED BY SOURCE AND target.VenueUploadId = @VenueUploadId THEN
-    UPDATE SET VenueUploadRowStatus = {(int)VenueUploadRowStatus.Deleted}
+    UPDATE SET VenueUploadRowStatus = {(int)UploadRowStatus.Deleted}
 WHEN NOT MATCHED THEN 
     INSERT (
         VenueUploadId,
@@ -48,7 +48,7 @@ WHEN NOT MATCHED THEN
     ) VALUES (
         @VenueUploadId,
         source.RowNumber,
-        {(int)VenueUploadRowStatus.Default},
+        {(int)UploadRowStatus.Default},
         source.IsValid,
         source.Errors,
         ISNULL(source.LastUpdated, source.LastValidated),
@@ -93,7 +93,7 @@ SELECT
     VenueName, ProviderVenueRef, AddressLine1, AddressLine2, Town, County, Postcode, Telephone, Email, Website
 FROM Pttcd.VenueUploadRows
 WHERE VenueUploadId = @VenueUploadId
-AND VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
+AND VenueUploadRowStatus = {(int)UploadRowStatus.Default}
 ORDER BY RowNumber";
 
             var paramz = new

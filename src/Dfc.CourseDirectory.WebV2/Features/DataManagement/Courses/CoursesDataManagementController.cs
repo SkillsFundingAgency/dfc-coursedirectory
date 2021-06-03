@@ -56,6 +56,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("template")]
         public IActionResult Template() =>
-           new CsvResult<CourseRow>("courses-template.csv", Enumerable.Empty<CourseRow>());
+           new CsvResult<CsvCourseRow>("courses-template.csv", Enumerable.Empty<CsvCourseRow>());
     }
 }

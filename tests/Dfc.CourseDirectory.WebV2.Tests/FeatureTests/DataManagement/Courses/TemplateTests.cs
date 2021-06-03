@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
               "ATTENDANCE_PATTERN"
             });
 
-            var rows = csvReader.GetRecords<CourseRow>();
+            var rows = csvReader.GetRecords<CsvCourseRow>();
             rows.Should().BeEmpty();
         }
     }

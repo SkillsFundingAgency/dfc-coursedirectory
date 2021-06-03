@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-        public async Task<SaveFileResult> SaveCourseFileForProvider(Guid providerId, Stream stream, UserInfo uploadedBy)
+        public async Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return SaveFileResult.Success(new Guid(), UploadStatus.ProcessedSuccessfully);
         }
 
-        private class CourseUploadRowValidator : AbstractValidator<CourseRow>
+        private class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
         { }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Dfc.CourseDirectory.Core.Models
 {
-    public enum VenueUploadRowStatus
+    public enum UploadRowStatus
     {
         Default = 0,
         Deleted = 1

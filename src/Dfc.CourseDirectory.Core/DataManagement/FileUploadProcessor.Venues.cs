@@ -110,8 +110,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessVenueFile(Guid venueUploadId, Stream stream)
         {
-            // N.B. Every part of this method needs to be idempotent
-
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
@@ -130,7 +128,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 await dispatcher.Commit();
             }
 
-            // At this point `stream` should be a CSV that's already known to conform to `VenueRow`'s schema.
+            // At this point `stream` should be a CSV that's already known to conform to `CsvVenueRow`'s schema.
             // We read all the rows upfront because validation needs to do duplicate checking.
             // We also don't expect massive files here so reading everything into memory is ok.
             List<CsvVenueRow> rows;
@@ -415,9 +413,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     allPostcodeInfo.TryGetValue(postcode, out postcodeInfo);
                 }
 
-                var rowValidatonResult = validator.Validate(row);
-                var errors = rowValidatonResult.Errors.Select(e => e.ErrorCode).ToArray();
-                var rowIsValid = rowValidatonResult.IsValid;
+                var rowValidationResult = validator.Validate(row);
+                var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
+                var rowIsValid = rowValidationResult.IsValid;
                 uploadIsValid &= rowIsValid;
 
                 upsertRecords.Add(new SetVenueUploadRowsRecord()

@@ -1,32 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
-namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
+namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class CourseUpload
+    public class SetCourseUploadRows : ISqlQuery<IReadOnlyCollection<CourseUploadRow>>
     {
         public Guid CourseUploadId { get; set; }
-        public Guid ProviderId { get; set; }
-        public UploadStatus UploadStatus { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public DateTime? ProcessingStartedOn { get; set; }
-        public DateTime? ProcessingCompletedOn { get; set; }
-        public DateTime? PublishedOn { get; set; }
-        public DateTime? AbandonedOn { get; set; }
-        public DateTime? LastValidated { get; set; }
-        public bool? IsValid { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+        public DateTime ValidatedOn { get; set; }
+        public IEnumerable<SetCourseUploadRowsRecord> Records { get; set; }
     }
 
-    public class CourseUploadRow
+    public class SetCourseUploadRowsRecord
     {
         public int RowNumber { get; set; }
         public bool IsValid { get; set; }
-        public IReadOnlyCollection<string> Errors { get; set; }
+        public IEnumerable<string> Errors { get; set; }
         public Guid CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-        public DateTime LastUpdated { get; set; }
-        public DateTime LastValidated { get; set; }
         public string LarsQan { get; set; }
         public string WhoThisCourseIsFor { get; set; }
         public string EntryRequirements { get; set; }
