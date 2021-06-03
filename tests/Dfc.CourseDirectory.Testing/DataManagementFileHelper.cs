@@ -26,6 +26,110 @@ namespace Dfc.CourseDirectory.Testing
             return stream;
         }
 
+        public static Stream CreateCourseUploadCsvStream(Action<CsvWriter> writeRows) =>
+            CreateCsvStream(csvWriter =>
+            {
+                // N.B. We deliberately do not use the CsvCourseRow class here to ensure we notice if any columns change name
+
+                csvWriter.WriteField("LARS_QAN");
+                csvWriter.WriteField("WHO_IS_THIS_COURSE_FOR");
+                csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                csvWriter.WriteField("WHERE_NEXT");
+                csvWriter.WriteField("COURSE_NAME");
+                csvWriter.WriteField("YOUR_REFERENCE");
+                csvWriter.WriteField("DELIVERY_MODE");
+                csvWriter.WriteField("START_DATE");
+                csvWriter.WriteField("FLEXIBLE_START_DATE");
+                csvWriter.WriteField("VENUE_NAME");
+                csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                csvWriter.WriteField("NATIONAL_DELIVERY");
+                csvWriter.WriteField("SUB_REGION");
+                csvWriter.WriteField("COURSE_WEBPAGE");
+                csvWriter.WriteField("COST");
+                csvWriter.WriteField("COST_DESCRIPTION");
+                csvWriter.WriteField("DURATION");
+                csvWriter.WriteField("DURATION_UNIT");
+                csvWriter.WriteField("STUDY_MODE");
+                csvWriter.WriteField("ATTENDANCE_PATTERN");
+                csvWriter.NextRecord();
+
+                writeRows(csvWriter);
+            });
+
+        public static Stream CreateCourseUploadCsvStream(params CsvCourseRow[] rows) => CreateCourseUploadCsvStream(csvWriter =>
+        {
+            foreach (var row in rows)
+            {
+                csvWriter.WriteField(row.LarsQan);
+                csvWriter.WriteField(row.WhoThisCourseIsFor);
+                csvWriter.WriteField(row.EntryRequirements);
+                csvWriter.WriteField(row.WhatYouWillLearn);
+                csvWriter.WriteField(row.HowYouWillLearn);
+                csvWriter.WriteField(row.WhatYouWillNeedToBring);
+                csvWriter.WriteField(row.HowYouWillBeAssessed);
+                csvWriter.WriteField(row.WhereNext);
+                csvWriter.WriteField(row.CourseName);
+                csvWriter.WriteField(row.YourReference);
+                csvWriter.WriteField(row.DeliveryMode);
+                csvWriter.WriteField(row.StartDate);
+                csvWriter.WriteField(row.FlexibleStartDate);
+                csvWriter.WriteField(row.VenueName);
+                csvWriter.WriteField(row.ProviderVenueRef);
+                csvWriter.WriteField(row.NationalDelivery);
+                csvWriter.WriteField(row.SubRegions);
+                csvWriter.WriteField(row.CourseWebPage);
+                csvWriter.WriteField(row.Cost);
+                csvWriter.WriteField(row.CostDescription);
+                csvWriter.WriteField(row.Duration);
+                csvWriter.WriteField(row.DurationUnit);
+                csvWriter.WriteField(row.StudyMode);
+                csvWriter.WriteField(row.AttendancePattern);
+
+                csvWriter.NextRecord();
+            }
+        });
+
+        public static Stream CreateCourseUploadCsvStream(int rowCount) =>
+            CreateCourseUploadCsvStream(CreateCourseUploadRows(rowCount).ToArray());
+
+        public static IEnumerable<CsvCourseRow> CreateCourseUploadRows(int rowCount)
+        {
+            for (int i = 0; i < rowCount; i++)
+            {
+                yield return new CsvCourseRow()
+                {
+                    LarsQan = $"ABC{i:D4}",
+                    WhoThisCourseIsFor = "Who this course is for",
+                    EntryRequirements = "",
+                    WhatYouWillLearn = "",
+                    HowYouWillLearn = "",
+                    WhatYouWillNeedToBring = "",
+                    HowYouWillBeAssessed = "",
+                    WhereNext = "",
+                    CourseName = "Course name",
+                    YourReference = "",
+                    DeliveryMode = "Online",
+                    StartDate = "",
+                    FlexibleStartDate = "yes",
+                    VenueName = "",
+                    ProviderVenueRef = "",
+                    NationalDelivery = "yes",
+                    SubRegions = "",
+                    CourseWebPage = "",
+                    Cost = "",
+                    CostDescription = "Free",
+                    Duration = "2",
+                    DurationUnit = "years",
+                    StudyMode = "part time",
+                    AttendancePattern = "evening"
+                };
+            }
+        }
+
         public static Stream CreateVenueUploadCsvStream(Action<CsvWriter> writeRows) =>
             CreateCsvStream(csvWriter =>
             {
@@ -65,24 +169,8 @@ namespace Dfc.CourseDirectory.Testing
             }
         });
 
-        public static Stream CreateVenueUploadCsvStream(int rowCount) => CreateVenueUploadCsvStream(csvWriter =>
-        {
-            foreach (var row in CreateVenueUploadRows(rowCount))
-            {
-                csvWriter.WriteField(row.ProviderVenueRef);
-                csvWriter.WriteField(row.VenueName);
-                csvWriter.WriteField(row.AddressLine1);
-                csvWriter.WriteField(row.AddressLine2);
-                csvWriter.WriteField(row.Town);
-                csvWriter.WriteField(row.County);
-                csvWriter.WriteField(row.Postcode);
-                csvWriter.WriteField(row.Email);
-                csvWriter.WriteField(row.Telephone);
-                csvWriter.WriteField(row.Website);
-
-                csvWriter.NextRecord();
-            }
-        });
+        public static Stream CreateVenueUploadCsvStream(int rowCount) =>
+            CreateVenueUploadCsvStream(CreateVenueUploadRows(rowCount).ToArray());
 
         public static IEnumerable<CsvVenueRow> CreateVenueUploadRows(int rowCount)
         {

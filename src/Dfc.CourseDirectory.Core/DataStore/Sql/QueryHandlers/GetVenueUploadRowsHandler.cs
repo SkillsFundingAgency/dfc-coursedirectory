@@ -31,7 +31,7 @@ ORDER BY RowNumber";
 
             var lastRowNumber = results.Last()?.RowNumber ?? 0;
 
-            results.RemoveAll(r => r.VenueUploadRowStatus == VenueUploadRowStatus.Deleted);
+            results.RemoveAll(r => r.VenueUploadRowStatus == UploadRowStatus.Deleted);
 
             foreach (var row in results)
             {
@@ -44,7 +44,7 @@ ORDER BY RowNumber";
         private class Result : VenueUploadRow
         {
             public string ErrorList { get; set; }
-            public VenueUploadRowStatus VenueUploadRowStatus { get; set; }
+            public UploadRowStatus VenueUploadRowStatus { get; set; }
         }
     }
 }

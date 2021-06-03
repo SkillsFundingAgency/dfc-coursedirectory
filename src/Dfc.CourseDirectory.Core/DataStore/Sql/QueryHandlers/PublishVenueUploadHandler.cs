@@ -42,7 +42,7 @@ USING (
     SELECT r.*, pc.Position FROM Pttcd.VenueUploadRows r
     JOIN Pttcd.Postcodes pc ON CONVERT(VARCHAR(8), r.Postcode) = pc.Postcode
     WHERE r.VenueUploadId = @VenueUploadId
-    AND r.VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
+    AND r.VenueUploadRowStatus = {(int)UploadRowStatus.Default}
 ) AS source
 ON target.VenueId = source.VenueId
 WHEN MATCHED THEN UPDATE SET
@@ -106,7 +106,7 @@ SELECT 1 AS Status
 
 SELECT r.VenueId FROM Pttcd.VenueUploadRows r
 WHERE r.VenueUploadId = @VenueUploadId
-AND r.VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
+AND r.VenueUploadRowStatus = {(int)UploadRowStatus.Default}
 ";
 
             var paramz = new

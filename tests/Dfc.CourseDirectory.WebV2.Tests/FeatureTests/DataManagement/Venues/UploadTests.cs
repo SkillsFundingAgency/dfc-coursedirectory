@@ -92,13 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new CreateVenueUpload()
-            {
-                CreatedBy = User.ToUserInfo(),
-                CreatedOn = Clock.UtcNow,
-                ProviderId = provider.ProviderId,
-                VenueUploadId = Guid.NewGuid()
-            }));
+            await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), createdOn: Clock.UtcNow);
 
             var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
@@ -133,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
-        public async Task Post_ValidUpload_AbandonsExistingUnpublishedUpload()
+        public async Task Post_ValidVenuesFile_AbandonsExistingUnpublishedUpload()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
