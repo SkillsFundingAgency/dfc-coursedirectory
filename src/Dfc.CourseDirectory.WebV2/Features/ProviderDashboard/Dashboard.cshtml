@@ -320,9 +320,12 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                                 <a asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
                             }
                         </li>
-                        <li>
-                            <a asp-action="Download" asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published venue data (CSV)</a>
-                        </li>
+                        @if (Model.VenueCount > 0)
+                        {
+                            <li>
+                                <a asp-action="Download" asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadVenues">Download your published venue data (CSV)</a>
+                            </li>
+                        }
                         <li>
                             <a asp-action="Template" asp-controller="VenuesDataManagement" class="govuk-link">Download venue data template (CSV)</a>
                         </li>

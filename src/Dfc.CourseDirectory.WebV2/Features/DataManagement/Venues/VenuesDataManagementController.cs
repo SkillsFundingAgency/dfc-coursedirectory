@@ -34,7 +34,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("")]
         [RequireProviderContext]
-        public IActionResult Index() => View("Upload");
+        public async Task<IActionResult> Index() =>
+            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
         [HttpGet("download")]
         [RequireProviderContext]
