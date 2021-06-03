@@ -64,6 +64,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.ConfigurationBuilder.AddInMemoryCollection(new Dictionary<string, string>()
             {
                 { "DataUploadsContainerName", Core.DataManagement.Constants.ContainerName },
+                { "CourseUploadsFolderName", Core.DataManagement.Constants.CoursesFolder },
                 { "VenueUploadsFolderName", Core.DataManagement.Constants.VenuesFolder }
             });
         }
