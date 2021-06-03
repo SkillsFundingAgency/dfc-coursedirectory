@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
 
-            var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
+            var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
             {
                 // Miss out VENUE_NAME, POSTCODE
                 csvWriter.WriteField("YOUR_VENUE_REFERENCE");
@@ -90,8 +90,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 csvWriter.WriteField("PHONE");
                 csvWriter.WriteField("WEBSITE");
                 csvWriter.NextRecord();
-            },
-            writeHeader: false);
+            });
 
             // Act
             var (result, missingHeaders) = await fileUploadProcessor.FileMatchesSchema<CsvVenueRow>(stream);

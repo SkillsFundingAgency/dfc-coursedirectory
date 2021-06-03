@@ -262,7 +262,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
                 csvWriter =>
                 {
                     // Miss out VENUE_NAME, POSTCODE
@@ -275,8 +275,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                     csvWriter.WriteField("PHONE");
                     csvWriter.WriteField("WEBSITE");
                     csvWriter.NextRecord();
-                },
-                writeHeader: false);
+                });
 
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
             
@@ -306,8 +305,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 {
                     csvWriter.WriteField("One column");
                     csvWriter.NextRecord();
-                },
-                writeHeader: true);
+                });
 
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
