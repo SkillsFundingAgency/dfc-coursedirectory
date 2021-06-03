@@ -165,8 +165,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     }
                 }
 
-                // We've finished reading the whole buffer and not found an EOL - probably not a CSV
-                return false;
+                // If we've read the entire buffer and not hit an LF and the there's more to read
+                // then probably not a CSV
+                if (stream.Length > readBufferSize)
+                {
+                    return false;
+                }
+
+                // We've read the entire file but haven't got an LF;
+                // e.g. a single row of headers - could be valid
+                return true;
             }
             finally
             {
