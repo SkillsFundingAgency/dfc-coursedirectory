@@ -83,5 +83,35 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 courseUpload.ProcessingStartedOn.Should().NotBeNull();
             }
         }
+
+        [Fact]
+        public async Task ValidateCourseUploadRows_RowsHaveNoLarsCode_AreNotGrouped()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+
+            var rows = DataManagementFileHelper.CreateCourseUploadRows(rowCount: 2).ToArray();
+            rows[0].LarsQan = string.Empty;
+            rows[1].LarsQan = string.Empty;
+
+            var uploadRows = rows.ToDataUploadRowCollection();
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                // Act
+                var (_, rows) = await fileUploadProcessor.ValidateCourseUploadRows(
+                    dispatcher,
+                    courseUpload.CourseUploadId,
+                    provider.ProviderId,
+                    uploadRows);
+
+                // Assert
+                rows.First().CourseId.Should().NotBe(rows.Last().CourseId);
+            });
+        }
     }
 }
