@@ -10,15 +10,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     {
         private readonly TRow[] _rows;
 
-        protected DataUploadRowInfoCollection(int lastRowNumber, IEnumerable<TRow> rows)
+        protected DataUploadRowInfoCollection(IEnumerable<TRow> rows)
         {
             _rows = rows.ToArray();
-            LastRowNumber = lastRowNumber;
         }
 
         public TRow this[int index] => _rows[index];
-
-        public int LastRowNumber { get; }
 
         public int Count => _rows.Length;
 
