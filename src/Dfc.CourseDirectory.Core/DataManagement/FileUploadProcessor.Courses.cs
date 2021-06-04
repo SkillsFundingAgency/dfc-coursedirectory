@@ -244,6 +244,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return false;
                 }
 
+                // Don't group together records that have no LARS code
+                if (string.IsNullOrEmpty(x.LarsQan) || string.IsNullOrEmpty(y.LarsQan))
+                {
+                    return false;
+                }
+
                 return
                     x.LarsQan == y.LarsQan &&
                     x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
