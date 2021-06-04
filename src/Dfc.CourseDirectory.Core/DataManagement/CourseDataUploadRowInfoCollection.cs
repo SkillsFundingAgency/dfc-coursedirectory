@@ -6,13 +6,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public class CourseDataUploadRowInfoCollection : DataUploadRowInfoCollection<CsvCourseRow, CourseDataUploadRowInfo>
     {
-        public CourseDataUploadRowInfoCollection(int lastRowNumber, params CourseDataUploadRowInfo[] rows) :
-            this(lastRowNumber, rows.AsEnumerable())
+        public CourseDataUploadRowInfoCollection(params CourseDataUploadRowInfo[] rows) :
+            this(rows.AsEnumerable())
         {
         }
 
-        public CourseDataUploadRowInfoCollection(int lastRowNumber, IEnumerable<CourseDataUploadRowInfo> rows) :
-            base(lastRowNumber, rows)
+        public CourseDataUploadRowInfoCollection(IEnumerable<CourseDataUploadRowInfo> rows) :
+            base(rows)
         {
         }
     }

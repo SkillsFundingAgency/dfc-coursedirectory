@@ -12,9 +12,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         public VenueDataUploadRowInfoCollection(int lastRowNumber, IEnumerable<VenueDataUploadRowInfo> rows) :
-            base(lastRowNumber, rows)
+            base(rows)
         {
+            LastRowNumber = lastRowNumber;
         }
+
+        public int LastRowNumber { get; }
     }
 
     public class VenueDataUploadRowInfo : DataUploadRowInfo<CsvVenueRow>

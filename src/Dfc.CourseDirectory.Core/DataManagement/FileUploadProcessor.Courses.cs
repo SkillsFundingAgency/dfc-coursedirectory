@@ -48,7 +48,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
 
             var rowsCollection = new CourseDataUploadRowInfoCollection(
-                lastRowNumber: rows.Count + 1,
                 rows: rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
