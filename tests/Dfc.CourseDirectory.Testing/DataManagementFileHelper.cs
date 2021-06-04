@@ -207,7 +207,6 @@ namespace Dfc.CourseDirectory.Testing
             var rowsArray = rows.ToArray();
 
             return new CourseDataUploadRowInfoCollection(
-                lastRowNumber: rowsArray.Length + 1,
                 rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
         }
 
