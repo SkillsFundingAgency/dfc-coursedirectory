@@ -43,7 +43,7 @@
         </li>
         @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement))
         {
-            <li class="pttcd-subnav__item@(currentController == "DataManagement" ? " govuk-header__navigation-item--active" : null)">
+            <li class="pttcd-subnav__item@(currentController.StartsWith("DataManagement") ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="Dashboard" asp-controller="DataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="pttcd-subnav__item__link" data-testid="adminsubnav-datamanagement">
                     Data upload
                 </a>

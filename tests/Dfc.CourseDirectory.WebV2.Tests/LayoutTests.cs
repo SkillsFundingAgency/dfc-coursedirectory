@@ -413,57 +413,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         [Theory]
-        [InlineData(ProviderType.Apprenticeships, "/data-upload")]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/data-upload")]
-        public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
-             ProviderType providerType,
-            string expectedHref)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                providerName: "Test Provider");
-
-            await User.AsDeveloper();
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Data upload");
-            bulkUploadLink.GetAttribute("href").Should().Be($"{expectedHref}?providerId={provider.ProviderId}");
-        }
-
-        [Theory]
-        [InlineData(ProviderType.FE, "/data-upload")]
-        [InlineData(ProviderType.Apprenticeships, "/data-upload")]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/data-upload")]
-        public async Task ProviderTopNavBulkUploadLinksAreCorrect(
-            ProviderType providerType,
-            string expectedHref)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                providerName: "Test Provider");
-
-            await User.AsProviderUser(provider.ProviderId, providerType);
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
-            
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Data upload");
-            bulkUploadLink.GetAttribute("href").Should().Be($"{expectedHref}?providerId={provider.ProviderId}");
-        }
-
-        [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
         public async Task ProviderUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
