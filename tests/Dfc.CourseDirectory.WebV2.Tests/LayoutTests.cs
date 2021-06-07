@@ -123,8 +123,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[0].TestId.Should().Be("adminsubnav-home");
                 subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[3].Href.Should().Be("/BulkUpload");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -168,8 +168,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[0].TestId.Should().Be("adminsubnav-home");
                 subNavLinks[1].TestId.Should().Be("adminsubnav-apprenticeships");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[3].Href.Should().Be("/BulkUploadApprenticeships");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
-            Assert.Equal(3, subNavLinks.Count);
+            Assert.Equal(4, subNavLinks.Count);
 
             using (new AssertionScope())
             {
@@ -258,8 +258,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[2].TestId.Should().Be("adminsubnav-apprenticeships");
                 subNavLinks[3].TestId.Should().Be("adminsubnav-tlevels");
                 subNavLinks[4].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[5].TestId.Should().Be("adminsubnav-bulkupload");
-                subNavLinks[5].Href.Should().Be("/BulkUpload/LandingOptions");
+                subNavLinks[5].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[5].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -292,8 +292,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-courses");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[3].Href.Should().Be("/BulkUpload");
+                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -329,8 +329,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-apprenticeships");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[3].Href.Should().Be("/BulkUploadApprenticeships");
+                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -359,14 +359,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(4);
+            topLevelLinks.Count.Should().Be(5);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-tlevels");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
             subNavLinks.Count.Should().Be(0);
@@ -403,63 +404,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[2].TestId.Should().Be("topnav-apprenticeships");
                 topLevelLinks[3].TestId.Should().Be("topnav-tlevels");
                 topLevelLinks[4].TestId.Should().Be("topnav-locations");
-                topLevelLinks[5].TestId.Should().Be("topnav-bulkupload");
-                topLevelLinks[5].Href.Should().Be("/BulkUpload/LandingOptions");
+                topLevelLinks[5].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[5].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
                 topLevelLinks[6].TestId.Should().Be("topnav-signout");
             }
 
             subNavLinks.Count.Should().Be(0);
-        }
-
-        [Theory]
-        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/BulkUpload/LandingOptions")]
-        public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
-             ProviderType providerType,
-            string expectedHref)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                providerName: "Test Provider");
-
-            await User.AsDeveloper();
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
-            bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
-        }
-
-        [Theory]
-        [InlineData(ProviderType.FE, "/BulkUpload")]
-        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, "/BulkUpload/LandingOptions")]
-        public async Task ProviderTopNavBulkUploadLinksAreCorrect(
-            ProviderType providerType,
-            string expectedHref)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                providerName: "Test Provider");
-
-            await User.AsProviderUser(provider.ProviderId, providerType);
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
-            
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
-            bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
         }
 
         [Theory]

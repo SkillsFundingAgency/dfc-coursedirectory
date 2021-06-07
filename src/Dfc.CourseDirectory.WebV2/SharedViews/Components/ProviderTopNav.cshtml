@@ -41,29 +41,42 @@
                 Venues
             </a>
         </li>
-        @if (Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks)
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement))
         {
-            <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link" data-testid="topnav-bulkupload">
-                    Bulk upload
+            <li class="govuk-header__navigation-item@(currentController.StartsWith("DataManagement") ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="Dashboard" asp-controller="DataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-datamanagement">
+                    Data upload
                 </a>
             </li>
         }
-        else if (Model.ShowApprenticeshipsLinks)
+        else
         {
-            <li class="govuk-header__navigation-item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="govuk-header__link" data-testid="topnav-bulkupload">
-                    Bulk upload
-                </a>
-            </li>
-        }
-        else if (Model.ShowCoursesLinks)
-        {
-            <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="index" asp-controller="BulkUpload" class="govuk-header__link" data-testid="topnav-bulkupload">
-                    Bulk upload
-                </a>
-            </li>
+
+            @if (Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks)
+            {
+                <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link" data-testid="topnav-bulkupload">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+            else if (Model.ShowApprenticeshipsLinks)
+            {
+                <li class="govuk-header__navigation-item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="govuk-header__link" data-testid="topnav-bulkupload">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+            else if (Model.ShowCoursesLinks)
+            {
+                <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="index" asp-controller="BulkUpload" class="govuk-header__link" data-testid="topnav-bulkupload">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+
         }
         <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
             <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link" data-testid="topnav-signout">
