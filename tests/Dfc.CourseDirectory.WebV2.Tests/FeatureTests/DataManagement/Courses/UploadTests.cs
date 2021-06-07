@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("File", "The selected file must be smaller than 3MB");
+            doc.AssertHasError("File", "The selected file must be smaller than 5MB");
         }
 
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
