@@ -41,7 +41,7 @@
                 Venues
             </a>
         </li>
-        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement) && ((Model.ShowCoursesLinks && Model.ShowApprenticeshipsLinks) || Model.ShowApprenticeshipsLinks || Model.ShowCoursesLinks))
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement))
         {
             <li class="govuk-header__navigation-item@(currentController == "DataManagement" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="Dashboard" asp-controller="DataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-datamanagement">

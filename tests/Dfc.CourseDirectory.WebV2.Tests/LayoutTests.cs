@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
-            Assert.Equal(3, subNavLinks.Count);
+            Assert.Equal(4, subNavLinks.Count);
 
             using (new AssertionScope())
             {
@@ -359,14 +359,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(4);
+            topLevelLinks.Count.Should().Be(5);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-tlevels");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
             subNavLinks.Count.Should().Be(0);
