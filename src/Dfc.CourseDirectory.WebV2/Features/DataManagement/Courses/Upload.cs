@@ -70,8 +70,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             _optionsAccessor = optionsAccessor;
         }
         public async Task<OneOf<UploadFailedResult, UploadResult>> Handle(
-                  Command request,
-                  CancellationToken cancellationToken)
+            Command request,
+            CancellationToken cancellationToken)
         {
             var validator = new CommandValidator();
             var result = await validator.ValidateAsync(request);
