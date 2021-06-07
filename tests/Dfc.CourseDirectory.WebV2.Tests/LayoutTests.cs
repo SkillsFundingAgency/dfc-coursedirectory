@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
                 subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
-                subNavLinks[3].Href.Should().Be("/data-upload");
+                subNavLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -169,7 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[1].TestId.Should().Be("adminsubnav-apprenticeships");
                 subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
                 subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
-                subNavLinks[3].Href.Should().Be("/data-upload");
+                subNavLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -259,7 +259,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 subNavLinks[3].TestId.Should().Be("adminsubnav-tlevels");
                 subNavLinks[4].TestId.Should().Be("adminsubnav-locations");
                 subNavLinks[5].TestId.Should().Be("adminsubnav-datamanagement");
-                subNavLinks[5].Href.Should().Be("/data-upload");
+                subNavLinks[5].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -293,7 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[1].TestId.Should().Be("topnav-courses");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
                 topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
-                topLevelLinks[3].Href.Should().Be("/data-upload");
+                topLevelLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -330,7 +330,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[1].TestId.Should().Be("topnav-apprenticeships");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
                 topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
-                topLevelLinks[3].Href.Should().Be("/data-upload");
+                topLevelLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[3].TestId.Should().Be("topnav-tlevels");
                 topLevelLinks[4].TestId.Should().Be("topnav-locations");
                 topLevelLinks[5].TestId.Should().Be("topnav-datamanagement");
-                topLevelLinks[5].Href.Should().Be("/data-upload");
+                topLevelLinks[5].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
                 topLevelLinks[6].TestId.Should().Be("topnav-signout");
             }
 
@@ -433,7 +433,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var doc = await response.GetDocument();
             var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Data upload");
-            bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
+            bulkUploadLink.GetAttribute("href").Should().Be($"{expectedHref}?providerId={provider.ProviderId}");
         }
 
         [Theory]
@@ -459,7 +459,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var doc = await response.GetDocument();
             var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Data upload");
-            bulkUploadLink.GetAttribute("href").Should().Be(expectedHref);
+            bulkUploadLink.GetAttribute("href").Should().Be($"{expectedHref}?providerId={provider.ProviderId}");
         }
 
         [Theory]
