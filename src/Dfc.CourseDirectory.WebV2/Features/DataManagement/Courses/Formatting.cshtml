@@ -1,0 +1,727 @@
+﻿@{
+    ViewBag.Title = "Data Upload - Course file format requirements";
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back to course data upload</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Course file format requirements</h1>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <p class="govuk-body">Your data upload file must be a CSV file type.  If you have more than one option when saving as a CSV, choose CSV UTF-8 (Comma delimited) (.csv).</p>
+        <p class="govuk-body">The tables below show information about each field in the data upload file and how to complete it correctly.</p><p>
+        </p><div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number">
+                    <li><a class="govuk-link" href="#LARS_QAN">LARS/QAN</a></li>
+                    <li><a class="govuk-link" href="#WHO_IS_THIS_COURSE_FOR">Who this course is for</a></li>
+                    <li><a class="govuk-link" href="#ENTRY_REQUIREMENTS">Entry requirements</a></li>
+                    <li><a class="govuk-link" href="#WHAT_YOU_WILL_LEARN">What you will learn</a></li>
+                    <li><a class="govuk-link" href="#HOW_YOU_WILL_LEARN">How you will learn</a></li>
+                    <li><a class="govuk-link" href="#WHAT_YOU_WILL_NEED_TO_BRING">What you will need to bring</a></li>
+                    <li><a class="govuk-link" href="#HOW_YOU_WILL_BE_ASSESSED">How you will be assessed</a></li>
+                    <li><a class="govuk-link" href="#WHERE_NEXT">Where next</a></li>
+                </ol>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number" start="9">
+                    <li><a class="govuk-link" href="#COURSE_NAME">Course name</a></li>
+                    <li><a class="govuk-link" href="#ID">Your reference</a></li>
+                    <li><a class="govuk-link" href="#DELIVERY_MODE">Delivery mode</a></li>
+                    <li><a class="govuk-link" href="#START_DATE">Start date</a></li>
+                    <li><a class="govuk-link" href="#FLEXIBLE_START_DATE">Flexible start date</a></li>
+                    <li><a class="govuk-link" href="#VENUE">Venue name</a></li>
+                    <li><a class="govuk-link" href="#VENUEREF">Your venue reference</a></li>
+                    <li><a class="govuk-link" href="#NATIONAL_DELIVERY">National delivery</a></li>
+
+                </ol>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number" start="17">
+                    <li><a class="govuk-link" href="#SUB_REGION">Sub-region</a></li>
+                    <li><a class="govuk-link" href="#URL">Course webpage</a></li>
+                    <li><a class="govuk-link" href="#COST">Cost</a></li>
+                    <li><a class="govuk-link" href="#COST_DESCRIPTION">Cost description</a></li>
+                    <li><a class="govuk-link" href="#DURATION">Duration</a></li>
+                    <li><a class="govuk-link" href="#DURATION_UNIT">Duration unit</a></li>
+                    <li><a class="govuk-link" href="#STUDY_MODE">Study mode</a></li>
+                    <li><a class="govuk-link" href="#ATTENDANCE_PATTERN">Attendance pattern</a></li>
+                </ol>
+            </div>
+        </div>
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="LARS_QAN">LARS_QAN</h2>
+        <p class="govuk-body">Regulated and non regulated qualifications are listed by LARS (Learning Aims Reference) or QAN (Qualification Accreditation Number) code.</p>
+        <p class="govuk-body">Codes can be found at <a href="https://findalearningaimbeta.fasst.org.uk/" target="_blank" class="govuk-link govuk-link--blocked">Find a learning aim</a>.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    8
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    50079281<br>
+                    Z9483628<br>
+                    00280206<br>
+                    5011752X
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Codes must be 8 digits. For codes with less than 8 digits add one or more zeros to the beginning of the code.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="WHO_IS_THIS_COURSE_FOR">WHO_THIS_COURSE_IS_FOR</h2>
+        <p class="govuk-body">Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    2000
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="ENTRY_REQUIREMENTS">ENTRY_REQUIREMENTS</h2>
+        <p class="govuk-body">Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    500
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="WHAT_YOU_WILL_LEARN">WHAT_YOU_WILL_LEARN</h2>
+        <p class="govuk-body">The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    500
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="HOW_YOU_WILL_LEARN">HOW_YOU_WILL_LEARN</h2>
+        <p class="govuk-body">The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    500
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="WHAT_YOU_WILL_NEED_TO_BRING">WHAT_YOU_WILL_NEED_TO_BRING</h2>
+        <p class="govuk-body">What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    500
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="HOW_YOU_WILL_BE_ASSESSED">HOW_YOU_WILL_BE_ASSESSED</h2>
+        <p class="govuk-body">The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    500
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="WHERE_NEXT">WHERE_NEXT</h2>
+        <p class="govuk-body">The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    500
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="COURSE_NAME">COURSE_NAME</h2>
+        <p class="govuk-body">The course name displayed on the National Careers Service, <a href="https://nationalcareers.service.gov.uk/find-a-course/search" class="govuk-link govuk-link--blocked" target="_blank">Find a course</a>.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Avoid using special characters and line breaks.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="ID">YOUR_REFERENCE</h2>
+        <p class="govuk-body">A reference that will help you identify this course in your internal systems. This will not be visible to learners.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="DELIVERY_MODE">DELIVERY_MODE</h2>
+        <p class="govuk-body">The course name displayed on the National Career Service, <a href="https://nationalcareers.service.gov.uk/find-a-course/search" class="govuk-link govuk-link--blocked" target="_blank">Find a course</a>.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Classroom based<br>
+                    Online<br>
+                    Work based
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    For courses with more than one delivery mode, each course must be entered on a separate row.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="START_DATE">START_DATE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When course has a specific start date
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    24/09/2022
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <p class="govuk-body">Start dates must be after today's date.</p><p>
+                    </p><p class="govuk-body">For courses with more than one start date, each course must be entered on a separate row.</p><p>
+                    </p><p class="govuk-body">If your course does not have a specific start date leave blank.</p><p>
+                    </p>
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="FLEXIBLE_START_DATE">FLEXIBLE_START_DATE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When course has a flexible start date
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    If your course does not have a flexible start date leave blank.
+                </dd>
+            </div>
+        </dl>
+
+
+
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="VENUE">VENUE_NAME</h2>
+        <p class="govuk-body">You can only enter a venue that is already added to Publish to the course directory.</p>
+        <p class="govuk-body">You must add new venues <a asp-action="add" asp-controller="Venues" class="govuk-link govuk-link--blocked">on screen</a> or by <a asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-controller="VenuesDataManagement" class="govuk-link govuk-link--blocked">venue upload</a> prior to a course upload</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_MODE</strong> is <strong>Classroom based</strong>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Chartacter limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    My Location Name
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="VENUEREF">YOUR_VENUE_REFERENCE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Chartacter limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    A unique reference that will help you identify this venue in your internal systems.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="NATIONAL_DELIVERY">NATIONAL_DELIVERY</h2>
+        <p class="govuk-body">You can deliver the course anywhere in England and you will be shown as a national provider for this course.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_MODE</strong> is <strong>Work based</strong>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes<br>
+                    No
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="SUB_REGION">SUB_REGION</h2>
+        <p class="govuk-body">All the areas where you can deliver the course.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_MODE</strong> is <strong>Work based</strong> and course is <strong>not delivered nationally</strong>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Derby;Norfolk;Leicester;Brent
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <a href="javascript:preventDefault();" class="govuk-link govuk-link--blocked">Regions and sub regions</a>
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="URL">COURSE_WEBPAGE</h2>
+        <p class="govuk-body">The webpage for this course.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    https://www.provider.com/coursename
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="COST">COST</h2>
+        <p class="govuk-body">Cost of the course to the learner.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>COST_DESCRIPTION</strong> is blank
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Currency
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    GBP
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    1500.00
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="COST_DESCRIPTION">COST_DESCRIPTION</h2>
+        <p class="govuk-body">A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>COST</strong> is blank
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="DURATION">DURATION</h2>
+        <p class="govuk-body">The number of days, weeks, months or years the course runs for.</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    3
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    18
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="DURATION_UNIT">DURATION_UNIT</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Hours<br>
+                    Days<br>
+                    Weeks<br>
+                    Months<br>
+                    Years
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="STUDY_MODE">STUDY_MODE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_MODE</strong> is <strong>Classroom based</strong>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Full time<br>
+                    Part time<br>
+                    Flexible
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    For courses with more than one study mode, each course must be entered on a separate row.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="ATTENDANCE_PATTERN">ATTENDANCE_PATTERN</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_MODE</strong> is <strong>Classroom based</strong>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What to enter
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Daytime<br>
+                    Evening<br>
+                    Weekend<br>
+                    Day/Block Release
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    For courses with more than one attendance pattern, each course must be entered on a separate row.
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
