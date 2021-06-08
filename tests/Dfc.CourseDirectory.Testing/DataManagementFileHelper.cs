@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Testing
                 csvWriter.WriteField(row.HowYouWillBeAssessed);
                 csvWriter.WriteField(row.WhereNext);
                 csvWriter.WriteField(row.CourseName);
-                csvWriter.WriteField(row.YourReference);
+                csvWriter.WriteField(row.ProviderCourseRef);
                 csvWriter.WriteField(row.DeliveryMode);
                 csvWriter.WriteField(row.StartDate);
                 csvWriter.WriteField(row.FlexibleStartDate);
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.Testing
                     HowYouWillBeAssessed = "",
                     WhereNext = "",
                     CourseName = "Course name",
-                    YourReference = "",
+                    ProviderCourseRef = "",
                     DeliveryMode = "Online",
                     StartDate = "",
                     FlexibleStartDate = "yes",

@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, CourseId, CourseRunId, LastUpdated, LastValidated,
     LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
-    HowYouWillBeAssessed, WhereNext, CourseName, YourReference, DeliveryMode, StartDate, FlexibleStartDate,
+    HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern
 FROM Pttcd.CourseUploadRows
