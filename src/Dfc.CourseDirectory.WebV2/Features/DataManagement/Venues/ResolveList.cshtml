@@ -43,9 +43,12 @@
                             </a>
                         </td>
                         <td class="govuk-table__cell govuk-body-s">
-                            <a asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
-                                Delete
-                            </a>
+                            @if (row.IsDeletable)
+                            {
+                                <a asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link" data-testid="Delete">
+                                    Delete
+                                </a>
+                            }
                         </td>
                     </tr>
                 }
@@ -53,3 +56,5 @@
         </table>
     </div>
 </div>
+
+<vc:venues-data-management-help />

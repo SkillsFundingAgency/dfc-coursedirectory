@@ -25,6 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public bool IsSupplementary { get; set; }
         public bool? OutsideOfEngland { get; set; }
         public Guid VenueId { get; set; }
+        public bool IsDeletable { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }
         public string ProviderVenueRef { get; set; }

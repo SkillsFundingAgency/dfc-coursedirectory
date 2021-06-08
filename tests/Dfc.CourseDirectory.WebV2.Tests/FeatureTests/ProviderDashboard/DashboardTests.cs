@@ -494,6 +494,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("NewProvider").Should().BeNull();
         }
 
+        [Fact]
+        public async Task Get_HasLiveVenues_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadVenues").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveVenues_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadVenues").Should().BeNull();
+        }
+
         private async Task CreateApprenticeships(Guid providerId, int count)
         {
             for (var i = 1; i <= count; i++)

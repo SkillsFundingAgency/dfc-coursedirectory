@@ -11,7 +11,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public interface IFileUploadProcessor
     {
+        // Courses
+        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task ProcessCourseFile(Guid courseUploadId, Stream stream);
+
+        // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);
+        Task<bool> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber);
         Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId);
         IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);
@@ -19,7 +25,5 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow);
         Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
-        Task<bool> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber);
-        Task<SaveFileResult> SaveCourseFileForProvider(Guid providerId, Stream stream, UserInfo uploadedBy);
     }
 }

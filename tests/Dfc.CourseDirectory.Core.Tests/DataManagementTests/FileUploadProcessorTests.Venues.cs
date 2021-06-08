@@ -224,7 +224,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessVenueFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, blobServiceClient.Object, Clock);
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -254,7 +257,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessVenueFile_RowHasErrors_SetStatusToProcessedWithErrors()
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, blobServiceClient.Object, Clock);
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -547,6 +553,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     LastUpdated = Clock.UtcNow,
                     LastValidated = Clock.UtcNow,
                     IsSupplementary = false,
+                    IsDeletable = true,
                     AddressLine1 = row.AddressLine1,
                     AddressLine2 = row.AddressLine2,
                     County = row.County,
@@ -607,6 +614,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     LastValidated = Clock.UtcNow,
                     IsSupplementary = true,
                     VenueId = venue.VenueId,
+                    IsDeletable = false,
                     AddressLine1 = venue.AddressLine1,
                     AddressLine2 = venue.AddressLine2,
                     County = venue.County,

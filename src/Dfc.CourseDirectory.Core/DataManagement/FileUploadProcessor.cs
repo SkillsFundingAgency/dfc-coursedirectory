@@ -165,8 +165,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     }
                 }
 
-                // We've finished reading the whole buffer and not found an EOL - probably not a CSV
-                return false;
+                // If we've read the entire buffer and not hit an LF and the there's more to read
+                // then probably not a CSV
+                if (stream.Length > readBufferSize)
+                {
+                    return false;
+                }
+
+                // We've read the entire file but haven't got an LF;
+                // e.g. a single row of headers - could be valid
+                return foundAComma;
             }
             finally
             {
@@ -195,24 +203,37 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 {
                     ProviderId = providerId
                 });
+
                 var (existingRows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
                 var rowToDelete = existingRows.SingleOrDefault(x => x.RowNumber == rowNumber);
                 if (rowToDelete == null)
+                {
                     return false;
+                }
+
+                if (!rowToDelete.IsDeletable)
+                {
+                    throw new InvalidStateException(InvalidStateReason.VenueUploadRowCannotBeDeleted);
+                }
+
                 var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();
 
                 var rowCollection =  new VenueDataUploadRowInfoCollection(
-                lastRowNumber: lastRowNumber,
-                nonDeletedRows
-                    .Where(r => r.RowNumber != rowNumber)
-                    .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+                    lastRowNumber: lastRowNumber,
+                    nonDeletedRows
+                        .Where(r => r.RowNumber != rowNumber)
+                        .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+
                 await ValidateVenueUploadRows(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
                     rowCollection);
+
                 await dispatcher.Commit();
             }
+
             return true;
         }
 

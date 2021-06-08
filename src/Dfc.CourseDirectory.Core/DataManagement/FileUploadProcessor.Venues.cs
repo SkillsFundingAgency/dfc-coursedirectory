@@ -110,20 +110,25 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessVenueFile(Guid venueUploadId, Stream stream)
         {
-            // N.B. Every part of this method needs to be idempotent
-
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
+                var setProcessingResult = await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
                 {
                     VenueUploadId = venueUploadId,
                     ProcessingStartedOn = _clock.UtcNow
                 });
 
+                if (setProcessingResult != SetVenueUploadProcessingResult.Success)
+                {
+                    await DeleteBlob();
+
+                    return;
+                }
+
                 await dispatcher.Commit();
             }
 
-            // At this point `stream` should be a CSV that's already known to conform to `VenueRow`'s schema.
+            // At this point `stream` should be a CSV that's already known to conform to `CsvVenueRow`'s schema.
             // We read all the rows upfront because validation needs to do duplicate checking.
             // We also don't expect massive files here so reading everything into memory is ok.
             List<CsvVenueRow> rows;
@@ -145,6 +150,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 await ValidateVenueUploadRows(dispatcher, venueUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
+            }
+
+            await DeleteBlob();
+
+            Task DeleteBlob()
+            {
+                var blobName = $"{Constants.VenuesFolder}/{venueUploadId}.csv";
+                return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
             }
         }
 
@@ -391,6 +404,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venueId = rowVenueIdMapping[i] ?? Guid.NewGuid();
                 var isSupplementaryRow = i >= originalRowCount;
 
+                // A row is deletable if it is *not* matched to an existing venue that has attached offerings
+                var isDeletable = rowVenueIdMapping[i] is null ||
+                    !existingVenues.Single(v => v.VenueId == rowVenueIdMapping[i]).HasLiveOfferings;
+
                 row.ProviderVenueRef = row.ProviderVenueRef?.Trim();
                 row.Postcode = Postcode.TryParse(row.Postcode, out var postcode) ? postcode : row.Postcode;
 
@@ -400,9 +417,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     allPostcodeInfo.TryGetValue(postcode, out postcodeInfo);
                 }
 
-                var rowValidatonResult = validator.Validate(row);
-                var errors = rowValidatonResult.Errors.Select(e => e.ErrorCode).ToArray();
-                var rowIsValid = rowValidatonResult.IsValid;
+                var rowValidationResult = validator.Validate(row);
+                var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
+                var rowIsValid = rowValidationResult.IsValid;
                 uploadIsValid &= rowIsValid;
 
                 upsertRecords.Add(new SetVenueUploadRowsRecord()
@@ -413,6 +430,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     IsSupplementary = isSupplementaryRow,
                     OutsideOfEngland = postcodeInfo != null ? !postcodeInfo.InEngland : (bool?)null,
                     VenueId = venueId,
+                    IsDeletable = isDeletable,
                     ProviderVenueRef = row.ProviderVenueRef,
                     VenueName = row.VenueName,
                     AddressLine1 = row.AddressLine1,

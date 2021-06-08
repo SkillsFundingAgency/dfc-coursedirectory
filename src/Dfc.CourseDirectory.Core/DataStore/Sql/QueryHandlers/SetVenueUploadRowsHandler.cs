@@ -22,7 +22,7 @@ MERGE Pttcd.VenueUploadRows AS target
 USING (SELECT * FROM @Rows) AS source
     ON target.VenueUploadId = @VenueUploadId AND target.RowNumber = source.RowNumber
 WHEN NOT MATCHED BY SOURCE AND target.VenueUploadId = @VenueUploadId THEN
-    UPDATE SET VenueUploadRowStatus = {(int)VenueUploadRowStatus.Deleted}
+    UPDATE SET VenueUploadRowStatus = {(int)UploadRowStatus.Deleted}
 WHEN NOT MATCHED THEN 
     INSERT (
         VenueUploadId,
@@ -44,11 +44,12 @@ WHEN NOT MATCHED THEN
         Website,
         VenueId,
         OutsideOfEngland,
-        IsSupplementary
+        IsSupplementary,
+        IsDeletable
     ) VALUES (
         @VenueUploadId,
         source.RowNumber,
-        {(int)VenueUploadRowStatus.Default},
+        {(int)UploadRowStatus.Default},
         source.IsValid,
         source.Errors,
         ISNULL(source.LastUpdated, source.LastValidated),
@@ -65,10 +66,10 @@ WHEN NOT MATCHED THEN
         source.Website,
         source.VenueId,
         source.OutsideOfEngland,
-        source.IsSupplementary
+        source.IsSupplementary,
+        source.IsDeletable
     )
 WHEN MATCHED THEN UPDATE SET
-    RowNumber = source.RowNumber,
     IsValid = source.IsValid,
     Errors = source.Errors,
     LastUpdated = ISNULL(source.LastUpdated, target.LastValidated),
@@ -85,15 +86,15 @@ WHEN MATCHED THEN UPDATE SET
     Website = source.Website,
     VenueId = source.VenueId,
     OutsideOfEngland = source.OutsideOfEngland,
-    IsSupplementary = source.IsSupplementary
+    IsDeletable = source.IsDeletable
 ;
 
 SELECT
-    RowNumber, IsValid, Errors AS ErrorList, IsSupplementary, OutsideOfEngland, VenueId, LastUpdated, LastValidated,
+    RowNumber, IsValid, Errors AS ErrorList, IsSupplementary, OutsideOfEngland, VenueId, IsDeletable, LastUpdated, LastValidated,
     VenueName, ProviderVenueRef, AddressLine1, AddressLine2, Town, County, Postcode, Telephone, Email, Website
 FROM Pttcd.VenueUploadRows
 WHERE VenueUploadId = @VenueUploadId
-AND VenueUploadRowStatus = {(int)VenueUploadRowStatus.Default}
+AND VenueUploadRowStatus = {(int)UploadRowStatus.Default}
 ORDER BY RowNumber";
 
             var paramz = new
@@ -133,6 +134,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("VenueId", typeof(Guid));
                 table.Columns.Add("OutsideOfEngland", typeof(bool));
                 table.Columns.Add("IsSupplementary", typeof(bool));
+                table.Columns.Add("IsDeletable", typeof(bool));
 
                 foreach (var record in query.Records)
                 {
@@ -154,7 +156,8 @@ ORDER BY RowNumber";
                         record.Website,
                         record.VenueId,
                         record.OutsideOfEngland,
-                        record.IsSupplementary);
+                        record.IsSupplementary,
+                        record.IsDeletable);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.VenueUploadRowTable");

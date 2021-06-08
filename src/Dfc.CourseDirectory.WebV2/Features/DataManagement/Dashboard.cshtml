@@ -31,7 +31,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a asp-controller="CoursesDataManagement" asp-action="Template" class="govuk-link">
+                                <a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Download course data template (CSV)
                                 </a>
                             </li>
@@ -90,6 +90,7 @@
             </div>
         </div>
     }
+
     @if (FeatureFlagProvider.HaveFeature(FeatureFlags.VenuesDataManagement))
     {
         <div class="govuk-grid-column-one-third" data-testid="VenuesCard">
@@ -117,11 +118,14 @@
                                 <a asp-controller="VenuesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-upload-new-link">Upload new venue data</a>
                             }
                         </li>
-                        <li>
-                            <a asp-controller="VenuesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                Download your published venue data (CSV)
-                            </a>
-                        </li>
+                        @if (Model.PublishedVenueCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="VenuesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadVenues">
+                                    Download your published venue data (CSV)
+                                </a>
+                            </li>
+                        }
                         <li>
                             <a asp-controller="VenuesDataManagement" asp-action="Template" class="govuk-link">
                                 Download venue data template (CSV)

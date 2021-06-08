@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.Command;
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload.ViewModel;
 @{
     ViewBag.Title = "Data Upload - Upload your venue data";
 }
@@ -42,8 +42,8 @@
             <p class="govuk-body">To ensure an upload is successful you must:</p>
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
                 <li>include existing and new venues in the data file</li>
-                <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues"
-                                  class="govuk-link">file format requirements</a></li>
+                <li>include <a asp-action="Formatting" asp-fragment="YOUR_VENUE_REFERENCE" class="govuk-link">a venue reference</a> for each venue</li>
+                <li>follow the <a asp-action="Formatting" class="govuk-link">file format requirements</a></li>
             </ul>
 
             <govuk-file-upload asp-for="File" input-accept=".csv">
@@ -52,7 +52,6 @@
 
             <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
         </form>
-
     </div>
     <div class="govuk-grid-column-one-third">
         <aside class="pttcd-provider-data-upload__download-panel" role="complementary">
@@ -61,9 +60,14 @@
             </h2>
             <nav role="navigation" aria-labelledby="subsection-title">
                 <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
-                    <li>
-                        <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published venue data (CSV)</a>
-                    </li>
+                    @if (Model.VenueCount > 0)
+                    {
+                        <li>
+                            <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadLink">
+                                Download your published venue data (CSV)
+                            </a>
+                        </li>
+                    }
                     <li>
                         <a asp-action="Template" class="govuk-link">Download an empty venue data template (CSV)</a>
                     </li>
@@ -72,3 +76,5 @@
         </aside>
     </div>
 </div>
+
+<vc:venues-data-management-help />

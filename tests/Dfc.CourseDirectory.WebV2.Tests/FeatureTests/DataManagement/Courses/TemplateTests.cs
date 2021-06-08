@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
 using Xunit;
 
@@ -20,9 +21,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         public async Task Get_DownloadsValidFile()
         {
             // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/courses/template");
+            var response = await HttpClient.GetAsync($"/data-upload/courses/template?providerId={provider.ProviderId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -63,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
               "ATTENDANCE_PATTERN"
             });
 
-            var rows = csvReader.GetRecords<CourseRow>();
+            var rows = csvReader.GetRecords<CsvCourseRow>();
             rows.Should().BeEmpty();
         }
     }

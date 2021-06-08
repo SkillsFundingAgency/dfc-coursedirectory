@@ -3,7 +3,7 @@ using CsvHelper.Configuration.Attributes;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
-    public class CourseRow
+    public class CsvCourseRow
     {
         [Index(0), Name("LARS_QAN")]
         public string LarsQan { get; set; }
@@ -34,13 +34,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(13), Name("VENUE_NAME")]
         public string VenueName { get; set; }
         [Index(14), Name("YOUR_VENUE_REFERENCE")]
-        public string YourVenueReference { get; set; }
+        public string ProviderVenueRef { get; set; }
         [Index(15), Name("NATIONAL_DELIVERY")]
         public string NationalDelivery { get; set; }
         [Index(16), Name("SUB_REGION")]
-        public string SubRegion { get; set; }
+        public string SubRegions { get; set; }
         [Index(17), Name("COURSE_WEBPAGE")]
-        public string CourseWebpage { get; set; }
+        public string CourseWebPage { get; set; }
         [Index(18), Name("COST")]
         public string Cost { get; set; }
         [Index(19), Name("COST_DESCRIPTION")]

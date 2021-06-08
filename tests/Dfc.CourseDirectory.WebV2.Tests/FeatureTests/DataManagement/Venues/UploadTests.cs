@@ -49,16 +49,41 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         private Mock<BlobContainerClient> DataUploadsContainerClient { get; }
 
         [Fact]
-        public async Task Get_RendersPage()
+        public async Task Get_HasLiveVenues_DoesRenderDownloadLink()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
 
+            await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/venues?providerId={provider.ProviderId}");
+
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/venues?providerId={provider.ProviderId}");
+            var response = await HttpClient.SendAsync(request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadLink").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveVenues_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/venues?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadLink").Should().BeNull();
         }
 
         [Fact]
@@ -67,13 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new CreateVenueUpload()
-            {
-                CreatedBy = User.ToUserInfo(),
-                CreatedOn = Clock.UtcNow,
-                ProviderId = provider.ProviderId,
-                VenueUploadId = Guid.NewGuid()
-            }));
+            await TestData.CreateVenueUpload(provider.ProviderId, createdBy: User.ToUserInfo(), createdOn: Clock.UtcNow);
 
             var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
@@ -108,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
-        public async Task Post_ValidUpload_AbandonsExistingUnpublishedUpload()
+        public async Task Post_ValidVenuesFile_AbandonsExistingUnpublishedUpload()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -237,7 +256,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
                 csvWriter =>
                 {
                     // Miss out VENUE_NAME, POSTCODE
@@ -250,8 +269,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                     csvWriter.WriteField("PHONE");
                     csvWriter.WriteField("WEBSITE");
                     csvWriter.NextRecord();
-                },
-                writeHeader: false);
+                });
 
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
             
@@ -281,8 +299,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                 {
                     csvWriter.WriteField("One column");
                     csvWriter.NextRecord();
-                },
-                writeHeader: true);
+                });
 
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
