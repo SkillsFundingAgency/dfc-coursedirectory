@@ -18,7 +18,7 @@
 	[HowYouWillBeAssessed] NVARCHAR(MAX),
 	[WhereNext] NVARCHAR(MAX),
 	[CourseName] NVARCHAR(MAX),
-	[YourReference] NVARCHAR(MAX),
+	[ProviderCourseRef] NVARCHAR(MAX),
 	[DeliveryMode] NVARCHAR(MAX),
 	[StartDate] NVARCHAR(MAX),
 	[FlexibleStartDate] NVARCHAR(MAX),

@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(8), Name("COURSE_NAME")]
         public string CourseName { get; set; }
         [Index(9), Name("YOUR_REFERENCE")]
-        public string YourReference { get; set; }
+        public string ProviderCourseRef { get; set; }
         [Index(10), Name("DELIVERY_MODE")]
         public string DeliveryMode { get; set; }
         [Index(11), Name("START_DATE")]

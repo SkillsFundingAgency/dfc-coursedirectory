@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string HowYouWillBeAssessed { get; set; }
         public string WhereNext { get; set; }
         public string CourseName { get; set; }
-        public string YourReference { get; set; }
+        public string ProviderCourseRef { get; set; }
         public string DeliveryMode { get; set; }
         public string StartDate { get; set; }
         public string FlexibleStartDate { get; set; }
