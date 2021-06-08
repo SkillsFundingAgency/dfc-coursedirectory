@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -182,12 +183,40 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Fact]
-        public async Task Post_FileIsTooLarge_RendersError()
+        public async Task Post_FileHasMissingHeaders_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider();
 
-            var csvStream = new MemoryStream(new byte[3145728 + 1]);
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
+                csvWriter =>
+                {
+                    // Miss out WHO_THIS_COURSE_IS_FOR, YOUR_REFERENCE
+                    csvWriter.WriteField("LARS_QAN");
+                    csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                    csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                    csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                    csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                    csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                    csvWriter.WriteField("WHERE_NEXT");
+                    csvWriter.WriteField("COURSE_NAME");
+                    csvWriter.WriteField("DELIVERY_MODE");
+                    csvWriter.WriteField("START_DATE");
+                    csvWriter.WriteField("FLEXIBLE_START_DATE");
+                    csvWriter.WriteField("VENUE_NAME");
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("NATIONAL_DELIVERY");
+                    csvWriter.WriteField("SUB_REGION");
+                    csvWriter.WriteField("COURSE_WEBPAGE");
+                    csvWriter.WriteField("COST");
+                    csvWriter.WriteField("COST_DESCRIPTION");
+                    csvWriter.WriteField("DURATION");
+                    csvWriter.WriteField("DURATION_UNIT");
+                    csvWriter.WriteField("STUDY_MODE");
+                    csvWriter.WriteField("ATTENDANCE_PATTERN");
+                    csvWriter.NextRecord();
+                });
+
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -197,7 +226,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("File", "The selected file must be smaller than 3MB");
+            doc.AssertHasError("File", "Enter headings in the correct format");
+            doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "WHO_THIS_COURSE_IS_FOR",
+                "YOUR_REFERENCE"
+            });
+        }
+
+        [Fact]
+        public async Task Post_FileIsTooLarge_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+
+            var csvStream = new MemoryStream(new byte[5242880 + 1]);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file must be smaller than 5MB");
         }
 
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)

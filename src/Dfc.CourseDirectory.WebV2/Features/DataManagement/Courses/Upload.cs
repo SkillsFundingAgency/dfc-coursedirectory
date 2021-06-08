@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
@@ -15,7 +17,7 @@ using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 {
-    public class Command : IRequest<OneOf<ModelWithErrors<Command>, UploadResult>>
+    public class Command : IRequest<OneOf<UploadFailedResult, UploadResult>>
     {
         public IFormFile File { get; set; }
     }
@@ -26,7 +28,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
         ProcessingCompleted
     }
 
-    public class Handler : IRequestHandler<Command, OneOf<ModelWithErrors<Command>, UploadResult>>
+    public class UploadFailedResult : ModelWithErrors<Command>
+    {
+        public UploadFailedResult(Command model, ValidationResult validationResult)
+            : base(model, validationResult)
+        {
+            MissingHeaders = Array.Empty<string>();
+        }
+
+        public UploadFailedResult(Command model, string fileErrorMessage, IEnumerable<string> missingHeaders = null)
+            : base(model, CreateValidationResult(fileErrorMessage))
+        {
+            MissingHeaders = missingHeaders?.ToArray() ?? Array.Empty<string>();
+        }
+
+        public IReadOnlyCollection<string> MissingHeaders { get; }
+
+        private static ValidationResult CreateValidationResult(string fileErrorMessage) =>
+            new ValidationResult(new[]
+            {
+                new ValidationFailure(nameof(Command.File), fileErrorMessage)
+            });
+    }
+
+    public class Handler : IRequestHandler<Command, OneOf<UploadFailedResult, UploadResult>>
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -44,8 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             _currentUserProvider = currentUserProvider;
             _optionsAccessor = optionsAccessor;
         }
-
-        public async Task<OneOf<ModelWithErrors<Command>, UploadResult>> Handle(
+        public async Task<OneOf<UploadFailedResult, UploadResult>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
@@ -54,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 
             if (!result.IsValid)
             {
-                return new ModelWithErrors<Command>(request, result);
+                return new UploadFailedResult(request, result);
             }
 
             using var stream = request.File.OpenReadStream();
@@ -66,20 +90,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 
             if (saveFileResult.Status == SaveFileResultStatus.InvalidFile)
             {
-                return new ModelWithErrors<Command>(
+                return new UploadFailedResult(
                     request,
-                    CreateValidationResultFromError("The selected file must be a CSV"));
+                    "The selected file must be a CSV");
+            }
+            else if (saveFileResult.Status == SaveFileResultStatus.InvalidRows)
+            {
+                return new UploadFailedResult(
+                    request,
+                    "The selected file must use the template");
             }
             else if (saveFileResult.Status == SaveFileResultStatus.InvalidHeader)
             {
-                // TODO PTCD-920
-                throw new NotImplementedException();
+                return new UploadFailedResult(
+                    request,
+                    "Enter headings in the correct format",
+                    saveFileResult.MissingHeaders);
             }
             else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
             {
-                return new ModelWithErrors<Command>(
+                return new UploadFailedResult(
                     request,
-                    CreateValidationResultFromError("The selected file is empty"));
+                    "The selected file is empty");
             }
             else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
             {
@@ -101,12 +133,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             {
                 return UploadResult.ProcessingInProgress;
             }
-
-            static ValidationResult CreateValidationResultFromError(string message) =>
-                new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(request.File), message)
-                });
         }
     }
 
