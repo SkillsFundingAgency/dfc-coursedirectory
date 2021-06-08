@@ -84,6 +84,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidFile();
             }
 
+            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvCourseRow>(stream);
+            if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+            {
+                return SaveFileResult.InvalidHeader(missingHeaders);
+            }
+
 
             var courseUploadId = Guid.NewGuid();
 

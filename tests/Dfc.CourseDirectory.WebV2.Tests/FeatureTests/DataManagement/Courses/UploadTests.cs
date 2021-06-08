@@ -188,7 +188,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
                 csvWriter =>
                 {
                     // Miss out WHO_THIS_COURSE_IS_FOR, YOUR_REFERENCE
@@ -215,8 +215,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     csvWriter.WriteField("STUDY_MODE");
                     csvWriter.WriteField("ATTENDANCE_PATTERN");
                     csvWriter.NextRecord();
-                },
-                writeHeader: false);
+                });
 
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
