@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         HowYouWillBeAssessed = row.Data.HowYouWillBeAssessed,
                         WhereNext = row.Data.WhereNext,
                         CourseName = row.Data.CourseName,
-                        YourReference = row.Data.YourReference,
+                        ProviderCourseRef = row.Data.ProviderCourseRef,
                         DeliveryMode = row.Data.DeliveryMode,
                         StartDate = row.Data.StartDate,
                         FlexibleStartDate = row.Data.FlexibleStartDate,

@@ -42,7 +42,7 @@ WHEN NOT MATCHED THEN
         HowYouWillBeAssessed,
         WhereNext,
         CourseName,
-        YourReference,
+        ProviderCourseRef,
         DeliveryMode,
         StartDate,
         FlexibleStartDate,
@@ -76,7 +76,7 @@ WHEN NOT MATCHED THEN
         source.HowYouWillBeAssessed,
         source.WhereNext,
         source.CourseName,
-        source.YourReference,
+        source.ProviderCourseRef,
         source.DeliveryMode,
         source.StartDate,
         source.FlexibleStartDate,
@@ -109,7 +109,7 @@ WHEN MATCHED THEN UPDATE SET
     HowYouWillBeAssessed = source.HowYouWillBeAssessed,
     WhereNext = source.WhereNext,
     CourseName = source.CourseName,
-    YourReference = source.YourReference,
+    ProviderCourseRef = source.ProviderCourseRef,
     DeliveryMode = source.DeliveryMode,
     StartDate = source.StartDate,
     FlexibleStartDate = source.FlexibleStartDate,
@@ -129,7 +129,7 @@ WHEN MATCHED THEN UPDATE SET
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, CourseId, CourseRunId, LastUpdated, LastValidated,
     LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
-    HowYouWillBeAssessed, WhereNext, CourseName, YourReference, DeliveryMode, StartDate, FlexibleStartDate,
+    HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern
 FROM Pttcd.CourseUploadRows
@@ -172,7 +172,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("HowYouWillBeAssessed", typeof(string));
                 table.Columns.Add("WhereNext", typeof(string));
                 table.Columns.Add("CourseName", typeof(string));
-                table.Columns.Add("YourReference", typeof(string));
+                table.Columns.Add("ProviderCourseRef", typeof(string));
                 table.Columns.Add("DeliveryMode", typeof(string));
                 table.Columns.Add("StartDate", typeof(string));
                 table.Columns.Add("FlexibleStartDate", typeof(string));
@@ -207,7 +207,7 @@ ORDER BY RowNumber";
                         record.HowYouWillBeAssessed,
                         record.WhereNext,
                         record.CourseName,
-                        record.YourReference,
+                        record.ProviderCourseRef,
                         record.DeliveryMode,
                         record.StartDate,
                         record.FlexibleStartDate,
