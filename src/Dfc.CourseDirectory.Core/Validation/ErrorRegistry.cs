@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("COURSERUN_COST_REQUIRED"),
             new Error("COURSERUN_COURSE_NAME_FORMAT"),
             new Error("COURSERUN_COURSE_NAME_MAXLENGTH", CourseConstants.CourseNameMaxLength),
+            new Error("COURSERUN_COURSE_NAME_REQUIRED"),
             new Error("COURSERUN_COURSE_WEB_PAGE_FORMAT"),
             new Error("COURSERUN_DELIVERY_MODE_REQUIRED"),
             new Error("COURSERUN_DURATION_RANGE"),

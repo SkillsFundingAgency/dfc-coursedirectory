@@ -234,6 +234,15 @@ namespace Dfc.CourseDirectory.Core {
         /// <summary>
         ///   Looks up a localized string similar to &lt;TODO&gt;.
         /// </summary>
+        public static string ERROR_COURSERUN_COURSE_NAME_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_NAME_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
         public static string ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT {
             get {
                 return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT", resourceCulture);

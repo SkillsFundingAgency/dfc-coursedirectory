@@ -80,6 +80,9 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void CourseName<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
+                .NormalizeWhitespace()
+                .NotEmpty()
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_REQUIRED")
                 .MaximumLength(Constants.CourseNameMaxLength)
                     .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_MAXLENGTH")
                 .Matches(@"^[a-zA-Z0-9/\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$")
