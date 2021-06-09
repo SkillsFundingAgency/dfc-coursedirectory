@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
@@ -23,15 +24,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly BlobContainerClient _blobContainerClient;
         private readonly IClock _clock;
+        private readonly IRegionCache _regionCache;
 
         public FileUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             BlobServiceClient blobServiceClient,
-            IClock clock)
+            IClock clock,
+            IRegionCache regionCache)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
             _clock = clock;
+            _regionCache = regionCache;
         }
 
         protected internal async Task<bool> FileIsEmpty(Stream stream)
