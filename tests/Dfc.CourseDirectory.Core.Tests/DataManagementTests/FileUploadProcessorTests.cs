@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,7 +44,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FileIsEmpty_ReturnsExpectedResult(string base64Content, bool expectedResult)
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var stream = new MemoryStream(Convert.FromBase64String(base64Content));
             stream.Seek(0L, SeekOrigin.Begin);
@@ -60,7 +65,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task LooksLikeCsv_ReturnsExpectedResult(byte[] content, bool expectedResult)
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var stream = new MemoryStream(content);
             stream.Seek(0L, SeekOrigin.Begin);
@@ -76,7 +85,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FileMatchesSchema_HeaderHasMissingColumn_ReturnsInvalidHeaderResult()
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
             {
@@ -110,7 +123,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FileMatchesSchema_RowHasIncorrectColumnCount_ReturnsInvalidRows(int columnCount)
         {
             // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
             {

@@ -15,7 +15,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public DateTime? PublishedOn { get; set; }
         public DateTime? AbandonedOn { get; set; }
         public DateTime? LastValidated { get; set; }
-        public bool? IsValid { get; set; }
     }
 
     public class CourseUploadRow
