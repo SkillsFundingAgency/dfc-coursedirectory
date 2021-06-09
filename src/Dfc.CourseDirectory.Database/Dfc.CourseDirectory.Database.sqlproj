@@ -283,6 +283,7 @@
     <Build Include="Pttcd\Tables\CourseUploads.sql" />
     <Build Include="Pttcd\Tables\CourseUploadRows.sql" />
     <Build Include="Pttcd\Types\CourseUploadRowTable.sql" />
+    <Build Include="Pttcd\Types\UnicodeStringTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
