@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -26,7 +27,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetVenueUploadStatusUpdates_VenueUploadDoesNotExist_ReturnsArgumentException()
         {
             // Arrange
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var venueUploadId = Guid.NewGuid();
 
@@ -47,7 +51,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetVenueUploadStatusUpdates_EmitsInitialStatus()
         {
             // Arrange
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -72,7 +79,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Fact]
         public async Task GetVenueUploadStatusUpdates_EmitsChangedStatus()
         {
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -100,7 +110,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetVenueUploadStatusUpdates_DoesNotEmitDuplicateStatuses()
         {
             // Arrange
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -129,7 +142,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [InlineData(UploadStatus.Published)]
         public async Task GetVenueUploadStatusUpdates_CompletesWhenStatusIsTerminal(UploadStatus uploadStatus)
         {
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -162,7 +178,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var existingVenues = new[] { venue1 };
 
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             // Act
             var result = uploadProcessor.MatchRowsToExistingVenues(rows, existingVenues);
@@ -184,7 +203,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var existingVenues = new[] { venue1 };
 
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             // Act
             var result = uploadProcessor.MatchRowsToExistingVenues(rows, existingVenues);
@@ -210,7 +232,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var existingVenues = new[] { venue1 };
 
-            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(SqlQueryDispatcherFactory, Clock);
+            var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             // Act
             var result = uploadProcessor.MatchRowsToExistingVenues(rows, existingVenues);
@@ -227,7 +252,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, blobServiceClient.Object, Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -260,7 +289,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, blobServiceClient.Object, Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -298,7 +331,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 createdBy: user,
                 UploadStatus.ProcessedWithErrors);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             // Act
             var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
@@ -356,8 +393,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 new[] { oldVenue2.VenueId },
                 createdBy: user);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
-            
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
             // Act
             var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
 
@@ -407,7 +448,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 new[] { oldVenue2.VenueId },
                 createdBy: user);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             // Act
             var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
@@ -452,7 +497,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 await TestData.CreatePostcodeInfo(postcode, postcodePosition.Latitude, postcodePosition.Longitude);
             }
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             // Act
             var result = await fileUploadProcessor.PublishVenueUploadForProvider(provider.ProviderId, user);
@@ -517,7 +566,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var row = new CsvVenueRow()
             {
@@ -585,7 +638,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 locationVenueIds: new[] { venue.VenueId },
                 createdBy: user);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var uploadRows = new[]
             {
@@ -637,7 +694,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var row = new CsvVenueRow()
             {
@@ -670,7 +731,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var row = new CsvVenueRow()
             {
@@ -707,7 +772,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var uploadRows = new[] { row }.Concat(additionalRows ?? Enumerable.Empty<CsvVenueRow>()).ToDataUploadRowCollection();
 
@@ -739,7 +808,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToDataUploadRowCollection();
 
@@ -768,7 +841,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (venueUpload, _) = await TestData.CreateVenueUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
 
-            var fileUploadProcessor = new FileUploadProcessor(SqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), Clock);
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
 
             var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToDataUploadRowCollection();
 
@@ -970,8 +1047,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             private readonly TaskCompletionSource<Guid> _venueUploadIdTcs;
 
-            public TriggerableVenueUploadStatusUpdatesFileUploadProcessor(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock)
-                : base(sqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), clock)
+            public TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
+                ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
+                IClock clock,
+                IRegionCache regionCache)
+                : base(sqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), clock, regionCache)
             {
                 _subject = new ReplaySubject<UploadStatus>();
                 _venueUploadIdTcs = new TaskCompletionSource<Guid>();

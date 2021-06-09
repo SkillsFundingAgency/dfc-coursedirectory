@@ -61,6 +61,384 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Entry requirements must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How you&apos;ll be assesssed must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How you&apos;ll learn must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSE_LARS_QAN_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_LARS_QAN_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSE_LARS_QAN_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_LARS_QAN_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to What you can do next must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to What you&apos;ll learn must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSE_WHERE_NEXT_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHERE_NEXT_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter who this course is for.
+        /// </summary>
+        public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COST_DESCRIPTION_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_DESCRIPTION_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COST_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COST_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COURSE_NAME_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_NAME_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COURSE_NAME_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_NAME_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_DELIVERY_MODE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_DELIVERY_MODE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_DURATION_RANGE {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_DURATION_RANGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_DURATION_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_DURATION_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_DURATION_UNIT_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_DURATION_UNIT_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_FLEXIBLE_START_DATE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_FLEXIBLE_START_DATE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_PROVIDER_COURSE_REF_FORMAT {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_PROVIDER_COURSE_REF_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_START_DATE_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_START_DATE_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_START_DATE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_START_DATE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_STUDY_MODE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_STUDY_MODE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_SUBREGIONS_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_SUBREGIONS_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_SUBREGIONS_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_SUBREGIONS_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_SUBREGIONS_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_SUBREGIONS_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_VENUE_NAME_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_VENUE_NAME_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_VENUE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_VENUE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Address line 1 must only include letters, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE1_FORMAT {
