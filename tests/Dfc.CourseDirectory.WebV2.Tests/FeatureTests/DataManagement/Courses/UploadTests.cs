@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact(Skip = "No in progress page yet")]
+        [Fact]
         public async Task Post_ValidCoursesFile_CreatesRecordAndRedirectsToInProgress()
         {
             // Arrange

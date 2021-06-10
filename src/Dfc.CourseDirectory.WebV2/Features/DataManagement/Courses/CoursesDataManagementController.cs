@@ -44,17 +44,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    result =>
-                        RedirectToAction("Index", nameof(ProviderDashboard))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext())
-                        ));
+                    success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
+        [HttpGet("in-progress")]
+        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query(),
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    _ => View(status)
+                }));
+
+        [HttpGet("errors")]
+        public IActionResult Errors() => Ok();
+
         [HttpGet("check-publish")]
-        public IActionResult CheckAndPublish()
-        {
-            return View();
-        }
+        public IActionResult CheckAndPublish() => Ok();
 
         [HttpGet("template")]
         public IActionResult Template() =>
@@ -85,10 +96,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         {
             return View();
         }
-
-
-        [HttpGet("errors")]
-        [RequireProviderContext]
-        public IActionResult Errors() => Ok();
     }
 }
