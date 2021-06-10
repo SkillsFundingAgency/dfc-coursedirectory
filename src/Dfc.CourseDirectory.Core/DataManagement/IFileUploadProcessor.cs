@@ -12,6 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     public interface IFileUploadProcessor
     {
         // Courses
+        IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
         Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
 

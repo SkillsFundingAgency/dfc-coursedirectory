@@ -124,6 +124,7 @@ namespace Dfc.CourseDirectory.Testing
                             rowBuilder.AddRow(record =>
                             {
                                 record.VenueName = string.Empty;
+                                record.IsValid = false;
                                 record.Errors = new[] { ErrorRegistry.All["VENUE_NAME_REQUIRED"].ErrorCode };
                             });
                         }

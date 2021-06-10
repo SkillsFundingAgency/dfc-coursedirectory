@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
@@ -18,6 +20,27 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId)
+        {
+            return GetCourseUploadId().ToObservable()
+                .SelectMany(courseUploadId => GetCourseUploadStatusUpdates(courseUploadId))
+                .DistinctUntilChanged()
+                .TakeUntil(status => status.IsTerminal());
+
+            async Task<Guid> GetCourseUploadId()
+            {
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider() { ProviderId = providerId });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                return courseUpload.CourseUploadId;
+            }
+        }
+
         public async Task ProcessCourseFile(Guid courseUploadId, Stream stream)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -144,6 +167,24 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
             }
         }
+
+        protected async Task<UploadStatus> GetCourseUploadStatus(Guid courseUploadId)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            var courseUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
+
+            if (courseUpload == null)
+            {
+                throw new ArgumentException("Specified course upload does not exist.", nameof(courseUploadId));
+            }
+
+            return courseUpload.UploadStatus;
+        }
+
+        // virtual for testing
+        protected virtual IObservable<UploadStatus> GetCourseUploadStatusUpdates(Guid courseUploadId) =>
+            Observable.Interval(_statusUpdatesPollInterval)
+                .SelectMany(_ => Observable.FromAsync(() => GetCourseUploadStatus(courseUploadId)));
 
         // internal for testing
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<CourseUploadRow> Rows)> ValidateCourseUploadRows(
