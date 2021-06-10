@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Testing
@@ -17,17 +18,19 @@ namespace Dfc.CourseDirectory.Testing
             UploadStatus uploadStatus,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
-            if (uploadStatus != UploadStatus.Created &&
-                uploadStatus != UploadStatus.Processing &&
-                uploadStatus != UploadStatus.ProcessedSuccessfully)
-            {
-                throw new NotImplementedException();
-            }
-
             var createdOn = _clock.UtcNow;
 
             DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
             DateTime? processingCompletedOn = uploadStatus >= UploadStatus.ProcessedWithErrors ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null;
+            DateTime? publishedOn = uploadStatus == UploadStatus.Published ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
+            DateTime? abandonedOn = uploadStatus == UploadStatus.Abandoned ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
+
+            var isValid = uploadStatus switch
+            {
+                UploadStatus.ProcessedWithErrors => false,
+                UploadStatus.Created | UploadStatus.Processing => (bool?)null,
+                _ => true
+            };
 
             var (courseUpload, rows) = await CreateCourseUpload(
                 providerId,
@@ -35,6 +38,9 @@ namespace Dfc.CourseDirectory.Testing
                 createdOn,
                 processingStartedOn,
                 processingCompletedOn,
+                publishedOn,
+                abandonedOn,
+                isValid,
                 configureRows);
 
             Assert.Equal(uploadStatus, courseUpload.UploadStatus);
@@ -48,6 +54,9 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? createdOn = null,
             DateTime? processingStartedOn = null,
             DateTime? processingCompletedOn = null,
+            DateTime? publishedOn = null,
+            DateTime? abandonedOn = null,
+            bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
             var courseUploadId = Guid.NewGuid();
@@ -85,7 +94,7 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         CourseUploadId = courseUploadId,
                         ProcessingCompletedOn = processingCompletedOn.Value,
-                        IsValid = true
+                        IsValid = isValid.Value
                     });
 
                     var rowBuilder = new CourseUploadRowBuilder();
@@ -96,7 +105,19 @@ namespace Dfc.CourseDirectory.Testing
                     }
                     else
                     {
-                        rowBuilder.AddValidRows(3);
+                        if (isValid.Value)
+                        {
+                            var learnAimRef = await CreateLearningAimRef();
+                            rowBuilder.AddValidRows(learnAimRef, 3);
+                        }
+                        else
+                        {
+                            rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                            {
+                                record.IsValid = false;
+                                record.Errors = new[] { ErrorRegistry.All["COURSE_LARS_QAN_REQUIRED"].ErrorCode };
+                            });
+                        }
                     }
 
                     rows = (await dispatcher.ExecuteQuery(new SetCourseUploadRows()
@@ -106,6 +127,34 @@ namespace Dfc.CourseDirectory.Testing
                         UpdatedOn = processingCompletedOn.Value,
                         ValidatedOn = processingCompletedOn.Value
                     })).ToArray();
+                }
+
+                if (publishedOn.HasValue)
+                {
+                    if (!processingCompletedOn.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(processingCompletedOn));
+                    }
+
+                    await dispatcher.ExecuteQuery(new PublishCourseUpload()
+                    {
+                        CourseUploadId = courseUploadId,
+                        PublishedBy = createdBy,
+                        PublishedOn = publishedOn.Value
+                    });
+                }
+                else if (abandonedOn.HasValue)
+                {
+                    if (!processingCompletedOn.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(processingCompletedOn));
+                    }
+
+                    await dispatcher.ExecuteQuery(new SetCourseUploadAbandoned()
+                    {
+                        CourseUploadId = courseUploadId,
+                        AbandonedOn = abandonedOn.Value
+                    });
                 }
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetCourseUpload()
@@ -121,9 +170,9 @@ namespace Dfc.CourseDirectory.Testing
         {
             private readonly List<SetCourseUploadRowsRecord> _records = new List<SetCourseUploadRowsRecord>();
 
-            public CourseUploadRowBuilder AddRow(Action<SetCourseUploadRowsRecord> configureRecord)
+            public CourseUploadRowBuilder AddRow(string learnAimRef, Action<SetCourseUploadRowsRecord> configureRecord)
             {
-                var record = CreateValidRecord();
+                var record = CreateValidRecord(learnAimRef);
                 configureRecord(record);
                 _records.Add(record);
                 return this;
@@ -192,18 +241,18 @@ namespace Dfc.CourseDirectory.Testing
                 return this;
             }
 
-            public CourseUploadRowBuilder AddValidRow()
+            public CourseUploadRowBuilder AddValidRow(string learnAimRef)
             {
-                var record = CreateValidRecord();
+                var record = CreateValidRecord(learnAimRef);
                 _records.Add(record);
                 return this;
             }
 
-            public CourseUploadRowBuilder AddValidRows(int count)
+            public CourseUploadRowBuilder AddValidRows(string learnAimRef, int count)
             {
                 for (int i = 0; i < count; i++)
                 {
-                    AddValidRow();
+                    AddValidRow(learnAimRef);
                 }
 
                 return this;
@@ -277,19 +326,12 @@ namespace Dfc.CourseDirectory.Testing
                 };
             }
 
-            private SetCourseUploadRowsRecord CreateValidRecord()
+            private SetCourseUploadRowsRecord CreateValidRecord(string learnAimRef)
             {
-                string larsQan;
-                do
-                {
-                    larsQan = $"ABC{new Random().Next(0, 9999):D4}";
-                }
-                while (_records.Any(r => r.LarsQan == larsQan));
-
                 return CreateRecord(
                     courseId: Guid.NewGuid(),
                     courseRunId: Guid.NewGuid(),
-                    larsQan: larsQan,
+                    larsQan: learnAimRef,
                     whoThisCourseIsFor: "Who this course is for",
                     entryRequirements: "",
                     whatYouWillLearn: "",
@@ -304,15 +346,15 @@ namespace Dfc.CourseDirectory.Testing
                     flexibleStartDate: "yes",
                     venueName: "",
                     providerVenueRef: "",
-                    nationalDelivery: "yes",
+                    nationalDelivery: "",
                     subRegions: "",
                     courseWebpage: "",
                     cost: "",
                     costDescription: "Free",
                     duration: "2",
                     durationUnit: "years",
-                    studyMode: "part time",
-                    attendancePattern: "evening");
+                    studyMode: "",
+                    attendancePattern: "");
             }
         }
     }
