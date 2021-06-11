@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            //Create some venue upload rows to test new data in UI
+            //Create some course upload rows to test new data in UI
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
