@@ -18,6 +18,14 @@ namespace Dfc.CourseDirectory.Testing
             UploadStatus uploadStatus,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
+            if (uploadStatus != UploadStatus.Created &&
+                uploadStatus != UploadStatus.Processing &&
+                uploadStatus != UploadStatus.ProcessedSuccessfully &&
+                uploadStatus != UploadStatus.ProcessedWithErrors)
+            {
+                throw new NotImplementedException();
+            }
+
             var createdOn = _clock.UtcNow;
 
             DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
@@ -81,6 +89,11 @@ namespace Dfc.CourseDirectory.Testing
                         CourseUploadId = courseUploadId,
                         ProcessingStartedOn = processingStartedOn.Value
                     });
+
+                    if (!isValid.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(isValid));
+                    }
                 }
 
                 if (processingCompletedOn.HasValue)

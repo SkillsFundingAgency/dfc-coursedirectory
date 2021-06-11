@@ -99,7 +99,12 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
             <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
                 <h2 class="govuk-heading-s">Published courses</h2>
                 <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.LiveCourseRunCount</p>
-            </div>
+                @if (Model.UnpublishedCourseCount > 0)
+                {
+                    <h2 class="govuk-heading-s govuk-!-margin-top-5">Unpublished courses</h2>
+                    <p class="pttcd-provider-dashboard__card__number" data-testid="unpublished-course-count">@Model.UnpublishedCourseCount</p>
+                }
+                </div>
         </div>
 
         <div class="govuk-grid-column-one-third">
@@ -123,28 +128,69 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                 </div>
             </div>
         </div>
-
-        <div class="govuk-grid-column-one-third">
-            <div class="pttcd-provider-dashboard__card">
-                <div class="pttcd-provider-dashboard__card__content">
-                    <h2 class="govuk-heading-s">Bulk upload</h2>
-                    <p class="govuk-body-s">Manage your courses as a CSV file.</p>
-                </div>
-                <div class="pttcd-provider-dashboard__card__actions">
-                    <ul class="govuk-list pttcd-list--small">
-                        <li>
-                            <a asp-controller="BlobStorage" asp-action="GetCurrentCoursesTemplateFile" class="govuk-link">Your published course information (CSV)</a>
-                        </li>
-                        <li>
-                            <a asp-controller="BlobStorage" asp-action="GetBulkUploadTemplateFile" class="govuk-link">A course information template (CSV)</a>
-                        </li>
-                        <li>
-                            <a asp-controller="BulkUpload" asp-action="Courses" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload courses</a>
-                        </li>
-                    </ul>
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
+        {
+            <div class="govuk-grid-column-one-third">
+                <div class="pttcd-provider-dashboard__card">
+                    <div class="pttcd-provider-dashboard__card__content">
+                        <h2 class="govuk-heading-s">Course data upload</h2>
+                        <p class="govuk-body-s">Upload your courses with a CSV file.</p>
+                    </div>
+                    <div class="pttcd-provider-dashboard__card__actions">
+                        <ul class="govuk-list pttcd-list--small">
+                            <li>
+                                @if (Model.CourseUploadInProgress)
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-in-progress-link">Upload in progress</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                        Upload new course data
+                                    </a>
+                                }
+                            </li>
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Download your published course data (CSV)
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Download course data template (CSV)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="govuk-grid-column-one-third">
+                <div class="pttcd-provider-dashboard__card">
+                    <div class="pttcd-provider-dashboard__card__content">
+                        <h2 class="govuk-heading-s">Bulk upload</h2>
+                        <p class="govuk-body-s">Manage your courses as a CSV file.</p>
+                    </div>
+                    <div class="pttcd-provider-dashboard__card__actions">
+
+                        <ul class="govuk-list pttcd-list--small">
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetCurrentCoursesTemplateFile" class="govuk-link">Your published course information (CSV)</a>
+                            </li>
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetBulkUploadTemplateFile" class="govuk-link">A course information template (CSV)</a>
+                            </li>
+                            <li>
+                                <a asp-controller="BulkUpload" asp-action="Courses" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload courses</a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 }
 

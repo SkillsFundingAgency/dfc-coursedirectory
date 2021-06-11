@@ -19,6 +19,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public bool ShowCourses { get; set; }
         public int PublishedApprenticeshipsCount { get; set; }
         public int PublishedCourseCount { get; set; }
+        public bool CourseUploadInProgress { get; set; }
+        public int UnpublishedCourseCount { get; set; }
         public int PublishedVenueCount { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
@@ -58,6 +60,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                     ProviderId = providerContext.ProviderInfo.ProviderId
                 });
 
+            var courseUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerContext.ProviderInfo.ProviderId
+                });
+
             return new ViewModel()
             {
                 PublishedApprenticeshipsCount = counts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live, 0),
@@ -66,7 +74,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 ShowApprenticeships = providerType.HasFlag(ProviderType.Apprenticeships),
                 ShowCourses = providerType.HasFlag(ProviderType.FE),
                 VenueUploadInProgress = venueUploadStatus != null && venueUploadStatus.UploadStatus == UploadStatus.Processing,
-                UnpublishedVenueCount = counts.UnpublishedVenueCount
+                UnpublishedVenueCount = counts.UnpublishedVenueCount,
+                UnpublishedCourseCount = counts.UnpublishedCourseCount,
+                CourseUploadInProgress = courseUploadStatus != null && courseUploadStatus.UploadStatus == UploadStatus.Processing
             };
         }
     }
