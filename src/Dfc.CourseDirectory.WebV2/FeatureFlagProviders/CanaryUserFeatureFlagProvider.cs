@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.Security;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders
 {
     public abstract class CanaryUserFeatureFlagProvider : IFeatureFlagProvider
     {
