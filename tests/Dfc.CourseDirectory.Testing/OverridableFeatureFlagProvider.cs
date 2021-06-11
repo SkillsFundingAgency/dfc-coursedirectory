@@ -1,19 +1,18 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Core;
+﻿using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public class OverridableFeatureFlagProvider : IFeatureFlagProvider
     {
         private readonly IFeatureFlagProvider _inner;
-        private IReadOnlyCollection<string> _overridenFeatures;
+        private ConfiguredFeaturesCollection _overridenFeatures;
 
         public OverridableFeatureFlagProvider(IFeatureFlagProvider inner)
         {
             _inner = inner;
         }
 
-        public IReadOnlyCollection<string> GetFeatureFlags()
+        public ConfiguredFeaturesCollection GetFeatureFlags()
         {
             if (_overridenFeatures != null)
             {
@@ -32,7 +31,7 @@ namespace Dfc.CourseDirectory.Testing
 
         public void SetFeatures(params string[] features)
         {
-            _overridenFeatures = new HashSet<string>(features);
+            _overridenFeatures = new ConfiguredFeaturesCollection(features);
         }
     }
 }
