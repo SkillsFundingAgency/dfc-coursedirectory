@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
                 UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
-                CourseUploadInProgress = courseUploadStatus != null && courseUploadStatus.UploadStatus == UploadStatus.Processing
+                CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created)
             };
 
             return vm;
