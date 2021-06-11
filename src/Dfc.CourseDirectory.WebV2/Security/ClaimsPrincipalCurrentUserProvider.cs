@@ -32,9 +32,6 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 claims.Add(new Claim("ProviderId", signInContext.Provider.Id.ToString()));
                 claims.Add(new Claim("ProviderType", ((int)signInContext.Provider.ProviderType).ToString()));
                 claims.Add(new Claim("provider_status", signInContext.Provider.ProviderStatus));
-
-                // This claim is kept around to keep the old UI bits working.
-                // New bits should use ProviderId instead
                 claims.Add(new Claim("UKPRN", signInContext.Provider.Ukprn.ToString()));
             }
 
@@ -46,6 +43,9 @@ namespace Dfc.CourseDirectory.WebV2.Security
             var providerIdClaim = principal.FindFirst("ProviderId");
             var providerId = providerIdClaim != null ? Guid.Parse(providerIdClaim.Value) : (Guid?)null;
 
+            var ukprnClaim = principal.FindFirst("UKPRN");
+            var ukprn = ukprnClaim != null ? int.Parse(ukprnClaim.Value) : (int?)null;
+
             return new AuthenticatedUserInfo()
             {
                 Email = principal.FindFirst("email").Value,
@@ -53,7 +53,8 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 LastName = principal.FindFirst("family_name").Value,
                 Role = principal.FindFirst(ClaimTypes.Role)?.Value,
                 UserId = principal.FindFirst("sub").Value, // sub == subject of claim in JWT, i.e. userId. https://tools.ietf.org/html/rfc7519#section-4.1.2
-                CurrentProviderId = providerId
+                CurrentProviderId = providerId,
+                CurrentProviderUkprn = ukprn
             };
         }
 

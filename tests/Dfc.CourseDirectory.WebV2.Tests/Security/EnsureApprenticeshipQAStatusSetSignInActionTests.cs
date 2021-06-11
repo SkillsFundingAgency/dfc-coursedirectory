@@ -38,6 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                 UserInfo = new AuthenticatedUserInfo()
                 {
                     CurrentProviderId = provider.ProviderId,
+                    CurrentProviderUkprn = provider.Ukprn,
                     Email = "test.guy@provider.com",
                     FirstName = "Test",
                     LastName = "Guy",
