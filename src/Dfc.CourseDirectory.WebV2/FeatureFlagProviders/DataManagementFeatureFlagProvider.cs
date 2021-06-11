@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dfc.CourseDirectory.Core;
 
-namespace Dfc.CourseDirectory.Core
+namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders
 {
     public class DataManagementFeatureFlagProvider : IFeatureFlagProvider
     {

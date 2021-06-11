@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
+using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
