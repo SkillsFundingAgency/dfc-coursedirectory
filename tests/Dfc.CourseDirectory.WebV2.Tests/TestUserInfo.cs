@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -22,10 +21,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public static readonly string DefaultUserId = new Guid("9b8adb2a-5a26-44b9-b6a0-52846f7a4555").ToString();
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IProviderInfoCache _providerInfoCache;
 
-        public TestUserInfo(IServiceScopeFactory serviceScopeFactory)
+        public TestUserInfo(IServiceScopeFactory serviceScopeFactory, IProviderInfoCache providerInfoCache)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _providerInfoCache = providerInfoCache;
         }
 
         public string Email { get; private set; }
@@ -38,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Guid? ProviderId { get; private set; }
         public ProviderType? ProviderType { get; private set; }
         public string ProviderStatus { get; set; }
+        public int? ProviderUkprn { get; private set; }
 
         public Task AsTestUser(TestUserType userType, Guid? providerId = null)
         {
@@ -101,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Task AsProviderUser(Guid providerId, ProviderType providerType, string providerStatus) =>
             AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
-        public Task AsProviderUser(
+        public async Task AsProviderUser(
             string email,
             string userId,
             string firstName,
@@ -119,8 +121,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = providerId;
             ProviderType = providerType;
             ProviderStatus = providerStatus;
+            ProviderUkprn = await GetProviderUkprn(providerId);
 
-            return RecordSignIn();
+            await RecordSignIn();
         }
 
         public Task AsProviderSuperUser(Guid providerId, ProviderType providerType) =>
@@ -129,7 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Task AsProviderSuperUser(Guid providerId, ProviderType providerType, string providerStatus) =>
             AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
-        public Task AsProviderSuperUser(
+        public async Task AsProviderSuperUser(
             string email,
             string userId,
             string firstName,
@@ -147,8 +150,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = providerId;
             ProviderType = providerType;
             ProviderStatus = providerStatus;
+            ProviderUkprn = await GetProviderUkprn(providerId);
 
-            return RecordSignIn();
+            await RecordSignIn();
         }
 
         public Task Reset() => AsDeveloper();
@@ -164,6 +168,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = default;
             ProviderType = default;
             ProviderStatus = null;
+            ProviderUkprn = null;
         }
 
         public ClaimsPrincipal ToPrincipal()
@@ -184,7 +189,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 {
                     new Claim("ProviderId", ProviderId.Value.ToString()),
                     new Claim("ProviderType", ProviderType.Value.ToString()),
-                    new Claim("provider_status", ProviderStatus)
+                    new Claim("provider_status", ProviderStatus),
+                    new Claim("UKPRN", ProviderUkprn.Value.ToString())
                     // These claims are populated in the real app but are not required here (yet):
                     // organisation - JSON from DfE Sign In API call
                     // OrganisationId - GUID Org ID for DfE API call
@@ -203,6 +209,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             LastName = LastName
         };
 
+        private async Task<int> GetProviderUkprn(Guid providerId)
+        {
+            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
+            return providerInfo.Ukprn;
+        }
+
         private async Task RecordSignIn()
         {
             using (var scope = _serviceScopeFactory.CreateScope())
@@ -217,6 +229,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                         FirstName = FirstName,
                         LastName = LastName,
                         CurrentProviderId = ProviderId,
+                        CurrentProviderUkprn = ProviderUkprn,
                         Role = Role,
                         UserId = UserId
                     });
