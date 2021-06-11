@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dfc.CourseDirectory.Core;
+﻿using Dfc.CourseDirectory.Core;
 
 namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders
 {
@@ -14,17 +11,17 @@ namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders
             _innerFeatureFlagProvider = innerFeatureFlagProvider;
         }
 
-        public IReadOnlyCollection<string> GetFeatureFlags()
+        public ConfiguredFeaturesCollection GetFeatureFlags()
         {
-            var features = _innerFeatureFlagProvider.GetFeatureFlags().ToList();
+            var features = _innerFeatureFlagProvider.GetFeatureFlags();
 
-            if (_innerFeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement) ||
-                _innerFeatureFlagProvider.HaveFeature(FeatureFlags.VenuesDataManagement))
+            if (features.HaveFeature(FeatureFlags.CoursesDataManagement) ||
+                features.HaveFeature(FeatureFlags.VenuesDataManagement))
             {
-                features.Add(FeatureFlags.DataManagement);
+                features = features.With(FeatureFlags.DataManagement);
             }
 
-            return features.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            return features;
         }
     }
 }
