@@ -473,6 +473,38 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
         }
 
+        [Fact]
+        public async Task Get_UnpublishedCourseUploads()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.FE);
+
+            //Create some venue upload rows to test new data in UI
+            var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
+            }
+
+        }
+
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]

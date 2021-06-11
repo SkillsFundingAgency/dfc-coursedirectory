@@ -19,7 +19,8 @@ namespace Dfc.CourseDirectory.Testing
         {
             if (uploadStatus != UploadStatus.Created &&
                 uploadStatus != UploadStatus.Processing &&
-                uploadStatus != UploadStatus.ProcessedSuccessfully)
+                uploadStatus != UploadStatus.ProcessedSuccessfully &&
+                uploadStatus != UploadStatus.ProcessedWithErrors)
             {
                 throw new NotImplementedException();
             }
@@ -29,12 +30,20 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
             DateTime? processingCompletedOn = uploadStatus >= UploadStatus.ProcessedWithErrors ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null;
 
+            var isValid = uploadStatus switch
+            {
+                UploadStatus.ProcessedWithErrors => false,
+                UploadStatus.Created | UploadStatus.Processing => (bool?)null,
+                _ => true
+            };
+
             var (courseUpload, rows) = await CreateCourseUpload(
                 providerId,
                 createdBy,
                 createdOn,
                 processingStartedOn,
                 processingCompletedOn,
+                isValid,
                 configureRows);
 
             Assert.Equal(uploadStatus, courseUpload.UploadStatus);
@@ -48,6 +57,7 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? createdOn = null,
             DateTime? processingStartedOn = null,
             DateTime? processingCompletedOn = null,
+            bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
             var courseUploadId = Guid.NewGuid();
@@ -72,6 +82,11 @@ namespace Dfc.CourseDirectory.Testing
                         CourseUploadId = courseUploadId,
                         ProcessingStartedOn = processingStartedOn.Value
                     });
+
+                    if (!isValid.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(isValid));
+                    }
                 }
 
                 if (processingCompletedOn.HasValue)
@@ -85,7 +100,7 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         CourseUploadId = courseUploadId,
                         ProcessingCompletedOn = processingCompletedOn.Value,
-                        IsValid = true
+                        IsValid = isValid.Value
                     });
 
                     var rowBuilder = new CourseUploadRowBuilder();
@@ -96,7 +111,17 @@ namespace Dfc.CourseDirectory.Testing
                     }
                     else
                     {
-                        rowBuilder.AddValidRows(3);
+                        if (isValid.Value)
+                        {
+                            rowBuilder.AddValidRows(3);
+                        }
+                        else
+                        {
+                            rowBuilder.AddRow(record =>
+                            {
+                                record.CourseName = string.Empty;
+                            });
+                        }
                     }
 
                     rows = (await dispatcher.ExecuteQuery(new SetCourseUploadRows()
