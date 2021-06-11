@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
     {
         public string Role { get; set; }
         public Guid? CurrentProviderId { get; set; }
+        public int? CurrentProviderUkprn { get; set; }
 
         public bool IsAdmin => IsDeveloper || IsHelpdesk;
         public bool IsDeveloper => Role == RoleNames.Developer;
