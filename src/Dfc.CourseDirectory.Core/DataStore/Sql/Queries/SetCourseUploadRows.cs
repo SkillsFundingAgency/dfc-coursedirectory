@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
@@ -44,5 +45,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string StudyMode { get; set; }
         public string AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public CourseDeliveryMode? ResolvedDeliveryMode { get; set; }
+        public DateTime? ResolvedStartDate { get; set; }
+        public bool? ResolvedFlexibleStartDate { get; set; }
+        public bool? ResolvedNationalDelivery { get; set; }
+        public decimal? ResolvedCost { get; set; }
+        public int? ResolvedDuration { get; set; }
+        public CourseDurationUnit? ResolvedDurationUnit { get; set; }
+        public CourseStudyMode? ResolvedStudyMode { get; set; }
+        public CourseAttendancePattern? ResolvedAttendancePattern { get; set; }
     }
 }

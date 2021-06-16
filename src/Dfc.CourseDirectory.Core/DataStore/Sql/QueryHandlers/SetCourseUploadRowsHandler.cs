@@ -57,7 +57,16 @@ WHEN NOT MATCHED THEN
         DurationUnit,
         StudyMode,
         AttendancePattern,
-        VenueId
+        VenueId,
+        ResolvedDeliveryMode,
+        ResolvedStartDate,
+        ResolvedFlexibleStartDate,
+        ResolvedNationalDelivery,
+        ResolvedCost,
+        ResolvedDuration,
+        ResolvedDurationUnit,
+        ResolvedStudyMode,
+        ResolvedAttendancePattern
     ) VALUES (
         @CourseUploadId,
         source.RowNumber,
@@ -92,7 +101,16 @@ WHEN NOT MATCHED THEN
         source.DurationUnit,
         source.StudyMode,
         source.AttendancePattern,
-        source.VenueId
+        source.VenueId,
+        source.ResolvedDeliveryMode,
+        source.ResolvedStartDate,
+        source.ResolvedFlexibleStartDate,
+        source.ResolvedNationalDelivery,
+        source.ResolvedCost,
+        source.ResolvedDuration,
+        source.ResolvedDurationUnit,
+        source.ResolvedStudyMode,
+        source.ResolvedAttendancePattern
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -126,7 +144,16 @@ WHEN MATCHED THEN UPDATE SET
     DurationUnit = source.DurationUnit,
     StudyMode = source.StudyMode,
     AttendancePattern = source.AttendancePattern,
-    VenueId = source.VenueId
+    VenueId = source.VenueId,
+    ResolvedDeliveryMode = source.ResolvedDeliveryMode,
+    ResolvedStartDate = source.ResolvedStartDate,
+    ResolvedFlexibleStartDate = source.ResolvedFlexibleStartDate,
+    ResolvedNationalDelivery = source.ResolvedNationalDelivery,
+    ResolvedCost = source.ResolvedCost,
+    ResolvedDuration = source.ResolvedDuration,
+    ResolvedDurationUnit = source.ResolvedDurationUnit,
+    ResolvedStudyMode = source.ResolvedStudyMode,
+    ResolvedAttendancePattern = source.ResolvedAttendancePattern
 ;
 
 SELECT
@@ -134,7 +161,9 @@ SELECT
     LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
     HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
-    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId
+    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
+    ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery, ResolvedCost,
+    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -191,6 +220,15 @@ ORDER BY RowNumber";
                 table.Columns.Add("StudyMode", typeof(string));
                 table.Columns.Add("AttendancePattern", typeof(string));
                 table.Columns.Add("VenueId", typeof(Guid));
+                table.Columns.Add("ResolvedDeliveryMode", typeof(byte));
+                table.Columns.Add("ResolvedStartDate", typeof(DateTime));
+                table.Columns.Add("ResolvedFlexibleStartDate", typeof(bool));
+                table.Columns.Add("ResolvedNationalDelivery", typeof(bool));
+                table.Columns.Add("ResolvedCost", typeof(decimal));
+                table.Columns.Add("ResolvedDuration", typeof(int));
+                table.Columns.Add("ResolvedDurationUnit", typeof(byte));
+                table.Columns.Add("ResolvedStudyMode", typeof(byte));
+                table.Columns.Add("ResolvedAttendancePattern", typeof(byte));
 
                 foreach (var record in query.Records)
                 {
@@ -226,7 +264,16 @@ ORDER BY RowNumber";
                         record.DurationUnit,
                         record.StudyMode,
                         record.AttendancePattern,
-                        record.VenueId);
+                        record.VenueId,
+                        record.ResolvedDeliveryMode,
+                        record.ResolvedStartDate,
+                        record.ResolvedFlexibleStartDate,
+                        record.ResolvedNationalDelivery,
+                        record.ResolvedCost,
+                        record.ResolvedDuration,
+                        record.ResolvedDurationUnit,
+                        record.ResolvedStudyMode,
+                        record.ResolvedAttendancePattern);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.CourseUploadRowTable");

@@ -14,6 +14,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.22" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.376" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.11" />
+    <PackageReference Include="Mapster" Version="5.1.0" />
     <PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.0.0-beta.1" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.3" />

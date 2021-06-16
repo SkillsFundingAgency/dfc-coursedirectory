@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
+using Mapster;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -146,11 +147,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         // internal for testing
-        internal Guid? FindVenue(CsvCourseRow row, IReadOnlyCollection<Venue> providerVenues)
+        internal Guid? FindVenue(ParsedCsvCourseRow row, IReadOnlyCollection<Venue> providerVenues)
         {
-            var deliveryMode = CsvCourseRow.ResolveDeliveryMode(row.DeliveryMode);
-
-            if (deliveryMode != CourseDeliveryMode.ClassroomBased)
+            if (row.ResolvedDeliveryMode != CourseDeliveryMode.ClassroomBased)
             {
                 return null;
             }
@@ -234,11 +233,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     var rowNumber = row.RowNumber;
                     var courseRunId = Guid.NewGuid();
 
-                    var matchedVenueId = FindVenue(row.Data, providerVenues);
+                    var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data);
+
+                    var matchedVenueId = FindVenue(parsedRow, providerVenues);
 
                     var validator = new CourseUploadRowValidator(regions, validLearningAimRefs, matchedVenueId);
 
-                    var rowValidationResult = validator.Validate(row.Data);
+                    var rowValidationResult = validator.Validate(parsedRow);
                     var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                     var rowIsValid = rowValidationResult.IsValid;
                     uploadIsValid &= rowIsValid;
@@ -250,30 +251,39 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         Errors = errors,
                         CourseId = courseId,
                         CourseRunId = courseRunId,
-                        LarsQan = row.Data.LarsQan,
-                        WhoThisCourseIsFor = row.Data.WhoThisCourseIsFor,
-                        EntryRequirements = row.Data.EntryRequirements,
-                        WhatYouWillLearn = row.Data.WhatYouWillLearn,
-                        HowYouWillLearn = row.Data.HowYouWillLearn,
-                        WhatYouWillNeedToBring = row.Data.WhatYouWillNeedToBring,
-                        HowYouWillBeAssessed = row.Data.HowYouWillBeAssessed,
-                        WhereNext = row.Data.WhereNext,
-                        CourseName = row.Data.CourseName,
-                        ProviderCourseRef = row.Data.ProviderCourseRef,
-                        DeliveryMode = row.Data.DeliveryMode,
-                        StartDate = row.Data.StartDate,
-                        FlexibleStartDate = row.Data.FlexibleStartDate,
-                        VenueName = row.Data.VenueName,
-                        ProviderVenueRef = row.Data.ProviderVenueRef,
-                        NationalDelivery = row.Data.NationalDelivery,
-                        SubRegions = row.Data.SubRegions,
-                        CourseWebpage = row.Data.CourseWebPage,
-                        Cost = row.Data.Cost,
-                        CostDescription = row.Data.CostDescription,
-                        Duration = row.Data.Duration,
-                        DurationUnit = row.Data.DurationUnit,
-                        StudyMode = row.Data.StudyMode,
-                        AttendancePattern = row.Data.AttendancePattern
+                        LarsQan = parsedRow.LarsQan,
+                        WhoThisCourseIsFor = parsedRow.WhoThisCourseIsFor,
+                        EntryRequirements = parsedRow.EntryRequirements,
+                        WhatYouWillLearn = parsedRow.WhatYouWillLearn,
+                        HowYouWillLearn = parsedRow.HowYouWillLearn,
+                        WhatYouWillNeedToBring = parsedRow.WhatYouWillNeedToBring,
+                        HowYouWillBeAssessed = parsedRow.HowYouWillBeAssessed,
+                        WhereNext = parsedRow.WhereNext,
+                        CourseName = parsedRow.CourseName,
+                        ProviderCourseRef = parsedRow.ProviderCourseRef,
+                        DeliveryMode = parsedRow.DeliveryMode,
+                        StartDate = parsedRow.StartDate,
+                        FlexibleStartDate = parsedRow.FlexibleStartDate,
+                        VenueName = parsedRow.VenueName,
+                        ProviderVenueRef = parsedRow.ProviderVenueRef,
+                        NationalDelivery = parsedRow.NationalDelivery,
+                        SubRegions = parsedRow.SubRegions,
+                        CourseWebpage = parsedRow.CourseWebPage,
+                        Cost = parsedRow.Cost,
+                        CostDescription = parsedRow.CostDescription,
+                        Duration = parsedRow.Duration,
+                        DurationUnit = parsedRow.DurationUnit,
+                        StudyMode = parsedRow.StudyMode,
+                        AttendancePattern = parsedRow.AttendancePattern,
+                        ResolvedDeliveryMode = parsedRow.ResolvedDeliveryMode,
+                        ResolvedStartDate = parsedRow.ResolvedStartDate,
+                        ResolvedFlexibleStartDate = parsedRow.ResolvedFlexibleStartDate,
+                        ResolvedNationalDelivery = parsedRow.ResolvedNationalDelivery,
+                        ResolvedCost = parsedRow.ResolvedCost,
+                        ResolvedDuration = parsedRow.ResolvedDuration,
+                        ResolvedDurationUnit = parsedRow.ResolvedDurationUnit,
+                        ResolvedStudyMode = parsedRow.ResolvedStudyMode,
+                        ResolvedAttendancePattern = parsedRow.ResolvedAttendancePattern
                     });
                 }
             }
@@ -298,7 +308,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         // internal for testing
-        internal class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
+        internal class CourseUploadRowValidator : AbstractValidator<ParsedCsvCourseRow>
         {
             public CourseUploadRowValidator(
                 IReadOnlyCollection<Region> allRegions,
@@ -315,20 +325,126 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.WhereNext).WhereNext();
                 RuleFor(c => c.CourseName).CourseName();
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
-                RuleFor(c => c.DeliveryMode).DeliveryMode();
-                RuleFor(c => c.StartDate).StartDate(c => c.FlexibleStartDate);
-                RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
-                RuleFor(c => c.VenueName).VenueName(c => c.DeliveryMode, c => c.ProviderVenueRef, matchedVenueId);
-                RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.DeliveryMode, c => c.VenueName, matchedVenueId);
-                RuleFor(c => c.NationalDelivery).NationalDelivery(c => c.DeliveryMode);
-                RuleFor(c => c.SubRegions).SubRegions(c => c.DeliveryMode, c => c.NationalDelivery, allRegions);
+                RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode();
+                RuleFor(c => c.ResolvedStartDate).StartDate(c => c.ResolvedFlexibleStartDate);
+                RuleFor(c => c.ResolvedFlexibleStartDate).FlexibleStartDate();
+                RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMode, c => c.ProviderVenueRef, matchedVenueId);
+                RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.ResolvedDeliveryMode, c => c.VenueName, matchedVenueId);
+                RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(c => c.ResolvedDeliveryMode);
+                RuleFor(c => c.SubRegions).SubRegions(c => c.ResolvedDeliveryMode, c => c.ResolvedNationalDelivery, allRegions);
                 RuleFor(c => c.CourseWebPage).CourseWebPage();
-                RuleFor(c => c.Cost).Cost(c => c.CostDescription);
-                RuleFor(c => c.CostDescription).CostDescription(c => c.Cost);
-                RuleFor(c => c.Duration).Duration();
-                RuleFor(c => c.DurationUnit).DurationUnit();
-                RuleFor(c => c.StudyMode).StudyMode(c => c.DeliveryMode);
-                RuleFor(c => c.AttendancePattern).AttendancePattern(c => c.DeliveryMode);
+                RuleFor(c => c.ResolvedCost).Cost(c => c.CostDescription);
+                RuleFor(c => c.CostDescription).CostDescription(c => c.ResolvedCost);
+                RuleFor(c => c.ResolvedDuration).Duration();
+                RuleFor(c => c.ResolvedDurationUnit).DurationUnit();
+                RuleFor(c => c.ResolvedStudyMode).StudyMode(
+                    studyModeWasSpecified: t => !string.IsNullOrEmpty(t.StudyMode),
+                    c => c.ResolvedDeliveryMode);
+                RuleFor(c => c.ResolvedAttendancePattern).AttendancePattern(
+                    attendancePatternWasSpecified: t => !string.IsNullOrEmpty(t.AttendancePattern),
+                    c => c.ResolvedDeliveryMode);
+            }
+        }
+
+        internal class ParsedCsvCourseRow : CsvCourseRow
+        {
+            private const string DateFormat = "dd/MM/yyyy";
+
+            private ParsedCsvCourseRow()
+            {
+            }
+
+            public CourseDeliveryMode? ResolvedDeliveryMode => ResolveDeliveryMode(DeliveryMode);
+            public DateTime? ResolvedStartDate => ResolveStartDate(StartDate);
+            public bool? ResolvedFlexibleStartDate => ResolveFlexibleStartDate(FlexibleStartDate);
+            public bool? ResolvedNationalDelivery => ResolveNationalDelivery(NationalDelivery);
+            public decimal? ResolvedCost => ResolveCost(Cost);
+            public int? ResolvedDuration => ResolveDuration(Duration);
+            public CourseDurationUnit? ResolvedDurationUnit => ResolveDurationUnit(DurationUnit);
+            public CourseStudyMode? ResolvedStudyMode => ResolveStudyMode(StudyMode);
+            public CourseAttendancePattern? ResolvedAttendancePattern => ResolveAttendancePattern(AttendancePattern);
+
+            public static ParsedCsvCourseRow FromCsvCourseRow(CsvCourseRow row)
+            {
+                var parsedRow = new ParsedCsvCourseRow();
+                return row.Adapt(parsedRow);
+            }
+
+            public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
+            {
+                "daytime" => CourseAttendancePattern.Daytime,
+                "evening" => CourseAttendancePattern.Evening,
+                "weekend" => CourseAttendancePattern.Weekend,
+                "day/block release" => CourseAttendancePattern.DayOrBlockRelease,
+                _ => (CourseAttendancePattern?)null
+            };
+
+            public static decimal? ResolveCost(string value) =>
+                decimal.TryParse(value, out var result) && GetDecimalPlaces(result) <= 2 ? result : (decimal?)null;
+
+            public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
+            {
+                "classroom based" => CourseDeliveryMode.ClassroomBased,
+                "classroom" => CourseDeliveryMode.ClassroomBased,
+                "online" => CourseDeliveryMode.Online,
+                "work based" => CourseDeliveryMode.WorkBased,
+                "work" => CourseDeliveryMode.WorkBased,
+                _ => (CourseDeliveryMode?)null
+            };
+
+            public static int? ResolveDuration(string value) =>
+                int.TryParse(value, out var duration) ? duration : (int?)null;
+
+            public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
+            {
+                "hours" => CourseDurationUnit.Hours,
+                "days" => CourseDurationUnit.Days,
+                "weeks" => CourseDurationUnit.Weeks,
+                "months" => CourseDurationUnit.Months,
+                "years" => CourseDurationUnit.Years,
+                _ => (CourseDurationUnit?)null
+            };
+
+            public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
+            {
+                "yes" => true,
+                "no" => false,
+                "" => false,
+                _ => null
+            };
+
+            public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
+            {
+                "yes" => true,
+                "no" => false,
+                _ => null
+            };
+
+            public static DateTime? ResolveStartDate(string value) =>
+                DateTime.TryParseExact(value, DateFormat, null, DateTimeStyles.None, out var dt) ? dt : (DateTime?)null;
+
+            public static CourseStudyMode? ResolveStudyMode(string value) => value?.ToLower() switch
+            {
+                "full time" => CourseStudyMode.FullTime,
+                "part time" => CourseStudyMode.PartTime,
+                "flexible" => CourseStudyMode.Flexible,
+                _ => (CourseStudyMode?)null
+            };
+
+            private static int GetDecimalPlaces(decimal n)
+            {
+                n = Math.Abs(n);
+                n -= (int)n;
+
+                var decimalPlaces = 0;
+                while (n > 0)
+                {
+                    decimalPlaces++;
+                    n *= 10;
+                    n -= (int)n;
+                }
+
+                return decimalPlaces;
             }
         }
 

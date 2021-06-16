@@ -11,6 +11,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using Xunit;
+using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
 
 namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 {
@@ -44,7 +45,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -75,7 +76,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -106,7 +107,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result);
@@ -138,7 +139,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -170,7 +171,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result);
@@ -201,7 +202,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -232,7 +233,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             // Act
-            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row), new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result);

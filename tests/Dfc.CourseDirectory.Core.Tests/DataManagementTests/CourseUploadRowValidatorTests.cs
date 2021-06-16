@@ -30,12 +30,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.AttendancePattern) && error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
         }
 
         [Theory]
@@ -55,12 +55,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.AttendancePattern) && error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
         }
 
         [Fact]
@@ -78,16 +78,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.Cost) && error.ErrorCode == "COURSERUN_COST_REQUIRED");
-
-            Assert.DoesNotContain(
-                validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.CostDescription));
+                error => error.ErrorCode == "COURSERUN_COST_REQUIRED");
         }
 
         [Fact]
@@ -105,12 +101,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.Cost) && error.ErrorCode == "COURSERUN_COST_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_COST_NOT_ALLOWED");
         }
 
         [Fact]
@@ -128,12 +124,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.DurationUnit) && error.ErrorCode == "COURSERUN_DURATION_UNIT_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_DURATION_UNIT_REQUIRED");
         }
 
         [Fact]
@@ -150,12 +146,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.LarsQan) && error.ErrorCode == "COURSE_LARS_QAN_REQUIRED");
+                error => error.ErrorCode == "COURSE_LARS_QAN_REQUIRED");
         }
 
         [Fact]
@@ -173,12 +169,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.NationalDelivery) && error.ErrorCode == "COURSERUN_NATIONAL_DELIVERY_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_NATIONAL_DELIVERY_REQUIRED");
         }
 
         [Theory]
@@ -198,12 +194,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.NationalDelivery) && error.ErrorCode == "COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED");
         }
 
         [Theory]
@@ -223,12 +219,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.ProviderVenueRef) && error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
         }
 
         [Fact]
@@ -247,12 +243,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.ProviderVenueRef) && error.ErrorCode == "COURSERUN_VENUE_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_VENUE_REQUIRED");
         }
 
         [Fact]
@@ -280,12 +276,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.ProviderVenueRef) && error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_INVALID");
+                error => error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_INVALID");
         }
 
         [Fact]
@@ -304,7 +300,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.DoesNotContain(
@@ -327,12 +323,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.StartDate) && error.ErrorCode == "COURSERUN_START_DATE_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_START_DATE_REQUIRED");
         }
 
         [Fact]
@@ -350,12 +346,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.StartDate) && error.ErrorCode == "COURSERUN_START_DATE_NOT_ALLOWED");
+                error =>error.ErrorCode == "COURSERUN_START_DATE_NOT_ALLOWED");
         }
 
         [Fact]
@@ -373,12 +369,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.StudyMode) && error.ErrorCode == "COURSERUN_STUDY_MODE_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_STUDY_MODE_REQUIRED");
         }
 
         [Theory]
@@ -398,12 +394,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.StudyMode) && error.ErrorCode == "COURSERUN_STUDY_MODE_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_STUDY_MODE_NOT_ALLOWED");
         }
 
         [Fact]
@@ -422,12 +418,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.SubRegions) && error.ErrorCode == "COURSERUN_SUBREGIONS_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_REQUIRED");
         }
 
         [Theory]
@@ -449,12 +445,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.DoesNotContain(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.SubRegions) && error.ErrorCode == "COURSERUN_SUBREGIONS_REQUIRED");
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_REQUIRED");
         }
 
         [Fact]
@@ -473,12 +469,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.SubRegions) && error.ErrorCode == "COURSERUN_SUBREGIONS_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_NOT_ALLOWED");
         }
 
         [Fact]
@@ -497,12 +493,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.SubRegions) && error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
         }
 
         [Theory]
@@ -522,12 +518,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.DoesNotContain(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.SubRegions) && error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
         }
 
         [Theory]
@@ -549,12 +545,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.VenueName) && error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED");
         }
 
         [Fact]
@@ -582,12 +578,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.VenueName) && error.ErrorCode == "COURSERUN_VENUE_NAME_INVALID");
+                error => error.ErrorCode == "COURSERUN_VENUE_NAME_INVALID");
         }
 
         [Fact]
@@ -616,12 +612,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
-            var validationResult = validator.Validate(row);
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row));
 
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.PropertyName == nameof(CsvCourseRow.VenueName) && error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF");
+                error => error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF");
         }
     }
 }
