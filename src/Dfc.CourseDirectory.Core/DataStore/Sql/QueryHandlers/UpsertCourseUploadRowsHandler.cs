@@ -12,16 +12,14 @@ using static Dapper.SqlMapper;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class SetCourseUploadRowsHandler : ISqlQueryHandler<SetCourseUploadRows, IReadOnlyCollection<CourseUploadRow>>
+    public class UpsertCourseUploadRowsHandler : ISqlQueryHandler<UpsertCourseUploadRows, IReadOnlyCollection<CourseUploadRow>>
     {
-        public async Task<IReadOnlyCollection<CourseUploadRow>> Execute(SqlTransaction transaction, SetCourseUploadRows query)
+        public async Task<IReadOnlyCollection<CourseUploadRow>> Execute(SqlTransaction transaction, UpsertCourseUploadRows query)
         {
             var sql = $@"
 MERGE Pttcd.CourseUploadRows AS target
 USING (SELECT * FROM @Rows) AS source
     ON target.CourseUploadId = @CourseUploadId AND target.RowNumber = source.RowNumber
-WHEN NOT MATCHED BY SOURCE AND target.CourseUploadId = @CourseUploadId THEN
-    UPDATE SET CourseUploadRowStatus = {(int)UploadRowStatus.Deleted}
 WHEN NOT MATCHED THEN 
     INSERT (
         CourseUploadId,
@@ -56,7 +54,17 @@ WHEN NOT MATCHED THEN
         Duration,
         DurationUnit,
         StudyMode,
-        AttendancePattern
+        AttendancePattern,
+        VenueId,
+        ResolvedDeliveryMode,
+        ResolvedStartDate,
+        ResolvedFlexibleStartDate,
+        ResolvedNationalDelivery,
+        ResolvedCost,
+        ResolvedDuration,
+        ResolvedDurationUnit,
+        ResolvedStudyMode,
+        ResolvedAttendancePattern
     ) VALUES (
         @CourseUploadId,
         source.RowNumber,
@@ -90,7 +98,17 @@ WHEN NOT MATCHED THEN
         source.Duration,
         source.DurationUnit,
         source.StudyMode,
-        source.AttendancePattern
+        source.AttendancePattern,
+        source.VenueId,
+        source.ResolvedDeliveryMode,
+        source.ResolvedStartDate,
+        source.ResolvedFlexibleStartDate,
+        source.ResolvedNationalDelivery,
+        source.ResolvedCost,
+        source.ResolvedDuration,
+        source.ResolvedDurationUnit,
+        source.ResolvedStudyMode,
+        source.ResolvedAttendancePattern
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -123,7 +141,17 @@ WHEN MATCHED THEN UPDATE SET
     Duration = source.Duration,
     DurationUnit = source.DurationUnit,
     StudyMode = source.StudyMode,
-    AttendancePattern = source.AttendancePattern
+    AttendancePattern = source.AttendancePattern,
+    VenueId = source.VenueId,
+    ResolvedDeliveryMode = source.ResolvedDeliveryMode,
+    ResolvedStartDate = source.ResolvedStartDate,
+    ResolvedFlexibleStartDate = source.ResolvedFlexibleStartDate,
+    ResolvedNationalDelivery = source.ResolvedNationalDelivery,
+    ResolvedCost = source.ResolvedCost,
+    ResolvedDuration = source.ResolvedDuration,
+    ResolvedDurationUnit = source.ResolvedDurationUnit,
+    ResolvedStudyMode = source.ResolvedStudyMode,
+    ResolvedAttendancePattern = source.ResolvedAttendancePattern
 ;
 
 SELECT
@@ -131,7 +159,9 @@ SELECT
     LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
     HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
-    Duration, DurationUnit, StudyMode, AttendancePattern
+    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
+    ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery, ResolvedCost,
+    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -187,6 +217,16 @@ ORDER BY RowNumber";
                 table.Columns.Add("DurationUnit", typeof(string));
                 table.Columns.Add("StudyMode", typeof(string));
                 table.Columns.Add("AttendancePattern", typeof(string));
+                table.Columns.Add("VenueId", typeof(Guid));
+                table.Columns.Add("ResolvedDeliveryMode", typeof(byte));
+                table.Columns.Add("ResolvedStartDate", typeof(DateTime));
+                table.Columns.Add("ResolvedFlexibleStartDate", typeof(bool));
+                table.Columns.Add("ResolvedNationalDelivery", typeof(bool));
+                table.Columns.Add("ResolvedCost", typeof(decimal));
+                table.Columns.Add("ResolvedDuration", typeof(int));
+                table.Columns.Add("ResolvedDurationUnit", typeof(byte));
+                table.Columns.Add("ResolvedStudyMode", typeof(byte));
+                table.Columns.Add("ResolvedAttendancePattern", typeof(byte));
 
                 foreach (var record in query.Records)
                 {
@@ -221,7 +261,17 @@ ORDER BY RowNumber";
                         record.Duration,
                         record.DurationUnit,
                         record.StudyMode,
-                        record.AttendancePattern);
+                        record.AttendancePattern,
+                        record.VenueId,
+                        record.ResolvedDeliveryMode,
+                        record.ResolvedStartDate,
+                        record.ResolvedFlexibleStartDate,
+                        record.ResolvedNationalDelivery,
+                        record.ResolvedCost,
+                        record.ResolvedDuration,
+                        record.ResolvedDurationUnit,
+                        record.ResolvedStudyMode,
+                        record.ResolvedAttendancePattern);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.CourseUploadRowTable");

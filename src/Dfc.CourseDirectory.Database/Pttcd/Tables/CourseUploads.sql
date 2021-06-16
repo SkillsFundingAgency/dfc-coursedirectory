@@ -8,6 +8,5 @@
 	[ProcessingStartedOn] DATETIME,
 	[ProcessingCompletedOn] DATETIME,
 	[PublishedOn] DATETIME,
-	[AbandonedOn] DATETIME,
-	[LastValidated] DATETIME
+	[AbandonedOn] DATETIME
 )

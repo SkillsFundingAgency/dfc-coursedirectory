@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Testing
@@ -19,6 +21,7 @@ namespace Dfc.CourseDirectory.Testing
         {
             if (uploadStatus != UploadStatus.Created &&
                 uploadStatus != UploadStatus.Processing &&
+                uploadStatus != UploadStatus.ProcessedWithErrors &&
                 uploadStatus != UploadStatus.ProcessedSuccessfully)
             {
                 throw new NotImplementedException();
@@ -29,12 +32,20 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
             DateTime? processingCompletedOn = uploadStatus >= UploadStatus.ProcessedWithErrors ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null;
 
+            var isValid = uploadStatus switch
+            {
+                UploadStatus.ProcessedWithErrors => false,
+                UploadStatus.Created | UploadStatus.Processing => (bool?)null,
+                _ => true
+            };
+
             var (courseUpload, rows) = await CreateCourseUpload(
                 providerId,
                 createdBy,
                 createdOn,
                 processingStartedOn,
                 processingCompletedOn,
+                isValid,
                 configureRows);
 
             Assert.Equal(uploadStatus, courseUpload.UploadStatus);
@@ -48,6 +59,7 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? createdOn = null,
             DateTime? processingStartedOn = null,
             DateTime? processingCompletedOn = null,
+            bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
             var courseUploadId = Guid.NewGuid();
@@ -81,11 +93,16 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingStartedOn));
                     }
 
+                    if (!isValid.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(isValid));
+                    }
+
                     await dispatcher.ExecuteQuery(new SetCourseUploadProcessed()
                     {
                         CourseUploadId = courseUploadId,
                         ProcessingCompletedOn = processingCompletedOn.Value,
-                        IsValid = true
+                        IsValid = isValid.Value
                     });
 
                     var rowBuilder = new CourseUploadRowBuilder();
@@ -96,10 +113,22 @@ namespace Dfc.CourseDirectory.Testing
                     }
                     else
                     {
-                        rowBuilder.AddValidRows(3);
+                        if (isValid.Value)
+                        {
+                            rowBuilder.AddValidRows(3);
+                        }
+                        else
+                        {
+                            rowBuilder.AddRow(record =>
+                            {
+                                record.CourseName = string.Empty;
+                                record.Errors = new[] { ErrorRegistry.All["COURSERUN_COURSE_NAME_REQUIRED"].ErrorCode };
+                                record.IsValid = false;
+                            });
+                        }
                     }
 
-                    rows = (await dispatcher.ExecuteQuery(new SetCourseUploadRows()
+                    rows = (await dispatcher.ExecuteQuery(new UpsertCourseUploadRows()
                     {
                         CourseUploadId = courseUploadId,
                         Records = rowBuilder.GetUpsertQueryRows(),
@@ -119,9 +148,9 @@ namespace Dfc.CourseDirectory.Testing
 
         public class CourseUploadRowBuilder
         {
-            private readonly List<SetCourseUploadRowsRecord> _records = new List<SetCourseUploadRowsRecord>();
+            private readonly List<UpsertCourseUploadRowsRecord> _records = new List<UpsertCourseUploadRowsRecord>();
 
-            public CourseUploadRowBuilder AddRow(Action<SetCourseUploadRowsRecord> configureRecord)
+            public CourseUploadRowBuilder AddRow(Action<UpsertCourseUploadRowsRecord> configureRecord)
             {
                 var record = CreateValidRecord();
                 configureRecord(record);
@@ -156,6 +185,7 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                Guid? venueId,
                 IEnumerable<string> errors = null)
             {
                 var record = CreateRecord(
@@ -185,6 +215,7 @@ namespace Dfc.CourseDirectory.Testing
                     durationUnit,
                     studyMode,
                     attendancePattern,
+                    venueId,
                     errors);
 
                 _records.Add(record);
@@ -209,9 +240,9 @@ namespace Dfc.CourseDirectory.Testing
                 return this;
             }
 
-            internal IReadOnlyCollection<SetCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
+            internal IReadOnlyCollection<UpsertCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
 
-            private SetCourseUploadRowsRecord CreateRecord(
+            private UpsertCourseUploadRowsRecord CreateRecord(
                 Guid courseId,
                 Guid courseRunId,
                 string larsQan,
@@ -238,12 +269,13 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                Guid? venueId,
                 IEnumerable<string> errors = null)
             {
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
                 var isValid = !errorsArray.Any();
 
-                return new SetCourseUploadRowsRecord()
+                return new UpsertCourseUploadRowsRecord()
                 {
                     RowNumber = _records.Count + 2,
                     IsValid = isValid,
@@ -273,11 +305,21 @@ namespace Dfc.CourseDirectory.Testing
                     Duration = duration,
                     DurationUnit = durationUnit,
                     StudyMode = studyMode,
-                    AttendancePattern = attendancePattern
+                    AttendancePattern = attendancePattern,
+                    VenueId = venueId,
+                    ResolvedDeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(deliveryMode),
+                    ResolvedStartDate = ParsedCsvCourseRow.ResolveStartDate(startDate),
+                    ResolvedFlexibleStartDate = ParsedCsvCourseRow.ResolveFlexibleStartDate(flexibleStartDate),
+                    ResolvedNationalDelivery = ParsedCsvCourseRow.ResolveNationalDelivery(nationalDelivery),
+                    ResolvedCost = ParsedCsvCourseRow.ResolveCost(cost),
+                    ResolvedDuration = ParsedCsvCourseRow.ResolveDuration(duration),
+                    ResolvedDurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(durationUnit),
+                    ResolvedStudyMode = ParsedCsvCourseRow.ResolveStudyMode(studyMode),
+                    ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern)
                 };
             }
 
-            private SetCourseUploadRowsRecord CreateValidRecord()
+            private UpsertCourseUploadRowsRecord CreateValidRecord()
             {
                 string larsQan;
                 do
@@ -312,7 +354,8 @@ namespace Dfc.CourseDirectory.Testing
                     duration: "2",
                     durationUnit: "years",
                     studyMode: "part time",
-                    attendancePattern: "evening");
+                    attendancePattern: "evening",
+                    venueId: null);
             }
         }
     }
