@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMode = "classroom based"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMode = deliveryMode
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 CostDescription = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 CostDescription = "Some cost description"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Duration = "10"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 LarsQan = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -170,7 +170,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -195,7 +195,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = nationalDelivery
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -220,7 +220,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ProviderVenueRef = "venue"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -244,7 +244,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -274,10 +274,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var row = new CsvCourseRow()
             {
                 DeliveryMode = "classroom based",
-                ProviderVenueRef = "bad venue"
+                ProviderVenueRef = "VENUE2"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), new[] { venue });
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -301,7 +301,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "venue"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -324,7 +324,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 FlexibleStartDate = "no"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -347,7 +347,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 FlexibleStartDate = "yes"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -370,7 +370,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StudyMode = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -395,7 +395,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StudyMode = "full time"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -419,7 +419,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -446,7 +446,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = string.Empty
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -470,7 +470,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "Warwickshire"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -494,7 +494,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "x"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -519,7 +519,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "xxx"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -533,6 +533,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
+        [InlineData("xxx")]
         public async Task VenueNameNotEmptyWithNonClassroomBasedDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -545,7 +546,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "venue"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), Array.Empty<Venue>());
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -578,7 +579,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "bad venue"
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), new[] { venue });
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
@@ -612,7 +613,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = venue.VenueName
             };
 
-            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), new[] { venue });
+            var validator = new CourseUploadRowValidator(allRegions, validLearningAimRefs: Array.Empty<string>(), null);
 
             // Act
             var validationResult = validator.Validate(row);
