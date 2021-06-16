@@ -14,7 +14,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public DateTime? ProcessingCompletedOn { get; set; }
         public DateTime? PublishedOn { get; set; }
         public DateTime? AbandonedOn { get; set; }
-        public DateTime? LastValidated { get; set; }
     }
 
     public class CourseUploadRow
@@ -50,5 +49,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string DurationUnit { get; set; }
         public string StudyMode { get; set; }
         public string AttendancePattern { get; set; }
+        public Guid? VenueId { get; set; }
     }
 }

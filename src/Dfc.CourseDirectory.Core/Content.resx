@@ -123,10 +123,10 @@
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
-  <data name="ERROR_COURSERUN_COST_DESCRIPTION_INVALID" xml:space="preserve">
+  <data name="ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
-  <data name="ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH" xml:space="preserve">
+  <data name="ERROR_COURSERUN_COST_INVALID" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_COST_REQUIRED" xml:space="preserve">

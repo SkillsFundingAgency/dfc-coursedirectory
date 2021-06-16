@@ -180,18 +180,18 @@ namespace Dfc.CourseDirectory.Core {
         /// <summary>
         ///   Looks up a localized string similar to &lt;TODO&gt;.
         /// </summary>
-        public static string ERROR_COURSERUN_COST_DESCRIPTION_INVALID {
+        public static string ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH {
             get {
-                return ResourceManager.GetString("ERROR_COURSERUN_COST_DESCRIPTION_INVALID", resourceCulture);
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;TODO&gt;.
         /// </summary>
-        public static string ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH {
+        public static string ERROR_COURSERUN_COST_INVALID {
             get {
-                return ResourceManager.GetString("ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH", resourceCulture);
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_INVALID", resourceCulture);
             }
         }
         
