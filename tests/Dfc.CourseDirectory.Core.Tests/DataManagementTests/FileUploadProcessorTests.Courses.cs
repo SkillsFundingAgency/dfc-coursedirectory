@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
@@ -240,6 +241,184 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
+        public async Task GetCourseUploadRowsRequiringRevalidation_MatchedVenueUpdatedSinceRowLastValidated_ReturnsRow()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "REF");
+
+            var (courseUpload, rows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                user,
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.DeliveryMode = "classroom based";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
+                        record.ProviderVenueRef = venue.ProviderVenueRef;
+                        record.VenueId = venue.VenueId;
+                    });
+                });
+
+            Clock.UtcNow += TimeSpan.FromHours(1);
+            await TestData.UpdateVenue(venue.VenueId, updatedBy: user);
+
+            // Act
+            var result = await WithSqlQueryDispatcher(
+                dispatcher => fileUploadProcessor.GetCourseUploadRowsRequiringRevalidation(dispatcher, courseUpload));
+
+            // Assert
+            Assert.Collection(
+                result,
+                row => Assert.Equal(rows[0].CourseRunId, row.CourseRunId));
+        }
+
+        [Fact]
+        public async Task GetCourseUploadRowsRequiringRevalidation_MatchedVenueNotUpdatedSinceRowLastValidated_DoesNotReturnRow()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "REF");
+
+            var (courseUpload, rows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                user,
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.DeliveryMode = "classroom based";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
+                        record.ProviderVenueRef = venue.ProviderVenueRef;
+                        record.VenueId = venue.VenueId;
+                    });
+                });
+
+            // Act
+            var result = await WithSqlQueryDispatcher(
+                dispatcher => fileUploadProcessor.GetCourseUploadRowsRequiringRevalidation(dispatcher, courseUpload));
+
+            // Assert
+            Assert.Collection(result);
+        }
+
+        [Fact]
+        public async Task GetCourseUploadRowsRequiringRevalidation_MatchedVenueNotUpdatedSinceRowLastValidatedButOtherVenuesAmended_DoesNotReturnRow()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "REF");
+
+            var (courseUpload, rows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                user,
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.DeliveryMode = "classroom based";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
+                        record.ProviderVenueRef = venue.ProviderVenueRef;
+                        record.VenueId = venue.VenueId;
+                    });
+                });
+
+            Clock.UtcNow += TimeSpan.FromHours(1);
+            await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Another Venue");
+
+            // Act
+            var result = await WithSqlQueryDispatcher(
+                dispatcher => fileUploadProcessor.GetCourseUploadRowsRequiringRevalidation(dispatcher, courseUpload));
+
+            // Assert
+            Assert.Collection(result);
+        }
+
+        [Fact]
+        public async Task GetCourseUploadRowsRequiringRevalidation_NoMatchedVenueAndProviderVenuesAmendedSinceRowLastValidated_ReturnsRow()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+
+            var (courseUpload, rows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                user,
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(record =>
+                    {
+                        record.DeliveryMode = "classroom based";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
+                        record.ProviderVenueRef = "REF";
+                    });
+                });
+
+            Clock.UtcNow += TimeSpan.FromHours(1);
+            await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "Another Venue");
+
+            // Act
+            var result = await WithSqlQueryDispatcher(
+                dispatcher => fileUploadProcessor.GetCourseUploadRowsRequiringRevalidation(dispatcher, courseUpload));
+
+            // Assert
+            Assert.Collection(
+                result,
+                row => Assert.Equal(rows[0].CourseRunId, row.CourseRunId));
+        }
+
+        [Fact]
         public async Task ProcessCourseFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
         {
             // Arrange
@@ -270,7 +449,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             using (new AssertionScope())
             {
                 courseUpload.UploadStatus.Should().Be(UploadStatus.ProcessedSuccessfully);
-                courseUpload.LastValidated.Should().Be(Clock.UtcNow);
                 courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
                 courseUpload.ProcessingStartedOn.Should().NotBeNull();
             }
@@ -307,7 +485,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             using (new AssertionScope())
             {
                 courseUpload.UploadStatus.Should().Be(UploadStatus.ProcessedWithErrors);
-                courseUpload.LastValidated.Should().Be(Clock.UtcNow);
                 courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
                 courseUpload.ProcessingStartedOn.Should().NotBeNull();
             }

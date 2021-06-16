@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Xunit;
 using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
 

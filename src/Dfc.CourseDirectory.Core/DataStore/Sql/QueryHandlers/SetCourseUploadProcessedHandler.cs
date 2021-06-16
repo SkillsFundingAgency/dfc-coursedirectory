@@ -15,8 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var sql = @"
 UPDATE Pttcd.CourseUploads SET
     UploadStatus = @UploadStatus,
-    ProcessingCompletedOn = ISNULL(ProcessingCompletedOn, @ProcessingCompletedOn),
-    LastValidated = @ProcessingCompletedOn
+    ProcessingCompletedOn = ISNULL(ProcessingCompletedOn, @ProcessingCompletedOn)
 WHERE CourseUploadId = @CourseUploadId";
 
             var paramz = new

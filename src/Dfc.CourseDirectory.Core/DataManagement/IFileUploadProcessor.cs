@@ -12,8 +12,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     public interface IFileUploadProcessor
     {
         // Courses
-        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
+        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);

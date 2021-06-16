@@ -12,16 +12,14 @@ using static Dapper.SqlMapper;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class SetCourseUploadRowsHandler : ISqlQueryHandler<SetCourseUploadRows, IReadOnlyCollection<CourseUploadRow>>
+    public class UpsertCourseUploadRowsHandler : ISqlQueryHandler<UpsertCourseUploadRows, IReadOnlyCollection<CourseUploadRow>>
     {
-        public async Task<IReadOnlyCollection<CourseUploadRow>> Execute(SqlTransaction transaction, SetCourseUploadRows query)
+        public async Task<IReadOnlyCollection<CourseUploadRow>> Execute(SqlTransaction transaction, UpsertCourseUploadRows query)
         {
             var sql = $@"
 MERGE Pttcd.CourseUploadRows AS target
 USING (SELECT * FROM @Rows) AS source
     ON target.CourseUploadId = @CourseUploadId AND target.RowNumber = source.RowNumber
-WHEN NOT MATCHED BY SOURCE AND target.CourseUploadId = @CourseUploadId THEN
-    UPDATE SET CourseUploadRowStatus = {(int)UploadRowStatus.Deleted}
 WHEN NOT MATCHED THEN 
     INSERT (
         CourseUploadId,

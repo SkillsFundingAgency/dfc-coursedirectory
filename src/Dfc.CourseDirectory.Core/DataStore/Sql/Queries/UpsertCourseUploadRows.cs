@@ -5,15 +5,15 @@ using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class SetCourseUploadRows : ISqlQuery<IReadOnlyCollection<CourseUploadRow>>
+    public class UpsertCourseUploadRows : ISqlQuery<IReadOnlyCollection<CourseUploadRow>>
     {
         public Guid CourseUploadId { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public DateTime ValidatedOn { get; set; }
-        public IEnumerable<SetCourseUploadRowsRecord> Records { get; set; }
+        public IEnumerable<UpsertCourseUploadRowsRecord> Records { get; set; }
     }
 
-    public class SetCourseUploadRowsRecord
+    public class UpsertCourseUploadRowsRecord
     {
         public int RowNumber { get; set; }
         public bool IsValid { get; set; }
