@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 {
@@ -210,49 +210,47 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             this IRuleBuilderInitial<T, string> field,
             Func<T, string> getDeliveryMode,
             Func<T, string> getVenueName,
-            IReadOnlyCollection<Venue> providerVenues)
+            Guid? matchedVenueId)
         {
             field
-                .ProviderVenueRef(getDeliveryMode: t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)), getVenueName, providerVenues);
-        }
-
-        public static void ProviderVenueRef<T>(
-            this IRuleBuilderInitial<T, string> field,
-            Func<T, CourseDeliveryMode?> getDeliveryMode,
-            Func<T, string> getVenueName,
-            IReadOnlyCollection<Venue> providerVenues)
-        {
-            field
+                .Cascade(CascadeMode.Stop)
                 .NormalizeWhitespace()
-                // Must match a venue for the provider
-                // N.B. Using Count() == 1 here instead of Any() or SingleOrDefault() because we have some duplicates in bad data;
-                // better to fail early here than later on during the publish process
-                .Must(
-                    venueRef => string.IsNullOrWhiteSpace(venueRef) ||
-                        providerVenues.Count(v => v.ProviderVenueRef?.Equals(venueRef, StringComparison.OrdinalIgnoreCase) == true) == 1)
-                    .When(t => getDeliveryMode(t) == CourseDeliveryMode.ClassroomBased, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_PROVIDER_VENUE_REF_INVALID")
-                // Required for classroom based delivery modes if venue name is not specified
-                .NotNull()
-                    .When(
-                        t =>
-                        {
-                            var deliveryMode = getDeliveryMode(t);
-                            return deliveryMode.HasValue && deliveryMode == CourseDeliveryMode.ClassroomBased &&
-                                string.IsNullOrWhiteSpace(getVenueName(t));
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_VENUE_REQUIRED")
-                // Not allowed for delivery modes other than classroom based
-                .Null()
-                    .When(
-                        t =>
-                        {
-                            var deliveryMode = getDeliveryMode(t);
-                            return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased;
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
+                .Custom((v, ctx) =>
+                {
+                    var obj = (T)ctx.InstanceToValidate;
+
+                    var deliveryMode = CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(obj));
+                    var isSpecified = !string.IsNullOrEmpty(v);
+
+                    // Not allowed for delivery modes other than classroom based
+                    if (isSpecified && deliveryMode != CourseDeliveryMode.ClassroomBased)
+                    {
+                        ctx.AddFailure(CreateFailure("COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED"));
+                        return;
+                    }
+
+                    if (deliveryMode != CourseDeliveryMode.ClassroomBased)
+                    {
+                        return;
+                    }
+
+                    // If not specified and Venue Name isn't specified then it's required
+                    if (!isSpecified && string.IsNullOrEmpty(getVenueName(obj)))
+                    {
+                        ctx.AddFailure(CreateFailure("COURSERUN_VENUE_REQUIRED"));
+                        return;
+                    }
+
+                    // If specified then it must match a venue
+                    if (isSpecified && !matchedVenueId.HasValue)
+                    {
+                        ctx.AddFailure(CreateFailure("COURSERUN_PROVIDER_VENUE_REF_INVALID"));
+                        return;
+                    }
+
+                    ValidationFailure CreateFailure(string errorCode) =>
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                });
         }
 
         public static void StartDate<T>(this IRuleBuilderInitial<T, string> field, DateTime now, Func<T, string> getFlexibleStartDate)
@@ -354,50 +352,54 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 
                         return values.All(v => allSubRegions.Contains(v)) && values.Length > 0;
                     })
-                    .WithMessageFromErrorCode("COURSERUN_SUBREGIONS_INVALID")
-                ;
+                    .WithMessageFromErrorCode("COURSERUN_SUBREGIONS_INVALID");
         }
 
         public static void VenueName<T>(
             this IRuleBuilderInitial<T, string> field,
             Func<T, string> getDeliveryMode,
             Func<T, string> getProviderVenueRef,
-            IReadOnlyCollection<Venue> providerVenues)
-        {
-            field
-                .VenueName(t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)), getProviderVenueRef, providerVenues);
-        }
-
-        public static void VenueName<T>(
-            this IRuleBuilderInitial<T, string> field,
-            Func<T, CourseDeliveryMode?> getDeliveryMode,
-            Func<T, string> getProviderVenueRef,
-            IReadOnlyCollection<Venue> providerVenues)
+            Guid? matchedVenueId)
         {
             field
                 .NormalizeWhitespace()
-                // Must match a venue for the provider
-                // N.B. Using Count() == 1 here instead of Any() or SingleOrDefault() because we have some duplicates in bad data;
-                // better to fail early here than later on during the publish process
-                .Must(
-                    venueName => string.IsNullOrWhiteSpace(venueName) ||
-                        providerVenues.Count(v => v.VenueName.Equals(venueName, StringComparison.OrdinalIgnoreCase)) == 1)
-                    .When(t => getDeliveryMode(t) == CourseDeliveryMode.ClassroomBased, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_VENUE_NAME_INVALID")
-                // Not allowed for delivery modes other than classroom based
-                .Null()
-                    .When(
-                        t =>
+                .Custom((v, ctx) =>
+                {
+                    var obj = (T)ctx.InstanceToValidate;
+
+                    var deliveryMode = CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(obj));
+                    var isSpecified = !string.IsNullOrEmpty(v);
+
+                    // Not allowed for delivery modes other than classroom based
+                    if (isSpecified && deliveryMode != CourseDeliveryMode.ClassroomBased)
+                    {
+                        ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED"));
+                        return;
+                    }
+
+                    if (deliveryMode != CourseDeliveryMode.ClassroomBased)
+                    {
+                        return;
+                    }
+
+                    if (isSpecified && !matchedVenueId.HasValue)
+                    {
+                        // We don't want both a ref and a name but if the ref resolves a venue and that venue's name
+                        // matches this name then we let it go. If it doesn't match then yield an error.
+                        if (!string.IsNullOrEmpty(getProviderVenueRef(obj)))
                         {
-                            var deliveryMode = getDeliveryMode(t);
-                            return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased;
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_VENUE_NAME_NOT_ALLOWED")
-                // Not allowed if provider venue ref is specified
-                .Null()
-                    .When(t => !string.IsNullOrWhiteSpace(getProviderVenueRef(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF");
+                            ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF"));
+                            return;
+                        }
+
+                        // Couldn't find a match from name
+                        ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_INVALID"));
+                        return;
+                    }
+
+                    ValidationFailure CreateFailure(string errorCode) =>
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                });
         }
 
         public static void WhatYouWillLearn<T>(this IRuleBuilderInitial<T, string> field)

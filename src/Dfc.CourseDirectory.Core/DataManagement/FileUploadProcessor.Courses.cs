@@ -222,6 +222,63 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 .SelectMany(_ => Observable.FromAsync(() => GetCourseUploadStatus(courseUploadId)));
 
         // internal for testing
+        internal Guid? FindVenue(CsvCourseRow row, IReadOnlyCollection<Venue> providerVenues)
+        {
+            var deliveryMode = CsvCourseRow.ResolveDeliveryMode(row.DeliveryMode);
+
+            if (deliveryMode != CourseDeliveryMode.ClassroomBased)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrEmpty(row.ProviderVenueRef))
+            {
+                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
+
+                var matchedVenues = providerVenues
+                    .Where(v => RefMatches(row.ProviderVenueRef, v))
+                    .ToArray();
+
+                if (matchedVenues.Length != 1)
+                {
+                    return null;
+                }
+
+                var venue = matchedVenues[0];
+
+                // If VenueName was provided too then it must match
+                if (!string.IsNullOrEmpty(row.VenueName) && !NameMatches(row.VenueName, venue))
+                {
+                    return null;
+                }
+
+                return venue.VenueId;
+            }
+
+            if (!string.IsNullOrEmpty(row.VenueName))
+            {
+                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
+
+                var matchedVenues = providerVenues
+                    .Where(v => NameMatches(row.VenueName, v))
+                    .ToArray();
+
+                if (matchedVenues.Length != 1)
+                {
+                    return null;
+                }
+
+                return matchedVenues[0].VenueId;
+            }
+
+            return null;
+
+            static bool NameMatches(string name, Venue venue) => name.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase);
+
+            static bool RefMatches(string providerVenueRef, Venue venue) => providerVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase);
+        }
+
+        // internal for testing
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<CourseUploadRow> Rows)> ValidateCourseUploadRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
             Guid courseUploadId,
@@ -238,7 +295,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
             var uploadIsValid = true;
-            var validator = new CourseUploadRowValidator(regions, validLearningAimRefs, _clock, providerVenues);
 
             // Group rows into courses
             var courseGroups = rows.GroupBy(r => r.Data, new CsvCourseRowCourseComparer());
@@ -253,6 +309,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 {
                     var rowNumber = row.RowNumber;
                     var courseRunId = Guid.NewGuid();
+
+                    var matchedVenueId = FindVenue(row.Data, providerVenues);
+
+                    var validator = new CourseUploadRowValidator(regions, validLearningAimRefs, _clock, matchedVenueId);
 
                     var rowValidationResult = validator.Validate(row.Data);
                     var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -320,7 +380,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IReadOnlyCollection<Region> allRegions,
                 IReadOnlyCollection<string> validLearningAimRefs,
                 IClock clock,
-                IReadOnlyCollection<Venue> providerVenues)
+                Guid? matchedVenueId)
             {
                 RuleFor(c => c.LarsQan).LarsQan(validLearningAimRefs);
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
@@ -335,8 +395,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.DeliveryMode).DeliveryMode();
                 RuleFor(c => c.StartDate).StartDate(clock.UtcNow, c => c.FlexibleStartDate);
                 RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
-                RuleFor(c => c.VenueName).VenueName(c => c.DeliveryMode, c => c.ProviderVenueRef, providerVenues);
-                RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.DeliveryMode, c => c.VenueName, providerVenues);
+                RuleFor(c => c.VenueName).VenueName(c => c.DeliveryMode, c => c.ProviderVenueRef, matchedVenueId);
+                RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.DeliveryMode, c => c.VenueName, matchedVenueId);
                 RuleFor(c => c.NationalDelivery).NationalDelivery(c => c.DeliveryMode);
                 RuleFor(c => c.SubRegions).SubRegions(c => c.DeliveryMode, c => c.NationalDelivery, allRegions);
                 RuleFor(c => c.CourseWebPage).CourseWebPage();

@@ -16,6 +16,228 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 {
     public partial class FileUploadProcessorTests
     {
+        [Theory]
+        [InlineData("online")]
+        [InlineData("work based")]
+        [InlineData("xxx")]
+        public async Task FindVenue_NonClassroomBasedDeliveryMode_ReturnsNull(string deliveryMode)
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = deliveryMode,
+                VenueName = "my venue"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task FindVenue_RefProvidedButDoesNotMatch_ReturnsNull()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "classroom based",
+                ProviderVenueRef = "VENUE2"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task FindVenue_RefProvidedAndMatches_ReturnsVenueId()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "classroom based",
+                ProviderVenueRef = "venue1"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Equal(venue.VenueId, result);
+        }
+
+        [Fact]
+        public async Task FindVenue_RefProvidedAndMatchedButNameProvidedAndDoesNotMatch_ReturnsNull()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "classroom based",
+                ProviderVenueRef = "venue1",
+                VenueName = "another name"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task FindVenue_RefProvidedAndMatchedAndNameProvidedAndMatches_ReturnsVenueId()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "classroom based",
+                ProviderVenueRef = "venue1",
+                VenueName = "my venue"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Equal(venue.VenueId, result);
+        }
+
+        [Fact]
+        public async Task FindVenue_NameProvidedButDoesNotMatch_ReturnsNull()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "classroom based",
+                VenueName = "another name"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task FindVenue_NameProvidedAndMatches_ReturnsVenueId()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "classroom based",
+                VenueName = "my venue"
+            };
+
+            // Act
+            var result = fileUploadProcessor.FindVenue(row, new[] { venue });
+
+            // Assert
+            Assert.Equal(venue.VenueId, result);
+        }
+
         [Fact]
         public async Task ProcessCourseFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
         {

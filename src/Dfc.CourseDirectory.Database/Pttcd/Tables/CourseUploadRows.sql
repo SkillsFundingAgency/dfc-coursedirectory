@@ -33,4 +33,5 @@
 	[DurationUnit] NVARCHAR(MAX),
 	[StudyMode] NVARCHAR(MAX),
 	[AttendancePattern] NVARCHAR(MAX),
+	[VenueId] UNIQUEIDENTIFIER CONSTRAINT [FK_CourseUploadRows_Venue] FOREIGN KEY REFERENCES [Pttcd].[Venues] ([VenueId])
 )

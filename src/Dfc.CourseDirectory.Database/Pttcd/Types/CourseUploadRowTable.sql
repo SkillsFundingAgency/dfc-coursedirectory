@@ -30,5 +30,6 @@
 	[Duration] NVARCHAR(MAX),
 	[DurationUnit] NVARCHAR(MAX),
 	[StudyMode] NVARCHAR(MAX),
-	[AttendancePattern] NVARCHAR(MAX)
+	[AttendancePattern] NVARCHAR(MAX),
+	[VenueId] UNIQUEIDENTIFIER
 )
