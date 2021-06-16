@@ -56,7 +56,8 @@ WHEN NOT MATCHED THEN
         Duration,
         DurationUnit,
         StudyMode,
-        AttendancePattern
+        AttendancePattern,
+        VenueId
     ) VALUES (
         @CourseUploadId,
         source.RowNumber,
@@ -90,7 +91,8 @@ WHEN NOT MATCHED THEN
         source.Duration,
         source.DurationUnit,
         source.StudyMode,
-        source.AttendancePattern
+        source.AttendancePattern,
+        source.VenueId
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -123,7 +125,8 @@ WHEN MATCHED THEN UPDATE SET
     Duration = source.Duration,
     DurationUnit = source.DurationUnit,
     StudyMode = source.StudyMode,
-    AttendancePattern = source.AttendancePattern
+    AttendancePattern = source.AttendancePattern,
+    VenueId = source.VenueId
 ;
 
 SELECT
@@ -131,7 +134,7 @@ SELECT
     LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
     HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
-    Duration, DurationUnit, StudyMode, AttendancePattern
+    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -187,6 +190,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("DurationUnit", typeof(string));
                 table.Columns.Add("StudyMode", typeof(string));
                 table.Columns.Add("AttendancePattern", typeof(string));
+                table.Columns.Add("VenueId", typeof(Guid));
 
                 foreach (var record in query.Records)
                 {
@@ -221,7 +225,8 @@ ORDER BY RowNumber";
                         record.Duration,
                         record.DurationUnit,
                         record.StudyMode,
-                        record.AttendancePattern);
+                        record.AttendancePattern,
+                        record.VenueId);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.CourseUploadRowTable");
