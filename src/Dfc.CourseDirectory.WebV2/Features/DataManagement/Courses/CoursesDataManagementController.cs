@@ -62,5 +62,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("formatting")]
         public IActionResult Formatting() => View();
+
+        [HttpGet("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload() =>
+            await _mediator.SendAndMapResponse(
+                new DeleteUpload.Query(),
+                command => View(command));
+
+        [HttpPost("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("resolve/delete/success")]
+        [RequireProviderContext]
+        public IActionResult DeleteUploadSuccess()
+        {
+            return View();
+        }
     }
 }
