@@ -204,10 +204,19 @@ namespace Dfc.CourseDirectory.Testing
 
         public static CourseDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvCourseRow> rows)
         {
-            var rowsArray = rows.ToArray();
+            var rowInfos = new List<CourseDataUploadRowInfo>();
 
-            return new CourseDataUploadRowInfoCollection(
-                rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
+            foreach (var group in CsvCourseRow.GroupRows(rows))
+            {
+                var courseId = Guid.NewGuid();
+
+                foreach (var row in group)
+                {
+                    rowInfos.Add(new CourseDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
+                }
+            }
+
+            return new CourseDataUploadRowInfoCollection(rowInfos);
         }
 
         public static VenueDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvVenueRow> rows)
