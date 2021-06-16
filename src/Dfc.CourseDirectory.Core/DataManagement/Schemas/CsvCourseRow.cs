@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CsvHelper.Configuration.Attributes;
-using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
@@ -57,56 +59,80 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(23), Name("ATTENDANCE_PATTERN")]
         public string AttendancePattern { get; set; }
 
-        public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
+        public static CsvCourseRow FromModel(CourseUploadRow row) => new CsvCourseRow()
         {
-            "daytime" => CourseAttendancePattern.Daytime,
-            "evening" => CourseAttendancePattern.Evening,
-            "weekend" => CourseAttendancePattern.Weekend,
-            "day/block release" => CourseAttendancePattern.DayOrBlockRelease,
-            _ => (CourseAttendancePattern?)null
+            LarsQan = row.LarsQan,
+            WhoThisCourseIsFor = row.WhoThisCourseIsFor,
+            EntryRequirements = row.EntryRequirements,
+            WhatYouWillLearn = row.WhatYouWillLearn,
+            HowYouWillLearn = row.HowYouWillLearn,
+            WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
+            HowYouWillBeAssessed = row.HowYouWillBeAssessed,
+            WhereNext = row.WhereNext,
+            CourseName = row.CourseName,
+            ProviderCourseRef = row.ProviderCourseRef,
+            DeliveryMode = row.DeliveryMode,
+            StartDate = row.StartDate,
+            FlexibleStartDate = row.FlexibleStartDate,
+            VenueName = row.VenueName,
+            ProviderVenueRef = row.ProviderVenueRef,
+            NationalDelivery = row.NationalDelivery,
+            SubRegions = row.SubRegions,
+            CourseWebPage = row.CourseWebpage,
+            Cost = row.Cost,
+            CostDescription = row.CostDescription,
+            Duration = row.Duration,
+            DurationUnit = row.DurationUnit,
+            StudyMode = row.StudyMode,
+            AttendancePattern = row.AttendancePattern
         };
 
-        public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
-        {
-            "classroom based" => CourseDeliveryMode.ClassroomBased,
-            "classroom" => CourseDeliveryMode.ClassroomBased,
-            "online" => CourseDeliveryMode.Online,
-            "work based" => CourseDeliveryMode.WorkBased,
-            "work" => CourseDeliveryMode.WorkBased,
-            _ => (CourseDeliveryMode?)null
-        };
+        public static CsvCourseRow[][] GroupRows(IEnumerable<CsvCourseRow> rows) =>
+            rows.GroupBy(r => r, new CsvCourseRowCourseComparer())
+                .Select(g => g.ToArray())
+                .ToArray();
 
-        public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
+        private class CsvCourseRowCourseComparer : IEqualityComparer<CsvCourseRow>
         {
-            "hours" => CourseDurationUnit.Hours,
-            "days" => CourseDurationUnit.Days,
-            "weeks" => CourseDurationUnit.Weeks,
-            "months" => CourseDurationUnit.Months,
-            "years" => CourseDurationUnit.Years,
-            _ => (CourseDurationUnit?)null
-        };
+            public bool Equals(CsvCourseRow x, CsvCourseRow y)
+            {
+                if (x is null && y is null)
+                {
+                    return true;
+                }
 
-        public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
-        {
-            "yes" => true,
-            "no" => false,
-            "" => false,
-            _ => null
-        };
+                if (x is null || y is null)
+                {
+                    return false;
+                }
 
-        public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
-        {
-            "yes" => true,
-            "no" => false,
-            _ => null
-        };
+                // Don't group together records that have no LARS code
+                if (string.IsNullOrEmpty(x.LarsQan) || string.IsNullOrEmpty(y.LarsQan))
+                {
+                    return false;
+                }
 
-        public static CourseStudyMode? ResolveStudyMode(string value) => value?.ToLower() switch
-        {
-            "full time" => CourseStudyMode.FullTime,
-            "part time" => CourseStudyMode.PartTime,
-            "flexible" => CourseStudyMode.Flexible,
-            _ => (CourseStudyMode?)null
-        };
+                return
+                    x.LarsQan == y.LarsQan &&
+                    x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
+                    x.EntryRequirements == y.EntryRequirements &&
+                    x.WhatYouWillLearn == y.WhatYouWillLearn &&
+                    x.HowYouWillLearn == y.HowYouWillLearn &&
+                    x.WhatYouWillNeedToBring == y.WhatYouWillNeedToBring &&
+                    x.HowYouWillBeAssessed == y.HowYouWillBeAssessed &&
+                    x.WhereNext == y.WhereNext;
+            }
+
+            public int GetHashCode(CsvCourseRow obj) =>
+                HashCode.Combine(
+                    obj.LarsQan,
+                    obj.WhoThisCourseIsFor,
+                    obj.EntryRequirements,
+                    obj.WhatYouWillLearn,
+                    obj.HowYouWillLearn,
+                    obj.WhatYouWillNeedToBring,
+                    obj.HowYouWillBeAssessed,
+                    obj.WhereNext);
+        }
     }
 }

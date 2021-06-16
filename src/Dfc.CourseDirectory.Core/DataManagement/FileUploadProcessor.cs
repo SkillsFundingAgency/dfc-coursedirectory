@@ -229,7 +229,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         .Where(r => r.RowNumber != rowNumber)
                         .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
 
-                await ValidateVenueUploadRows(
+                await ValidateVenueUploadFile(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
