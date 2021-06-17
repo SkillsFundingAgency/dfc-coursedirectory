@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 // rows will only be non-null if revalidation was done above
                 //rows ??= (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId })).Rows;
-                var rows = (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId })).Rows;
+                var rows = (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId }));
                 return (rows, courseUpload.UploadStatus);
             }
         }
@@ -287,7 +287,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
             var uploadIsValid = true;
-            var validator = new CourseUploadRowValidator(regions, validLearningAimRefs, providerVenues);
+            var validator = new CourseUploadRowValidator(regions, validLearningAimRefs, _clock, providerVenues);
 
             // Group rows into courses
             var courseGroups = rows.GroupBy(r => r.Data, new CsvCourseRowCourseComparer());
@@ -362,8 +362,40 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return (uploadStatus, updatedRows);
         }
 
-        private class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
-        { }
+        internal class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
+        {
+            public CourseUploadRowValidator(
+                IReadOnlyCollection<Region> allRegions,
+                IReadOnlyCollection<string> validLearningAimRefs,
+                IClock clock,
+                IReadOnlyCollection<Venue> providerVenues)
+            {
+                RuleFor(c => c.LarsQan).LarsQan(validLearningAimRefs);
+                RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
+                RuleFor(c => c.EntryRequirements).EntryRequirements();
+                RuleFor(c => c.WhatYouWillLearn).WhatYouWillLearn();
+                RuleFor(c => c.HowYouWillLearn).HowYouWillLearn();
+                RuleFor(c => c.WhatYouWillNeedToBring).WhatYouWillNeedToBring();
+                RuleFor(c => c.HowYouWillBeAssessed).HowYouWillBeAssessed();
+                RuleFor(c => c.WhereNext).WhereNext();
+                RuleFor(c => c.CourseName).CourseName();
+                RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
+                RuleFor(c => c.DeliveryMode).DeliveryMode();
+                RuleFor(c => c.StartDate).StartDate(clock.UtcNow, c => c.FlexibleStartDate);
+                RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
+                RuleFor(c => c.VenueName).VenueName(c => c.DeliveryMode, c => c.ProviderVenueRef, providerVenues);
+                RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.DeliveryMode, c => c.VenueName, providerVenues);
+                RuleFor(c => c.NationalDelivery).NationalDelivery(c => c.DeliveryMode);
+                RuleFor(c => c.SubRegions).SubRegions(c => c.DeliveryMode, c => c.NationalDelivery, allRegions);
+                RuleFor(c => c.CourseWebPage).CourseWebPage();
+                RuleFor(c => c.Cost).Cost(c => c.CostDescription);
+                RuleFor(c => c.CostDescription).CostDescription(c => c.Cost);
+                RuleFor(c => c.Duration).Duration();
+                RuleFor(c => c.DurationUnit).DurationUnit();
+                RuleFor(c => c.StudyMode).StudyMode(c => c.DeliveryMode);
+                RuleFor(c => c.AttendancePattern).AttendancePattern(c => c.DeliveryMode);
+            }
+        }
 
         private class CsvCourseRowCourseComparer : IEqualityComparer<CsvCourseRow>
         {

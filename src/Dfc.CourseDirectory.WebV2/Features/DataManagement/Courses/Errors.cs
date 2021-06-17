@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
     public class ViewModelRow
     {
-        public string ProviderVenueReference { get; set; }
+        public string ProviderCourseRef { get; set; }
         public string CourseName { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(
                 _providerContextProvider.GetProviderId());
 
             if (uploadStatus == UploadStatus.ProcessedSuccessfully)
@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
             if (!validationResult.IsValid)
             {
-                var (uploadRows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(
+                var (uploadRows, _) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(
                     _providerContextProvider.GetProviderId());
 
                 var vm = CreateViewModel(uploadRows);
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
             return new Success();
         }
 
-        private ViewModel CreateViewModel(IReadOnlyCollection<VenueUploadRow> rows)
+        private ViewModel CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
         {
             var errorRows = rows.Where(row => !row.IsValid).ToArray();
             var errorRowCount = errorRows.Length;
@@ -104,19 +104,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 ErrorRows = errorRows
                     .Select(row => new ViewModelRow()
                     {
-                        ProviderVenueReference = row.ProviderVenueRef,
+                        ProviderCourseRef = row.ProviderCourseRef,
                         CourseName = row.CourseName,
-                        AddressParts =
-                            new[]
-                            {
-                                row.AddressLine1,
-                                row.AddressLine2,
-                                row.Town,
-                                row.County,
-                                row.Postcode
-                            }
-                            .Where(part => !string.IsNullOrWhiteSpace(part))
-                            .ToArray(),
                         ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapVenueErrorToFieldGroup(e)).Distinct().ToArray()
                     })
                     .ToArray(),
