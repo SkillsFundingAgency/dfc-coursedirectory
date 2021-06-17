@@ -75,11 +75,4 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[DeliveryModes]" />
   </Operation>
-  <Operation Name="Rename Refactor" Key="a70cc039-af25-428d-ae35-b05afc06b608" ChangeDateTime="06/17/2021 10:03:37">
-    <Property Name="ElementName" Value="[Pttcd].[CourseUploadRows].[YourReference]" />
-    <Property Name="ElementType" Value="SqlSimpleColumn" />
-    <Property Name="ParentElementName" Value="[Pttcd].[CourseUploadRows]" />
-    <Property Name="ParentElementType" Value="SqlTable" />
-    <Property Name="NewName" Value="ProviderCourseRef" />
-  </Operation>
 </Operations>
