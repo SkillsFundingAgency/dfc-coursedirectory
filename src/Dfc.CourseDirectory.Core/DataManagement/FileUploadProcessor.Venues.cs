@@ -83,6 +83,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // rows will only be non-null if revalidation was done above
                 rows ??= (await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId })).Rows;
 
+                await dispatcher.Commit();
+
                 return (rows, venueUpload.UploadStatus);
             }
         }
