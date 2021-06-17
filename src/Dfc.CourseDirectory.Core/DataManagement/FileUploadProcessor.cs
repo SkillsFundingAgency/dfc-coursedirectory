@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();
 
-                var rowCollection =  new VenueDataUploadRowInfoCollection(
+                var rowCollection = new VenueDataUploadRowInfoCollection(
                     lastRowNumber: lastRowNumber,
                     nonDeletedRows
                         .Where(r => r.RowNumber != rowNumber)
