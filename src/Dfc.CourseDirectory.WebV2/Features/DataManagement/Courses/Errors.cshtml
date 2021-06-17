@@ -1,0 +1,94 @@
+﻿@using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors
+@model ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Course data errors");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="WhatNext" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Course data errors</h1>
+
+        <p class="govuk-body">Your course data has been uploaded.</p>
+    
+        <p class="govuk-body">
+            Your data upload has <span data-testid="ErrorRowCount">@Model.ErrorRowCount</span> error@(Model.ErrorRowCount != 1 ? "s" : "") in
+            <span data-testid="TotalRowCount">@Model.TotalRowCount</span> courses.
+            
+            You must resolve these errors before your data can be published.
+        </p>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <govuk-details>
+            <govuk-details-summary>View errors in your upload</govuk-details-summary>
+            <govuk-details-text>
+                <table class="govuk-table" data-testid="ErrorRows">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" style="width: 185px">Your course reference</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Course name</th>
+                            <th scope="col" class="govuk-table__header">Address</th>
+                            <th scope="col" class="govuk-table__header" style="width: 230px">Error(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var row in Model.ErrorRows)
+                        {
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__cell">@row.ProviderVenueReference</th>
+                                <td class="govuk-table__cell govuk-body-s">@row.VenueName</td>
+                                <td class="govuk-table__cell govuk-body-s">@string.Join(", ", row.AddressParts)</td>
+                                <td class="govuk-table__cell govuk-body-s pttcd-dm-error">
+                                    @for (var i = 0; i < row.ErrorFields.Count; i++)
+                                    {
+                                        <span class="govuk-!-display-inline-block">
+                                            @row.ErrorFields.ElementAt(i)@(i != row.ErrorFields.Count - 1 ? "," : "")
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </govuk-details-text>
+        </govuk-details>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Errors" asp-all-route-data="@ProviderContext.RouteValues">
+            <p class="govuk-body">
+                You can
+                <a asp-action="DownloadErrors" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    download all of your course data including the errors (opens in a CSV file)
+                </a>
+                to edit and upload.
+            </p>
+
+            <govuk-radios asp-for="WhatNext">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        What do you want to do?
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                @if (Model.CanResolveOnScreen)
+                {
+                    <govuk-radios-item value="@WhatNext.ResolveOnScreen" data-testid="ResolveOnScreenOption">Resolve the errors on screen</govuk-radios-item>
+                }
+                <govuk-radios-item value="@WhatNext.UploadNewFile">Upload a new data file</govuk-radios-item>
+                <govuk-radios-item value="@WhatNext.DeleteUpload">Delete upload</govuk-radios-item>
+            </govuk-radios>
+
+            <govuk-button type="submit">Continue</govuk-button>
+        </form>
+    </div>
+</div>
+
+<vc:venues-data-management-help />

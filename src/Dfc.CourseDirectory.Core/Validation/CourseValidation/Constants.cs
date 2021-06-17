@@ -4,6 +4,7 @@
     {
         public const int CostDescriptionMaxLength = 255;
         public const int CourseNameMaxLength = 255;
+        public const int CourseWebPageMaxLength = 255;
         public const int ProviderCourseRefMaxLength = 255;
         public const int EntryRequirementsMaxLength = 500;
         public const int HowYouWillBeAssessedMaxLength = 500;

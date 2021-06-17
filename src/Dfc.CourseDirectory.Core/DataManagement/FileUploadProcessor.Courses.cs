@@ -181,11 +181,95 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return courseUpload.UploadStatus;
         }
 
-        // virtual for testing
-        protected virtual IObservable<UploadStatus> GetCourseUploadStatusUpdates(Guid courseUploadId) =>
-            Observable.Interval(_statusUpdatesPollInterval)
-                .SelectMany(_ => Observable.FromAsync(() => GetCourseUploadStatus(courseUploadId)));
+        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
 
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                //var (_, _, rows) = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                // rows will only be non-null if revalidation was done above
+                //rows ??= (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId })).Rows;
+                var rows = (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId })).Rows;
+                return (rows, courseUpload.UploadStatus);
+            }
+        }
+
+/*        private async Task<(bool Revalidated, UploadStatus uploadStatus, IReadOnlyCollection<CourseUploadRow> ValidatedRows)> RevalidateCourseUploadIfRequired(
+    ISqlQueryDispatcher sqlQueryDispatcher,
+    Guid courseUploadId)
+        {
+            var courseUpload = await sqlQueryDispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
+
+            if (courseUpload == null)
+            {
+                throw new ArgumentException("Course upload does not exist.", nameof(courseUploadId));
+            }
+
+            var revalidate = await DoesCourseUploadRequireRevalidating(sqlQueryDispatcher, courseUpload);
+
+            if (!revalidate)
+            {
+                return (Revalidated: false, courseUpload.UploadStatus, ValidatedRows: null);
+            }
+
+            var (rows, lastRowNumber) = await sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUploadId });
+
+            var rowCollection = new CourseDataUploadRowInfoCollection(
+                lastRowNumber,
+                rows.Select(r => new CourseDataUploadRowInfo(CsvCourseRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+
+            var (uploadStatus, revalidatedRows) = await ValidateVenueUploadRows(
+                sqlQueryDispatcher,
+                courseUploadId,
+                courseUpload.ProviderId,
+                rowCollection);
+
+            return (Revalidated: true, uploadStatus, ValidatedRows: revalidatedRows);
+        }
+
+        private async Task<bool> DoesCourseUploadRequireRevalidating(ISqlQueryDispatcher sqlQueryDispatcher, CourseUpload courseUpload)
+        {
+            if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
+                courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
+            {
+                throw new InvalidOperationException($"Course upload at status {courseUpload.UploadStatus} cannot be revalidated.");
+            }
+
+            // Need to revalidate if any venues had been added/updated/removed for this provider
+            // (since it affects duplicate checking)
+            // or if any courses, apprenticeships or T Levels have had any venues associated or deassociated
+            // (since it affects the supplementary rows required).
+            // Figuring out these scenarios exactly isn't practical so we check if any
+            // venue, course, apprenticeship or T Level has been added/updated/removed for the provider.
+
+            var lastUpdatedOffering = await sqlQueryDispatcher.ExecuteQuery(new GetProviderCoursesLastUpdated()
+            {
+                ProviderId = courseUpload.ProviderId
+            });
+
+            return lastUpdatedOffering.HasValue && lastUpdatedOffering >= courseUpload.LastValidated;
+        }
+*/
         // internal for testing
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<CourseUploadRow> Rows)> ValidateCourseUploadRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
@@ -278,40 +362,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return (uploadStatus, updatedRows);
         }
 
-        // internal for testing
-        internal class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
-        {
-            public CourseUploadRowValidator(
-                IReadOnlyCollection<Region> allRegions,
-                IReadOnlyCollection<string> validLearningAimRefs,
-                IReadOnlyCollection<Venue> providerVenues)
-            {
-                RuleFor(c => c.LarsQan).LarsQan(validLearningAimRefs);
-                RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
-                RuleFor(c => c.EntryRequirements).EntryRequirements();
-                RuleFor(c => c.WhatYouWillLearn).WhatYouWillLearn();
-                RuleFor(c => c.HowYouWillLearn).HowYouWillLearn();
-                RuleFor(c => c.WhatYouWillNeedToBring).WhatYouWillNeedToBring();
-                RuleFor(c => c.HowYouWillBeAssessed).HowYouWillBeAssessed();
-                RuleFor(c => c.WhereNext).WhereNext();
-                RuleFor(c => c.CourseName).CourseName();
-                RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
-                RuleFor(c => c.DeliveryMode).DeliveryMode();
-                RuleFor(c => c.StartDate).StartDate(c => c.FlexibleStartDate);
-                RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
-                RuleFor(c => c.VenueName).VenueName(c => c.DeliveryMode, c => c.ProviderVenueRef, providerVenues);
-                RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.DeliveryMode, c => c.VenueName, providerVenues);
-                RuleFor(c => c.NationalDelivery).NationalDelivery(c => c.DeliveryMode);
-                RuleFor(c => c.SubRegions).SubRegions(c => c.NationalDelivery, allRegions);
-                RuleFor(c => c.CourseWebPage).CourseWebPage();
-                RuleFor(c => c.Cost).Cost(c => c.CostDescription);
-                RuleFor(c => c.CostDescription).CostDescription(c => c.Cost);
-                RuleFor(c => c.Duration).Duration();
-                RuleFor(c => c.DurationUnit).DurationUnit();
-                RuleFor(c => c.StudyMode).StudyMode(c => c.DeliveryMode);
-                RuleFor(c => c.AttendancePattern).AttendancePattern(c => c.DeliveryMode);
-            }
-        }
+        private class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
+        { }
 
         private class CsvCourseRowCourseComparer : IEqualityComparer<CsvCourseRow>
         {

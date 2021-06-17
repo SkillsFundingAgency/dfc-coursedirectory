@@ -16,27 +16,21 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void AttendancePattern<T>(this IRuleBuilderInitial<T, string> field, Func<T, string> getDeliveryMode)
         {
             field
-                .Transform(CsvCourseRow.ResolveAttendancePattern)
-                .AttendancePattern(t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)));
+                .AttendancePattern(
+                    attendancePatternWasSpecified: p => !string.IsNullOrEmpty(p),
+                    resolveAttendancePattern: p => CsvCourseRow.ResolveAttendancePattern(p),
+                    getDeliveryMode: t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)));
         }
 
-        public static void AttendancePattern<T>(this IRuleBuilderInitial<T, CourseAttendancePattern?> field, Func<T, CourseDeliveryMode?> getDeliveryMode)
+        public static void AttendancePattern<T>(
+            this IRuleBuilderInitial<T, CourseAttendancePattern?> field,
+            Func<T, CourseDeliveryMode?> getDeliveryMode)
         {
             field
-                // Required for classroom based delivery modes
-                .NotNull()
-                    .When(t => getDeliveryMode(t) == CourseDeliveryMode.ClassroomBased, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED")
-                // Not allowed for delivery modes other than classroom based
-                .Null()
-                    .When(
-                        t =>
-                        {
-                            var deliveryMode = getDeliveryMode(t);
-                            return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased;
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
+                .AttendancePattern(
+                    attendancePatternWasSpecified: p => p.HasValue,
+                    resolveAttendancePattern: p => p,
+                    getDeliveryMode);
         }
 
         public static void Cost<T>(this IRuleBuilderInitial<T, string> field, Func<T, string> getCostDescription)
@@ -52,11 +46,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 // Required if cost description is not specified
                 .NotNull()
                     .When(t => string.IsNullOrWhiteSpace(getCostDescription(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED")
-                // Not allowed if cost description is specified
-                .Null()
-                    .When(t => !string.IsNullOrWhiteSpace(getCostDescription(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_COST_NOT_ALLOWED");
+                    .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED");
         }
 
         public static void CostDescription<T>(this IRuleBuilderInitial<T, string> field, Func<T, string> getCost)
@@ -70,11 +60,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.CostDescriptionMaxLength)
                     .When(t => !getCost(t).HasValue, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_COST_DESCRIPTION_MAXLENGTH")
-                // Not allowed if cost is specified
-                .Must(v => string.IsNullOrWhiteSpace(v))
-                    .When(t => getCost(t).HasValue, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_COST_DESCRIPTION_NOT_ALLOWED");
+                    .WithMessageFromErrorCode("COURSERUN_COST_DESCRIPTION_MAXLENGTH");
         }
 
         public static void CourseName<T>(this IRuleBuilderInitial<T, string> field)
@@ -93,7 +79,9 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Apply(Rules.Website)
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT")
+                .MaximumLength(Constants.CourseWebPageMaxLength)
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH");
         }
 
         public static void DeliveryMode<T>(this IRuleBuilderInitial<T, string> field)
@@ -271,16 +259,17 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
         }
 
-        public static void StartDate<T>(this IRuleBuilderInitial<T, string> field, Func<T, string> getFlexibleStartDate)
+        public static void StartDate<T>(this IRuleBuilderInitial<T, string> field, DateTime now, Func<T, string> getFlexibleStartDate)
         {
             field
                 .Transform(c => DateTime.TryParseExact(c, _dateFormats, provider: null, DateTimeStyles.None, out var dt) ? dt : (DateTime?)null)
-                .StartDate(t => CsvCourseRow.ResolveFlexibleStartDate(getFlexibleStartDate(t)));
+                .StartDate(now, t => CsvCourseRow.ResolveFlexibleStartDate(getFlexibleStartDate(t)));
         }
 
-        public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, Func<T, bool?> getFlexibleStartDate)
+        public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
         {
             field
+                .Cascade(CascadeMode.Stop)
                 // Required if flexible start date is false
                 .NotEmpty()
                     .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
@@ -288,49 +277,72 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 // Not allowed if flexible start date is not false
                 .Empty()
                     .When(t => getFlexibleStartDate(t) == true, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_START_DATE_NOT_ALLOWED");
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_NOT_ALLOWED")
+                // Must be in the future
+                .Must(v => v.Value >= now.Date)
+                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID");
         }
 
         public static void StudyMode<T>(this IRuleBuilderInitial<T, string> field, Func<T, string> getDeliveryMode)
         {
             field
-                .Transform(CsvCourseRow.ResolveStudyMode)
-                .StudyMode(t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)));
+                .StudyMode(
+                    studyModeWasSpecified: p => !string.IsNullOrEmpty(p),
+                    resolveStudyMode: p => CsvCourseRow.ResolveStudyMode(p),
+                    getDeliveryMode: t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)));
         }
 
-        public static void StudyMode<T>(this IRuleBuilderInitial<T, CourseStudyMode?> field, Func<T, CourseDeliveryMode?> getDeliveryMode)
+        public static void StudyMode<T>(
+            this IRuleBuilderInitial<T, CourseStudyMode?> field,
+            Func<T, CourseDeliveryMode?> getDeliveryMode)
         {
             field
-                // Required for classroom based delivery modes
-                .NotNull()
-                    .When(t => getDeliveryMode(t) == CourseDeliveryMode.ClassroomBased, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED")
-                // Not allowed for delivery modes other than classroom based
-                .Null()
-                    .When(
-                        t =>
-                        {
-                            var deliveryMode = getDeliveryMode(t);
-                            return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased;
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_NOT_ALLOWED");
+                .StudyMode(
+                    studyModeWasSpecified: p => p.HasValue,
+                    resolveStudyMode: p => p,
+                    getDeliveryMode);
         }
 
         public static void SubRegions<T>(
             this IRuleBuilderInitial<T, string> field,
+            Func<T, string> getDeliveryMode,
             Func<T, string> getNationalDelivery,
             IReadOnlyCollection<Region> allRegions)
         {
             field
                 .NormalizeWhitespace()
-                // Required when national delivery is false
+                .SubRegions(
+                    t => CsvCourseRow.ResolveDeliveryMode(getDeliveryMode(t)),
+                    t => CsvCourseRow.ResolveNationalDelivery(getNationalDelivery(t)),
+                    allRegions);
+        }
+
+        public static void SubRegions<T>(
+            this IRuleBuilderInitial<T, string> field,
+            Func<T, CourseDeliveryMode?> getDeliveryMode,
+            Func<T, bool?> getNationalDelivery,
+            IReadOnlyCollection<Region> allRegions)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                // Not allowed when delivery mode is not work based or national is true
+                .Empty()
+                    .When(
+                        t =>
+                        {
+                            var deliveryMode = getDeliveryMode(t);
+                            return (deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.WorkBased) || getNationalDelivery(t) == true;
+                        },
+                        ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_SUBREGIONS_NOT_ALLOWED")
+                // Required when national delivery is false and delivery mode is work based
                 .NotEmpty()
-                    .When(t => CsvCourseRow.ResolveNationalDelivery(getNationalDelivery(t)) == false, ApplyConditionTo.CurrentValidator)
+                    .When(t => getNationalDelivery(t) == false && getDeliveryMode(t) == CourseDeliveryMode.WorkBased, ApplyConditionTo.CurrentValidator)
                     .WithMessageFromErrorCode("COURSERUN_SUBREGIONS_REQUIRED")
                 // All specified regions must be valid and there should be at least 1
                 .Must(
-                    sr =>
+                    (t, sr) =>
                     {
                         if (string.IsNullOrWhiteSpace(sr))
                         {
@@ -347,9 +359,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                         return values.All(v => allSubRegions.Contains(v)) && values.Length > 0;
                     })
                     .WithMessageFromErrorCode("COURSERUN_SUBREGIONS_INVALID")
-                .Empty()
-                    .When(t => CsvCourseRow.ResolveNationalDelivery(getNationalDelivery(t)) == true, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_SUBREGIONS_NOT_ALLOWED");
+                ;
         }
 
         public static void VenueName<T>(
@@ -429,6 +439,52 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED")
                 .MaximumLength(Constants.WhoThisCourseIsForMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH");
+        }
+
+        private static void AttendancePattern<T, TProperty>(
+            this IRuleBuilderInitial<T, TProperty> field,
+            Func<TProperty, bool> attendancePatternWasSpecified,
+            Func<TProperty, CourseAttendancePattern?> resolveAttendancePattern,
+            Func<T, CourseDeliveryMode?> getDeliveryMode)
+        {
+            field
+                // Required for classroom based delivery modes
+                .Must(v => attendancePatternWasSpecified(v) && resolveAttendancePattern(v).HasValue)
+                    .When(t => getDeliveryMode(t) == CourseDeliveryMode.ClassroomBased, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED")
+                // Not allowed for delivery modes other than classroom based
+                .Must(v => !attendancePatternWasSpecified(v))
+                    .When(
+                        t =>
+                        {
+                            var deliveryMode = getDeliveryMode(t);
+                            return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased;
+                        },
+                        ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
+        }
+
+        private static void StudyMode<T, TProperty>(
+            this IRuleBuilderInitial<T, TProperty> field,
+            Func<TProperty, bool> studyModeWasSpecified,
+            Func<TProperty, CourseStudyMode?> resolveStudyMode,
+            Func<T, CourseDeliveryMode?> getDeliveryMode)
+        {
+            field
+                // Required for classroom based delivery modes
+                .Must(v => studyModeWasSpecified(v) && resolveStudyMode(v).HasValue)
+                    .When(t => getDeliveryMode(t) == CourseDeliveryMode.ClassroomBased, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED")
+                // Not allowed for delivery modes other than classroom based
+                .Must(v => !studyModeWasSpecified(v))
+                    .When(
+                        t =>
+                        {
+                            var deliveryMode = getDeliveryMode(t);
+                            return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased;
+                        },
+                        ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_NOT_ALLOWED");
         }
 
         private static int GetDecimalPlaces(decimal n)
