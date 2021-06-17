@@ -190,7 +190,7 @@ namespace Dfc.CourseDirectory.Testing
                 {
                     ProviderVenueRef = Guid.NewGuid().ToString(),
                     VenueName = venueName,
-                    AddressLine1 = Faker.Address.StreetAddress(),
+                    AddressLine1 = FakerEx.StreetAddressSafe(),
                     AddressLine2 = Faker.Address.SecondaryAddress(),
                     Town = Faker.Address.City(),
                     County = Faker.Address.UkCounty(),
