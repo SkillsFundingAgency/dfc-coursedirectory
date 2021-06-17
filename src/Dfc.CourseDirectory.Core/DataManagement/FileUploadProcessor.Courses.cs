@@ -237,7 +237,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 new GetCourseUploadRowsToRevalidate() { CourseUploadId = courseUpload.CourseUploadId });
         }
 
-        internal async Task<(bool Revalidated, UploadStatus UploadStatus)> RevalidateCourseUploadIfRequired(
+        internal async Task<UploadStatus> RevalidateCourseUploadIfRequired(
             ISqlQueryDispatcher sqlQueryDispatcher,
             Guid courseUploadId)
         {
@@ -252,7 +252,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             if (toBeRevalidated.Count == 0)
             {
-                return (Revalidated: false, UploadStatus: courseUpload.UploadStatus);
+                return courseUpload.UploadStatus;
             }
 
             var rowsCollection = new CourseDataUploadRowInfoCollection(
@@ -260,7 +260,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var (uploadStatus, _) = await ValidateCourseUploadRows(sqlQueryDispatcher, courseUploadId, courseUpload.ProviderId, rowsCollection);
 
-            return (Revalidated: true, uploadStatus);
+            return uploadStatus;
         }
 
         // internal for testing
