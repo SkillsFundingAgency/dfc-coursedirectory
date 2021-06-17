@@ -19,18 +19,12 @@ namespace Dfc.CourseDirectory.Testing
             UploadStatus uploadStatus,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
-            if (uploadStatus != UploadStatus.Created &&
-                uploadStatus != UploadStatus.Processing &&
-                uploadStatus != UploadStatus.ProcessedWithErrors &&
-                uploadStatus != UploadStatus.ProcessedSuccessfully)
-            {
-                throw new NotImplementedException();
-            }
-
             var createdOn = _clock.UtcNow;
 
             DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
             DateTime? processingCompletedOn = uploadStatus >= UploadStatus.ProcessedWithErrors ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null;
+            DateTime? publishedOn = uploadStatus == UploadStatus.Published ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
+            DateTime? abandonedOn = uploadStatus == UploadStatus.Abandoned ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
 
             var isValid = uploadStatus switch
             {
@@ -45,6 +39,8 @@ namespace Dfc.CourseDirectory.Testing
                 createdOn,
                 processingStartedOn,
                 processingCompletedOn,
+                publishedOn,
+                abandonedOn,
                 isValid,
                 configureRows);
 
@@ -59,9 +55,16 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? createdOn = null,
             DateTime? processingStartedOn = null,
             DateTime? processingCompletedOn = null,
+            DateTime? publishedOn = null,
+            DateTime? abandonedOn = null,
             bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
+            if (publishedOn.HasValue && abandonedOn.HasValue)
+            {
+                throw new ArgumentException($"A {nameof(VenueUpload)} cannot be both {UploadStatus.Abandoned} and {UploadStatus.Published}.");
+            }
+
             var courseUploadId = Guid.NewGuid();
             createdOn ??= _clock.UtcNow;
 
@@ -135,6 +138,34 @@ namespace Dfc.CourseDirectory.Testing
                         UpdatedOn = processingCompletedOn.Value,
                         ValidatedOn = processingCompletedOn.Value
                     })).ToArray();
+                }
+
+                if (publishedOn.HasValue)
+                {
+                    if (!processingCompletedOn.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(processingCompletedOn));
+                    }
+
+                    await dispatcher.ExecuteQuery(new PublishCourseUpload()
+                    {
+                        CourseUploadId = courseUploadId,
+                        PublishedBy = createdBy,
+                        PublishedOn = publishedOn.Value
+                    });
+                }
+                else if (abandonedOn.HasValue)
+                {
+                    if (!processingCompletedOn.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(processingCompletedOn));
+                    }
+
+                    await dispatcher.ExecuteQuery(new SetCourseUploadAbandoned()
+                    {
+                        CourseUploadId = courseUploadId,
+                        AbandonedOn = abandonedOn.Value
+                    });
                 }
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetCourseUpload()
