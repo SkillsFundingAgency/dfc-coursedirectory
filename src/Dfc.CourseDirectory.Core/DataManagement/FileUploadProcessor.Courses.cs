@@ -81,7 +81,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 if (courseUpload == null)
                 {
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedVenueUpload);
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+
                 }
 
                 if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&

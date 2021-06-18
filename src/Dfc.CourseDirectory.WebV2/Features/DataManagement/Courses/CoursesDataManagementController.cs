@@ -85,5 +85,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         {
             return View();
         }
+
+
+        [HttpGet("errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Errors() => Ok();
     }
 }
