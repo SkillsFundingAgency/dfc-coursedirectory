@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteUpload
             {
                 var validationResult = new ValidationResult(new[]
                 {
-                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete these courses")
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete course data upload")
                 });
                 return new ModelWithErrors<Command>(new Command(), validationResult);
             }
