@@ -70,6 +70,41 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task DeleteCourseUploadForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                await dispatcher.ExecuteQuery(
+                    new SetCourseUploadAbandoned()
+                    {
+                        CourseUploadId = courseUpload.CourseUploadId,
+                        AbandonedOn = _clock.UtcNow
+                    });
+
+                await dispatcher.Commit();
+            }
+        }
+
         public async Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);

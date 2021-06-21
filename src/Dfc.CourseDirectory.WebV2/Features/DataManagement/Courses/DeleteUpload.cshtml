@@ -1,0 +1,51 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteUpload.Command
+@{
+    ViewContext.SetLayoutData(title: "Delete course data upload");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Confirm" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Delete course data upload</h1>
+
+        <p class="govuk-body govuk-!-margin-bottom-7">The unpublished courses from your data upload will be deleted.</p>
+
+        <form asp-action="DeleteUpload" asp-all-route-data="@ProviderContext.RouteValues">
+            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading">
+                            Are you sure?
+                        </h2>
+                    </govuk-checkboxes-fieldset-legend>
+                </govuk-checkboxes-fieldset>
+                <govuk-checkboxes-item value="@(true)">
+                    Yes, I want to delete unpublished course data
+                </govuk-checkboxes-item>
+            </govuk-checkboxes>
+
+            <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="govuk-button--warning govuk-!-margin-right-3">Delete</govuk-button>
+
+            <govuk-button asp-action="Errors" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary" data-testid="cancel-btn">Cancel</govuk-button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function enableDeleteBtn() {
+            $('#pttcd-delete-courseupload__delete-btn').attr(
+                'disabled',
+                $('#Confirm').is(':checked') ? null : 'disabled');
+        }
+
+        // timeout is required otherwise the _checked_ property check doesn't return the correct value
+        // (maybe GDS scripts need chance to run?)
+        setTimeout(enableDeleteBtn, 100);
+
+        $('#Confirm').change(enableDeleteBtn);
+    </script>
+}
