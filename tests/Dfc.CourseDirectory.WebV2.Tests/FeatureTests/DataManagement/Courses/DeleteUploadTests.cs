@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("Confirm", "Confirm you want to delete these courses");
+            doc.AssertHasError("Confirm", "Confirm you want to delete course data upload");
         }
 
         [Theory(Skip = "TestData.CreateCourse does not have an implementation for all these statuses")]
