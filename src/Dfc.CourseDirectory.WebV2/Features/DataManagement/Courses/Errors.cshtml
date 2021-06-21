@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors
+﻿@using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 @model ViewModel
 @{
     ViewContext.SetLayoutData(title: "Course data errors");
@@ -41,8 +41,8 @@
                         @foreach (var row in Model.ErrorRows)
                         {
                             <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__cell">@row.ProviderVenueReference</th>
-                                <td class="govuk-table__cell govuk-body-s">@row.VenueName</td>
+                                <th scope="row" class="govuk-table__cell">@row.ProviderCourseRef</th>
+                                <td class="govuk-table__cell govuk-body-s">@row.CourseName</td>
                                 <td class="govuk-table__cell govuk-body-s">@string.Join(", ", row.AddressParts)</td>
                                 <td class="govuk-table__cell govuk-body-s pttcd-dm-error">
                                     @for (var i = 0; i < row.ErrorFields.Count; i++)
