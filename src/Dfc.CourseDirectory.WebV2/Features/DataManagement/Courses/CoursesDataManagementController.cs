@@ -63,9 +63,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     _ => View(status)
                 }));
 
-        [HttpGet("errors")]
-        public IActionResult Errors() => Ok();
-
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
 

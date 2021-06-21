@@ -362,6 +362,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return (uploadStatus, updatedRows);
         }
 
+        // virtual for testing
+        protected virtual IObservable<UploadStatus> GetCourseUploadStatusUpdates(Guid courseUploadId) =>
+            Observable.Interval(_statusUpdatesPollInterval)
+                .SelectMany(_ => Observable.FromAsync(() => GetCourseUploadStatus(courseUploadId)));
+
         internal class CourseUploadRowValidator : AbstractValidator<CsvCourseRow>
         {
             public CourseUploadRowValidator(
