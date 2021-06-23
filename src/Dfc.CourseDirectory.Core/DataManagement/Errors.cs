@@ -39,5 +39,61 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
         }
+
+        public static string MapCourseErrorToFieldGroup(string errorCode)
+        {
+            switch (errorCode)
+            {
+                case "COURSE_ENTRY_REQUIREMENTS_MAXLENGTH":
+                case "COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH":
+                case "COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH":
+                case "COURSE_LARS_QAN_INVALID":
+                case "COURSE_LARS_QAN_REQUIRED":
+                case "COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH":
+                case "COURSE_WHAT_CAN_DO_NEXT_MAXLENGTH":
+                case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH":
+                case "COURSE_WHERE_NEXT_MAXLENGTH":
+                case "COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH":
+                case "COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED":
+                case "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED":
+                case "COURSERUN_ATTENDANCE_PATTERN_REQUIRED":
+                case "COURSERUN_COST_DESCRIPTION_MAXLENGTH":
+                case "COURSERUN_COST_INVALID":
+                case "COURSERUN_COST_REQUIRED":
+                case "COURSERUN_COURSE_NAME_FORMAT":
+                case "COURSERUN_COURSE_NAME_MAXLENGTH":
+                case "COURSERUN_COURSE_NAME_REQUIRED":
+                    return "Course name";
+                case "COURSERUN_COURSE_WEB_PAGE_FORMAT":
+                case "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH":
+                case "COURSERUN_DELIVERY_MODE_REQUIRED":
+                case "COURSERUN_DURATION_RANGE":
+                case "COURSERUN_DURATION_REQUIRED":
+                case "COURSERUN_DURATION_UNIT_REQUIRED":
+                case "COURSERUN_FLEXIBLE_START_DATE_REQUIRED":
+                case "COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED":
+                case "COURSERUN_NATIONAL_DELIVERY_REQUIRED":
+                case "COURSERUN_PROVIDER_COURSE_REF_FORMAT":
+                case "COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH":
+                case "COURSERUN_PROVIDER_VENUE_REF_INVALID":
+                case "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED":
+                case "COURSERUN_START_DATE_INVALID":
+                case "COURSERUN_START_DATE_NOT_ALLOWED":
+                case "COURSERUN_START_DATE_REQUIRED":
+                case "COURSERUN_STUDY_MODE_NOT_ALLOWED":
+                case "COURSERUN_STUDY_MODE_REQUIRED":
+                case "COURSERUN_SUBREGIONS_INVALID":
+                case "COURSERUN_SUBREGIONS_NOT_ALLOWED":
+                case "COURSERUN_SUBREGIONS_REQUIRED":
+                case "COURSERUN_VENUE_REQUIRED":
+                case "COURSERUN_VENUE_NAME_INVALID":
+                case "COURSERUN_VENUE_NAME_NOT_ALLOWED":
+                case "COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF":
+                    return "Venue name";
+            }
+
+            throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
+        }
+
     }
 }

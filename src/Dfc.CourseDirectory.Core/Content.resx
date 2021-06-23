@@ -147,6 +147,9 @@
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
+  <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>  
   <data name="ERROR_COURSERUN_DELIVERY_MODE_REQUIRED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
@@ -186,6 +189,9 @@
   <data name="ERROR_COURSERUN_START_DATE_REQUIRED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
+  <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>  
   <data name="ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>

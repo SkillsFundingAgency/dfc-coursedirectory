@@ -21,15 +21,21 @@
                     <ul class="govuk-list pttcd-list--small">
                         @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
                         {
-                        <li>
-                            @if (Model.CourseUploadInProgress)
+                            @if (Model.UnpublishedCourseCount > 0)
                             {
-                                <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-in-progress-link">Upload in progress</a>
+                                <li>
+                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-view-edit-link">Your unpublished courses</a>
+                                </li>
                             }
-                            else
-                            {
-                                <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues"  data-testid="courses-upload-new-link" class="govuk-link">Upload new course data</a>
-                            }
+                            <li>
+                                @if (Model.CourseUploadInProgress)
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-in-progress-link">Upload in progress</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="courses-upload-new-link" class="govuk-link">Upload new course data</a>
+                                }
                             </li>
                             <li>
                                 <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">

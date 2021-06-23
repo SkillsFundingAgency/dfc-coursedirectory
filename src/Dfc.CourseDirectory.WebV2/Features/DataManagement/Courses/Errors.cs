@@ -36,8 +36,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
     public class ViewModelRow
     {
         public string ProviderCourseRef { get; set; }
+        public string LarsQan { get; set; }
         public string CourseName { get; set; }
-        public IReadOnlyCollection<string> AddressParts { get; set; }
+        public string StartDate { get; set; }
+        public string VenueName { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
 
@@ -105,8 +107,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                     .Select(row => new ViewModelRow()
                     {
                         ProviderCourseRef = row.ProviderCourseRef,
+                        LarsQan = row.LarsQan,
                         CourseName = row.CourseName,
-                        ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapVenueErrorToFieldGroup(e)).Distinct().ToArray()
+                        StartDate = row.StartDate,
+                        VenueName = row.VenueName,
+                        ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
                     })
                     .ToArray(),
                 CanResolveOnScreen = canResolveOnScreen,

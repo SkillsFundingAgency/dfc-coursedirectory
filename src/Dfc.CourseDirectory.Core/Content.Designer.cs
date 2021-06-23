@@ -252,6 +252,15 @@ namespace Dfc.CourseDirectory.Core {
         /// <summary>
         ///   Looks up a localized string similar to &lt;TODO&gt;.
         /// </summary>
+        public static string ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
         public static string ERROR_COURSERUN_DELIVERY_MODE_REQUIRED {
             get {
                 return ResourceManager.GetString("ERROR_COURSERUN_DELIVERY_MODE_REQUIRED", resourceCulture);
@@ -345,6 +354,15 @@ namespace Dfc.CourseDirectory.Core {
         public static string ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED {
             get {
                 return ResourceManager.GetString("ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_START_DATE_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_START_DATE_INVALID", resourceCulture);
             }
         }
         
