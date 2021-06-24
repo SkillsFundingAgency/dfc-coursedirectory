@@ -204,72 +204,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         UploadStatus.ProcessedWithErrors);
                 }
 
-                // If the world around us has changed (courses added etc.) then we might need to revalidate
-                //var (_, _, rows) = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
-
-                // rows will only be non-null if revalidation was done above
-                //rows ??= (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId })).Rows;
                 var rows = (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId }));
                 return (rows, courseUpload.UploadStatus);
             }
         }
 
-/*        private async Task<(bool Revalidated, UploadStatus uploadStatus, IReadOnlyCollection<CourseUploadRow> ValidatedRows)> RevalidateCourseUploadIfRequired(
-    ISqlQueryDispatcher sqlQueryDispatcher,
-    Guid courseUploadId)
-        {
-            var courseUpload = await sqlQueryDispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
-
-            if (courseUpload == null)
-            {
-                throw new ArgumentException("Course upload does not exist.", nameof(courseUploadId));
-            }
-
-            var revalidate = await DoesCourseUploadRequireRevalidating(sqlQueryDispatcher, courseUpload);
-
-            if (!revalidate)
-            {
-                return (Revalidated: false, courseUpload.UploadStatus, ValidatedRows: null);
-            }
-
-            var (rows, lastRowNumber) = await sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUploadId });
-
-            var rowCollection = new CourseDataUploadRowInfoCollection(
-                lastRowNumber,
-                rows.Select(r => new CourseDataUploadRowInfo(CsvCourseRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
-
-            var (uploadStatus, revalidatedRows) = await ValidateVenueUploadRows(
-                sqlQueryDispatcher,
-                courseUploadId,
-                courseUpload.ProviderId,
-                rowCollection);
-
-            return (Revalidated: true, uploadStatus, ValidatedRows: revalidatedRows);
-        }
-
-        private async Task<bool> DoesCourseUploadRequireRevalidating(ISqlQueryDispatcher sqlQueryDispatcher, CourseUpload courseUpload)
-        {
-            if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
-                courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
-            {
-                throw new InvalidOperationException($"Course upload at status {courseUpload.UploadStatus} cannot be revalidated.");
-            }
-
-            // Need to revalidate if any venues had been added/updated/removed for this provider
-            // (since it affects duplicate checking)
-            // or if any courses, apprenticeships or T Levels have had any venues associated or deassociated
-            // (since it affects the supplementary rows required).
-            // Figuring out these scenarios exactly isn't practical so we check if any
-            // venue, course, apprenticeship or T Level has been added/updated/removed for the provider.
-
-            var lastUpdatedOffering = await sqlQueryDispatcher.ExecuteQuery(new GetProviderCoursesLastUpdated()
-            {
-                ProviderId = courseUpload.ProviderId
-            });
-
-            return lastUpdatedOffering.HasValue && lastUpdatedOffering >= courseUpload.LastValidated;
-        }
-*/
         // internal for testing
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<CourseUploadRow> Rows)> ValidateCourseUploadRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
