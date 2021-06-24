@@ -78,14 +78,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var (_, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
+                var (uploadStatus, rows) = await RevalidateVenueUploadIfRequired(dispatcher, venueUpload.VenueUploadId);
 
                 // rows will only be non-null if revalidation was done above
                 rows ??= (await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId })).Rows;
 
                 await dispatcher.Commit();
 
-                return (rows, venueUpload.UploadStatus);
+                return (rows, uploadStatus);
             }
         }
 
