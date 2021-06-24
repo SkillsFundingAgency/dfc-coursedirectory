@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -81,7 +82,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("resolve/{rowNumber}/details")]
-        public IActionResult ResolveRowDetails([FromRoute] int rowNumber, [FromQuery] string deliveryMode) => Ok();
+        [RequireValidModelState]
+        public IActionResult ResolveRowDetails(
+            [FromRoute] int rowNumber,
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode) => Ok();
 
         [HttpGet("in-progress")]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
