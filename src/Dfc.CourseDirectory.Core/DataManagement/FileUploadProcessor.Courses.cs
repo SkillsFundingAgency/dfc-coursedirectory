@@ -19,6 +19,116 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        public async Task DeleteCourseUploadForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                await dispatcher.ExecuteQuery(
+                    new SetCourseUploadAbandoned()
+                    {
+                        CourseUploadId = courseUpload.CourseUploadId,
+                        AbandonedOn = _clock.UtcNow
+                    });
+
+                await dispatcher.Commit();
+            }
+        }
+
+        public async Task<CourseUploadRow> GetCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                var row = await dispatcher.ExecuteQuery(new GetCourseUploadRow()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    RowNumber = rowNumber
+                });
+
+                await dispatcher.Commit();
+
+                return row;
+            }
+        }
+
+        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId
+                });
+
+                await dispatcher.Commit();
+
+                return (rows, uploadStatus);
+            }
+        }
+
         public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId)
         {
             return GetCourseUploadId().ToObservable()
@@ -105,41 +215,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 return new CourseDataUploadRowInfoCollection(rowInfos);
-            }
-        }
-
-        public async Task DeleteCourseUploadForProvider(Guid providerId)
-        {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
-                {
-                    ProviderId = providerId
-                });
-
-                if (courseUpload == null)
-                {
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
-
-                }
-
-                if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
-                    courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
-                {
-                    throw new InvalidUploadStatusException(
-                        courseUpload.UploadStatus,
-                        UploadStatus.ProcessedWithErrors,
-                        UploadStatus.ProcessedSuccessfully);
-                }
-
-                await dispatcher.ExecuteQuery(
-                    new SetCourseUploadAbandoned()
-                    {
-                        CourseUploadId = courseUpload.CourseUploadId,
-                        AbandonedOn = _clock.UtcNow
-                    });
-
-                await dispatcher.Commit();
             }
         }
 

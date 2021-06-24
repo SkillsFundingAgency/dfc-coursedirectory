@@ -47,6 +47,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
+        [HttpGet("errors")]
+        public IActionResult Errors() => Ok();
+
+        [HttpGet("resolve/{rowNumber}/delivery")]
+        public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
+            await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    command => View(command)));
+
+        [HttpPost("resolve/{rowNumber}/delivery")]
+        public async Task<IActionResult> ResolveRowDeliveryMode([FromRoute] int rowNumber, ResolveRowDeliveryMode.Command command)
+        {
+            command.RowNumber = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(ResolveRowDetails), new
+                    {
+                        rowNumber = rowNumber,
+                        deliveryMode = command.DeliveryMode switch
+                        {
+                            CourseDeliveryMode.ClassroomBased => "classroom",
+                            CourseDeliveryMode.Online => "online",
+                            CourseDeliveryMode.WorkBased => "work",
+                            _ => throw new System.NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
+                        }
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpGet("resolve/{rowNumber}/details")]
+        public IActionResult ResolveRowDetails([FromRoute] int rowNumber, [FromQuery] string deliveryMode) => Ok();
+
         [HttpGet("in-progress")]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
             new InProgress.Query(),
@@ -60,19 +96,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
-
-        [HttpGet("errors")]
-        public IActionResult Errors() => Ok();
-
-        [HttpGet("check-publish")]
-        public IActionResult CheckAndPublish() => Ok();
-
-        [HttpGet("template")]
-        public IActionResult Template() =>
-           new CsvResult<CsvCourseRow>("courses-template.csv", Enumerable.Empty<CsvCourseRow>());
-
-        [HttpGet("formatting")]
-        public IActionResult Formatting() => View();
 
         [HttpGet("delete")]
         [RequireProviderContext]
@@ -92,9 +115,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("resolve/delete/success")]
         [RequireProviderContext]
-        public IActionResult DeleteUploadSuccess()
-        {
-            return View();
-        }
+        public IActionResult DeleteUploadSuccess() => View();
+
+        [HttpGet("check-publish")]
+        public IActionResult CheckAndPublish() => Ok();
+
+        [HttpGet("template")]
+        public IActionResult Template() =>
+           new CsvResult<CsvCourseRow>("courses-template.csv", Enumerable.Empty<CsvCourseRow>());
+
+        [HttpGet("formatting")]
+        public IActionResult Formatting() => View();
     }
 }
