@@ -143,6 +143,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("resolve/delete/success")]
         [RequireProviderContext]
+        public IActionResult DeleteUploadSuccess()
+        {
+            return View();
+        }
+
+        [HttpGet("download")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
+            new Download.Query(),
+            result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
         public IActionResult DeleteUploadSuccess() => View();
 
         [HttpGet("check-publish")]
