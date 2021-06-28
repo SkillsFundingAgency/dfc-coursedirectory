@@ -300,7 +300,7 @@ namespace Dfc.CourseDirectory.Testing
                     venueId: venueId ?? Guid.NewGuid(),
                     providerVenueRef: Guid.NewGuid().ToString(),
                     venueName,
-                    addressLine1: Faker.Address.StreetAddress(),
+                    addressLine1: FakerEx.StreetAddressSafe(),
                     addressLine2: Faker.Address.SecondaryAddress(),
                     town: Faker.Address.City(),
                     county: Faker.Address.UkCounty(),

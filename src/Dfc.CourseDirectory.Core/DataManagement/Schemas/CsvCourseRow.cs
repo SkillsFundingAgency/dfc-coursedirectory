@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
@@ -56,6 +59,82 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public string StudyMode { get; set; }
         [Index(23), Name("ATTENDANCE_PATTERN")]
         public string AttendancePattern { get; set; }
+
+        public static CsvCourseRow FromModel(CourseUploadRow row) => new CsvCourseRow()
+        {
+            LarsQan = row.LarsQan,
+            WhoThisCourseIsFor = row.WhoThisCourseIsFor,
+            EntryRequirements = row.EntryRequirements,
+            WhatYouWillLearn = row.WhatYouWillLearn,
+            HowYouWillLearn = row.HowYouWillLearn,
+            WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
+            HowYouWillBeAssessed = row.HowYouWillBeAssessed,
+            WhereNext = row.WhereNext,
+            CourseName = row.CourseName,
+            ProviderCourseRef = row.ProviderCourseRef,
+            DeliveryMode = row.DeliveryMode,
+            StartDate = row.StartDate,
+            FlexibleStartDate = row.FlexibleStartDate,
+            VenueName = row.VenueName,
+            ProviderVenueRef = row.ProviderVenueRef,
+            NationalDelivery = row.NationalDelivery,
+            SubRegions = row.SubRegions,
+            CourseWebPage = row.CourseWebpage,
+            Cost = row.Cost,
+            CostDescription = row.CostDescription,
+            Duration = row.Duration,
+            DurationUnit = row.DurationUnit,
+            StudyMode = row.StudyMode,
+            AttendancePattern = row.AttendancePattern
+        };
+
+        public static CsvCourseRow[][] GroupRows(IEnumerable<CsvCourseRow> rows) =>
+            rows.GroupBy(r => r, new CsvCourseRowCourseComparer())
+                .Select(g => g.ToArray())
+                .ToArray();
+
+        private class CsvCourseRowCourseComparer : IEqualityComparer<CsvCourseRow>
+        {
+            public bool Equals(CsvCourseRow x, CsvCourseRow y)
+            {
+                if (x is null && y is null)
+                {
+                    return true;
+                }
+
+                if (x is null || y is null)
+                {
+                    return false;
+                }
+
+                // Don't group together records that have no LARS code
+                if (string.IsNullOrEmpty(x.LarsQan) || string.IsNullOrEmpty(y.LarsQan))
+                {
+                    return false;
+                }
+
+                return
+                    x.LarsQan == y.LarsQan &&
+                    x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
+                    x.EntryRequirements == y.EntryRequirements &&
+                    x.WhatYouWillLearn == y.WhatYouWillLearn &&
+                    x.HowYouWillLearn == y.HowYouWillLearn &&
+                    x.WhatYouWillNeedToBring == y.WhatYouWillNeedToBring &&
+                    x.HowYouWillBeAssessed == y.HowYouWillBeAssessed &&
+                    x.WhereNext == y.WhereNext;
+            }
+
+            public int GetHashCode(CsvCourseRow obj) =>
+                HashCode.Combine(
+                    obj.LarsQan,
+                    obj.WhoThisCourseIsFor,
+                    obj.EntryRequirements,
+                    obj.WhatYouWillLearn,
+                    obj.HowYouWillLearn,
+                    obj.WhatYouWillNeedToBring,
+                    obj.HowYouWillBeAssessed,
+                    obj.WhereNext);
+        }
 
         public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
         {

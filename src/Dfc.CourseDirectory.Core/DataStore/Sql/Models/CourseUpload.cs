@@ -50,5 +50,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string DurationUnit { get; set; }
         public string StudyMode { get; set; }
         public string AttendancePattern { get; set; }
+        public Guid? VenueId { get; set; }
     }
 }

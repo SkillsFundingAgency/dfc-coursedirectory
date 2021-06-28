@@ -12,9 +12,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     public interface IFileUploadProcessor
     {
         // Courses
+		Task DeleteCourseUploadForProvider(Guid providerId);
+        Task<CourseUploadRow> GetCourseUploadRowForProvider(Guid providerId, int rowNumber);
+        Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId);
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
-        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
+        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);

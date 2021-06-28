@@ -30,5 +30,15 @@
 	[Duration] NVARCHAR(MAX),
 	[DurationUnit] NVARCHAR(MAX),
 	[StudyMode] NVARCHAR(MAX),
-	[AttendancePattern] NVARCHAR(MAX)
+	[AttendancePattern] NVARCHAR(MAX),
+	[VenueId] UNIQUEIDENTIFIER,
+	[ResolvedDeliveryMode] TINYINT,
+	[ResolvedStartDate] DATE,
+	[ResolvedFlexibleStartDate] BIT,
+	[ResolvedNationalDelivery] BIT,
+	[ResolvedCost] MONEY,
+	[ResolvedDuration] INT,
+	[ResolvedDurationUnit] TINYINT,
+	[ResolvedStudyMode] TINYINT,
+	[ResolvedAttendancePattern] TINYINT
 )

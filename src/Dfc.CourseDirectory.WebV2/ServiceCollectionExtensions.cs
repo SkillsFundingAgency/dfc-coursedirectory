@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,9 +75,11 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
                     options.Filters.Add(new StateExpiredExceptionFilter());
 
-                    options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new StandardModelBinderProvider());
+                    // If a binder type is is explicitly specified then ensure it's honoured
+                    Debug.Assert(options.ModelBinderProviders[0].GetType() == typeof(BinderTypeModelBinderProvider));
+                    options.ModelBinderProviders.Insert(1, new MptxInstanceContextModelBinderProvider());
+                    options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
+                    options.ModelBinderProviders.Insert(1, new StandardModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>

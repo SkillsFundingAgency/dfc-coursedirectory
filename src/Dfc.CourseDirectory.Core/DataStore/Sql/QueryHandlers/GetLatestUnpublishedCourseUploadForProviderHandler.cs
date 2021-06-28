@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT TOP 1 CourseUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
-ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn, LastValidated
+ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn
 FROM Pttcd.CourseUploads WITH (HOLDLOCK)
 WHERE ProviderId = @ProviderId
 AND UploadStatus IN ({string.Join(", ", UploadStatusExtensions.UnpublishedStatuses.Cast<int>())})

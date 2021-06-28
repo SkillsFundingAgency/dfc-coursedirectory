@@ -13,16 +13,16 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 {
     public static class RuleBuilderExtensions
     {
-        private static readonly Regex _addressLinePattern = new Regex(
-            @"^[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$",
-            RegexOptions.Compiled);
-
         private static readonly Regex _countyPattern = new Regex(
             @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$",
             RegexOptions.Compiled);
 
         private static readonly Regex _townPattern = new Regex(
             @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$",
+            RegexOptions.Compiled);
+
+        public static Regex AddressLinePattern { get; } = new Regex(
+            @"^[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$",
             RegexOptions.Compiled);
 
         public static void AddressLine1<T>(this IRuleBuilderInitial<T, string> field)
@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .MaximumLength(Constants.AddressLine1MaxLength)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_MAXLENGTH")
-                .Matches(_addressLinePattern)
+                .Matches(AddressLinePattern)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_FORMAT");
         }
 
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .NormalizeWhitespace()
                 .MaximumLength(Constants.AddressLine2MaxLength)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH")
-                .Matches(_addressLinePattern)
+                .Matches(AddressLinePattern)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_FORMAT");
         }
 

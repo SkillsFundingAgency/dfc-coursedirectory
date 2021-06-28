@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
@@ -9,12 +8,11 @@ using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetCourseUploadRowsHandler :
-        ISqlQueryHandler<GetCourseUploadRows, IReadOnlyCollection<CourseUploadRow>>
+    public class GetCourseUploadRowHandler : ISqlQueryHandler<GetCourseUploadRow, CourseUploadRow>
     {
-        public async Task<IReadOnlyCollection<CourseUploadRow>> Execute(
+        public async Task<CourseUploadRow> Execute(
             SqlTransaction transaction,
-            GetCourseUploadRows query)
+            GetCourseUploadRow query)
         {
             var sql = $@"
 SELECT
@@ -24,19 +22,24 @@ SELECT
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern, VenueId
 FROM Pttcd.CourseUploadRows
-WHERE CourseUploadId = @CourseUploadId
+WHERE CourseUploadId = @CourseUploadId AND RowNumber = @RowNumber
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
 ORDER BY RowNumber";
 
-            var results = (await transaction.Connection.QueryAsync<Result>(sql, new { query.CourseUploadId }, transaction))
-                .AsList();
-
-            foreach (var row in results)
+            var paramz = new
             {
-                row.Errors = (row.ErrorList ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries);
+                query.CourseUploadId,
+                query.RowNumber
+            };
+
+            var result = await transaction.Connection.QuerySingleOrDefaultAsync<Result>(sql, paramz, transaction);
+
+            if (result != null)
+            {
+                result.Errors = (result.ErrorList ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
 
-            return results;
+            return result;
         }
 
         private class Result : CourseUploadRow

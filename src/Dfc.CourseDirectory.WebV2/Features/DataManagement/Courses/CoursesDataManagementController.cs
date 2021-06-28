@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +50,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
+        [HttpGet("errors")]
+        public IActionResult Errors() => Ok();
+
+        [HttpGet("resolve/{rowNumber}/delivery")]
+        public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
+            await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    command => View(command)));
+
+        [HttpPost("resolve/{rowNumber}/delivery")]
+        public async Task<IActionResult> ResolveRowDeliveryMode([FromRoute] int rowNumber, ResolveRowDeliveryMode.Command command)
+        {
+            command.RowNumber = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(ResolveRowDetails), new
+                    {
+                        rowNumber = rowNumber,
+                        deliveryMode = command.DeliveryMode switch
+                        {
+                            CourseDeliveryMode.ClassroomBased => "classroom",
+                            CourseDeliveryMode.Online => "online",
+                            CourseDeliveryMode.WorkBased => "work",
+                            _ => throw new System.NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
+                        }
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
         [HttpGet("in-progress")]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
             new InProgress.Query(),
@@ -62,6 +95,49 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
+
+        [HttpGet("check-publish")]
+        public IActionResult CheckAndPublish() => Ok();
+
+        [HttpGet("resolve/{rowNumber}/details")]
+        [RequireValidModelState]
+        public IActionResult ResolveRowDetails(
+            [FromRoute] int rowNumber,
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode) => Ok();
+
+        [HttpGet("in-progress")]
+        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query(),
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    _ => View(status)
+                }));
+
+        [HttpGet("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload() =>
+            await _mediator.SendAndMapResponse(
+                new DeleteUpload.Query(),
+                command => View(command));
+
+        [HttpPost("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("resolve/delete/success")]
+        [RequireProviderContext]
+        public IActionResult DeleteUploadSuccess() => View();
 
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
