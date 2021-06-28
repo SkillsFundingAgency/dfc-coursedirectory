@@ -92,43 +92,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
-        {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
-                {
-                    ProviderId = providerId
-                });
-
-                if (courseUpload == null)
-                {
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
-                }
-
-                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
-                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
-                {
-                    throw new InvalidUploadStatusException(
-                        courseUpload.UploadStatus,
-                        UploadStatus.ProcessedSuccessfully,
-                        UploadStatus.ProcessedWithErrors);
-                }
-
-                // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
-
-                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
-                {
-                    CourseUploadId = courseUpload.CourseUploadId
-                });
-
-                await dispatcher.Commit();
-
-                return (rows, uploadStatus);
-            }
-        }
-
         public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId)
         {
             return GetCourseUploadId().ToObservable()
@@ -181,7 +144,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
 
             var rowsCollection = CreateCourseDataUploadRowInfoCollection();
-                rows: rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
+               // rows: rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
@@ -292,19 +255,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var blobName = $"{Constants.CoursesFolder}/{courseUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
             }
-        }
-
-        protected async Task<UploadStatus> GetCourseUploadStatus(Guid courseUploadId)
-        {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
-            var courseUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
-
-            if (courseUpload == null)
-            {
-                throw new ArgumentException("Specified course upload does not exist.", nameof(courseUploadId));
-            }
-
-            return courseUpload.UploadStatus;
         }
 
         // virtual for testing
@@ -462,8 +412,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             Guid courseUploadId,
             Guid providerId,
             CourseDataUploadRowInfoCollection rows)
+        { 
             var allRegions = await _regionCache.GetAllRegions();
-            var validator = new CourseUploadRowValidator();
 
             var validLearningAimRefs = await sqlQueryDispatcher.ExecuteQuery(new GetLearningAimRefs()
             {
@@ -534,8 +484,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ResolvedAttendancePattern = parsedRow.ResolvedAttendancePattern,
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray()
                 });
-            }
-            }
+            }           
 
             var updatedRows = await sqlQueryDispatcher.ExecuteQuery(new UpsertCourseUploadRows()
             {
@@ -594,7 +543,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ResolvedAttendancePattern).AttendancePattern(
                     attendancePatternWasSpecified: t => !string.IsNullOrEmpty(t.AttendancePattern),
                     c => c.ResolvedDeliveryMode);
-                    x.WhereNext == y.WhereNext;
             }
         }
     }

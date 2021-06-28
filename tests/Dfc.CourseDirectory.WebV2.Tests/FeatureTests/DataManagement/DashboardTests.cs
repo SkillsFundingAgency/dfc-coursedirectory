@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
 
         }
 
-        [Fact]
+        /*[Fact]
         public async Task Get_UnpublishedCourseUploads()
         {
             // Arrange
@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 doc.GetElementByTestId("courses-upload-new-link").TextContent.Should().Be("Upload new course data");
             }
 
-        }
+        }*/
 
         [Fact]
         public async Task TestVenueUploadInProgress()

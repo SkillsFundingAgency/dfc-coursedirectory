@@ -50,9 +50,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
-        [HttpGet("errors")]
-        public IActionResult Errors() => Ok();
-
         [HttpGet("resolve/{rowNumber}/delivery")]
         public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
             await _mediator.SendAndMapResponse(
@@ -105,20 +102,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             [FromRoute] int rowNumber,
             [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode) => Ok();
 
-        [HttpGet("in-progress")]
-        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
-            new InProgress.Query(),
-            result => result.Match(
-                notFound => NotFound(),
-                status => status switch
-                {
-                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
-                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    _ => View(status)
-                }));
-
         [HttpGet("delete")]
         [RequireProviderContext]
         public async Task<IActionResult> DeleteUpload() =>
@@ -139,9 +122,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [RequireProviderContext]
         public IActionResult DeleteUploadSuccess() => View();
 
-        [HttpGet("check-publish")]
-        public IActionResult CheckAndPublish() => Ok();
-
         [HttpGet("template")]
         public IActionResult Template() =>
            new CsvResult<CsvCourseRow>("courses-template.csv", Enumerable.Empty<CsvCourseRow>());
@@ -152,11 +132,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("errors")]
         [RequireProviderContext]
         public async Task<IActionResult> Errors() =>
-    await _mediator.SendAndMapResponse(
-        new Errors.Query(),
-        result => result.Match<IActionResult>(
-            noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-            vm => View(vm)));
+            await _mediator.SendAndMapResponse(
+                new Errors.Query(),
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
 
         [HttpPost("errors")]
         [RequireProviderContext]

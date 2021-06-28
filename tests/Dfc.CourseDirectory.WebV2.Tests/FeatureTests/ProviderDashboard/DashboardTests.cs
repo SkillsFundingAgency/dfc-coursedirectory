@@ -473,7 +473,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
         }
 
-        [Fact]
+        /*[Fact]
         public async Task Get_UnpublishedCourseUploads()
         {
             // Arrange
@@ -503,7 +503,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                 doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
             }
 
-        }
+        }*/
 
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
