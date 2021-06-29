@@ -9,9 +9,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 {
-    public class ResolveRowDetailsTests : MvcTestBase
+    public class ResolveRowDeliveryTests : MvcTestBase
     {
-        public ResolveRowDetailsTests(CourseDirectoryApplicationFactory factory)
+        public ResolveRowDeliveryTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
