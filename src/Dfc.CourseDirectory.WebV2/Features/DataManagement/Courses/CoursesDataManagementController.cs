@@ -96,6 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
 
+
         [HttpGet("resolve/{rowNumber}/details")]
         [RequireValidModelState]
         public IActionResult ResolveRowDetails(
@@ -148,6 +149,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => (command.WhatNext switch
                     {
                         ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
     }

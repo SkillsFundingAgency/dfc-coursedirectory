@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
 
         }
 
-        /*[Fact]
+        [Fact]
         public async Task Get_UnpublishedCourseUploads()
         {
             // Arrange
@@ -117,8 +117,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(record => record.IsValid = false);
-                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record => record.IsValid = false);
                 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 doc.GetElementByTestId("courses-upload-new-link").TextContent.Should().Be("Upload new course data");
             }
 
-        }*/
+        }
 
         [Fact]
         public async Task TestVenueUploadInProgress()

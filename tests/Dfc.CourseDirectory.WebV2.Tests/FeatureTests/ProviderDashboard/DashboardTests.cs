@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -473,7 +474,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
         }
 
-        /*[Fact]
+        [Fact]
         public async Task Get_UnpublishedCourseUploads()
         {
             // Arrange
@@ -485,8 +486,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(record => record.IsValid = false);
-                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record => record.IsValid = false);
                 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
@@ -503,7 +504,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                 doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
             }
 
-        }*/
+        }
 
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
