@@ -104,7 +104,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                     <h2 class="govuk-heading-s govuk-!-margin-top-5">Unpublished courses</h2>
                     <p class="pttcd-provider-dashboard__card__number" data-testid="unpublished-course-count">@Model.UnpublishedCourseCount</p>
                 }
-                </div>
+            </div>
         </div>
 
         <div class="govuk-grid-column-one-third">
@@ -138,6 +138,12 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                     </div>
                     <div class="pttcd-provider-dashboard__card__actions">
                         <ul class="govuk-list pttcd-list--small">
+                            @if (Model.UnpublishedCourseCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-view-edit-link">Your unpublished courses</a>
+                                </li>
+                            }
                             <li>
                                 @if (Model.CourseUploadInProgress)
                                 {
@@ -145,9 +151,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                                 }
                                 else
                                 {
-                                    <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                        Upload new course data
-                                    </a>
+                                    <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="courses-upload-new-link" class="govuk-link">Upload new course data</a>
                                 }
                             </li>
                             <li>
