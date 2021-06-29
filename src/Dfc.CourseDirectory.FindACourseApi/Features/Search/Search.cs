@@ -33,6 +33,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         public SearchSortBy? SortBy { get; set; }
         public DateTime? StartDateFrom { get; set; }
         public DateTime? StartDateTo { get; set; }
+        public string CampaignCode { get; set; }
         public int? Limit { get; set; }
         public int? Start { get; set; }
     }
@@ -180,6 +181,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             if (!string.IsNullOrWhiteSpace(request.ProviderName))
             {
                 filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', '{nameof(FindACourseOffering.ProviderDisplayName)}', 'simple', 'any')");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.CampaignCode))
+            {
+                filters.Add($"{nameof(FindACourseOffering.CampaignCodes)}/any(c: c eq '{EscapeFilterValue(request.CampaignCode)}')");
             }
 
             var orderBy = request.SortBy == SearchSortBy.StartDateDescending ?
