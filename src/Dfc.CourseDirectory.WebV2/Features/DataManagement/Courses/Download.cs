@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
@@ -25,15 +26,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
+        private readonly IRegionCache _regionCache;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IClock clock)
+            IClock clock,
+            IRegionCache regionCache)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
+            _regionCache = regionCache;
         }
 
         public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
@@ -42,20 +46,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
 
             var courses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
             {
-                ProviderId = providerContext.ProviderInfo.ProviderId
+                ProviderId = providerContext.ProviderInfo.ProviderId,
+                CourseRunStatuses = new[] { Core.Models.CourseStatus.Live }
             });
 
-            //var courseRuns = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse()
-            //{
-            //    ProviderId = providerContext.ProviderInfo.ProviderId
-            //});
-
+            var allRegions = await _regionCache.GetAllRegions();
             var rows = courses
-                .OrderBy(v => v.LarsQan)
-                .ThenBy(v => v.CourseId)
-                .Select(CsvCourseRow.FromModel)
+                .SelectMany(course => CsvCourseRow.FromModel(course, allRegions))
                 .ToList();
-
 
             var fileName = FileNameHelper.SanitizeFileName(
                 $"{providerContext.ProviderInfo.ProviderName}_courses_{_clock.UtcNow:yyyyMMddHHmm}.csv");

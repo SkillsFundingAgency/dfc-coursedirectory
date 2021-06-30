@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.Models;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
@@ -11,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public const char SubRegionDelimiter = ';';
 
         [Index(0), Name("LARS_QAN")]
-        public string LarsQan { get; set; }
+        public string LearnAimRef { get; set; }
         [Index(1), Name("WHO_THIS_COURSE_IS_FOR")]
         public string WhoThisCourseIsFor { get; set; }
         [Index(2), Name("ENTRY_REQUIREMENTS")]

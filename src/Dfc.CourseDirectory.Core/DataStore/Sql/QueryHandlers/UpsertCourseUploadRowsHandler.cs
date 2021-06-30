@@ -249,7 +249,7 @@ ORDER BY RowNumber";
                         query.ValidatedOn,
                         record.CourseId,
                         record.CourseRunId,
-                        record.LarsQan,
+                        record.LearnAimRef,
                         record.WhoThisCourseIsFor,
                         record.EntryRequirements,
                         record.WhatYouWillLearn,
