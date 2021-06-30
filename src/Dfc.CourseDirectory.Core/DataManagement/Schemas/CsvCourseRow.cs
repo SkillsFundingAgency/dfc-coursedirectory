@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
@@ -134,5 +135,57 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                     obj.HowYouWillBeAssessed,
                     obj.WhereNext);
         }
+
+        public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
+        {
+            "daytime" => CourseAttendancePattern.Daytime,
+            "evening" => CourseAttendancePattern.Evening,
+            "weekend" => CourseAttendancePattern.Weekend,
+            "day/block release" => CourseAttendancePattern.DayOrBlockRelease,
+            _ => (CourseAttendancePattern?)null
+        };
+
+        public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
+        {
+            "classroom based" => CourseDeliveryMode.ClassroomBased,
+            "classroom" => CourseDeliveryMode.ClassroomBased,
+            "online" => CourseDeliveryMode.Online,
+            "work based" => CourseDeliveryMode.WorkBased,
+            "work" => CourseDeliveryMode.WorkBased,
+            _ => (CourseDeliveryMode?)null
+        };
+
+        public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
+        {
+            "hours" => CourseDurationUnit.Hours,
+            "days" => CourseDurationUnit.Days,
+            "weeks" => CourseDurationUnit.Weeks,
+            "months" => CourseDurationUnit.Months,
+            "years" => CourseDurationUnit.Years,
+            _ => (CourseDurationUnit?)null
+        };
+
+        public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
+        {
+            "yes" => true,
+            "no" => false,
+            "" => false,
+            _ => null
+        };
+
+        public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
+        {
+            "yes" => true,
+            "no" => false,
+            _ => null
+        };
+
+        public static CourseStudyMode? ResolveStudyMode(string value) => value?.ToLower() switch
+        {
+            "full time" => CourseStudyMode.FullTime,
+            "part time" => CourseStudyMode.PartTime,
+            "flexible" => CourseStudyMode.Flexible,
+            _ => (CourseStudyMode?)null
+        };
     }
 }
