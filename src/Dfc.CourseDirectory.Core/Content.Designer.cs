@@ -222,6 +222,7 @@ namespace Dfc.CourseDirectory.Core {
             }
         }
         
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;TODO&gt;.
         /// </summary>
@@ -453,6 +454,25 @@ namespace Dfc.CourseDirectory.Core {
         public static string ERROR_COURSERUN_VENUE_REQUIRED {
             get {
                 return ResourceManager.GetString("ERROR_COURSERUN_VENUE_REQUIRED", resourceCulture);
+            }
+        }
+ 
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COST_DESCRIPTION_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_DESCRIPTION_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        /// </summary>
+        public static string ERROR_COURSERUN_COST_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COST_NOT_ALLOWED", resourceCulture);
             }
         }
         
