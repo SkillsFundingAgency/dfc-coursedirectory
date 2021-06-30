@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int PublishedApprenticeshipsCount { get; set; }
         public int PublishedCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
+        public int UnpublishedCourseCount { get; set; }
         public int PublishedVenueCount { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
@@ -74,6 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 ShowCourses = providerType.HasFlag(ProviderType.FE),
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = counts.UnpublishedVenueCount,
+                UnpublishedCourseCount = counts.UnpublishedCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created)
             };
         }

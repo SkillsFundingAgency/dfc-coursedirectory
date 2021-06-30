@@ -120,6 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                         CourseName = g.Select(p => p.CourseName).FirstOrDefault(),
                         CourseRows = g.Select(r => new ViewModelRow()
                             {
+                                //CourseId = row.Key,
                                 ProviderCourseRef = r.ProviderCourseRef,
                                 StartDate = r.StartDate,
                                 VenueName = r.VenueName,

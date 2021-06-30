@@ -92,43 +92,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
-        {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
-                {
-                    ProviderId = providerId
-                });
-
-                if (courseUpload == null)
-                {
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
-                }
-
-                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
-                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
-                {
-                    throw new InvalidUploadStatusException(
-                        courseUpload.UploadStatus,
-                        UploadStatus.ProcessedSuccessfully,
-                        UploadStatus.ProcessedWithErrors);
-                }
-
-                // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
-
-                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
-                {
-                    CourseUploadId = courseUpload.CourseUploadId
-                });
-
-                await dispatcher.Commit();
-
-                return (rows, uploadStatus);
-            }
-        }
-
         public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId)
         {
             return GetCourseUploadId().ToObservable()
@@ -440,6 +403,34 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             static bool RefMatches(string providerVenueRef, Venue venue) => providerVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase);
         }
 
+
+        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                var rows = (await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId }));
+                return (rows, courseUpload.UploadStatus);
+            }
+        }
         // internal for testing
         internal async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsRequiringRevalidation(
             ISqlQueryDispatcher sqlQueryDispatcher,
