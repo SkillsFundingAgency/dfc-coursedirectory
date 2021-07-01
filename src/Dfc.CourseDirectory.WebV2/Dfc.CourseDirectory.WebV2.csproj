@@ -37,6 +37,8 @@
     <None Remove="Content\components\pager.css" />
     <None Remove="Content\components\related-content.css" />
     <None Remove="Content\components\search-input.css" />
+    <None Remove="Content\components\sub-region-selector.css" />
+    <None Remove="Content\components\sub-region-selector.js" />
     <None Remove="Content\components\summary-list.css" />
     <None Remove="Content\components\tinymce.css" />
     <None Remove="Content\images\arrow-pagination-left.svg" />
@@ -51,8 +53,6 @@
     <None Remove="Content\pages\data-upload.css" />
     <None Remove="Content\pages\helpdesk-dashboard.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-classroom-locations.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-employer-locations.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-employer-locations.js" />
     <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-summary.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\provider-detail.css" />
