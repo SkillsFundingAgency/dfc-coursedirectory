@@ -32,7 +32,7 @@ where p.ProviderStatus = 1 and p.UkrlpProviderStatusDescription = 'Active'";
 
             using (var con = _dbConnectionFactory())
             {
-                con.Open();
+                con.Open(); 
 
                 using (var multi = await con.QueryMultipleAsync(sql))
                 {
