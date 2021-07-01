@@ -1,0 +1,22 @@
+﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.SubRegionSelectorViewModel
+@inject Dfc.CourseDirectory.Core.DataStore.IRegionCache RegionCache
+@{ 
+    var allRegions = await RegionCache.GetAllRegions();
+}
+
+<govuk-accordion id="@Model.Id" data-pttcd-module="sub-region-selector">
+    @foreach (var region in allRegions.OrderBy(r => r.Name))
+    {
+        <govuk-accordion-item expanded="@(Model.SelectedSubRegionIds.Any(r => region.SubRegions.Select(sr => sr.Id).Contains(r)))" class="pttcd-sub-regions-selector__region" data-testid="@(Model.Id)-@(region.Id)">
+            <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>
+            <govuk-checkboxes name="@Model.Name" checkboxes-class="govuk-checkboxes--small">
+                @foreach (var subRegion in region.SubRegions.OrderBy(sr => sr.Name))
+                {
+                    <govuk-checkboxes-item value="@subRegion.Id" id="@(Model.Id)-@(subRegion.Id)" checked="@(Model.SelectedSubRegionIds.Contains(subRegion.Id))">
+                        @subRegion.Name
+                    </govuk-checkboxes-item>
+                }
+            </govuk-checkboxes>
+        </govuk-accordion-item>
+    }
+</govuk-accordion>

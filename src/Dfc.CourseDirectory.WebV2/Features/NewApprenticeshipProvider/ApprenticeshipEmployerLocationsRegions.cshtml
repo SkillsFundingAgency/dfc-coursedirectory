@@ -18,22 +18,7 @@
 
         <govuk-hint>Choose all of the areas in as many regions as you deliver this course</govuk-hint>
 
-        <govuk-accordion id="pttcd-new-apprenticeship-provider__apprenticeship-employer-locations">
-            @foreach (var region in (await RegionCache.GetAllRegions()).OrderBy(r => r.Name))
-            {
-                <govuk-accordion-item id="Region-@region.Id" class="pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region" expanded="@(Model.RegionIds.Any(r => region.SubRegions.Select(sr => sr.Id).Contains(r)))">
-                    <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>
-                    <govuk-checkboxes asp-for="RegionIds" checkboxes-class="govuk-checkboxes--small" ignore-modelstate-errors="true">
-                        @foreach (var subRegion in region.SubRegions.OrderBy(sr => sr.Name))
-                        {
-                            <govuk-checkboxes-item value="@subRegion.Id" id="RegionIds-@subRegion.Id" checked="@(Model.RegionIds.Contains(subRegion.Id))">
-                                @subRegion.Name
-                            </govuk-checkboxes-item>
-                        }
-                    </govuk-checkboxes>
-                </govuk-accordion-item>
-            }
-        </govuk-accordion>
+        <vc:sub-region-selector id="@Html.IdFor(m => m.RegionIds)" name="@Html.NameFor(m => m.RegionIds)" selected-sub-region-ids="@Model.RegionIds" />
     </govuk-fieldset>
 
     <govuk-button type="submit">Continue</govuk-button>
