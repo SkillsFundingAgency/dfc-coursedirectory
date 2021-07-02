@@ -531,7 +531,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     Errors = errors,
                     CourseId = row.CourseId,
                     CourseRunId = courseRunId,
-                    LarsQan = parsedRow.LarsQan,
+                    LearnAimRef = parsedRow.LearnAimRef,
                     WhoThisCourseIsFor = parsedRow.WhoThisCourseIsFor,
                     EntryRequirements = parsedRow.EntryRequirements,
                     WhatYouWillLearn = parsedRow.WhatYouWillLearn,
@@ -622,56 +622,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     c => c.ResolvedDeliveryMode,
                     c => c.ResolvedNationalDelivery);
                 RuleFor(c => c.CourseWebPage).CourseWebPage();
-                RuleFor(c => c.Cost).Cost(c => c.CostDescription);
-                RuleFor(c => c.CostDescription).CostDescription(c => c.Cost);
-                RuleFor(c => c.Duration).Duration();
-                RuleFor(c => c.DurationUnit).DurationUnit();
-                RuleFor(c => c.StudyMode).StudyMode(c => c.DeliveryMode);
-                RuleFor(c => c.AttendancePattern).AttendancePattern(c => c.DeliveryMode);
+                RuleFor(c => c.ResolvedCost).Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), c => c.CostDescription);
+                RuleFor(c => c.CostDescription).CostDescription(c => c.ResolvedCost);
+                RuleFor(c => c.ResolvedDuration).Duration();
+                RuleFor(c => c.ResolvedDurationUnit).DurationUnit();
+                RuleFor(c => c.ResolvedStudyMode).StudyMode(
+                    studyModeWasSpecified: t => !string.IsNullOrEmpty(t.StudyMode),
+                    c => c.ResolvedDeliveryMode);
+                RuleFor(c => c.ResolvedAttendancePattern).AttendancePattern(
+                    attendancePatternWasSpecified: t => !string.IsNullOrEmpty(t.AttendancePattern),
+                    c => c.ResolvedDeliveryMode);
             }
-        }
-
-        private class CsvCourseRowCourseComparer : IEqualityComparer<CsvCourseRow>
-        {
-            public bool Equals([AllowNull] CsvCourseRow x, [AllowNull] CsvCourseRow y)
-            {
-                if (x is null && y is null)
-                {
-                    return true;
-                }
-
-                if (x is null || y is null)
-                {
-                    return false;
-                }
-
-                // Don't group together records that have no LARS code
-                if (string.IsNullOrEmpty(x.LarsQan) || string.IsNullOrEmpty(y.LarsQan))
-                {
-                    return false;
-                }
-
-                return
-                    x.LarsQan == y.LarsQan &&
-                    x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
-                    x.EntryRequirements == y.EntryRequirements &&
-                    x.WhatYouWillLearn == y.WhatYouWillLearn &&
-                    x.HowYouWillLearn == y.HowYouWillLearn &&
-                    x.WhatYouWillNeedToBring == y.WhatYouWillNeedToBring &&
-                    x.HowYouWillBeAssessed == y.HowYouWillBeAssessed &&
-                    x.WhereNext == y.WhereNext;
-            }
-
-            public int GetHashCode([DisallowNull] CsvCourseRow obj) =>
-                HashCode.Combine(
-                    obj.LarsQan,
-                    obj.WhoThisCourseIsFor,
-                    obj.EntryRequirements,
-                    obj.WhatYouWillLearn,
-                    obj.HowYouWillLearn,
-                    obj.WhatYouWillNeedToBring,
-                    obj.HowYouWillBeAssessed,
-                    obj.WhereNext);
         }
     }
 }
