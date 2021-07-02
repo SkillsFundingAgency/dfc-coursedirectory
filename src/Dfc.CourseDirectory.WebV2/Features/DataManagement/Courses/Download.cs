@@ -51,7 +51,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
             });
 
             var allRegions = await _regionCache.GetAllRegions();
-            var rows = courses
+            var rows = courses.OrderBy(x=>x.LearnAimRef)
+                .ThenBy(x=>x.CourseId)
                 .SelectMany(course => CsvCourseRow.FromModel(course, allRegions))
                 .ToList();
 
