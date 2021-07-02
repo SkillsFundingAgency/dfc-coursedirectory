@@ -6,16 +6,13 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.TLevelValidation;
-using Dfc.CourseDirectory.WebV2.Validation;
 using FluentValidation;
-using FluentValidation.Results;
 using FormFlow;
-using GovUk.Frontend.AspNetCore;
 using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OneOf;
 using OneOf.Types;
 
@@ -28,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public string YourReference { get; set; }
-        public Date? StartDate { get; set; }
+        public DateInput StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         public string WhoFor { get; set; }
@@ -58,16 +55,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
     {
         private readonly JourneyInstance<EditTLevelJourneyModel> _journeyInstance;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IActionContextAccessor _actionContextAccessor;
 
         public Handler(
             JourneyInstance<EditTLevelJourneyModel> journeyInstance,
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            IActionContextAccessor actionContextAccessor)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _journeyInstance = journeyInstance;
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _actionContextAccessor = actionContextAccessor;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -86,13 +80,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             request.LocationVenueIds ??= new HashSet<Guid>();
             request.LocationVenueIds.Intersect(providerVenues.Select(v => v.VenueId));
 
-            var validator = new CommandValidator(_actionContextAccessor);
-            var validationResult = await validator.ValidateAsync(request);
+            var validator = new CommandValidator(
+                _journeyInstance.State.ProviderId,
+                _journeyInstance.State.TLevelDefinitionId,
+                _sqlQueryDispatcher);
 
-            // TODO Move this logic into Validation.TLevelValidation when Validator doesn't have to be injected.
-            // This is a limitation of the way the current Date validation works that will go away when
-            // tag helper library supports model binding to DateTimes.
-            await CheckNoExistingTLevelForStartDate(validationResult, request);
+            var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
@@ -105,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             _journeyInstance.UpdateState(state =>
             {
                 state.YourReference = request.YourReference;
-                state.StartDate = request.StartDate.Value.ToDateTime();
+                state.StartDate = request.StartDate.Value;
                 state.LocationVenueIds = request.LocationVenueIds.ToList();
                 state.Website = request.Website;
                 state.WhoFor = request.WhoFor;
@@ -120,26 +113,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             return new Success();
         }
 
-        private async Task CheckNoExistingTLevelForStartDate(ValidationResult validationResult, Command command)
-        {
-            if (!command.StartDate.HasValue)
-            {
-                return;
-            }
-
-            var existingTLevels = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetTLevelsForProvider() { ProviderId = _journeyInstance.State.ProviderId });
-
-            if (existingTLevels.Any(tl =>
-                tl.TLevelDefinition.TLevelDefinitionId == _journeyInstance.State.TLevelDefinitionId &&
-                tl.TLevelId != _journeyInstance.State.TLevelId &&
-                tl.StartDate == command.StartDate?.ToDateTime()))
-            {
-                validationResult.Errors.Add(
-                    new ValidationFailure(nameof(Command.StartDate), "Start date already exists"));
-            }
-        }
-
         private ViewModel CreateViewModel(IReadOnlyCollection<Venue> providerVenues) => new ViewModel()
         {
             ProviderVenues = providerVenues
@@ -150,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                 })
                 .ToList(),
             LocationVenueIds = new HashSet<Guid>(_journeyInstance.State.LocationVenueIds),
-            StartDate = (Date?)_journeyInstance.State.StartDate,
+            StartDate = _journeyInstance.State.StartDate,
             Website = _journeyInstance.State.Website,
             YourReference = _journeyInstance.State.YourReference,
             EntryRequirements = _journeyInstance.State.EntryRequirements,
@@ -170,17 +143,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                     ProviderId = _journeyInstance.State.ProviderId
                 });
 
-        private class CommandValidator : ValidatorBase<Command>
+        private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(IActionContextAccessor actionContextAccessor)
-                : base(actionContextAccessor)
+            public CommandValidator(Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
-                // TODO Move this logic into Validation.TLevelValidation when tag helper library
-                // supports binding DateTimes
                 RuleFor(c => c.StartDate)
-                    .Date(displayName: "Start date", missingErrorMessage: "Enter a start date", isRequired: true);
+                    .StartDate(providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()

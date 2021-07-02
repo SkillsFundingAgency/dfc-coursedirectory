@@ -134,7 +134,11 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
             {
                 // Avoid import being added to old pages
-                AddImportsToHtml = false
+                AddImportsToHtml = false,
+                DateInputModelConverters =
+                {
+                    new ModelBinding.DateInputModelConverter()
+                }
             });
             services.AddMediatR(typeof(ServiceCollectionExtensions));
             services.AddTransient<IClock, SystemClock>();
@@ -172,7 +176,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
             services.AddTransient<SqlDataSync>();
             services.AddScoped<RouteValuesHelper>();
-            services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
             services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();

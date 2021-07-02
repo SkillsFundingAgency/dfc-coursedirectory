@@ -1,18 +1,18 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Validation;
-using GovUk.Frontend.AspNetCore;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
 {
-    public class ValidatorBaseTests : MvcTestBase
+    public class DateValidationTests : MvcTestBase
     {
-        public ValidatorBaseTests(CourseDirectoryApplicationFactory factory)
+        public DateValidationTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
                 .Add("DateOfBirth.Year", year)
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "ValidatorBaseTests")
+            var request = new HttpRequestMessage(HttpMethod.Post, "DateValidationTests")
             {
                 Content = content
             };
@@ -57,33 +57,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
         }
     }
 
-    public class ValidatorBaseTestsController : Controller
+    public class DateValidationTestsController : Controller
     {
-        [HttpPost("ValidatorBaseTests")]
+        [HttpPost("DateValidationTests")]
         public IActionResult Post(
-            ValidatorBaseTestsModel model,
-            [FromServices] ValidatorBaseTestsValidator validator)
+            DateValidationTestsModel model,
+            [FromServices] DateValidationTestsValidator validator)
         {
             var result = validator.Validate(model);
             return Json(new { isValid = result.IsValid, errors = result.Errors });
         }
     }
 
-    public class ValidatorBaseTestsModel
+    public class DateValidationTestsModel
     {
-        public Date? DateOfBirth { get; set; }
+        public DateInput DateOfBirth { get; set; }
     }
 
-    public class ValidatorBaseTestsValidator : ValidatorBase<ValidatorBaseTestsModel>
+    public class DateValidationTestsValidator : AbstractValidator<DateValidationTestsModel>
     {
-        public ValidatorBaseTestsValidator(IActionContextAccessor actionContextAccessor)
-            : base(actionContextAccessor)
+        public DateValidationTestsValidator()
         {
             RuleFor(m => m.DateOfBirth)
-                .Date(
-                    displayName: "Date of birth",
-                    missingErrorMessage: "Enter your date of birth",
-                    isRequired: true);
+                .NotEmpty()
+                    .WithMessage("Enter your date of birth")
+                .Apply(builder => Rules.Date(builder, displayName: "Date of birth"));
         }
     }
 }
