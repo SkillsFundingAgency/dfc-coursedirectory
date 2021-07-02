@@ -61,8 +61,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models
         public string CostDescription { get; set; }
         public CourseDurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
-        public CourseStudyMode StudyMode { get; set; }
-        public CourseAttendancePattern AttendancePattern { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }
+        public CourseAttendancePattern? AttendancePattern { get; set; }
         public bool? National { get; set; }
         public IEnumerable<string> Regions { get; set; }
         public CourseStatus RecordStatus { get; set; }
