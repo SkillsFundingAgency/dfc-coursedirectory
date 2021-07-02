@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
-            services.AddTransient<ValidatorBaseTestsValidator>();
+            services.AddTransient<DateValidationTestsValidator>();
 
             services.Configure<DataManagementOptions>(
                 options => options.ProcessedImmediatelyThreshold = TimeSpan.FromMilliseconds(2000));
