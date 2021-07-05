@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             ProviderVenueRef = row.ProviderVenueRef,
             NationalDelivery = row.NationalDelivery,
             SubRegions = row.SubRegions,
-            CourseWebPage = row.CourseWebpage,
+            CourseWebPage = row.CourseWebPage,
             Cost = row.Cost,
             CostDescription = row.CostDescription,
             Duration = row.Duration,
@@ -88,34 +88,37 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             AttendancePattern = row.AttendancePattern
         };
 
-        public static IEnumerable<CsvCourseRow> FromModel(Course row,IReadOnlyCollection<Region> allRegions) => row.CourseRuns.OrderBy(x=>x.StartDate).ThenBy(x=>x.DeliveryMode).Select(courserun => new CsvCourseRow()
-        { 
-            LearnAimRef = row.LearnAimRef,
-            WhoThisCourseIsFor = row.CourseDescription,
-            EntryRequirements = row.EntryRequirements,
-            WhatYouWillLearn = row.WhatYoullLearn,
-            HowYouWillLearn = row.HowYoullLearn,
-            WhatYouWillNeedToBring = row.WhatYoullNeed,
-            HowYouWillBeAssessed = row.HowYoullBeAssessed,
-            WhereNext = row.WhereNext,
-            CourseName = courserun.CourseName,
-            ProviderCourseRef = courserun.ProviderCourseId,
-            DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(courserun.DeliveryMode),
-            StartDate = courserun.StartDate.HasValue ? courserun.StartDate?.ToString("dd/MM/yyyy") : null,
-            FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(courserun.FlexibleStartDate),
-            VenueName = courserun.VenueName,
-            ProviderVenueRef = courserun.ProviderVenueRef,
-            NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(courserun.National),
-            SubRegions = string.Join(SubRegionDelimiter, allRegions.SelectMany(x => x.SubRegions.Where(x=> courserun.SubRegionIds.Contains(x.Id)).Select(x=>x.Name))),
-            CourseWebPage = courserun.CourseWebsite,
-            Cost = ParsedCsvCourseRow.MapCost(courserun.Cost),
-            CostDescription = courserun.CostDescription,
-            Duration = ParsedCsvCourseRow.MapDuration(courserun.DurationValue),
-            DurationUnit = ParsedCsvCourseRow.MapDurationUnit(courserun.DurationUnit),
-            StudyMode = ParsedCsvCourseRow.MapStudyMode(courserun.StudyMode) ?? "",
-            AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(courserun.AttendancePattern) ?? ""
-        });
-
+        public static IEnumerable<CsvCourseRow> FromModel(Course row, IReadOnlyCollection<Region> allRegions) =>
+            row.CourseRuns
+                .OrderBy(x => x.StartDate)
+                .ThenBy(x => x.DeliveryMode)
+                .Select(courseRun => new CsvCourseRow()
+                {
+                    LearnAimRef = row.LearnAimRef,
+                    WhoThisCourseIsFor = row.CourseDescription,
+                    EntryRequirements = row.EntryRequirements,
+                    WhatYouWillLearn = row.WhatYoullLearn,
+                    HowYouWillLearn = row.HowYoullLearn,
+                    WhatYouWillNeedToBring = row.WhatYoullNeed,
+                    HowYouWillBeAssessed = row.HowYoullBeAssessed,
+                    WhereNext = row.WhereNext,
+                    CourseName = courseRun.CourseName,
+                    ProviderCourseRef = courseRun.ProviderCourseId,
+                    DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(courseRun.DeliveryMode),
+                    StartDate = ParsedCsvCourseRow.MapStartDate(courseRun.StartDate),
+                    FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(courseRun.FlexibleStartDate),
+                    VenueName = courseRun.VenueName,
+                    ProviderVenueRef = courseRun.ProviderVenueRef,
+                    NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(courseRun.National),
+                    SubRegions = ParsedCsvCourseRow.MapSubRegions(courseRun.SubRegionIds, allRegions),
+                    CourseWebPage = courseRun.CourseWebsite,
+                    Cost = ParsedCsvCourseRow.MapCost(courseRun.Cost),
+                    CostDescription = courseRun.CostDescription,
+                    Duration = ParsedCsvCourseRow.MapDuration(courseRun.DurationValue),
+                    DurationUnit = ParsedCsvCourseRow.MapDurationUnit(courseRun.DurationUnit),
+                    StudyMode = ParsedCsvCourseRow.MapStudyMode(courseRun.StudyMode) ?? "",
+                    AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(courseRun.AttendancePattern) ?? ""
+                });
 
         public static CsvCourseRow[][] GroupRows(IEnumerable<CsvCourseRow> rows) =>
             rows.GroupBy(r => r, new CsvCourseRowCourseComparer())

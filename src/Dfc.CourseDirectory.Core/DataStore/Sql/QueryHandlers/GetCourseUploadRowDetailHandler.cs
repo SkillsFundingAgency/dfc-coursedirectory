@@ -8,11 +8,11 @@ using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetCourseUploadRowHandler : ISqlQueryHandler<GetCourseUploadRow, CourseUploadRow>
+    public class GetCourseUploadRowDetailHandler : ISqlQueryHandler<GetCourseUploadRowDetail, CourseUploadRowDetail>
     {
-        public async Task<CourseUploadRow> Execute(
+        public async Task<CourseUploadRowDetail> Execute(
             SqlTransaction transaction,
-            GetCourseUploadRow query)
+            GetCourseUploadRowDetail query)
         {
             var sql = $@"
 SELECT
@@ -20,11 +20,17 @@ SELECT
     LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
     HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
-    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId
+    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
+    ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery,
+    ResolvedCost, ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId AND RowNumber = @RowNumber
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
-ORDER BY RowNumber";
+ORDER BY RowNumber
+
+SELECT RegionId FROM Pttcd.CourseUploadRowSubRegions
+WHERE CourseUploadId = @CourseUploadId AND RowNumber = @RowNumber
+";
 
             var paramz = new
             {
@@ -32,20 +38,26 @@ ORDER BY RowNumber";
                 query.RowNumber
             };
 
-            var result = await transaction.Connection.QuerySingleOrDefaultAsync<Result>(sql, paramz, transaction);
-
-            if (result != null)
+            using (var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction))
             {
-                result.Errors = (result.ErrorList ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries);
-            }
+                var result = await reader.ReadSingleOrDefaultAsync<Result>();
 
-            return result;
+                if (result == null)
+                {
+                    return null;
+                }
+
+                result.Errors = (result.ErrorList ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries);
+
+                result.ResolvedSubRegionIds = (await reader.ReadAsync<string>()).AsList();
+
+                return result;
+            }
         }
 
-        private class Result : CourseUploadRow
+        private class Result : CourseUploadRowDetail
         {
             public string ErrorList { get; set; }
-            public UploadRowStatus CourseUploadRowStatus { get; set; }
         }
     }
 }

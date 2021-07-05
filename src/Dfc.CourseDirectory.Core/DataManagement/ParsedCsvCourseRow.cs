@@ -43,15 +43,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return parsedRow;
         }
 
-        public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
-        {
-            "daytime" => CourseAttendancePattern.Daytime,
-            "evening" => CourseAttendancePattern.Evening,
-            "weekend" => CourseAttendancePattern.Weekend,
-            "day/block release" => CourseAttendancePattern.DayOrBlockRelease,
-            _ => (CourseAttendancePattern?)null
-        };
-
         public static string MapAttendancePattern(CourseAttendancePattern? value) => value switch
         {
             0 => null,
@@ -63,10 +54,77 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
+        public static string MapCost(decimal? value) => value?.ToString("0.00");
+
+        public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
+        {
+            CourseDeliveryMode.ClassroomBased => "classroom based",
+            CourseDeliveryMode.Online => "online",
+            CourseDeliveryMode.WorkBased => "work based",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapDuration(int? value) => value?.ToString("0.##");
+
+        public static string MapDurationUnit(CourseDurationUnit? value) => value switch
+        {
+            CourseDurationUnit.Hours => "hours",
+            CourseDurationUnit.Days => "days",
+            CourseDurationUnit.Weeks => "weeks",
+            CourseDurationUnit.Months => "months",
+            CourseDurationUnit.Years => "years",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapFlexibleStartDate(bool? value) => value switch
+        {
+            true => "yes",
+            false => "no",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapNationalDelivery(bool? value) => value switch
+        {
+            true => "yes",
+            false => "no",
+            null => null,
+        };
+
+        public static string MapSubRegions(IReadOnlyCollection<string> value, IReadOnlyCollection<Region> allRegions) =>
+            value == null ?
+                string.Empty :
+                string.Join(
+                    SubRegionDelimiter + " ",
+                    allRegions
+                        .SelectMany(r => r.SubRegions)
+                        .Where(r => value.Contains(r.Id))
+                        .Select(r => r.Name));
+
+        public static string MapStartDate(DateTime? value) => value?.ToString("dd/MM/yyyy");
+
+        public static string MapStudyMode(CourseStudyMode? value) => value switch
+        {
+            0 => null,
+            null => null,
+            CourseStudyMode.FullTime => "full time",
+            CourseStudyMode.PartTime => "part time",
+            CourseStudyMode.Flexible => "flexible",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
+        {
+            "daytime" => CourseAttendancePattern.Daytime,
+            "evening" => CourseAttendancePattern.Evening,
+            "weekend" => CourseAttendancePattern.Weekend,
+            "day/block release" => CourseAttendancePattern.DayOrBlockRelease,
+            _ => (CourseAttendancePattern?)null
+        };
+
         public static decimal? ResolveCost(string value) =>
             decimal.TryParse(value, out var result) && GetDecimalPlaces(result) <= 2 ? result : (decimal?)null;
-
-        public static string MapCost(decimal? value) => value?.ToString("0.0000");
 
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
         {
@@ -80,20 +138,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseDeliveryMode?)null
         };
 
-        public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
-        {
-            CourseDeliveryMode.ClassroomBased => "classroom based",
-            CourseDeliveryMode.Online => "online",
-            CourseDeliveryMode.WorkBased => "work based",
-            null => null,
-            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
-        };
-
-
         public static int? ResolveDuration(string value) =>
             int.TryParse(value, out var duration) ? duration : (int?)null;
-
-        public static string MapDuration(int? value) => value?.ToString("0.##");
 
         public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
         {
@@ -105,17 +151,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
-        public static string MapDurationUnit(CourseDurationUnit? value) => value switch
-        {
-            CourseDurationUnit.Hours => "hours",
-            CourseDurationUnit.Days => "days",
-            CourseDurationUnit.Weeks => "weeks",
-            CourseDurationUnit.Months => "months",
-            CourseDurationUnit.Years => "years",
-            null => null,
-            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
-        };
-
         public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
         {
             "yes" => true,
@@ -124,25 +159,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
-        public static string MapFlexibleStartDate(bool? value) => value switch
-        {
-            true => "yes",
-            false => "no",
-            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
-        };
-
         public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
         {
             "yes" => true,
             "no" => false,
             _ => null
-        };
-
-        public static string MapNationalDelivery(bool? value) => value switch
-        {
-            true => "yes",
-            false => "no",
-            null => null,
         };
 
         public static DateTime? ResolveStartDate(string value) =>
@@ -154,16 +175,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "part time" => CourseStudyMode.PartTime,
             "flexible" => CourseStudyMode.Flexible,
             _ => (CourseStudyMode?)null
-        };
-
-        public static string MapStudyMode(CourseStudyMode? value) => value switch
-        {
-            0 => null,
-            null => null,
-            CourseStudyMode.FullTime => "full time",
-            CourseStudyMode.PartTime => "part time",
-            CourseStudyMode.Flexible => "flexible",
-            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
         public static IReadOnlyCollection<Region> ResolveSubRegions(string value, IEnumerable<Region> allRegions)

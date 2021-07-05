@@ -169,7 +169,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Select an attendance pattern.
         /// </summary>
         public static string ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED {
             get {
@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Cost description must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH {
             get {
@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter a real cost.
         /// </summary>
         public static string ERROR_COURSERUN_COST_INVALID {
             get {
@@ -196,7 +196,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter a cost or cost description.
         /// </summary>
         public static string ERROR_COURSERUN_COST_REQUIRED {
             get {
@@ -205,7 +205,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Course name must only include letters, numbers, hyphens, brackets and spaces.
         /// </summary>
         public static string ERROR_COURSERUN_COURSE_NAME_FORMAT {
             get {
@@ -214,7 +214,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Course name must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSERUN_COURSE_NAME_MAXLENGTH {
             get {
@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter a Course name.
         /// </summary>
         public static string ERROR_COURSERUN_COURSE_NAME_REQUIRED {
             get {
@@ -232,7 +232,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Course webpage must be a real website.
         /// </summary>
         public static string ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT {
             get {
@@ -241,7 +241,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Course webpage must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH {
             get {
@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Select a delivery mode.
         /// </summary>
         public static string ERROR_COURSERUN_DELIVERY_MODE_REQUIRED {
             get {
@@ -259,7 +259,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter duration between 0-999.
         /// </summary>
         public static string ERROR_COURSERUN_DURATION_RANGE {
             get {
@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter duration.
         /// </summary>
         public static string ERROR_COURSERUN_DURATION_REQUIRED {
             get {
@@ -277,7 +277,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter a duration unit.
         /// </summary>
         public static string ERROR_COURSERUN_DURATION_UNIT_REQUIRED {
             get {
@@ -286,7 +286,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter start date.
         /// </summary>
         public static string ERROR_COURSERUN_FLEXIBLE_START_DATE_REQUIRED {
             get {
@@ -304,7 +304,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Select National delivery.
         /// </summary>
         public static string ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED {
             get {
@@ -313,7 +313,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Your reference must only include letters, numbers, hyphens, brackets and spaces.
         /// </summary>
         public static string ERROR_COURSERUN_PROVIDER_COURSE_REF_FORMAT {
             get {
@@ -322,7 +322,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Your reference must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH {
             get {
@@ -349,7 +349,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter a real start date.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_INVALID {
             get {
@@ -358,7 +358,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Start date cannot be earlier than today&apos;s date.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_NOT_ALLOWED {
             get {
@@ -367,7 +367,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Enter start date.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_REQUIRED {
             get {
@@ -385,7 +385,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Select course hours.
         /// </summary>
         public static string ERROR_COURSERUN_STUDY_MODE_REQUIRED {
             get {
@@ -412,7 +412,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Select at least one sub region.
         /// </summary>
         public static string ERROR_COURSERUN_SUBREGIONS_REQUIRED {
             get {
@@ -448,7 +448,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Select a venue.
         /// </summary>
         public static string ERROR_COURSERUN_VENUE_REQUIRED {
             get {

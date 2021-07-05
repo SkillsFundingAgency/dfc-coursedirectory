@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
@@ -80,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                             CourseDeliveryMode.ClassroomBased => "classroom",
                             CourseDeliveryMode.Online => "online",
                             CourseDeliveryMode.WorkBased => "work",
-                            _ => throw new System.NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
+                            _ => throw new NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
                         }
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
@@ -107,9 +108,41 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("resolve/{rowNumber}/details")]
         [RequireValidModelState]
-        public IActionResult ResolveRowDetails(
+        public async Task<IActionResult> ResolveRowDetails(
             [FromRoute] int rowNumber,
-            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode) => Ok();
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode)
+        {
+            var query = new ResolveRowDetails.Query()
+            {
+                DeliveryMode = deliveryMode,
+                RowNumber = rowNumber
+            };
+
+            return await _mediator.SendAndMapResponse(
+                query,
+                errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+        }
+
+        [HttpPost("resolve/{rowNumber}/details")]
+        [RequireValidModelState(forKey: "deliveryMode")]
+        public async Task<IActionResult> ResolveRowDetails(
+            [FromRoute] int rowNumber,
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode,
+            ResolveRowDetails.Command command)
+        {
+            command.RowNumber = rowNumber;
+            command.DeliveryMode = deliveryMode;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(ResolveList))
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
 
         [HttpGet("in-progress")]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
@@ -150,7 +183,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             new Download.Query(),
             result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
 
-
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
 
@@ -162,7 +194,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         public IActionResult Formatting() => View();
 
         [HttpGet("errors")]
-        [RequireProviderContext]
         public async Task<IActionResult> Errors() =>
             await _mediator.SendAndMapResponse(
                 new Errors.Query(),
@@ -171,7 +202,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     vm => View(vm)));
 
         [HttpPost("errors")]
-        [RequireProviderContext]
         public async Task<IActionResult> Errors(Errors.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
