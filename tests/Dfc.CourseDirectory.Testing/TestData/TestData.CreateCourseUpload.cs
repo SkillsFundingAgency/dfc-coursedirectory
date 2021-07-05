@@ -33,13 +33,6 @@ namespace Dfc.CourseDirectory.Testing
                 _ => true
             };
 
-            var isValid = uploadStatus switch
-            {
-                UploadStatus.ProcessedWithErrors => false,
-                UploadStatus.Created | UploadStatus.Processing => (bool?)null,
-                _ => true
-            };
-
             var (courseUpload, rows) = await CreateCourseUpload(
                 providerId,
                 createdBy,

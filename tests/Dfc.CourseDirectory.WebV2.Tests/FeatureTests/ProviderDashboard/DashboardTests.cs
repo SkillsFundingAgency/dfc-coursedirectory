@@ -481,12 +481,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
+            var learningAimRef = await TestData.CreateLearningAimRef();
             //Create some course upload rows to test new data in UI
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(record => record.IsValid = false);
-                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
                 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
