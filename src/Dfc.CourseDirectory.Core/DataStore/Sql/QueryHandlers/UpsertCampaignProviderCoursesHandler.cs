@@ -32,7 +32,7 @@ DELETE FROM @Changes WHERE Action <> 'INSERT'
 -- Below here should be kept in sync with RemoveStaleCampaignProviderCourses
 
 WITH AmendedProviderLearnAimRefs AS (
-    SELECT p.ProviderId, c.LearnAimRef
+    SELECT p.ProviderId, c.LearnAimRef, c.ProviderUkprn
     FROM @Changes c
     JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 )
@@ -43,7 +43,7 @@ USING (
 	    x.LearnAimRef,
         CONCAT('[', STRING_AGG(CASE WHEN cpc.CampaignCode IS NOT NULL THEN CONCAT('""', REPLACE(cpc.CampaignCode, '""', '\""'), '""') ELSE '' END, ','), ']') CampaignCodesJson
     FROM AmendedProviderLearnAimRefs x
-    LEFT JOIN pttcd.CampaignProviderCourses cpc ON cpc.LearnAimRef = x.LearnAimRef
+    LEFT JOIN pttcd.CampaignProviderCourses cpc ON cpc.LearnAimRef = x.LearnAimRef AND cpc.ProviderUkprn = x.ProviderUkprn
     GROUP BY x.ProviderId, x.LearnAimRef
 ) AS source
 ON target.ProviderId = source.ProviderId AND target.LearnAimRef = source.LearnAimRef
