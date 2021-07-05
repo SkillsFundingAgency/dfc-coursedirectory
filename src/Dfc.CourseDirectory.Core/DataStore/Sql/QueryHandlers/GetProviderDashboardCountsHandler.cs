@@ -69,15 +69,7 @@ INNER JOIN Pttcd.VenueUploadRows vr
 ON vu.VenueUploadId = vr.VenueUploadId
 WHERE vu.UploadStatus IN ({(int)UploadStatus.ProcessedWithErrors}, {(int)UploadStatus.ProcessedSuccessfully})
 AND vr.VenueUploadRowStatus = 0 
-AND vu.ProviderId = @{ nameof(query.ProviderId)}
-
-SELECT COUNT(*)
-FROM Pttcd.CourseUploads cu
-INNER JOIN Pttcd.CourseUploadRows cr
-ON cu.CourseUploadId = cr.CourseUploadId
-WHERE cu.UploadStatus IN({ (int)UploadStatus.ProcessedWithErrors}, { (int)UploadStatus.ProcessedSuccessfully})
-AND cr.CourseUploadRowStatus = 0
-AND cu.ProviderId = @{ nameof(query.ProviderId)}";
+AND vu.ProviderId = @{ nameof(query.ProviderId)}";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
             {
@@ -90,7 +82,6 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
                 var bulkUploadCourseRunsErrorCount = reader.ReadSingle<int>();
                 var apprenticeshipsBulkUploadErrorCount = reader.ReadSingle<int>();
                 var unpublishedVenueCount = reader.ReadSingle<int>();
-                var unpublishedCourseCount = reader.ReadSingle<int>();
 
                 return new DashboardCounts
                 {
@@ -102,8 +93,7 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
                     BulkUploadCoursesErrorCount = bulkUploadCoursesErrorCount,
                     BulkUploadCourseRunsErrorCount = bulkUploadCourseRunsErrorCount,
                     ApprenticeshipsBulkUploadErrorCount = apprenticeshipsBulkUploadErrorCount,
-                    UnpublishedVenueCount = unpublishedVenueCount,
-                    UnpublishedCourseCount = unpublishedCourseCount
+                    UnpublishedVenueCount = unpublishedVenueCount
                 };
             }
         }

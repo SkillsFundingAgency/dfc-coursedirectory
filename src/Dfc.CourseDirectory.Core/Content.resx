@@ -147,21 +147,6 @@
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
-  <data name="ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH" xml:space="preserve">
-    <value>How you'll be assesssed must be {0} characters or fewer</value>
-  </data>
-  <data name="ERROR_COURSE_LARS_QAN_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
-  </data>
-  <data name="ERROR_COURSE_LARS_QAN_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
-  </data>
-  <data name="ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH" xml:space="preserve">
-    <value>What you can do next must be {0} characters or fewer</value>
-  </data>
-  <data name="ERROR_COURSERUN_COST_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
-  </data>
   <data name="ERROR_COURSERUN_DELIVERY_MODE_REQUIRED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
@@ -195,15 +180,15 @@
   <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
+  <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>
   <data name="ERROR_COURSERUN_START_DATE_NOT_ALLOWED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_REQUIRED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
-  <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
-  </data>  
   <data name="ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
@@ -234,8 +219,20 @@
   <data name="ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH" xml:space="preserve">
     <value>Entry requirements must be {0} characters or fewer</value>
   </data>
+  <data name="ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH" xml:space="preserve">
+    <value>How you'll be assesssed must be {0} characters or fewer</value>
+  </data>
   <data name="ERROR_COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH" xml:space="preserve">
     <value>How you'll learn must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_LARS_QAN_INVALID" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>
+  <data name="ERROR_COURSE_LARS_QAN_REQUIRED" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>
+  <data name="ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH" xml:space="preserve">
+    <value>What you can do next must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH" xml:space="preserve">
     <value>What you'll learn must be {0} characters or fewer</value>
