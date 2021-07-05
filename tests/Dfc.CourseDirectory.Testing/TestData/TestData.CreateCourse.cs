@@ -114,12 +114,12 @@ namespace Dfc.CourseDirectory.Testing
 
             public CreateCourseCourseRunBuilder WithCourseRun(
                 CourseDeliveryMode deliveryMode,
-                CourseStudyMode studyMode,
-                CourseAttendancePattern attendancePattern,
+                CourseStudyMode? studyMode = null,
+                CourseAttendancePattern? attendancePattern = null,
                 string courseName = "Education assessment in Maths",
                 bool? national = null,
                 Guid? venueId = null,
-                IEnumerable<string> regions = null,
+                IEnumerable<string> subRegionIds = null,
                 bool? flexibleStartDate = null,
                 DateTime? startDate = null,
                 string courseUrl = null,
@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.Testing
                     StudyMode = studyMode,
                     AttendancePattern = attendancePattern,
                     National = national,
-                    Regions = regions,
+                    SubRegionIds = subRegionIds,
                     ProviderCourseId = providerCourseId
                 });
 

@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
+using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -78,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
-            services.AddTransient<ValidatorBaseTestsValidator>();
+            services.AddTransient<DateValidationTestsValidator>();
 
             services.Configure<DataManagementOptions>(
                 options => options.ProcessedImmediatelyThreshold = TimeSpan.FromMilliseconds(2000));

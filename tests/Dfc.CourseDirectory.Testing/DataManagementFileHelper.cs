@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Testing
                 csvWriter.WriteField(row.HowYouWillBeAssessed);
                 csvWriter.WriteField(row.WhereNext);
                 csvWriter.WriteField(row.CourseName);
-                csvWriter.WriteField(row.YourReference);
+                csvWriter.WriteField(row.ProviderCourseRef);
                 csvWriter.WriteField(row.DeliveryMode);
                 csvWriter.WriteField(row.StartDate);
                 csvWriter.WriteField(row.FlexibleStartDate);
@@ -93,16 +93,16 @@ namespace Dfc.CourseDirectory.Testing
             }
         });
 
-        public static Stream CreateCourseUploadCsvStream(int rowCount) =>
-            CreateCourseUploadCsvStream(CreateCourseUploadRows(rowCount).ToArray());
+        public static Stream CreateCourseUploadCsvStream(string learningAimRef, int rowCount) =>
+            CreateCourseUploadCsvStream(CreateCourseUploadRows(learningAimRef, rowCount).ToArray());
 
-        public static IEnumerable<CsvCourseRow> CreateCourseUploadRows(int rowCount)
+        public static IEnumerable<CsvCourseRow> CreateCourseUploadRows(string learningAimRef, int rowCount)
         {
             for (int i = 0; i < rowCount; i++)
             {
                 yield return new CsvCourseRow()
                 {
-                    LarsQan = $"ABC{i:D4}",
+                    LarsQan = learningAimRef,
                     WhoThisCourseIsFor = "Who this course is for",
                     EntryRequirements = "",
                     WhatYouWillLearn = "",
@@ -111,21 +111,21 @@ namespace Dfc.CourseDirectory.Testing
                     HowYouWillBeAssessed = "",
                     WhereNext = "",
                     CourseName = "Course name",
-                    YourReference = "",
+                    ProviderCourseRef = "",
                     DeliveryMode = "Online",
                     StartDate = "",
                     FlexibleStartDate = "yes",
                     VenueName = "",
                     ProviderVenueRef = "",
-                    NationalDelivery = "yes",
+                    NationalDelivery = "",
                     SubRegions = "",
                     CourseWebPage = "",
                     Cost = "",
                     CostDescription = "Free",
                     Duration = "2",
                     DurationUnit = "years",
-                    StudyMode = "part time",
-                    AttendancePattern = "evening"
+                    StudyMode = "",
+                    AttendancePattern = ""
                 };
             }
         }
@@ -190,7 +190,7 @@ namespace Dfc.CourseDirectory.Testing
                 {
                     ProviderVenueRef = Guid.NewGuid().ToString(),
                     VenueName = venueName,
-                    AddressLine1 = Faker.Address.StreetAddress(),
+                    AddressLine1 = FakerEx.StreetAddressSafe(),
                     AddressLine2 = Faker.Address.SecondaryAddress(),
                     Town = Faker.Address.City(),
                     County = Faker.Address.UkCounty(),
@@ -204,11 +204,19 @@ namespace Dfc.CourseDirectory.Testing
 
         public static CourseDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvCourseRow> rows)
         {
-            var rowsArray = rows.ToArray();
+            var rowInfos = new List<CourseDataUploadRowInfo>();
 
-            return new CourseDataUploadRowInfoCollection(
-                lastRowNumber: rowsArray.Length + 1,
-                rows.Select((r, i) => new CourseDataUploadRowInfo(r, rowNumber: i + 2)));
+            foreach (var group in CsvCourseRow.GroupRows(rows))
+            {
+                var courseId = Guid.NewGuid();
+
+                foreach (var row in group)
+                {
+                    rowInfos.Add(new CourseDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
+                }
+            }
+
+            return new CourseDataUploadRowInfoCollection(rowInfos);
         }
 
         public static VenueDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvVenueRow> rows)

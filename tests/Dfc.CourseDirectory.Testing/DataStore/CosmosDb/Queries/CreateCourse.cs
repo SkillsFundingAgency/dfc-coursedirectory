@@ -44,10 +44,10 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public string CostDescription { get; set; }
         public CourseDurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
-        public CourseStudyMode StudyMode { get; set; }
-        public CourseAttendancePattern AttendancePattern { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }
+        public CourseAttendancePattern? AttendancePattern { get; set; }
         public bool? National { get; set; }
-        public IEnumerable<string> Regions { get; set; }
+        public IEnumerable<string> SubRegionIds { get; set; }
         public string ProviderCourseId { get; set; }
     }
 }

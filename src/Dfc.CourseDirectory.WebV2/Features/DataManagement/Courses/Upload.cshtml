@@ -44,7 +44,7 @@
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
                 <li>add new venues <a asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-controller="AddVenue" class="govuk-link">on screen</a> or by <a asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-controller="VenuesDataManagement" class="govuk-link">venue upload</a> prior to a course upload</li>
                 <li>include existing and new courses in the data file</li>
-                <li>follow the <a href="#">file format requirements</a></li>
+                <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">file format requirements</a></li>
             </ul>
             <govuk-file-upload asp-for="File" input-accept=".csv">
                 <govuk-file-upload-label>Upload a file</govuk-file-upload-label>

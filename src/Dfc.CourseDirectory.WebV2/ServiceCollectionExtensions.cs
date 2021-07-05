@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
+using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -32,6 +34,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,9 +75,11 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
                     options.Filters.Add(new StateExpiredExceptionFilter());
 
-                    options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new StandardModelBinderProvider());
+                    // If a binder type is is explicitly specified then ensure it's honoured
+                    Debug.Assert(options.ModelBinderProviders[0].GetType() == typeof(BinderTypeModelBinderProvider));
+                    options.ModelBinderProviders.Insert(1, new MptxInstanceContextModelBinderProvider());
+                    options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
+                    options.ModelBinderProviders.Insert(1, new StandardModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
@@ -129,7 +134,11 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
             {
                 // Avoid import being added to old pages
-                AddImportsToHtml = false
+                AddImportsToHtml = false,
+                DateInputModelConverters =
+                {
+                    new ModelBinding.DateInputModelConverter()
+                }
             });
             services.AddMediatR(typeof(ServiceCollectionExtensions));
             services.AddTransient<IClock, SystemClock>();
@@ -167,7 +176,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
             services.AddTransient<SqlDataSync>();
             services.AddScoped<RouteValuesHelper>();
-            services.AddTransient<Features.TLevels.AddTLevel.Details.CommandValidator>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
             services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();

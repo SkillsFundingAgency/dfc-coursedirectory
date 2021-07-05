@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 DurationValue = courseRun.DurationValue,
                 FlexibleStartDate = courseRun.FlexibleStartDate,
                 StartDate = !courseRun.FlexibleStartDate ? courseRun.StartDate : null,
-                StudyMode = courseRun.StudyMode,
+                StudyMode = courseRun.StudyMode.HasValue ? courseRun.StudyMode.Value : 0,
                 National = courseRun.National,
                 Course = new CourseViewModel
                 {
@@ -180,7 +180,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     DurationValue = c.CourseRun.DurationValue,
                     FlexibleStartDate = c.CourseRun.FlexibleStartDate,
                     StartDate = !c.CourseRun.FlexibleStartDate ? c.CourseRun.StartDate : null,
-                    StudyMode = c.CourseRun.StudyMode,
+                    StudyMode = c.CourseRun.StudyMode.HasValue ? c.CourseRun.StudyMode.Value : 0,
                     Venue = c.Venue != null
                         ? new VenueViewModel
                         {

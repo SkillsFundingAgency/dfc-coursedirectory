@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Testing
         private readonly IClock _clock;
         private readonly UniqueIdHelper _uniqueIdHelper;
         private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
+        private AsyncLocal<ISqlQueryDispatcher> _currentDispatcher = new AsyncLocal<ISqlQueryDispatcher>();
 
         public TestData(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
@@ -40,11 +41,17 @@ namespace Dfc.CourseDirectory.Testing
         protected async Task<TResult> WithSqlQueryDispatcher<TResult>(
             Func<ISqlQueryDispatcher, Task<TResult>> action)
         {
+            if (_currentDispatcher.Value != null)
+            {
+                return await action(_currentDispatcher.Value);
+            }
+
             await _dispatcherLock.WaitAsync();
 
             try
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                _currentDispatcher.Value = dispatcher;
                 var result = await action(dispatcher);
                 await dispatcher.Commit();
                 return result;
@@ -52,6 +59,7 @@ namespace Dfc.CourseDirectory.Testing
             finally
             {
                 _dispatcherLock.Release();
+                _currentDispatcher.Value = null;
             }
         }
     }

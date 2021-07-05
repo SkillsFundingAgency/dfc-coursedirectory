@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.Security;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders
 {
     public abstract class CanaryUserFeatureFlagProvider : IFeatureFlagProvider
     {
-        private readonly Lazy<IReadOnlyCollection<string>> _featureFlags;
+        private readonly IFeatureFlagProvider _innerFeatureFlagProvider;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
         public CanaryUserFeatureFlagProvider(
             IFeatureFlagProvider innerFeatureFlagProvider,
@@ -23,15 +23,15 @@ namespace Dfc.CourseDirectory.WebV2
                 throw new ArgumentNullException(nameof(currentUserProvider));
             }
 
-            _featureFlags = new Lazy<IReadOnlyCollection<string>>(() =>
-                ResolveFeatureFlags(currentUserProvider.GetCurrentUser(), innerFeatureFlagProvider.GetFeatureFlags()));
+            _innerFeatureFlagProvider = innerFeatureFlagProvider;
+            _currentUserProvider = currentUserProvider;
         }
 
-        public IReadOnlyCollection<string> GetFeatureFlags()
-        {
-            return _featureFlags.Value;
-        }
+        public ConfiguredFeaturesCollection GetFeatureFlags() =>
+            ResolveFeatureFlags(_currentUserProvider.GetCurrentUser(), _innerFeatureFlagProvider.GetFeatureFlags());
 
-        protected abstract IReadOnlyCollection<string> ResolveFeatureFlags(AuthenticatedUserInfo user, IReadOnlyCollection<string> featureFlags);
+        protected abstract ConfiguredFeaturesCollection ResolveFeatureFlags(
+            AuthenticatedUserInfo user,
+            ConfiguredFeaturesCollection featureFlags);
     }
 }

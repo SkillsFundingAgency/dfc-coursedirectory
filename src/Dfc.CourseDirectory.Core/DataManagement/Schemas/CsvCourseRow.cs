@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
     public class CsvCourseRow
     {
+        public const char SubRegionDelimiter = ';';
+
         [Index(0), Name("LARS_QAN")]
         public string LarsQan { get; set; }
         [Index(1), Name("WHO_THIS_COURSE_IS_FOR")]
@@ -24,7 +29,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(8), Name("COURSE_NAME")]
         public string CourseName { get; set; }
         [Index(9), Name("YOUR_REFERENCE")]
-        public string YourReference { get; set; }
+        public string ProviderCourseRef { get; set; }
         [Index(10), Name("DELIVERY_MODE")]
         public string DeliveryMode { get; set; }
         [Index(11), Name("START_DATE")]
@@ -53,5 +58,81 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public string StudyMode { get; set; }
         [Index(23), Name("ATTENDANCE_PATTERN")]
         public string AttendancePattern { get; set; }
+
+        public static CsvCourseRow FromModel(CourseUploadRow row) => new CsvCourseRow()
+        {
+            LarsQan = row.LarsQan,
+            WhoThisCourseIsFor = row.WhoThisCourseIsFor,
+            EntryRequirements = row.EntryRequirements,
+            WhatYouWillLearn = row.WhatYouWillLearn,
+            HowYouWillLearn = row.HowYouWillLearn,
+            WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
+            HowYouWillBeAssessed = row.HowYouWillBeAssessed,
+            WhereNext = row.WhereNext,
+            CourseName = row.CourseName,
+            ProviderCourseRef = row.ProviderCourseRef,
+            DeliveryMode = row.DeliveryMode,
+            StartDate = row.StartDate,
+            FlexibleStartDate = row.FlexibleStartDate,
+            VenueName = row.VenueName,
+            ProviderVenueRef = row.ProviderVenueRef,
+            NationalDelivery = row.NationalDelivery,
+            SubRegions = row.SubRegions,
+            CourseWebPage = row.CourseWebpage,
+            Cost = row.Cost,
+            CostDescription = row.CostDescription,
+            Duration = row.Duration,
+            DurationUnit = row.DurationUnit,
+            StudyMode = row.StudyMode,
+            AttendancePattern = row.AttendancePattern
+        };
+
+        public static CsvCourseRow[][] GroupRows(IEnumerable<CsvCourseRow> rows) =>
+            rows.GroupBy(r => r, new CsvCourseRowCourseComparer())
+                .Select(g => g.ToArray())
+                .ToArray();
+
+        private class CsvCourseRowCourseComparer : IEqualityComparer<CsvCourseRow>
+        {
+            public bool Equals(CsvCourseRow x, CsvCourseRow y)
+            {
+                if (x is null && y is null)
+                {
+                    return true;
+                }
+
+                if (x is null || y is null)
+                {
+                    return false;
+                }
+
+                // Don't group together records that have no LARS code
+                if (string.IsNullOrEmpty(x.LarsQan) || string.IsNullOrEmpty(y.LarsQan))
+                {
+                    return false;
+                }
+
+                return
+                    x.LarsQan == y.LarsQan &&
+                    x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
+                    x.EntryRequirements == y.EntryRequirements &&
+                    x.WhatYouWillLearn == y.WhatYouWillLearn &&
+                    x.HowYouWillLearn == y.HowYouWillLearn &&
+                    x.WhatYouWillNeedToBring == y.WhatYouWillNeedToBring &&
+                    x.HowYouWillBeAssessed == y.HowYouWillBeAssessed &&
+                    x.WhereNext == y.WhereNext;
+            }
+
+            public int GetHashCode(CsvCourseRow obj) =>
+                HashCode.Combine(
+                    obj.LarsQan,
+                    obj.WhoThisCourseIsFor,
+                    obj.EntryRequirements,
+                    obj.WhatYouWillLearn,
+                    obj.HowYouWillLearn,
+                    obj.WhatYouWillNeedToBring,
+                    obj.HowYouWillBeAssessed,
+                    obj.WhereNext);
+        }
     }
 }

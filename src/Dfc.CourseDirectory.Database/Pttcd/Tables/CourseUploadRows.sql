@@ -18,7 +18,7 @@
 	[HowYouWillBeAssessed] NVARCHAR(MAX),
 	[WhereNext] NVARCHAR(MAX),
 	[CourseName] NVARCHAR(MAX),
-	[YourReference] NVARCHAR(MAX),
+	[ProviderCourseRef] NVARCHAR(MAX),
 	[DeliveryMode] NVARCHAR(MAX),
 	[StartDate] NVARCHAR(MAX),
 	[FlexibleStartDate] NVARCHAR(MAX),
@@ -33,4 +33,14 @@
 	[DurationUnit] NVARCHAR(MAX),
 	[StudyMode] NVARCHAR(MAX),
 	[AttendancePattern] NVARCHAR(MAX),
+	[VenueId] UNIQUEIDENTIFIER CONSTRAINT [FK_CourseUploadRows_Venue] FOREIGN KEY REFERENCES [Pttcd].[Venues] ([VenueId]),
+	[ResolvedDeliveryMode] TINYINT,
+	[ResolvedStartDate] DATE,
+	[ResolvedFlexibleStartDate] BIT,
+	[ResolvedNationalDelivery] BIT,
+	[ResolvedCost] MONEY,
+	[ResolvedDuration] INT,
+	[ResolvedDurationUnit] TINYINT,
+	[ResolvedStudyMode] TINYINT,
+	[ResolvedAttendancePattern] TINYINT
 )

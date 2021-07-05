@@ -124,6 +124,7 @@ namespace Dfc.CourseDirectory.Testing
                             rowBuilder.AddRow(record =>
                             {
                                 record.VenueName = string.Empty;
+                                record.IsValid = false;
                                 record.Errors = new[] { ErrorRegistry.All["VENUE_NAME_REQUIRED"].ErrorCode };
                             });
                         }
@@ -299,7 +300,7 @@ namespace Dfc.CourseDirectory.Testing
                     venueId: venueId ?? Guid.NewGuid(),
                     providerVenueRef: Guid.NewGuid().ToString(),
                     venueName,
-                    addressLine1: Faker.Address.StreetAddress(),
+                    addressLine1: FakerEx.StreetAddressSafe(),
                     addressLine2: Faker.Address.SecondaryAddress(),
                     town: Faker.Address.City(),
                     county: Faker.Address.UkCounty(),

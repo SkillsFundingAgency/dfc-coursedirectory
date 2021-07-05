@@ -79,13 +79,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact(Skip = "No in progress page yet")]
+        [Fact]
         public async Task Post_ValidCoursesFile_CreatesRecordAndRedirectsToInProgress()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+            var learnAimRef = await TestData.CreateLearningAimRef();
 
-            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(rowCount: 1);
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -106,10 +107,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var learnAimRef = await TestData.CreateLearningAimRef();
 
             var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
-            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(rowCount: 1);
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act

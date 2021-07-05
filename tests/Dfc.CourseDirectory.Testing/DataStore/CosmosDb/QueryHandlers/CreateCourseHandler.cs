@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 using OneOf.Types;
 
@@ -7,8 +9,17 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
 {
     public class CreateCourseHandler : ICosmosDbQueryHandler<CreateCourse, Success>
     {
+        private readonly IRegionCache _regionCache;
+
+        public CreateCourseHandler(IRegionCache regionCache)
+        {
+            _regionCache = regionCache;
+        }
+
         public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, CreateCourse request)
         {
+            var allRegions = _regionCache.GetAllRegions().GetAwaiter().GetResult();
+
             var course = new Course()
             {
                 Id = request.CourseId,
@@ -44,7 +55,16 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                     StudyMode = cr.StudyMode,
                     AttendancePattern = cr.AttendancePattern,
                     National = cr.National,
-                    Regions = cr.Regions,
+                    Regions = cr.SubRegionIds,
+                    SubRegions = cr.SubRegionIds != null ? Region.Reduce(allRegions, cr.SubRegionIds)
+                        .Select(r => new CourseRunSubRegion()
+                        {
+                            Id = r.Id,
+                            Latitude = r.Latitude,
+                            Longitude = r.Longitude,
+                            SubRegionName = r.Name
+                        }) :
+                        null,
                     RecordStatus = request.CourseStatus,
                     CreatedDate = request.CreatedDate,
                     CreatedBy = request.CreatedByUser.UserId,

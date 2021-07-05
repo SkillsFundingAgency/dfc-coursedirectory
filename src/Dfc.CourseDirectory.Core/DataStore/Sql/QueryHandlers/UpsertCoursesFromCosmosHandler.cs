@@ -251,7 +251,7 @@ CREATE TABLE #CourseRuns (
                         DurationUnit = (byte)cr.DurationUnit,
                         cr.DurationValue,
                         cr.StudyMode,
-                        AttendancePattern = (byte)cr.AttendancePattern,
+                        cr.AttendancePattern,
                         cr.National,
                         BulkUploadErrorCount = cr.BulkUploadErrors.Count()
                     })),

@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Testing
@@ -17,18 +19,19 @@ namespace Dfc.CourseDirectory.Testing
             UploadStatus uploadStatus,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
-            if (uploadStatus != UploadStatus.Created &&
-                uploadStatus != UploadStatus.Processing &&
-                uploadStatus != UploadStatus.ProcessedSuccessfully &&
-                uploadStatus != UploadStatus.ProcessedWithErrors)
-            {
-                throw new NotImplementedException();
-            }
-
             var createdOn = _clock.UtcNow;
 
             DateTime? processingStartedOn = uploadStatus >= UploadStatus.Processing ? createdOn.AddSeconds(3) : (DateTime?)null;
             DateTime? processingCompletedOn = uploadStatus >= UploadStatus.ProcessedWithErrors ? processingStartedOn.Value.AddSeconds(30) : (DateTime?)null;
+            DateTime? publishedOn = uploadStatus == UploadStatus.Published ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
+            DateTime? abandonedOn = uploadStatus == UploadStatus.Abandoned ? processingCompletedOn.Value.AddHours(2) : (DateTime?)null;
+
+            var isValid = uploadStatus switch
+            {
+                UploadStatus.ProcessedWithErrors => false,
+                UploadStatus.Created | UploadStatus.Processing => (bool?)null,
+                _ => true
+            };
 
             var isValid = uploadStatus switch
             {
@@ -43,6 +46,8 @@ namespace Dfc.CourseDirectory.Testing
                 createdOn,
                 processingStartedOn,
                 processingCompletedOn,
+                publishedOn,
+                abandonedOn,
                 isValid,
                 configureRows);
 
@@ -57,6 +62,8 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? createdOn = null,
             DateTime? processingStartedOn = null,
             DateTime? processingCompletedOn = null,
+            DateTime? publishedOn = null,
+            DateTime? abandonedOn = null,
             bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
@@ -96,6 +103,11 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingStartedOn));
                     }
 
+                    if (!isValid.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(isValid));
+                    }
+
                     await dispatcher.ExecuteQuery(new SetCourseUploadProcessed()
                     {
                         CourseUploadId = courseUploadId,
@@ -113,24 +125,54 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         if (isValid.Value)
                         {
-                            rowBuilder.AddValidRows(3);
+                            var learnAimRef = await CreateLearningAimRef();
+                            rowBuilder.AddValidRows(learnAimRef, 3);
                         }
                         else
                         {
-                            rowBuilder.AddRow(record =>
+                            rowBuilder.AddRow(learnAimRef: string.Empty, record =>
                             {
-                                record.CourseName = string.Empty;
+                                record.IsValid = false;
+                                record.Errors = new[] { ErrorRegistry.All["COURSE_LARS_QAN_REQUIRED"].ErrorCode };
                             });
                         }
                     }
 
-                    rows = (await dispatcher.ExecuteQuery(new SetCourseUploadRows()
+                    rows = (await dispatcher.ExecuteQuery(new UpsertCourseUploadRows()
                     {
                         CourseUploadId = courseUploadId,
                         Records = rowBuilder.GetUpsertQueryRows(),
                         UpdatedOn = processingCompletedOn.Value,
                         ValidatedOn = processingCompletedOn.Value
                     })).ToArray();
+                }
+
+                if (publishedOn.HasValue)
+                {
+                    if (!processingCompletedOn.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(processingCompletedOn));
+                    }
+
+                    await dispatcher.ExecuteQuery(new PublishCourseUpload()
+                    {
+                        CourseUploadId = courseUploadId,
+                        PublishedBy = createdBy,
+                        PublishedOn = publishedOn.Value
+                    });
+                }
+                else if (abandonedOn.HasValue)
+                {
+                    if (!processingCompletedOn.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(processingCompletedOn));
+                    }
+
+                    await dispatcher.ExecuteQuery(new SetCourseUploadAbandoned()
+                    {
+                        CourseUploadId = courseUploadId,
+                        AbandonedOn = abandonedOn.Value
+                    });
                 }
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetCourseUpload()
@@ -144,11 +186,11 @@ namespace Dfc.CourseDirectory.Testing
 
         public class CourseUploadRowBuilder
         {
-            private readonly List<SetCourseUploadRowsRecord> _records = new List<SetCourseUploadRowsRecord>();
+            private readonly List<UpsertCourseUploadRowsRecord> _records = new List<UpsertCourseUploadRowsRecord>();
 
-            public CourseUploadRowBuilder AddRow(Action<SetCourseUploadRowsRecord> configureRecord)
+            public CourseUploadRowBuilder AddRow(string learnAimRef, Action<UpsertCourseUploadRowsRecord> configureRecord)
             {
-                var record = CreateValidRecord();
+                var record = CreateValidRecord(learnAimRef);
                 configureRecord(record);
                 _records.Add(record);
                 return this;
@@ -166,7 +208,7 @@ namespace Dfc.CourseDirectory.Testing
                 string howYouWillBeAssessed,
                 string whereNext,
                 string courseName,
-                string yourReference,
+                string providerCourseRef,
                 string deliveryMode,
                 string startDate,
                 string flexibleStartDate,
@@ -181,6 +223,7 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                Guid? venueId,
                 IEnumerable<string> errors = null)
             {
                 var record = CreateRecord(
@@ -195,7 +238,7 @@ namespace Dfc.CourseDirectory.Testing
                     howYouWillBeAssessed,
                     whereNext,
                     courseName,
-                    yourReference,
+                    providerCourseRef,
                     deliveryMode,
                     startDate,
                     flexibleStartDate,
@@ -210,6 +253,7 @@ namespace Dfc.CourseDirectory.Testing
                     durationUnit,
                     studyMode,
                     attendancePattern,
+                    venueId,
                     errors);
 
                 _records.Add(record);
@@ -217,26 +261,26 @@ namespace Dfc.CourseDirectory.Testing
                 return this;
             }
 
-            public CourseUploadRowBuilder AddValidRow()
+            public CourseUploadRowBuilder AddValidRow(string learnAimRef)
             {
-                var record = CreateValidRecord();
+                var record = CreateValidRecord(learnAimRef);
                 _records.Add(record);
                 return this;
             }
 
-            public CourseUploadRowBuilder AddValidRows(int count)
+            public CourseUploadRowBuilder AddValidRows(string learnAimRef, int count)
             {
                 for (int i = 0; i < count; i++)
                 {
-                    AddValidRow();
+                    AddValidRow(learnAimRef);
                 }
 
                 return this;
             }
 
-            internal IReadOnlyCollection<SetCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
+            internal IReadOnlyCollection<UpsertCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
 
-            private SetCourseUploadRowsRecord CreateRecord(
+            private UpsertCourseUploadRowsRecord CreateRecord(
                 Guid courseId,
                 Guid courseRunId,
                 string larsQan,
@@ -248,7 +292,7 @@ namespace Dfc.CourseDirectory.Testing
                 string howYouWillBeAssessed,
                 string whereNext,
                 string courseName,
-                string yourReference,
+                string providerCourseRef,
                 string deliveryMode,
                 string startDate,
                 string flexibleStartDate,
@@ -263,12 +307,13 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                Guid? venueId,
                 IEnumerable<string> errors = null)
             {
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
                 var isValid = !errorsArray.Any();
 
-                return new SetCourseUploadRowsRecord()
+                return new UpsertCourseUploadRowsRecord()
                 {
                     RowNumber = _records.Count + 2,
                     IsValid = isValid,
@@ -284,7 +329,7 @@ namespace Dfc.CourseDirectory.Testing
                     HowYouWillBeAssessed = howYouWillBeAssessed,
                     WhereNext = whereNext,
                     CourseName = courseName,
-                    YourReference = yourReference,
+                    ProviderCourseRef = providerCourseRef,
                     DeliveryMode = deliveryMode,
                     StartDate = startDate,
                     FlexibleStartDate = flexibleStartDate,
@@ -298,23 +343,26 @@ namespace Dfc.CourseDirectory.Testing
                     Duration = duration,
                     DurationUnit = durationUnit,
                     StudyMode = studyMode,
-                    AttendancePattern = attendancePattern
+                    AttendancePattern = attendancePattern,
+                    VenueId = venueId,
+                    ResolvedDeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(deliveryMode),
+                    ResolvedStartDate = ParsedCsvCourseRow.ResolveStartDate(startDate),
+                    ResolvedFlexibleStartDate = ParsedCsvCourseRow.ResolveFlexibleStartDate(flexibleStartDate),
+                    ResolvedNationalDelivery = ParsedCsvCourseRow.ResolveNationalDelivery(nationalDelivery),
+                    ResolvedCost = ParsedCsvCourseRow.ResolveCost(cost),
+                    ResolvedDuration = ParsedCsvCourseRow.ResolveDuration(duration),
+                    ResolvedDurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(durationUnit),
+                    ResolvedStudyMode = ParsedCsvCourseRow.ResolveStudyMode(studyMode),
+                    ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern)
                 };
             }
 
-            private SetCourseUploadRowsRecord CreateValidRecord()
+            private UpsertCourseUploadRowsRecord CreateValidRecord(string learnAimRef)
             {
-                string larsQan;
-                do
-                {
-                    larsQan = $"ABC{new Random().Next(0, 9999):D4}";
-                }
-                while (_records.Any(r => r.LarsQan == larsQan));
-
                 return CreateRecord(
                     courseId: Guid.NewGuid(),
                     courseRunId: Guid.NewGuid(),
-                    larsQan: larsQan,
+                    larsQan: learnAimRef,
                     whoThisCourseIsFor: "Who this course is for",
                     entryRequirements: "",
                     whatYouWillLearn: "",
@@ -323,21 +371,22 @@ namespace Dfc.CourseDirectory.Testing
                     howYouWillBeAssessed: "",
                     whereNext: "",
                     courseName: "Course name",
-                    yourReference: "",
+                    providerCourseRef: "",
                     deliveryMode: "Online",
                     startDate: "",
                     flexibleStartDate: "yes",
                     venueName: "",
                     providerVenueRef: "",
-                    nationalDelivery: "yes",
+                    nationalDelivery: "",
                     subRegions: "",
                     courseWebpage: "",
                     cost: "",
                     costDescription: "Free",
                     duration: "2",
                     durationUnit: "years",
-                    studyMode: "part time",
-                    attendancePattern: "evening");
+                    studyMode: "",
+                    attendancePattern: "",
+                    venueId: null);
             }
         }
     }
