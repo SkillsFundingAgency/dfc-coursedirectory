@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,24 +21,44 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Campaigns
 
         public async Task ImportCampaignData(string campaignCode, Stream csvStream)
         {
-            using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
-
             using var streamReader = new StreamReader(csvStream);
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
-            var rows = csvReader.GetRecords<CsvRow>();
+            const int batchSize = 100;
 
-            await sqlDispatcher.ExecuteQuery(new SetCampaignProviderCourses()
+            var importJobId = Guid.NewGuid();
+
+            var records = csvReader.GetRecordsAsync<CsvRow>();
+
+            await foreach (var batch in records.Buffer(batchSize))
             {
-                CampaignCode = campaignCode,
-                Records = rows.Select(r => new SetCampaignProviderCoursesRecord()
-                {
-                    LearnAimRef = r.LearnAimRef,
-                    ProviderUkprn = r.ProviderUkprn
-                })
-            });
+                using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-            await sqlDispatcher.Commit();
+                await sqlDispatcher.ExecuteQuery(new UpsertCampaignProviderCourses()
+                {
+                    CampaignCode = campaignCode,
+                    ImportJobId = importJobId,
+                    Records = batch.Select(r => new UpsertCampaignProviderCoursesRecord()
+                    {
+                        LearnAimRef = r.LearnAimRef,
+                        ProviderUkprn = r.ProviderUkprn
+                    })
+                });
+
+                await sqlDispatcher.Commit();
+            }
+
+            {
+                using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+                await sqlDispatcher.ExecuteQuery(new RemoveStaleCampaignProviderCourses()
+                {
+                    CampaignCode = campaignCode,
+                    ImportJobId = importJobId
+                });
+
+                await sqlDispatcher.Commit();
+            }
         }
 
         private class CsvRow
