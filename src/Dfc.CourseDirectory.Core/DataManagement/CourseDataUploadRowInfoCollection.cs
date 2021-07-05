@@ -20,12 +20,15 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
     public class CourseDataUploadRowInfo : DataUploadRowInfo<CsvCourseRow>
     {
-        public CourseDataUploadRowInfo(CsvCourseRow data, int rowNumber, Guid courseId)
+        public CourseDataUploadRowInfo(CsvCourseRow data, int rowNumber, Guid courseId, Guid? venueIdHint = null)
             : base(data, rowNumber)
         {
             CourseId = courseId;
+            VenueIdHint = venueIdHint;
         }
 
         public Guid CourseId { get; set; }
+
+        public Guid? VenueIdHint { get; set; }
     }
 }

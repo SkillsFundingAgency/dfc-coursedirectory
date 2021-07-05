@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         {
             var providerId = _providerContextProvider.GetProviderId();
 
-            var row = await _fileUploadProcessor.GetCourseUploadRowForProvider(providerId, rowNumber);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber);
             if (row == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);

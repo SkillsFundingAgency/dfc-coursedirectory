@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
 using FluentValidation.Results;
@@ -39,21 +38,20 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
-                // Required if cost description is not specified
-                .NotNull()
-                    .When(t => string.IsNullOrWhiteSpace(getCostDescription(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED")
                 // Must be a valid decimal if specified
                 .Must(v => v.HasValue)
                     .When(t => costWasSpecified(t), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_COST_INVALID");
+                    .WithMessageFromErrorCode("COURSERUN_COST_INVALID")
+                // Required if cost description is not specified
+                .NotNull()
+                    .When(t => string.IsNullOrWhiteSpace(getCostDescription(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED");
         }
 
-        public static void CostDescription<T>(this IRuleBuilderInitial<T, string> field, Func<T, decimal?> getCost)
+        public static void CostDescription<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.CostDescriptionMaxLength)
-                    .When(t => !getCost(t).HasValue, ApplyConditionTo.CurrentValidator)
                     .WithMessageFromErrorCode("COURSERUN_COST_DESCRIPTION_MAXLENGTH");
         }
 
@@ -72,10 +70,11 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void CourseWebPage<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .Apply(Rules.Website)
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT")
+                .Cascade(CascadeMode.Stop)
                 .MaximumLength(Constants.CourseWebPageMaxLength)
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH")
+                .Apply(Rules.Website)
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
         }
 
         public static void DeliveryMode<T>(this IRuleBuilderInitial<T, CourseDeliveryMode?> field)
@@ -216,10 +215,12 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 });
         }
 
-        public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
+        public static void StartDate<T>(this IRuleBuilderInitial<T, DateInput> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
         {
             field
                 .Cascade(CascadeMode.Stop)
+                // Must be valid
+                .Apply(builder => Rules.Date(builder, displayName: "Start date"))
                 // Required if flexible start date is false
                 .NotEmpty()
                     .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
@@ -294,6 +295,36 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     if (isSpecified && (v == null || v.Count == 0))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_INVALID"));
+                    }
+
+                    ValidationFailure CreateFailure(string errorCode) =>
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                });
+        }
+
+        public static void VenueId<T>(
+            this IRuleBuilderInitial<T, Guid?> field,
+            Func<T, CourseDeliveryMode?> getDeliveryMode)
+        {
+            field
+                .Custom((v, ctx) =>
+                {
+                    var obj = (T)ctx.InstanceToValidate;
+
+                    var deliveryMode = getDeliveryMode(obj);
+                    var isSpecified = v.HasValue;
+
+                    // Not allowed for delivery modes other than classroom based
+                    if (isSpecified && deliveryMode != CourseDeliveryMode.ClassroomBased)
+                    {
+                        ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED"));
+                        return;
+                    }
+
+                    if (deliveryMode == CourseDeliveryMode.ClassroomBased && !isSpecified)
+                    {
+                        ctx.AddFailure(CreateFailure("COURSERUN_VENUE_REQUIRED"));
+                        return;
                     }
 
                     ValidationFailure CreateFailure(string errorCode) =>
