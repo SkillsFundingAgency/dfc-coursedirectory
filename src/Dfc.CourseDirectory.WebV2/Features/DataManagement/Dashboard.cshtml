@@ -15,18 +15,11 @@
                 <div class="pttcd-provider-dashboard__card__content">
                     <h2 class="govuk-heading-m">Courses</h2>
                     <p class="govuk-body-s">You have <strong data-testid="PublishedCourseCount">@Model.PublishedCourseCount</strong> published @string.Format("course{0}", Model.PublishedCourseCount > 1 || Model.PublishedCourseCount == 0 ? "s" : string.Empty)</p>
-                    <p class="govuk-body-s">You have <strong data-testid="UnpublishedCourseCount">@Model.UnpublishedCourseCount</strong> unpublished  @string.Format("course{0}", Model.UnpublishedCourseCount > 1 || Model.UnpublishedCourseCount == 0 ? "s" : string.Empty)</p>
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
                         @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
                         {
-                            @if (Model.UnpublishedCourseCount > 0)
-                            {
-                                <li>
-                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-view-edit-link">Your unpublished courses</a>
-                                </li>
-                            }
                             <li>
                                 @if (Model.CourseUploadInProgress)
                                 {

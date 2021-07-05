@@ -106,39 +106,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         }
 
         [Fact]
-        public async Task Get_UnpublishedCourseUploads()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
-                providerType: ProviderType.FE);
-
-            //Create some course upload rows to test new data in UI
-            var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
-                rowBuilder =>
-                {
-                    rowBuilder.AddRow(learnAimRef: string.Empty, record => record.IsValid = false);
-                    rowBuilder.AddRow(learnAimRef: string.Empty, record => record.IsValid = false);
-                });
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("UnpublishedCourseCount").TextContent.Should().Be("2");
-                doc.GetElementByTestId("courses-upload-new-link").TextContent.Should().Be("Upload new course data");
-            }
-
-        }
-
-        [Fact]
         public async Task TestVenueUploadInProgress()
         {
             // Arrange

@@ -55,9 +55,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddValidRows(learnAimRef: string.Empty, 1);
+                    rowBuilder.AddValidRows(learnAimRef: TestData.CreateLearningAimRef().Result, 1);
 
-                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    rowBuilder.AddRow(learnAimRef: TestData.CreateLearningAimRef().Result, record =>
                     {
                         record.CourseName = string.Empty;
                         record.DeliveryMode = "Classroom Based";
