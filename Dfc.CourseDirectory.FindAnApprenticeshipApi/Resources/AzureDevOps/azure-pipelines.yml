@@ -41,7 +41,6 @@ trigger:
 pr:
   branches:
     include:
-    - release/*
     - main
   paths:
     include:

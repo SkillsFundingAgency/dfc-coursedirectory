@@ -3,16 +3,16 @@ branches:
   master:
     regex: ^master$|^main$
     mode: ContinuousDelivery
-    tag: ''
+    tag: 'rc'
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
     tracks-release-branches: false
-    is-release-branch: false
+    is-release-branch: true
   release:
-    regex: ^releases?[/-]
+    regex: ^release(s)?[/-]
     mode: ContinuousDelivery
-    tag: rc
+    tag: useBranchName
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
@@ -20,7 +20,7 @@ branches:
     is-release-branch: true
     pre-release-weight: 1000
   feature:
-    regex: ^features?[/-]
+    regex: ^feature(s)?[/-]
     mode: ContinuousDelivery
     tag: useBranchName
     increment: Inherit
