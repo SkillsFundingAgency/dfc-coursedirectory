@@ -33,7 +33,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
         public string DeliveryMode { get; set; }
      }
 
-    public class Command : IRequest<OneOf<ModelWithErrors<Response>, NotFound, DeleteRowResult>>
     {
         public bool Confirm { get; set; }
         public int Row { get; set; }
@@ -51,7 +50,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
     }
 
     public class Handler : IRequestHandler<Query, OneOf<NotFound, Response>>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<Response>, NotFound, DeleteRowResult>>
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -101,7 +99,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
             };
         }
 
-        public async Task<OneOf<ModelWithErrors<Response>, NotFound, DeleteRowResult>> Handle(Command request, CancellationToken cancellationToken)
         {
             return null;
         }
