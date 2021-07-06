@@ -130,5 +130,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("formatting")]
         public IActionResult Formatting() => View();
+
+        [HttpGet("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
+        {
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    _ => NotFound(),
+                    course => View(course)));
+        }
     }
 }

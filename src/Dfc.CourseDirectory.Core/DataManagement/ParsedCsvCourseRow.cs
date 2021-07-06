@@ -104,6 +104,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseStudyMode?)null
         };
 
+        public static string ResolveDeliveryMode(CourseDeliveryMode value) => value switch
+        {
+            CourseDeliveryMode.ClassroomBased => "classroom",
+            CourseDeliveryMode.Online => "online",
+            CourseDeliveryMode.WorkBased => "Work based",
+            _ => null
+        };
+
         public static IReadOnlyCollection<Region> ResolveSubRegions(string value, IEnumerable<Region> allRegions)
         {
             if (string.IsNullOrWhiteSpace(value))

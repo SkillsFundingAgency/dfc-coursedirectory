@@ -39,5 +39,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
         }
+
+        public static string MapCourseErrorToFieldGroup(string errorCode)
+        {
+            switch (errorCode)
+            {
+                case "COURSE_LARS_QAN_INVALID":
+                case "COURSERUN_DELIVERY_MODE_REQUIRED":
+                case "COURSERUN_FLEXIBLE_START_DATE_REQUIRED":
+                case "COURSERUN_VENUE_NAME_NOT_ALLOWED":
+                case "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED":
+                case "COURSERUN_SUBREGIONS_NOT_ALLOWED":
+                case "COURSERUN_DURATION_UNIT_REQUIRED":
+                    return "Course Upload Error defined in another story";
+            }
+
+            throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
+        }
     }
 }

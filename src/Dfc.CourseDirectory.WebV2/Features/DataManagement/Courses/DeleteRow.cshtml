@@ -1,0 +1,67 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow.Response
+@{
+    ViewBag.Title = "Data Upload - Delete course details";
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Confirm" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Delete unpublished course</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <form asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.Row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Course name</th>
+                        <th scope="col" class="govuk-table__header">Delivery type</th>
+                        <th scope="col" class="govuk-table__header">Start date</th>
+                        <th scope="col" class="govuk-table__header">Error(s)</th>
+                        <th scope="col" colspan="2" class="govuk-table__header"></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row" data-testid="row-@Model.Row">
+                        <th scope="row" class="govuk-table__cell govuk-body-s"><span data-testid="CourseName">@Model.CourseName</span></th>
+                        <td class="govuk-table__cell govuk-body-s" data-testid="DeliveryMode">@Model.DeliveryMode</td>
+                        <td class="govuk-table__cell govuk-body-s" data-testid="StartDate">@Model.StartDate</td>
+                        <td class="govuk-table__cell govuk-body-s" style="color: #d4351c;" data-testid="Errors">@Model.Errors</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m" id="areyousure">
+                        <h2 class="govuk-fieldset__heading">
+                            Are you sure?
+                        </h2>
+                    </govuk-checkboxes-fieldset-legend>
+                </govuk-checkboxes-fieldset>
+                <govuk-checkboxes-item value="@(true)">
+                    Yes, I want to delete this unpublished course
+                </govuk-checkboxes-item>
+            </govuk-checkboxes>
+            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-course__delete-btn">Delete</govuk-button>
+            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        function enableDeleteBtn() {
+            $('#pttcd-delete-course__delete-btn').attr(
+                'disabled',
+                $('#Confirm').is(':checked') ? null : 'disabled');
+        }
+        setTimeout(enableDeleteBtn, 100);
+        $('#Confirm').change(enableDeleteBtn);
+    </script>
+}
