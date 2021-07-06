@@ -141,7 +141,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                                 <a asp-action="Download" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download your published course data (CSV)</a>
                             </li>
                             <li>
-                                <a asp-action="Template" asp-controller="CoursesDataManagement" class="govuk-link">Download course data template (CSV)</a>
+                                <a asp-action="Template" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download course data template (CSV)</a>
                             </li>
                         </ul>
                     </div>
