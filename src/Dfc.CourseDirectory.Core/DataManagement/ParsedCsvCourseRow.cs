@@ -78,9 +78,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string ResolveDeliveryMode(CourseDeliveryMode value) => value switch
         {
-            CourseDeliveryMode.ClassroomBased => "classroom",
+            CourseDeliveryMode.ClassroomBased => "classroom based",
             CourseDeliveryMode.Online => "online",
-            CourseDeliveryMode.WorkBased => "Work based",
+            CourseDeliveryMode.WorkBased => "work based",
             _ => null
         };
 
@@ -112,30 +112,30 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
         {
-            "Yes" => true,
-            "No" => false,
+            "yes" => true,
+            "no" => false,
             "" => false,
             _ => null
         };
 
         public static string ResolveFlexibleStartDate(bool? value) => value switch
         {
-            true => "Yes",
-            false => "No",
+            true => "yes",
+            false => "no",
             _ => null
         };
 
         public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
         {
-            "Yes" => true,
-            "No" => false,
+            "yes" => true,
+            "no" => false,
             _ => null
         };
 
         public static string ResolveNationalDelivery(bool? value) => value switch
         {
-            true => "Yes",
-            false => "No",
+            true => "yes",
+            false => "no",
             _ => null
         };
 
