@@ -130,5 +130,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("formatting")]
         public IActionResult Formatting() => View();
+
+        [HttpGet("download-errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
+            new DownloadErrors.Query(),
+            result => new CsvResult<CsvCourseRowWithErrors>(result.FileName, result.Rows));
     }
 }
