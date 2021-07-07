@@ -20,8 +20,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
         [Theory]
         [InlineData(null)]
-        [InlineData(UploadStatus.Created)]
-        [InlineData(UploadStatus.Processing)]
         [InlineData(UploadStatus.Published)]
         [InlineData(UploadStatus.Abandoned)]
         public async Task Get_NoUnpublishedCourseUpload_ReturnsBadRequest(UploadStatus? uploadStatus)
