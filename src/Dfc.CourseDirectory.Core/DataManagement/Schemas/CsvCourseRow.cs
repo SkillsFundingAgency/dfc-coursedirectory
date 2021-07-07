@@ -100,20 +100,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             WhereNext = row.WhereNext,
             CourseName = courserun.CourseName,
             ProviderCourseRef = courserun.ProviderCourseId,
-            DeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(courserun.DeliveryMode),
+            DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(courserun.DeliveryMode),
             StartDate = courserun.StartDate.HasValue ? courserun.StartDate?.ToString("dd/MM/yyyy") : null,
-            FlexibleStartDate = ParsedCsvCourseRow.ResolveFlexibleStartDate(courserun.FlexibleStartDate),
+            FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(courserun.FlexibleStartDate),
             VenueName = courserun.VenueName,
             ProviderVenueRef = courserun.ProviderVenueRef,
-            NationalDelivery = ParsedCsvCourseRow.ResolveNationalDelivery(courserun.National),
+            NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(courserun.National),
             SubRegions = string.Join(SubRegionDelimiter, allRegions.SelectMany(x => x.SubRegions.Where(x=> courserun.SubRegionIds.Contains(x.Id)).Select(x=>x.Name))),
             CourseWebPage = courserun.CourseWebsite,
-            Cost = ParsedCsvCourseRow.ResolveCost(courserun.Cost),
+            Cost = ParsedCsvCourseRow.MapCost(courserun.Cost),
             CostDescription = courserun.CostDescription,
-            Duration = ParsedCsvCourseRow.ResolveDuration(courserun.DurationValue),
-            DurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(courserun.DurationUnit),
-            StudyMode = ParsedCsvCourseRow.ResolveStudyMode(courserun.StudyMode),
-            AttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(courserun.AttendancePattern)
+            Duration = ParsedCsvCourseRow.MapDuration(courserun.DurationValue),
+            DurationUnit = ParsedCsvCourseRow.MapDurationUnit(courserun.DurationUnit),
+            StudyMode = ParsedCsvCourseRow.MapStudyMode(courserun.StudyMode),
+            AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(courserun.AttendancePattern)
         });
 
 

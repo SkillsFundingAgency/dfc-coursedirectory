@@ -52,19 +52,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseAttendancePattern?)null
         };
 
-        public static string ResolveAttendancePattern(CourseAttendancePattern value) => value switch
+        public static string MapAttendancePattern(CourseAttendancePattern value) => value switch
         {
             CourseAttendancePattern.Daytime => "daytime",
             CourseAttendancePattern.Evening => "evening",
             CourseAttendancePattern.Weekend => "weekend",
             CourseAttendancePattern.DayOrBlockRelease => "day/block release",
-            _ => null
+            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
         };
 
         public static decimal? ResolveCost(string value) =>
             decimal.TryParse(value, out var result) && GetDecimalPlaces(result) <= 2 ? result : (decimal?)null;
 
-        public static string ResolveCost(decimal? value) => value?.ToString("0.0000");
+        public static string MapCost(decimal? value) => value?.ToString("0.0000");
 
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
         {
@@ -76,19 +76,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseDeliveryMode?)null
         };
 
-        public static string ResolveDeliveryMode(CourseDeliveryMode value) => value switch
+        public static string MapDeliveryMode(CourseDeliveryMode value) => value switch
         {
             CourseDeliveryMode.ClassroomBased => "classroom based",
             CourseDeliveryMode.Online => "online",
             CourseDeliveryMode.WorkBased => "work based",
-            _ => null
+            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
         };
 
 
         public static int? ResolveDuration(string value) =>
             int.TryParse(value, out var duration) ? duration : (int?)null;
 
-        public static string ResolveDuration(int? value) => value?.ToString("0.##");
+        public static string MapDuration(int? value) => value?.ToString("0.##");
 
         public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
         {
@@ -97,10 +97,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "weeks" => CourseDurationUnit.Weeks,
             "months" => CourseDurationUnit.Months,
             "years" => CourseDurationUnit.Years,
-            _ => (CourseDurationUnit?)null
+            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
         };
 
-        public static string ResolveDurationUnit(CourseDurationUnit value) => value switch
+        public static string MapDurationUnit(CourseDurationUnit value) => value switch
         {
             CourseDurationUnit.Hours => "hours",
             CourseDurationUnit.Days => "days",
@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
-        public static string ResolveFlexibleStartDate(bool? value) => value switch
+        public static string MapFlexibleStartDate(bool? value) => value switch
         {
             true => "yes",
             false => "no",
@@ -132,7 +132,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
-        public static string ResolveNationalDelivery(bool? value) => value switch
+        public static string MapNationalDelivery(bool? value) => value switch
         {
             true => "yes",
             false => "no",
@@ -150,12 +150,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseStudyMode?)null
         };
 
-        public static string ResolveStudyMode(CourseStudyMode value) => value switch
+        public static string MapStudyMode(CourseStudyMode value) => value switch
         {
             CourseStudyMode.FullTime => "full time",
             CourseStudyMode.PartTime => "part time",
             CourseStudyMode.Flexible => "flexible",
-            _ => null
+            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
         };
 
         public static IReadOnlyCollection<Region> ResolveSubRegions(string value, IEnumerable<Region> allRegions)
