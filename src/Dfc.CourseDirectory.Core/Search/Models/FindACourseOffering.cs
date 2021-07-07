@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Spatial;
@@ -46,5 +47,6 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public GeographyPoint Position { get; set; }
         public string RegionName { get; set; }
         public decimal ScoreBoost { get; set; }
+        public IEnumerable<string> CampaignCodes { get; set; }
     }
 }
