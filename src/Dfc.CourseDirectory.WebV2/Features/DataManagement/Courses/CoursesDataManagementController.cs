@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
@@ -164,6 +166,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 result => result.Match<IActionResult>(
                     _ => NotFound(),
                     course => View(course)));
+        }
+
+        [HttpPost("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
+        {
+            command.Row = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    _ => NotFound(),
+                    success => success switch
+                    {
+                        DeleteRowResult.CourseRowDeletedHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        DeleteRowResult.CourseRowDeletedHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => throw new NotSupportedException($"Unknown value: '{success}'.")
+                    }));
         }
     }
 }
