@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,6 +82,11 @@ namespace Dfc.CourseDirectory.Testing
                         CourseUploadId = courseUploadId,
                         ProcessingStartedOn = processingStartedOn.Value
                     });
+
+                    if (!isValid.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(isValid));
+                    }
                 }
 
                 if (processingCompletedOn.HasValue)

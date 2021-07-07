@@ -50,7 +50,8 @@ BEGIN
 				ELSE 2.3  -- Region
 				END AS float) AS ScoreBoost,
 
-			v.VenueId
+			v.VenueId,
+			cc.CampaignCodesJson CampaignCodes
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr WITH (UPDLOCK) ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
@@ -59,6 +60,7 @@ BEGIN
 		INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 		INNER JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 		LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
+		LEFT JOIN Pttcd.FindACourseIndexCampaignCodes cc ON p.ProviderId = cc.ProviderId AND c.LearnAimRef = cc.LearnAimRef
 		WHERE cr.CourseRunStatus = 1  -- Live
 	)
 	MERGE Pttcd.FindACourseIndex AS target
@@ -95,7 +97,8 @@ BEGIN
 		Position = source.Position,
 		RegionName = source.RegionName,
 		ScoreBoost = source.ScoreBoost,
-		VenueId = source.VenueId
+		VenueId = source.VenueId,
+		CampaignCodes = source.CampaignCodes
 	WHEN NOT MATCHED THEN INSERT (
 		Id,
 		LastSynced,
@@ -128,7 +131,8 @@ BEGIN
 		Position,
 		RegionName,
 		ScoreBoost,
-		VenueId)
+		VenueId,
+		CampaignCodes)
 	VALUES (
 		source.Id,
 		@Now,
@@ -161,7 +165,8 @@ BEGIN
 		source.Position,
 		source.RegionName,
 		source.ScoreBoost,
-		source.VenueId)
+		source.VenueId,
+		source.CampaignCodes)
 	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET
 		Live = 0,
 		LastSynced = @Now;
