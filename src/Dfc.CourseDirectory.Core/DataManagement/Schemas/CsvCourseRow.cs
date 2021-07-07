@@ -112,8 +112,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             CostDescription = courserun.CostDescription,
             Duration = ParsedCsvCourseRow.MapDuration(courserun.DurationValue),
             DurationUnit = ParsedCsvCourseRow.MapDurationUnit(courserun.DurationUnit),
-            StudyMode = ParsedCsvCourseRow.MapStudyMode(courserun.StudyMode),
-            AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(courserun.AttendancePattern)
+            StudyMode = ParsedCsvCourseRow.MapStudyMode(courserun.StudyMode) ?? "",
+            AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(courserun.AttendancePattern) ?? ""
         });
 
 

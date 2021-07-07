@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             CourseAttendancePattern.Evening => "evening",
             CourseAttendancePattern.Weekend => "weekend",
             CourseAttendancePattern.DayOrBlockRelease => "day/block release",
-            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
+            _ => null
         };
 
         public static decimal? ResolveCost(string value) =>
@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             CourseDeliveryMode.ClassroomBased => "classroom based",
             CourseDeliveryMode.Online => "online",
             CourseDeliveryMode.WorkBased => "work based",
-            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
+            _ => null
         };
 
 
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "weeks" => CourseDurationUnit.Weeks,
             "months" => CourseDurationUnit.Months,
             "years" => CourseDurationUnit.Years,
-            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
+            _ => null
         };
 
         public static string MapDurationUnit(CourseDurationUnit value) => value switch
@@ -150,12 +150,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseStudyMode?)null
         };
 
-        public static string MapStudyMode(CourseStudyMode value) => value switch
+        public static string MapStudyMode(CourseStudyMode? value) => value switch
         {
             CourseStudyMode.FullTime => "full time",
             CourseStudyMode.PartTime => "part time",
             CourseStudyMode.Flexible => "flexible",
-            _ => throw new NotSupportedException($"Unknown value: '{value}'.")
+            _ => null
         };
 
         public static IReadOnlyCollection<Region> ResolveSubRegions(string value, IEnumerable<Region> allRegions)
