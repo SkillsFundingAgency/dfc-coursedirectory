@@ -46,16 +46,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-
+            var learnAimRef = await TestData.CreateLearningAimRef();
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddValidRows(learnAimRef: TestData.CreateLearningAimRef().Result, 1);
+                    rowBuilder.AddValidRows(learnAimRef: learnAimRef, 1);
 
-                    rowBuilder.AddRow(learnAimRef: TestData.CreateLearningAimRef().Result, record =>
+                    rowBuilder.AddRow(learnAimRef: learnAimRef, record =>
                     {
                         record.CourseName = string.Empty;
                         record.DeliveryMode = "Classroom Based";
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-
+            var learnAimRef = await TestData.CreateLearningAimRef();
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 {
                     for (int i = 0; i < 31; i++)
                     {
-                        rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                        rowBuilder.AddRow(learnAimRef: learnAimRef, record =>
                         {
                             record.CourseName = string.Empty;
                             record.IsValid = false;
@@ -136,14 +136,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-
+            var learnAimRef = await TestData.CreateLearningAimRef();
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    rowBuilder.AddRow(learnAimRef: learnAimRef, record =>
                     {
                         record.CourseName = string.Empty;
                         record.IsValid = false;
@@ -177,14 +177,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-
+            var learnAimRef = await TestData.CreateLearningAimRef();
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    rowBuilder.AddRow(learnAimRef: learnAimRef, record =>
                     {
                         record.CourseName = string.Empty;
                         record.IsValid = false;
