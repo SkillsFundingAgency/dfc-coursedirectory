@@ -37,11 +37,14 @@
                                     <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="courses-upload-new-link" class="govuk-link">Upload new course data</a>
                                 }
                             </li>
-                            <li>
-                                <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                    Download your published course data (CSV)
-                                </a>
-                            </li>
+                            @if (Model.PublishedCourseCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="CoursesDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadCourses">
+                                        Download your published course data (CSV)
+                                    </a>
+                                </li>
+                            }
                             <li>
                                 <a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Download course data template (CSV)

@@ -27,7 +27,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("")]
-        public IActionResult Index() => View("Upload");
+        public async Task<IActionResult> Index() =>
+            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(Upload.Command command)

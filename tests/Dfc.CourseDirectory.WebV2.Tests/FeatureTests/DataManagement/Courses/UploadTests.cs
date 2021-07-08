@@ -49,16 +49,42 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         private Mock<BlobContainerClient> DataUploadsContainerClient { get; }
 
         [Fact]
-        public async Task Get_RendersPage()
+        public async Task Get_HasLiveVenues_DoesRenderDownloadLink()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider();
+
+            var learnAimRef = await TestData.CreateLearningAimRef();
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses?providerId={provider.ProviderId}");
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/courses?providerId={provider.ProviderId}");
+            var response = await HttpClient.SendAsync(request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadLink").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveVenues_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadLink").Should().BeNull();
         }
 
         [Fact]
