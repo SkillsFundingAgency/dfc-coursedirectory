@@ -51,6 +51,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("errors")]
         public IActionResult Errors() => Ok();
 
+        [HttpGet("resolve")]
+        public IActionResult ResolveList() => Ok();
+
         [HttpGet("resolve/{rowNumber}/delivery")]
         public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
             await _mediator.SendAndMapResponse(
@@ -78,6 +81,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                             CourseDeliveryMode.WorkBased => "work",
                             _ => throw new System.NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
                         }
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpGet("resolve/{rowNumber}/description")]
+        public async Task<IActionResult> ResolveRowDescription(ResolveRowDescription.Query query) =>
+            await _mediator.SendAndMapResponse(query, errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+
+        [HttpPost("resolve/{rowNumber}/description")]
+        public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber, ResolveRowDescription.Command command)
+        {
+            command.RowNumber = rowNumber;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(ResolveList))
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
