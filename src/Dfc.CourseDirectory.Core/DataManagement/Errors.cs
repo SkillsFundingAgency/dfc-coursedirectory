@@ -45,67 +45,62 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             switch (errorCode)
             {
                 case "COURSE_ENTRY_REQUIREMENTS_MAXLENGTH":
-                    return "Entry requirements";
                 case "COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH":
-                    return "How will you be assessed";
                 case "COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH":
-                    return "How will you learn";
+                    return "Course description";
                 case "COURSE_LARS_QAN_INVALID":
                 case "COURSE_LARS_QAN_REQUIRED":
                     return "Lars";
                 case "COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH":
-                    return "What you will learn";
                 case "COURSE_WHAT_CAN_DO_NEXT_MAXLENGTH":
-                    return "What can you do next";
                 case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH":
-                    return "What you will need to bring";
                 case "COURSE_WHERE_NEXT_MAXLENGTH":
-                    return "Where next";
                 case "COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH":
                 case "COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED":
-                    return "Who is this course for";
+                    return "Course description";
                 case "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED":
                 case "COURSERUN_ATTENDANCE_PATTERN_REQUIRED":
                     return "Attendance pattern";
                 case "COURSERUN_COST_DESCRIPTION_MAXLENGTH":
                 case "COURSERUN_COST_INVALID":
                 case "COURSERUN_COST_REQUIRED":
-                    return "Course cost";
+                    return "Cost";
                 case "COURSERUN_COURSE_NAME_FORMAT":
                 case "COURSERUN_COURSE_NAME_MAXLENGTH":
                 case "COURSERUN_COURSE_NAME_REQUIRED":
                     return "Course name";
                 case "COURSERUN_COURSE_WEB_PAGE_FORMAT":
                 case "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH":
-                    return "Web page";
+                    return "Course webpage";
                 case "COURSERUN_DELIVERY_MODE_REQUIRED":
-                    return "Delivery Mode";
+                    return "Delivery mode";
                 case "COURSERUN_DURATION_RANGE":
                 case "COURSERUN_DURATION_REQUIRED":
-                case "COURSERUN_DURATION_UNIT_REQUIRED":
                     return "Duration";
+                case "COURSERUN_DURATION_UNIT_REQUIRED":
+                    return "Duration unit";
                 case "COURSERUN_FLEXIBLE_START_DATE_REQUIRED":
-                    return "Flexible start date";
+                    return "Start date";
                 case "COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED":
                 case "COURSERUN_NATIONAL_DELIVERY_REQUIRED":
-                    return "National delivery";
+                    return "Location";
                 case "COURSERUN_PROVIDER_COURSE_REF_FORMAT":
                 case "COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH":
-                    return "Course ref";
+                    return "Your reference";
                 case "COURSERUN_PROVIDER_VENUE_REF_INVALID":
                 case "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED":
-                    return "Venue Ref";
+                    return "Your venue reference";
                 case "COURSERUN_START_DATE_INVALID":
                 case "COURSERUN_START_DATE_NOT_ALLOWED":
                 case "COURSERUN_START_DATE_REQUIRED":
-                    return "Start Date";
+                    return "Start date";
                 case "COURSERUN_STUDY_MODE_NOT_ALLOWED":
                 case "COURSERUN_STUDY_MODE_REQUIRED":
-                    return "Study Mode";
+                    return "Course hours";
                 case "COURSERUN_SUBREGIONS_INVALID":
                 case "COURSERUN_SUBREGIONS_NOT_ALLOWED":
                 case "COURSERUN_SUBREGIONS_REQUIRED":
-                    return "Subregions";
+                    return "Location";
                 case "COURSERUN_VENUE_REQUIRED":
                 case "COURSERUN_VENUE_NAME_INVALID":
                 case "COURSERUN_VENUE_NAME_NOT_ALLOWED":
