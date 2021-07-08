@@ -177,6 +177,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     {
                         ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
                         ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
     }
