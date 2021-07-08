@@ -206,5 +206,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             var doc = await response.GetDocument();
             doc.GetElementByTestId("DownloadVenues").Should().BeNull();
         }
+
+        [Fact]
+        public async Task Get_HasLiveCourses_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var learnAimRef = await TestData.CreateLearningAimRef();
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadCourses").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveCourses_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadCourses").Should().BeNull();
+        }
     }
 }
