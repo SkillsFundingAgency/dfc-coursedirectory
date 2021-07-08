@@ -82,11 +82,6 @@ namespace Dfc.CourseDirectory.Testing
                         CourseUploadId = courseUploadId,
                         ProcessingStartedOn = processingStartedOn.Value
                     });
-
-                    if (!isValid.HasValue)
-                    {
-                        throw new ArgumentNullException(nameof(isValid));
-                    }
                 }
 
                 if (processingCompletedOn.HasValue)
