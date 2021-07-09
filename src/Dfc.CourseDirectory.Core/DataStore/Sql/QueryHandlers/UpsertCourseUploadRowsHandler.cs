@@ -110,6 +110,8 @@ WHEN NOT MATCHED THEN
         source.ResolvedStudyMode,
         source.ResolvedAttendancePattern
     )
+WHEN NOT MATCHED BY SOURCE AND CourseUploadId=@CourseUploadId THEN
+    UPDATE SET CourseUploadRowStatus = {(int)UploadRowStatus.Deleted}
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
     IsValid = source.IsValid,
