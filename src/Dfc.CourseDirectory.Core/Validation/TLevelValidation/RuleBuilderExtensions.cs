@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
@@ -28,6 +28,31 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
             field
                 .MaximumLength(Constants.HowYoullLearnMaxLength)
                     .WithMessage($"How you'll learn must be {Constants.HowYoullLearnMaxLength} characters or fewer");
+        }
+
+        public static void StartDate<T>(
+            this IRuleBuilderInitial<T, DateInput> field,
+            Guid providerId,
+            Guid tLevelDefinitionId,
+            ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                    .WithMessage("Enter a start date")
+                .Apply(builder => Rules.Date(builder, displayName: "Start date"))
+                .CustomAsync(async (v, ctx, _) =>
+                {
+                    var existingTLevels = await sqlQueryDispatcher.ExecuteQuery(
+                        new GetTLevelsForProvider() { ProviderId = providerId });
+
+                    if (existingTLevels.Any(tl =>
+                        tl.TLevelDefinition.TLevelDefinitionId == tLevelDefinitionId &&
+                        tl.StartDate == v.Value))
+                    {
+                        ctx.AddFailure("Start date already exists");
+                    }
+                });
         }
 
         public static void Website<T>(this IRuleBuilderInitial<T, string> field)

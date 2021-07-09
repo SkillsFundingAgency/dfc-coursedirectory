@@ -9,8 +9,8 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
     [RestrictChildren("pttcd-search-input-label", "pttcd-search-input-hint", "pttcd-search-input-error-message")]
     public class SearchInputTagHelper : InputTagHelper
     {
-        public SearchInputTagHelper(IGovUkHtmlGenerator htmlGenerator)
-            : base(htmlGenerator)
+        public SearchInputTagHelper(IGovUkHtmlGenerator htmlGenerator, IModelHelper modelHelper)
+            : base(htmlGenerator, modelHelper)
         {
         }
 

@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload.Command;
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload.ViewModel;
 @{
     ViewBag.Title = "Data Upload - Upload course data";
 }
@@ -61,9 +61,12 @@
             </h2>
             <nav role="navigation" aria-labelledby="subsection-title">
                 <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
-                    <li>
-                        <a href="#" class="govuk-link">Download your published course data (CSV)</a>
-                    </li>
+                    @if (Model.CourseCount > 0)
+                    {
+                        <li>
+                            <a href="#" class="govuk-link" data-testid="DownloadLink">Download your published course data (CSV)</a>
+                        </li>
+                    }
                     <li>
                         <a asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download an empty course data template (CSV)</a>
                     </li>

@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
@@ -47,6 +48,7 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
             builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
+            builder.Services.AddSingleton<CampaignDataImporter>();
 
             builder.Services.AddSingleton(
                 _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
@@ -63,6 +65,7 @@ namespace Dfc.CourseDirectory.Functions
 
             builder.ConfigurationBuilder.AddInMemoryCollection(new Dictionary<string, string>()
             {
+                { "CampaignDataContainerName", "campaign-data" },
                 { "DataUploadsContainerName", Core.DataManagement.Constants.ContainerName },
                 { "CourseUploadsFolderName", Core.DataManagement.Constants.CoursesFolder },
                 { "VenueUploadsFolderName", Core.DataManagement.Constants.VenuesFolder }
