@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Course description";
                 case "COURSE_LARS_QAN_INVALID":
                 case "COURSE_LARS_QAN_REQUIRED":
-                    return "Lars";
+                    return "LARS";
                 case "COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH":
                 case "COURSE_WHAT_CAN_DO_NEXT_MAXLENGTH":
                 case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH":
