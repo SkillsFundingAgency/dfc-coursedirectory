@@ -191,7 +191,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     _ => NotFound(),
                     success => success switch
                     {
-                        DeleteRowResult.CourseRowDeletedHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        DeleteRowResult.CourseRowDeletedHasMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                         DeleteRowResult.CourseRowDeletedHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                         _ => throw new NotSupportedException($"Unknown value: '{success}'.")
                     }));
