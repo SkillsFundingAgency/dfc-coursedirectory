@@ -152,8 +152,8 @@ JOIN @CourseIds x ON cr.CourseId = x.Id
             public string CostDescription { get; set; }
             public CourseDurationUnit DurationUnit { get; set; }
             public int? DurationValue { get; set; }
-            public CourseStudyMode StudyMode { get; set; }
-            public CourseAttendancePattern AttendancePattern { get; set; }
+            public CourseStudyMode? StudyMode { get; set; }
+            public CourseAttendancePattern? AttendancePattern { get; set; }
             public bool? National { get; set; }
             public string VenueName { get; set; }
             public string ProviderVenueRef { get; set; }

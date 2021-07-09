@@ -17,10 +17,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string CourseWebsite { get; set; }
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
-        public CourseDurationUnit DurationUnit { get; set; }
+        public CourseDurationUnit? DurationUnit { get; set; }
         public int? DurationValue { get; set; }
-        public CourseStudyMode StudyMode { get; set; }
-        public CourseAttendancePattern AttendancePattern { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }
+        public CourseAttendancePattern? AttendancePattern { get; set; }
         public bool? National { get; set; }
         public IReadOnlyCollection<string> SubRegionIds { get; set; }
         public string VenueName { get; set; }
