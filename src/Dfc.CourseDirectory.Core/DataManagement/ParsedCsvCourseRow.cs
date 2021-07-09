@@ -58,9 +58,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
         {
             "classroom based" => CourseDeliveryMode.ClassroomBased,
+            "classroombased" => CourseDeliveryMode.ClassroomBased,
             "classroom" => CourseDeliveryMode.ClassroomBased,
             "online" => CourseDeliveryMode.Online,
             "work based" => CourseDeliveryMode.WorkBased,
+            "workbased" => CourseDeliveryMode.WorkBased,
             "work" => CourseDeliveryMode.WorkBased,
             _ => (CourseDeliveryMode?)null
         };
