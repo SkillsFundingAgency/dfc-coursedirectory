@@ -340,7 +340,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             FlexibleStartDate = r.FlexibleStartDate,
                             HowYouWillBeAssessed = update.HowYouWillBeAssessed,
                             HowYouWillLearn = update.HowYouWillLearn,
-                            LarsQan = r.LarsQan,
+                            LearnAimRef = r.LarsQan,
                             NationalDelivery = r.NationalDelivery,
                             ProviderCourseRef = r.ProviderCourseRef,
                             ProviderVenueRef = r.ProviderVenueRef,
