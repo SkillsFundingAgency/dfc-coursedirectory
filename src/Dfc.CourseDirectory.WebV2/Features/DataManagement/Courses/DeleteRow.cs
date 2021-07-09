@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
         public string StartDate { get; set; }
         public string Errors { get; set; }
         public string DeliveryMode { get; set; }
-     }
+    }
 
     public class Command : IRequest<OneOf<ModelWithErrors<Response>, NotFound, DeleteRowResult>>
     {
@@ -94,18 +94,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 Row = row.RowNumber,
                 CourseName = row.CourseName,
                 StartDate = row.StartDate,
-                Errors =  GetUniqueErrorMessages(row),
+                Errors = GetUniqueErrorMessages(row),
                 DeliveryMode = row.DeliveryMode
             };
         }
 
         public async Task<OneOf<ModelWithErrors<Response>, NotFound, DeleteRowResult>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var row = await _fileUploadProcessor.GetCourseUploadRowForProvider(
+                _providerContextProvider.GetProviderId(), request.Row);
+
             if (!request.Confirm)
             {
-                var row = await _fileUploadProcessor.GetCourseUploadRowForProvider(
-                    _providerContextProvider.GetProviderId(), request.Row);
-
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this venue")
