@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
@@ -8,6 +6,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation;
+using FluentValidation.Results;
 using MediatR;
 using OneOf;
 using OneOf.Types;
@@ -38,7 +37,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
         public bool Confirm { get; set; }
         public int Row { get; set; }
     }
-
 
     public class Response
     {
@@ -103,7 +101,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
 
         public async Task<OneOf<ModelWithErrors<Response>, NotFound, DeleteRowResult>> Handle(Command request, CancellationToken cancellationToken)
         {
-            return null;
+            if (!request.Confirm)
+            {
+                var row = await _fileUploadProcessor.GetCourseUploadRowForProvider(
+                    _providerContextProvider.GetProviderId(), request.Row);
+
+                var validationResult = new ValidationResult(new[]
+                {
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this venue")
+                });
+                return new ModelWithErrors<Response>(new Response()
+                {
+                    Row = row.RowNumber,
+                    CourseName = row.CourseName,
+                    StartDate = row.StartDate,
+                    Errors = GetUniqueErrorMessages(row),
+                    DeliveryMode = row.DeliveryMode
+                }, validationResult);
+            }
+
+            var deleted = await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.Row);
+            if (!deleted)
+                return new NotFound();
+
+            var (existingRows, _) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(
+                    _providerContextProvider.GetProviderId());
+            if (existingRows.Any(x => x.Errors.Count > 0))
+                return DeleteRowResult.CourseRowDeletedHasMoreErrors;
+            else
+                return DeleteRowResult.CourseRowDeletedHasNoMoreErrors;
         }
 
         private string GetUniqueErrorMessages(CourseUploadRow row)
