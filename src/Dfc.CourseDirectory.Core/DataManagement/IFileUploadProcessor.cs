@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
         Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update);
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);

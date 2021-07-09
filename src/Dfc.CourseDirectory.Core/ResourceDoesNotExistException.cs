@@ -10,7 +10,8 @@ namespace Dfc.CourseDirectory.Core
         CourseRun,
         Venue,
         TLevel,
-        VenueUploadRow
+        VenueUploadRow,
+        CourseUploadRow
     }
 
     public class ResourceDoesNotExistException : Exception

@@ -33,5 +33,6 @@
 	[Position] GEOGRAPHY,
 	[RegionName] NVARCHAR(100),
 	[ScoreBoost] FLOAT NOT NULL,
-	[VenueId] UNIQUEIDENTIFIER
+	[VenueId] UNIQUEIDENTIFIER,
+	[CampaignCodes] NVARCHAR(MAX)
 )

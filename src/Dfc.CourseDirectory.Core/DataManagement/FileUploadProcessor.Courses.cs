@@ -328,6 +328,80 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+            {
+                ProviderId = providerId
+            });
+
+            if (courseUpload == null)
+            {
+                throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+            }
+
+            if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+            {
+                throw new InvalidUploadStatusException(courseUpload.UploadStatus, UploadStatus.ProcessedWithErrors);
+            }
+
+            var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRowsByCourseId()
+            {
+                CourseUploadId = courseUpload.CourseUploadId,
+                CourseId = courseId
+            });
+
+            if (rows.Count == 0)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.VenueUploadRow, courseId);
+            }
+
+            var updatedRows = new CourseDataUploadRowInfoCollection(
+                rows.Select(r =>
+                    new CourseDataUploadRowInfo(
+                        new CsvCourseRow()
+                        {
+                            AttendancePattern = r.AttendancePattern,
+                            Cost = r.Cost,
+                            CostDescription = r.CostDescription,
+                            CourseName = r.CourseName,
+                            CourseWebPage = r.CourseWebpage,
+                            DeliveryMode = r.DeliveryMode,
+                            Duration = r.Duration,
+                            DurationUnit = r.DurationUnit,
+                            EntryRequirements = update.EntryRequirements,
+                            FlexibleStartDate = r.FlexibleStartDate,
+                            HowYouWillBeAssessed = update.HowYouWillBeAssessed,
+                            HowYouWillLearn = update.HowYouWillLearn,
+                            LarsQan = r.LarsQan,
+                            NationalDelivery = r.NationalDelivery,
+                            ProviderCourseRef = r.ProviderCourseRef,
+                            ProviderVenueRef = r.ProviderVenueRef,
+                            StartDate = r.StartDate,
+                            StudyMode = r.StudyMode,
+                            SubRegions = r.SubRegions,
+                            VenueName = r.VenueName,
+                            WhatYouWillLearn = update.WhatYouWillLearn,
+                            WhatYouWillNeedToBring = update.WhatYouWillNeedToBring,
+                            WhereNext = update.WhereNext,
+                            WhoThisCourseIsFor = update.WhoThisCourseIsFor
+                        },
+                        r.RowNumber,
+                        courseId)));
+
+            await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+
+            // Other rows not covered by this group may require revalidation;
+            // ensure revalidation is done if required so that `uploadStatus` is accurate
+            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+            await dispatcher.Commit();
+
+            return uploadStatus;
+        }
+
         protected async Task<UploadStatus> GetCourseUploadStatus(Guid courseUploadId)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
@@ -465,7 +539,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
-            var uploadIsValid = true;
+            var rowsAreValid = true;
 
             var upsertRecords = new List<UpsertCourseUploadRowsRecord>();
 
@@ -483,7 +557,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
-                uploadIsValid &= rowIsValid;
+                rowsAreValid &= rowIsValid;
 
                 upsertRecords.Add(new UpsertCourseUploadRowsRecord()
                 {
@@ -537,6 +611,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Records = upsertRecords
             });
 
+            // If all the provided rows are valid check if there are any more invalid rows
+            var uploadIsValid = rowsAreValid ?
+                (await sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadInvalidRowCount() { CourseUploadId = courseUploadId })) == 0 :
+                false;
+
             await sqlQueryDispatcher.ExecuteQuery(new SetCourseUploadProcessed()
             {
                 CourseUploadId = courseUploadId,
@@ -544,7 +623,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IsValid = uploadIsValid
             });
 
-            var uploadStatus = uploadIsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
+            var uploadStatus = rowsAreValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
 
             return (uploadStatus, updatedRows);
         }

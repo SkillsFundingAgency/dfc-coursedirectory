@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to What you will need to bring must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH {
             get {
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Where next must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_WHERE_NEXT_MAXLENGTH {
             get {
@@ -142,7 +142,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Who this course is for must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH {
             get {

@@ -1,0 +1,85 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDescription.Command
+@using Dfc.CourseDirectory.Core.Validation.CourseValidation 
+@{
+    ViewContext.SetLayoutData(title: "Course description");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="ResolveRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber">
+            <govuk-error-summary>
+                <govuk-error-summary-item asp-for="WhoThisCourseIsFor" />
+                <govuk-error-summary-item asp-for="EntryRequirements" />
+                <govuk-error-summary-item asp-for="WhatYouWillLearn" />
+                <govuk-error-summary-item asp-for="HowYouWillLearn" />
+                <govuk-error-summary-item asp-for="WhatYouWillNeedToBring" />
+                <govuk-error-summary-item asp-for="HowYouWillBeAssessed" />
+                <govuk-error-summary-item asp-for="WhereNext" />
+            </govuk-error-summary>
+
+            <h1 class="govuk-heading-xl">Course description</h1>
+
+            <p class="govuk-body">
+                The course information you provide will be available on the National Careers Service,
+                <a href="https://nationalcareers.service.gov.uk/find-a-course/search" target="_blank" class="govuk-link">Find a course</a>,
+                available to learners searching for learning and training opportunities.
+            </p>
+
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                This is your opportunity to tell learners about your course, the content and style of the course information you provide should be aimed at the learner.
+            </p>
+
+            <govuk-character-count asp-for="WhoThisCourseIsFor" max-length="@Constants.WhoThisCourseIsForMaxLength">
+                <govuk-character-count-label class="govuk-label--m">Who this course is for</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="EntryRequirements" max-length="@Constants.EntryRequirementsMaxLength">
+                <govuk-character-count-label class="govuk-label--m">Entry requirements</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="WhatYouWillLearn" max-length="@Constants.WhatYouWillLearnMaxLength">
+                <govuk-character-count-label class="govuk-label--m">What you'll learn</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="HowYouWillLearn" max-length="@Constants.HowYoullLearnMaxLength">
+                <govuk-character-count-label class="govuk-label--m">How you'll learn</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="WhatYouWillNeedToBring" max-length="@Constants.WhatYouWillNeedToBringMaxLength">
+                <govuk-character-count-label class="govuk-label--m">What you'll need to bring</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="HowYouWillBeAssessed" max-length="@Constants.HowYouWillBeAssessedMaxLength">
+                <govuk-character-count-label class="govuk-label--m">How you'll be assessed</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-character-count asp-for="WhereNext" max-length="@Constants.WhereNextMaxLength">
+                <govuk-character-count-label class="govuk-label--m">What you can do next</govuk-character-count-label>
+                <govuk-character-count-hint>
+                    The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <govuk-button type="submit">Resolve errors</govuk-button>
+            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
+    </div>
+</div>
