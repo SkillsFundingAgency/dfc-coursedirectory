@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         public IActionResult Errors() => Ok();
 
         [HttpGet("resolve")]
-        public IActionResult ResolveList() => Ok();
+        public IActionResult Resolve() => Ok();
 
         [HttpGet("resolve/{rowNumber}/delivery")]
         public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
@@ -177,7 +177,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     {
                         ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
                         ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
-                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(Resolve)),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
     }
