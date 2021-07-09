@@ -24,14 +24,13 @@ SELECT
     VenueUploadRowStatus
 FROM Pttcd.VenueUploadRows
 WHERE VenueUploadId = @VenueUploadId
+AND VenueUploadRowStatus <> {(int)UploadRowStatus.Deleted}
 ORDER BY RowNumber";
 
             var results = (await transaction.Connection.QueryAsync<Result>(sql, new { query.VenueUploadId }, transaction))
                 .AsList();
 
             var lastRowNumber = results.Last()?.RowNumber ?? 0;
-
-            results.RemoveAll(r => r.VenueUploadRowStatus == UploadRowStatus.Deleted);
 
             foreach (var row in results)
             {
