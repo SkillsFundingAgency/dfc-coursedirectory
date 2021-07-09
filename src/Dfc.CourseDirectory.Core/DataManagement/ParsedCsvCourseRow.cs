@@ -54,6 +54,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapAttendancePattern(CourseAttendancePattern? value) => value switch
         {
+            0 => "undefined",
             CourseAttendancePattern.Daytime => "daytime",
             CourseAttendancePattern.Evening => "evening",
             CourseAttendancePattern.Weekend => "weekend",
@@ -155,6 +156,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapStudyMode(CourseStudyMode? value) => value switch
         {
+            0 => "Undefined",
             CourseStudyMode.FullTime => "full time",
             CourseStudyMode.PartTime => "part time",
             CourseStudyMode.Flexible => "flexible",
