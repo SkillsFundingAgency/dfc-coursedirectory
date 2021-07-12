@@ -45,6 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool IsNewProvider { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
+        public int UnpublishedCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
     }
 
@@ -122,6 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 IsNewProvider = provider.ProviderType == ProviderType.None,
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
+                UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created)
             };
 

@@ -349,9 +349,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     .Add("EntryRequirements", entryRequirements)
                     .Add("WhatYouWillLearn", whatYouWillLearn)
                     .Add("HowYouWillLearn", howYouWillLearn)
-                    .Add("WhatYouWillNeedToBring", whatYouWillNeedToBring)
+                    .Add("WhatYouWillNeedToBring", whatYouWillNeedToBring) //TODO error
                     .Add("HowYouWillBeAssessed", howYouWillBeAssessed)
-                    .Add("WhereNext", whereNext)
+                    .Add("WhereNext", whereNext) //TODO error
                     .ToContent()
             };
 
