@@ -1,96 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
 using MediatR;
 using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
 {
-    public class Query : IRequest<OneOf<NotFound, Response>>
+    public class Query : IRequest<ViewModel>
     {
         public int RowNumber { get; set; }
     }
 
-    public enum DeleteVenueResult
-    {
-        VenueDeletedUploadHasNoMoreErrors = 1,
-        VenueDeletedUploadHasMoreErrors = 2
-    }
-
-    public class ViewModel
-    {
-        public string YourRef { get; set; }
-        public string VenueName { get; set; }
-        public string Address { get; set; }
-        public List<string> Errors { get; set; }
-    }
-
-    public class Command : IRequest<OneOf<ModelWithErrors<Response>, NotFound, DeleteVenueResult>>
+    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
         public bool Confirm { get; set; }
-        public int Row { get; set; }
+        public int RowNumber { get; set; }
     }
 
-
-    public class Response
+    public class ViewModel : Command
     {
-        public int Row { get; set; }
         public string YourRef { get; set; }
         public string VenueName { get; set; }
         public string Address { get; set; }
         public string Errors { get; set; }
-        public bool Confirm { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, OneOf<NotFound, Response>>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<Response>, NotFound, DeleteVenueResult>>
+    public class Handler :
+        IRequestHandler<Query, ViewModel>,
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IFileUploadProcessor _fileUploadProcessor;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
-            ISqlQueryDispatcher sqlQueryDispatcher,
             IFileUploadProcessor fileUploadProcessor)
         {
             _providerContextProvider = providerContextProvider;
-            _sqlQueryDispatcher = sqlQueryDispatcher;
             _fileUploadProcessor = fileUploadProcessor;
         }
 
-        public async Task<OneOf<NotFound, Response>> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var providerId = _providerContextProvider.GetProviderId();
-            var venueUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
-            {
-                ProviderId = providerId
-            });
+        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber);
 
-            if (venueUpload == null)
+        public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
+        {
+            if (!request.Confirm)
             {
-                return new NotFound();
+                var validationResult = new ValidationResult(new[]
+                {
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this venue")
+                });
+                return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
 
-            var (venueUploadRows, _) = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueUploadRows()
-            {
-                VenueUploadId = venueUpload.VenueUploadId
-            });
+            return await _fileUploadProcessor.DeleteVenueUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber);
+        }
 
-            var row = venueUploadRows.FirstOrDefault(x => x.RowNumber == request.RowNumber);
+        private async Task<ViewModel> CreateViewModel(int rowNumber)
+        {
+            var (rows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(_providerContextProvider.GetProviderId());
+
+            var row = rows.SingleOrDefault(r => r.RowNumber == rowNumber);
             if (row == null)
             {
-                return new NotFound();
+                throw new ResourceDoesNotExistException(ResourceType.VenueUploadRow, rowNumber);
             }
 
             if (!row.IsDeletable)
@@ -98,13 +78,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
                 throw new InvalidStateException(InvalidStateReason.VenueUploadRowCannotBeDeleted);
             }
 
-            return new Response
+            return new ViewModel()
             {
-                Row = row.RowNumber,
-                YourRef = row.ProviderVenueRef,
-                VenueName = row.VenueName,
-                Errors = GetUniqueErrorMessages(row),
+                RowNumber = rowNumber,
                 Address = FormatAddress(row),
+                Errors = GetUniqueErrorMessages(row),
+                VenueName = row.VenueName,
+                YourRef = row.ProviderVenueRef
             };
         }
 
@@ -119,40 +99,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
         {
             var errors = row.Errors.Select(errorCode => Core.DataManagement.Errors.MapVenueErrorToFieldGroup(errorCode));
             return string.Join(",", errors.Distinct().ToList());
-        }
-
-        public async Task<OneOf<ModelWithErrors<Response>, NotFound, DeleteVenueResult>> Handle(Command request, CancellationToken cancellationToken)
-        {
-            if (!request.Confirm)
-            {
-                var (uploadRows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(
-                    _providerContextProvider.GetProviderId());
-                var row = uploadRows.SingleOrDefault(x => x.RowNumber == request.Row);
-
-                var validationResult = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this venue")
-                });
-                return new ModelWithErrors<Response>(new Response()
-                {
-                    Row = row.RowNumber,
-                    YourRef = row.ProviderVenueRef,
-                    VenueName = row.VenueName,
-                    Errors = GetUniqueErrorMessages(row),
-                    Address = FormatAddress(row),
-                }, validationResult);
-            }
-
-            var deleted = await _fileUploadProcessor.DeleteVenueUploadRowForProvider(_providerContextProvider.GetProviderId(), request.Row);
-            if (!deleted)
-                return new NotFound();
-
-            var (existingRows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(
-                    _providerContextProvider.GetProviderId());
-            if (existingRows.Any(x => x.Errors.Count > 0))
-                return DeleteVenueResult.VenueDeletedUploadHasMoreErrors;
-            else
-                return DeleteVenueResult.VenueDeletedUploadHasNoMoreErrors;
         }
     }
 }

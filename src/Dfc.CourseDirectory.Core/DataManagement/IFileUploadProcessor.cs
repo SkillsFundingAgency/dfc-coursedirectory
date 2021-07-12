@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);
-        Task<bool> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber);
+        Task<UploadStatus> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber);
         Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId);
         IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);

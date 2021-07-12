@@ -10,7 +10,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FormFlow;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors.WhatNext;
-using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 {
@@ -149,33 +148,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
+        [HttpGet("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow(DeleteRow.Query request) =>
+            await _mediator.SendAndMapResponse(
+                request,
+                vm => View(vm));
+
         [HttpPost("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
         public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
         {
-            command.Row = rowNumber;
+            command.RowNumber = rowNumber;
             return await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    _ => NotFound(),
-                    success => success switch
+                    uploadStatus => uploadStatus switch
                     {
-                        DeleteVenueResult.VenueDeletedUploadHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        DeleteVenueResult.VenueDeletedUploadHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        _ => throw new NotSupportedException($"Unknown value: '{success}'.")
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext())
                     }));
-        }
-
-        [HttpGet("resolve/{rowNumber}/delete")]
-        [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
-        {
-            return await _mediator.SendAndMapResponse(
-                request,
-                result => result.Match<IActionResult>(
-                    _ => NotFound(),
-                    venue => View("DeleteRow", venue)));
         }
 
         [HttpGet("delete")]
