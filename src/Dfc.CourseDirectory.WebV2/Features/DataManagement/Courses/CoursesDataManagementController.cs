@@ -51,8 +51,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
-        [HttpGet("errors")]
-        public IActionResult Errors() => Ok();
+        [HttpGet("resolve")]
+        public IActionResult Resolve() => Ok();
 
         [HttpGet("resolve")]
         public IActionResult Resolve() => Ok();
