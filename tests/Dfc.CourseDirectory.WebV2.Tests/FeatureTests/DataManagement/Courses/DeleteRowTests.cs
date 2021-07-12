@@ -59,6 +59,41 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
+
+        [Fact]
+        public async Task Get_DeletedCoursesRow_ReturnError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
+            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+            var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                  configureRows: rowBuilder =>
+                  {
+                      rowBuilder.AddValidRow("some Radndom Ref");
+                  });
+            var rowNumber = courseUploadRows.FirstOrDefault().RowNumber;
+
+            // Act
+            var postrequest = new HttpRequestMessage(
+            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/delete")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                .Add("Confirm", "true")
+                .ToContent()
+            };
+            var postresponse = await HttpClient.SendAsync(postrequest);
+            var getresponse = await HttpClient.GetAsync($"/data-upload/courses/resolve/{rowNumber}/delete");
+
+            // Assert
+            postresponse.StatusCode.Should().Be(HttpStatusCode.Found);
+            getresponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+
         [Theory]
         [InlineData(-1)]
         [InlineData(11)]

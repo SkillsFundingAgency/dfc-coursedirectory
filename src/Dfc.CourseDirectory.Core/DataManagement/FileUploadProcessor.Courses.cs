@@ -19,42 +19,35 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-            public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
-                    {
-                        ProviderId = providerId
-                    });
+                    ProviderId = providerId
+                });
+                if (courseUpload == null)
+                    return false;
+                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
 
-                    var existingRows = await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId });
+                await dispatcher.Commit();
 
-                    var rowToDelete = existingRows.SingleOrDefault(x => x.RowNumber == rowNumber);
-                    if (rowToDelete == null)    
-                    {
-                        return false;
-                    }
-                    var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();
+                return result.Match<bool>(
+                    success =>
+                        {
+                            return true;
+                        },
+                     failure =>
+                        {
+                            return false;
+                        });
 
-                    var rowCollection = new CourseDataUploadRowInfoCollection(
-                        nonDeletedRows
-                            .Where(r => r.RowNumber != rowNumber)
-                            .Select(r => new CourseDataUploadRowInfo(CsvCourseRow.FromModel(r), r.RowNumber, courseUpload.CourseUploadId)));
-
-                    await ValidateCourseUploadRows(
-                        dispatcher,
-                        courseUpload.CourseUploadId,
-                        courseUpload.ProviderId,
-                        rowCollection);
-
-                    await dispatcher.Commit();
-                }
-                return true;
             }
+        }
 
 
-            public async Task DeleteCourseUploadForProvider(Guid providerId)
+        public async Task DeleteCourseUploadForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
