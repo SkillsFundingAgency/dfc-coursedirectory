@@ -78,12 +78,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 return new NotFound();
             }
 
-            var venueUploadRows = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadRows()
+            var courseUploadRows = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadRows()
             {
                 CourseUploadId = courseUpload.CourseUploadId
             });
 
-            var row = venueUploadRows.FirstOrDefault(x => x.RowNumber == request.RowNumber);
+            var row = courseUploadRows.FirstOrDefault(x => x.RowNumber == request.RowNumber);
             if (row == null)
             {
                 return new NotFound();

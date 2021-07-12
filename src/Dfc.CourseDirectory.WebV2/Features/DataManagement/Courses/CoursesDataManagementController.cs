@@ -185,45 +185,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         _ => throw new NotSupportedException($"Unknown value: '{success}'.")
                     }));
         }
-
-        [HttpGet("resolve/{rowNumber}/delete")]
-        [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
-        {
-            return await _mediator.SendAndMapResponse(
-                request,
-                result => result.Match<IActionResult>(
-                    _ => NotFound(),
-                    course => View(course)));
-        }
-
-        [HttpGet("resolve/{rowNumber}/delete")]
-        [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
-        {
-            return await _mediator.SendAndMapResponse(
-                request,
-                result => result.Match<IActionResult>(
-                    _ => NotFound(),
-                    course => View(course)));
-        }
-
-        [HttpPost("resolve/{rowNumber}/delete")]
-        [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
-        {
-            command.Row = rowNumber;
-            return await _mediator.SendAndMapResponse(
-                command,
-                result => result.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
-                    _ => NotFound(),
-                    success => success switch
-                    {
-                        DeleteRowResult.CourseRowDeletedHasMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        DeleteRowResult.CourseRowDeletedHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        _ => throw new NotSupportedException($"Unknown value: '{success}'.")
-                    }));
-        }
     }
 }

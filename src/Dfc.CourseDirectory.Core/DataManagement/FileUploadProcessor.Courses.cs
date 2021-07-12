@@ -28,9 +28,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ProviderId = providerId
                 });
                 if (courseUpload == null)
-                    return false;
-                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
 
+                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
                 await dispatcher.Commit();
 
                 return result.Match<bool>(
@@ -42,7 +42,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             return false;
                         });
-
             }
         }
 
