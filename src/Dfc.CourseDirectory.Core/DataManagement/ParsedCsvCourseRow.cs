@@ -117,9 +117,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var allSubRegions = allRegions
                 .SelectMany(sr => sr.SubRegions)
-                .ToDictionary(sr => sr.Id, sr => sr, comparer);
+                .ToDictionary(sr => sr.Name, sr => sr, comparer);
 
-            var subRegionNames = value.Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries);
+            var subRegionNames = value
+                .Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Trim())
+                .ToArray();
 
             var matchedRegions = subRegionNames
                 .SelectMany(v => allSubRegions.TryGetValue(v, out var sr) ? new[] { sr } : Array.Empty<Region>())
