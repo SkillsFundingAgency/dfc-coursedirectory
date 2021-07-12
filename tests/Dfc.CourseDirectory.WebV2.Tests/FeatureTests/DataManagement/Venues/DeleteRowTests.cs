@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         [Theory]
         [InlineData(-1)]
         [InlineData(54)]
-        public async Task Get_DeleteNonExistentRowNumber_ReturnsError(int rowNumber)
+        public async Task Get_DeleteNonExistentRowNumber_ReturnsNotFound(int rowNumber)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
         }
 
         [Fact]
-        public async Task Get_DeleteRowForNonExistentFileUpload_ReturnsError()
+        public async Task Get_DeleteRowForNonExistentFileUpload_ReturnsBadRequest()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             var response = await HttpClient.GetAsync($"/data-upload/venues/resolve/1/delete");
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
