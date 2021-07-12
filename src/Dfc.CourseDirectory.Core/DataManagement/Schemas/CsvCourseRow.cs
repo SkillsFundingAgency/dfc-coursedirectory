@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             AttendancePattern = row.AttendancePattern
         };
 
-        public static IEnumerable<CsvCourseRow> FromModel(Course row,IReadOnlyCollection<Region> allRegions) => row.CourseRuns.Select(courserun => new CsvCourseRow()
+        public static IEnumerable<CsvCourseRow> FromModel(Course row,IReadOnlyCollection<Region> allRegions) => row.CourseRuns.OrderBy(x=>x.StartDate).ThenBy(x=>x.DeliveryMode).Select(courserun => new CsvCourseRow()
         { 
             LearnAimRef = row.LearnAimRef,
             WhoThisCourseIsFor = row.CourseDescription,
