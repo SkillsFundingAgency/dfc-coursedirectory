@@ -47,6 +47,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Status = SaveFileResultStatus.InvalidRows
             };
 
+        public static SaveFileResult InvalidLars() =>
+            new SaveFileResult()
+            {
+                MissingHeaders = Array.Empty<string>(),
+                Status = SaveFileResultStatus.InvalidLars
+            };
+
         public static SaveFileResult Success(Guid venueUploadId, UploadStatus uploadStatus) =>
             new SaveFileResult()
             {
@@ -64,6 +71,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         InvalidHeader,
         InvalidRows,
         EmptyFile,
-        ExistingFileInFlight
+        ExistingFileInFlight,
+        InvalidLars
     }
 }

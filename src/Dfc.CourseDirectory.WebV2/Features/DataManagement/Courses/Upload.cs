@@ -116,6 +116,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
+            else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
+            {
+                return new UploadFailedResult(
+                    request,
+                    "The file contains errors and could not be uploaded");
+            }
             else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
             {
                 return new UploadFailedResult(
