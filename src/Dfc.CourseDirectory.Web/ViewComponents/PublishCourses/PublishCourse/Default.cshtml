@@ -68,8 +68,7 @@
 
     foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
     {
-        @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadPending) ||
-(Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
+        @if (Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadPending)
         {
 
             @*
@@ -147,14 +146,7 @@
                 <div class="govuk-grid-column-one-quarter">
                     <div class="align-right col right center">
 
-                        @if (adminLogin.Succeeded)
-                        {
-                            @if (Model.PublishMode == Dfc.CourseDirectory.Services.Models.PublishMode.Migration)
-                            {
-                                <a asp-action="Get" asp-controller="DeleteCourseRun"
-                                   asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
-                            }
-                        }
+
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
                            asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"

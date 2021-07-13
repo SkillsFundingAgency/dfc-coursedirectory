@@ -47,10 +47,6 @@
         @if (adminLogin.Succeeded || helpdeskLogin.Succeeded)
         {
             <div class="cta-container">
-                @if (Model.PublishMode == Dfc.CourseDirectory.Services.Models.PublishMode.Migration)
-                {
-                    @*@Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button govuk-!-margin-right-3" })*@
-                }
                 @if (Model.PublishMode != Dfc.CourseDirectory.Services.Models.PublishMode.DataQualityIndicator)
                 {
                  @Html.ActionLink("Cancel", "Index", "Home", new { }, new { @class = "govuk-link" })

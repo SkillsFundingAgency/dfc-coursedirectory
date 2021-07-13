@@ -126,7 +126,7 @@
                     AriaDescribedBy = "Venue",
                     HintText = null,
                     VenueId = Model.VenueId ?? (Guid?)null,
-                    DisplayLink = Model.Mode != PublishMode.BulkUpload && Model.Mode != PublishMode.Migration
+                    DisplayLink = Model.Mode != PublishMode.BulkUpload
                 })
             </div>
 
@@ -195,9 +195,6 @@
 
             @switch (Model.Mode)
             {
-                case PublishMode.Migration:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode, courseId = Model.CourseId, courseRunId = Model.CourseRunId }, new { @class = "govuk-button govuk-button--secondary" })
-                    break;
                 case PublishMode.BulkUpload:
                 case PublishMode.DataQualityIndicator:
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })

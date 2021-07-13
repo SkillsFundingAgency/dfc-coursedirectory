@@ -160,22 +160,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     courseForEdit.Value.ValidationErrors = _courseService.ValidateCourse(courseForEdit.Value).Select(x => x.Value);
 
-                    if (model.Mode == PublishMode.Migration)
-                    {
-                        if (!(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any()))
-                        {
-                            // Change courseruns status of MigrationReadyToGoLive to Live so the entire course can go live
-                            foreach (var courseRun in courseForEdit.Value.CourseRuns.Where(x => x.RecordStatus == RecordStatus.MigrationReadyToGoLive))
-                            {
-                                courseRun.RecordStatus = RecordStatus.Live;
-                            }
-                        }
-                    }
-
                     var message = string.Empty;
                     bool isCourseValid = !(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any());
 
-                    RecordStatus[] validStatuses = new[] { RecordStatus.MigrationReadyToGoLive, RecordStatus.Live };
+                    RecordStatus[] validStatuses = new[] { RecordStatus.Live };
 
                     if (isCourseValid && !(courseForEdit.Value.CourseRuns.Where(x => !validStatuses.Contains(x.RecordStatus)).Any()))
                     {
@@ -192,15 +180,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     switch (model.Mode)
                     {
-
-                        case PublishMode.Migration:
-                           return RedirectToAction("Index", "PublishCourses",
-                                new
-                                {
-                                    publishMode = model.Mode,
-                                    courseId = model.CourseId,
-                                    notificationTitle = message
-                                });
                         case PublishMode.BulkUpload:
                             return RedirectToAction("Index", "PublishCourses",
                                 new

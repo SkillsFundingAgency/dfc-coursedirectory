@@ -281,32 +281,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("courseStartDateNotification").Should().NotBeNull();
         }
 
-        [Theory]
-        [InlineData(CourseStatus.MigrationPending)]
-        [InlineData(CourseStatus.MigrationReadyToGoLive)]
-        public async Task Notifications_WithMigrationCourseStatusCourseRunCountGreaterThanZero_DisplaysMigrationNotification(CourseStatus courseStatus)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE);
-
-            await TestData.CreateCourse(
-                provider.ProviderId,
-                createdBy: User.ToUserInfo(),
-                configureCourseRuns: builder => builder.WithCourseRun(status: courseStatus));
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            doc.GetElementByTestId("migrationNotification").Should().NotBeNull();
-        }
-
         [Fact]
         public async Task Notifications_WithBulkUploadInProgress_DisplaysProcessingCoursesBulkUploadNotification()
         {

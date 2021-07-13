@@ -56,8 +56,6 @@ namespace Dfc.CourseDirectory.Services.Models
         Undefined = 0,
         [Description("BulkUpload")]
         BulkUpload = 1,
-        [Description("Migration")]
-        Migration = 2,
         [Description("DataQualityIndicator")]
         DataQualityIndicator = 3,
         [Description("Summary")]
