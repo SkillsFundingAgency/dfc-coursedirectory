@@ -1,9 +1,5 @@
-﻿using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions;
