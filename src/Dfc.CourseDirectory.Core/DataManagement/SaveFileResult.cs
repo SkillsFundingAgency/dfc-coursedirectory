@@ -83,6 +83,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         InvalidRows,
         EmptyFile,
         ExistingFileInFlight,
-        InvalidLars
+        MissingLars,
+        InvalidLars,
+        ExpiredLars
     }
 }
