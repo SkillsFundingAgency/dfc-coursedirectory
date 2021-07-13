@@ -71,9 +71,6 @@
 
             @switch (Model.Mode)
             {
-                case PublishMode.Migration:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })
-                    break;
                 case PublishMode.BulkUpload:
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })
                     break;

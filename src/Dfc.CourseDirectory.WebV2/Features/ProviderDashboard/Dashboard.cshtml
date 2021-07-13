@@ -10,14 +10,6 @@
     </pttcd-notification>
 }
 
-@if (Model.BulkUploadFileCount == 0 && (Model.MigrationPendingCourseRunCount > 0 || Model.LarslessCourseCount > 0))
-{
-    <pttcd-notification title="Migration" data-testid="migrationNotification">
-        <p class="govuk-body">We have transferred information about your courses.</p>
-        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="Migration" asp-action="Report" class="govuk-link">View details of migration</a></p>
-    </pttcd-notification>
-}
-
 @if (Model.BulkUploadInProgress)
 {
     <pttcd-notification title="Processing bulk upload of courses" data-testid="processingCoursesBulkUploadNotification">

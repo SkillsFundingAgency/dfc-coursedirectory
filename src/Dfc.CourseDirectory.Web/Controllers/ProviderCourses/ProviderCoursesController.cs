@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             var allCourses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
             var filteredLiveCourses = from Course c in allCourses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle) select c;
-            var pendingCourses = from Course c in allCourses.Where(c => c.CourseStatus == RecordStatus.MigrationPending || c.CourseStatus == RecordStatus.BulkUploadPending)
+            var pendingCourses = from Course c in allCourses.Where(c => c.CourseStatus == RecordStatus.BulkUploadPending)
                                  select c;
 
             var model = new ProviderCoursesViewModel()

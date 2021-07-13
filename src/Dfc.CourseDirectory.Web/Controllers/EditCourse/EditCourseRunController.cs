@@ -488,10 +488,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         case PublishMode.BulkUpload:
                             courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
                             break;
-                        case PublishMode.Migration:
-                            // Set courserun status to Migration Ready to go live if no errors found
-                            courseRunForEdit.RecordStatus = isValidCourseRun ? RecordStatus.MigrationReadyToGoLive : RecordStatus.MigrationPending;
-                            break;
                         case PublishMode.DataQualityIndicator:
                         default:
                             courseRunForEdit.RecordStatus = RecordStatus.Live;
@@ -501,24 +497,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     Session.Remove("NewAddedVenue");
                     Session.Remove("Option");
 
-                    // Check if course has no errors
-                    if (model.Mode == PublishMode.Migration)
-                    {
-                        if (isCourseValid)
-                        {
-                            // Change courseruns status of MigrationReadyToGoLive to Live so the entire course can go live
-                            foreach (var courseRun in courseForEdit.Value.CourseRuns.Where(x => x.RecordStatus == RecordStatus.MigrationReadyToGoLive))
-                            {
-                                courseRun.RecordStatus = RecordStatus.Live;
-                            }
-                        }
-                    }
-
                     var status = courseForEdit.Value.CourseStatus;
 
                     var message = string.Empty;
 
-                    RecordStatus[] validStatuses = new[] { RecordStatus.MigrationReadyToGoLive, RecordStatus.Live };
+                    RecordStatus[] validStatuses = new[] { RecordStatus.Live };
 
                     // Coures run is valid course is invalid, course run is fixed
                     if(courseRunForEdit.RecordStatus == RecordStatus.MigrationReadyToGoLive && !isCourseValid)
@@ -548,15 +531,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     courseRunId = model.CourseRunId,
                                     notificationTitle = ""
                                 });
-                            case PublishMode.Migration:
-                                return RedirectToAction("Index", "PublishCourses",
-                                    new
-                                    {
-                                        publishMode = model.Mode,
-                                        courseId = model.CourseId,
-                                        courseRunId = model.CourseRunId,
-                                        notificationTitle = message
-                                    });
                             case PublishMode.DataQualityIndicator:
                                 return RedirectToAction("Index", "PublishCourses",
                                  new

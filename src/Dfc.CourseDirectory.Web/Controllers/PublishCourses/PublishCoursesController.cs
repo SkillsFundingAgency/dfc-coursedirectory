@@ -70,27 +70,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
             switch (publishMode)
             {
-                case PublishMode.Migration:
-                   if (courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive) && x.IsValid == false).Any())
-                    {
-                        vm.PublishMode = PublishMode.Migration;
-
-                        var migratedCourses = courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive));
-                        var migratedCoursesWithErrors = GetErrorMessages(migratedCourses, ValidationMode.MigrateCourse).ToList();
-
-                        vm.NumberOfCoursesInFiles = migratedCoursesWithErrors.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending
-                                                                                                                    || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
-
-                        vm.Courses = migratedCoursesWithErrors.OrderBy(x => x.QualificationCourseTitle);
-                        vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCoursesWithErrors, PublishMode.Migration);
-                        vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _sqlQueryDispatcher).Result;
-                        break;
-                    }
-                    else
-                    {
-                        return View("../Migration/Complete/index");
-                    }
-
                 case PublishMode.BulkUpload:
 
                     vm.PublishMode = PublishMode.BulkUpload;
@@ -181,16 +160,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
             switch (vm.PublishMode)
             {
-                case PublishMode.Migration:
-
-                    // Publish migrated courses directly, NO archiving
-                    var resultPublishMigratedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Live);
-                    CompleteVM.Mode = PublishMode.Migration;
-                    if (resultPublishMigratedCourses.IsSuccess)
-                        return View("Complete", CompleteVM);
-                    else
-                        return RedirectToAction("Index", "Home", new { errmsg = "Publish All Migration-PublishCourses Error" });
-
                 case PublishMode.BulkUpload:
 
                     await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
@@ -217,27 +186,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             }            
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId,string courseName)
-        {
-            var result = await _sqlQueryDispatcher.ExecuteQuery(new DeleteCourseRun()
-            {
-                CourseId = courseId,
-                CourseRunId = courseRunId,
-                DeletedBy = _currentUserProvider.GetCurrentUser(),
-                DeletedOn = _clock.UtcNow
-            });
-
-            string notificationTitle;
-            if (result.Value is Success)
-                notificationTitle = courseName + " was successfully deleted";
-            else
-                notificationTitle = "Error " + courseName + " was not deleted";
-
-            return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration,notificationTitle = notificationTitle });
-        }
-
         public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)
         {
             bool AreAllReadyToBePublished = false;
@@ -252,11 +200,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             {
                 switch (publishMode)
                 {
-                    case PublishMode.Migration:
-                        var hasInvalidMigrationCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending));
-                        if (!hasInvalidMigrationCourseRuns)
-                            AreAllReadyToBePublished = true;
-                        break;
                     case PublishMode.BulkUpload:
                         var hasInvalidBulkUploadCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending));
                         if (!hasInvalidBulkUploadCourseRuns)
