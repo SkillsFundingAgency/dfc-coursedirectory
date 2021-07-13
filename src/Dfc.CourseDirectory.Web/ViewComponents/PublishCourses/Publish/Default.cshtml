@@ -26,28 +26,6 @@
             }
         }
 
-        @if (Model.PublishMode.Equals(PublishMode.Migration))
-        {
-
-            if (Model.NumberOfCoursesInFiles > 0)
-            {
-                <div class="govuk-form-group">
-                    <span class="govuk-caption-l">Course Directory</span>
-                    <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Fix errors</h1>
-                </div>
-
-                <p>We have not transferred @Model.NumberOfCoursesInFiles courses because they have errors. You must fix these to publish them to the course directory. Or you can ensure all of your provision is up to date by 
-                    <a href="/BulkUpload">uploading a file of all your courses</a>.</p>
-                <p>
-                    If you no longer run the courses, our <a href="@Url.Action("help","Home")" class="govuk-link" target="_blank">helpdesk can delete them</a>
-                </p>
-
-            }
-            else
-            {
-                <h1 class="govuk-govuk-grid-column-one-half-l">No Courses to Migrate</h1>
-            }
-        }
         @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
         {
             var courseRunCount = Model.Courses.SelectMany(x => x.CourseRuns).Count();

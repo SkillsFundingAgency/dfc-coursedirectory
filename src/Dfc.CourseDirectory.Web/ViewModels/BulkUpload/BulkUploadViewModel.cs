@@ -8,7 +8,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
         public IEnumerable<string> errors { get; set; }
         public string NotificationTitle { get; set; }
         public string NotificationMessage { get; set; }
-        public bool HasMigrationErrors { get; set; }
 
         // Background process status
         public bool BulkUploadBackgroundInProgress { get; set; }

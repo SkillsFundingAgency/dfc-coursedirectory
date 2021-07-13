@@ -835,37 +835,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public async Task<Result<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN)
-        {
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "?UKPRN=" + UKPRN));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var courseMigrationReport = JsonConvert.DeserializeObject<CourseMigrationReport>(json);
-                    return Result.Ok(courseMigrationReport);
-                }
-                else
-                {
-                    return Result.Fail<CourseMigrationReport>("Get course migration report service unsuccessful http response");
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Get course migration report service http request error");
-                return Result.Fail<CourseMigrationReport>("Get course migration report service http request error.");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Get course migration report service unknown error.");
-                return Result.Fail<CourseMigrationReport>("Get course migration report service unknown error.");
-            }
-        }
-
         public async Task<Result> ArchiveCoursesExceptBulkUploadReadytoGoLive(int UKPRN,int StatusToBeChangedTo)
         {
             HttpClient httpClient = new HttpClient();

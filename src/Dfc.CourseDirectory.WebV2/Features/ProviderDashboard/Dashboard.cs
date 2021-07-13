@@ -5,12 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
-using CosmosDbQueries = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
 {
@@ -33,7 +31,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int BulkUploadReadyToGoLiveCourseRunCount { get; set; }
         public int BulkUploadCoursesErrorCount { get; set; }
         public int BulkUploadCourseRunsErrorCount { get; set; }
-        public int LarslessCourseCount { get; set; }
         public int ApprenticeshipCount { get; set; }
         public int BulkUploadPendingApprenticeshipsCount { get; set; }
         public int BulkUploadReadyToGoLiveApprenticeshipsCount { get; set; }
@@ -52,14 +49,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
     public class Handler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
         private readonly IClock _clock;
 
-        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IBinaryStorageProvider binaryStorageProvider, IClock clock)
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, IBinaryStorageProvider binaryStorageProvider, IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _binaryStorageProvider = binaryStorageProvider;
             _clock = clock;
         }
@@ -80,8 +75,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                     ProviderId = request.ProviderId,
                     Date = _clock.UtcNow.ToLocalTime().Date
                 });
-
-            var courseMigrationReport = await _cosmosDbQueryDispatcher.ExecuteQuery(new CosmosDbQueries.GetCourseMigrationReportForProvider { ProviderUkprn = provider.Ukprn });
 
             var bulkUploadFiles = await _binaryStorageProvider.ListFiles($"{provider.Ukprn}/Bulk Upload/Files/");
 
@@ -111,7 +104,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 BulkUploadReadyToGoLiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadReadyToGoLive),
                 BulkUploadCoursesErrorCount = dashboardCounts.BulkUploadCoursesErrorCount,
                 BulkUploadCourseRunsErrorCount = dashboardCounts.BulkUploadCourseRunsErrorCount,
-                LarslessCourseCount = courseMigrationReport?.LarslessCourses?.Count ?? 0,
                 ApprenticeshipCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
                 BulkUploadPendingApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadPending),
                 BulkUploadReadyToGoLiveApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadReadyToGoLive),

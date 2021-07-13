@@ -83,15 +83,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
             }
 
-            var courseCounts = await _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN));
-
-            var courseErrors = courseCounts.IsSuccess
-                ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count()
-                : 500;
-
             var model = new BulkUploadViewModel
             {
-                HasMigrationErrors = courseErrors > 0 ? true : false,
             };
 
             if (provider.ApprenticeshipBulkUploadStatus != null)

@@ -135,7 +135,7 @@
 
             <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
                 @{var displayLink = true;
-                    if (Model.PublishMode == PublishMode.BulkUpload || Model.PublishMode == PublishMode.Migration)
+                    if (Model.PublishMode == PublishMode.BulkUpload)
                     {
                         displayLink = false;
                     }
