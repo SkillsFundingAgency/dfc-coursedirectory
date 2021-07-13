@@ -272,7 +272,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var nationalDelivery = getNationalDelivery(obj);
 
                     // Not allowed when delivery mode is not work based or national is true
-                    if (isSpecified && (deliveryMode != CourseDeliveryMode.WorkBased) || nationalDelivery == true)
+                    if (isSpecified && (deliveryMode != CourseDeliveryMode.WorkBased || nationalDelivery == true))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_NOT_ALLOWED"));
                         return;
