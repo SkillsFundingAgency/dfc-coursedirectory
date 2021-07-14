@@ -28,7 +28,7 @@
             </govuk-details>
         </govuk-error-summary-item>
     }
-    else if (ViewBag.MissingLarRows is IReadOnlyCollection<string> missingLars && missingLars.Count != 0)
+    else if (ViewBag.MissingLarsRows is IReadOnlyCollection<string> missingLars && missingLars.Count != 0)
     {
         <govuk-error-summary-item>
             <a href="#@(Html.IdFor(m => m.File))">@Html.ValidationMessageFor(m => m.File)</a>
