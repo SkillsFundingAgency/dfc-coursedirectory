@@ -112,8 +112,8 @@ JOIN @CourseIds x ON cr.CourseId = x.Id
                             CostDescription = cr.CostDescription,
                             DurationUnit = cr.DurationUnit,
                             DurationValue = cr.DurationValue,
-                            StudyMode = cr.StudyMode,
-                            AttendancePattern = cr.AttendancePattern,
+                            StudyMode = cr.StudyMode != 0 ? cr.StudyMode : null,  // Normalize 0 to null
+                            AttendancePattern = cr.AttendancePattern != 0 ? cr.AttendancePattern : null,  // Normalize 0 to null
                             National = cr.National,
                             SubRegionIds = courseRunSubRegions.GetValueOrDefault(cr.CourseRunId, Enumerable.Empty<string>()).ToArray(),
                             VenueName = cr.VenueName,

@@ -170,8 +170,8 @@ namespace Dfc.CourseDirectory.Core
                         CostDescription = courseRun.CostDescription,
                         DurationUnit = courseRun.DurationUnit,
                         DurationValue = courseRun.DurationValue,
-                        StudyMode = courseRun.StudyMode,
-                        AttendancePattern = courseRun.AttendancePattern,
+                        StudyMode = courseRun.StudyMode != 0 ? courseRun.StudyMode : null,  // Normalize 0 to null
+                        AttendancePattern = courseRun.AttendancePattern != 0 ? courseRun.AttendancePattern : null,  // Normalize 0 to null
                         National = courseRun.National,
                         RegionIds = courseRun.Regions ?? Array.Empty<string>(),
                         SubRegionIds = courseRun.SubRegions?.Select(r => r.Id) ?? Array.Empty<string>(),

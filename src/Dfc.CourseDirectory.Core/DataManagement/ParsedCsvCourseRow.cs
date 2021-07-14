@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapAttendancePattern(CourseAttendancePattern? value) => value switch
         {
-            0 => null,
+            0 => null,  // TODO - remove when NormalizeClassroomBasedCourseRunFields function has been run
             null => null,
             CourseAttendancePattern.Daytime => "Daytime",
             CourseAttendancePattern.Evening => "Evening",
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapStudyMode(CourseStudyMode? value) => value switch
         {
-            0 => null,
+            0 => null,  // TODO - remove when NormalizeClassroomBasedCourseRunFields function has been run
             null => null,
             CourseStudyMode.FullTime => "Full time",
             CourseStudyMode.PartTime => "Part time",
