@@ -132,12 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
         private async Task<ViewModel> CreateViewModel()
         {
-            var courseRunCount = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetLiveCourseRunCountForProvider() { ProviderId = _providerContextProvider.GetProviderId() });
-
-            return new ViewModel()
-            {
-            };
+            return await Task.FromResult(new ViewModel());
         }
 
         private class CommandValidator : AbstractValidator<Command>
