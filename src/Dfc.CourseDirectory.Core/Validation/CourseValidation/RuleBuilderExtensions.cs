@@ -291,7 +291,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     }
 
                     // All sub regions specified must be valid and there should be at least one
-                    if (v == null || v.Count == 0)
+                    if (isSpecified && (v == null || v.Count == 0))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_INVALID"));
                     }

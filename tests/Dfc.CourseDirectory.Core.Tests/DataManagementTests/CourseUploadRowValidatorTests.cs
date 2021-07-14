@@ -502,6 +502,30 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
         }
 
+        [Fact]
+        public async Task SubRegionsEmptyWithNational_DoesNotReturnValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "work based",
+                NationalDelivery = "yes",
+                SubRegions = ""
+            };
+
+            var validator = new CourseUploadRowValidator(validLearningAimRefs: Array.Empty<string>(), Clock, null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult.Errors,
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
+        }
+
         [Theory]
         [InlineData("classroom based")]
         [InlineData("online")]
