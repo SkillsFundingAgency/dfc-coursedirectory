@@ -45,8 +45,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool IsNewProvider { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
-        public bool CourseUploadInProgress { get; set; }
         public int UnpublishedCourseCount { get; set; }
+        public bool CourseUploadInProgress { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
