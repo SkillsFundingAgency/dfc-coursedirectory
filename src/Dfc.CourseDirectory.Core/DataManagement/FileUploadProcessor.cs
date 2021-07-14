@@ -211,16 +211,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     csvReader.ReadHeader();
                     List<string> emptyLars = new List<string>();
                     List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
-
+                    //Don't count the first row
+                    int rowCount = 1;
                     //this works
                     foreach (IDictionary<string, object> row in csvRecords)
                     {
                         try
                         {
-                            //csvReader.ReadHeader();
+                            rowCount++;
                             string larsRow = row["LARS_QAN"].ToString();
-                            //string larsRow = csvReader.GetField<string>("LARS_QAN");
-                            emptyLars.Add(csvReader.Context.RawRow.ToString());
+                            if (larsRow == null || larsRow.IsEmpty())
+                            {
+                                emptyLars.Add(rowCount.ToString());
+                            }
                         }
                         catch (CsvHelper.MissingFieldException)
                         {

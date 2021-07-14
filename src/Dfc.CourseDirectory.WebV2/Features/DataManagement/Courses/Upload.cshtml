@@ -28,22 +28,27 @@
             </govuk-details>
         </govuk-error-summary-item>
     }
-    else if (ViewBag.MissingLarsRows is IReadOnlyCollection<string> missingLars && missingLars.Count != 0)
+    else if ((ViewBag.MissingLarsRows is IReadOnlyCollection<string> missingLars && missingLars.Count != 0) ||
+        (ViewBag.InvalidLarsRows is IReadOnlyCollection<string> invalidLars && invalidLars.Count != 0))
     {
+        if (ViewBag.MissingLarsRows is IReadOnlyCollection<string> missingLs && missingLs.Count != 0)
+        {
         <govuk-error-summary-item>
             <a href="#@(Html.IdFor(m => m.File))">@Html.ValidationMessageFor(m => m.File)</a>
             <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
                 <govuk-details-summary>Missing LARS or QAN</govuk-details-summary>
                 <govuk-details-text>
+                    <p>You must enter a LARS code in the LARS_QAN column</p>
                     <ul class="govuk-list govuk-!-margin-0">
-                        @foreach (var lars in missingLars)
+                        @foreach (var lars in missingLs)
                         {
-                            <li data-testid="MissingLars">@lars</li>
+                            <li data-testid="MissingLars">Row @lars</li>
                         }
                     </ul>
                 </govuk-details-text>
             </govuk-details>
         </govuk-error-summary-item>
+        }
     }
     else
     {
