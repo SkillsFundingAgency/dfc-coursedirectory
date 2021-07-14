@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
 {
     [Route("data-upload/apprenticeships")]
-    [RequireFeatureFlag(FeatureFlags.CoursesDataManagement)]
+    [RequireFeatureFlag(FeatureFlags.ApprenticeshipsDataManagement)]
     [RequireProviderContext]
     [RestrictProviderTypes(ProviderType.FE)]
     public class ApprenticeshipsDataManagementController : Controller

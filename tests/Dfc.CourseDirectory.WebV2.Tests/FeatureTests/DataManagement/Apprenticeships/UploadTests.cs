@@ -105,37 +105,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             doc.AssertHasError("File", "The selected file is empty");
         }
 
-        [Fact]
-        public async Task Post_FileHasMissingHeaders_RendersError()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-
-            var csvStream = DataManagementFileHelper.CreateCsvStream(
-                csvWriter =>
-                {
-                    // Miss out WHO_THIS_COURSE_IS_FOR, YOUR_REFERENCE
-                    csvWriter.WriteField("STANDARD_CODE");
-                    csvWriter.WriteField("STANDARD_VERSION");
-                    csvWriter.NextRecord();
-                });
-
-            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
-
-            // Act
-            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var doc = await response.GetDocument();
-            doc.AssertHasError("File", "Enter headings in the correct format");
-            doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-            {
-                "APPRENTICESHIP_INFORMATION"
-            });
-        }
-
         /// <summary>
         /// TODO: Test that needs to be wired up as part of validate story.
         /// </summary>
