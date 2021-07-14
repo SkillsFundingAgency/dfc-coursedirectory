@@ -38,15 +38,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             : base(model, validationResult)
         {
             MissingHeaders = Array.Empty<string>();
+            MissingLarsRows = Array.Empty<string>();
         }
 
-        public UploadFailedResult(ViewModel model, string fileErrorMessage, IEnumerable<string> missingHeaders = null)
+        public UploadFailedResult(Command model, string fileErrorMessage, IEnumerable<string> missingHeaders = null, IEnumerable<string> missingLars = null)
             : base(model, CreateValidationResult(fileErrorMessage))
         {
             MissingHeaders = missingHeaders?.ToArray() ?? Array.Empty<string>();
+            MissingLarsRows = missingLars?.ToArray() ?? Array.Empty<string>();
+            var lRows = MissingLarsRows;
         }
 
         public IReadOnlyCollection<string> MissingHeaders { get; }
+        public IReadOnlyCollection<string> MissingLarsRows { get; }
 
         private static ValidationResult CreateValidationResult(string fileErrorMessage) =>
             new ValidationResult(new[]
@@ -116,11 +120,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
+            else if (saveFileResult.Status == SaveFileResultStatus.MissingLars)
+            {
+                return new UploadFailedResult(
+                    request,
+                    "The file contains errors",
+                    null,
+                    saveFileResult.MissingLarsRows);
+            }
             else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
                     request,
-                    "The file contains errors and could not be uploaded");
+                    "The file contains invalid LARs");
+            }
+            else if (saveFileResult.Status == SaveFileResultStatus.ExpiredLars)
+            {
+                return new UploadFailedResult(
+                    request,
+                    "The file contains expired LARs");
             }
             else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
             {
@@ -128,6 +146,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     await CreateViewModel(),
                     "The selected file is empty");
             }
+
             else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
             {
                 // UI Should stop us getting here so a generic error is sufficient

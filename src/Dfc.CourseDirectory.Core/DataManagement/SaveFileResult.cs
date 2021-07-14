@@ -53,14 +53,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static SaveFileResult MissingLars(IEnumerable<string> missingLars) =>
             new SaveFileResult()
             {
+                MissingHeaders = Array.Empty<string>(),
                 MissingLarsRows = missingLars.ToArray(),
-                Status = SaveFileResultStatus.InvalidLars
+                Status = SaveFileResultStatus.MissingLars
             };
 
         public static SaveFileResult Success(Guid venueUploadId, UploadStatus uploadStatus) =>
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
+                MissingLarsRows = Array.Empty<string>(),
                 Status = SaveFileResultStatus.Success,
                 UploadStatus = uploadStatus,
                 VenueUploadId = venueUploadId

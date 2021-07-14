@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -197,11 +198,57 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileMissingLars<TRow>(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+            //var rows;
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+                    List<string> emptyLars = new List<string>();
+                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
+
+                    //this works
+                    foreach (IDictionary<string, object> row in csvRecords)
+                    {
+                        try
+                        {
+                            //csvReader.ReadHeader();
+                            string larsRow = row["LARS_QAN"].ToString();
+                            //string larsRow = csvReader.GetField<string>("LARS_QAN");
+                            emptyLars.Add(csvReader.Context.RawRow.ToString());
+                        }
+                        catch (CsvHelper.MissingFieldException)
+                        {
+                            return (FileMatchesSchemaResult.MissingLars, Array.Empty<string>());
+                        }
+                    }
+                    if(emptyLars.Count > 0)
+                    {
+                        return (FileMatchesSchemaResult.MissingLars, emptyLars.ToArray());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
         protected internal enum FileMatchesSchemaResult
         {
             Ok,
             InvalidHeader,
-            InvalidRows
+            InvalidRows,
+            MissingLars,
+            InvalidLars,
+            ExpiredLars
         }
     }
 }

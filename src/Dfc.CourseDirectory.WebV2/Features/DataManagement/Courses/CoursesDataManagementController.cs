@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors =>
                     {
                         ViewBag.MissingHeaders = errors.MissingHeaders;
+                        ViewBag.MissingLarsRows = errors.MissingLarsRows;
                         return this.ViewFromErrors(errors);
                     },
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
