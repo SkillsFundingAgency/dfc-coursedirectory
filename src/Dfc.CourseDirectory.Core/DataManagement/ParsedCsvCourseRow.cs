@@ -82,14 +82,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             true => "yes",
             false => "no",
-            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+            null => null
         };
 
         public static string MapNationalDelivery(bool? value) => value switch
         {
             true => "yes",
             false => "no",
-            null => null,
+            null => null
         };
 
         public static string MapSubRegions(IReadOnlyCollection<string> value, IReadOnlyCollection<Region> allRegions) =>

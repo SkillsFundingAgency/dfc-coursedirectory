@@ -494,19 +494,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 .SelectMany(_ => Observable.FromAsync(() => GetCourseUploadStatus(courseUploadId)));
 
         // internal for testing
-        internal Guid? FindVenue(ParsedCsvCourseRow row, IReadOnlyCollection<Venue> providerVenues)
+        internal Venue FindVenue(CourseDataUploadRowInfo row, IReadOnlyCollection<Venue> providerVenues)
         {
-            if (row.ResolvedDeliveryMode != CourseDeliveryMode.ClassroomBased)
+            if (row.VenueIdHint.HasValue)
             {
-                return null;
+                return providerVenues.Single(v => v.VenueId == row.VenueIdHint);
             }
 
-            if (!string.IsNullOrEmpty(row.ProviderVenueRef))
+            if (!string.IsNullOrEmpty(row.Data.ProviderVenueRef))
             {
                 // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
 
                 var matchedVenues = providerVenues
-                    .Where(v => RefMatches(row.ProviderVenueRef, v))
+                    .Where(v => RefMatches(row.Data.ProviderVenueRef, v))
                     .ToArray();
 
                 if (matchedVenues.Length != 1)
@@ -517,20 +517,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venue = matchedVenues[0];
 
                 // If VenueName was provided too then it must match
-                if (!string.IsNullOrEmpty(row.VenueName) && !NameMatches(row.VenueName, venue))
+                if (!string.IsNullOrEmpty(row.Data.VenueName) && !NameMatches(row.Data.VenueName, venue))
                 {
                     return null;
                 }
 
-                return venue.VenueId;
+                return venue;
             }
 
-            if (!string.IsNullOrEmpty(row.VenueName))
+            if (!string.IsNullOrEmpty(row.Data.VenueName))
             {
                 // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
 
                 var matchedVenues = providerVenues
-                    .Where(v => NameMatches(row.VenueName, v))
+                    .Where(v => NameMatches(row.Data.VenueName, v))
                     .ToArray();
 
                 if (matchedVenues.Length != 1)
@@ -538,7 +538,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return null;
                 }
 
-                return matchedVenues[0].VenueId;
+                return matchedVenues[0];
             }
 
             return null;
@@ -623,9 +623,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data, allRegions);
 
-                var matchedVenueId = row.VenueIdHint ?? FindVenue(parsedRow, providerVenues);
+                var matchedVenue = FindVenue(row, providerVenues);
 
-                var validator = new CourseUploadRowValidator(validLearningAimRefs, _clock, matchedVenueId);
+                var validator = new CourseUploadRowValidator(validLearningAimRefs, _clock, matchedVenue?.VenueId);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -649,20 +649,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     WhereNext = parsedRow.WhereNext,
                     CourseName = parsedRow.CourseName,
                     ProviderCourseRef = parsedRow.ProviderCourseRef,
-                    DeliveryMode = parsedRow.DeliveryMode,
-                    StartDate = parsedRow.StartDate,
-                    FlexibleStartDate = parsedRow.FlexibleStartDate,
-                    VenueName = parsedRow.VenueName,
-                    ProviderVenueRef = parsedRow.ProviderVenueRef,
-                    NationalDelivery = parsedRow.NationalDelivery,
+                    DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode) ?? parsedRow.DeliveryMode,
+                    StartDate = ParsedCsvCourseRow.MapStartDate(parsedRow.ResolvedStartDate) ?? parsedRow.StartDate,
+                    FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(parsedRow.ResolvedFlexibleStartDate) ?? parsedRow.FlexibleStartDate,
+                    VenueName = matchedVenue?.VenueName,
+                    ProviderVenueRef = matchedVenue?.ProviderVenueRef,
+                    NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery) ?? parsedRow.NationalDelivery,
                     SubRegions = parsedRow.SubRegions,
                     CourseWebpage = parsedRow.CourseWebPage,
-                    Cost = parsedRow.Cost,
+                    Cost = ParsedCsvCourseRow.MapCost(parsedRow.ResolvedCost) ?? parsedRow.Cost,
                     CostDescription = parsedRow.CostDescription,
-                    Duration = parsedRow.Duration,
-                    DurationUnit = parsedRow.DurationUnit,
-                    StudyMode = parsedRow.StudyMode,
-                    VenueId = matchedVenueId,
+                    Duration = ParsedCsvCourseRow.MapDuration(parsedRow.ResolvedDuration) ?? parsedRow.Duration,
+                    DurationUnit = ParsedCsvCourseRow.MapDurationUnit(parsedRow.ResolvedDurationUnit) ?? parsedRow.DurationUnit,
+                    StudyMode = ParsedCsvCourseRow.MapStudyMode(parsedRow.ResolvedStudyMode) ?? parsedRow.StudyMode,
+                    VenueId = matchedVenue?.VenueId,
                     AttendancePattern = parsedRow.AttendancePattern,
                     ResolvedDeliveryMode = parsedRow.ResolvedDeliveryMode,
                     ResolvedStartDate = parsedRow.ResolvedStartDate,
