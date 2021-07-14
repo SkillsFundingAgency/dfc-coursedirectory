@@ -54,12 +54,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapAttendancePattern(CourseAttendancePattern? value) => value switch
         {
-            0 => "undefined",
+            0 => null,
+            null => null,
             CourseAttendancePattern.Daytime => "daytime",
             CourseAttendancePattern.Evening => "evening",
             CourseAttendancePattern.Weekend => "weekend",
             CourseAttendancePattern.DayOrBlockRelease => "day/block release",
-            null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
@@ -158,11 +158,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapStudyMode(CourseStudyMode? value) => value switch
         {
-            0 => "Undefined",
+            0 => null,
+            null => null,
             CourseStudyMode.FullTime => "full time",
             CourseStudyMode.PartTime => "part time",
             CourseStudyMode.Flexible => "flexible",
-            null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
