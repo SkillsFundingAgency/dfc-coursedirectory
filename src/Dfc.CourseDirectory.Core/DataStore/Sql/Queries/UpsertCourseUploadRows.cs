@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public IEnumerable<string> Errors { get; set; }
         public Guid CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-        public string LarsQan { get; set; }
+        public string LearnAimRef { get; set; }
         public string WhoThisCourseIsFor { get; set; }
         public string EntryRequirements { get; set; }
         public string WhatYouWillLearn { get; set; }

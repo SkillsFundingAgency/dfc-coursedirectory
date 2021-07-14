@@ -23,11 +23,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{courseId}");
+                $"/AuthorizeCourseAttributeTests/{course.Id}");
 
             await User.AsTestUser(userType);
 
@@ -46,11 +46,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{courseId}");
+                $"/AuthorizeCourseAttributeTests/{course.Id}");
 
             await User.AsTestUser(userType, provider.ProviderId);
 
@@ -71,11 +71,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var provider = await TestData.CreateProvider();
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{courseId}");
+                $"/AuthorizeCourseAttributeTests/{course.Id}");
 
             await User.AsTestUser(userType, anotherProvider.ProviderId);
 
@@ -92,11 +92,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{courseId}");
+                $"/AuthorizeCourseAttributeTests/{course.Id}");
 
             User.SetNotAuthenticated();
 

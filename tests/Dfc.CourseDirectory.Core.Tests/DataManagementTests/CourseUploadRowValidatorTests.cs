@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var row = new CsvCourseRow()
             {
-                LarsQan = string.Empty
+                LearnAimRef = string.Empty
             };
 
             var validator = new CourseUploadRowValidator(validLearningAimRefs: Array.Empty<string>(), Clock, null);

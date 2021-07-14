@@ -520,8 +520,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 new RegionCache(SqlQueryDispatcherFactory));
 
             var rows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, rowCount: 2).ToArray();
-            rows[0].LarsQan = string.Empty;
-            rows[1].LarsQan = string.Empty;
+            rows[0].LearnAimRef = string.Empty;
+            rows[1].LearnAimRef = string.Empty;
 
             var uploadRows = rows.ToDataUploadRowCollection();
 
