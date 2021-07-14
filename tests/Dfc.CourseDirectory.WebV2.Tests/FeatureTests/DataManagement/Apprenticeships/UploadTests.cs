@@ -10,12 +10,10 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Moq;
-using OneOf.Types;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprenticeships
@@ -48,200 +46,132 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
 
         private Mock<BlobContainerClient> DataUploadsContainerClient { get; }
 
+        [Fact]
+        public async Task Post_MissingFile_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-        //[Fact]
-        //public async Task Post_ProviderAlreadyHasUnprocessedUpload_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
-        //    await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), createdOn: Clock.UtcNow);
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
 
-        //    var csvStream = DataManagementFileHelper.CreateVenueUploadCsvStream(rowCount: 1);
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "Select a CSV");
+        }
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        //}
+        [Fact]
+        public async Task Post_InvalidFile_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-        //[Fact]
-        //public async Task Post_ValidCoursesFile_CreatesRecordAndRedirectsToInProgress()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider();
-        //    var learnAimRef = await TestData.CreateLearningAimRef();
+            // This data is a small PNG file
+            var nonCsvContent = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAABcAAAAbCAIAAAAYioOMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAEkSURBVEhLY/hPDTBqCnYwgkz5tf/ge0sHIPqxai1UCDfAacp7Q8u3MipA9E5ZGyoEA7+vXPva0IJsB05TgJohpgARVOj//++LlgF1wsWBCGIHTlO+TZkBVwoV6Z0IF0FGQCkUU36fPf8pJgkeEMjqcBkBVA+URZjy99UruC+ADgGKwJV+a++GsyEIGGpfK2t/HTsB0YswBRhgcEUQ38K5yAhrrCFMgUcKBAGdhswFIjyxjjAFTc87LSMUrrL2n9t3oUoxAE5T0BAkpHABqCmY7kdGn5MzIcpwAagpyEGLiSBq8AAGzOQIQT937IKzoWpxAwa4UmQESUtwLkQpHgA1BS0VQQBppgBt/vfjB1QACZBmClYjgIA0UwgiqFrcgBqm/P8PAGN09WCiWJ70AAAAAElFTkSuQmCC");
 
-        //    var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+            var fileStream = new MemoryStream(nonCsvContent);
+            var requestContent = CreateMultiPartDataContent("text/csv", fileStream);
 
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        //    response.Headers.Location.Should().Be($"/data-upload/courses/in-progress?providerId={provider.ProviderId}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        //    SqlQuerySpy.VerifyQuery<CreateCourseUpload, Success>(q =>
-        //        q.CreatedBy.UserId == User.UserId &&
-        //        q.CreatedOn == Clock.UtcNow &&
-        //        q.ProviderId == provider.ProviderId);
-        //}
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file must be a CSV");
+        }
 
-        //[Fact]
-        //public async Task Post_ValidCoursesFile_AbandonsExistingUnpublishedUpload()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
-        //    var learnAimRef = await TestData.CreateLearningAimRef();
+        [Fact]
+        public async Task Post_EmptyFile_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-        //    var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
+            var csvStream = new MemoryStream(Convert.FromBase64String(""));
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
-        //    var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
 
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        //    // Assert
-        //    response.EnsureNonErrorStatusCode();
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file is empty");
+        }
 
-        //    oldUpload = await WithSqlQueryDispatcher(
-        //        dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = oldUpload.CourseUploadId }));
-        //    oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
-        //}
+        [Fact]
+        public async Task Post_FileHasMissingHeaders_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
 
-        //[Fact]
-        //public async Task Post_MissingFile_RendersError()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
+                csvWriter =>
+                {
+                    // Miss out WHO_THIS_COURSE_IS_FOR, YOUR_REFERENCE
+                    csvWriter.WriteField("STANDARD_CODE");
+                    csvWriter.WriteField("STANDARD_VERSION");
+                    csvWriter.NextRecord();
+                });
 
-        //    var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        //    var doc = await response.GetDocument();
-        //    doc.AssertHasError("File", "Select a CSV");
-        //}
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "Enter headings in the correct format");
+            doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "APPRENTICESHIP_INFORMATION"
+            });
+        }
 
-        //[Fact]
-        //public async Task Post_InvalidFile_RendersError()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+        /// <summary>
+        /// TODO: Test that needs to be wired up as part of validate story.
+        /// </summary>
+        /// <returns></returns>
+        [Fact(Skip ="Place holder test for next story and size needs to be confirmed")]
+        public async Task Post_FileIsTooLarge_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
-        //    // This data is a small PNG file
-        //    var nonCsvContent = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAABcAAAAbCAIAAAAYioOMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAEkSURBVEhLY/hPDTBqCnYwgkz5tf/ge0sHIPqxai1UCDfAacp7Q8u3MipA9E5ZGyoEA7+vXPva0IJsB05TgJohpgARVOj//++LlgF1wsWBCGIHTlO+TZkBVwoV6Z0IF0FGQCkUU36fPf8pJgkeEMjqcBkBVA+URZjy99UruC+ADgGKwJV+a++GsyEIGGpfK2t/HTsB0YswBRhgcEUQ38K5yAhrrCFMgUcKBAGdhswFIjyxjjAFTc87LSMUrrL2n9t3oUoxAE5T0BAkpHABqCmY7kdGn5MzIcpwAagpyEGLiSBq8AAGzOQIQT937IKzoWpxAwa4UmQESUtwLkQpHgA1BS0VQQBppgBt/vfjB1QACZBmClYjgIA0UwgiqFrcgBqm/P8PAGN09WCiWJ70AAAAAElFTkSuQmCC");
+            var csvStream = new MemoryStream(new byte[5242880 + 1]);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
-        //    var fileStream = new MemoryStream(nonCsvContent);
-        //    var requestContent = CreateMultiPartDataContent("text/csv", fileStream);
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
 
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The selected file must be smaller than 5MB");
+        }
 
-        //    var doc = await response.GetDocument();
-        //    doc.AssertHasError("File", "The selected file must be a CSV");
-        //}
+        [Fact]
+        public async Task Get_Returns_Ok()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/apprenticeships?providerId={provider.ProviderId}");
 
-        //[Fact]
-        //public async Task Post_EmptyFile_RendersError()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            // Act
+            var response = await HttpClient.SendAsync(request);
 
-        //    var csvStream = new MemoryStream(Convert.FromBase64String(""));
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
-
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
-
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        //    var doc = await response.GetDocument();
-        //    doc.AssertHasError("File", "The selected file is empty");
-        //}
-
-        //[Fact]
-        //public async Task Post_FileHasMissingHeaders_RendersError()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider();
-
-        //    var csvStream = DataManagementFileHelper.CreateCsvStream(
-        //        csvWriter =>
-        //        {
-        //            // Miss out WHO_THIS_COURSE_IS_FOR, YOUR_REFERENCE
-        //            csvWriter.WriteField("LARS_QAN");
-        //            csvWriter.WriteField("ENTRY_REQUIREMENTS");
-        //            csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
-        //            csvWriter.WriteField("HOW_YOU_WILL_LEARN");
-        //            csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
-        //            csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
-        //            csvWriter.WriteField("WHERE_NEXT");
-        //            csvWriter.WriteField("COURSE_NAME");
-        //            csvWriter.WriteField("DELIVERY_MODE");
-        //            csvWriter.WriteField("START_DATE");
-        //            csvWriter.WriteField("FLEXIBLE_START_DATE");
-        //            csvWriter.WriteField("VENUE_NAME");
-        //            csvWriter.WriteField("YOUR_VENUE_REFERENCE");
-        //            csvWriter.WriteField("NATIONAL_DELIVERY");
-        //            csvWriter.WriteField("SUB_REGION");
-        //            csvWriter.WriteField("COURSE_WEBPAGE");
-        //            csvWriter.WriteField("COST");
-        //            csvWriter.WriteField("COST_DESCRIPTION");
-        //            csvWriter.WriteField("DURATION");
-        //            csvWriter.WriteField("DURATION_UNIT");
-        //            csvWriter.WriteField("STUDY_MODE");
-        //            csvWriter.WriteField("ATTENDANCE_PATTERN");
-        //            csvWriter.NextRecord();
-        //        });
-
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
-
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
-
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        //    var doc = await response.GetDocument();
-        //    doc.AssertHasError("File", "Enter headings in the correct format");
-        //    doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-        //    {
-        //        "WHO_THIS_COURSE_IS_FOR",
-        //        "YOUR_REFERENCE"
-        //    });
-        //}
-
-        //[Fact]
-        //public async Task Post_FileIsTooLarge_RendersError()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
-
-        //    var csvStream = new MemoryStream(new byte[5242880 + 1]);
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
-
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
-
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        //    var doc = await response.GetDocument();
-        //    doc.AssertHasError("File", "The selected file must be smaller than 5MB");
-        //}
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
 
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {

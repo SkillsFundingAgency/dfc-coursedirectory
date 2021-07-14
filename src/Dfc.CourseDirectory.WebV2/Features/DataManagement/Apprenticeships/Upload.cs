@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
             using var stream = request.File.OpenReadStream();
 
-            var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
+            var saveFileResult = await _fileUploadProcessor.SaveApprenticeshipFile(
                 _providerContextProvider.GetProviderId(),
                 stream,
                 _currentUserProvider.GetCurrentUser());
