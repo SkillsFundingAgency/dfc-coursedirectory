@@ -24,7 +24,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
     public class ViewModel : Command
     {
-        public int CourseCount { get; set; }
     }
 
     public class Command : IRequest<OneOf<UploadFailedResult, Success>>
@@ -138,7 +137,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
             return new ViewModel()
             {
-                CourseCount = courseRunCount
             };
         }
 
@@ -150,8 +148,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
                 RuleFor(x => x.File)
                     .NotNull()
                         .WithMessage("Select a CSV")
-                    .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
-                        .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
+                    .Must(file => file == null || file.Length <= Constants.ApprenticeshipFileMaxSizeBytes)
+                        .WithMessage($"The selected file must be smaller than {Constants.ApprenticeshipFileMaxSizeLabel}");
             }
         }
     }
