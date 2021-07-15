@@ -216,23 +216,55 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     //this works
                     foreach (IDictionary<string, object> row in csvRecords)
                     {
-                        try
+                        rowCount++;
+                        string larsRow = row["LARS_QAN"].ToString();
+                        if (larsRow == null || larsRow.IsEmpty())
                         {
-                            rowCount++;
-                            string larsRow = row["LARS_QAN"].ToString();
-                            if (larsRow == null || larsRow.IsEmpty())
-                            {
-                                emptyLars.Add(rowCount.ToString());
-                            }
-                        }
-                        catch (CsvHelper.MissingFieldException)
-                        {
-                            return (FileMatchesSchemaResult.MissingLars, Array.Empty<string>());
+                            emptyLars.Add(rowCount.ToString());
                         }
                     }
                     if(emptyLars.Count > 0)
                     {
                         return (FileMatchesSchemaResult.MissingLars, emptyLars.ToArray());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileInvalidLars<TRow>(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+            //var rows;
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+                    List<string> emptyLars = new List<string>();
+                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
+                    //Don't count the first row
+                    int rowCount = 1;
+                    //this works
+                    foreach (IDictionary<string, object> row in csvRecords)
+                    {
+                        rowCount++;
+                        string larsRow = row["LARS_QAN"].ToString();
+                        if (larsRow == null || larsRow.IsEmpty())
+                        {
+                            emptyLars.Add(rowCount.ToString());
+                        }
+                    }
+                    if (emptyLars.Count > 0)
+                    {
+                        return (FileMatchesSchemaResult.InvalidLars, emptyLars.ToArray());
                     }
                 }
 
