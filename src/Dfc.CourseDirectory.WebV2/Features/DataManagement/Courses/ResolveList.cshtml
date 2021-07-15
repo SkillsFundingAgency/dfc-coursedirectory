@@ -1,0 +1,68 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Resolve errors in your course data");
+}
+
+@section BackLink
+{
+    <govuk-back-link asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues">Back to Data Upload</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Resolve errors in your course data</h1>
+
+        <table class="govuk-table" data-testid="ErrorRows">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
+                    <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">Start Date</th>
+                    <th scope="col" class="govuk-table__header">Error(s)</th>
+                    <th scope="col" class="govuk-table__header" colspan="2"></th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var row in Model.ErrorRows)
+                {
+                    <tr class="govuk-table__row">
+                        <td scope="row" class="govuk-table__header-noborder">@row.CourseName</td>
+                        <td class="govuk-table__cell-noborder"></td>
+                        <td class="govuk-table__cell-noborder"></td>
+                    </tr>
+                    <tr>
+                        <td class="govuk-body-s"> <strong>LARS</strong> @row.LarsQan</td>
+                    </tr>
+                    @foreach (var course in row.CourseRows)
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header-noborder"></th>
+
+                            <td class="govuk-table__cell-noborder">@course.DeliveryMode</td>
+                            <td class="govuk-table__cell-noborder">@course.StartDate</td>
+                            <td class="govuk-table__cell-noborder govuk-body-s pttcd-dm-error" data-testid="ErrorRow">
+                                @for (var i = 0; i < course.ErrorFields.Count; i++)
+                                {
+                                    <span class="govuk-!-display-inline-block">
+                                        @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
+                                    </span>
+                                }
+                            </td>
+                            <td class="govuk-table__cell govuk-body-s">
+                                <a asp-action="ResolveRowErrors" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@course.RowNumber" class="govuk-link">
+                                    Resolve
+                                </a>
+                            </td>
+                            <td class="govuk-table__cell govuk-body-s">
+                                <a asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@course.RowNumber" class="govuk-link" data-testid="Delete">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    <tr class="govuk-section-break--visible"></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
