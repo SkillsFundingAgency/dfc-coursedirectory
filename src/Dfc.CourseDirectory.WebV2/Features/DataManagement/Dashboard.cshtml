@@ -78,23 +78,43 @@
                     <p class="govuk-body-s">You have <strong data-testid="PublishedCourseCount">@Model.PublishedApprenticeshipsCount</strong> published apprenticeships</p>
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
-                    <ul class="govuk-list pttcd-list--small">
-                        <li>
-                            <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                Upload new apprenticeship data
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="BlobStorage" asp-action="GetCurrentApprenticeshipsTemplateFile" class="govuk-link">
-                                Download your published apprenticeship data (CSV)
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">
-                                Download apprenticeship data template (CSV)
-                            </a>
-                        </li>
-                    </ul>
+                    @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipsDataManagement))
+                    {
+                        <ul class="govuk-list pttcd-list--small">
+                            <li>
+                                <a asp-controller="ApprenticeshipsDataManagement" asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
+                            </li>
+                            @if (Model.PublishedApprenticeshipsCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
+                                </li>
+                            }
+                            <li>
+                                <a asp-controller="ApprenticeshipsDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download apprenticeship data template (CSV)</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="govuk-list pttcd-list--small">
+                            <li>
+                                <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Upload new apprenticeship data
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetCurrentApprenticeshipsTemplateFile" class="govuk-link">
+                                    Download your published apprenticeship data (CSV)
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">
+                                    Download apprenticeship data template (CSV)
+                                </a>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </div>
