@@ -19,6 +19,33 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+                if (courseUpload == null)
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+
+                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
+                await dispatcher.Commit();
+
+                return result.Match<bool>(
+                    success =>
+                        {
+                            return true;
+                        },
+                     failure =>
+                        {
+                            return false;
+                        });
+            }
+        }
+
+
         public async Task DeleteCourseUploadForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
