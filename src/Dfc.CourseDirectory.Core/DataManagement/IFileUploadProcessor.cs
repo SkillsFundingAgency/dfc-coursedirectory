@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);
-        Task<bool> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber);
+        Task<UploadStatus> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber);
         Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId);
         IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);
@@ -31,5 +31,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow);
         Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
+
+        // Apprenticeships
+        Task<SaveFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy);
     }
 }

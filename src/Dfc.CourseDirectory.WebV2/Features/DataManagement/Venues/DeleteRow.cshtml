@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow.Response
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow.ViewModel
 @{
     ViewBag.Title = "Data Upload - Resolve errors in venue data";
 }
@@ -14,7 +14,7 @@
 </div>
 
 <div class="govuk-grid-row">
-    <form asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.Row"  >
+    <form asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber">
         <div class="govuk-grid-column-full">
             <table class="govuk-table">
                 <thead class="govuk-table__head">
@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row" data-testid="row-@Model.Row">
+                    <tr class="govuk-table__row" data-testid="row-@Model.RowNumber">
                         <th scope="row" class="govuk-table__cell govuk-body-s"><span data-testid="YourRef">@Model.YourRef</span></th>
                         <td class="govuk-table__cell govuk-body-s" data-testid="VenueName">@Model.VenueName</td>
                         <td class="govuk-table__cell govuk-body-s" data-testid="Address">@Model.Address</td>

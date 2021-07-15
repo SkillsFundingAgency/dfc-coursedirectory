@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<bool> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber)
+        public async Task<UploadStatus> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowToDelete = existingRows.SingleOrDefault(x => x.RowNumber == rowNumber);
                 if (rowToDelete == null)
                 {
-                    return false;
+                    throw new ResourceDoesNotExistException(ResourceType.VenueUploadRow, rowNumber);
                 }
 
                 if (!rowToDelete.IsDeletable)
@@ -84,16 +84,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         .Where(r => r.RowNumber != rowNumber)
                         .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
 
-                await ValidateVenueUploadFile(
+                var (uploadStatus, _) = await ValidateVenueUploadFile(
                     dispatcher,
                     venueUpload.VenueUploadId,
                     venueUpload.ProviderId,
                     rowCollection);
 
                 await dispatcher.Commit();
-            }
 
-            return true;
+                return uploadStatus;
+            }
         }
 
         public async Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId)

@@ -367,7 +367,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             FlexibleStartDate = r.FlexibleStartDate,
                             HowYouWillBeAssessed = update.HowYouWillBeAssessed,
                             HowYouWillLearn = update.HowYouWillLearn,
-                            LarsQan = r.LarsQan,
+                            LearnAimRef = r.LarsQan,
                             NationalDelivery = r.NationalDelivery,
                             ProviderCourseRef = r.ProviderCourseRef,
                             ProviderVenueRef = r.ProviderVenueRef,
@@ -526,7 +526,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var validLearningAimRefs = await sqlQueryDispatcher.ExecuteQuery(new GetLearningAimRefs()
             {
-                LearningAimRefs = rows.Select(r => r.Data.LarsQan).Where(v => !string.IsNullOrWhiteSpace(v))
+                LearningAimRefs = rows.Select(r => r.Data.LearnAimRef).Where(v => !string.IsNullOrWhiteSpace(v))
             });
 
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
@@ -558,7 +558,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     Errors = errors,
                     CourseId = row.CourseId,
                     CourseRunId = courseRunId,
-                    LarsQan = parsedRow.LarsQan,
+                    LearnAimRef = parsedRow.LearnAimRef,
                     WhoThisCourseIsFor = parsedRow.WhoThisCourseIsFor,
                     EntryRequirements = parsedRow.EntryRequirements,
                     WhatYouWillLearn = parsedRow.WhatYouWillLearn,
@@ -628,7 +628,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IClock clock,
                 Guid? matchedVenueId)
             {
-                RuleFor(c => c.LarsQan).LarsQan(validLearningAimRefs);
+                RuleFor(c => c.LearnAimRef).LarsQan(validLearningAimRefs);
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
                 RuleFor(c => c.WhatYouWillLearn).WhatYouWillLearn();

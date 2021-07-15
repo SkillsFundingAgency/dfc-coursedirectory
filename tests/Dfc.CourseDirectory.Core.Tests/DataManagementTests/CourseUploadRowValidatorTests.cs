@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var row = new CsvCourseRow()
             {
-                LarsQan = string.Empty
+                LearnAimRef = string.Empty
             };
 
             var validator = new CourseUploadRowValidator(validLearningAimRefs: Array.Empty<string>(), Clock, null);
@@ -474,6 +474,54 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             // Assert
             Assert.Contains(
+                validationResult.Errors,
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
+        }
+
+        [Fact]
+        public async Task SubRegionsValid_DoesNotReturnValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "work based",
+                NationalDelivery = "no",
+                SubRegions = "Warwickshire; Derbyshire"
+            };
+
+            var validator = new CourseUploadRowValidator(validLearningAimRefs: Array.Empty<string>(), Clock, null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult.Errors,
+                error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
+        }
+
+        [Fact]
+        public async Task SubRegionsEmptyWithNational_DoesNotReturnValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvCourseRow()
+            {
+                DeliveryMode = "work based",
+                NationalDelivery = "yes",
+                SubRegions = ""
+            };
+
+            var validator = new CourseUploadRowValidator(validLearningAimRefs: Array.Empty<string>(), Clock, null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
                 validationResult.Errors,
                 error => error.ErrorCode == "COURSERUN_SUBREGIONS_INVALID");
         }

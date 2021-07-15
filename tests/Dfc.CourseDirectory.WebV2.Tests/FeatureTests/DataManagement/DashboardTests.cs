@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             var doc = await response.GetDocument();
             using (new AssertionScope())
             {
-                doc.GetElementByTestId("UnpublishedCourseCount").TextContent.Should().Be("2");
+                doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
                 doc.GetElementByTestId("courses-upload-new-link").TextContent.Should().Be("Upload new course data");
             }
 

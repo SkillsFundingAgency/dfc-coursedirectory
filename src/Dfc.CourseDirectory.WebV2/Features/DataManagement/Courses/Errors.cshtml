@@ -1,0 +1,105 @@
+@using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
+@model ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Course data errors");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="WhatNext" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Course data errors</h1>
+
+        <p class="govuk-body">Your course data has been uploaded.</p>
+    
+        <p class="govuk-body">
+            Your data upload has <span data-testid="ErrorRowCount">@Model.ErrorRowCount</span> error@(Model.ErrorRowCount != 1 ? "s" : "") in
+            <span data-testid="TotalRowCount">@Model.TotalRowCount</span> courses.
+            
+            You must resolve these errors before your data can be published.
+        </p>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <govuk-details>
+            <govuk-details-summary>View errors in your upload</govuk-details-summary>
+            <govuk-details-text>
+                <table class="govuk-table" data-testid="ErrorRows">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                            <th scope="col" class="govuk-table__header" style="width: 130px">Start Date</th>
+                            <th scope="col" class="govuk-table__header">Error(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var row in Model.ErrorRows)
+                        {
+                            <tr class="govuk-table__row">
+                                <td scope="row" class="govuk-table__header-noborder">@row.CourseName</td>
+                                <td class="govuk-table__cell-noborder"></td>
+                                <td class="govuk-table__cell-noborder"></td>
+                            </tr>
+                            <tr>
+                                <td class="govuk-body-s"> <strong>LARS</strong> @row.LarsQan</td>
+                            </tr>
+                            @foreach (var course in row.CourseRows)
+                            {
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header-noborder"></th>
+                        
+                                    <td class="govuk-table__cell-noborder">@course.DeliveryMode</td>
+                                    <td class="govuk-table__cell-noborder">@course.StartDate</td>
+                                    <td class="govuk-table__cell-noborder govuk-body-s pttcd-dm-error" data-testid="ErrorRow" >
+                                        @for (var i = 0; i < course.ErrorFields.Count; i++)
+                                        {
+                                            <span class="govuk-!-display-inline-block">
+                                                @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            <tr class="govuk-section-break--visible"></tr>
+                        }
+                        </tbody>
+                    </table>
+            </govuk-details-text>
+        </govuk-details>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Errors" asp-all-route-data="@ProviderContext.RouteValues">
+            <p class="govuk-body">
+                You can
+                <a asp-action="DownloadErrors" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    download all of your course data including the errors (opens in a CSV file)
+                </a>
+                to edit and upload.
+            </p>
+
+            <govuk-radios asp-for="WhatNext">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        What do you want to do?
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                @if (Model.CanResolveOnScreen)
+                {
+                    <govuk-radios-item value="@WhatNext.ResolveOnScreen" data-testid="ResolveOnScreenOption">Resolve the errors on screen</govuk-radios-item>
+                }
+                <govuk-radios-item value="@WhatNext.UploadNewFile">Upload a new data file</govuk-radios-item>
+                <govuk-radios-item value="@WhatNext.DeleteUpload">Delete upload</govuk-radios-item>
+            </govuk-radios>
+
+            <govuk-button type="submit">Continue</govuk-button>
+        </form>
+    </div>
+</div>

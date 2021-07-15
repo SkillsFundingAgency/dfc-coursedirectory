@@ -52,8 +52,21 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseAttendancePattern?)null
         };
 
+        public static string MapAttendancePattern(CourseAttendancePattern? value) => value switch
+        {
+            0 => null,
+            null => null,
+            CourseAttendancePattern.Daytime => "daytime",
+            CourseAttendancePattern.Evening => "evening",
+            CourseAttendancePattern.Weekend => "weekend",
+            CourseAttendancePattern.DayOrBlockRelease => "day/block release",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
         public static decimal? ResolveCost(string value) =>
             decimal.TryParse(value, out var result) && GetDecimalPlaces(result) <= 2 ? result : (decimal?)null;
+
+        public static string MapCost(decimal? value) => value?.ToString("0.0000");
 
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
         {
@@ -67,8 +80,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseDeliveryMode?)null
         };
 
+        public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
+        {
+            CourseDeliveryMode.ClassroomBased => "classroom based",
+            CourseDeliveryMode.Online => "online",
+            CourseDeliveryMode.WorkBased => "work based",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+
         public static int? ResolveDuration(string value) =>
             int.TryParse(value, out var duration) ? duration : (int?)null;
+
+        public static string MapDuration(int? value) => value?.ToString("0.##");
 
         public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
         {
@@ -77,7 +102,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "weeks" => CourseDurationUnit.Weeks,
             "months" => CourseDurationUnit.Months,
             "years" => CourseDurationUnit.Years,
-            _ => (CourseDurationUnit?)null
+            _ => null
+        };
+
+        public static string MapDurationUnit(CourseDurationUnit? value) => value switch
+        {
+            CourseDurationUnit.Hours => "hours",
+            CourseDurationUnit.Days => "days",
+            CourseDurationUnit.Weeks => "weeks",
+            CourseDurationUnit.Months => "months",
+            CourseDurationUnit.Years => "years",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
         public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
@@ -88,11 +124,25 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
+        public static string MapFlexibleStartDate(bool? value) => value switch
+        {
+            true => "yes",
+            false => "no",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
         public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
         {
             "yes" => true,
             "no" => false,
             _ => null
+        };
+
+        public static string MapNationalDelivery(bool? value) => value switch
+        {
+            true => "yes",
+            false => "no",
+            null => null,
         };
 
         public static DateTime? ResolveStartDate(string value) =>
@@ -106,12 +156,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => (CourseStudyMode?)null
         };
 
-        public static string ResolveDeliveryMode(CourseDeliveryMode value) => value switch
+        public static string MapStudyMode(CourseStudyMode? value) => value switch
         {
-            CourseDeliveryMode.ClassroomBased => "classroom",
-            CourseDeliveryMode.Online => "online",
-            CourseDeliveryMode.WorkBased => "Work based",
-            _ => null
+            0 => null,
+            null => null,
+            CourseStudyMode.FullTime => "full time",
+            CourseStudyMode.PartTime => "part time",
+            CourseStudyMode.Flexible => "flexible",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
         public static IReadOnlyCollection<Region> ResolveSubRegions(string value, IEnumerable<Region> allRegions)
@@ -125,9 +177,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var allSubRegions = allRegions
                 .SelectMany(sr => sr.SubRegions)
-                .ToDictionary(sr => sr.Id, sr => sr, comparer);
+                .ToDictionary(sr => sr.Name, sr => sr, comparer);
 
-            var subRegionNames = value.Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries);
+            var subRegionNames = value
+                .Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Trim())
+                .ToArray();
 
             var matchedRegions = subRegionNames
                 .SelectMany(v => allSubRegions.TryGetValue(v, out var sr) ? new[] { sr } : Array.Empty<Region>())

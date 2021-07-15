@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 {
@@ -50,9 +51,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     },
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
-
-        [HttpGet("errors")]
-        public IActionResult Errors() => Ok();
 
         [HttpGet("resolve")]
         public IActionResult ResolveList() => Ok();
@@ -144,8 +142,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("resolve/delete/success")]
-        [RequireProviderContext]
         public IActionResult DeleteUploadSuccess() => View();
+
+        [HttpGet("download")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
+            new Download.Query(),
+            result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
+
 
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
@@ -156,6 +160,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("formatting")]
         public IActionResult Formatting() => View();
+
+        [HttpGet("errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Errors() =>
+            await _mediator.SendAndMapResponse(
+                new Errors.Query(),
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
+
+        [HttpPost("errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Errors(Errors.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => (command.WhatNext switch
+                    {
+                        ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
+                        _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
