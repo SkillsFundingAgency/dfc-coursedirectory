@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                             StartDate = r.StartDate,
                             VenueName = r.VenueName,
                             DeliveryMode = r.DeliveryMode,
-                            ErrorFields = r.Errors.Select(e => Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
+                            ErrorFields = r.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
                         }).OrderBy(
                                     g => g.StartDate
                                 ).ThenByDescending(
