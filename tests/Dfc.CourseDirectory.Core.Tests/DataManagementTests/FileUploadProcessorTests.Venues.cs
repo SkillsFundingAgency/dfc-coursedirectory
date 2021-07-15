@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Mapster;
 using Moq;
 using Xunit;
 
@@ -176,7 +177,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var rows = new[] { new CsvVenueRow() { ProviderVenueRef = "REF", VenueName = "NAME" } }.ToDataUploadRowCollection();
 
-            var existingVenues = new[] { venue1 };
+            var existingVenues = new[] { venue1 }.Select(v => v.Adapt<VenueMatchInfo>());
 
             var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -201,7 +202,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var rows = new[] { new CsvVenueRow() { VenueName = "NAME" } }.ToDataUploadRowCollection();
 
-            var existingVenues = new[] { venue1 };
+            var existingVenues = new[] { venue1 }.Select(v => v.Adapt<VenueMatchInfo>());
 
             var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -230,7 +231,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 new CsvVenueRow() { VenueName = "NAME" },
             }.ToDataUploadRowCollection();
 
-            var existingVenues = new[] { venue1 };
+            var existingVenues = new[] { venue1 }.Select(v => v.Adapt<VenueMatchInfo>());
 
             var uploadProcessor = new TriggerableVenueUploadStatusUpdatesFileUploadProcessor(
                 SqlQueryDispatcherFactory,
