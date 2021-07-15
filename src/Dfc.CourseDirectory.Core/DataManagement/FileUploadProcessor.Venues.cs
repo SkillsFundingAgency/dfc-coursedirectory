@@ -508,11 +508,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         // internal for testing
-        internal Guid?[] MatchRowsToExistingVenues(VenueDataUploadRowInfoCollection rows, IEnumerable<Venue> existingVenues)
+        internal Guid?[] MatchRowsToExistingVenues(VenueDataUploadRowInfoCollection rows, IEnumerable<VenueMatchInfo> existingVenues)
         {
             var rowVenueIdMapping = new Guid?[rows.Count];
 
-            var remainingCandidates = existingVenues.ToList();
+            // We have some bad data with duplicates; prefer matching on Venues that have have live offerings
+            var remainingCandidates = existingVenues
+                .OrderByDescending(v => v.HasLiveOfferings ? 1 : 0)
+                .ToList();
 
             // First try to match on ProviderVenueRef..
             MatchOnPredicate((row, venue) =>
@@ -543,7 +546,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             remainingCandidates.Remove(candidate);
                             rowVenueIdMapping[i] = candidate.VenueId;
-                            continue;
+                            break;
                         }
                     }
                 }
