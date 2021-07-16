@@ -18,25 +18,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
 
     public class ViewModel
     {
-        public IReadOnlyCollection<ViewModelCourse> ErrorRows { get; set; }
-    }
-
-    public class ViewModelCourse
-    {
-        public Guid CourseId { get; set; }
-        public string LarsQan { get; set; }
-        public string CourseName { get; set; }
-        public IReadOnlyCollection<ViewModelRow> CourseRows { get; set; }
+        public IReadOnlyCollection<ViewModelRow> ErrorRows { get; set; }
     }
 
     public class ViewModelRow
     {
         public int RowNumber { get; set; }
+        public Guid CourseId { get; set; }
+        public string LarsQan { get; set; }
+        public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
-
         public string StartDate { get; set; }
         public string VenueName { get; set; }
         public string DeliveryMode { get; set; }
+        public bool DeliveryError { get; set; }
+        public bool DescriptionError { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
 
@@ -65,32 +61,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
             {
                 ErrorRows = uploadRows
                     .Where(row => !row.IsValid)
-                    .GroupBy(row => row.CourseId)
-                    .Select(g => new ViewModelCourse()
+                    .Select(row => new ViewModelRow()
                     {
-                        CourseId = g.Key,
-                        LarsQan = g.Select(p => p.LarsQan).FirstOrDefault(),
-                        CourseName = g.Select(p => p.CourseName).FirstOrDefault(),
-                        CourseRows = g.Select(r => new ViewModelRow()
-                        {
-                            //CourseId = row.Key,
-                            ProviderCourseRef = r.ProviderCourseRef,
-                            StartDate = r.StartDate,
-                            VenueName = r.VenueName,
-                            DeliveryMode = r.DeliveryMode,
-                            ErrorFields = r.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
-                        }).OrderBy(
-                                    g => g.StartDate
-                                ).ThenByDescending(
-                                    g => g.DeliveryMode
-                                ).ToArray()
+                        RowNumber = row.RowNumber,
+                        CourseId = row.CourseId,
+                        LarsQan = row.LarsQan,
+                        CourseName = row.CourseName,
+                        ProviderCourseRef = row.ProviderCourseRef,
+                        StartDate = row.StartDate,
+                        VenueName = row.VenueName,
+                        DeliveryMode = row.DeliveryMode,
+                        ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
+                        DeliveryError = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().Contains("Delivery mode"),
+                        DescriptionError = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().Contains("Course description")
                     }).OrderBy(
-                        g => g.LarsQan
+                        g => g.DeliveryMode
                     ).ThenByDescending(
-                        g => g.CourseId
-                    )
-
-                    .ToArray()
+                        g => g.DescriptionError
+                    ).ToArray()
             };
         }
     }

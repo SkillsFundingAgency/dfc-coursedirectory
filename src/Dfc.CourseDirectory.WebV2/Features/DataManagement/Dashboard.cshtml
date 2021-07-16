@@ -21,6 +21,12 @@
                     <ul class="govuk-list pttcd-list--small">
                         @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
                         {
+                            @if (Model.UnpublishedCourseCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-view-edit-link">Your unpublished courses</a>
+                                </li>
+                            }
                             <li>
                                 @if (Model.CourseUploadInProgress)
                                 {
