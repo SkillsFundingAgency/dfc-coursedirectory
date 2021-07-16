@@ -236,28 +236,57 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                 </div>
             </div>
         </div>
-
-        <div class="govuk-grid-column-one-third">
-            <div class="pttcd-provider-dashboard__card">
-                <div class="pttcd-provider-dashboard__card__content">
-                    <h2 class="govuk-heading-s">Bulk upload</h2>
-                    <p class="govuk-body-s">Manage your apprenticeship training courses as a CSV file.</p>
-                </div>
-                <div class="pttcd-provider-dashboard__card__actions">
-                    <ul class="govuk-list pttcd-list--small">
-                        <li>
-                            <a asp-controller="BlobStorage" asp-action="GetCurrentApprenticeshipsTemplateFile" class="govuk-link">Your published apprenticeship training course information (CSV)</a>
-                        </li>
-                        <li>
-                            <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">An apprenticeships training course template (CSV)</a>
-                        </li>
-                        <li>
-                            <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload apprenticeships<span class="govuk-visually-hidden"> further education courses</span></a>
-                        </li>
-                    </ul>
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipsDataManagement))
+        {
+            <div class="govuk-grid-column-one-third">
+                <div class="pttcd-provider-dashboard__card">
+                    <div class="pttcd-provider-dashboard__card__content">
+                        <h2 class="govuk-heading-s">Apprenticeship data upload</h2>
+                        <p class="govuk-body-s">Upload your apprenticeships with a CSV file.</p>
+                    </div>
+                    <div class="pttcd-provider-dashboard__card__actions">
+                        <ul class="govuk-list pttcd-list--small">
+                            <li>
+                                <a asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
+                            </li>
+                            @if (Model.ApprenticeshipCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
+                                </li>
+                            }
+                            <li>
+                                <a asp-controller="ApprenticeshipsDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download apprenticeship data template (CSV)</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="govuk-grid-column-one-third">
+                <div class="pttcd-provider-dashboard__card">
+                    <div class="pttcd-provider-dashboard__card__content">
+                        <h2 class="govuk-heading-s">Bulk upload</h2>
+                        <p class="govuk-body-s">Manage your apprenticeship training courses as a CSV file.</p>
+                    </div>
+                    <div class="pttcd-provider-dashboard__card__actions">
+                        <ul class="govuk-list pttcd-list--small">
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetCurrentApprenticeshipsTemplateFile" class="govuk-link">Your published apprenticeship training course information (CSV)</a>
+                            </li>
+                            <li>
+                                <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">An apprenticeships training course template (CSV)</a>
+                            </li>
+                            <li>
+                                <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload apprenticeships<span class="govuk-visually-hidden"> further education courses</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 }
 
