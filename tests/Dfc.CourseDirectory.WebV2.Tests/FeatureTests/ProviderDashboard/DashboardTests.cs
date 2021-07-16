@@ -623,6 +623,46 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             }
         }
 
+        [Fact]
+        public async Task Get_HasLiveApprenticeships_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var standard = await TestData.CreateStandard(1234, 1, standardName: "My standard");
+            await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadApprenticeships").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveApprenticeships_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadApprenticeships").Should().BeNull();
+        }
+
+
         private async Task<IReadOnlyCollection<Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
                 TestData.CreateVenue(providerId, createdBy: User.ToUserInfo(), venueName: $"Test {i}")));
