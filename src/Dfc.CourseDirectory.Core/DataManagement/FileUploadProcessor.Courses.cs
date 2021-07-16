@@ -381,10 +381,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidHeader(missingHeaders);
             }
 
-            var (missingLarsSchemaResult, missingLars) = await FileMissingLars<CsvCourseRow>(stream);
-            if (missingLarsSchemaResult == FileMatchesSchemaResult.MissingLars)
+            var (missingLarsResult, missingLars) = await FileMissingLars(stream);
+            if (missingLarsResult == FileMatchesSchemaResult.MissingLars)
             {
                 return SaveFileResult.MissingLars(missingLars);
+            }
+
+            var (invalideLarsResult, invalidLars) = await FileInvalidLars(stream);
+            if (invalideLarsResult == FileMatchesSchemaResult.InvalidLars)
+            {
+                return SaveFileResult.MissingLars(invalidLars);
             }
 
             var courseUploadId = Guid.NewGuid();

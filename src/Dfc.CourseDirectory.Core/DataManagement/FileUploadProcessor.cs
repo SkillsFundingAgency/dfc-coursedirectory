@@ -198,10 +198,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileMissingLars<TRow>(Stream stream)
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileMissingLars(Stream stream)
         {
             CheckStreamIsProcessable(stream);
-            //var rows;
+
             try
             {
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
@@ -213,12 +213,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
                     //Don't count the first row
                     int rowCount = 1;
-                    //this works
+
                     foreach (IDictionary<string, object> row in csvRecords)
                     {
                         rowCount++;
                         string larsRow = row["LARS_QAN"].ToString();
-                        if (larsRow == null || larsRow.IsEmpty())
+                        if (string.IsNullOrWhiteSpace(larsRow))
                         {
                             emptyLars.Add(rowCount.ToString());
                         }
@@ -237,34 +237,42 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileInvalidLars<TRow>(Stream stream)
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] InvalidLars)> FileInvalidLars(Stream stream)
         {
             CheckStreamIsProcessable(stream);
-            //var rows;
+
+            
+            {
+            }
+
             try
             {
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                 {
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
-                    List<string> emptyLars = new List<string>();
+
+                    var validLearningAimRefs = await dispatcher.ExecuteQuery(new GetLearningAimRefs());
+
+                    List<string> invalidLars = new List<string>();
                     List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
-                    //Don't count the first row
+
                     int rowCount = 1;
-                    //this works
+
                     foreach (IDictionary<string, object> row in csvRecords)
                     {
                         rowCount++;
                         string larsRow = row["LARS_QAN"].ToString();
-                        if (larsRow == null || larsRow.IsEmpty())
+                        if (!validLearningAimRefs.Contains(larsRow))
                         {
-                            emptyLars.Add(rowCount.ToString());
+                            invalidLars.Add(rowCount.ToString());
                         }
                     }
-                    if (emptyLars.Count > 0)
+                    if (invalidLars.Count > 0)
                     {
-                        return (FileMatchesSchemaResult.InvalidLars, emptyLars.ToArray());
+                        return (FileMatchesSchemaResult.InvalidLars, invalidLars.ToArray());
                     }
                 }
 

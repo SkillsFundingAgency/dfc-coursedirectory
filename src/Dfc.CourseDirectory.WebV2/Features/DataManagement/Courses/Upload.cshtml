@@ -54,13 +54,13 @@
             <govuk-error-summary-item>
                 <a href="#@(Html.IdFor(m => m.File))">@Html.ValidationMessageFor(m => m.File)</a>
                 <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
-                    <govuk-details-summary>Missing LARS or QAN</govuk-details-summary>
+                    <govuk-details-summary>Invalid LARS or QAN</govuk-details-summary>
                     <govuk-details-text>
                         <p>Enter a valid LARS code in the LARS_QAN column</p>
                         <ul class="govuk-list govuk-!-margin-0">
                             @foreach (var lars in invalidLars)
                             {
-                                <li data-testid="MissingLars">Row @lars</li>
+                                <li data-testid="InvalidLars">Row @lars</li>
                             }
                         </ul>
                     </govuk-details-text>

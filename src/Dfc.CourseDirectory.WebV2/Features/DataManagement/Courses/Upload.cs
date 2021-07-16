@@ -39,19 +39,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
         {
             MissingHeaders = Array.Empty<string>();
             MissingLarsRows = Array.Empty<string>();
+            InvalidLarsRows = Array.Empty<string>();
+            ExpiredLarsRows = Array.Empty<string>();
         }
 
-        public UploadFailedResult(Command model, string fileErrorMessage, IEnumerable<string> missingHeaders = null, IEnumerable<string> missingLars = null)
+        public UploadFailedResult(Command model, string fileErrorMessage, IEnumerable<string> missingHeaders = null, IEnumerable<string> missingLars = null, IEnumerable<string> invalidLars = null, IEnumerable<string> expiredLars = null)
             : base(model, CreateValidationResult(fileErrorMessage))
         {
             MissingHeaders = missingHeaders?.ToArray() ?? Array.Empty<string>();
             MissingLarsRows = missingLars?.ToArray() ?? Array.Empty<string>();
-            var lRows = MissingLarsRows;
+            InvalidLarsRows = invalidLars?.ToArray() ?? Array.Empty<string>();
+            ExpiredLarsRows = expiredLars?.ToArray() ?? Array.Empty<string>();
         }
 
         public IReadOnlyCollection<string> MissingHeaders { get; }
         public IReadOnlyCollection<string> MissingLarsRows { get; }
-
+        public IReadOnlyCollection<string> InvalidLarsRows { get; }
+        public IReadOnlyCollection<string> ExpiredLarsRows { get; }
         private static ValidationResult CreateValidationResult(string fileErrorMessage) =>
             new ValidationResult(new[]
             {
@@ -120,25 +124,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.MissingLars)
+            else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
                     request,
                     "The file contains errors",
                     null,
-                    saveFileResult.MissingLarsRows);
-            }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
-            {
-                return new UploadFailedResult(
-                    request,
-                    "The file contains invalid LARs");
-            }
-            else if (saveFileResult.Status == SaveFileResultStatus.ExpiredLars)
-            {
-                return new UploadFailedResult(
-                    request,
-                    "The file contains expired LARs");
+                    saveFileResult.MissingLarsRows,
+                    saveFileResult.InvalidLarsRows,
+                    saveFileResult.ExpiredLarsRows);
             }
             else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
             {
