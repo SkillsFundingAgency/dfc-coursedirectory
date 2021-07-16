@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             rows.Should().BeEquivalentTo(
                 new CsvCourseRowWithErrors()
                 {
-                    LarsQan = courseUploadRows[0].LarsQan,
+                    LearnAimRef = courseUploadRows[0].LarsQan,
                     WhoThisCourseIsFor = courseUploadRows[0].WhoThisCourseIsFor,
                     EntryRequirements = courseUploadRows[0].EntryRequirements,
                     WhatYouWillLearn = courseUploadRows[0].WhatYouWillLearn,
@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     ProviderVenueRef = courseUploadRows[0].ProviderVenueRef,
                     NationalDelivery = courseUploadRows[0].NationalDelivery,
                     SubRegions = courseUploadRows[0].SubRegions,
-                    CourseWebPage = courseUploadRows[0].CourseWebpage,
+                    CourseWebPage = courseUploadRows[0].CourseWebPage,
                     Cost = courseUploadRows[0].Cost,
                     CostDescription = courseUploadRows[0].CostDescription,
                     Duration = courseUploadRows[0].Duration,
