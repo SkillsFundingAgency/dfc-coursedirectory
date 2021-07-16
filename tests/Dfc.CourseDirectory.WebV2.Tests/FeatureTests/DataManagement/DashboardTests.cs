@@ -106,6 +106,40 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         }
 
         [Fact]
+        public async Task Get_UnpublishedCourseUploads()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.FE);
+
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            //Create some course upload rows to test new data in UI
+            var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
+                doc.GetElementByTestId("courses-upload-new-link").TextContent.Should().Be("Upload new course data");
+            }
+
+        }
+
+        [Fact]
         public async Task TestVenueUploadInProgress()
         {
             // Arrange
@@ -171,6 +205,84 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
 
             var doc = await response.GetDocument();
             doc.GetElementByTestId("DownloadVenues").Should().BeNull();
+        }
+
+        [Fact]
+        public async Task Get_HasLiveCourses_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var learnAimRef = await TestData.CreateLearningAimRef();
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadCourses").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveCourses_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadCourses").Should().BeNull();
+        }
+
+        [Fact]
+        public async Task Get_HasLiveApprenticeships_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var standard = await TestData.CreateStandard(1234, 1, standardName: "My standard");
+            await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadApprenticeships").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveApprenticeships_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadApprenticeships").Should().BeNull();
         }
     }
 }

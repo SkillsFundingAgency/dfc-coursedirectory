@@ -43,6 +43,77 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return parsedRow;
         }
 
+        public static string MapAttendancePattern(CourseAttendancePattern? value) => value switch
+        {
+            0 => null,
+            null => null,
+            CourseAttendancePattern.Daytime => "daytime",
+            CourseAttendancePattern.Evening => "evening",
+            CourseAttendancePattern.Weekend => "weekend",
+            CourseAttendancePattern.DayOrBlockRelease => "day/block release",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapCost(decimal? value) => value?.ToString("0.00");
+
+        public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
+        {
+            CourseDeliveryMode.ClassroomBased => "classroom based",
+            CourseDeliveryMode.Online => "online",
+            CourseDeliveryMode.WorkBased => "work based",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapDuration(int? value) => value?.ToString("0.##");
+
+        public static string MapDurationUnit(CourseDurationUnit? value) => value switch
+        {
+            CourseDurationUnit.Hours => "hours",
+            CourseDurationUnit.Days => "days",
+            CourseDurationUnit.Weeks => "weeks",
+            CourseDurationUnit.Months => "months",
+            CourseDurationUnit.Years => "years",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapFlexibleStartDate(bool? value) => value switch
+        {
+            true => "yes",
+            false => "no",
+            null => null
+        };
+
+        public static string MapNationalDelivery(bool? value) => value switch
+        {
+            true => "yes",
+            false => "no",
+            null => null
+        };
+
+        public static string MapSubRegions(IReadOnlyCollection<string> value, IReadOnlyCollection<Region> allRegions) =>
+            value == null ?
+                string.Empty :
+                string.Join(
+                    SubRegionDelimiter + " ",
+                    allRegions
+                        .SelectMany(r => r.SubRegions)
+                        .Where(r => value.Contains(r.Id))
+                        .Select(r => r.Name));
+
+        public static string MapStartDate(DateTime? value) => value?.ToString("dd/MM/yyyy");
+
+        public static string MapStudyMode(CourseStudyMode? value) => value switch
+        {
+            0 => null,
+            null => null,
+            CourseStudyMode.FullTime => "full time",
+            CourseStudyMode.PartTime => "part time",
+            CourseStudyMode.Flexible => "flexible",
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
         public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
         {
             "daytime" => CourseAttendancePattern.Daytime,
@@ -58,9 +129,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
         {
             "classroom based" => CourseDeliveryMode.ClassroomBased,
+            "classroombased" => CourseDeliveryMode.ClassroomBased,
             "classroom" => CourseDeliveryMode.ClassroomBased,
             "online" => CourseDeliveryMode.Online,
             "work based" => CourseDeliveryMode.WorkBased,
+            "workbased" => CourseDeliveryMode.WorkBased,
             "work" => CourseDeliveryMode.WorkBased,
             _ => (CourseDeliveryMode?)null
         };
@@ -75,7 +148,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "weeks" => CourseDurationUnit.Weeks,
             "months" => CourseDurationUnit.Months,
             "years" => CourseDurationUnit.Years,
-            _ => (CourseDurationUnit?)null
+            _ => null
         };
 
         public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
@@ -115,9 +188,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var allSubRegions = allRegions
                 .SelectMany(sr => sr.SubRegions)
-                .ToDictionary(sr => sr.Id, sr => sr, comparer);
+                .ToDictionary(sr => sr.Name, sr => sr, comparer);
 
-            var subRegionNames = value.Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries);
+            var subRegionNames = value
+                .Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Trim())
+                .ToArray();
 
             var matchedRegions = subRegionNames
                 .SelectMany(v => allSubRegions.TryGetValue(v, out var sr) ? new[] { sr } : Array.Empty<Region>())

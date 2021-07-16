@@ -54,6 +54,48 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<UploadStatus> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                var (existingRows, lastRowNumber) = await dispatcher.ExecuteQuery(new GetVenueUploadRows() { VenueUploadId = venueUpload.VenueUploadId });
+
+                var rowToDelete = existingRows.SingleOrDefault(x => x.RowNumber == rowNumber);
+                if (rowToDelete == null)
+                {
+                    throw new ResourceDoesNotExistException(ResourceType.VenueUploadRow, rowNumber);
+                }
+
+                if (!rowToDelete.IsDeletable)
+                {
+                    throw new InvalidStateException(InvalidStateReason.VenueUploadRowCannotBeDeleted);
+                }
+
+                var nonDeletedRows = existingRows.Where(x => x.RowNumber != rowNumber).ToArray();
+
+                var rowCollection = new VenueDataUploadRowInfoCollection(
+                    lastRowNumber: lastRowNumber,
+                    nonDeletedRows
+                        .Where(r => r.RowNumber != rowNumber)
+                        .Select(r => new VenueDataUploadRowInfo(CsvVenueRow.FromModel(r), r.RowNumber, r.IsSupplementary)));
+
+                var (uploadStatus, _) = await ValidateVenueUploadFile(
+                    dispatcher,
+                    venueUpload.VenueUploadId,
+                    venueUpload.ProviderId,
+                    rowCollection);
+
+                await dispatcher.Commit();
+
+                return uploadStatus;
+            }
+        }
+
         public async Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())

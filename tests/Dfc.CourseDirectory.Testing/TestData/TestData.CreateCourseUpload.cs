@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -271,7 +271,7 @@ namespace Dfc.CourseDirectory.Testing
             private UpsertCourseUploadRowsRecord CreateRecord(
                 Guid courseId,
                 Guid courseRunId,
-                string larsQan,
+                string learnAimRef,
                 string whoThisCourseIsFor,
                 string entryRequirements,
                 string whatYouWillLearn,
@@ -308,7 +308,7 @@ namespace Dfc.CourseDirectory.Testing
                     Errors = errorsArray,
                     CourseId = courseId,
                     CourseRunId = courseRunId,
-                    LarsQan = larsQan,
+                    LearnAimRef = learnAimRef,
                     WhoThisCourseIsFor = whoThisCourseIsFor,
                     EntryRequirements = entryRequirements,
                     WhatYouWillLearn = whatYouWillLearn,
@@ -350,7 +350,7 @@ namespace Dfc.CourseDirectory.Testing
                 return CreateRecord(
                     courseId: Guid.NewGuid(),
                     courseRunId: Guid.NewGuid(),
-                    larsQan: learnAimRef,
+                    learnAimRef: learnAimRef,
                     whoThisCourseIsFor: "Who this course is for",
                     entryRequirements: "",
                     whatYouWillLearn: "",

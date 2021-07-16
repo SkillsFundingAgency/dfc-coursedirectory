@@ -51,12 +51,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             var courseRunId = Guid.NewGuid();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -76,12 +76,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             var anotherProvider = await TestData.CreateProvider();
 
             var provider = await TestData.CreateProvider();
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             var courseRunId = Guid.NewGuid();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsTestUser(userType, anotherProvider.ProviderId);
 
@@ -98,16 +98,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo());
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue")).VenueId;
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo(),
@@ -139,11 +139,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                     CourseAttendancePattern.Daytime,
                     venueId: venueId));
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -165,7 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue");
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo(),
@@ -176,11 +176,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                     venueId: null,
                     national: true));
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue");
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo(),
@@ -213,11 +213,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                     national: true,
                     providerCourseId: "My course"));
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -239,7 +239,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue");
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo(),
@@ -250,11 +250,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                     national: true,
                     providerCourseId: null));
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -276,7 +276,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue");
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo(),
@@ -287,11 +287,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                     national: true,
                     flexibleStartDate: true));
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -313,7 +313,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "Test Venue");
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo(),
@@ -324,11 +324,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                     national: true,
                     startDate: new DateTime(2020, 4, 1)));
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2Fcourses");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -347,14 +347,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var returnUrl = "/courses";
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl={UrlEncoder.Default.Encode(returnUrl)}");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl={UrlEncoder.Default.Encode(returnUrl)}");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -403,7 +403,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             var courseRunId = Guid.NewGuid();
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -412,14 +412,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
-            CreateJourneyInstance(courseId, courseRunId);
+            CreateJourneyInstance(course.Id, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -437,8 +437,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             var anotherProvider = await TestData.CreateProvider();
 
             var provider = await TestData.CreateProvider();
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Confirm", "true")
@@ -446,14 +446,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsTestUser(userType, anotherProvider.ProviderId);
 
-            CreateJourneyInstance(courseId, courseRunId);
+            CreateJourneyInstance(course.Id, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -467,22 +467,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var courseId = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .ToContent();
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
-            CreateJourneyInstance(courseId, courseRunId);
+            CreateJourneyInstance(course.Id, courseRunId);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -498,12 +498,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo());
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Confirm", "true")
@@ -511,14 +511,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete?returnUrl=%2fcourses")
             {
                 Content = requestContent
             };
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
-            CreateJourneyInstance(courseId, courseRunId);
+            CreateJourneyInstance(course.Id, courseRunId);
 
             DeleteCourseRunQuery capturedDeleteCourseRunQuery = null;
             CosmosDbQueryDispatcher.Callback<DeleteCourseRunQuery, OneOf<NotFound, Success>>(q => capturedDeleteCourseRunQuery = q);
@@ -530,14 +530,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
 
             Assert.Equal(
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed",
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete/confirmed",
                 response.Headers.Location.OriginalString);
 
             CosmosDbQueryDispatcher.Verify(d => d.ExecuteQuery(It.IsAny<DeleteCourseRunQuery>()), Times.Once);
             using (new AssertionScope())
             {
                 capturedDeleteCourseRunQuery.Should().NotBeNull();
-                capturedDeleteCourseRunQuery.CourseId.Should().Be(courseId);
+                capturedDeleteCourseRunQuery.CourseId.Should().Be(course.Id);
                 capturedDeleteCourseRunQuery.CourseRunId.Should().Be(courseRunId);
                 capturedDeleteCourseRunQuery.ProviderUkprn.Should().Be(provider.Ukprn);
                 capturedDeleteCourseRunQuery.UpdatedBy.Should().Be(TestUserInfo.DefaultUserId);
@@ -551,28 +551,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo());
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
             {
-                CourseId = courseId,
+                CourseId = course.Id,
                 CourseRunId = courseRunId,
                 ProviderUkprn = provider.Ukprn
             });
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete/confirmed");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             CreateJourneyInstance(
-                courseId,
+                course.Id,
                 courseRunId,
                 new JourneyModel()
                 {
@@ -597,28 +597,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo());
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
             {
-                CourseId = courseId,
+                CourseId = course.Id,
                 CourseRunId = courseRunId,
                 ProviderUkprn = provider.Ukprn
             });
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete/confirmed");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             CreateJourneyInstance(
-                courseId,
+                course.Id,
                 courseRunId,
                 new JourneyModel()
                 {
@@ -643,31 +643,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var courseId = await TestData.CreateCourse(
+            var course = await TestData.CreateCourse(
                 provider.ProviderId,
                 qualificationCourseTitle: "Maths",
                 createdBy: User.ToUserInfo());
 
-            var courseRunId = await GetCourseRunIdForCourse(courseId);
+            var courseRunId = await GetCourseRunIdForCourse(course.Id);
 
             // Create another live course
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
             await CosmosDbQueryDispatcher.Object.ExecuteQuery(new DeleteCourseRunQuery()
             {
-                CourseId = courseId,
+                CourseId = course.Id,
                 CourseRunId = courseRunId,
                 ProviderUkprn = provider.Ukprn
             });
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/courses/{courseId}/course-runs/{courseRunId}/delete/confirmed");
+                $"/courses/{course.Id}/course-runs/{courseRunId}/delete/confirmed");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             CreateJourneyInstance(
-                courseId,
+                course.Id,
                 courseRunId,
                 new JourneyModel()
                 {

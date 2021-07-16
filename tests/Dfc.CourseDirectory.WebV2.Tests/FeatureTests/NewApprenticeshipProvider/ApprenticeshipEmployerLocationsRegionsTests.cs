@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Parent Region should be expanded
             Assert.Contains(
                 "govuk-accordion__section--expanded",
-                doc.GetElementById("Region-E12000001").ClassList);
+                doc.GetElementByTestId("RegionIds-E12000001").ClassList);
         }
 
         [Fact]

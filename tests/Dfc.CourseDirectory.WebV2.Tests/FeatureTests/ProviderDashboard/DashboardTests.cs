@@ -473,6 +473,39 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
         }
 
+        [Fact]
+        public async Task Get_UnpublishedCourseUploads()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.FE);
+
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            //Create some course upload rows to test new data in UI
+            var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
+            }
+
+        }
+
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
@@ -532,6 +565,45 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("DownloadVenues").Should().BeNull();
         }
 
+        [Fact]
+        public async Task Get_HasLiveCourses_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var learnAimRef = await TestData.CreateLearningAimRef();
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadCourses").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveCourses_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadCourses").Should().BeNull();
+        }
+
         private async Task CreateApprenticeships(Guid providerId, int count)
         {
             for (var i = 1; i <= count; i++)
@@ -550,6 +622,46 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                     createdBy: User.ToUserInfo());
             }
         }
+
+        [Fact]
+        public async Task Get_HasLiveApprenticeships_DoesRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var standard = await TestData.CreateStandard(1234, 1, standardName: "My standard");
+            await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadApprenticeships").Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Get_NoLiveApprenticeships_DoesNotRenderDownloadLink()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetElementByTestId("DownloadApprenticeships").Should().BeNull();
+        }
+
 
         private async Task<IReadOnlyCollection<Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>

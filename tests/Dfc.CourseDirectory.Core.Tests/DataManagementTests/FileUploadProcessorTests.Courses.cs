@@ -12,23 +12,17 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using Xunit;
-using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
 
 namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 {
     public partial class FileUploadProcessorTests
     {
-        [Theory]
-        [InlineData("online")]
-        [InlineData("work based")]
-        [InlineData("xxx")]
-        public async Task FindVenue_NonClassroomBasedDeliveryMode_ReturnsNull(string deliveryMode)
+        [Fact]
+        public async Task FindVenue_RowHasVenueIdHint_ReturnsVenueMatchingHint()
         {
             // Arrange
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -39,29 +33,29 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var learningAimRef = await TestData.CreateLearningAimRef();
-            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue");
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
             {
-                DeliveryMode = deliveryMode,
-                VenueName = "my venue"
+                DeliveryMode = "classroom based",
+                ProviderVenueRef = "xxx"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid(), venueIdHint: venue.VenueId);
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
-            Assert.Null(result);
+            Assert.Equal(venue.VenueId, result?.VenueId);
         }
-
+        
         [Fact]
         public async Task FindVenue_RefProvidedButDoesNotMatch_ReturnsNull()
         {
             // Arrange
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -80,8 +74,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ProviderVenueRef = "VENUE2"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -93,8 +89,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -113,11 +107,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ProviderVenueRef = "venue1"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
-            Assert.Equal(venue.VenueId, result);
+            Assert.Equal(venue.VenueId, result?.VenueId);
         }
 
         [Fact]
@@ -126,8 +122,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -147,8 +141,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "another name"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -161,8 +157,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
 
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
@@ -181,11 +175,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "my venue"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
-            Assert.Equal(venue.VenueId, result);
+            Assert.Equal(venue.VenueId, result?.VenueId);
         }
 
         [Fact]
@@ -194,8 +190,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -214,8 +208,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "another name"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -227,8 +223,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var blobServiceClient = new Mock<BlobServiceClient>();
             blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -247,11 +241,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "my venue"
             };
 
+            var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
+
             // Act
-            var result = fileUploadProcessor.FindVenue(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions), new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
 
             // Assert
-            Assert.Equal(venue.VenueId, result);
+            Assert.Equal(venue.VenueId, result?.VenueId);
         }
 
         [Fact]
@@ -510,7 +506,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, UploadStatus.Processing);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null);
             var learningAimRef = await TestData.CreateLearningAimRef();
 
             var fileUploadProcessor = new FileUploadProcessor(
@@ -520,8 +516,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 new RegionCache(SqlQueryDispatcherFactory));
 
             var rows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, rowCount: 2).ToArray();
-            rows[0].LarsQan = string.Empty;
-            rows[1].LarsQan = string.Empty;
+            rows[0].LearnAimRef = string.Empty;
+            rows[1].LearnAimRef = string.Empty;
 
             var uploadRows = rows.ToDataUploadRowCollection();
 

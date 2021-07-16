@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Testing
         {
             foreach (var row in rows)
             {
-                csvWriter.WriteField(row.LarsQan);
+                csvWriter.WriteField(row.LearnAimRef);
                 csvWriter.WriteField(row.WhoThisCourseIsFor);
                 csvWriter.WriteField(row.EntryRequirements);
                 csvWriter.WriteField(row.WhatYouWillLearn);
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.Testing
             {
                 yield return new CsvCourseRow()
                 {
-                    LarsQan = learningAimRef,
+                    LearnAimRef = learningAimRef,
                     WhoThisCourseIsFor = "Who this course is for",
                     EntryRequirements = "",
                     WhatYouWillLearn = "",

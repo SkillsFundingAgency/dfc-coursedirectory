@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,33 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+                if (courseUpload == null)
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+
+                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
+                await dispatcher.Commit();
+
+                return result.Match<bool>(
+                    success =>
+                        {
+                            return true;
+                        },
+                     failure =>
+                        {
+                            return false;
+                        });
+            }
+        }
+
+
         public async Task DeleteCourseUploadForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -54,7 +82,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<CourseUploadRow> GetCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        public async Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
@@ -80,7 +108,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
                 await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
 
-                var row = await dispatcher.ExecuteQuery(new GetCourseUploadRow()
+                var row = await dispatcher.ExecuteQuery(new GetCourseUploadRowDetail()
                 {
                     CourseUploadId = courseUpload.CourseUploadId,
                     RowNumber = rowNumber
@@ -238,7 +266,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidHeader(missingHeaders);
             }
 
-
             var courseUploadId = Guid.NewGuid();
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -293,6 +320,161 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+            {
+                ProviderId = providerId
+            });
+
+            if (courseUpload == null)
+            {
+                throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+            }
+
+            if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+            {
+                throw new InvalidUploadStatusException(courseUpload.UploadStatus, UploadStatus.ProcessedWithErrors);
+            }
+
+            var row = await dispatcher.ExecuteQuery(new GetCourseUploadRowDetail()
+            {
+                CourseUploadId = courseUpload.CourseUploadId,
+                RowNumber = rowNumber
+            });
+
+            if (row == null)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
+            }
+
+            var allRegions = await _regionCache.GetAllRegions();
+
+            Venue venue = update.VenueId.HasValue ?
+                (await dispatcher.ExecuteQuery(new GetVenue() { VenueId = update.VenueId.Value })) :
+                null;
+            Debug.Assert(!update.VenueId.HasValue || venue != null);
+
+            var updatedRows = new CourseDataUploadRowInfoCollection(
+                new CourseDataUploadRowInfo(
+                    new CsvCourseRow()
+                    {
+                        AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(update.AttendancePattern),
+                        Cost = ParsedCsvCourseRow.MapCost(update.Cost),
+                        CostDescription = update.CostDescription,
+                        CourseName = update.CourseName,
+                        CourseWebPage = update.CourseWebPage,
+                        DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(update.DeliveryMode),
+                        Duration = ParsedCsvCourseRow.MapDuration(update.Duration),
+                        DurationUnit = ParsedCsvCourseRow.MapDurationUnit(update.DurationUnit),
+                        EntryRequirements = row.EntryRequirements,
+                        FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
+                        HowYouWillBeAssessed = row.HowYouWillBeAssessed,
+                        HowYouWillLearn = row.HowYouWillLearn,
+                        LearnAimRef = row.LarsQan,
+                        NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(update.NationalDelivery),
+                        ProviderCourseRef = update.ProviderCourseRef,
+                        ProviderVenueRef = venue?.ProviderVenueRef,
+                        StartDate = ParsedCsvCourseRow.MapStartDate(update.StartDate),
+                        StudyMode = ParsedCsvCourseRow.MapStudyMode(update.StudyMode),
+                        SubRegions = ParsedCsvCourseRow.MapSubRegions(update.SubRegionIds, allRegions),
+                        VenueName = venue?.VenueName,
+                        WhatYouWillLearn = row.WhatYouWillLearn,
+                        WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
+                        WhereNext = row.WhereNext,
+                        WhoThisCourseIsFor = row.WhoThisCourseIsFor
+                    },
+                    row.RowNumber,
+                    row.CourseId,
+                    venue?.VenueId));
+
+            await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+
+            // Other rows not covered by this group may require revalidation;
+            // ensure revalidation is done if required so that `uploadStatus` is accurate
+            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+            await dispatcher.Commit();
+
+            return uploadStatus;
+        }
+
+        public async Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+            {
+                ProviderId = providerId
+            });
+
+            if (courseUpload == null)
+            {
+                throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+            }
+
+            if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+            {
+                throw new InvalidUploadStatusException(courseUpload.UploadStatus, UploadStatus.ProcessedWithErrors);
+            }
+
+            var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRowsByCourseId()
+            {
+                CourseUploadId = courseUpload.CourseUploadId,
+                CourseId = courseId
+            });
+
+            if (rows.Count == 0)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, courseId);
+            }
+
+            var updatedRows = new CourseDataUploadRowInfoCollection(
+                rows.Select(r =>
+                    new CourseDataUploadRowInfo(
+                        new CsvCourseRow()
+                        {
+                            AttendancePattern = r.AttendancePattern,
+                            Cost = r.Cost,
+                            CostDescription = r.CostDescription,
+                            CourseName = r.CourseName,
+                            CourseWebPage = r.CourseWebPage,
+                            DeliveryMode = r.DeliveryMode,
+                            Duration = r.Duration,
+                            DurationUnit = r.DurationUnit,
+                            EntryRequirements = update.EntryRequirements,
+                            FlexibleStartDate = r.FlexibleStartDate,
+                            HowYouWillBeAssessed = update.HowYouWillBeAssessed,
+                            HowYouWillLearn = update.HowYouWillLearn,
+                            LearnAimRef = r.LarsQan,
+                            NationalDelivery = r.NationalDelivery,
+                            ProviderCourseRef = r.ProviderCourseRef,
+                            ProviderVenueRef = r.ProviderVenueRef,
+                            StartDate = r.StartDate,
+                            StudyMode = r.StudyMode,
+                            SubRegions = r.SubRegions,
+                            VenueName = r.VenueName,
+                            WhatYouWillLearn = update.WhatYouWillLearn,
+                            WhatYouWillNeedToBring = update.WhatYouWillNeedToBring,
+                            WhereNext = update.WhereNext,
+                            WhoThisCourseIsFor = update.WhoThisCourseIsFor
+                        },
+                        r.RowNumber,
+                        courseId)));
+
+            await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+
+            // Other rows not covered by this group may require revalidation;
+            // ensure revalidation is done if required so that `uploadStatus` is accurate
+            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+            await dispatcher.Commit();
+
+            return uploadStatus;
+        }
+
         protected async Task<UploadStatus> GetCourseUploadStatus(Guid courseUploadId)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
@@ -312,19 +494,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 .SelectMany(_ => Observable.FromAsync(() => GetCourseUploadStatus(courseUploadId)));
 
         // internal for testing
-        internal Guid? FindVenue(ParsedCsvCourseRow row, IReadOnlyCollection<Venue> providerVenues)
+        internal Venue FindVenue(CourseDataUploadRowInfo row, IReadOnlyCollection<Venue> providerVenues)
         {
-            if (row.ResolvedDeliveryMode != CourseDeliveryMode.ClassroomBased)
+            if (row.VenueIdHint.HasValue)
             {
-                return null;
+                return providerVenues.Single(v => v.VenueId == row.VenueIdHint);
             }
 
-            if (!string.IsNullOrEmpty(row.ProviderVenueRef))
+            if (!string.IsNullOrEmpty(row.Data.ProviderVenueRef))
             {
                 // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
 
                 var matchedVenues = providerVenues
-                    .Where(v => RefMatches(row.ProviderVenueRef, v))
+                    .Where(v => RefMatches(row.Data.ProviderVenueRef, v))
                     .ToArray();
 
                 if (matchedVenues.Length != 1)
@@ -335,20 +517,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venue = matchedVenues[0];
 
                 // If VenueName was provided too then it must match
-                if (!string.IsNullOrEmpty(row.VenueName) && !NameMatches(row.VenueName, venue))
+                if (!string.IsNullOrEmpty(row.Data.VenueName) && !NameMatches(row.Data.VenueName, venue))
                 {
                     return null;
                 }
 
-                return venue.VenueId;
+                return venue;
             }
 
-            if (!string.IsNullOrEmpty(row.VenueName))
+            if (!string.IsNullOrEmpty(row.Data.VenueName))
             {
                 // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
 
                 var matchedVenues = providerVenues
-                    .Where(v => NameMatches(row.VenueName, v))
+                    .Where(v => NameMatches(row.Data.VenueName, v))
                     .ToArray();
 
                 if (matchedVenues.Length != 1)
@@ -356,7 +538,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return null;
                 }
 
-                return matchedVenues[0].VenueId;
+                return matchedVenues[0];
             }
 
             return null;
@@ -425,12 +607,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var validLearningAimRefs = await sqlQueryDispatcher.ExecuteQuery(new GetLearningAimRefs()
             {
-                LearningAimRefs = rows.Select(r => r.Data.LarsQan).Where(v => !string.IsNullOrWhiteSpace(v))
+                LearningAimRefs = rows.Select(r => r.Data.LearnAimRef).Where(v => !string.IsNullOrWhiteSpace(v))
             });
 
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
-            var uploadIsValid = true;
+            var rowsAreValid = true;
 
             var upsertRecords = new List<UpsertCourseUploadRowsRecord>();
 
@@ -441,14 +623,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data, allRegions);
 
-                var matchedVenueId = FindVenue(parsedRow, providerVenues);
+                var matchedVenue = FindVenue(row, providerVenues);
 
-                var validator = new CourseUploadRowValidator(validLearningAimRefs, _clock, matchedVenueId);
+                var validator = new CourseUploadRowValidator(validLearningAimRefs, _clock, matchedVenue?.VenueId);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
-                uploadIsValid &= rowIsValid;
+                rowsAreValid &= rowIsValid;
 
                 upsertRecords.Add(new UpsertCourseUploadRowsRecord()
                 {
@@ -457,7 +639,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     Errors = errors,
                     CourseId = row.CourseId,
                     CourseRunId = courseRunId,
-                    LarsQan = parsedRow.LarsQan,
+                    LearnAimRef = parsedRow.LearnAimRef,
                     WhoThisCourseIsFor = parsedRow.WhoThisCourseIsFor,
                     EntryRequirements = parsedRow.EntryRequirements,
                     WhatYouWillLearn = parsedRow.WhatYouWillLearn,
@@ -467,20 +649,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     WhereNext = parsedRow.WhereNext,
                     CourseName = parsedRow.CourseName,
                     ProviderCourseRef = parsedRow.ProviderCourseRef,
-                    DeliveryMode = parsedRow.DeliveryMode,
-                    StartDate = parsedRow.StartDate,
-                    FlexibleStartDate = parsedRow.FlexibleStartDate,
-                    VenueName = parsedRow.VenueName,
-                    ProviderVenueRef = parsedRow.ProviderVenueRef,
-                    NationalDelivery = parsedRow.NationalDelivery,
+                    DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode) ?? parsedRow.DeliveryMode,
+                    StartDate = ParsedCsvCourseRow.MapStartDate(parsedRow.ResolvedStartDate) ?? parsedRow.StartDate,
+                    FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(parsedRow.ResolvedFlexibleStartDate) ?? parsedRow.FlexibleStartDate,
+                    VenueName = matchedVenue?.VenueName,
+                    ProviderVenueRef = matchedVenue?.ProviderVenueRef,
+                    NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery) ?? parsedRow.NationalDelivery,
                     SubRegions = parsedRow.SubRegions,
                     CourseWebpage = parsedRow.CourseWebPage,
-                    Cost = parsedRow.Cost,
+                    Cost = ParsedCsvCourseRow.MapCost(parsedRow.ResolvedCost) ?? parsedRow.Cost,
                     CostDescription = parsedRow.CostDescription,
-                    Duration = parsedRow.Duration,
-                    DurationUnit = parsedRow.DurationUnit,
-                    StudyMode = parsedRow.StudyMode,
-                    VenueId = matchedVenueId,
+                    Duration = ParsedCsvCourseRow.MapDuration(parsedRow.ResolvedDuration) ?? parsedRow.Duration,
+                    DurationUnit = ParsedCsvCourseRow.MapDurationUnit(parsedRow.ResolvedDurationUnit) ?? parsedRow.DurationUnit,
+                    StudyMode = ParsedCsvCourseRow.MapStudyMode(parsedRow.ResolvedStudyMode) ?? parsedRow.StudyMode,
+                    VenueId = matchedVenue?.VenueId,
                     AttendancePattern = parsedRow.AttendancePattern,
                     ResolvedDeliveryMode = parsedRow.ResolvedDeliveryMode,
                     ResolvedStartDate = parsedRow.ResolvedStartDate,
@@ -502,6 +684,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Records = upsertRecords
             });
 
+            // If all the provided rows are valid check if there are any more invalid rows
+            var uploadIsValid = rowsAreValid ?
+                (await sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadInvalidRowCount() { CourseUploadId = courseUploadId })) == 0 :
+                false;
+
             await sqlQueryDispatcher.ExecuteQuery(new SetCourseUploadProcessed()
             {
                 CourseUploadId = courseUploadId,
@@ -509,7 +696,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IsValid = uploadIsValid
             });
 
-            var uploadStatus = uploadIsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
+            var uploadStatus = rowsAreValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
 
             return (uploadStatus, updatedRows);
         }
@@ -522,7 +709,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IClock clock,
                 Guid? matchedVenueId)
             {
-                RuleFor(c => c.LarsQan).LarsQan(validLearningAimRefs);
+                RuleFor(c => c.LearnAimRef).LarsQan(validLearningAimRefs);
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
                 RuleFor(c => c.WhatYouWillLearn).WhatYouWillLearn();
@@ -533,7 +720,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.CourseName).CourseName();
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode();
-                RuleFor(c => c.ResolvedStartDate).StartDate(clock.UtcNow, c => c.ResolvedFlexibleStartDate);
+                RuleFor(c => c.ResolvedStartDate)
+                    .Transform(d => d.HasValue ? new DateInput(d.Value) : null)
+                    .StartDate(clock.UtcNow, c => c.ResolvedFlexibleStartDate);
                 RuleFor(c => c.ResolvedFlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMode, c => c.ProviderVenueRef, matchedVenueId);
                 RuleFor(c => c.ProviderVenueRef).ProviderVenueRef(c => c.ResolvedDeliveryMode, c => c.VenueName, matchedVenueId);
@@ -544,7 +733,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     c => c.ResolvedNationalDelivery);
                 RuleFor(c => c.CourseWebPage).CourseWebPage();
                 RuleFor(c => c.ResolvedCost).Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), c => c.CostDescription);
-                RuleFor(c => c.CostDescription).CostDescription(c => c.ResolvedCost);
+                RuleFor(c => c.CostDescription).CostDescription();
                 RuleFor(c => c.ResolvedDuration).Duration();
                 RuleFor(c => c.ResolvedDurationUnit).DurationUnit();
                 RuleFor(c => c.ResolvedStudyMode).StudyMode(

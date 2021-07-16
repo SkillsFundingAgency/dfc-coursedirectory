@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 
@@ -8,7 +9,7 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<Guid> CreateCourse(
+        public async Task<Course> CreateCourse(
             Guid providerId,
             UserInfo createdBy,
             string qualificationCourseTitle = "Education assessment in Maths",
@@ -103,7 +104,7 @@ namespace Dfc.CourseDirectory.Testing
             var course = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseById() { CourseId = courseId });
             await _sqlDataSync.SyncCourse(course);
 
-            return courseId;
+            return course;
         }
 
         public class CreateCourseCourseRunBuilder

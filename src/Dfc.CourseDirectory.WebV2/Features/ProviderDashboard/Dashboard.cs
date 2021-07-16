@@ -45,6 +45,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool IsNewProvider { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
+        public int UnpublishedCourseCount { get; set; }
+        public bool CourseUploadInProgress { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -89,6 +91,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                     ProviderId = request.ProviderId
                 });
 
+            var courseUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = provider.ProviderId
+                });
+
             var vm = new ViewModel()
             {
                 ProviderName = provider.ProviderName,
@@ -114,7 +122,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
-                UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount
+                UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
+                UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
+                CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created)
             };
 
             return vm;

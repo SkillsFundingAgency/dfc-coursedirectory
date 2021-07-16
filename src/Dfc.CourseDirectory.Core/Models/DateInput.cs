@@ -64,6 +64,12 @@ namespace Dfc.CourseDirectory.Core.Models
         }
     }
 
+    public static class DateInputExtensions
+    {
+        public static DateTime? ToDateTime(this DateInput dateInput) =>
+            dateInput != null && dateInput.TryGetValue(out var value) ? (DateTime?)value : null;
+    }
+
     [Flags]
     public enum InvalidDateInputReasons
     {

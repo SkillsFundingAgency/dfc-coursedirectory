@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
 
-            var courseId = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder =>
+            var course = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder =>
                 builder.WithCourseRun(CourseDeliveryMode.ClassroomBased, CourseStudyMode.FullTime, CourseAttendancePattern.Daytime, venueId: venue.VenueId));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/venues/{venue.VenueId}/delete");
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             var doc = await response.GetDocument();
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-course-{courseId}"));
+            Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.Id}"));
         }
 
         [Fact]
@@ -303,7 +303,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
 
-            var courseId = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder =>
+            var course = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder =>
                 builder.WithCourseRun(CourseDeliveryMode.ClassroomBased, CourseStudyMode.FullTime, CourseAttendancePattern.Daytime, venueId: venue.VenueId));
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -325,7 +325,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             var doc = await response.GetDocument();
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-course-{courseId}"));
+            Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.Id}"));
             doc.GetElementByTestId("affected-courses-error-message").TextContent.Should().Be("The affected courses have changed");
         }
 

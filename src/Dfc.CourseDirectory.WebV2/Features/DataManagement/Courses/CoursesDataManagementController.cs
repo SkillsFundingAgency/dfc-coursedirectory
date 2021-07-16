@@ -1,13 +1,17 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 {
@@ -27,7 +31,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("")]
-        public IActionResult Index() => View("Upload");
+        public async Task<IActionResult> Index() =>
+            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(Upload.Command command)
@@ -48,8 +53,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
-        [HttpGet("errors")]
-        public IActionResult Errors() => Ok();
+        [HttpGet("resolve")]
+        public IActionResult ResolveList() => Ok();
 
         [HttpGet("resolve/{rowNumber}/delivery")]
         public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
@@ -76,16 +81,68 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                             CourseDeliveryMode.ClassroomBased => "classroom",
                             CourseDeliveryMode.Online => "online",
                             CourseDeliveryMode.WorkBased => "work",
-                            _ => throw new System.NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
+                            _ => throw new NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
                         }
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpGet("resolve/{rowNumber}/description")]
+        public async Task<IActionResult> ResolveRowDescription(ResolveRowDescription.Query query) =>
+            await _mediator.SendAndMapResponse(query, errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+
+        [HttpPost("resolve/{rowNumber}/description")]
+        public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber, ResolveRowDescription.Command command)
+        {
+            command.RowNumber = rowNumber;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(ResolveList))
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
         [HttpGet("resolve/{rowNumber}/details")]
         [RequireValidModelState]
-        public IActionResult ResolveRowDetails(
+        public async Task<IActionResult> ResolveRowDetails(
             [FromRoute] int rowNumber,
-            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode) => Ok();
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode)
+        {
+            var query = new ResolveRowDetails.Query()
+            {
+                DeliveryMode = deliveryMode,
+                RowNumber = rowNumber
+            };
+
+            return await _mediator.SendAndMapResponse(
+                query,
+                errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+        }
+
+        [HttpPost("resolve/{rowNumber}/details")]
+        [RequireValidModelState(forKey: "deliveryMode")]
+        public async Task<IActionResult> ResolveRowDetails(
+            [FromRoute] int rowNumber,
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode,
+            ResolveRowDetails.Command command)
+        {
+            command.RowNumber = rowNumber;
+            command.DeliveryMode = deliveryMode;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(ResolveList))
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
 
         [HttpGet("in-progress")]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
@@ -118,8 +175,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("resolve/delete/success")]
-        [RequireProviderContext]
         public IActionResult DeleteUploadSuccess() => View();
+
+        [HttpGet("download")]
+        [RequireProviderContext]
+        public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
+            new Download.Query(),
+            result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
 
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
@@ -136,5 +198,56 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
             new DownloadErrors.Query(),
             result => new CsvResult<CsvCourseRowWithErrors>(result.FileName, result.Rows));
+
+        [HttpGet("errors")]
+        public async Task<IActionResult> Errors() =>
+            await _mediator.SendAndMapResponse(
+                new Errors.Query(),
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
+
+        [HttpPost("errors")]
+        public async Task<IActionResult> Errors(Errors.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => (command.WhatNext switch
+                    {
+                        ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
+                        _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
+        {
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    _ => NotFound(),
+                    course => View(course)));
+        }
+
+        [HttpPost("resolve/{rowNumber}/delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
+        {
+            command.Row = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    _ => NotFound(),
+                    success => success switch
+                    {
+                        DeleteRowResult.CourseRowDeletedHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        DeleteRowResult.CourseRowDeletedHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => throw new NotSupportedException($"Unknown value: '{success}'.")
+                    }));
+        }
     }
 }

@@ -121,58 +121,58 @@
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Select an attendance pattern</value>
   </data>
   <data name="ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Cost description must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSERUN_COST_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a real cost</value>
   </data>
   <data name="ERROR_COURSERUN_COST_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a cost or cost description</value>
   </data>
   <data name="ERROR_COURSERUN_COURSE_NAME_FORMAT" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Course name must only include letters, numbers, hyphens, brackets and spaces</value>
   </data>
   <data name="ERROR_COURSERUN_COURSE_NAME_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Course name must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSERUN_COURSE_NAME_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a Course name</value>
   </data>
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Course webpage must be a real website</value>
   </data>
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Course webpage must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSERUN_DELIVERY_MODE_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Select a delivery mode</value>
   </data>
   <data name="ERROR_COURSERUN_DURATION_RANGE" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter duration between 0-999</value>
   </data>
   <data name="ERROR_COURSERUN_DURATION_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter duration</value>
   </data>
   <data name="ERROR_COURSERUN_DURATION_UNIT_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a duration unit</value>
   </data>
   <data name="ERROR_COURSERUN_FLEXIBLE_START_DATE_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter start date</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Select National delivery</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_COURSE_REF_FORMAT" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Your reference must only include letters, numbers, hyphens, brackets and spaces</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Your reference must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
@@ -181,19 +181,19 @@
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a real start date</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Start date cannot be earlier than today's date</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter start date</value>
   </data>
   <data name="ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_STUDY_MODE_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Select course hours</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_INVALID" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
@@ -202,7 +202,7 @@
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_INVALID" xml:space="preserve">
     <value>&lt;TODO&gt;</value>
@@ -214,7 +214,7 @@
     <value>&lt;TODO&gt;</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_REQUIRED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Select a venue</value>
   </data>
   <data name="ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH" xml:space="preserve">
     <value>Entry requirements must be {0} characters or fewer</value>
@@ -238,13 +238,13 @@
     <value>What you'll learn must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>What you will need to bring must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSE_WHERE_NEXT_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Where next must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Who this course is for must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED" xml:space="preserve">
     <value>Enter who this course is for</value>

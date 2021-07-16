@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
@@ -11,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public const char SubRegionDelimiter = ';';
 
         [Index(0), Name("LARS_QAN")]
-        public string LarsQan { get; set; }
+        public string LearnAimRef { get; set; }
         [Index(1), Name("WHO_THIS_COURSE_IS_FOR")]
         public string WhoThisCourseIsFor { get; set; }
         [Index(2), Name("ENTRY_REQUIREMENTS")]
@@ -61,7 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
         public static CsvCourseRow FromModel(CourseUploadRow row) => new CsvCourseRow()
         {
-            LarsQan = row.LarsQan,
+            LearnAimRef = row.LarsQan,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
             EntryRequirements = row.EntryRequirements,
             WhatYouWillLearn = row.WhatYouWillLearn,
@@ -78,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             ProviderVenueRef = row.ProviderVenueRef,
             NationalDelivery = row.NationalDelivery,
             SubRegions = row.SubRegions,
-            CourseWebPage = row.CourseWebpage,
+            CourseWebPage = row.CourseWebPage,
             Cost = row.Cost,
             CostDescription = row.CostDescription,
             Duration = row.Duration,
@@ -86,6 +87,38 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             StudyMode = row.StudyMode,
             AttendancePattern = row.AttendancePattern
         };
+
+        public static IEnumerable<CsvCourseRow> FromModel(Course row, IReadOnlyCollection<Region> allRegions) =>
+            row.CourseRuns
+                .OrderBy(x => x.StartDate)
+                .ThenBy(x => x.DeliveryMode)
+                .Select(courseRun => new CsvCourseRow()
+                {
+                    LearnAimRef = row.LearnAimRef,
+                    WhoThisCourseIsFor = row.CourseDescription,
+                    EntryRequirements = row.EntryRequirements,
+                    WhatYouWillLearn = row.WhatYoullLearn,
+                    HowYouWillLearn = row.HowYoullLearn,
+                    WhatYouWillNeedToBring = row.WhatYoullNeed,
+                    HowYouWillBeAssessed = row.HowYoullBeAssessed,
+                    WhereNext = row.WhereNext,
+                    CourseName = courseRun.CourseName,
+                    ProviderCourseRef = courseRun.ProviderCourseId,
+                    DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(courseRun.DeliveryMode),
+                    StartDate = ParsedCsvCourseRow.MapStartDate(courseRun.StartDate),
+                    FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(courseRun.FlexibleStartDate),
+                    VenueName = courseRun.VenueName,
+                    ProviderVenueRef = courseRun.ProviderVenueRef,
+                    NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(courseRun.National),
+                    SubRegions = ParsedCsvCourseRow.MapSubRegions(courseRun.SubRegionIds, allRegions),
+                    CourseWebPage = courseRun.CourseWebsite,
+                    Cost = ParsedCsvCourseRow.MapCost(courseRun.Cost),
+                    CostDescription = courseRun.CostDescription,
+                    Duration = ParsedCsvCourseRow.MapDuration(courseRun.DurationValue),
+                    DurationUnit = ParsedCsvCourseRow.MapDurationUnit(courseRun.DurationUnit),
+                    StudyMode = ParsedCsvCourseRow.MapStudyMode(courseRun.StudyMode) ?? "",
+                    AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(courseRun.AttendancePattern) ?? ""
+                });
 
         public static CsvCourseRow[][] GroupRows(IEnumerable<CsvCourseRow> rows) =>
             rows.GroupBy(r => r, new CsvCourseRowCourseComparer())
@@ -107,13 +140,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                 }
 
                 // Don't group together records that have no LARS code
-                if (string.IsNullOrEmpty(x.LarsQan) || string.IsNullOrEmpty(y.LarsQan))
+                if (string.IsNullOrEmpty(x.LearnAimRef) || string.IsNullOrEmpty(y.LearnAimRef))
                 {
                     return false;
                 }
 
                 return
-                    x.LarsQan == y.LarsQan &&
+                    x.LearnAimRef == y.LearnAimRef &&
                     x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
                     x.EntryRequirements == y.EntryRequirements &&
                     x.WhatYouWillLearn == y.WhatYouWillLearn &&
@@ -125,7 +158,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
             public int GetHashCode(CsvCourseRow obj) =>
                 HashCode.Combine(
-                    obj.LarsQan,
+                    obj.LearnAimRef,
                     obj.WhoThisCourseIsFor,
                     obj.EntryRequirements,
                     obj.WhatYouWillLearn,
