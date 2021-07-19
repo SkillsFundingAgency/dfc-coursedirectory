@@ -15,38 +15,12 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-        public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
-        {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
-                {
-                    ProviderId = providerId
-                });
-                if (courseUpload == null)
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
-
-                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
-                await dispatcher.Commit();
-
-                return result.Match<bool>(
-                    success =>
-                        {
-                            return true;
-                        },
-                     failure =>
-                        {
-                            return false;
-                        });
-            }
-        }
-
-
         public async Task DeleteCourseUploadForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -79,6 +53,65 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     });
 
                 await dispatcher.Commit();
+            }
+        }
+
+        public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+                if (courseUpload == null)
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+
+                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
+                await dispatcher.Commit();
+
+                return result.Match<bool>(
+                    success =>
+                    {
+                        return true;
+                    },
+                     failure =>
+                     {
+                         return false;
+                     });
+            }
+        }
+
+        public async Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                var deleteResult = await dispatcher.ExecuteQuery(new DeleteCourseUploadRowGroup()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    CourseId = courseId
+                });
+
+                if (deleteResult.Value is NotFound)
+                {
+                    throw new ResourceDoesNotExistException(ResourceType.CourseUploadRowGroup, courseId);
+                }
+
+                var uploadStatus = await RefreshCourseUploadValidationStatus(courseUpload.CourseUploadId, dispatcher);
+
+                await dispatcher.Commit();
+
+                return uploadStatus;
             }
         }
 
@@ -117,6 +150,44 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 await dispatcher.Commit();
 
                 return row;
+            }
+        }
+
+        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRowsByCourseId()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    CourseId = courseId
+                });
+
+                await dispatcher.Commit();
+
+                return rows;
             }
         }
 
@@ -428,7 +499,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             if (rows.Count == 0)
             {
-                throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, courseId);
+                throw new ResourceDoesNotExistException(ResourceType.CourseUploadRowGroup, courseId);
             }
 
             var updatedRows = new CourseDataUploadRowInfoCollection(
@@ -684,10 +755,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Records = upsertRecords
             });
 
-            // If all the provided rows are valid check if there are any more invalid rows
-            var uploadIsValid = rowsAreValid ?
-                (await sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadInvalidRowCount() { CourseUploadId = courseUploadId })) == 0 :
-                false;
+            var uploadStatus = await RefreshCourseUploadValidationStatus(courseUploadId, sqlQueryDispatcher);
+
+            return (uploadStatus, updatedRows);
+        }
+
+        private async Task<UploadStatus> RefreshCourseUploadValidationStatus(Guid courseUploadId, ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            var uploadIsValid = (await sqlQueryDispatcher.ExecuteQuery(new GetCourseUploadInvalidRowCount() { CourseUploadId = courseUploadId })) == 0;
 
             await sqlQueryDispatcher.ExecuteQuery(new SetCourseUploadProcessed()
             {
@@ -696,9 +771,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IsValid = uploadIsValid
             });
 
-            var uploadStatus = rowsAreValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
-
-            return (uploadStatus, updatedRows);
+            return uploadIsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
         }
 
         // internal for testing

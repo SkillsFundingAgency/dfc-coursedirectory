@@ -11,7 +11,8 @@ namespace Dfc.CourseDirectory.Core
         Venue,
         TLevel,
         VenueUploadRow,
-        CourseUploadRow
+        CourseUploadRow,
+        CourseUploadRowGroup
     }
 
     public class ResourceDoesNotExistException : Exception
