@@ -52,7 +52,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("resolve")]
-        public IActionResult ResolveList() => Ok();
+        [RequireProviderContext]
+        public async Task<IActionResult> ResolveList() =>
+            await _mediator.SendAndMapResponse(
+                new ResolveList.Query(),
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
 
         [HttpGet("resolve/{rowNumber}/delivery")]
         public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
