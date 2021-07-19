@@ -26,6 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
     public class ViewModel : Command
     {
         public string CourseName { get; set; }
+        public string LarsQan { get; set; }
         public string StartDate { get; set; }
         public string Errors { get; set; }
         public string DeliveryMode { get; set; }
@@ -54,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
             {
                 var validationResult = new ValidationResult(new[]
                 {
-                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this course")
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
@@ -77,7 +78,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 CourseName = row.CourseName,
                 DeliveryMode = row.DeliveryMode,
                 Errors = GetUniqueErrorMessages(row),
-                StartDate = row.StartDate
+                StartDate = row.StartDate,
+                LarsQan = row.LarsQan
             };
         }
 
