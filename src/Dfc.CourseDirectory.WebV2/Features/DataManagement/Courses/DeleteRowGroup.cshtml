@@ -1,0 +1,85 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGroup.ViewModel 
+@{
+    ViewContext.SetLayoutData(title: "Delete unpublished course");
+
+    var deliveryModesDescription = Model.DeliveryModes.Select(dm => dm.ToDescription().ToLower()).ToCommaSeparatedString();
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Delete unpublished course</h1>
+    </div>
+</div>
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
+            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+            <th scope="col" class="govuk-table__header" style="width: 130px">Start Date</th>
+            <th scope="col" class="govuk-table__header">Error(s)</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <td class="govuk-body-s"><strong>LARS</strong> @Model.LearnAimRef</td>
+        </tr>
+        @foreach (var course in Model.Rows)
+        {
+            <tr class="govuk-table__row @(course == Model.Rows.Last() ? "pttcd-table__row-!-border" : "")">
+                <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
+                <td class="govuk-table__cell pttcd-table--no-border">@course.DeliveryMode</td>
+                <td class="govuk-table__cell pttcd-table--no-border">@course.StartDate</td>
+                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="ErrorRow">
+                    @for (var i = 0; i < course.ErrorFields.Count; i++)
+                    {
+                        <span class="govuk-!-display-inline-block">
+                            @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<govuk-warning-text icon-fallback-text="Warning">
+    Deleting this course description will remove all
+    <span data-testid="DeliveryModes">@deliveryModesDescription</span>
+    courses for this course.
+</govuk-warning-text>
+
+<form asp-action="DeleteRowGroup" asp-route-rowNumber="@Model.RowNumber" asp-all-route-data="@ProviderContext.RouteValues">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m" id="areyousure">
+                        <h2 class="govuk-fieldset__heading">
+                            Are you sure?
+                        </h2>
+                    </govuk-checkboxes-fieldset-legend>
+                </govuk-checkboxes-fieldset>
+                <govuk-checkboxes-item value="@(true)">
+                    Yes, I want to delete this unpublished course
+                </govuk-checkboxes-item>
+            </govuk-checkboxes>
+
+            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-course__delete-btn">Delete</govuk-button>
+
+            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script type="text/javascript">
+        function enableDeleteBtn() {
+            $('#pttcd-delete-course__delete-btn').attr(
+                'disabled',
+                $('#Confirm').is(':checked') ? null : 'disabled');
+        }
+        setTimeout(enableDeleteBtn, 100);
+        $('#Confirm').change(enableDeleteBtn);
+    </script>
+}

@@ -183,6 +183,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             new Download.Query(),
             result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
 
+        [HttpGet("resolve/{rowNumber}/course/delete/")]
+        public async Task<IActionResult> DeleteRowGroup([FromRoute] int rowNumber) =>
+            await _mediator.SendAndMapResponse(new DeleteRowGroup.Query() { RowNumber = rowNumber }, vm => View(vm));
+
+        [HttpPost("resolve/{rowNumber}/course/delete/")]
+        public async Task<IActionResult> DeleteRowGroup([FromRoute] int rowNumber, DeleteRowGroup.Command command)
+        {
+            command.RowNumber = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    status => status switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish))
+                            .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => RedirectToAction(nameof(ResolveList))
+                            .WithProviderContext(_providerContextProvider.GetProviderContext())
+                    }));
+        }
+
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => Ok();
 
