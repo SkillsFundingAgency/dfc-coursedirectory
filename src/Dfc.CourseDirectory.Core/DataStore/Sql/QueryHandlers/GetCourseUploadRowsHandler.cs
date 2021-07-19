@@ -26,6 +26,7 @@ SELECT
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+{(query.WithErrorsOnly ? "AND IsValid = 0" : "")}
 ORDER BY RowNumber";
 
             var results = (await transaction.Connection.QueryAsync<Result>(sql, new { query.CourseUploadId }, transaction))
