@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
-using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
@@ -238,30 +236,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow(DeleteRow.Query request)
-        {
-            return await _mediator.SendAndMapResponse(
+        public async Task<IActionResult> DeleteRow(DeleteRow.Query request) =>
+            await _mediator.SendAndMapResponse(
                 request,
-                result => result.Match<IActionResult>(
-                    _ => NotFound(),
-                    course => View(course)));
-        }
+                vm => View(vm));
 
         [HttpPost("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
         public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
         {
-            command.Row = rowNumber;
+            command.RowNumber = rowNumber;
             return await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    _ => NotFound(),
-                    success => success switch
+                    uploadStatus => uploadStatus switch
                     {
-                        DeleteRowResult.CourseRowDeletedHasMoreErrors => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        DeleteRowResult.CourseRowDeletedHasNoMoreErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        _ => throw new NotSupportedException($"Unknown value: '{success}'.")
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext())
                     }));
         }
     }

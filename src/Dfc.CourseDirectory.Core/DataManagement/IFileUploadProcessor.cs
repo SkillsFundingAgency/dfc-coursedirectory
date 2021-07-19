@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     {
         // Courses
         Task DeleteCourseUploadForProvider(Guid providerId);
-        Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber);
+        Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber);
         Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
         Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber);
         Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
