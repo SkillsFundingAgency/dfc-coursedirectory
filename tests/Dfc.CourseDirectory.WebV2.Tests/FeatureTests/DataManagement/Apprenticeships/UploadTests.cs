@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         /// TODO: Test that needs to be wired up as part of validate story.
         /// </summary>
         /// <returns></returns>
-        [Fact(Skip ="Place holder test for next story and size needs to be confirmed")]
+        [Fact]
         public async Task Post_FileIsTooLarge_RendersError()
         {
             // Arrange
@@ -158,6 +158,49 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
                 }
             }
             return content;
+        }
+
+        [Fact]
+        public async Task Post_FileHasMissingHeaders_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
+                csvWriter =>
+                {
+                    // Miss out STANDARD_CODE, VENUE
+                    csvWriter.WriteField("STANDARD_VERSION");
+                    csvWriter.WriteField("APPRENTICESHIP_INFORMATION");
+                    csvWriter.WriteField("APPRENTICESHIP_WEBPAGE");
+                    csvWriter.WriteField("CONTACT_EMAIL");
+                    csvWriter.WriteField("CONTACT_PHONE");
+                    csvWriter.WriteField("CONTACT_URL");
+                    csvWriter.WriteField("DELIVERY_METHOD");
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("RADIUS");
+                    csvWriter.WriteField("DELIVERY_MODE");
+                    csvWriter.WriteField("ACROSS_ENGLAND");
+                    csvWriter.WriteField("NATIONAL_DELIVERY");
+                    csvWriter.WriteField("SUB_REGION");
+                    csvWriter.NextRecord();
+                });
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "Enter headings in the correct format");
+            doc.GetAllElementsByTestId("MissingHeader").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "STANDARD_CODE",
+                "VENUE"
+            });
         }
     }
 }
