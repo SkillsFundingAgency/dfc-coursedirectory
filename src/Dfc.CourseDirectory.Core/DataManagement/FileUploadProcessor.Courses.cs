@@ -234,6 +234,44 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    WithErrorsOnly = true
+                });
+
+                await dispatcher.Commit();
+
+                return rows;
+            }
+        }
+
         public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId)
         {
             return GetCourseUploadId().ToObservable()

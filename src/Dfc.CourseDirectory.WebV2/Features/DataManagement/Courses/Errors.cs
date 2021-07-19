@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
             if (!validationResult.IsValid)
             {
-                var (uploadRows, _) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(
+                var uploadRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                     _providerContextProvider.GetProviderId());
 
                 var vm = CreateViewModel(uploadRows);

@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber);
         Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
         Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId);
+        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId);
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
         Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
