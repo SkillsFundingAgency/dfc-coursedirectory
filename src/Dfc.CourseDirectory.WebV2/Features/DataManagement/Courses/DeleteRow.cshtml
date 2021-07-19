@@ -1,6 +1,6 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow.Response
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow.ViewModel
 @{
-    ViewBag.Title = "Data Upload - Delete course details";
+    ViewBag.Title = "Delete unpublished course";
 }
 
 <govuk-error-summary>
@@ -14,7 +14,7 @@
 </div>
 
 <div class="govuk-grid-row">
-    <form asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.Row">
+    <form asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber">
         <div class="govuk-grid-column-full">
             <table class="govuk-table">
                 <thead class="govuk-table__head">
@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row" data-testid="row-@Model.Row">
+                    <tr class="govuk-table__row" data-testid="row-@Model.RowNumber">
                         <th scope="row" class="govuk-table__cell govuk-body-s"><span data-testid="CourseName">@Model.CourseName</span></th>
                         <td class="govuk-table__cell govuk-body-s" data-testid="DeliveryMode">@Model.DeliveryMode</td>
                         <td class="govuk-table__cell govuk-body-s" data-testid="StartDate">@Model.StartDate</td>

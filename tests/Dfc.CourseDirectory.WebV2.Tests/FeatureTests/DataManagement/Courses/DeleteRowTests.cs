@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedWithErrors);
 
             // Act
             var response = await HttpClient.GetAsync($"/data-upload/courses/resolve/{rowNumber}/delete");

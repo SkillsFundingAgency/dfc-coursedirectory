@@ -33,7 +33,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 if (courseUpload == null)
                 {
                     throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
-
                 }
 
                 if (courseUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
@@ -56,7 +55,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<bool> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        public async Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
@@ -64,21 +63,28 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 {
                     ProviderId = providerId
                 });
-                if (courseUpload == null)
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
 
-                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow() { CourseUploadId = courseUpload.CourseUploadId, RowNumber = rowNumber });
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                var result = await dispatcher.ExecuteQuery(new DeleteCourseUploadRow()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    RowNumber = rowNumber
+                });
+
+                if (result.Value is NotFound)
+                {
+                    throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
+                }
+
+                var uploadStatus = await RefreshCourseUploadValidationStatus(courseUpload.CourseUploadId, dispatcher);
+
                 await dispatcher.Commit();
 
-                return result.Match<bool>(
-                    success =>
-                    {
-                        return true;
-                    },
-                     failure =>
-                     {
-                         return false;
-                     });
+                return uploadStatus;
             }
         }
 
