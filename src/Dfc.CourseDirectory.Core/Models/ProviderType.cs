@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 })
                 .ToArray();
 
-            return string.Join(", ", parts.SkipLast(2).Append(string.Join(" & ", parts.TakeLast(2))));
+            return parts.ToCommaSeparatedString(finalValuesConjunction: "&");
         }
     }
 }
