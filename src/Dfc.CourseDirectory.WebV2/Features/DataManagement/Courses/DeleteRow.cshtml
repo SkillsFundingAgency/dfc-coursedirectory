@@ -23,15 +23,19 @@
                         <th scope="col" class="govuk-table__header">Delivery type</th>
                         <th scope="col" class="govuk-table__header">Start date</th>
                         <th scope="col" class="govuk-table__header">Error(s)</th>
-                        <th scope="col" colspan="2" class="govuk-table__header"></th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row" data-testid="row-@Model.RowNumber">
-                        <th scope="row" class="govuk-table__cell govuk-body-s"><span data-testid="CourseName">@Model.CourseName</span></th>
-                        <td class="govuk-table__cell govuk-body-s" data-testid="DeliveryMode">@Model.DeliveryMode</td>
-                        <td class="govuk-table__cell govuk-body-s" data-testid="StartDate">@Model.StartDate</td>
-                        <td class="govuk-table__cell govuk-body-s" style="color: #d4351c;" data-testid="Errors">@Model.Errors</td>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-body-s">@Model.CourseName</td>
+                    </tr>
+                    <tr class="govuk-table__row pttcd-table__row-!-border">
+                        <td class="govuk-table__cell pttcd-table--no-border" scope="row" style="text-align: left; top:0"> <strong>LARS</strong> @Model.LarsQan</td>
+                        <td class="govuk-table__cell pttcd-table--no-border" data-testid="DeliveryMode">@Model.DeliveryMode</td>
+                        <td class="govuk-table__cell pttcd-table--no-border" data-testid="StartDate">@Model.StartDate</td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="Errors">
+                            <span class="govuk-!-display-inline-block">@Model.Errors</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
