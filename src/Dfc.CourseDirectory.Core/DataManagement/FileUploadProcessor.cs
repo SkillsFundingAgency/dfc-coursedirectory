@@ -253,6 +253,50 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] ExpiredLars)> FileExpiredLars(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    List<string> expiredLars = new List<string>();
+                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
+
+                    int rowCount = 1;
+                    //Refoctor this to pass the Lars model to the view instead of the error
+                    foreach (IDictionary<string, object> row in csvRecords)
+                    {
+                        rowCount++;
+                        string larsRow = row["LARS_QAN"].ToString().Trim();
+                        var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo() { LearningAimRef = larsRow });
+                        if (validLearningAimRef != null
+                            && validLearningAimRef.EffectiveTo.HasValue 
+                            && validLearningAimRef.EffectiveTo < DateTime.Now)
+                        {
+                            expiredLars.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
+                        }
+                    }
+                    if (expiredLars.Count > 0)
+                    {
+                        return (FileMatchesSchemaResult.InvalidLars, expiredLars.ToArray());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
         protected internal enum FileMatchesSchemaResult
         {
             Ok,

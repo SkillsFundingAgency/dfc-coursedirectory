@@ -346,5 +346,229 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             }
             return content;
         }
+
+        [Fact]
+        public async Task Post_FileHasMissingLars_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
+                csvWriter =>
+                {
+                    //Row 1
+                    csvWriter.WriteField("LARS_QAN");
+                    csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
+                    csvWriter.WriteField("YOUR_REFERENCE");
+                    csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                    csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                    csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                    csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                    csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                    csvWriter.WriteField("WHERE_NEXT");
+                    csvWriter.WriteField("COURSE_NAME");
+                    csvWriter.WriteField("DELIVERY_MODE");
+                    csvWriter.WriteField("START_DATE");
+                    csvWriter.WriteField("FLEXIBLE_START_DATE");
+                    csvWriter.WriteField("VENUE_NAME");
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("NATIONAL_DELIVERY");
+                    csvWriter.WriteField("SUB_REGION");
+                    csvWriter.WriteField("COURSE_WEBPAGE");
+                    csvWriter.WriteField("COST");
+                    csvWriter.WriteField("COST_DESCRIPTION");
+                    csvWriter.WriteField("DURATION");
+                    csvWriter.WriteField("DURATION_UNIT");
+                    csvWriter.WriteField("STUDY_MODE");
+                    csvWriter.WriteField("ATTENDANCE_PATTERN");
+                    csvWriter.NextRecord();
+                    //Row 2
+                    csvWriter.WriteField("60149735");
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 3 empty lars
+                    csvWriter.WriteField("");
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 4
+                    csvWriter.WriteField("60149735");
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 5 whitespace lars
+                    csvWriter.WriteField("      ");
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                });
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The file contains errors and could not be uploaded");
+            doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "Row 3",
+                "Row 5"
+            });
+        }
+
+        [Fact]
+        public async Task Post_FileHasInvalidLars_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var learningAimRef = await TestData.CreateLearningAimRef();
+
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
+                csvWriter =>
+                {
+                    //Row 1
+                    csvWriter.WriteField("LARS_QAN");
+                    csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
+                    csvWriter.WriteField("YOUR_REFERENCE");
+                    csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                    csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                    csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                    csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                    csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                    csvWriter.WriteField("WHERE_NEXT");
+                    csvWriter.WriteField("COURSE_NAME");
+                    csvWriter.WriteField("DELIVERY_MODE");
+                    csvWriter.WriteField("START_DATE");
+                    csvWriter.WriteField("FLEXIBLE_START_DATE");
+                    csvWriter.WriteField("VENUE_NAME");
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("NATIONAL_DELIVERY");
+                    csvWriter.WriteField("SUB_REGION");
+                    csvWriter.WriteField("COURSE_WEBPAGE");
+                    csvWriter.WriteField("COST");
+                    csvWriter.WriteField("COST_DESCRIPTION");
+                    csvWriter.WriteField("DURATION");
+                    csvWriter.WriteField("DURATION_UNIT");
+                    csvWriter.WriteField("STUDY_MODE");
+                    csvWriter.WriteField("ATTENDANCE_PATTERN");
+                    csvWriter.NextRecord();
+                    //Row 2 invalid
+                    csvWriter.WriteField("XX149CCI");
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 3
+                    csvWriter.WriteField(learningAimRef);
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 4
+                    csvWriter.WriteField(learningAimRef);
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 5 invalid
+                    csvWriter.WriteField("ABCDEFGH");
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                });
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The file contains errors and could not be uploaded");
+            doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "Row 2",
+                "Row 5"
+            });
+        }
+
+        [Fact]
+        public async Task Post_FileHasExpiredLars_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Today.AddDays(-1));
+            var validLearningAimRef = await TestData.CreateLearningAimRef();
+
+            var csvStream = DataManagementFileHelper.CreateCsvStream(
+                csvWriter =>
+                {
+                    //Row 1
+                    csvWriter.WriteField("LARS_QAN");
+                    csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
+                    csvWriter.WriteField("YOUR_REFERENCE");
+                    csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                    csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                    csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                    csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                    csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                    csvWriter.WriteField("WHERE_NEXT");
+                    csvWriter.WriteField("COURSE_NAME");
+                    csvWriter.WriteField("DELIVERY_MODE");
+                    csvWriter.WriteField("START_DATE");
+                    csvWriter.WriteField("FLEXIBLE_START_DATE");
+                    csvWriter.WriteField("VENUE_NAME");
+                    csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                    csvWriter.WriteField("NATIONAL_DELIVERY");
+                    csvWriter.WriteField("SUB_REGION");
+                    csvWriter.WriteField("COURSE_WEBPAGE");
+                    csvWriter.WriteField("COST");
+                    csvWriter.WriteField("COST_DESCRIPTION");
+                    csvWriter.WriteField("DURATION");
+                    csvWriter.WriteField("DURATION_UNIT");
+                    csvWriter.WriteField("STUDY_MODE");
+                    csvWriter.WriteField("ATTENDANCE_PATTERN");
+                    csvWriter.NextRecord();
+                    //Row 2 valid
+                    csvWriter.WriteField(validLearningAimRef);
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                    //Row 3 invalid
+                    csvWriter.WriteField(expiredLearningAimRef);
+                    csvWriter.WriteField("who for");
+                    csvWriter.WriteField("your ref");
+                    csvWriter.WriteField("venue name");
+                    csvWriter.NextRecord();
+                });
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The file contains errors and could not be uploaded");
+            doc.GetAllElementsByTestId("ExpiredLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                string.Format("Row {0}, expired code {1}", 3, expiredLearningAimRef)
+            });
+        }
     }
 }

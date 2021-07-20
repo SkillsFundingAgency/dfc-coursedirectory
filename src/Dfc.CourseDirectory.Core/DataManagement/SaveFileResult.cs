@@ -68,6 +68,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 MissingHeaders = Array.Empty<string>(),
                 MissingLarsRows = Array.Empty<string>(),
                 InvalidLarsRows = invalidLars.ToArray(),
+                ExpiredLarsRows = expiredLars.ToArray(),
                 Status = SaveFileResultStatus.InvalidLars
             };
 
@@ -92,8 +93,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         InvalidRows,
         EmptyFile,
         ExistingFileInFlight,
-        MissingLars,
-        InvalidLars,
-        ExpiredLars
+        InvalidLars
     }
 }
