@@ -1,0 +1,23 @@
+﻿CREATE TABLE [Pttcd].[ApprenticeshipUploadRows](
+	[ApprenticeshipUploadRowId] [bigint] IDENTITY(1,1) NOT NULL,
+	[ApprenticeshipUploadId] [uniqueidentifier] NOT NULL,
+	[RowNumber] [int] NOT NULL,
+	[ApprenticeshipUploadRowStatus] [tinyint] NOT NULL,
+	[IsValid] [bit] NOT NULL,
+	[Errors] [varchar](max) NULL,
+	[LastUpdated] [datetime] NOT NULL,
+	[LastValidated] [datetime] NOT NULL,
+    [StandardCode] INT NOT NULL,
+    [StandardVersion] INT NOT NULL,
+    [ApprenticeshipInformation] NVARCHAR(MAX) NOT NULL,
+    [ApprenticeshipWebpage]  NVARCHAR(MAX) NULL,
+    [ContactEmail] NVARCHAR(MAX) NOT NULL,
+    [ContactPhone] NVARCHAR(MAX) NOT NULL,
+    [ContactUrl] NVARCHAR(MAX) NULL,
+    [DeliveryMode] NVARCHAR(MAX) NOT NULL,
+    [Venue] NVARCHAR(MAX) NULL,
+    [YourVenueReference] NVARCHAR(MAX) NOT NULL,
+    [Radius] NVARCHAR(MAX) NULL,
+    [NationalDelivery] NVARCHAR(MAX) NULL,
+    [SubRegion] NVARCHAR(MAX) NULL
+)
