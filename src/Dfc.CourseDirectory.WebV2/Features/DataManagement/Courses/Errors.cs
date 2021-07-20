@@ -75,15 +75,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(
+            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                 _providerContextProvider.GetProviderId());
 
-            if (uploadStatus == UploadStatus.ProcessedSuccessfully)
+            if (errorRows.Count == 0)
             {
                 return new UploadHasNoErrors();
             }
 
-            return CreateViewModel(uploadRows);
+            return CreateViewModel(errorRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
