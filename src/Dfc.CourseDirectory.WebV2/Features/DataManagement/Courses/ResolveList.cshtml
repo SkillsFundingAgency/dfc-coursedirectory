@@ -17,7 +17,7 @@
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
                     <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
-                    <th scope="col" class="govuk-table__header" style="width: 120px">Start Date</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">Start date</th>
                     <th scope="col" class="govuk-table__header">Error(s)</th>
                     <th scope="col" class="govuk-table__header" colspan="2"></th>
                 </tr>
@@ -25,55 +25,71 @@
             <tbody class="govuk-table__body">
                 @foreach (var row in Model.ErrorRows)
                 {
-                        <tr class="govuk-table__row">
-                            <td scope="row" class="govuk-table__header-noborder">@row.CourseName</td>
-                            <td class="govuk-table__cell-noborder"></td>
-                            <td class="govuk-table__cell-noborder"></td>
-                        </tr>
-                        <tr>
-                            <td class="govuk-body-s"> <strong>LARS</strong> @row.LarsQan</td>
-                        </tr>
-
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header-noborder"></th>
-                            <td class="govuk-table__cell-noborder">@row.DeliveryMode</td>
-                            <td class="govuk-table__cell-noborder">@row.StartDate</td>
-                            <td class="govuk-table__cell-noborder govuk-body-s pttcd-dm-error" data-testid="ErrorRow">
-                                @for (var i = 0; i < row.ErrorFields.Count; i++)
+                    <tr class="govuk-table__row" data-testid="CourseRow">
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s"><strong>LARS</strong> @row.LearnAimRef</td>
+                        <td class="govuk-table__cell pttcd-table--no-border"></td>
+                        <td class="govuk-table__cell pttcd-table--no-border"></td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
+                            @for (var i = 0; i < row.ErrorFields.Count; i++)
+                            {
+                                <span class="govuk-!-display-inline-block">
+                                    @row.ErrorFields.ElementAt(i)@(i != row.ErrorFields.Count - 1 ? "," : "")
+                                </span>
+                            }
+                        </td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                            @if (row.HasDescriptionErrors)
+                            {
+                                <a asp-action="ResolveRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
+                                    Resolve
+                                </a>
+                            }
+                        </td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                            @if (row.HasDescriptionErrors)
+                            {
+                                <a asp-action="DeleteRowGroup" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
+                                    Delete
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                    @foreach (var course in row.CourseRows)
+                    {
+                        <tr class="govuk-table__row @(course == row.CourseRows.Last() ? "pttcd-table__row-!-border" : "")" data-testid="CourseRunRow">
+                            <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.DeliveryMode</td>
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.StartDate</td>
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="Errors">
+                                @for (var i = 0; i < course.ErrorFields.Count; i++)
                                 {
                                     <span class="govuk-!-display-inline-block">
-                                        @row.ErrorFields.ElementAt(i)@(i != row.ErrorFields.Count - 1 ? "," : "")
+                                        @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
                                     </span>
-                                }  
-                            </td>
-                            <td class="govuk-table__cell govuk-body-s">
-                                @if (row.DeliveryError)
-                                {
-                                    <a asp-action="ResolveRowDeliveryMode" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
-                                        Resolve
-                                    </a>
                                 }
-                                else if (row.DescriptionError)
+                            </td>
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                                @if (course.HasDeliveryModeError)
                                 {
-                                    <a asp-action="ResolveRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
+                                    <a asp-action="ResolveRowDeliveryMode" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@course.RowNumber" class="govuk-link">
                                         Resolve
                                     </a>
                                 }
                                 else
                                 {
-                                    <a asp-action="ResolveRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link">
+                                    <a asp-action="ResolveRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@course.RowNumber" asp-route-deliveryMode="@course.DeliveryMode" class="govuk-link">
                                         Resolve
                                     </a>
                                 }
                             </td>
-                            <td class="govuk-table__cell govuk-body-s">
-                                <a asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link" data-testid="Delete">
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                                <a asp-action="DeleteRow" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@course.RowNumber" class="govuk-link" data-testid="Delete">
                                     Delete
                                 </a>
                             </td>
                         </tr>
                     }
-                    <tr class="govuk-section-break--visible"></tr>
+                }
             </tbody>
         </table>
     </div>

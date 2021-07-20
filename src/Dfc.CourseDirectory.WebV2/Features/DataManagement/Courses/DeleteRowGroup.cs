@@ -4,8 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
@@ -30,6 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
         public string LearnAimRef { get; set; }
         public IReadOnlyCollection<CourseDeliveryMode> DeliveryModes { get; set; }
         public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
+        public IReadOnlyCollection<string> GroupErrorFields { get; set; }
     }
 
     public class ViewModelRow
@@ -97,6 +96,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
 
             var rowGroup = await _fileUploadProcessor.GetCourseUploadRowGroupForProvider(providerId, rootRow.CourseId);
             var deliveryModes = DeduceDeliveryModes();
+
+            var groupErrors = rowGroup.First().Errors
+                .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.Course)
+                .ToArray();
             
             return new ViewModel()
             {
@@ -108,10 +111,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
                     {
                         CourseName = r.CourseName,
                         DeliveryMode = r.DeliveryMode,
-                        ErrorFields = r.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
+                        ErrorFields = r.Errors.Except(groupErrors).Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
                         StartDate = r.StartDate
                     })
-                    .ToArray()
+                    .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
+                    .ThenBy(r => r.StartDate)
+                    .ThenBy(r => r.DeliveryMode)
+                    .ToArray(),
+                GroupErrorFields = groupErrors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
             };
 
             IReadOnlyCollection<CourseDeliveryMode> DeduceDeliveryModes()

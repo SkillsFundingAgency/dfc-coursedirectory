@@ -53,8 +53,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddValidRows(learnAimRef: learnAimRef, 1);
-
                     rowBuilder.AddRow(learnAimRef: learnAimRef, record =>
                     {
                         record.CourseName = string.Empty;
@@ -80,11 +78,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (new AssertionScope())
             {
                 // Should only have one error row in the table
-                var errorRowsRow = doc.GetAllElementsByTestId("ErrorRow");
-   
-                errorRowsRow.Count().Should().Be(1);
+                var errorRows = doc.GetAllElementsByTestId("CourseRunRow");
 
-                var firstRowCells = errorRowsRow.First().TextContent.Trim();
+                errorRows.Count().Should().Be(1);
+
+                var firstRowCells = errorRows.Single().GetElementByTestId("Errors").TextContent.Trim();
                 firstRowCells.Should().BeEquivalentTo(
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED")
                 );

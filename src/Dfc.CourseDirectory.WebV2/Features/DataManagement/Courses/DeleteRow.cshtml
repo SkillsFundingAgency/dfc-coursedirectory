@@ -19,9 +19,9 @@
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Course name</th>
-                        <th scope="col" class="govuk-table__header">Delivery type</th>
-                        <th scope="col" class="govuk-table__header">Start date</th>
+                        <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
+                        <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                        <th scope="col" class="govuk-table__header" style="width: 130px">Start date</th>
                         <th scope="col" class="govuk-table__header">Error(s)</th>
                     </tr>
                 </thead>
@@ -33,8 +33,13 @@
                         <td class="govuk-table__cell pttcd-table--no-border" scope="row" style="text-align: left; top:0"> <strong>LARS</strong> @Model.LarsQan</td>
                         <td class="govuk-table__cell pttcd-table--no-border" data-testid="DeliveryMode">@Model.DeliveryMode</td>
                         <td class="govuk-table__cell pttcd-table--no-border" data-testid="StartDate">@Model.StartDate</td>
-                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="Errors">
-                            <span class="govuk-!-display-inline-block">@Model.Errors</span>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" style="color: #d4351c;" data-testid="Errors">
+                            @for (var i = 0; i < Model.ErrorFields.Count; i++)
+                            {
+                                <span class="govuk-!-display-inline-block">
+                                    @Model.ErrorFields.ElementAt(i)@(i != Model.ErrorFields.Count - 1 ? "," : "")
+                                </span>
+                            }
                         </td>
                     </tr>
                 </tbody>

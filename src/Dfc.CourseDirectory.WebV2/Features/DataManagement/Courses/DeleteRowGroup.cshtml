@@ -11,37 +11,51 @@
     </div>
 </div>
 
-<table class="govuk-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
-            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
-            <th scope="col" class="govuk-table__header" style="width: 130px">Start Date</th>
-            <th scope="col" class="govuk-table__header">Error(s)</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-            <td class="govuk-body-s"><strong>LARS</strong> @Model.LearnAimRef</td>
-        </tr>
-        @foreach (var course in Model.Rows)
-        {
-            <tr class="govuk-table__row @(course == Model.Rows.Last() ? "pttcd-table__row-!-border" : "")">
-                <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
-                <td class="govuk-table__cell pttcd-table--no-border">@course.DeliveryMode</td>
-                <td class="govuk-table__cell pttcd-table--no-border">@course.StartDate</td>
-                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="ErrorRow">
-                    @for (var i = 0; i < course.ErrorFields.Count; i++)
-                    {
-                        <span class="govuk-!-display-inline-block">
-                            @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
-                        </span>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header" style="width: 200px">Course name</th>
+                    <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                    <th scope="col" class="govuk-table__header" style="width: 130px">Start date</th>
+                    <th scope="col" class="govuk-table__header">Error(s)</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s"><strong>LARS</strong> @Model.LearnAimRef</td>
+                    <td class="govuk-table__cell pttcd-table--no-border"></td>
+                    <td class="govuk-table__cell pttcd-table--no-border"></td>
+                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
+                        @for (var i = 0; i < Model.GroupErrorFields.Count; i++)
+                        {
+                            <span class="govuk-!-display-inline-block">
+                                @Model.GroupErrorFields.ElementAt(i)@(i != Model.GroupErrorFields.Count - 1 ? "," : "")
+                            </span>
+                        }
+                    </td>
+                </tr>
+                @foreach (var course in Model.Rows)
+                {
+                    <tr class="govuk-table__row @(course == Model.Rows.Last() ? "pttcd-table__row-!-border" : "")">
+                        <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.DeliveryMode</td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.StartDate</td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="ErrorRow">
+                            @for (var i = 0; i < course.ErrorFields.Count; i++)
+                            {
+                                <span class="govuk-!-display-inline-block">
+                                    @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <govuk-warning-text icon-fallback-text="Warning">
     Deleting this course description will remove all

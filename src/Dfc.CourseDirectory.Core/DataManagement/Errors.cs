@@ -4,6 +4,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public static class Errors
     {
+        public static CourseErrorComponent GetCourseErrorComponent(string errorCode) =>
+            errorCode.StartsWith("COURSERUN_") ? CourseErrorComponent.CourseRun :
+            errorCode.StartsWith("COURSE_") ? CourseErrorComponent.Course :
+            throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
+
         public static string MapVenueErrorToFieldGroup(string errorCode)
         {
             switch (errorCode)
@@ -110,6 +115,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
         }
-
     }
+
+    public enum CourseErrorComponent { Course, CourseRun }
 }
