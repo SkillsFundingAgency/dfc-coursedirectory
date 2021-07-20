@@ -720,11 +720,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validLearningAimRefs = await sqlQueryDispatcher.ExecuteQuery(new GetLearningAimRefs()
-            {
-                LearningAimRefs = rows.Select(r => r.Data.LearnAimRef).Where(v => !string.IsNullOrWhiteSpace(v))
-            });
-
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
             var rowsAreValid = true;
@@ -740,7 +735,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row, providerVenues);
 
-                var validator = new CourseUploadRowValidator(validLearningAimRefs, _clock, matchedVenue?.VenueId);
+                var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -822,11 +817,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         internal class CourseUploadRowValidator : AbstractValidator<ParsedCsvCourseRow>
         {
             public CourseUploadRowValidator(
-                IReadOnlyCollection<string> validLearningAimRefs,
                 IClock clock,
                 Guid? matchedVenueId)
             {
-                RuleFor(c => c.LearnAimRef).LarsQan(validLearningAimRefs);
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
                 RuleFor(c => c.WhatYouWillLearn).WhatYouWillLearn();
