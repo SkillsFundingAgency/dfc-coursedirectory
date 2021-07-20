@@ -75,7 +75,7 @@
                                         Resolve
                                     </a>
                                 }
-                                else
+                                else if (course.HasDetailErrors)
                                 {
                                     <a asp-action="ResolveRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@course.RowNumber" asp-route-deliveryMode="@course.DeliveryMode" class="govuk-link">
                                         Resolve
