@@ -27,10 +27,13 @@
                 </thead>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <td class="govuk-body-s">@Model.CourseName</td>
+                        <td class="govuk-body-s" scope="row"> <strong>LARS</strong> @Model.LarsQan</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr class="govuk-table__row pttcd-table__row-!-border">
-                        <td class="govuk-table__cell pttcd-table--no-border" scope="row" style="text-align: left; top:0"> <strong>LARS</strong> @Model.LarsQan</td>
+                        <td class="govuk-table__cell pttcd-table--no-border" data-testid="CourseName">@Model.CourseName</td>
                         <td class="govuk-table__cell pttcd-table--no-border" data-testid="DeliveryMode">@Model.DeliveryMode</td>
                         <td class="govuk-table__cell pttcd-table--no-border" data-testid="StartDate">@Model.StartDate</td>
                         <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" style="color: #d4351c;" data-testid="Errors">
