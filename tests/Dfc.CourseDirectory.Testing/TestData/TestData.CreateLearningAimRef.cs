@@ -6,7 +6,8 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public Task<string> CreateLearningAimRef() => WithSqlQueryDispatcher(async dispatcher =>
+        public Task<string> CreateLearningAimRef(DateTime? expiredLars = null
+            ) => WithSqlQueryDispatcher(async dispatcher =>
         {
             var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
 
@@ -73,7 +74,8 @@ namespace Dfc.CourseDirectory.Testing
                         SFAFundedIndicator = string.Empty,
                         SourceQualType = string.Empty,
                         SuccessRateMapCode = string.Empty,
-                        UnitType = string.Empty
+                        UnitType = string.Empty,
+                        EffectiveTo = expiredLars
                     }
                 }
             });

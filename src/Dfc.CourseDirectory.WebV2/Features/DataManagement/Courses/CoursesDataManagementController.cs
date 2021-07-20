@@ -48,6 +48,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         ViewBag.MissingLarsRows = errors.MissingLarsRows;
                         ViewBag.InvalidLarsRows = errors.InvalidLarsRows;
+                        ViewBag.ExpiredLarsRows = errors.ExpiredLarsRows;
+                        if(errors.MissingLarsRows.Count > 0 || errors.InvalidLarsRows.Count > 0 || errors.ExpiredLarsRows.Count > 0)
+                            ModelState.AddModelError(nameof(command.File), "The file contains errors and could not be uploaded");
                         return this.ViewFromErrors(errors);
                     },
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));

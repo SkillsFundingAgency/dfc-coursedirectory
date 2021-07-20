@@ -382,15 +382,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
 
             var (missingLarsResult, missingLars) = await FileMissingLars(stream);
-            if (missingLarsResult == FileMatchesSchemaResult.MissingLars)
+            var (invalidLarsResult, invalidLars) = await FileInvalidLars(stream);
+            var (expiredLarsResult, expiredLars) = await FileExpiredLars(stream);
+            if (missingLarsResult == FileMatchesSchemaResult.InvalidLars || invalidLarsResult == FileMatchesSchemaResult.InvalidLars
+                || expiredLarsResult == FileMatchesSchemaResult.InvalidLars)
             {
-                return SaveFileResult.MissingLars(missingLars);
-            }
-
-            var (invalideLarsResult, invalidLars) = await FileInvalidLars(stream);
-            if (invalideLarsResult == FileMatchesSchemaResult.InvalidLars)
-            {
-                return SaveFileResult.MissingLars(invalidLars);
+                return SaveFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
             }
 
             var courseUploadId = Guid.NewGuid();
