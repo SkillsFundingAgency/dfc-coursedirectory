@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public string DeliveryMode { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
         public bool HasDeliveryModeError { get; set; }
+        public bool HasDetailErrors { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, OneOf<UploadHasNoErrors, ViewModel>>
@@ -95,7 +96,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                 VenueName = r.Row.VenueName,
                                 DeliveryMode = r.Row.DeliveryMode,
                                 ErrorFields = r.NonGroupErrorFields,
-                                HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode")
+                                HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
+                                HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode" }).Any()
                             })
                             .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
                             .ThenBy(r => r.StartDate)
