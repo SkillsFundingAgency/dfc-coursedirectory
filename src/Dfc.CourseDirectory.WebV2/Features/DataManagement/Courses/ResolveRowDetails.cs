@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 command.SubRegionIds = null;
             }
 
-            if (command.FlexibleStartDate == false)
+            if (command.FlexibleStartDate == true)
             {
                 command.StartDate = null;
             }
