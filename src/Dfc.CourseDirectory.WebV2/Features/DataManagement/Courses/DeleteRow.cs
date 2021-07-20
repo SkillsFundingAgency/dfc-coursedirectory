@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
         public string CourseName { get; set; }
         public string LarsQan { get; set; }
         public string StartDate { get; set; }
-        public string Errors { get; set; }
+        public IReadOnlyCollection<string> ErrorFields { get; set; }
         public string DeliveryMode { get; set; }
     }
 
@@ -77,16 +77,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 RowNumber = rowNumber,
                 CourseName = row.CourseName,
                 DeliveryMode = row.DeliveryMode,
-                Errors = GetUniqueErrorMessages(row),
+                ErrorFields = row.Errors
+                    .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.CourseRun)
+                    .Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e))
+                    .Distinct()
+                    .ToArray(),
                 StartDate = row.StartDate,
                 LarsQan = row.LarsQan
             };
-        }
-
-        private string GetUniqueErrorMessages(CourseUploadRow row)
-        {
-            var errors = row.Errors.Select(errorCode => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(errorCode));
-            return string.Join(",", errors.Distinct().ToList());
         }
     }
 }

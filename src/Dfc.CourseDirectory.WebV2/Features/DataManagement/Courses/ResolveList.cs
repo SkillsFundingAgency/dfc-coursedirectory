@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
-using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf;
 
@@ -18,22 +17,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
 
     public class ViewModel
     {
-        public IReadOnlyCollection<ViewModelRow> ErrorRows { get; set; }
+        public IReadOnlyCollection<ViewModelErrorRowGroup> ErrorRows { get; set; }
     }
 
-    public class ViewModelRow
+    public class ViewModelErrorRowGroup
     {
         public int RowNumber { get; set; }
         public Guid CourseId { get; set; }
-        public string LarsQan { get; set; }
+        public string LearnAimRef { get; set; }
+        public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
+        public IReadOnlyCollection<string> ErrorFields { get; set; }
+        public bool HasDescriptionErrors { get; set; }
+    }
+
+    public class ViewModelErrorRow
+    {
+        public int RowNumber { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
         public string StartDate { get; set; }
         public string VenueName { get; set; }
         public string DeliveryMode { get; set; }
-        public bool DeliveryError { get; set; }
-        public bool DescriptionError { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
+        public bool HasDeliveryModeError { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, OneOf<UploadHasNoErrors, ViewModel>>
@@ -49,36 +55,60 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var uploadRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                 _providerContextProvider.GetProviderId());
 
-            if (uploadRows.Count == 0)
+            if (errorRows.Count == 0)
             {
                 return new UploadHasNoErrors();
             }
 
             return new ViewModel()
             {
-                ErrorRows = uploadRows
-                    .Where(row => !row.IsValid)
-                    .Select(row => new ViewModelRow()
+                ErrorRows = errorRows
+                    .Select(r =>
                     {
-                        RowNumber = row.RowNumber,
-                        CourseId = row.CourseId,
-                        LarsQan = row.LarsQan,
-                        CourseName = row.CourseName,
-                        ProviderCourseRef = row.ProviderCourseRef,
-                        StartDate = row.StartDate,
-                        VenueName = row.VenueName,
-                        DeliveryMode = row.DeliveryMode,
-                        ErrorFields = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
-                        DeliveryError = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().Contains("Delivery mode"),
-                        DescriptionError = row.Errors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().Contains("Course description")
-                    }).OrderBy(
-                        g => g.DeliveryMode
-                    ).ThenByDescending(
-                        g => g.DescriptionError
-                    ).ToArray()
+                        var errorsByComponent = r.Errors
+                            .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
+                            .GroupBy(t => Core.DataManagement.Errors.GetCourseErrorComponent(t.ErrorCode))
+                            .ToDictionary(g => g.Key, g => g.Select(i => i.Field).ToArray());
+
+                        return (
+                            Row: r,
+                            GroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.Course, Array.Empty<string>()),
+                            NonGroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.CourseRun, Array.Empty<string>())
+                        );
+                    })
+                    .GroupBy(t => t.Row.CourseId)
+                    .Select(g => new ViewModelErrorRowGroup()
+                    {
+                        RowNumber = g.First().Row.RowNumber,
+                        CourseId = g.Key,
+                        LearnAimRef = g.Select(r => r.Row.LarsQan).Distinct().Single(),
+                        CourseRows = g
+                            .Select(r => new ViewModelErrorRow()
+                            {
+                                RowNumber = r.Row.RowNumber,
+                                CourseName = r.Row.CourseName,
+                                ProviderCourseRef = r.Row.ProviderCourseRef,
+                                StartDate = r.Row.StartDate,
+                                VenueName = r.Row.VenueName,
+                                DeliveryMode = r.Row.DeliveryMode,
+                                ErrorFields = r.NonGroupErrorFields,
+                                HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode")
+                            })
+                            .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
+                            .ThenBy(r => r.StartDate)
+                            .ThenBy(r => r.DeliveryMode)
+                            .ToArray(),
+                        ErrorFields = g.First().GroupErrorFields,
+                        HasDescriptionErrors = g.First().GroupErrorFields.Any()
+                    })
+                    .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
+                    .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
+                    .ThenBy(g => g.LearnAimRef)
+                    .ThenBy(g => g.CourseId)
+                    .ToArray()
             };
         }
     }

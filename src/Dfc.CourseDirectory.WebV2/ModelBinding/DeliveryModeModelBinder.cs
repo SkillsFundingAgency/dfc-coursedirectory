@@ -33,10 +33,12 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
                 "classroom" => CourseDeliveryMode.ClassroomBased,
                 "classroombased" => CourseDeliveryMode.ClassroomBased,
                 "classroom-based" => CourseDeliveryMode.ClassroomBased,
+                "classroom based" => CourseDeliveryMode.ClassroomBased,
                 "online" => CourseDeliveryMode.Online,
                 "work" => CourseDeliveryMode.WorkBased,
                 "workbased" => CourseDeliveryMode.WorkBased,
                 "work-based" => CourseDeliveryMode.WorkBased,
+                "work based" => CourseDeliveryMode.WorkBased,
                 _ => null
             };
 
