@@ -240,14 +240,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
-        [HttpGet("resolve/{rowNumber}/delete")]
+        [HttpGet("resolve/{rowNumber}/details/delete")]
         [RequireProviderContext]
         public async Task<IActionResult> DeleteRow(DeleteRow.Query request) =>
             await _mediator.SendAndMapResponse(
                 request,
                 vm => View(vm));
 
-        [HttpPost("resolve/{rowNumber}/delete")]
+        [HttpPost("resolve/{rowNumber}/details/delete")]
         [RequireProviderContext]
         public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
         {
