@@ -52,6 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 WhoThisCourseIsFor = row.WhoThisCourseIsFor,
                 EntryRequirements = row.EntryRequirements,
                 WhatYouWillLearn = row.WhatYouWillLearn,
+                HowYouWillLearn = row.HowYouWillLearn,
                 WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
                 HowYouWillBeAssessed = row.HowYouWillBeAssessed,
                 WhereNext = row.WhereNext
