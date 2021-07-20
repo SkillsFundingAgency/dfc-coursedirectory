@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 MissingLarsRows = missingLars.ToArray(),
                 InvalidLarsRows = invalidLars.ToArray(),
                 ExpiredLarsRows = expiredLars.ToArray(),
-                Status = SaveFileResultStatus.InvalidLars
+                Status = SaveFileResultStatus.MissingLars
             };
 
         public static SaveFileResult InvalidLars(IEnumerable<string> invalidLars) =>
@@ -77,8 +77,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 MissingHeaders = Array.Empty<string>(),
                 MissingLarsRows = Array.Empty<string>(),
-                InvalidLarsRows = Array.Empty<string>(),
-                ExpiredLarsRows = Array.Empty<string>(),
                 Status = SaveFileResultStatus.Success,
                 UploadStatus = uploadStatus,
                 VenueUploadId = venueUploadId
@@ -93,6 +91,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         InvalidRows,
         EmptyFile,
         ExistingFileInFlight,
-        InvalidLars
+        MissingLars,
+        InvalidLars,
+        ExpiredLars
     }
 }
