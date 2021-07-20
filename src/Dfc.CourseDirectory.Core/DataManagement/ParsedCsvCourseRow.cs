@@ -47,10 +47,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             0 => null,
             null => null,
-            CourseAttendancePattern.Daytime => "daytime",
-            CourseAttendancePattern.Evening => "evening",
-            CourseAttendancePattern.Weekend => "weekend",
-            CourseAttendancePattern.DayOrBlockRelease => "day/block release",
+            CourseAttendancePattern.Daytime => "Daytime",
+            CourseAttendancePattern.Evening => "Evening",
+            CourseAttendancePattern.Weekend => "Weekend",
+            CourseAttendancePattern.DayOrBlockRelease => "Day/Block release",
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
@@ -58,9 +58,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
         {
-            CourseDeliveryMode.ClassroomBased => "classroom based",
-            CourseDeliveryMode.Online => "online",
-            CourseDeliveryMode.WorkBased => "work based",
+            CourseDeliveryMode.ClassroomBased => "Classroom based",
+            CourseDeliveryMode.Online => "Online",
+            CourseDeliveryMode.WorkBased => "Work based",
             null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
@@ -69,26 +69,26 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapDurationUnit(CourseDurationUnit? value) => value switch
         {
-            CourseDurationUnit.Hours => "hours",
-            CourseDurationUnit.Days => "days",
-            CourseDurationUnit.Weeks => "weeks",
-            CourseDurationUnit.Months => "months",
-            CourseDurationUnit.Years => "years",
+            CourseDurationUnit.Hours => "Hours",
+            CourseDurationUnit.Days => "Days",
+            CourseDurationUnit.Weeks => "Weeks",
+            CourseDurationUnit.Months => "Months",
+            CourseDurationUnit.Years => "Years",
             null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
         public static string MapFlexibleStartDate(bool? value) => value switch
         {
-            true => "yes",
-            false => "no",
+            true => "Yes",
+            false => "No",
             null => null
         };
 
         public static string MapNationalDelivery(bool? value) => value switch
         {
-            true => "yes",
-            false => "no",
+            true => "Yes",
+            false => "No",
             null => null
         };
 
@@ -108,9 +108,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             0 => null,
             null => null,
-            CourseStudyMode.FullTime => "full time",
-            CourseStudyMode.PartTime => "part time",
-            CourseStudyMode.Flexible => "flexible",
+            CourseStudyMode.FullTime => "Full time",
+            CourseStudyMode.PartTime => "Part time",
+            CourseStudyMode.Flexible => "Flexible",
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
