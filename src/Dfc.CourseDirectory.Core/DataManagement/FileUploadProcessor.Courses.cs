@@ -361,6 +361,55 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus.IsUnprocessed())
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                if (courseUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                if (uploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var publishedOn = _clock.UtcNow;
+
+                var publishResult = await dispatcher.ExecuteQuery(new PublishCourseUpload()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    PublishedBy = publishedBy,
+                    PublishedOn = publishedOn
+                });
+
+                await dispatcher.Commit();
+
+                return PublishResult.Success(publishResult.AsT1.PublishedCount);
+            }
+        }
+
         public async Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);

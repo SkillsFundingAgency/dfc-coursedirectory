@@ -16,18 +16,21 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 DECLARE @CourseIds Pttcd.GuidIdTable
+
 INSERT INTO @CourseIds
 SELECT c.CourseId
 FROM Pttcd.Courses c
 JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 WHERE p.ProviderId = @ProviderId
 AND (c.CourseStatus & @CourseStatusMask) <> 0
+
 SELECT
     c.CourseId, c.CourseStatus, @ProviderId ProviderId, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext
 FROM Pttcd.Courses c
 JOIN @CourseIds x ON c.CourseId = x.Id
+
 SELECT
     cr.CourseRunId,
     cr.CourseId,

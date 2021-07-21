@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
@@ -44,9 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
     public class ViewModelErrorRow
     {
         public string CourseName { get; set; }
-        public string ProviderCourseRef { get; set; }
         public string StartDate { get; set; }
-        public string VenueName { get; set; }
         public string DeliveryMode { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
@@ -133,9 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                             .Select(r => new ViewModelErrorRow()
                             {
                                 CourseName = r.Row.CourseName,
-                                ProviderCourseRef = r.Row.ProviderCourseRef,
                                 StartDate = r.Row.StartDate,
-                                VenueName = r.Row.VenueName,
                                 DeliveryMode = r.Row.DeliveryMode,
                                 ErrorFields = r.NonGroupErrorFields
                             })
