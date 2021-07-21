@@ -8,13 +8,13 @@ namespace Dfc.CourseDirectory.Testing
     {
         public Task<string> CreateLearningAimRef(DateTime? expiredLars = null
             ) => WithSqlQueryDispatcher(async dispatcher =>
-        {
-            var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
-
-            await dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
             {
-                Records = new[]
+                var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
+
+                await dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
                 {
+                    Records = new[]
+                    {
                     new UpsertLarsLearningDeliveriesRecord()
                     {
                         LearnAimRef = learnAimRef,
@@ -78,9 +78,9 @@ namespace Dfc.CourseDirectory.Testing
                         EffectiveTo = expiredLars
                     }
                 }
-            });
+                });
 
-            return learnAimRef;
-        });
+                return learnAimRef;
+            });
     }
 }
