@@ -92,5 +92,198 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 );
             }
         }
+
+        [Fact]
+        public async Task Get_RowHasDescriptionErrors_RendersResolveAndDeleteButtons()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (_, CourseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    {
+                        record.WhoThisCourseIsFor = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("ResolveDescription").Should().NotBeNull();
+                doc.GetElementByTestId("DeleteDescription").Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Get_RowDoesNotHaveDescriptionErrors_DoesNotRenderResolveAndDeleteButtons()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (_, CourseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    {
+                        record.CourseName = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSERUN_COURSE_NAME_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("ResolveDescription").Should().BeNull();
+                doc.GetElementByTestId("DeleteDescription").Should().BeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Get_CourseDescriptionErrorsOnly_DoesNotRenderDetailsRow()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (_, CourseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    {
+                        record.WhoThisCourseIsFor = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.GetAllElementsByTestId("CourseRunRow").Count.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task Get_RowHasDeliveryModeError_RendersResolveAndDeleteLinks()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (_, CourseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    {
+                        record.DeliveryMode = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSERUN_DELIVERY_MODE_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("ResolveDelivery").Should().NotBeNull();
+                doc.GetElementByTestId("ResolveDetails").Should().BeNull();
+                doc.GetElementByTestId("DeleteDetails").Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Get_RowHasDetailsError_RendersResolveAndDeleteLinks()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (_, CourseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                    {
+                        record.CourseName = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSERUN_COURSE_NAME_REQUIRED"].ErrorCode,
+                        };
+                    });
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("ResolveDelivery").Should().BeNull();
+                doc.GetElementByTestId("ResolveDetails").Should().NotBeNull();
+                doc.GetElementByTestId("DeleteDetails").Should().NotBeNull();
+            }
+        }
     }
 }

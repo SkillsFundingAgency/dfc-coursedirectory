@@ -139,6 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                                 DeliveryMode = r.Row.DeliveryMode,
                                 ErrorFields = r.NonGroupErrorFields
                             })
+                            .Where(r => r.ErrorFields.Count > 0)
                             .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
                             .ThenBy(r => r.StartDate)
                             .ThenBy(r => r.DeliveryMode)

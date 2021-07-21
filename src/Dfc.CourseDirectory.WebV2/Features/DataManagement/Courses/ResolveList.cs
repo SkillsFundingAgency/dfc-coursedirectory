@@ -99,6 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                 HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
                                 HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode" }).Any()
                             })
+                            .Where(r => r.ErrorFields.Count > 0)
                             .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
                             .ThenBy(r => r.StartDate)
                             .ThenBy(r => r.DeliveryMode)
