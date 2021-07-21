@@ -126,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     NationalDelivery = request.NationalDelivery,
                     SubRegionIds = request.SubRegionIds?.ToArray(),
                     CourseWebPage = request.CourseWebPage,
-                    Cost = decimal.Parse(request.Cost),
+                    Cost = decimal.TryParse(request.Cost, out var cost) ? cost : (decimal?)null,
                     CostDescription = request.CostDescription,
                     Duration = request.Duration.Value,
                     DurationUnit = request.DurationUnit.Value,
