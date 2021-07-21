@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public Task<string> CreateLearningAimRef(DateTime? expiredLars = null
+        public Task<string> CreateLearningAimRef(DateTime? effectiveTo = null
             ) => WithSqlQueryDispatcher(async dispatcher =>
             {
                 var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
