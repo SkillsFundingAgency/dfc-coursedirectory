@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 {
-    public class Lars
+    public class LearningDelivery
     {
         public string LearnAimRef { get; set; }
         public DateTime? EffectiveTo { get; set; }
