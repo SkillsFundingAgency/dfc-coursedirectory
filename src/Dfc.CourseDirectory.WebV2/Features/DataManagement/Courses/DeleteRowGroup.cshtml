@@ -1,9 +1,13 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGroup.ViewModel 
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGroup.ViewModel
 @{
     ViewContext.SetLayoutData(title: "Delete unpublished course");
 
     var deliveryModesDescription = Model.DeliveryModes.Select(dm => dm.ToDescription().ToLower()).ToCommaSeparatedString();
 }
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Confirm" />
+</govuk-error-summary>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
