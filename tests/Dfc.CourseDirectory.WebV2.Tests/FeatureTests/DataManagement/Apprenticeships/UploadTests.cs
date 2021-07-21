@@ -202,15 +202,5 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
                 "VENUE"
             });
         }
-
-        [Fact]
-        public async Task Post_ValidFile()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-            var (upload, rows) = await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
-            var s = upload;
-        }
-
     }
 }

@@ -29,6 +29,7 @@ WHEN NOT MATCHED THEN
       Errors,
       LastUpdated,
       LastValidated,
+      ApprenticeshipId,
       StandardCode,
       StandardVersion,
       ApprenticeshipInformation,
@@ -50,6 +51,7 @@ WHEN NOT MATCHED THEN
         source.Errors,
         ISNULL(source.LastUpdated, source.LastValidated),
         source.LastValidated,
+        source.ApprenticeshipId,
         source.StandardCode,
         source.StandardVersion,
         source.ApprenticeshipInformation,
@@ -70,6 +72,7 @@ WHEN MATCHED THEN UPDATE SET
     Errors = source.Errors,
     LastUpdated = ISNULL(source.LastUpdated, target.LastValidated),
     LastValidated = source.LastValidated,
+    ApprenticeshipId = source.ApprenticeshipId,
     StandardCode = source.StandardCode,
     StandardVersion = source.StandardVersion,
     ApprenticeshipInformation = source.ApprenticeshipInformation,
@@ -86,7 +89,7 @@ WHEN MATCHED THEN UPDATE SET
 ;
 
 SELECT
-    RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated,
+    RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
     ContactPhone, ContactUrl, DeliveryMode, Venue,YourVenueReference, Radius, NationalDelivery,
     SubRegion
@@ -119,6 +122,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("Errors", typeof(string));
                 table.Columns.Add("LastUpdated", typeof(DateTime));
                 table.Columns.Add("LastValidated", typeof(DateTime));
+                table.Columns.Add("ApprenticeshipId", typeof(Guid));
                 table.Columns.Add("StandardCode", typeof(int));
                 table.Columns.Add("StandardVersion", typeof(int));
                 table.Columns.Add("ApprenticeshipInformation", typeof(string));
@@ -141,6 +145,7 @@ ORDER BY RowNumber";
                         string.Join(";", record.Errors ?? Enumerable.Empty<string>()), // Errors
                         query.UpdatedOn,
                         query.ValidatedOn,
+                        record.ApprenticeshipId,
                         record.StandardCode,
                         record.StandardVersion,
                         record.ApprenticeshipInformation,

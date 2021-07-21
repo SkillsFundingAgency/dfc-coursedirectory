@@ -116,10 +116,10 @@ namespace Dfc.CourseDirectory.Testing
                         }
                         else
                         {
-                            rowBuilder.AddRow(learnAimRef: string.Empty, record =>
+                            rowBuilder.AddRow(apprenticeshipInformation: string.Empty, record =>
                             {
                                 record.IsValid = false;
-                                record.Errors = new[] { ErrorRegistry.All["COURSE_LARS_QAN_REQUIRED"].ErrorCode };
+                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_APPRENTICESHIPINFORMATION_REQUIRED"].ErrorCode };
                             });
                         }
                     }
@@ -174,9 +174,9 @@ namespace Dfc.CourseDirectory.Testing
         {
             private readonly List<UpsertApprenticeshipUploadRowsRecord> _records = new List<UpsertApprenticeshipUploadRowsRecord>();
 
-            public ApprenticeshipUploadRowBuilder AddRow(string learnAimRef, Action<UpsertApprenticeshipUploadRowsRecord> configureRecord)
+            public ApprenticeshipUploadRowBuilder AddRow(string apprenticeshipInformation, Action<UpsertApprenticeshipUploadRowsRecord> configureRecord)
             {
-                var record = CreateValidRecord();
+                var record = CreateValidRecord(apprenticeshipInformation);
                 configureRecord(record);
                 _records.Add(record);
                 return this;
@@ -221,7 +221,7 @@ namespace Dfc.CourseDirectory.Testing
 
             public ApprenticeshipUploadRowBuilder AddValidRow()
             {
-                var record = CreateValidRecord();
+                var record = CreateValidRecord("Valid Apprenticeship");
                 _records.Add(record);
                 return this;
             }
@@ -280,13 +280,13 @@ namespace Dfc.CourseDirectory.Testing
                 };
             }
 
-            private UpsertApprenticeshipUploadRowsRecord CreateValidRecord()
+            private UpsertApprenticeshipUploadRowsRecord CreateValidRecord(string apprenticeshipInformation)
             {
                 return CreateRecord(
                     apprenticeshipId: Guid.NewGuid(),
                     standardCode: 1,
                     standardVersion: 1,
-                    apprenticeshipInformation: "Some info",
+                    apprenticeshipInformation: apprenticeshipInformation,
                     apprenticeshipWebpage: "https://someapprenticeshipsite.com",
                     contactEmail: "",
                     contactPhone: "",
