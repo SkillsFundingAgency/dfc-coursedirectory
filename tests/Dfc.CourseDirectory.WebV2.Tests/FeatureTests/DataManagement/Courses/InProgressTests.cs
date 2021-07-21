@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        /*[Theory]
+        [Theory]
         [InlineData(UploadStatus.Created, "Uploading file")]
         [InlineData(UploadStatus.Processing, "Processing data")]
         public async Task Get_UploadProcessingIsIncomplete_ReturnsLoadingView(
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var doc = await response.GetDocument();
             doc.GetElementsByClassName("h1").SingleOrDefault()?.TextContent.Should().Be("Uploading your course data");
             doc.GetElementById("StatusMessage").TextContent.Trim().Should().Be(expectedMessage);
-        }*/
+        }
 
         [Theory]
         [InlineData(UploadStatus.ProcessedSuccessfully, "check-publish")]
