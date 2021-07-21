@@ -381,6 +381,15 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidHeader(missingHeaders);
             }
 
+            var (missingLarsResult, missingLars) = await FileMissingLars(stream);
+            var (invalidLarsResult, invalidLars) = await FileInvalidLars(stream);
+            var (expiredLarsResult, expiredLars) = await FileExpiredLars(stream);
+            if (missingLarsResult == FileMatchesSchemaResult.InvalidLars || invalidLarsResult == FileMatchesSchemaResult.InvalidLars
+                || expiredLarsResult == FileMatchesSchemaResult.InvalidLars)
+            {
+                return SaveFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
+            }
+
             var courseUploadId = Guid.NewGuid();
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())

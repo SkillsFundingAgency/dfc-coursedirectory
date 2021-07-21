@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using Azure.Storage.Blobs;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -197,11 +199,140 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        //Could put FileMissingLars, FileInvalidLars and FileExpiredLars into one method but they may come in useful elsewhere
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileMissingLars(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+                    List<string> emptyLars = new List<string>();
+                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
+                    //Don't count the first row
+                    int rowCount = 1;
+
+                    foreach (IDictionary<string, object> row in csvRecords)
+                    {
+                        rowCount++;
+                        string larsRow = row["LARS_QAN"].ToString();
+                        if (string.IsNullOrWhiteSpace(larsRow))
+                        {
+                            emptyLars.Add(rowCount.ToString());
+                        }
+                    }
+                    if(emptyLars.Count > 0)
+                    {
+                        return (FileMatchesSchemaResult.InvalidLars, emptyLars.ToArray());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] InvalidLars)> FileInvalidLars(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    List<string> invalidLars = new List<string>();
+                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
+
+                    int rowCount = 1;
+
+                    foreach (IDictionary<string, object> row in csvRecords)
+                    {
+                        rowCount++;
+                        string larsRow = row["LARS_QAN"].ToString().Trim();
+                        var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo(){ LearningAimRef = larsRow });
+                        if (!string.IsNullOrWhiteSpace(larsRow) && validLearningAimRef == null)
+                        {
+                            invalidLars.Add(rowCount.ToString());
+                        }
+                    }
+                    if (invalidLars.Count > 0)
+                    {
+                        return (FileMatchesSchemaResult.InvalidLars, invalidLars.ToArray());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] ExpiredLars)> FileExpiredLars(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    List<string> expiredLars = new List<string>();
+                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
+
+                    int rowCount = 1;
+                    //Refoctor this to pass the Lars model to the view instead of the error
+                    foreach (IDictionary<string, object> row in csvRecords)
+                    {
+                        rowCount++;
+                        string larsRow = row["LARS_QAN"].ToString().Trim();
+                        var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo() { LearningAimRef = larsRow });
+                        if (validLearningAimRef != null
+                            && validLearningAimRef.EffectiveTo.HasValue 
+                            && validLearningAimRef.EffectiveTo < DateTime.Now)
+                        {
+                            expiredLars.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
+                        }
+                    }
+                    if (expiredLars.Count > 0)
+                    {
+                        return (FileMatchesSchemaResult.InvalidLars, expiredLars.ToArray());
+                    }
+                }
+
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
         protected internal enum FileMatchesSchemaResult
         {
             Ok,
             InvalidHeader,
-            InvalidRows
+            InvalidRows,
+            MissingLars,
+            InvalidLars,
+            ExpiredLars
         }
     }
 }
