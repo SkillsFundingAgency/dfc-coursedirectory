@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             {
                 var validationResult = new ValidationResult(new[]
                 {
-                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete unpublished course")
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
