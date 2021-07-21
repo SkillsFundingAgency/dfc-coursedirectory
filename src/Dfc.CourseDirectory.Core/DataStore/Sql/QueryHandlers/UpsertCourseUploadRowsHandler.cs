@@ -161,7 +161,7 @@ ON
     target.RowNumber = source.RowNumber AND
     target.RegionId = source.RegionId
 WHEN NOT MATCHED THEN INSERT (CourseUploadId, RowNumber, RegionId) VALUES (@CourseUploadId, source.RowNumber, source.RegionId)
-WHEN NOT MATCHED BY SOURCE AND target.CourseUploadId = @CourseUploadId THEN DELETE
+WHEN NOT MATCHED BY SOURCE AND target.CourseUploadId = @CourseUploadId AND target.RowNumber IN (SELECT RowNumber FROM @Rows) THEN DELETE
 ;
 
 SELECT
