@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                     .Select(g => new ViewModelErrorRowGroup()
                     {
                         CourseId = g.Key,
-                        LearnAimRef = g.Select(r => r.Row.LarsQan).Distinct().Single(),
+                        LearnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single(),
                         CourseRows = g
                             .Select(r => new ViewModelErrorRow()
                             {

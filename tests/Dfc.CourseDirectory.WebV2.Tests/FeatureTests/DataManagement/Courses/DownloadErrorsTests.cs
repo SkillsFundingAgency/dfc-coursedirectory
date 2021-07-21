@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             rows.Should().BeEquivalentTo(
                 new CsvCourseRowWithErrors()
                 {
-                    LearnAimRef = courseUploadRows[0].LarsQan,
+                    LearnAimRef = courseUploadRows[0].LearnAimRef,
                     WhoThisCourseIsFor = courseUploadRows[0].WhoThisCourseIsFor,
                     EntryRequirements = courseUploadRows[0].EntryRequirements,
                     WhatYouWillLearn = courseUploadRows[0].WhatYouWillLearn,

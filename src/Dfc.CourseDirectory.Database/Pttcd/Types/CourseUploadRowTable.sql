@@ -7,7 +7,7 @@
 	[LastValidated] DATETIME NOT NULL,
 	[CourseId] UNIQUEIDENTIFIER,
 	[CourseRunId] UNIQUEIDENTIFIER,
-	[LarsQan] NVARCHAR(MAX),
+	[LearnAimRef] NVARCHAR(MAX),
 	[WhoThisCourseIsFor] NVARCHAR(MAX),
 	[EntryRequirements] NVARCHAR(MAX),
 	[WhatYouWillLearn] NVARCHAR(MAX),

@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             return new ViewModel()
             {
                 DeliveryModes = deliveryModes,
-                LearnAimRef = rowGroup.Select(r => r.LarsQan).Distinct().Single(),
+                LearnAimRef = rowGroup.Select(r => r.LearnAimRef).Distinct().Single(),
                 RowNumber = rowNumber,
                 Rows = rowGroup
                     .Select(r => new ViewModelRow()

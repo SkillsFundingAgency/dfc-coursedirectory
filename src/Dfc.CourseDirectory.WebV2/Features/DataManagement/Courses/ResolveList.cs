@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                     {
                         RowNumber = g.First().Row.RowNumber,
                         CourseId = g.Key,
-                        LearnAimRef = g.Select(r => r.Row.LarsQan).Distinct().Single(),
+                        LearnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single(),
                         CourseRows = g
                             .Select(r => new ViewModelErrorRow()
                             {

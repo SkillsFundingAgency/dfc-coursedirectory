@@ -128,14 +128,14 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH");
         }
 
-        public static void LarsQan<T>(
+        public static void LearnAimRef<T>(
             this IRuleBuilderInitial<T, string> field,
-            IReadOnlyCollection<string> validLearningAimRefs)
+            IReadOnlyCollection<string> validLearnAimRefs)
         {
             field
                 .NotEmpty()
                     .WithMessageFromErrorCode("COURSE_LARS_QAN_REQUIRED")
-                .Must(v => string.IsNullOrWhiteSpace(v) || validLearningAimRefs.Contains(v, StringComparer.OrdinalIgnoreCase))
+                .Must(v => string.IsNullOrWhiteSpace(v) || validLearnAimRefs.Contains(v, StringComparer.OrdinalIgnoreCase))
                     .WithMessageFromErrorCode("COURSE_LARS_QAN_INVALID");
         }
 

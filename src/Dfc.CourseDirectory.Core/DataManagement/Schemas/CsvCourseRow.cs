@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
         public static CsvCourseRow FromModel(CourseUploadRow row) => new CsvCourseRow()
         {
-            LearnAimRef = row.LarsQan,
+            LearnAimRef = row.LearnAimRef,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
             EntryRequirements = row.EntryRequirements,
             WhatYouWillLearn = row.WhatYouWillLearn,

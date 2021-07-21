@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public Guid CourseRunId { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }
-        public string LarsQan { get; set; }
+        public string LearnAimRef { get; set; }
         public string WhoThisCourseIsFor { get; set; }
         public string EntryRequirements { get; set; }
         public string WhatYouWillLearn { get; set; }
