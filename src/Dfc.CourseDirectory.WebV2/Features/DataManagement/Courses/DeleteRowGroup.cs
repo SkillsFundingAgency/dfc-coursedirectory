@@ -100,7 +100,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             var groupErrors = rowGroup.First().Errors
                 .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.Course)
                 .ToArray();
-            
+
             return new ViewModel()
             {
                 DeliveryModes = deliveryModes,
@@ -114,6 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
                         ErrorFields = r.Errors.Except(groupErrors).Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
                         StartDate = r.StartDate
                     })
+                    .Where(r => r.ErrorFields.Count > 0)
                     .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
                     .ThenBy(r => r.StartDate)
                     .ThenBy(r => r.DeliveryMode)

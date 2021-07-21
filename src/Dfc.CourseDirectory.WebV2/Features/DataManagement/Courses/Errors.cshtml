@@ -40,7 +40,7 @@
                     <tbody class="govuk-table__body">
                         @foreach (var row in Model.ErrorRows)
                         {
-                            <tr class="govuk-table__row" data-testid="CourseRow">
+                            <tr class="govuk-table__row @(row.CourseRows.Count == 0 ? "pttcd-table__row-!-border" : "")" data-testid="CourseRow">
                                 <td class="govuk-table__cell pttcd-table--no-border govuk-body-s"><strong>LARS</strong> @row.LearnAimRef</td>
                                 <td class="govuk-table__cell pttcd-table--no-border"></td>
                                 <td class="govuk-table__cell pttcd-table--no-border"></td>
