@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -113,8 +112,7 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         if (isValid.Value)
                         {
-                            var learnAimRef = await CreateLearningAimRef();
-                            rowBuilder.AddValidRows(learnAimRef, 3);
+                            rowBuilder.AddValidRows(3);
                         }
                         else
                         {
@@ -142,7 +140,12 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingCompletedOn));
                     }
 
-                    //set published handler
+                    await dispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessed()
+                    {
+                        ApprenticeshipUploadId = apprenticeshipUploadId,
+                        ProcessingCompletedOn = processingCompletedOn.Value,
+                        IsValid = isValid.Value
+                    });
                 }
                 else if (abandonedOn.HasValue)
                 {
@@ -150,8 +153,12 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         throw new ArgumentNullException(nameof(processingCompletedOn));
                     }
-                    
-                    //set abandoned handler
+
+                    await dispatcher.ExecuteQuery(new SetApprenticeshipUploadAbandoned()
+                    {
+                        ApprenticeshipUploadId = apprenticeshipUploadId,
+                        AbandonedOn = abandonedOn.Value
+                    });
                 }
 
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload()
@@ -169,89 +176,61 @@ namespace Dfc.CourseDirectory.Testing
 
             public ApprenticeshipUploadRowBuilder AddRow(string learnAimRef, Action<UpsertApprenticeshipUploadRowsRecord> configureRecord)
             {
-                var record = CreateValidRecord(learnAimRef);
+                var record = CreateValidRecord();
                 configureRecord(record);
                 _records.Add(record);
                 return this;
             }
 
             public ApprenticeshipUploadRowBuilder AddRow(
-                Guid courseId,
-                Guid courseRunId,
-                string larsQan,
-                string whoThisCourseIsFor,
-                string entryRequirements,
-                string whatYouWillLearn,
-                string howYouWillLearn,
-                string whatYouWillNeedToBring,
-                string howYouWillBeAssessed,
-                string whereNext,
-                string courseName,
-                string providerCourseRef,
+                Guid apprenticeshipId,
+                int standardCode,
+                int standardVersion,
+                string apprenticeshipInformation,
+                string apprenticeshipWebpage,
+                string contactEmail,
+                string contactPhone,
+                string contactUrl,
                 string deliveryMode,
-                string startDate,
-                string flexibleStartDate,
-                string venueName,
-                string providerVenueRef,
+                string venue,
+                string yourVenueReference,
+                string radius,
                 string nationalDelivery,
-                string subRegions,
-                string courseWebpage,
-                string cost,
-                string costDescription,
-                string duration,
-                string durationUnit,
-                string studyMode,
-                string attendancePattern,
-                Guid? venueId,
+                string subRegion,
                 IEnumerable<string> errors = null)
             {
                 var record = CreateRecord(
-                    courseId,
-                    courseRunId,
-                    larsQan,
-                    whoThisCourseIsFor,
-                    entryRequirements,
-                    whatYouWillLearn,
-                    howYouWillLearn,
-                    whatYouWillNeedToBring,
-                    howYouWillBeAssessed,
-                    whereNext,
-                    courseName,
-                    providerCourseRef,
-                    deliveryMode,
-                    startDate,
-                    flexibleStartDate,
-                    venueName,
-                    providerVenueRef,
-                    nationalDelivery,
-                    subRegions,
-                    courseWebpage,
-                    cost,
-                    costDescription,
-                    duration,
-                    durationUnit,
-                    studyMode,
-                    attendancePattern,
-                    venueId,
-                    errors);
-
+                apprenticeshipId,
+                standardCode,
+                standardVersion,
+                apprenticeshipInformation,
+                apprenticeshipWebpage,
+                contactEmail,
+                contactPhone,
+                contactUrl,
+                deliveryMode,
+                venue,
+                yourVenueReference,
+                radius,
+                nationalDelivery,
+                subRegion,
+                errors);
                 _records.Add(record);
-
                 return this;
             }
 
-            public ApprenticeshipUploadRowBuilder AddValidRow(string learnAimRef)
+            public ApprenticeshipUploadRowBuilder AddValidRow()
             {
-                var record = CreateValidRecord(learnAimRef);
+                var record = CreateValidRecord();
                 _records.Add(record);
                 return this;
             }
 
-            public ApprenticeshipUploadRowBuilder AddValidRows(string learnAimRef, int count)
+            public ApprenticeshipUploadRowBuilder AddValidRows(int count)
             {
                 for (int i = 0; i < count; i++)
                 {
-                    AddValidRow(learnAimRef);
+                    AddValidRow();
                 }
 
                 return this;
@@ -260,33 +239,20 @@ namespace Dfc.CourseDirectory.Testing
             internal IReadOnlyCollection<UpsertApprenticeshipUploadRowsRecord> GetUpsertQueryRows() => _records;
 
             private UpsertApprenticeshipUploadRowsRecord CreateRecord(
-                Guid courseId,
-                Guid courseRunId,
-                string learnAimRef,
-                string whoThisCourseIsFor,
-                string entryRequirements,
-                string whatYouWillLearn,
-                string howYouWillLearn,
-                string whatYouWillNeedToBring,
-                string howYouWillBeAssessed,
-                string whereNext,
-                string courseName,
-                string providerCourseRef,
+                Guid apprenticeshipId,
+                int standardCode,
+                int standardVersion,
+                string apprenticeshipInformation,
+                string apprenticeshipWebpage,
+                string contactEmail,
+                string contactPhone,
+                string contactUrl,
                 string deliveryMode,
-                string startDate,
-                string flexibleStartDate,
-                string venueName,
-                string providerVenueRef,
+                string venue,
+                string yourVenueReference,
+                string radius,
                 string nationalDelivery,
-                string subRegions,
-                string courseWebpage,
-                string cost,
-                string costDescription,
-                string duration,
-                string durationUnit,
-                string studyMode,
-                string attendancePattern,
-                Guid? venueId,
+                string subRegion,
                 IEnumerable<string> errors = null)
             {
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
@@ -295,40 +261,42 @@ namespace Dfc.CourseDirectory.Testing
                 return new UpsertApprenticeshipUploadRowsRecord()
                 {
                     RowNumber = _records.Count + 2,
-                    IsValid = isValid
+                    IsValid = isValid,
+                    ApprenticeshipId = apprenticeshipId,
+                    StandardCode = standardCode,
+                    StandardVersion = standardVersion,
+                    ApprenticeshipInformation = apprenticeshipInformation,
+                    ApprenticeshipWebpage = apprenticeshipWebpage,
+                    ContactEmail = contactEmail,
+                    ContactPhone = contactPhone,
+                    ContactUrl = contactUrl,
+                    DeliveryMode = deliveryMode,
+                    Venue = venue,
+                    YourVenueReference = yourVenueReference,
+                    Radius = radius,
+                    NationalDelivery = nationalDelivery,
+                    SubRegion = subRegion,
+                    Errors = errors
                 };
             }
 
-            private UpsertApprenticeshipUploadRowsRecord CreateValidRecord(string learnAimRef)
+            private UpsertApprenticeshipUploadRowsRecord CreateValidRecord()
             {
                 return CreateRecord(
-                    courseId: Guid.NewGuid(),
-                    courseRunId: Guid.NewGuid(),
-                    learnAimRef: learnAimRef,
-                    whoThisCourseIsFor: "Who this course is for",
-                    entryRequirements: "",
-                    whatYouWillLearn: "",
-                    howYouWillLearn: "",
-                    whatYouWillNeedToBring: "",
-                    howYouWillBeAssessed: "",
-                    whereNext: "",
-                    courseName: "Course name",
-                    providerCourseRef: "",
-                    deliveryMode: "Online",
-                    startDate: "",
-                    flexibleStartDate: "yes",
-                    venueName: "",
-                    providerVenueRef: "",
-                    nationalDelivery: "",
-                    subRegions: "",
-                    courseWebpage: "",
-                    cost: "",
-                    costDescription: "Free",
-                    duration: "2",
-                    durationUnit: "years",
-                    studyMode: "",
-                    attendancePattern: "",
-                    venueId: null);
+                    apprenticeshipId: Guid.NewGuid(),
+                    standardCode: 1,
+                    standardVersion: 1,
+                    apprenticeshipInformation: "Some info",
+                    apprenticeshipWebpage: "https://someapprenticeshipsite.com",
+                    contactEmail: "",
+                    contactPhone: "",
+                    contactUrl: "",
+                    deliveryMode: "1",
+                    venue: "Some venue",
+                    yourVenueReference: "Some Reference",
+                    radius: "1",
+                    nationalDelivery: "1",
+                    subRegion: "");
             }
         }
     }

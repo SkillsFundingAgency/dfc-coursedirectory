@@ -1,11 +1,9 @@
-﻿CREATE TABLE [Pttcd].[ApprenticeshipUploadRows](
-	[ApprenticeshipUploadRowId] BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT [PK_ApprenticeshipUploadRows] PRIMARY KEY,
-	[ApprenticeshipUploadId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [FK_ApprenticeshipUploadRows_ApprenticeshipUploads] FOREIGN KEY REFERENCES [Pttcd].[ApprenticeshipUploads] ([ApprenticeshipUploadId]),
+﻿CREATE TYPE [Pttcd].[ApprenticeshipUploadRowTable] AS TABLE
+(
 	[RowNumber] INT NOT NULL,
-	[ApprenticeshipUploadRowStatus] TINYINT NOT NULL,
 	[IsValid] BIT NOT NULL,
-	[Errors] VARCHAR(max) NULL,
-	[LastUpdated] DATETIME NOT NULL,
+	[Errors] VARCHAR(MAX),
+	[LastUpdated] DATETIME,
 	[LastValidated] DATETIME NOT NULL,
     [StandardCode] INT NOT NULL,
     [StandardVersion] INT NOT NULL,
