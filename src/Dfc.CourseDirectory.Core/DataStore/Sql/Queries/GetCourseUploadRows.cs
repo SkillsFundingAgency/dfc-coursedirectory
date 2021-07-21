@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class GetCourseUploadRows : ISqlQuery<IReadOnlyCollection<CourseUploadRow>>
+    public class GetCourseUploadRows : ISqlQuery<(IReadOnlyCollection<CourseUploadRow> ErrorRows, int TotalRows)>
     {
         public Guid CourseUploadId { get; set; }
         public bool WithErrorsOnly { get; set; }

@@ -298,7 +298,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId });
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId });
 
                 // We expect rows 2 and 3 to be deleted (since they have the same CourseId) and 4 to be still live
                 rows.Count.Should().Be(1);

@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+            var (errorRows, totalRows) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                 _providerContextProvider.GetProviderId());
 
             if (errorRows.Count == 0)
@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 return new UploadHasNoErrors();
             }
 
-            return CreateViewModel(errorRows);
+            return CreateViewModel(errorRows, totalRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -93,17 +93,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
             if (!validationResult.IsValid)
             {
-                var uploadRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+                var (errorRows, totalRows) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                     _providerContextProvider.GetProviderId());
 
-                var vm = CreateViewModel(uploadRows);
+                var vm = CreateViewModel(errorRows, totalRows);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
             return new Success();
         }
 
-        private ViewModel CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
+        private ViewModel CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, int totalRows)
         {
             var errorRowCount = rows.Count;
             var canResolveOnScreen = errorRowCount <= 30;
@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                     .ToArray(),
                 CanResolveOnScreen = canResolveOnScreen,
                 ErrorRowCount = errorRowCount,
-                TotalRowCount = rows.Count
+                TotalRowCount = totalRows
             };
         }
 
