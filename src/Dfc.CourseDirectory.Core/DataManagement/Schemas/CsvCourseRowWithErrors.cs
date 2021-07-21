@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
         public new static CsvCourseRowWithErrors FromModel(CourseUploadRow row) => new CsvCourseRowWithErrors()
         {
-            LearnAimRef = row.LarsQan,
+            LearnAimRef = row.LearnAimRef,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
             EntryRequirements = row.EntryRequirements,
             WhatYouWillLearn = row.WhatYouWillLearn,
