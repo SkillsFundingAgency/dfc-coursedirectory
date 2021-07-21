@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
-                    request,
+                    await CreateViewModel(),
                     "The file contains errors",
                     null,
                     saveFileResult.MissingLarsRows);
