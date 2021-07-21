@@ -74,7 +74,7 @@
         if (ViewBag.ExpiredLarsRows is IReadOnlyCollection<string> expiredLars && expiredLars.Count != 0)
         {
 <govuk-error-summary-item>
-        @if ((ViewBag.MissingLarsRows is IReadOnlyCollection<string> firstErrorCheck && firstErrorCheck.Count == 0) ||
+        @if ((ViewBag.MissingLarsRows is IReadOnlyCollection<string> firstErrorCheck && firstErrorCheck.Count == 0) &&
             (ViewBag.InvalidLarsRows is IReadOnlyCollection<string> prevErrorCheck && prevErrorCheck.Count == 0))
         {
             <a href="#@(Html.IdFor(m => m.File))">The file contains errors</a>

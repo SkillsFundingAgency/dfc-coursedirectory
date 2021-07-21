@@ -10,6 +10,7 @@ using Azure.Storage.Blobs;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {

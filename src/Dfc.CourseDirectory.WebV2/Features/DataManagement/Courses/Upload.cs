@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             ExpiredLarsRows = Array.Empty<string>();
         }
 
-        public UploadFailedResult(Command model, string fileErrorMessage, IEnumerable<string> missingHeaders = null, IEnumerable<string> missingLars = null, IEnumerable<string> invalidLars = null, IEnumerable<string> expiredLars = null)
+        public UploadFailedResult(ViewModel model, string fileErrorMessage, IEnumerable<string> missingHeaders = null, IEnumerable<string> missingLars = null, IEnumerable<string> invalidLars = null, IEnumerable<string> expiredLars = null)
             : base(model, CreateValidationResult(fileErrorMessage))
         {
             MissingHeaders = missingHeaders?.ToArray() ?? Array.Empty<string>();
@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
-                    request,
+                    await CreateViewModel(),
                     "The file contains errors",
                     null,
                     saveFileResult.MissingLarsRows,
