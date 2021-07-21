@@ -290,6 +290,9 @@
     <Build Include="Pttcd\Tables\CampaignProviderCourses.sql" />
     <Build Include="Pttcd\Types\ProviderLearnAimRefTable.sql" />
     <Build Include="Pttcd\Tables\FindACourseIndexCampaignCodes.sql" />
+    <Build Include="Pttcd\Tables\ApprenticeshipUploadRows.sql" />
+    <Build Include="Pttcd\Tables\ApprenticeshipUploads.sql" />
+    <Build Include="Pttcd\Types\ApprenticeshipUploadRowTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
