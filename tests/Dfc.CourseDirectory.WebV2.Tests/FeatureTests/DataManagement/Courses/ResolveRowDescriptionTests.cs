@@ -452,7 +452,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be(string.Format(expectedLocation, provider.ProviderId));
 
-            var rows = await WithSqlQueryDispatcher(
+            var (rows, _) = await WithSqlQueryDispatcher(
                 dispatcher => dispatcher.ExecuteQuery(new GetCourseUploadRows() { CourseUploadId = courseUpload.CourseUploadId }));
 
             Assert.Collection(

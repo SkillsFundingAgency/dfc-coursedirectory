@@ -10,9 +10,9 @@ using Dfc.CourseDirectory.Core.Models;
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class GetCourseUploadRowsHandler :
-        ISqlQueryHandler<GetCourseUploadRows, IReadOnlyCollection<CourseUploadRow>>
+        ISqlQueryHandler<GetCourseUploadRows, (IReadOnlyCollection<CourseUploadRow> ErrorRows, int TotalRows)>
     {
-        public async Task<IReadOnlyCollection<CourseUploadRow>> Execute(
+        public async Task<(IReadOnlyCollection<CourseUploadRow> ErrorRows, int TotalRows)> Execute(
             SqlTransaction transaction,
             GetCourseUploadRows query)
         {
@@ -29,15 +29,28 @@ AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
 {(query.WithErrorsOnly ? "AND IsValid = 0" : "")}
 ORDER BY RowNumber";
 
-            var results = (await transaction.Connection.QueryAsync<Result>(sql, new { query.CourseUploadId }, transaction))
-                .AsList();
-
-            foreach (var row in results)
+            if (query.WithErrorsOnly)
             {
-                row.Errors = (row.ErrorList ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries);
+                sql += $@"
+SELECT COUNT(*)
+FROM Pttcd.CourseUploadRows
+WHERE CourseUploadId = @CourseUploadId
+AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}";
             }
 
-            return results;
+            using (var reader = await transaction.Connection.QueryMultipleAsync(sql, new { query.CourseUploadId }, transaction))
+            {
+                var rows = (await reader.ReadAsync<Result>()).AsList();
+
+                foreach (var row in rows)
+                {
+                    row.Errors = (row.ErrorList ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries);
+                }
+
+                var totalRows = query.WithErrorsOnly ? await reader.ReadSingleAsync<int>() : rows.Count;
+
+                return (rows, totalRows);
+            }
         }
 
         private class Result : CourseUploadRow
