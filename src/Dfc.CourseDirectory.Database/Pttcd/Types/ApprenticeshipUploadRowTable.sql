@@ -18,5 +18,5 @@
     [YourVenueReference] NVARCHAR(MAX) NOT NULL,
     [Radius] NVARCHAR(MAX) NULL,
     [NationalDelivery] NVARCHAR(MAX) NULL,
-    [SubRegion] NVARCHAR(MAX) NULL
+    [SubRegions] NVARCHAR(MAX) NULL
 )

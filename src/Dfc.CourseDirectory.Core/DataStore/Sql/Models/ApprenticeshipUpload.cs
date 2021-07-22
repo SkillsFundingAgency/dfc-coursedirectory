@@ -36,6 +36,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string YourVenueReference { get; set; }
         public string Radius { get; set; }
         public string NationalDelivery { get; set; }
-        public string SubRegion { get; set; }
+        public string SubRegions { get; set; }
     }
 }

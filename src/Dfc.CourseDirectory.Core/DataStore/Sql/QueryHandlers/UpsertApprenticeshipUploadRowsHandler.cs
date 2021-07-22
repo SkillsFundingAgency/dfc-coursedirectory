@@ -42,7 +42,7 @@ WHEN NOT MATCHED THEN
       YourVenueReference,
       Radius,
       NationalDelivery,
-      SubRegion
+      SubRegions
     ) VALUES (
         @ApprenticeshipUploadId,
         source.RowNumber,
@@ -64,7 +64,7 @@ WHEN NOT MATCHED THEN
         source.YourVenueReference,
         source.Radius,
         source.NationalDelivery,
-        source.SubRegion
+        source.SubRegions
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -85,14 +85,14 @@ WHEN MATCHED THEN UPDATE SET
     YourVenueReference = source.YourVenueReference,
     Radius = source.Radius,
     NationalDelivery = source.NationalDelivery,
-    SubRegion = source.SubRegion
+    SubRegions = source.SubRegions
 ;
 
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
     ContactPhone, ContactUrl, DeliveryMode, Venue,YourVenueReference, Radius, NationalDelivery,
-    SubRegion
+    SubRegions
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -135,7 +135,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("YourVenueReference", typeof(string));
                 table.Columns.Add("Radius", typeof(string));
                 table.Columns.Add("NationalDelivery", typeof(string));
-                table.Columns.Add("SubRegion", typeof(string));
+                table.Columns.Add("SubRegions", typeof(string));
 
                 foreach (var record in query.Records)
                 {
