@@ -285,6 +285,7 @@
     <Build Include="Pttcd\Types\CourseUploadRowTable.sql" />
     <Build Include="Pttcd\Types\UnicodeStringTable.sql" />
     <Build Include="Pttcd\Tables\CourseUploadRowSubRegions.sql" />
+    <Build Include="Pttcd\Indexes\IX_CourseRuns_Course.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseUploadRowSubRegions_RowRegion.sql" />
     <Build Include="Pttcd\Types\CourseUploadRowSubRegionsTable.sql" />
     <Build Include="Pttcd\Tables\CampaignProviderCourses.sql" />
