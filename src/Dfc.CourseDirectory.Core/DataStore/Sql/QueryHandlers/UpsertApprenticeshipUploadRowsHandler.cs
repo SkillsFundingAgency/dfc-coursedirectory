@@ -158,7 +158,7 @@ ORDER BY RowNumber";
                         record.YourVenueReference,
                         record.Radius,
                         record.NationalDelivery,
-                        record.SubRegion);
+                        record.SubRegions);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.ApprenticeshipUploadRowTable");

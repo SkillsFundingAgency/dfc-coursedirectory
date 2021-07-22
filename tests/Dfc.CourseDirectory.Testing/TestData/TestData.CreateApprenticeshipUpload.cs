@@ -116,10 +116,11 @@ namespace Dfc.CourseDirectory.Testing
                         }
                         else
                         {
-                            rowBuilder.AddRow(apprenticeshipInformation: string.Empty, record =>
+                            rowBuilder.AddRow(0,0, record =>
                             {
                                 record.IsValid = false;
-                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_APPRENTICESHIPINFORMATION_REQUIRED"].ErrorCode };
+                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_STANDARDVERSION_REQUIRED"].ErrorCode };
+                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_STANDARDCODE_REQUIRED"].ErrorCode };
                             });
                         }
                     }
@@ -174,9 +175,9 @@ namespace Dfc.CourseDirectory.Testing
         {
             private readonly List<UpsertApprenticeshipUploadRowsRecord> _records = new List<UpsertApprenticeshipUploadRowsRecord>();
 
-            public ApprenticeshipUploadRowBuilder AddRow(string apprenticeshipInformation, Action<UpsertApprenticeshipUploadRowsRecord> configureRecord)
+            public ApprenticeshipUploadRowBuilder AddRow(int standardCode, int standardVersion, Action<UpsertApprenticeshipUploadRowsRecord> configureRecord)
             {
-                var record = CreateValidRecord(apprenticeshipInformation);
+                var record = CreateValidRecord(standardCode, standardVersion);
                 configureRecord(record);
                 _records.Add(record);
                 return this;
@@ -196,7 +197,7 @@ namespace Dfc.CourseDirectory.Testing
                 string yourVenueReference,
                 string radius,
                 string nationalDelivery,
-                string subRegion,
+                string subRegions,
                 IEnumerable<string> errors = null)
             {
                 var record = CreateRecord(
@@ -213,7 +214,7 @@ namespace Dfc.CourseDirectory.Testing
                 yourVenueReference,
                 radius,
                 nationalDelivery,
-                subRegion,
+                subRegions,
                 errors);
                 _records.Add(record);
                 return this;
@@ -221,7 +222,7 @@ namespace Dfc.CourseDirectory.Testing
 
             public ApprenticeshipUploadRowBuilder AddValidRow()
             {
-                var record = CreateValidRecord("Valid Apprenticeship");
+                var record = CreateValidRecord(1,1);
                 _records.Add(record);
                 return this;
             }
@@ -252,7 +253,7 @@ namespace Dfc.CourseDirectory.Testing
                 string yourVenueReference,
                 string radius,
                 string nationalDelivery,
-                string subRegion,
+                string subRegions,
                 IEnumerable<string> errors = null)
             {
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
@@ -275,18 +276,18 @@ namespace Dfc.CourseDirectory.Testing
                     YourVenueReference = yourVenueReference,
                     Radius = radius,
                     NationalDelivery = nationalDelivery,
-                    SubRegion = subRegion,
+                    SubRegions = subRegions,
                     Errors = errors
                 };
             }
 
-            private UpsertApprenticeshipUploadRowsRecord CreateValidRecord(string apprenticeshipInformation)
+            private UpsertApprenticeshipUploadRowsRecord CreateValidRecord(int standardCode, int standardVersion)
             {
                 return CreateRecord(
                     apprenticeshipId: Guid.NewGuid(),
-                    standardCode: 1,
-                    standardVersion: 1,
-                    apprenticeshipInformation: apprenticeshipInformation,
+                    standardCode: standardCode,
+                    standardVersion: standardVersion,
+                    apprenticeshipInformation: "Some Apprenticeship Information",
                     apprenticeshipWebpage: "https://someapprenticeshipsite.com",
                     contactEmail: "",
                     contactPhone: "",
@@ -296,7 +297,7 @@ namespace Dfc.CourseDirectory.Testing
                     yourVenueReference: "Some Reference",
                     radius: "1",
                     nationalDelivery: "1",
-                    subRegion: "");
+                    subRegions: "");
             }
         }
     }
