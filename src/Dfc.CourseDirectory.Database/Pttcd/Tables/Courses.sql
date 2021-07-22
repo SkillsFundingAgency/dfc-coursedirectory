@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [Pttcd].[Courses]
 (
 	[CourseId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Courses] PRIMARY KEY,
+	[ProviderId] UNIQUEIDENTIFIER CONSTRAINT [FK_Courses_Provider] FOREIGN KEY REFERENCES [Pttcd].[Providers] ([ProviderId]),
 	[LastSyncedFromCosmos] DATETIME,
 	[Version] ROWVERSION NOT NULL,
 	[CourseStatus] INT,

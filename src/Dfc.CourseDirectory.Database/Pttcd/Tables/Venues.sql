@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [Pttcd].[Venues]
 (
 	[VenueId] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Venues] PRIMARY KEY,
+	[ProviderId] UNIQUEIDENTIFIER CONSTRAINT [FK_Venues_Provider] FOREIGN KEY REFERENCES [Pttcd].[Providers] ([ProviderId]),
 	[LastSyncedFromCosmos] DATETIME,
 	[Version] ROWVERSION NOT NULL,
 	[VenueStatus] TINYINT,

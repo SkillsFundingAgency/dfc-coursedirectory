@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     public class CreateVenue : ISqlQuery<Success>
     {
         public Guid VenueId { get; set; }
-        public int ProviderUkprn { get; set; }
+        public Guid ProviderId { get; set; }
         public string Name { get; set; }
         public string ProviderVenueRef { get; set; }
         public string Email { get; set; }
