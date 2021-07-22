@@ -31,7 +31,15 @@ UPDATE Pttcd.Venues
 SET ProviderId = p.ProviderId
 FROM Pttcd.Venues v
 JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
-WHERE v.ProviderId IS NULL";
+WHERE v.ProviderId IS NULL
+
+UPDATE Pttcd.Apprenticeships
+SET ProviderId = p.ProviderId
+FROM Pttcd.Apprenticeships a
+JOIN Pttcd.Providers p ON a.ProviderUkprn = a.ProviderUkprn
+WHERE a.ProviderId IS NULL OR a.ProviderId = '00000000-0000-0000-0000-000000000000' OR NOT EXISTS (
+    SELECT 1 FROM Pttcd.Providers x WHERE x.ProviderId = a.ProviderId
+)";
 
             await dispatcher.Transaction.Connection.ExecuteAsync(sql, transaction: dispatcher.Transaction);
 
