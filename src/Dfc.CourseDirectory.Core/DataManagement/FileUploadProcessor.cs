@@ -277,19 +277,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         string larsRow = row["LARS_QAN"].ToString().Trim();
                         var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo() { LearningAimRef = larsRow });
                         if (validLearningAimRef != null
-                            && validLearningAimRef.EffectiveTo.HasValue 
+                            && validLearningAimRef.EffectiveTo.HasValue
                             && validLearningAimRef.EffectiveTo < DateTime.Now)
                         {
-                            expiredLars.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
+                            expired.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
                         }
                     }
-                    if (expiredLars.Count > 0)
+                    if (missing.Count > 0 || invalid.Count > 0 || expired.Count > 0)
                     {
-                        return (FileMatchesSchemaResult.InvalidLars, expiredLars.ToArray());
+                        return (FileMatchesSchemaResult.InvalidLars, missing.ToArray(), invalid.ToArray(), expired.ToArray());
                     }
                 }
 
-                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>(), Array.Empty<string>(), Array.Empty<string>());
             }
             finally
             {
