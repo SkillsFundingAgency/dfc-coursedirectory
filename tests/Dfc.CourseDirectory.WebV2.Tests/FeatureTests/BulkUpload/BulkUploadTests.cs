@@ -14,17 +14,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.BulkUpload
         }
 
         [Theory]
-        [InlineData(1,"1 course")]
-        [InlineData(2,"2 courses")]
+        [InlineData(1, "1 course")]
+        [InlineData(2, "2 courses")]
         public async Task Get_PublishYourFile_RendersPendingCount(int courseCount, string expectedCourseCountText)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+
             for (var i = 0; i < courseCount; i++)
             {
-                await TestData.CreateCourse(provider.ProviderId, createdBy: providerUser, courseStatus: CourseStatus.BulkUploadReadyToGoLive);
+                await TestData.CreateCourse(
+                    provider.ProviderId,
+                    createdBy: providerUser,
+                    configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.BulkUploadReadyToGoLive));
             }
 
             // Act

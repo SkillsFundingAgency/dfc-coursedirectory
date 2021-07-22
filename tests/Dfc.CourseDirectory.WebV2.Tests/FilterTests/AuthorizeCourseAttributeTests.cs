@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{course.Id}");
+                $"/AuthorizeCourseAttributeTests/{course.CourseId}");
 
             await User.AsTestUser(userType);
 
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{course.Id}");
+                $"/AuthorizeCourseAttributeTests/{course.CourseId}");
 
             await User.AsTestUser(userType, provider.ProviderId);
 
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{course.Id}");
+                $"/AuthorizeCourseAttributeTests/{course.CourseId}");
 
             await User.AsTestUser(userType, anotherProvider.ProviderId);
 
@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/AuthorizeCourseAttributeTests/{course.Id}");
+                $"/AuthorizeCourseAttributeTests/{course.CourseId}");
 
             User.SetNotAuthenticated();
 

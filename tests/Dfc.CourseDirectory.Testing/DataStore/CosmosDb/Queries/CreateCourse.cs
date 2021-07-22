@@ -28,12 +28,12 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public IEnumerable<CreateCourseCourseRun> CourseRuns { get; set; }
         public DateTime CreatedDate { get; set; }
         public UserInfo CreatedByUser { get; set; }
-        public CourseStatus CourseStatus { get; set; }
     }
 
     public class CreateCourseCourseRun
     {
         public Guid CourseRunId { get; set; }
+        public CourseStatus CourseRunStatus { get; set; }
         public Guid? VenueId { get; set; }
         public string CourseName { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }

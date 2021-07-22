@@ -20,6 +20,8 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
         {
             var allRegions = _regionCache.GetAllRegions().GetAwaiter().GetResult();
 
+            var courseStatus = request.CourseRuns.Aggregate((CourseStatus)0, (cur, cr) => cur | cr.CourseRunStatus);
+
             var course = new Course()
             {
                 Id = request.CourseId,
@@ -65,14 +67,14 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                             SubRegionName = r.Name
                         }) :
                         null,
-                    RecordStatus = request.CourseStatus,
+                    RecordStatus = cr.CourseRunStatus,
                     CreatedDate = request.CreatedDate,
                     CreatedBy = request.CreatedByUser.UserId,
                     UpdatedDate = request.CreatedDate,
                     UpdatedBy = request.CreatedByUser.UserId,
                     ProviderCourseID = cr.ProviderCourseId
                 }),
-                CourseStatus = request.CourseStatus,
+                CourseStatus = courseStatus,
                 CreatedBy = request.CreatedByUser.UserId,
                 CreatedDate = request.CreatedDate,
                 UpdatedBy = request.CreatedByUser.UserId,

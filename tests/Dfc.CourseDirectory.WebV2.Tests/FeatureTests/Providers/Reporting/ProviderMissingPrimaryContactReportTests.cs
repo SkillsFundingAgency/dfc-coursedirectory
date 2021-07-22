@@ -476,7 +476,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             {
                 CreateContact("CV4 1AA", "some Street", null, null)
             });
-            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), courseStatus: courseStatus);
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: courseStatus));
 
             await User.AsHelpdesk();
             var request = new HttpRequestMessage(

@@ -10,26 +10,19 @@ using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetCoursesForProviderHandler : ISqlQueryHandler<GetCoursesForProvider, IReadOnlyCollection<Course>>
+    public class GetCourseHandler : ISqlQueryHandler<GetCourse, Course>
     {
-        public async Task<IReadOnlyCollection<Course>> Execute(SqlTransaction transaction, GetCoursesForProvider query)
+        public async Task<Course> Execute(SqlTransaction transaction, GetCourse query)
         {
             var sql = $@"
-DECLARE @CourseIds Pttcd.GuidIdTable
-
-INSERT INTO @CourseIds
-SELECT c.CourseId
-FROM Pttcd.Courses c
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-WHERE p.ProviderId = @ProviderId
-AND (c.CourseStatus & @CourseStatusMask) <> 0
-
 SELECT
-    c.CourseId, c.CourseStatus, @ProviderId ProviderId, c.LearnAimRef,
+    c.CourseId, c.CourseStatus, p.ProviderId, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext
 FROM Pttcd.Courses c
-JOIN @CourseIds x ON c.CourseId = x.Id
+JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
+WHERE c.CourseId = @CourseId
+AND c.CourseStatus <> {(int)CourseStatus.Archived}
 
 SELECT
     cr.CourseRunId,
@@ -53,77 +46,74 @@ SELECT
     v.VenueName,
     v.ProviderVenueRef
 FROM Pttcd.CourseRuns cr
-JOIN @CourseIds x ON cr.CourseId = x.Id
 LEFT JOIN Pttcd.Venues v on v.VenueId = cr.VenueId
-AND (cr.CourseRunStatus & @CourseStatusMask) <> 0
+WHERE cr.CourseId = @CourseId
+AND cr.CourseRunStatus <> {(int)CourseStatus.Archived}
 
 SELECT crsr.CourseRunId, crsr.RegionId
 FROM Pttcd.CourseRunSubRegions crsr
 JOIN Pttcd.CourseRuns cr ON crsr.CourseRunId = cr.CourseRunId
-JOIN @CourseIds x ON cr.CourseId = x.Id
+WHERE cr.CourseId = @CourseId
 ";
-
-            var courseStatusMask = query.CourseRunStatuses.Aggregate(CourseStatus.None, (current, status) => current | status);
 
             var paramz = new
             {
-                query.ProviderId,
-                CourseStatusMask = courseStatusMask
+                query.CourseId
             };
 
             using var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
-            var courses = await reader.ReadAsync<CourseResult>();
+            var course = await reader.ReadSingleOrDefaultAsync<CourseResult>();
 
-            var courseRuns = (await reader.ReadAsync<CourseRunResult>())
-                .GroupBy(r => r.CourseId)
-                .ToDictionary(g => g.Key, g => g.AsEnumerable());
+            if (course == null)
+            {
+                return null;
+            }
+
+            var courseRuns = await reader.ReadAsync<CourseRunResult>();
 
             var courseRunSubRegions = (await reader.ReadAsync<CourseRunSubRegionResult>())
                 .GroupBy(r => r.CourseRunId)
                 .ToDictionary(g => g.Key, g => g.Select(r => r.RegionId).AsEnumerable());
 
-            return courses
-                .Select(c => new Course()
-                {
-                    CourseId = c.CourseId,
-                    CourseStatus = c.CourseStatus,
-                    ProviderId = c.ProviderId,
-                    LearnAimRef = c.LearnAimRef,
-                    CourseDescription = c.CourseDescription,
-                    EntryRequirements = c.EntryRequirements,
-                    WhatYoullLearn = c.WhatYoullLearn,
-                    HowYoullLearn = c.HowYoullLearn,
-                    WhatYoullNeed = c.WhatYoullNeed,
-                    HowYoullBeAssessed = c.HowYoullBeAssessed,
-                    WhereNext = c.WhereNext,
-                    CourseRuns = courseRuns
-                        .GetValueOrDefault(c.CourseId, Enumerable.Empty<CourseRunResult>())
-                        .Select(cr => new CourseRun()
-                        {
-                            CourseRunId = cr.CourseRunId,
-                            CourseRunStatus = cr.CourseRunStatus,
-                            CourseName = cr.CourseName,
-                            VenueId = cr.VenueId,
-                            ProviderCourseId = cr.ProviderCourseId,
-                            DeliveryMode = cr.DeliveryMode,
-                            FlexibleStartDate = cr.FlexibleStartDate,
-                            StartDate = cr.StartDate,
-                            CourseWebsite = cr.CourseWebsite,
-                            Cost = cr.Cost,
-                            CostDescription = cr.CostDescription,
-                            DurationUnit = cr.DurationUnit,
-                            DurationValue = cr.DurationValue,
-                            StudyMode = cr.StudyMode != 0 ? cr.StudyMode : null,  // Normalize 0 to null
-                            AttendancePattern = cr.AttendancePattern != 0 ? cr.AttendancePattern : null,  // Normalize 0 to null
-                            National = cr.National,
-                            SubRegionIds = courseRunSubRegions.GetValueOrDefault(cr.CourseRunId, Enumerable.Empty<string>()).ToArray(),
-                            VenueName = cr.VenueName,
-                            ProviderVenueRef = cr.ProviderVenueRef
-                        })
-                        .ToArray()
-                })
-                .ToArray();
+            return new Course()
+            {
+                CourseId = course.CourseId,
+                CourseStatus = course.CourseStatus,
+                ProviderId = course.ProviderId,
+                LearnAimRef = course.LearnAimRef,
+                CourseDescription = course.CourseDescription,
+                EntryRequirements = course.EntryRequirements,
+                WhatYoullLearn = course.WhatYoullLearn,
+                HowYoullLearn = course.HowYoullLearn,
+                WhatYoullNeed = course.WhatYoullNeed,
+                HowYoullBeAssessed = course.HowYoullBeAssessed,
+                WhereNext = course.WhereNext,
+                CourseRuns = courseRuns
+                    .Select(cr => new CourseRun()
+                    {
+                        CourseRunId = cr.CourseRunId,
+                        CourseRunStatus = cr.CourseRunStatus,
+                        CourseName = cr.CourseName,
+                        VenueId = cr.VenueId,
+                        ProviderCourseId = cr.ProviderCourseId,
+                        DeliveryMode = cr.DeliveryMode,
+                        FlexibleStartDate = cr.FlexibleStartDate,
+                        StartDate = cr.StartDate,
+                        CourseWebsite = cr.CourseWebsite,
+                        Cost = cr.Cost,
+                        CostDescription = cr.CostDescription,
+                        DurationUnit = cr.DurationUnit,
+                        DurationValue = cr.DurationValue,
+                        StudyMode = cr.StudyMode != 0 ? cr.StudyMode : null,  // Normalize 0 to null
+                        AttendancePattern = cr.AttendancePattern != 0 ? cr.AttendancePattern : null,  // Normalize 0 to null
+                        National = cr.National,
+                        SubRegionIds = courseRunSubRegions.GetValueOrDefault(cr.CourseRunId, Enumerable.Empty<string>()).ToArray(),
+                        VenueName = cr.VenueName,
+                        ProviderVenueRef = cr.ProviderVenueRef
+                    })
+                    .ToArray()
+            };
         }
 
         private class CourseResult
