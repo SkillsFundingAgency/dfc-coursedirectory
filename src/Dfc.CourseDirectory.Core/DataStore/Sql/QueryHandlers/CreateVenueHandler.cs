@@ -12,8 +12,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<Success> Execute(SqlTransaction transaction, CreateVenue query)
         {
             var sql = $@"
+DECLARE @ProviderUkprn INT
+
+SELECT @ProviderUkprn = Ukprn FROM Pttcd.Providers
+WHERE ProviderId = @ProviderId
+
 INSERT INTO Pttcd.Venues (
     VenueId,
+    ProviderId,
     VenueStatus,
     CreatedOn,
     CreatedBy,
@@ -33,6 +39,7 @@ INSERT INTO Pttcd.Venues (
     Website
 ) VALUES (
     @VenueId,
+    @ProviderId,
     {(int)VenueStatus.Live},
     @CreatedOn,
     @CreatedByUserId,
@@ -55,10 +62,10 @@ INSERT INTO Pttcd.Venues (
             var paramz = new
             {
                 query.VenueId,
+                query.ProviderId,
                 query.CreatedOn,
                 CreatedByUserId = query.CreatedBy.UserId,
                 VenueName = query.Name,
-                query.ProviderUkprn,
                 query.ProviderVenueRef,
                 query.AddressLine1,
                 query.AddressLine2,

@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId).Completed.Should().BeTrue();
 
             SqlQuerySpy.VerifyQuery<CreateVenue, Success>(q =>
-                q.ProviderUkprn == provider.Ukprn &&
+                q.ProviderId == provider.ProviderId &&
                 q.Name == name &&
                 q.Email == email &&
                 q.Telephone == telephone &&

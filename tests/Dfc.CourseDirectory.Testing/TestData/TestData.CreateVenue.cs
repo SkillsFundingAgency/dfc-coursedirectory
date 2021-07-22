@@ -27,22 +27,12 @@ namespace Dfc.CourseDirectory.Testing
         {
             return WithSqlQueryDispatcher(async dispatcher =>
             {
-                var provider = await dispatcher.ExecuteQuery(new GetProviderById()
-                {
-                    ProviderId = providerId
-                });
-
-                if (provider == null)
-                {
-                    throw new ArgumentException("Provider does not exist.", nameof(providerId));
-                }
-
                 var venueId = Guid.NewGuid();
 
                 await dispatcher.ExecuteQuery(new CreateVenue()
                 {
                     VenueId = venueId,
-                    ProviderUkprn = provider.Ukprn,
+                    ProviderId = providerId,
                     ProviderVenueRef = providerVenueRef,
                     Name = venueName,
                     Email = email,
