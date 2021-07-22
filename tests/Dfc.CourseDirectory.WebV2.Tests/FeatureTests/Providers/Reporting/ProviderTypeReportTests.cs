@@ -123,10 +123,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             var provider = await CreateProvider(12345678, ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels, ProviderStatus.Onboarded, "Active");
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), venueName: "TestVenue1");
 
-            var liveCourseIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo())));
-            var pendingCourseIds = await Task.WhenAll(Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), courseStatus: CourseStatus.Pending)));
-            var archivedCourseIds = await Task.WhenAll(Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), courseStatus: CourseStatus.Archived)));
-            var deletedCourseIds = await Task.WhenAll(Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), courseStatus: CourseStatus.Deleted)));
+            var liveCourseIds = await Task.WhenAll(
+                Enumerable.Range(0, 3).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo())));
+
+            var pendingCourseIds = await Task.WhenAll(
+                Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.Pending))));
+
+            var archivedCourseIds = await Task.WhenAll(
+                Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.Archived))));
+
+            var deletedCourseIds = await Task.WhenAll(
+                Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.Deleted))));
 
             var standard = await TestData.CreateStandard(123, 456, "TestStandard1");
             var liveApprenticeships = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateApprenticeship(provider.ProviderId, standard, User.ToUserInfo())));

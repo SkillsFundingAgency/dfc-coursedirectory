@@ -267,12 +267,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime,
-                        startDate: Clock.UtcNow.AddMonths(-1).Date));
+                configureCourseRuns: builder => builder.WithCourseRun(startDate: Clock.UtcNow.AddMonths(-1).Date));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -298,12 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                courseStatus: courseStatus,
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime));
+                configureCourseRuns: builder => builder.WithCourseRun(status: courseStatus));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -347,12 +337,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                courseStatus: CourseStatus.BulkUploadPending,
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime));
+                configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.BulkUploadPending));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -376,12 +361,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                courseStatus: CourseStatus.BulkUploadReadyToGoLive,
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime));
+                configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.BulkUploadReadyToGoLive));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 

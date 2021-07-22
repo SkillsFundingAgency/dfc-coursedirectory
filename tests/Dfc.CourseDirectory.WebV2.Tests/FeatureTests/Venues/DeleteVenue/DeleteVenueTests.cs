@@ -72,8 +72,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
 
-            var course = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder =>
-                builder.WithCourseRun(CourseDeliveryMode.ClassroomBased, CourseStudyMode.FullTime, CourseAttendancePattern.Daytime, venueId: venue.VenueId));
+            var course = await TestData.CreateCourse(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                configureCourseRuns: builder => builder.WithClassroomBasedCourseRun(venueId: venue.VenueId));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/venues/{venue.VenueId}/delete");
 
@@ -86,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             var doc = await response.GetDocument();
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.Id}"));
+            Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.CourseId}"));
         }
 
         [Fact]
@@ -303,8 +305,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
 
-            var course = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder =>
-                builder.WithCourseRun(CourseDeliveryMode.ClassroomBased, CourseStudyMode.FullTime, CourseAttendancePattern.Daytime, venueId: venue.VenueId));
+            var course = await TestData.CreateCourse(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                configureCourseRuns: builder => builder.WithClassroomBasedCourseRun(venueId: venue.VenueId));
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.Confirm), true)
@@ -325,7 +329,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             var doc = await response.GetDocument();
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.Id}"));
+            Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.CourseId}"));
             doc.GetElementByTestId("affected-courses-error-message").TextContent.Should().Be("The affected courses have changed");
         }
 
