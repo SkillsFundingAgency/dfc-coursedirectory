@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -148,7 +149,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task FileMissingLars_ReturnsMissingLarsRowNumbers()
+        public async Task CheckLearnAimRefs_ReturnsExpectedResult()
         {
             // Arrange
             var fileUploadProcessor = new FileUploadProcessor(
@@ -157,168 +158,39 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory));
 
-            var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
-            {
-                //Add a few of the columns for the courses file
-                //Row 1
-                csvWriter.WriteField("LARS_QAN");
-                csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
-                csvWriter.WriteField("YOUR_REFERENCE");
-                csvWriter.WriteField("VENUE_NAME");
-                csvWriter.NextRecord();
-                //Row 2
-                csvWriter.WriteField("60149735");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 3 empty lars
-                csvWriter.WriteField("");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 4
-                csvWriter.WriteField("60149735");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 5 whitespace lars
-                csvWriter.WriteField("      ");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-            });
+            //Add missing lars
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, 1).ToList();
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
+
+            //Add invalid and expired lars
+            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Now.AddDays(-1));
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
+
+            var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
 
             // Act
-            var (result, missingLars) = await fileUploadProcessor.FileMissingLars(stream);
+            var (result, missing, invalid, expired) = await fileUploadProcessor.CheckLearnAimRefs(stream);
 
             // Assert
             result.Should().Be(FileMatchesSchemaResult.InvalidLars);
-            missingLars.Should().BeEquivalentTo(new[]
+            missing.Should().BeEquivalentTo(new[]
             {
                 "3",
                 "5"
             });
-        }
-
-        [Fact]
-        public async Task FileInvalidLars_ReturnsInvalidLarsRowNumbers()
-        {
-            // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(
-                SqlQueryDispatcherFactory,
-                Mock.Of<BlobServiceClient>(),
-                Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
-
-            var learningAimRef = await TestData.CreateLearningAimRef();
-
-            var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
+            invalid.Should().BeEquivalentTo(new[]
             {
-                //Add a few of the columns for the courses file
-                //Row 1
-                csvWriter.WriteField("LARS_QAN");
-                csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
-                csvWriter.WriteField("YOUR_REFERENCE");
-                csvWriter.WriteField("VENUE_NAME");
-                csvWriter.NextRecord();
-                //Row 2 invalid
-                csvWriter.WriteField("XX149CCI");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 3 empty lars is not handled by this method
-                csvWriter.WriteField("");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 4
-                csvWriter.WriteField(learningAimRef);
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 5 whitespace lars
-                csvWriter.WriteField("ABCDEFGH");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
+                "6",
+                "8"
             });
-
-            // Act
-            var (result, invalidLars) = await fileUploadProcessor.FileInvalidLars(stream);
-
-            // Assert
-            result.Should().Be(FileMatchesSchemaResult.InvalidLars);
-            invalidLars.Should().BeEquivalentTo(new[]
+            expired.Should().BeEquivalentTo(new[]
             {
-                "2",
-                "5"
-            });
-        }
-
-        [Fact]
-        public async Task FileExpiredLars_ReturnsExpiredLarsErrors()
-        {
-            // Arrange
-            var fileUploadProcessor = new FileUploadProcessor(
-                SqlQueryDispatcherFactory,
-                Mock.Of<BlobServiceClient>(),
-                Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
-
-            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Today.AddDays(-1));
-            var validLearningAimRef = await TestData.CreateLearningAimRef();
-
-            var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
-            {
-                //Add a few of the columns for the courses file
-                //Row 1
-                csvWriter.WriteField("LARS_QAN");
-                csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
-                csvWriter.WriteField("YOUR_REFERENCE");
-                csvWriter.WriteField("VENUE_NAME");
-                csvWriter.NextRecord();
-                //Row 2 valid lars
-                csvWriter.WriteField(validLearningAimRef);
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 3 empty lars is not handled by this method
-                csvWriter.WriteField("");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 4
-                csvWriter.WriteField("ZYXWVUT");
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-                //Row 5 expired lars
-                csvWriter.WriteField(expiredLearningAimRef);
-                csvWriter.WriteField("who for");
-                csvWriter.WriteField("your ref");
-                csvWriter.WriteField("venue name");
-                csvWriter.NextRecord();
-            });
-
-            // Act
-            var (result, expiredLars) = await fileUploadProcessor.FileExpiredLars(stream);
-
-            // Assert
-            result.Should().Be(FileMatchesSchemaResult.InvalidLars);
-            expiredLars.Should().BeEquivalentTo(new[]
-            {
-                string.Format("Row {0}, expired code {1}", 5, expiredLearningAimRef)
+                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef)
             });
         }
     }

@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.Testing
                         SourceQualType = string.Empty,
                         SuccessRateMapCode = string.Empty,
                         UnitType = string.Empty,
-                        EffectiveTo = expiredLars
+                        EffectiveTo = effectiveTo
                     }
                 }
                 });

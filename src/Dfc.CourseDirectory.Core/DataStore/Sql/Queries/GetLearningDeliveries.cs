@@ -5,10 +5,8 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     // Return all LearningAimRefs 
-    public class GetLearningAimRefAndEffectiveTo : ISqlQuery<Lars>
+    public class GetLearningDeliveries : ISqlQuery<IReadOnlyCollection<LearningDelivery>>
     {
-        public Lars Lars { get; set; }
-
-        public string LearningAimRef { get; set; }
+        public IEnumerable<string> LearningAimRefs { get; set; }
     }
 }

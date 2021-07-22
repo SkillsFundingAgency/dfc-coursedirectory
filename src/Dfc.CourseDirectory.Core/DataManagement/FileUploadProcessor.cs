@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -199,8 +200,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        //Could put FileMissingLars, FileInvalidLars and FileExpiredLars into one method but they may come in useful elsewhere
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] MissingLars)> FileMissingLars(Stream stream)
+        protected internal async Task<(FileMatchesSchemaResult Result, string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
         {
             CheckStreamIsProcessable(stream);
 
@@ -208,116 +208,48 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                 {
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
-                    List<string> emptyLars = new List<string>();
-                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
-                    //Don't count the first row
+
+                    List<string> missing = new List<string>();
+                    List<string> invalid = new List<string>();
+                    List<string> expired = new List<string>();
+                    List<CsvCourseRow> csvRecords = csvReader.GetRecords<CsvCourseRow>().ToList();
+
+                    var validLearningAimRefs = await dispatcher.ExecuteQuery(new GetLearningDeliveries() { LearningAimRefs = csvRecords.Select(l=>l.LearnAimRef) });
+
                     int rowCount = 1;
 
-                    foreach (IDictionary<string, object> row in csvRecords)
+                    foreach (var row in csvRecords)
                     {
                         rowCount++;
-                        string larsRow = row["LARS_QAN"].ToString();
+                        string larsRow = row.LearnAimRef.Trim();
+                        var validLearningAimRef = validLearningAimRefs.Where(l => l.LearnAimRef == larsRow).FirstOrDefault();
+                        //validLearningAimRef.
                         if (string.IsNullOrWhiteSpace(larsRow))
                         {
-                            emptyLars.Add(rowCount.ToString());
+                            missing.Add(rowCount.ToString());
                         }
-                    }
-                    if(emptyLars.Count > 0)
-                    {
-                        return (FileMatchesSchemaResult.InvalidLars, emptyLars.ToArray());
-                    }
-                }
-
-                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
-            }
-            finally
-            {
-                stream.Seek(0L, SeekOrigin.Begin);
-            }
-        }
-
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] InvalidLars)> FileInvalidLars(Stream stream)
-        {
-            CheckStreamIsProcessable(stream);
-
-            try
-            {
-                using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-                {
-                    await csvReader.ReadAsync();
-                    csvReader.ReadHeader();
-
-                    List<string> invalidLars = new List<string>();
-                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
-
-                    int rowCount = 1;
-
-                    foreach (IDictionary<string, object> row in csvRecords)
-                    {
-                        rowCount++;
-                        string larsRow = row["LARS_QAN"].ToString().Trim();
-                        var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo(){ LearningAimRef = larsRow });
                         if (!string.IsNullOrWhiteSpace(larsRow) && validLearningAimRef == null)
                         {
-                            invalidLars.Add(rowCount.ToString());
+                            invalid.Add(rowCount.ToString());
                         }
-                    }
-                    if (invalidLars.Count > 0)
-                    {
-                        return (FileMatchesSchemaResult.InvalidLars, invalidLars.ToArray());
-                    }
-                }
-
-                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
-            }
-            finally
-            {
-                stream.Seek(0L, SeekOrigin.Begin);
-            }
-        }
-
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] ExpiredLars)> FileExpiredLars(Stream stream)
-        {
-            CheckStreamIsProcessable(stream);
-
-            try
-            {
-                using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-                {
-                    await csvReader.ReadAsync();
-                    csvReader.ReadHeader();
-
-                    List<string> expiredLars = new List<string>();
-                    List<dynamic> csvRecords = csvReader.GetRecords<dynamic>().ToList();
-
-                    int rowCount = 1;
-                    //Refoctor this to pass the Lars model to the view instead of the error
-                    foreach (IDictionary<string, object> row in csvRecords)
-                    {
-                        rowCount++;
-                        string larsRow = row["LARS_QAN"].ToString().Trim();
-                        var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo() { LearningAimRef = larsRow });
                         if (validLearningAimRef != null
-                            && validLearningAimRef.EffectiveTo.HasValue 
+                            && validLearningAimRef.EffectiveTo.HasValue
                             && validLearningAimRef.EffectiveTo < DateTime.Now)
                         {
-                            expiredLars.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
+                            expired.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
                         }
                     }
-                    if (expiredLars.Count > 0)
+                    if (missing.Count > 0 || invalid.Count > 0 || expired.Count > 0)
                     {
-                        return (FileMatchesSchemaResult.InvalidLars, expiredLars.ToArray());
+                        return (FileMatchesSchemaResult.InvalidLars, missing.ToArray(), invalid.ToArray(), expired.ToArray());
                     }
                 }
 
-                return (FileMatchesSchemaResult.Ok, Array.Empty<string>());
+                return (FileMatchesSchemaResult.Ok, Array.Empty<string>(), Array.Empty<string>(), Array.Empty<string>());
             }
             finally
             {
@@ -330,9 +262,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             Ok,
             InvalidHeader,
             InvalidRows,
-            MissingLars,
-            InvalidLars,
-            ExpiredLars
+            InvalidLars
         }
     }
 }
