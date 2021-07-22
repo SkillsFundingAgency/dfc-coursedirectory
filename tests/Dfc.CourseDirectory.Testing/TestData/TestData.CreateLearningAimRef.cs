@@ -6,14 +6,15 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public Task<string> CreateLearningAimRef() => WithSqlQueryDispatcher(async dispatcher =>
-        {
-            var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
-
-            await dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
+        public Task<string> CreateLearningAimRef(DateTime? effectiveTo = null
+            ) => WithSqlQueryDispatcher(async dispatcher =>
             {
-                Records = new[]
+                var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
+
+                await dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
                 {
+                    Records = new[]
+                    {
                     new UpsertLarsLearningDeliveriesRecord()
                     {
                         LearnAimRef = learnAimRef,
@@ -73,12 +74,13 @@ namespace Dfc.CourseDirectory.Testing
                         SFAFundedIndicator = string.Empty,
                         SourceQualType = string.Empty,
                         SuccessRateMapCode = string.Empty,
-                        UnitType = string.Empty
+                        UnitType = string.Empty,
+                        EffectiveTo = effectiveTo
                     }
                 }
-            });
+                });
 
-            return learnAimRef;
-        });
+                return learnAimRef;
+            });
     }
 }

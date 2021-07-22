@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -8,6 +9,7 @@ using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -144,6 +146,52 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             // Assert
             result.Should().Be(FileMatchesSchemaResult.InvalidRows);
+        }
+
+        [Fact]
+        public async Task CheckLearnAimRefs_ReturnsExpectedResult()
+        {
+            // Arrange
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            //Add missing lars
+            var learningAimRef = await TestData.CreateLearningAimRef();
+            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, 1).ToList();
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
+
+            //Add invalid and expired lars
+            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Now.AddDays(-1));
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
+
+            var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
+
+            // Act
+            var (result, missing, invalid, expired) = await fileUploadProcessor.CheckLearnAimRefs(stream);
+
+            // Assert
+            result.Should().Be(FileMatchesSchemaResult.InvalidLars);
+            missing.Should().BeEquivalentTo(new[]
+            {
+                "3",
+                "5"
+            });
+            invalid.Should().BeEquivalentTo(new[]
+            {
+                "6",
+                "8"
+            });
+            expired.Should().BeEquivalentTo(new[]
+            {
+                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef)
+            });
         }
     }
 }
