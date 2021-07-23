@@ -6,5 +6,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
     {
         public string LearnAimRef { get; set; }
         public DateTime? EffectiveTo { get; set; }
+        public string OperationalEndDate { get; set; }
     }
 }

@@ -277,8 +277,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         string larsRow = row["LARS_QAN"].ToString().Trim();
                         var validLearningAimRef = await dispatcher.ExecuteQuery(new GetLearningAimRefAndEffectiveTo() { LearningAimRef = larsRow });
                         if (validLearningAimRef != null
-                            && validLearningAimRef.EffectiveTo.HasValue
+                            && ((validLearningAimRef.EffectiveTo.HasValue
                             && validLearningAimRef.EffectiveTo < DateTime.Now)
+                          || (validLearningAimRef.OperationalEndDate != null
+                            && !validLearningAimRef.OperationalEndDate.IsEmpty()
+                            && DateTime.Parse(validLearningAimRef.OperationalEndDate) < DateTime.Now)))
                         {
                             expired.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
                         }
