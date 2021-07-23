@@ -485,9 +485,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     //todo when real data
                     switch (model.Mode)
                     {
-                        case PublishMode.BulkUpload:
-                            courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
-                            break;
                         case PublishMode.DataQualityIndicator:
                         default:
                             courseRunForEdit.RecordStatus = RecordStatus.Live;
@@ -522,15 +519,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     {
                         switch (model.Mode)
                         {
-                            case PublishMode.BulkUpload:
-                                return RedirectToAction("Index", "PublishCourses",
-                                new
-                                {
-                                    publishMode = model.Mode,
-                                    courseId = model.CourseId,
-                                    courseRunId = model.CourseRunId,
-                                    notificationTitle = ""
-                                });
                             case PublishMode.DataQualityIndicator:
                                 return RedirectToAction("Index", "PublishCourses",
                                  new

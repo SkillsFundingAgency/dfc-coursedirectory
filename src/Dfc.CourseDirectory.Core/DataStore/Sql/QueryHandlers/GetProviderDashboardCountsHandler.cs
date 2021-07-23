@@ -47,17 +47,6 @@ WHERE       c.ProviderUkprn = @ProviderUkprn
 AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.Live}
 AND         cr.StartDate < @{nameof(query.Date)}
 
-SELECT      ISNULL(SUM(c.BulkUploadErrorCount), 0)
-FROM        Pttcd.Courses c
-WHERE       c.ProviderUkprn = @ProviderUkprn
-AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.BulkUploadPending}
-
-SELECT      ISNULL(SUM(cr.BulkUploadErrorCount), 0)
-FROM        Pttcd.CourseRuns cr
-INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE       c.ProviderUkprn = @ProviderUkprn
-AND         cr.CourseRunStatus = {(int)CourseStatus.BulkUploadPending}
-
 SELECT      ISNULL(SUM(a.BulkUploadErrorCount), 0)
 FROM        Pttcd.Apprenticeships a
 WHERE       a.ProviderUkprn = @ProviderUkprn
@@ -86,8 +75,6 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
                 var tLevelCounts = reader.Read().ToDictionary(r => (TLevelStatus)r.TLevelStatus, r => (int)r.Count);
                 var venueCount = reader.ReadSingle<int>();
                 var pastStartDateCourseRunCount = reader.ReadSingle<int>();
-                var bulkUploadCoursesErrorCount = reader.ReadSingle<int>();
-                var bulkUploadCourseRunsErrorCount = reader.ReadSingle<int>();
                 var apprenticeshipsBulkUploadErrorCount = reader.ReadSingle<int>();
                 var unpublishedVenueCount = reader.ReadSingle<int>();
                 var unpublishedCourseCount = reader.ReadSingle<int>();
@@ -99,8 +86,6 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
                     TLevelCounts = tLevelCounts,
                     VenueCount = venueCount,
                     PastStartDateCourseRunCount = pastStartDateCourseRunCount,
-                    BulkUploadCoursesErrorCount = bulkUploadCoursesErrorCount,
-                    BulkUploadCourseRunsErrorCount = bulkUploadCourseRunsErrorCount,
                     ApprenticeshipsBulkUploadErrorCount = apprenticeshipsBulkUploadErrorCount,
                     UnpublishedVenueCount = unpublishedVenueCount,
                     UnpublishedCourseCount = unpublishedCourseCount

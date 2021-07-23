@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 NewStatus = ApprenticeshipStatus.Live
             });
 
-            CompleteVM.Mode = PublishMode.BulkUpload;
+            CompleteVM.Mode = PublishMode.ApprenticeshipBulkUpload;
 
             return RedirectToAction("Complete", "Apprenticeships", new { CompleteVM });
         }

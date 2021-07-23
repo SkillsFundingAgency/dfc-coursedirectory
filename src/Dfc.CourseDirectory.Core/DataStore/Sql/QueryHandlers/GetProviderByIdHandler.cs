@@ -18,10 +18,6 @@ SELECT  ProviderId,
         Alias,
         DisplayNameSource,
         ApprenticeshipQAStatus,
-        BulkUploadInProgress,
-        BulkUploadPublishInProgress,
-        BulkUploadStartedDateTime,
-        BulkUploadTotalRowCount,
         LearnerSatisfaction,
         EmployerSatisfaction
 FROM    Pttcd.Providers

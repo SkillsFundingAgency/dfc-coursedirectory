@@ -12,10 +12,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string Alias { get; set; }
         public ProviderDisplayNameSource DisplayNameSource { get; set; }
         public ApprenticeshipQAStatus? ApprenticeshipQAStatus { get; set; }
-        public bool? BulkUploadInProgress { get; set; }
-        public bool? BulkUploadPublishInProgress { get; set; }
-        public DateTime? BulkUploadStartedDateTime { get; set; }
-        public int? BulkUploadTotalRowCount { get; set; }
         public decimal? LearnerSatisfaction { get; set; }
         public decimal? EmployerSatisfaction { get; set; }
 

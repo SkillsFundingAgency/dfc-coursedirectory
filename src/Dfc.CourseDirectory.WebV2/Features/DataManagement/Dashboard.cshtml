@@ -51,24 +51,6 @@
                                 </a>
                             </li>
                         }
-                        else
-                        {
-                            <li>
-                                <a asp-controller="BulkUpload" asp-action="Courses" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                    Upload new course data
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="BlobStorage" asp-action="GetCurrentCoursesTemplateFile" class="govuk-link">
-                                    Download your published course data (CSV)
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="BlobStorage" asp-action="GetBulkUploadTemplateFile" class="govuk-link">
-                                    Download course data template (CSV)
-                                </a>
-                            </li>
-                        }
                     </ul>
                 </div>
             </div>

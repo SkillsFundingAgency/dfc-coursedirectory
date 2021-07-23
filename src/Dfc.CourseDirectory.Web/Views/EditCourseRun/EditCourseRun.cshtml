@@ -126,7 +126,7 @@
                     AriaDescribedBy = "Venue",
                     HintText = null,
                     VenueId = Model.VenueId ?? (Guid?)null,
-                    DisplayLink = Model.Mode != PublishMode.BulkUpload
+                    DisplayLink = true
                 })
             </div>
 
@@ -195,7 +195,6 @@
 
             @switch (Model.Mode)
             {
-                case PublishMode.BulkUpload:
                 case PublishMode.DataQualityIndicator:
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })
                     break;
