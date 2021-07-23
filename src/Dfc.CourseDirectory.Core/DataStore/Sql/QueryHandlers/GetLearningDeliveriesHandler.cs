@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<IReadOnlyCollection<LearningDelivery>> Execute(SqlTransaction transaction, GetLearningDeliveries query)
         {
             var sql = @"
-SELECT ld.LearnAimRef, ld.EffectiveTo FROM LARS.LearningDelivery ld
+SELECT ld.LearnAimRef, ld.EffectiveTo, ld.OperationalEndDate FROM LARS.LearningDelivery ld
 JOIN @LearningAimRefs x ON ld.LearnAimRef = x.Value";
 
             var paramz = new

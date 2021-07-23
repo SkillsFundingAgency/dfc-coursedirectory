@@ -237,8 +237,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             invalid.Add(rowCount.ToString());
                         }
                         if (validLearningAimRef != null
-                            && validLearningAimRef.EffectiveTo.HasValue
+                            && ((validLearningAimRef.EffectiveTo.HasValue
                             && validLearningAimRef.EffectiveTo < DateTime.Now)
+                          || (validLearningAimRef.OperationalEndDate != null
+                            && !validLearningAimRef.OperationalEndDate.IsEmpty()
+                            && DateTime.Parse(validLearningAimRef.OperationalEndDate) < DateTime.Now)))
                         {
                             expired.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
                         }

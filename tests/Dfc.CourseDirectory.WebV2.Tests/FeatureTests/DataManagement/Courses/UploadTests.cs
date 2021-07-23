@@ -314,6 +314,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
             var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Today.AddDays(-1));
+            var expiredOperationalEndDate = await TestData.CreateLearningAimRef(operationalEndDate: DateTime.Now.AddDays(-1).ToString());
             var validLearningAimRef = await TestData.CreateLearningAimRef();
 
             //Add missing lars
@@ -327,6 +328,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearningAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredOperationalEndDate, 1).ToList());
 
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
 
@@ -352,7 +354,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             });
             doc.GetAllElementsByTestId("ExpiredLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
             {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef)
+                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef),
+                string.Format("Row {0}, expired code {1}", 9, expiredOperationalEndDate)
             });
         }
     }

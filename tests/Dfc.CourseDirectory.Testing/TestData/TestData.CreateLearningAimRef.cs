@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public Task<string> CreateLearningAimRef(DateTime? effectiveTo = null
+        public Task<string> CreateLearningAimRef(DateTime? effectiveTo = null, string operationalEndDate = null
             ) => WithSqlQueryDispatcher(async dispatcher =>
             {
                 var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Testing
                         // Unused columns that have `not null` constraints :-/
                         SourceURLLinkType = string.Empty,
                         RgltnStartDate = string.Empty,
-                        OperationalEndDate = string.Empty,
+                        OperationalEndDate = operationalEndDate != null ? operationalEndDate : string.Empty,
                         NotionalNVQLevelv2 = string.Empty,
                         LearnDirectClassSystemCode1 = string.Empty,
                         KeySkillsIndicator = string.Empty,
