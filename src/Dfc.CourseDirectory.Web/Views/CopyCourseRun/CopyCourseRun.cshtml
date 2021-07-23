@@ -134,12 +134,6 @@
             </div>
 
             <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-                @{var displayLink = true;
-                    if (Model.PublishMode == PublishMode.BulkUpload)
-                    {
-                        displayLink = false;
-                    }
-                }
                 @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
                 {
                     LabelText = "Venue",
@@ -147,7 +141,7 @@
                     HintText = null,
                     Venues = Model.Venues,
                     VenueId = Model.VenueId,
-                    DisplayLink = displayLink
+                    DisplayLink = true
                 })
 
             </div>

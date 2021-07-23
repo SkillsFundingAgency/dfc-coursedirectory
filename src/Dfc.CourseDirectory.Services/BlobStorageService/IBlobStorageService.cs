@@ -11,7 +11,6 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         Task UploadFileAsync(string filePath, Stream stream);
         IEnumerable<BlobFileInfo> GetFileList(string filePath);
         IEnumerable<CloudBlockBlob> ArchiveFiles(string filePath);
-        Task GetBulkUploadTemplateFileAsync(Stream stream);
         int InlineProcessingThreshold { get; }
     }
 }

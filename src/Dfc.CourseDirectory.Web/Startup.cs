@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Services.BlobStorageService;
-using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Configuration;
@@ -81,9 +80,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
 
             services.AddScoped<ICSVHelper, CSVHelper>();
-            services.AddScoped<ICourseProvisionHelper, CourseProvisionHelper>();
 
-            services.AddScoped<IBulkUploadService, BulkUploadService>();
             services.AddScoped<IApprenticeshipBulkUploadService, ApprenticeshipBulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();

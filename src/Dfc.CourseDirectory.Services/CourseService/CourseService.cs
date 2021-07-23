@@ -644,7 +644,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.AddCourseRun:
                     case ValidationMode.CopyCourseRun:
                     case ValidationMode.EditCourseBU:
-                    case ValidationMode.BulkUploadCourse:
 
                         _logger.LogError("course date" + courseRun.StartDate.Value.Date + "utc Date " + currentDate);
 

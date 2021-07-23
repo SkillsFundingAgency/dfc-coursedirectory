@@ -4,28 +4,6 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
     <div class="govuk-body cd-file-upload">
-        @if (Model.PublishMode.Equals(PublishMode.BulkUpload))
-        {
-            if (Model.AreAllReadyToBePublished)
-            {
-                <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Courses</h1>
-                <p>
-                    Your file of @Model.NumberOfCoursesInFiles @(Model.NumberOfCoursesInFiles.Equals(1) ? "course" : "courses") has no errors. Publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them") to replace your current courses on the course directory.
-                </p>
-            }
-            else
-            {
-                <div class="govuk-form-group">
-                    <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Resolve issues</h1>
-                </div>
-
-                <p>You must resolve all of the issues in your file before you can update your published courses.</p>
-
-                @*<p>Or you can <a asp-controller="BulkUpload" asp-action="DownloadErrorFile" class="govuk-link" target="_blank">download an error file </a>, fix them at source and upload a new file.</p>*@
-
-            }
-        }
-
         @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
         {
             var courseRunCount = Model.Courses.SelectMany(x => x.CourseRuns).Count();

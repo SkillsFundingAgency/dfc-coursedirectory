@@ -111,8 +111,8 @@ namespace Dfc.CourseDirectory.Services.Models.Courses
         EditCourseMT = 4,
         [Description("Copy CourseRun")]
         CopyCourseRun = 5,
-        [Description("Bulk Upload Course")]
-        BulkUploadCourse = 6,
+        //[Description("Bulk Upload Course")]
+        //BulkUploadCourse = 6,
         [Description("Migrate Course")]
         MigrateCourse = 7,
         [Description("DQI")]
