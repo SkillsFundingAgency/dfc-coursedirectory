@@ -2,22 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 {
@@ -26,22 +19,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IProviderContextProvider _providerContextProvider;
-        private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IClock _clock;
 
         public PublishCoursesController(
             ICourseService courseService,
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider,
-            ICurrentUserProvider currentUserProvider,
-            IClock clock)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _providerContextProvider = providerContextProvider;
-            _currentUserProvider = currentUserProvider;
-            _clock = clock;
         }
 
         [Authorize]
@@ -70,17 +54,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
             switch (publishMode)
             {
-                case PublishMode.BulkUpload:
-
-                    vm.PublishMode = PublishMode.BulkUpload;
-                    var bulkUploadedCourses = courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
-                    vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
-                    vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
-                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
-                    vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
-                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _sqlQueryDispatcher).Result;
-                    break;
-
                 case PublishMode.DataQualityIndicator:
 
                     vm.PublishMode = PublishMode.DataQualityIndicator;
@@ -117,132 +90,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             vm.CourseId = courseId;
             vm.CourseRunId = courseRunId;
 
-            if (vm.AreAllReadyToBePublished)
-            {
-                if (publishMode == PublishMode.BulkUpload)
-                    return RedirectToAction("CoursesPublishFile", "Bulkupload", new { NumberOfCourses = courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() })
-                        .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
-
-            } else {
-                if (publishMode == PublishMode.BulkUpload)
-                {
-                    var message = "";
-                    if (fromBulkUpload)
-                    {
-                        var invalidCourseCount = courses.Where(x => x.IsValid == false).Count();
-                        var bulkUploadedPendingCourses = (courses.SelectMany(c => c.CourseRuns)
-                                           .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending)
-                                           .Count());
-                        message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must resolve all errors before your courses information can be published.";
-                        return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
-                    }
-                  
-                }
-            }
-
             return View("Index", vm);
         }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Index(PublishViewModel vm)
-        {
-            PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel();
-
-            int? sUKPRN = Session.GetInt32("UKPRN");
-            int UKPRN;
-            if (!sUKPRN.HasValue)
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            else
-                UKPRN = sUKPRN ?? 0;
-
-            CompleteVM.NumberOfCoursesPublished = vm.NumberOfCoursesInFiles; 
-
-            switch (vm.PublishMode)
-            {
-                case PublishMode.BulkUpload:
-
-                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
-                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
-
-                    //Archive any existing courses
-                    var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
-                    if (resultArchivingCourses.IsSuccess)
-                    {
-                        // Publish courses
-                        var resultPublishBulkUploadedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
-                        CompleteVM.Mode = PublishMode.BulkUpload;
-                        if (resultPublishBulkUploadedCourses.IsSuccess)
-                            return View("Complete", CompleteVM);
-                        else
-                            return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-PublishCourses Error" });
-
-                    } else {
-                        return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-ArchiveCourses Error" });
-                    }
-
-                default:
-                    return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload/Migration Error" });
-            }            
-        }
-
-        public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)
-        {
-            bool AreAllReadyToBePublished = false;
-
-            if(courses.Count.Equals(0))
-                return AreAllReadyToBePublished;
-
-            var hasInvalidCourses = courses.Any(c => c.IsValid == false);
-            if (hasInvalidCourses)
-                return AreAllReadyToBePublished;
-            else
-            {
-                switch (publishMode)
-                {
-                    case PublishMode.BulkUpload:
-                        var hasInvalidBulkUploadCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending));
-                        if (!hasInvalidBulkUploadCourseRuns)
-                            AreAllReadyToBePublished = true;
-                        break;
-                }
-                return AreAllReadyToBePublished;
-            }         
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult DownloadErrorFile()
-        {
-            var model = new DownloadErrorFileViewModel();
-            model.ErrorFileCreatedDate = DateTime.Now;
-            return View("../DownloadErrorFile/Index", model);
-        }
-
 
         internal IEnumerable<Course> GetErrorMessages(IEnumerable<Course> courses, ValidationMode validationMode)
         {
             foreach (var course in courses)
             {
-                bool saveMe = false;
-
                 course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
-                if (validationMode == ValidationMode.BulkUploadCourse && course.BulkUploadErrors.Any() && !course.ValidationErrors.Any()) {
-                    course.BulkUploadErrors = new BulkUploadError[] { };
-                    saveMe = true;
-                }
 
                 foreach (var courseRun in course.CourseRuns)
                 {
                     courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
-                    if (validationMode == ValidationMode.BulkUploadCourse && courseRun.BulkUploadErrors.Any() && !courseRun.ValidationErrors.Any())
-                        courseRun.BulkUploadErrors = new BulkUploadError[] { };
                 }
-
-                // Save bulk upload fixed courses so that DQI stats will reflect new error counts
-                if (validationMode == ValidationMode.BulkUploadCourse && saveMe)
-                    _courseService.UpdateCourseAsync(course);
 
                 var crErrors = course.CourseRuns.Select(cr => cr.ValidationErrors.Count()).Sum();
                 var cErrors = course.ValidationErrors.Count();

@@ -180,13 +180,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     switch (model.Mode)
                     {
-                        case PublishMode.BulkUpload:
-                            return RedirectToAction("Index", "PublishCourses",
-                                new
-                                {
-                                    publishMode = model.Mode,
-                                    courseId = model.CourseId
-                                });
                         case PublishMode.Summary:
                             TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
                             return RedirectToAction("Index", "CourseSummary",

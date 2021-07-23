@@ -26,19 +26,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool ShowTLevels { get; set; }
         public int LiveCourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
-        public int MigrationPendingCourseRunCount { get; set; }
-        public int BulkUploadPendingCourseRunCount { get; set; }
-        public int BulkUploadReadyToGoLiveCourseRunCount { get; set; }
-        public int BulkUploadCoursesErrorCount { get; set; }
-        public int BulkUploadCourseRunsErrorCount { get; set; }
         public int ApprenticeshipCount { get; set; }
         public int BulkUploadPendingApprenticeshipsCount { get; set; }
         public int BulkUploadReadyToGoLiveApprenticeshipsCount { get; set; }
         public int ApprenticeshipsBulkUploadErrorCount { get; set; }
         public int TLevelCount { get; set; }
         public int VenueCount { get; set; }
-        public int BulkUploadFileCount { get; set; }
-        public bool BulkUploadInProgress { get; set; }
         public bool IsNewProvider { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
@@ -49,13 +42,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
     public class Handler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IBinaryStorageProvider _binaryStorageProvider;
         private readonly IClock _clock;
 
-        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, IBinaryStorageProvider binaryStorageProvider, IClock clock)
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _binaryStorageProvider = binaryStorageProvider;
             _clock = clock;
         }
 
@@ -75,8 +66,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                     ProviderId = request.ProviderId,
                     Date = _clock.UtcNow.ToLocalTime().Date
                 });
-
-            var bulkUploadFiles = await _binaryStorageProvider.ListFiles($"{provider.Ukprn}/Bulk Upload/Files/");
 
             var venueUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestUnpublishedVenueUploadForProvider()
@@ -99,19 +88,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 ShowTLevels = provider.ProviderType.HasFlag(ProviderType.TLevels),
                 LiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live),
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
-                MigrationPendingCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.MigrationPending) + dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.MigrationReadyToGoLive),
-                BulkUploadPendingCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadPending),
-                BulkUploadReadyToGoLiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.BulkUploadReadyToGoLive),
-                BulkUploadCoursesErrorCount = dashboardCounts.BulkUploadCoursesErrorCount,
-                BulkUploadCourseRunsErrorCount = dashboardCounts.BulkUploadCourseRunsErrorCount,
                 ApprenticeshipCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
                 BulkUploadPendingApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadPending),
                 BulkUploadReadyToGoLiveApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadReadyToGoLive),
                 ApprenticeshipsBulkUploadErrorCount = dashboardCounts.ApprenticeshipsBulkUploadErrorCount,
                 TLevelCount = dashboardCounts.TLevelCounts.GetValueOrDefault(TLevelStatus.Live),
                 VenueCount = dashboardCounts.VenueCount,
-                BulkUploadFileCount = bulkUploadFiles.Count(),
-                BulkUploadInProgress = provider.BulkUploadInProgress ?? false,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,

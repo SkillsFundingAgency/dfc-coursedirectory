@@ -10,33 +10,6 @@
     </pttcd-notification>
 }
 
-@if (Model.BulkUploadInProgress)
-{
-    <pttcd-notification title="Processing bulk upload of courses" data-testid="processingCoursesBulkUploadNotification">
-        <govuk-warning-text icon-fallback-text="Warning">
-            Do not add a new course or attempt another bulk upload during this process
-        </govuk-warning-text>
-        <p class="govuk-body govuk-!-margin-bottom-0">Continue to refresh this page until you receive a notification that the bulk upload process has been completed.</p>
-    </pttcd-notification>
-}
-else if (Model.BulkUploadPendingCourseRunCount > 0 || Model.BulkUploadReadyToGoLiveCourseRunCount > 0)
-{
-    @if (Model.BulkUploadCoursesErrorCount > 0 || Model.BulkUploadCourseRunsErrorCount > 0 || Model.BulkUploadPendingCourseRunCount > 0)
-    {
-        <pttcd-notification title="Error on bulk upload of courses" data-testid="coursesBulkUploadErrorNotification">
-            <p class="govuk-body">@(Model.BulkUploadPendingCourseRunCount + Model.BulkUploadReadyToGoLiveCourseRunCount) courses uploaded have @Model.BulkUploadCourseRunsErrorCount errors.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="WhatDoYouWantToDoNext" asp-controller="BulkUpload" class="govuk-link">Fix errors to publish your courses</a></p>
-        </pttcd-notification>
-    }
-    else
-    {
-        <pttcd-notification title="Successful bulk upload of courses" data-testid="coursesBulkUploadSuccessfulNotification">
-            <p class="govuk-body">@Model.BulkUploadReadyToGoLiveCourseRunCount courses have been uploaded and are ready to publish to the course directory.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-action="Index" asp-controller="PublishCourses" asp-route-publishMode="BulkUpload" class="govuk-link">Publish your courses</a></p>
-        </pttcd-notification>
-    }
-}
-
 @if (Model.ApprenticeshipsBulkUploadErrorCount > 0)
 {
     <pttcd-notification title="Error on bulk upload of apprenticeships" data-testid="apprenticeshipsBulkUploadErrorNotification">
@@ -158,30 +131,6 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                                 <a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Download course data template (CSV)
                                 </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="govuk-grid-column-one-third">
-                <div class="pttcd-provider-dashboard__card">
-                    <div class="pttcd-provider-dashboard__card__content">
-                        <h2 class="govuk-heading-s">Bulk upload</h2>
-                        <p class="govuk-body-s">Manage your courses as a CSV file.</p>
-                    </div>
-                    <div class="pttcd-provider-dashboard__card__actions">
-                        <ul class="govuk-list pttcd-list--small">
-                            <li>
-                                <a asp-controller="BlobStorage" asp-action="GetCurrentCoursesTemplateFile" class="govuk-link">Your published course information (CSV)</a>
-                            </li>
-                            <li>
-                                <a asp-controller="BlobStorage" asp-action="GetBulkUploadTemplateFile" class="govuk-link">A course information template (CSV)</a>
-                            </li>
-                            <li>
-                                <a asp-controller="BulkUpload" asp-action="Courses" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Bulk upload courses</a>
                             </li>
                         </ul>
                     </div>
