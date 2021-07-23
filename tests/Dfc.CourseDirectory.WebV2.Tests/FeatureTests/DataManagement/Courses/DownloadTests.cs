@@ -221,11 +221,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider(providerName: "Test Provider");
 
-            var course1 = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: "BBBBBBBB");
-            var course1CourseRun = course1.CourseRuns.Single();
-
-            var course2 = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: "AAAAAAAA");
-            var course2CourseRun = course2.CourseRuns.Single();
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
             // Act
             var response = await HttpClient.GetAsync($"/data-upload/courses/download?providerId={provider.ProviderId}");
@@ -242,8 +239,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var rows = csvReader.GetRecords<CsvCourseRow>().ToArray();
             rows.Length.Should().Be(2);
 
-            rows.First().LearnAimRef.Should().Be(course2.LearnAimRef);
-            rows.Last().LearnAimRef.Should().Be(course1.LearnAimRef);
+            rows.First().LearnAimRef.CompareTo(rows.Last().LearnAimRef).Should().BeNegative();
         }
     }
 }

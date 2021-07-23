@@ -200,12 +200,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
+        internal async Task<(string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
         {
             CheckStreamIsProcessable(stream);
 
             try
             {
+                var missing = new List<string>();
+                var invalid = new List<string>();
+                var expired = new List<string>();
+
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -213,43 +217,35 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
 
-                    List<string> missing = new List<string>();
-                    List<string> invalid = new List<string>();
-                    List<string> expired = new List<string>();
-                    List<CsvCourseRow> csvRecords = csvReader.GetRecords<CsvCourseRow>().ToList();
+                    List<CsvCourseRow> rows = csvReader.GetRecords<CsvCourseRow>().ToList();
 
-                    var validLearningAimRefs = await dispatcher.ExecuteQuery(new GetLearningDeliveries() { LearningAimRefs = csvRecords.Select(l=>l.LearnAimRef) });
+                    var validLearningDeliveries = await dispatcher.ExecuteQuery(
+                        new GetLearningDeliveries() { LearnAimRefs = rows.Select(r => r.LearnAimRef).Distinct() });
 
-                    int rowCount = 1;
+                    int rowNumber = 2;
 
-                    foreach (var row in csvRecords)
+                    foreach (var row in rows)
                     {
-                        rowCount++;
-                        string larsRow = row.LearnAimRef.Trim();
-                        var validLearningAimRef = validLearningAimRefs.Where(l => l.LearnAimRef == larsRow).FirstOrDefault();
-                        //validLearningAimRef.
-                        if (string.IsNullOrWhiteSpace(larsRow))
+                        var learnAimRef = row.LearnAimRef.Trim();
+
+                        if (string.IsNullOrWhiteSpace(learnAimRef))
                         {
-                            missing.Add(rowCount.ToString());
+                            missing.Add(rowNumber.ToString());
                         }
-                        if (!string.IsNullOrWhiteSpace(larsRow) && validLearningAimRef == null)
+                        else if (!validLearningDeliveries.TryGetValue(learnAimRef, out var learningDelivery))
                         {
-                            invalid.Add(rowCount.ToString());
+                            invalid.Add(rowNumber.ToString());
                         }
-                        if (validLearningAimRef != null
-                            && validLearningAimRef.EffectiveTo.HasValue
-                            && validLearningAimRef.EffectiveTo < DateTime.Now)
+                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
                         {
-                            expired.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
+                            expired.Add(string.Format("Row {0}, expired code {1}", rowNumber.ToString(), learnAimRef));
                         }
-                    }
-                    if (missing.Count > 0 || invalid.Count > 0 || expired.Count > 0)
-                    {
-                        return (FileMatchesSchemaResult.InvalidLars, missing.ToArray(), invalid.ToArray(), expired.ToArray());
+
+                        rowNumber++;
                     }
                 }
 
-                return (FileMatchesSchemaResult.Ok, Array.Empty<string>(), Array.Empty<string>(), Array.Empty<string>());
+                return (missing.ToArray(), invalid.ToArray(), expired.ToArray());
             }
             finally
             {

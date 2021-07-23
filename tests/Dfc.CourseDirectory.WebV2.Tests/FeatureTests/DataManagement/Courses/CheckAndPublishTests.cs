@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var (courseUpload, _) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var (courseUpload, _) = await TestData.CreateCourseUpload(
                 provider.ProviderId,

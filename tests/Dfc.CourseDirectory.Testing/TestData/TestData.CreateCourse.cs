@@ -12,11 +12,7 @@ namespace Dfc.CourseDirectory.Testing
         public async Task<Core.DataStore.Sql.Models.Course> CreateCourse(
             Guid providerId,
             UserInfo createdBy,
-            string qualificationCourseTitle = "Education assessment in Maths",
-            string learnAimRef = "Z0007842",
-            string notionalNVQLevelv2 = "E",  // TODO When we have a LARS data store for testing we should lookup from there
-            string awardOrgCode = "NONE",  // as above
-            string qualificationType = "Other",  // as above
+            string learnAimRef = null,
             string courseDescription = "The description",
             string entryRequirements = "To be eligible for ESFA government funding, you must be 19 or over. You must be a UK or EU citizen or have indefinite leave to remain in the UK. Learners will be ineligible if they have previously achieved a GCSE grade A* to C in the subject.",
             string whatYoullLearn = "DIGITAL EMPLOYABILITY SKILLS",
@@ -39,9 +35,14 @@ namespace Dfc.CourseDirectory.Testing
                 throw new ArgumentException("Provider does not exist.", nameof(providerId));
             }
 
+            var learningDelivery = learnAimRef != null ?
+                (await WithSqlQueryDispatcher(
+                    dispatcher => dispatcher.ExecuteQuery(
+                        new GetLearningDeliveries() { LearnAimRefs = new[] { learnAimRef } })))[learnAimRef] :
+                await CreateLearningDelivery();
+
             var courseId = Guid.NewGuid();
 
-            IEnumerable<CreateCourseCourseRun> courseRuns;
             var courseRunBuilder = new CreateCourseCourseRunBuilder();
 
             configureCourseRuns ??= builder => builder.WithOnlineCourseRun();
@@ -52,7 +53,7 @@ namespace Dfc.CourseDirectory.Testing
                 throw new InvalidOperationException("At least one CourseRun must be specified.");
             }
 
-            courseRuns = courseRunBuilder.CourseRuns;
+            var courseRuns = courseRunBuilder.CourseRuns;
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new CreateCourse()
@@ -60,11 +61,11 @@ namespace Dfc.CourseDirectory.Testing
                     CourseId = courseId,
                     ProviderId = providerId,
                     ProviderUkprn = provider.Ukprn,
-                    QualificationCourseTitle = qualificationCourseTitle,
-                    LearnAimRef = learnAimRef,
-                    NotionalNVQLevelv2 = notionalNVQLevelv2,
-                    AwardOrgCode = awardOrgCode,
-                    QualificationType = qualificationType,
+                    QualificationCourseTitle = learningDelivery.LearnAimRefTitle,
+                    LearnAimRef = learningDelivery.LearnAimRef,
+                    NotionalNVQLevelv2 = learningDelivery.NotionalNVQLevelv2,
+                    AwardOrgCode = learningDelivery.AwardOrgCode,
+                    QualificationType = learningDelivery.LearnAimRefTypeDesc,
                     CourseDescription = courseDescription,
                     EntryRequirements = entryRequirements,
                     WhatYoullLearn = whatYoullLearn,

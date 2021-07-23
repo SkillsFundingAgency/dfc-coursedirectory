@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerName: "Test Provider");
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
 
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(

@@ -158,26 +158,25 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory));
 
-            //Add missing lars
-            var learningAimRef = await TestData.CreateLearningAimRef();
-            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, 1).ToList();
+            // Add missing lars
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, 1).ToList();
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
 
-            //Add invalid and expired lars
-            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Now.AddDays(-1));
+            // Add invalid and expired lars
+            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Now.AddDays(-1))).LearnAimRef;
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
 
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
 
             // Act
-            var (result, missing, invalid, expired) = await fileUploadProcessor.CheckLearnAimRefs(stream);
+            var (missing, invalid, expired) = await fileUploadProcessor.CheckLearnAimRefs(stream);
 
             // Assert
-            result.Should().Be(FileMatchesSchemaResult.InvalidLars);
             missing.Should().BeEquivalentTo(new[]
             {
                 "3",
@@ -190,7 +189,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             });
             expired.Should().BeEquivalentTo(new[]
             {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef)
+                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef)
             });
         }
     }
