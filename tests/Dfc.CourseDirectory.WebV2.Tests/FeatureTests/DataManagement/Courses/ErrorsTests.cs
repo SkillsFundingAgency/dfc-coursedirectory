@@ -46,7 +46,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var learnAimRef = await TestData.CreateLearningAimRef();
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
@@ -96,7 +98,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var learnAimRef = await TestData.CreateLearningAimRef();
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
@@ -134,7 +138,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var learnAimRef = await TestData.CreateLearningAimRef();
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
@@ -175,7 +181,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var learnAimRef = await TestData.CreateLearningAimRef();
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (_, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),

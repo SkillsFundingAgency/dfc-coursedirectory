@@ -20,8 +20,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.BulkUpload
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+
             await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             for (var i = 0; i < courseCount; i++)
             {

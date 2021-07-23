@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses?providerId={provider.ProviderId}");
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
@@ -282,50 +282,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             doc.AssertHasError("File", "The selected file must be smaller than 5MB");
         }
 
-        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
-        {
-            var content = new MultipartFormDataContent();
-            content.Headers.ContentType.MediaType = "multipart/form-data";
-
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(mem))
-            {
-                if (csvStream != null)
-                {
-                    var byteArrayContent = new StreamContent(csvStream);
-                    byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
-                    content.Add(byteArrayContent, "File", "someFileName.csv");
-                }
-            }
-            return content;
-        }
-
-            //doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-           // {
-           //     "Row 3",
-           //     "Row 5"
-           // });
-        
-
-
         [Fact]
         public async Task Post_FileWithLarsErrors_RendersExpectedResult()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Today.AddDays(-1));
-            var validLearningAimRef = await TestData.CreateLearningAimRef();
+            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;
+            var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             //Add missing lars
-            var learningAimRef = await TestData.CreateLearningAimRef();
-            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearningAimRef, 1).ToList();
+            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList();
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(validLearningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
 
             //Add invalid and expired lars
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearningAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
 
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
@@ -352,8 +325,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             });
             doc.GetAllElementsByTestId("ExpiredLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
             {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef)
+                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef)
             });
+        }
+
+        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
+        {
+            var content = new MultipartFormDataContent();
+            content.Headers.ContentType.MediaType = "multipart/form-data";
+
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(mem))
+            {
+                if (csvStream != null)
+                {
+                    var byteArrayContent = new StreamContent(csvStream);
+                    byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+                    content.Add(byteArrayContent, "File", "someFileName.csv");
+                }
+            }
+            return content;
         }
     }
 }

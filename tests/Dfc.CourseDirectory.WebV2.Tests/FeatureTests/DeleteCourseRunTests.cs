@@ -463,10 +463,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var course = await TestData.CreateCourse(
-                provider.ProviderId,
-                qualificationCourseTitle: "Maths",
-                createdBy: User.ToUserInfo());
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
@@ -516,10 +513,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
+            var learnAimRef = (await TestData.CreateLearningDelivery(learnAimRefTitle: "Maths")).LearnAimRef;
+
             var course = await TestData.CreateCourse(
                 provider.ProviderId,
-                qualificationCourseTitle: "Maths",
-                createdBy: User.ToUserInfo());
+                createdBy: User.ToUserInfo(),
+                learnAimRef);
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
@@ -562,10 +561,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
+            var learnAimRef = (await TestData.CreateLearningDelivery(learnAimRefTitle: "Maths")).LearnAimRef;
+
             var course = await TestData.CreateCourse(
                 provider.ProviderId,
-                qualificationCourseTitle: "Maths",
-                createdBy: User.ToUserInfo());
+                createdBy: User.ToUserInfo(),
+                learnAimRef);
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
@@ -608,10 +609,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             // Arrange
             var provider = await TestData.CreateProvider();
 
+            var learnAimRef = (await TestData.CreateLearningDelivery(learnAimRefTitle: "Maths")).LearnAimRef;
+
             var course = await TestData.CreateCourse(
                 provider.ProviderId,
-                qualificationCourseTitle: "Maths",
-                createdBy: User.ToUserInfo());
+                createdBy: User.ToUserInfo(),
+                learnAimRef);
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 

@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         if (isValid.Value)
                         {
-                            var learnAimRef = await CreateLearningAimRef();
+                            var learnAimRef = (await CreateLearningDelivery()).LearnAimRef;
                             rowBuilder.AddValidRows(learnAimRef, 3);
                         }
                         else
