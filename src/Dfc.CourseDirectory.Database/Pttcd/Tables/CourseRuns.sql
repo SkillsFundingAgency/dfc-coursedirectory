@@ -21,5 +21,6 @@
 	[StudyMode] TINYINT,
 	[AttendancePattern] TINYINT,
 	[National] BIT,
-	[BulkUploadErrorCount] INT
+	[BulkUploadErrorCount] INT,
+	[DataIsHtmlEncoded] BIT NOT NULL CONSTRAINT [DF_CourseRuns_DataIsHtmlEncoded] DEFAULT (1)
 )

@@ -114,7 +114,8 @@ WHEN NOT MATCHED THEN
         WhatYoullNeed,
         HowYoullBeAssessed,
         WhereNext,
-        BulkUploadErrorCount
+        BulkUploadErrorCount,
+        DataIsHtmlEncoded
     ) VALUES (
         source.CourseId,
         source.ProviderId,
@@ -134,7 +135,8 @@ WHEN NOT MATCHED THEN
         source.WhatYoullNeed,
         source.HowYoullBeAssessed,
         source.WhereNext,
-        source.BulkUploadErrorCount
+        source.BulkUploadErrorCount,
+        1
     )
 WHEN MATCHED THEN
     UPDATE SET
@@ -314,7 +316,8 @@ WHEN NOT MATCHED THEN
         StudyMode,
         AttendancePattern,
         [National],
-        BulkUploadErrorCount
+        BulkUploadErrorCount,
+        DataIsHtmlEncoded
     ) VALUES (
         source.CourseRunId,
         source.CourseId,
@@ -337,7 +340,8 @@ WHEN NOT MATCHED THEN
         source.StudyMode,
         source.AttendancePattern,
         source.[National],
-        source.BulkUploadErrorCount
+        source.BulkUploadErrorCount,
+        1
     )
 WHEN MATCHED THEN
     UPDATE SET
