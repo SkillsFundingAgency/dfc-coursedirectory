@@ -89,7 +89,8 @@ INSERT INTO Pttcd.Courses (
     HowYoullLearn,
     WhatYoullNeed,
     HowYoullBeAssessed,
-    WhereNext
+    WhereNext,
+    DataIsHtmlEncoded
 )
 SELECT
     CourseId,
@@ -106,7 +107,8 @@ SELECT
     HowYouWillLearn,
     WhatYouWillNeedToBring,
     HowYouWillBeAssessed,
-    WhereNext
+    WhereNext,
+    0  -- DataIsHtmlEncoded
 FROM CoursesCte
 WHERE GroupRowNumber = 1
 
@@ -131,7 +133,8 @@ INSERT INTO Pttcd.CourseRuns (
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National],
+    DataIsHtmlEncoded
 )
 SELECT
     CourseRunId,
@@ -154,7 +157,8 @@ SELECT
     ResolvedDuration,
     ResolvedStudyMode,
     ResolvedAttendancePattern,
-    ResolvedNationalDelivery
+    ResolvedNationalDelivery,
+    0  -- DataIsHtmlEncoded
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
