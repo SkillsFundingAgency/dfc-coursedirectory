@@ -95,6 +95,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
             void NormalizeViewModel()
             {
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                {
+                    vm.VenueId = null;
+                    vm.StudyMode = null;
+                    vm.AttendancePattern = null;
+                }
+
+                if (request.DeliveryMode != CourseDeliveryMode.WorkBased)
+                {
+                    vm.NationalDelivery = null;
+                    vm.SubRegionIds = null;
+                }
+
                 // If mutually exclusive fields are specified, force the user to choose
 
                 if (vm.FlexibleStartDate == true && !string.IsNullOrEmpty(row.StartDate))
