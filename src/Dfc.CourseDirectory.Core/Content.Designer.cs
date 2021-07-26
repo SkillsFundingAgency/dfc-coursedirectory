@@ -349,7 +349,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a real start date.
+        ///   Looks up a localized string similar to Start date cannot be earlier than today&apos;s date.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_INVALID {
             get {
@@ -358,7 +358,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start date cannot be earlier than today&apos;s date.
+        ///   Looks up a localized string similar to &lt;TODO&gt;.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_NOT_ALLOWED {
             get {
