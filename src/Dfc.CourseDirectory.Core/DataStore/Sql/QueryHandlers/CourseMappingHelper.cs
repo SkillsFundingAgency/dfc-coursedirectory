@@ -48,7 +48,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     CourseRuns = courseRuns
                         .GetValueOrDefault(row.CourseId, Enumerable.Empty<CourseRunResult>())
                         .Select(MapCourseRun)
-                        .ToArray()
+                        .ToArray(),
+                    LearnAimRefTypeDesc = row.LearnAimRefTypeDesc,
+                    AwardOrgCode = row.AwardOrgCode,
+                    NotionalNVQLevelv2 = row.NotionalNVQLevelv2,
+                    LearnAimRefTitle = row.LearnAimRefTitle
                 };
 
                 string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded ? HtmlDecode(field) : field;
@@ -97,6 +101,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string HowYoullBeAssessed { get; set; }
             public string WhereNext { get; set; }
             public bool DataIsHtmlEncoded { get; set; }
+            public string LearnAimRefTypeDesc { get; set; }
+            public string AwardOrgCode { get; set; }
+            public string NotionalNVQLevelv2 { get; set; }
+            public string LearnAimRefTitle { get; set; }
         }
 
         private class CourseRunResult

@@ -26,9 +26,12 @@ AND (c.CourseStatus & @CourseStatusMask) <> 0
 SELECT
     c.CourseId, c.CourseStatus, @ProviderId ProviderId, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
-    c.WhereNext, c.DataIsHtmlEncoded
+    c.WhereNext, c.DataIsHtmlEncoded,
+    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
 FROM Pttcd.Courses c
 JOIN @CourseIds x ON c.CourseId = x.Id
+JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
+JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
 
 SELECT
     cr.CourseRunId,
