@@ -31,9 +31,10 @@ BEGIN
     RETURN
 END
 
-DECLARE @ProviderUkprn INT
+DECLARE @ProviderUkprn INT,
+        @ProviderId UNIQUEIDENTIFIER
 
-SELECT @ProviderUkprn = Ukprn FROM Pttcd.Providers p
+SELECT @ProviderUkprn = Ukprn, @ProviderId = p.ProviderId FROM Pttcd.Providers p
 JOIN Pttcd.VenueUploads vu ON p.ProviderId = vu.ProviderId
 WHERE VenueUploadId = @VenueUploadId
 
@@ -68,6 +69,7 @@ WHEN NOT MATCHED THEN INSERT (
     UpdatedBy,
     VenueName,
     ProviderUkprn,
+    ProviderId,
     ProviderVenueRef,
     AddressLine1,
     AddressLine2,
@@ -87,6 +89,7 @@ WHEN NOT MATCHED THEN INSERT (
     @PublishedByUserId,
     source.VenueName,
     @ProviderUkprn,
+    @ProviderId,
     source.ProviderVenueRef,
     source.AddressLine1,
     source.AddressLine2,
