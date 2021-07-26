@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(6), Name("CONTACT_URL")]
         public string ContactUrl { get; set; }
         [Index(7), Name("DELIVERY_METHOD")]
-        public string DeliveryMode { get; set; }
+        public string DeliveryMethod { get; set; }
         [Index(8), Name("VENUE")]
         public string Venue { get; set; }
         [Index(9), Name("YOUR_VENUE_REFERENCE")]
@@ -32,8 +32,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(10), Name("RADIUS")]
         public string Radius { get; set; }
         [Index(11), Name("DELIVERY_MODE")]
+        public string DeliveryMode { get; set; }
+        [Index(12), Name("NATIONAL_DELIVERY")]
         public string NationalDelivery { get; set; }
-        [Index(12), Name("SUB_REGION")]
+        [Index(13), Name("SUB_REGION")]
         public string SubRegion { get; set; }
     }
 }

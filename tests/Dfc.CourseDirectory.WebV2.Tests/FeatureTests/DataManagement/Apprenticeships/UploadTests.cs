@@ -180,7 +180,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
                     csvWriter.WriteField("YOUR_VENUE_REFERENCE");
                     csvWriter.WriteField("RADIUS");
                     csvWriter.WriteField("DELIVERY_MODE");
-                    csvWriter.WriteField("ACROSS_ENGLAND");
                     csvWriter.WriteField("NATIONAL_DELIVERY");
                     csvWriter.WriteField("SUB_REGION");
                     csvWriter.NextRecord();
