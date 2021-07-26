@@ -18,5 +18,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string HowYoullBeAssessed { get; set; }
         public string WhereNext { get; set; }
         public IReadOnlyCollection<CourseRun> CourseRuns { get; set; }
+        public string LearnAimRefTypeDesc { get; set; }
+        public string AwardOrgCode { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
+        public string LearnAimRefTitle { get; set; }
     }
 }
