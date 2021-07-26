@@ -23,9 +23,10 @@ BEGIN
     RETURN
 END
 
-DECLARE @ProviderUkprn INT
+DECLARE @ProviderUkprn INT,
+        @ProviderId UNIQUEIDENTIFIER
 
-SELECT @ProviderUkprn = Ukprn FROM Pttcd.Providers p
+SELECT @ProviderUkprn = Ukprn, @ProviderId = p.ProviderId FROM Pttcd.Providers p
 JOIN Pttcd.CourseUploads cu ON p.ProviderId = cu.ProviderId
 WHERE cu.CourseUploadId = @CourseUploadId
 
@@ -83,6 +84,7 @@ INSERT INTO Pttcd.Courses (
     UpdatedBy,
     LearnAimRef,
     ProviderUkprn,
+    ProviderId,
     CourseDescription,
     EntryRequirements,
     WhatYoullLearn,
@@ -101,6 +103,7 @@ SELECT
     @PublishedByUserId,
     LearnAimRef,
     @ProviderUkprn,
+    @ProviderId,
     WhoThisCourseIsFor,
     EntryRequirements,
     WhatYouWillLearn,
