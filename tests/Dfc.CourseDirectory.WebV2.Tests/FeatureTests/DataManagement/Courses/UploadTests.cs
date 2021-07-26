@@ -289,6 +289,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var provider = await TestData.CreateProvider();
             var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;
             var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+            var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1).ToString())).LearnAimRef;
 
             //Add missing lars
             List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList();
@@ -300,6 +301,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredOperationalEndDate, 1).ToList());
 
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
 
@@ -325,7 +327,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             });
             doc.GetAllElementsByTestId("ExpiredLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
             {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef)
+                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef),
+                string.Format("Row {0}, expired code {1}", 9, expiredOperationalEndDate)
             });
         }
 
