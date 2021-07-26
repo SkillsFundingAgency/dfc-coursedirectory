@@ -102,7 +102,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 doc.GetElementByTestId("UnpublishedVenueCount").TextContent.Should().Be("4");
                 doc.GetElementByTestId("venues-upload-new-link").TextContent.Should().Be("Upload new venue data");
             }
-
         }
 
         [Fact]
@@ -113,13 +112,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            var learningAimRef = await TestData.CreateLearningAimRef();
-            //Create some course upload rows to test new data in UI
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            // Create some course upload rows to test new data in UI
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
-                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef, record => record.IsValid = false);
                 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");

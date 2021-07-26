@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             {
                 var validationResult = new ValidationResult(new[]
                 {
-                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete unpublished course")
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
@@ -100,11 +100,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             var groupErrors = rowGroup.First().Errors
                 .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.Course)
                 .ToArray();
-            
+
             return new ViewModel()
             {
                 DeliveryModes = deliveryModes,
-                LearnAimRef = rowGroup.Select(r => r.LarsQan).Distinct().Single(),
+                LearnAimRef = rowGroup.Select(r => r.LearnAimRef).Distinct().Single(),
                 RowNumber = rowNumber,
                 Rows = rowGroup
                     .Select(r => new ViewModelRow()
@@ -114,6 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
                         ErrorFields = r.Errors.Except(groupErrors).Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
                         StartDate = r.StartDate
                     })
+                    .Where(r => r.ErrorFields.Count > 0)
                     .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
                     .ThenBy(r => r.StartDate)
                     .ThenBy(r => r.DeliveryMode)

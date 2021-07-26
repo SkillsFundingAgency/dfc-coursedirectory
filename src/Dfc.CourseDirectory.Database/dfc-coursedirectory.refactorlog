@@ -82,4 +82,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[ProviderCourseRef]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="eb302ea4-2337-4d7b-b29d-71b638ad7a33" ChangeDateTime="07/21/2021 18:22:39">
+    <Property Name="ElementName" Value="[Pttcd].[CourseUploadRows].[LarsQan]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[CourseUploadRows]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[LearnAimRef]" />
+  </Operation>
 </Operations>

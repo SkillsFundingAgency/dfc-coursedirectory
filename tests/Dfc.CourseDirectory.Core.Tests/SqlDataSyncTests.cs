@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                 SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
                 Clock,
-                new NullLogger<SqlDataSync>());;
+                new NullLogger<SqlDataSync>());
 
             // Act
             await sqlDataSync.SyncProvider(provider);
@@ -200,11 +200,13 @@ namespace Dfc.CourseDirectory.Core.Tests
         public async Task SyncCourse_UpsertsCourse()
         {
             // Arrange
+            var provider = await TestData.CreateProvider();
+
             var course = new Course()
             {
                 Id = Guid.NewGuid(),
-                ProviderId = Guid.NewGuid(),
-                ProviderUKPRN = 12345,
+                ProviderId = provider.ProviderId,
+                ProviderUKPRN = provider.Ukprn,
                 CourseId = 67890,
                 QualificationCourseTitle = "Maths",
                 LearnAimRef = "10101011",
@@ -302,7 +304,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                 }
 
                 return record.CourseId == course.Id &&
-                    record.ProviderUkprn == 12345 &&
+                    record.ProviderUkprn == provider.Ukprn &&
                     record.TribalCourseId == 67890 &&
                     record.LearnAimRef == "10101011" &&
                     record.CourseDescription == "Maths description" &&
@@ -343,11 +345,13 @@ namespace Dfc.CourseDirectory.Core.Tests
         public async Task SyncApprenticeship_UpsertsApprenticeship()
         {
             // Arrange
+            var provider = await TestData.CreateProvider();
+
             var apprenticeship = new Apprenticeship()
             {
                 Id = Guid.NewGuid(),
-                ProviderId = Guid.NewGuid(),
-                ProviderUKPRN = 12345,
+                ProviderId = provider.ProviderId,
+                ProviderUKPRN = provider.Ukprn,
                 ApprenticeshipTitle = "Test Apprenticeship",
                 ApprenticeshipType = ApprenticeshipType.StandardCode,
                 StandardId = Guid.NewGuid(),
@@ -431,7 +435,7 @@ namespace Dfc.CourseDirectory.Core.Tests
 
                 return record.ApprenticeshipId == apprenticeship.Id &&
                     record.ProviderId == apprenticeship.ProviderId &&
-                    record.ProviderUkprn == 12345 &&
+                    record.ProviderUkprn == provider.Ukprn &&
                     record.ApprenticeshipTitle == "Test Apprenticeship" &&
                     record.ApprenticeshipType == ApprenticeshipType.StandardCode &&
                     record.StandardCode == 123 &&

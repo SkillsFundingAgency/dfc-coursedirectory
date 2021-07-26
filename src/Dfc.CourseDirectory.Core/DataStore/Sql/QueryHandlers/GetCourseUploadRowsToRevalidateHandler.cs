@@ -25,7 +25,7 @@ WHERE cu.CourseUploadId = @CourseUploadId
 
 SELECT
     cur.RowNumber, cur.IsValid, cur.Errors AS ErrorList, cur.CourseId, cur.CourseRunId, cur.LastUpdated, cur.LastValidated,
-    cur.LarsQan, cur.WhoThisCourseIsFor, cur.EntryRequirements, cur.WhatYouWillLearn, cur.HowYouWillLearn, cur.WhatYouWillNeedToBring,
+    cur.LearnAimRef, cur.WhoThisCourseIsFor, cur.EntryRequirements, cur.WhatYouWillLearn, cur.HowYouWillLearn, cur.WhatYouWillNeedToBring,
     cur.HowYouWillBeAssessed, cur.WhereNext, cur.CourseName, cur.ProviderCourseRef, cur.DeliveryMode, cur.StartDate, cur.FlexibleStartDate,
     cur.VenueName, cur.ProviderVenueRef, cur.NationalDelivery, cur.SubRegions, cur.CourseWebpage, cur.Cost, cur.CostDescription,
     cur.Duration, cur.DurationUnit, cur.StudyMode, cur.AttendancePattern, cur.VenueId

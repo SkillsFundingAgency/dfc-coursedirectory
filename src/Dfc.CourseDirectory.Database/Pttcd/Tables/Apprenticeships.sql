@@ -9,7 +9,7 @@
 	[UpdatedOn] DATETIME,
 	[UpdatedBy] NVARCHAR(MAX),
 	[TribalApprenticeshipId] INT,
-	[ProviderId] UNIQUEIDENTIFIER,
+	[ProviderId] UNIQUEIDENTIFIER, --CONSTRAINT [FK_Apprenticeships_Provider] FOREIGN KEY REFERENCES [Pttcd].[Providers] ([ProviderId]),
 	[ProviderUkprn] INT,
 	[ApprenticeshipType] TINYINT,
 	[ApprenticeshipTitle] NVARCHAR(MAX),

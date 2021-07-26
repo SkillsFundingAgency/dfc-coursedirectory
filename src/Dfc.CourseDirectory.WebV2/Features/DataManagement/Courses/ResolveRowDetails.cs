@@ -84,24 +84,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         {
             var row = await GetRow(request.RowNumber);
             var vm = await CreateViewModel(request.DeliveryMode, row);
+            NormalizeViewModel();
 
             var allRegions = await _regionCache.GetAllRegions();
-
-            NormalizeCommand(vm);
 
             var validator = new CommandValidator(_clock, allRegions);
             var validationResult = await validator.ValidateAsync(vm);
 
             return new ModelWithErrors<ViewModel>(vm, validationResult);
+
+            void NormalizeViewModel()
+            {
+                // If mutually exclusive fields are specified, force the user to choose
+
+                if (vm.FlexibleStartDate == true && !string.IsNullOrEmpty(row.StartDate))
+                {
+                    vm.FlexibleStartDate = null;
+                }
+
+                if (vm.NationalDelivery == true && !string.IsNullOrEmpty(row.SubRegions))
+                {
+                    vm.NationalDelivery = null;
+                }
+            }
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
             var row = await GetRow(request.RowNumber);
 
-            var allRegions = await _regionCache.GetAllRegions();
+            NormalizeCommand();
 
-            NormalizeCommand(request);
+            var allRegions = await _regionCache.GetAllRegions();
 
             var validator = new CommandValidator(_clock, allRegions);
             var validationResult = await validator.ValidateAsync(request);
@@ -126,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     NationalDelivery = request.NationalDelivery,
                     SubRegionIds = request.SubRegionIds?.ToArray(),
                     CourseWebPage = request.CourseWebPage,
-                    Cost = decimal.Parse(request.Cost),
+                    Cost = decimal.TryParse(request.Cost, out var cost) ? cost : (decimal?)null,
                     CostDescription = request.CostDescription,
                     Duration = request.Duration.Value,
                     DurationUnit = request.DurationUnit.Value,
@@ -134,6 +148,34 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     AttendancePattern = request.AttendancePattern,
                     VenueId = request.VenueId
                 });
+
+            void NormalizeCommand()
+            {
+                // Some fields only apply under certain conditions; ensure we don't save fields that are not applicable
+
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                {
+                    request.VenueId = null;
+                    request.StudyMode = null;
+                    request.AttendancePattern = null;
+                }
+
+                if (request.DeliveryMode != CourseDeliveryMode.WorkBased)
+                {
+                    request.NationalDelivery = null;
+                    request.SubRegionIds = null;
+                }
+
+                if (request.FlexibleStartDate == true)
+                {
+                    request.StartDate = null;
+                }
+
+                if (request.NationalDelivery == true)
+                {
+                    request.SubRegionIds = null;
+                }
+            }
         }
 
         private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row)
@@ -187,34 +229,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             }
 
             return row;
-        }
-
-        private void NormalizeCommand(Command command)
-        {
-            // Some fields only apply under certain conditions; ensure we ignore fields that are not applicable
-
-            if (command.DeliveryMode != CourseDeliveryMode.ClassroomBased)
-            {
-                command.VenueId = null;
-                command.StudyMode = null;
-                command.AttendancePattern = null;
-            }
-            
-            if (command.DeliveryMode != CourseDeliveryMode.WorkBased)
-            {
-                command.NationalDelivery = null;
-                command.SubRegionIds = null;
-            }
-
-            if (command.FlexibleStartDate == true)
-            {
-                command.StartDate = null;
-            }
-
-            if (command.NationalDelivery == true)
-            {
-                command.SubRegionIds = null;
-            }
         }
 
         private class CommandValidator : AbstractValidator<Command>

@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
@@ -214,7 +215,32 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("check-publish")]
-        public IActionResult CheckAndPublish() => Ok();
+        public async Task<IActionResult> CheckAndPublish()
+        {
+            var query = new CheckAndPublish.Query();
+
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    hasErrors => RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    command => View(command)));
+        }
+
+        [HttpPost("check-publish")]
+        [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
+                        RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                        RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("success")]
+        [RequireJourneyInstance]
+        [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm));
 
         [HttpGet("template")]
         public IActionResult Template() =>
@@ -222,6 +248,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("formatting")]
         public IActionResult Formatting() => View();
+
+        [HttpGet("download-errors")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
+            new DownloadErrors.Query(),
+            result => new CsvResult<CsvCourseRowWithErrors>(result.FileName, result.Rows));
 
         [HttpGet("errors")]
         public async Task<IActionResult> Errors() =>

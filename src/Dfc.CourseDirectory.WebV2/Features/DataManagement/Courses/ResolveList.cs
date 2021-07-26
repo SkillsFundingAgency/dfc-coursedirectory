@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+            var (errorRows, _) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                 _providerContextProvider.GetProviderId());
 
             if (errorRows.Count == 0)
@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                     {
                         RowNumber = g.First().Row.RowNumber,
                         CourseId = g.Key,
-                        LearnAimRef = g.Select(r => r.Row.LarsQan).Distinct().Single(),
+                        LearnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single(),
                         CourseRows = g
                             .Select(r => new ViewModelErrorRow()
                             {
@@ -99,6 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                 HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
                                 HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode" }).Any()
                             })
+                            .Where(r => r.ErrorFields.Count > 0)
                             .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
                             .ThenBy(r => r.StartDate)
                             .ThenBy(r => r.DeliveryMode)

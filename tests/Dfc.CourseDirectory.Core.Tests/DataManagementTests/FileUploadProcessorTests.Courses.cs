@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -65,7 +65,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -98,7 +97,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -131,7 +129,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -165,7 +162,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -199,7 +195,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -232,7 +227,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
             var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
             var row = new CsvCourseRow()
@@ -265,7 +259,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "REF");
 
@@ -275,7 +269,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 UploadStatus.ProcessedWithErrors,
                 configureRows: rowBuilder =>
                 {
-                    rowBuilder.AddRow(learningAimRef, record =>
+                    rowBuilder.AddRow(learnAimRef, record =>
                     {
                         record.DeliveryMode = "classroom based";
                         record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
@@ -312,7 +306,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "REF");
 
@@ -322,7 +316,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 UploadStatus.ProcessedWithErrors,
                 configureRows: rowBuilder =>
                 {
-                    rowBuilder.AddRow(learningAimRef, record =>
+                    rowBuilder.AddRow(learnAimRef, record =>
                     {
                         record.DeliveryMode = "classroom based";
                         record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
@@ -354,7 +348,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "REF");
 
@@ -364,7 +358,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 UploadStatus.ProcessedWithErrors,
                 configureRows: rowBuilder =>
                 {
-                    rowBuilder.AddRow(learningAimRef, record =>
+                    rowBuilder.AddRow(learnAimRef, record =>
                     {
                         record.DeliveryMode = "classroom based";
                         record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
@@ -399,7 +393,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var (courseUpload, rows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
@@ -407,7 +401,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 UploadStatus.ProcessedWithErrors,
                 configureRows: rowBuilder =>
                 {
-                    rowBuilder.AddRow(learningAimRef, record =>
+                    rowBuilder.AddRow(learnAimRef, record =>
                     {
                         record.DeliveryMode = "classroom based";
                         record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
@@ -443,10 +437,10 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created);
 
-            var uploadRows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, rowCount: 3).ToArray();
+            var uploadRows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, rowCount: 3).ToArray();
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
 
             // Act
@@ -501,13 +495,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task ValidateCourseUploadRows_RowsHaveNoLarsCode_AreNotGrouped()
+        public async Task PublishCourseUpload_StatusIsProcessedWithErrors_ReturnsUploadHasErrors()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null);
-            var learningAimRef = await TestData.CreateLearningAimRef();
+
+            await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedWithErrors);
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -515,7 +512,87 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory));
 
-            var rows = DataManagementFileHelper.CreateCourseUploadRows(learningAimRef, rowCount: 2).ToArray();
+            // Act
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
+        }
+
+        [Fact]
+        public async Task PublishCourseUpload_StatusIsProcessedWithErrorsAfterRevalidation_ReturnsUploadHasErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.DeliveryMode = "classroom based";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
+                        record.ProviderVenueRef = venue.ProviderVenueRef;
+                        record.VenueId = venue.VenueId;
+                    });
+                });
+
+            // Delete the venue linked to the row in the upload, triggering revalidation
+            // (which should fail since the venue has gone away)
+
+            Clock.UtcNow += TimeSpan.FromDays(1);
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new DeleteVenue()
+            {
+                VenueId = venue.VenueId,
+                DeletedBy = user,
+                DeletedOn = Clock.UtcNow
+            }));
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            // Act
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
+        }
+
+        [Fact(Skip = "Awaiting courses in SQL")]
+        public Task PublishCourseUpload_CanBePublished_UpsertsRowsArchivesUnmatchedVenuesAndSetsStatusToPublished()
+        {
+            // TODO Implement once we have courses in SQL
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task ValidateCourseUploadRows_RowsHaveNoLarsCode_AreNotGrouped()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null);
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var rows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, rowCount: 2).ToArray();
             rows[0].LearnAimRef = string.Empty;
             rows[1].LearnAimRef = string.Empty;
 

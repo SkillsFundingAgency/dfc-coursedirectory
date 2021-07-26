@@ -267,12 +267,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime,
-                        startDate: Clock.UtcNow.AddMonths(-1).Date));
+                configureCourseRuns: builder => builder.WithCourseRun(startDate: Clock.UtcNow.AddMonths(-1).Date));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -298,12 +293,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                courseStatus: courseStatus,
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime));
+                configureCourseRuns: builder => builder.WithCourseRun(status: courseStatus));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -347,12 +337,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                courseStatus: CourseStatus.BulkUploadPending,
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime));
+                configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.BulkUploadPending));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -376,12 +361,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             await TestData.CreateCourse(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                courseStatus: CourseStatus.BulkUploadReadyToGoLive,
-                configureCourseRuns: courseRunBuilder =>
-                    courseRunBuilder.WithCourseRun(
-                        CourseDeliveryMode.ClassroomBased,
-                        CourseStudyMode.FullTime,
-                        CourseAttendancePattern.Daytime));
+                configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.BulkUploadReadyToGoLive));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
 
@@ -470,7 +450,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             {
                 doc.GetElementByTestId("UnpublishedVenueCount").TextContent.Should().Be("3");
             }
-
         }
 
         [Fact]
@@ -481,13 +460,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            var learningAimRef = await TestData.CreateLearningAimRef();
-            //Create some course upload rows to test new data in UI
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            // Create some course upload rows to test new data in UI
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
-                    rowBuilder.AddRow(learningAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef, record => record.IsValid = false);
+                    rowBuilder.AddRow(learnAimRef, record => record.IsValid = false);
                 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
@@ -503,7 +483,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             {
                 doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
             }
-
         }
 
         [Theory]
@@ -571,7 +550,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
@@ -662,7 +641,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("DownloadApprenticeships").Should().BeNull();
         }
 
-
         private async Task<IReadOnlyCollection<Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
                 TestData.CreateVenue(providerId, createdBy: User.ToUserInfo(), venueName: $"Test {i}")));
@@ -671,11 +649,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         {
             for (var i = 1; i <= count; i++)
             {
-                await TestData.CreateCourse(
-                    providerId,
-                    createdBy: User.ToUserInfo(),
-                    qualificationCourseTitle: $"Test {i}",
-                    learnAimRef: $"TST{i}");
+                await TestData.CreateCourse(providerId, createdBy: User.ToUserInfo());
             }
         }
 

@@ -1,9 +1,13 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGroup.ViewModel 
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGroup.ViewModel
 @{
     ViewContext.SetLayoutData(title: "Delete unpublished course");
 
     var deliveryModesDescription = Model.DeliveryModes.Select(dm => dm.ToDescription().ToLower()).ToCommaSeparatedString();
 }
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="Confirm" />
+</govuk-error-summary>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -23,7 +27,7 @@
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
+                <tr class="govuk-table__row @(Model.Rows.Count == 0 ? "pttcd-table__row-!-border" : "")">
                     <td class="govuk-table__cell pttcd-table--no-border govuk-body-s"><strong>LARS</strong> @Model.LearnAimRef</td>
                     <td class="govuk-table__cell pttcd-table--no-border"></td>
                     <td class="govuk-table__cell pttcd-table--no-border"></td>

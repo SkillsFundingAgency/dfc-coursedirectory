@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), learnAimRef: learnAimRef);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses?providerId={provider.ProviderId}");
@@ -111,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
-            var learnAimRef = await TestData.CreateLearningAimRef();
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
@@ -280,6 +280,53 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             var doc = await response.GetDocument();
             doc.AssertHasError("File", "The selected file must be smaller than 5MB");
+        }
+
+        [Fact]
+        public async Task Post_FileWithLarsErrors_RendersExpectedResult()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;
+            var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            //Add missing lars
+            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList();
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
+
+            //Add invalid and expired lars
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
+            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
+
+            var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
+
+            var requestContent = CreateMultiPartDataContent("text/csv", stream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The file contains errors and could not be uploaded");
+            doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "Row 3",
+                "Row 5"
+            });
+            doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "Row 6",
+                "Row 8"
+            });
+            doc.GetAllElementsByTestId("ExpiredLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef)
+            });
         }
 
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)

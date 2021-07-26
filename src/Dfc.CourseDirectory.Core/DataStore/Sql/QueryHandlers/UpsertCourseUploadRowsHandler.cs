@@ -31,7 +31,7 @@ WHEN NOT MATCHED THEN
         LastValidated,
         CourseId,
         CourseRunId,
-        LarsQan,
+        LearnAimRef,
         WhoThisCourseIsFor,
         EntryRequirements,
         WhatYouWillLearn,
@@ -75,7 +75,7 @@ WHEN NOT MATCHED THEN
         source.LastValidated,
         source.CourseId,
         source.CourseRunId,
-        source.LarsQan,
+        source.LearnAimRef,
         source.WhoThisCourseIsFor,
         source.EntryRequirements,
         source.WhatYouWillLearn,
@@ -118,7 +118,7 @@ WHEN MATCHED THEN UPDATE SET
     LastValidated = source.LastValidated,
     CourseId = source.CourseId,
     CourseRunId = source.CourseRunId,
-    LarsQan = source.LarsQan,
+    LearnAimRef = source.LearnAimRef,
     WhoThisCourseIsFor = source.WhoThisCourseIsFor,
     EntryRequirements = source.EntryRequirements,
     WhatYouWillLearn = source.WhatYouWillLearn,
@@ -161,12 +161,12 @@ ON
     target.RowNumber = source.RowNumber AND
     target.RegionId = source.RegionId
 WHEN NOT MATCHED THEN INSERT (CourseUploadId, RowNumber, RegionId) VALUES (@CourseUploadId, source.RowNumber, source.RegionId)
-WHEN NOT MATCHED BY SOURCE AND target.CourseUploadId = @CourseUploadId THEN DELETE
+WHEN NOT MATCHED BY SOURCE AND target.CourseUploadId = @CourseUploadId AND target.RowNumber IN (SELECT RowNumber FROM @Rows) THEN DELETE
 ;
 
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, CourseId, CourseRunId, LastUpdated, LastValidated,
-    LarsQan, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
+    LearnAimRef, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
     HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
@@ -204,7 +204,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("LastValidated", typeof(DateTime));
                 table.Columns.Add("CourseId", typeof(Guid));
                 table.Columns.Add("CourseRunId", typeof(Guid));
-                table.Columns.Add("LarsQan", typeof(string));
+                table.Columns.Add("LearnAimRef", typeof(string));
                 table.Columns.Add("WhoThisCourseIsFor", typeof(string));
                 table.Columns.Add("EntryRequirements", typeof(string));
                 table.Columns.Add("WhatYouWillLearn", typeof(string));

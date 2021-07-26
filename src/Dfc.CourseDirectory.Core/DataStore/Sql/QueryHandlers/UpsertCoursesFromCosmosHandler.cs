@@ -72,29 +72,32 @@ CREATE TABLE #Courses (
 MERGE Pttcd.Courses AS target
 USING (
     SELECT
-        CourseId,
-        CourseStatus,
-        CreatedOn,
-        CreatedBy,
-        UpdatedOn,
-        UpdatedBy,
-        TribalCourseId,
-        LearnAimRef,
-        ProviderUkprn,
-        CourseDescription,
-        EntryRequirements,
-        WhatYoullLearn,
-        HowYoullLearn,
-        WhatYoullNeed,
-        HowYoullBeAssessed,
-        WhereNext,
-        BulkUploadErrorCount
-    FROM #Courses
+        c.CourseId,
+        p.ProviderId,
+        c.CourseStatus,
+        c.CreatedOn,
+        c.CreatedBy,
+        c.UpdatedOn,
+        c.UpdatedBy,
+        c.TribalCourseId,
+        c.LearnAimRef,
+        c.ProviderUkprn,
+        c.CourseDescription,
+        c.EntryRequirements,
+        c.WhatYoullLearn,
+        c.HowYoullLearn,
+        c.WhatYoullNeed,
+        c.HowYoullBeAssessed,
+        c.WhereNext,
+        c.BulkUploadErrorCount
+    FROM #Courses c
+    JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 ) AS source
 ON target.CourseId = source.CourseId
 WHEN NOT MATCHED THEN
     INSERT (
         CourseId,
+        ProviderId,
         LastSyncedFromCosmos,
         CourseStatus,
         CreatedOn,
@@ -114,6 +117,7 @@ WHEN NOT MATCHED THEN
         BulkUploadErrorCount
     ) VALUES (
         source.CourseId,
+        source.ProviderId,
         @LastSyncedFromCosmos,
         source.CourseStatus,
         source.CreatedOn,

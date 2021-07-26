@@ -90,12 +90,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
             var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
 
             var venueId = Guid.NewGuid();
-            var providerUkprn = _providerContextProvider.GetProviderContext().ProviderInfo.Ukprn;
+            var providerId = _providerContextProvider.GetProviderId();
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateVenue()
             {
                 VenueId = venueId,
-                ProviderUkprn = providerUkprn,
+                ProviderId = providerId,
                 Name = journeyInstance.State.Name,
                 Email = journeyInstance.State.Email,
                 Telephone = journeyInstance.State.Telephone,

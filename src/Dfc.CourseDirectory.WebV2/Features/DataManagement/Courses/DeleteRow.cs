@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                     .Distinct()
                     .ToArray(),
                 StartDate = row.StartDate,
-                LarsQan = row.LarsQan
+                LarsQan = row.LearnAimRef
             };
         }
     }

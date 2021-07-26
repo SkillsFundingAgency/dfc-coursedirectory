@@ -60,6 +60,11 @@ namespace Dfc.CourseDirectory.Testing
             bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
+            if (publishedOn.HasValue && abandonedOn.HasValue)
+            {
+                throw new ArgumentException($"A {nameof(VenueUpload)} cannot be both {UploadStatus.Abandoned} and {UploadStatus.Published}.");
+            }
+
             var courseUploadId = Guid.NewGuid();
             createdOn ??= _clock.UtcNow;
 
@@ -113,7 +118,7 @@ namespace Dfc.CourseDirectory.Testing
                     {
                         if (isValid.Value)
                         {
-                            var learnAimRef = await CreateLearningAimRef();
+                            var learnAimRef = (await CreateLearningDelivery()).LearnAimRef;
                             rowBuilder.AddValidRows(learnAimRef, 3);
                         }
                         else

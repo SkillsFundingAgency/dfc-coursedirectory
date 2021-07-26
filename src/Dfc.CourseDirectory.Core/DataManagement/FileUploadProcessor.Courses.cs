@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
                 var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
 
-                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
                 {
                     CourseUploadId = courseUpload.CourseUploadId
                 });
@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
+        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, int TotalRows)> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
@@ -260,7 +260,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
                 await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
 
-                var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                var (errorRows, totalRows) = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
                 {
                     CourseUploadId = courseUpload.CourseUploadId,
                     WithErrorsOnly = true
@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 await dispatcher.Commit();
 
-                return rows;
+                return (errorRows, totalRows);
             }
         }
 
@@ -358,6 +358,55 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 return new CourseDataUploadRowInfoCollection(rowInfos);
+            }
+        }
+
+        public async Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus.IsUnprocessed())
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                if (courseUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+
+                if (uploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var publishedOn = _clock.UtcNow;
+
+                var publishResult = await dispatcher.ExecuteQuery(new PublishCourseUpload()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    PublishedBy = publishedBy,
+                    PublishedOn = publishedOn
+                });
+
+                await dispatcher.Commit();
+
+                return PublishResult.Success(publishResult.AsT1.PublishedCount);
             }
         }
 
@@ -494,7 +543,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
                         HowYouWillBeAssessed = row.HowYouWillBeAssessed,
                         HowYouWillLearn = row.HowYouWillLearn,
-                        LearnAimRef = row.LarsQan,
+                        LearnAimRef = row.LearnAimRef,
                         NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(update.NationalDelivery),
                         ProviderCourseRef = update.ProviderCourseRef,
                         ProviderVenueRef = venue?.ProviderVenueRef,
@@ -569,7 +618,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             FlexibleStartDate = r.FlexibleStartDate,
                             HowYouWillBeAssessed = update.HowYouWillBeAssessed,
                             HowYouWillLearn = update.HowYouWillLearn,
-                            LearnAimRef = r.LarsQan,
+                            LearnAimRef = r.LearnAimRef,
                             NationalDelivery = r.NationalDelivery,
                             ProviderCourseRef = r.ProviderCourseRef,
                             ProviderVenueRef = r.ProviderVenueRef,
