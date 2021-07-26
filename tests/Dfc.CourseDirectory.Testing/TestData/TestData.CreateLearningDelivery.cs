@@ -12,7 +12,8 @@ namespace Dfc.CourseDirectory.Testing
                 DateTime? effectiveTo = null,
                 string notionalNVQLevelv2 = "3",
                 string awardOrgCode = "EDEXCEL",
-                string learnAimRefTypeDesc = "National Certificate") => 
+                string learnAimRefTypeDesc = "National Certificate",
+                string operationalEndDate = null) => 
             WithSqlQueryDispatcher(async dispatcher =>
             {
                 var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
@@ -49,7 +50,7 @@ namespace Dfc.CourseDirectory.Testing
                             // Unused columns that have `not null` constraints :-/
                             SourceURLLinkType = string.Empty,
                             RgltnStartDate = string.Empty,
-                            OperationalEndDate = string.Empty,
+                            OperationalEndDate = operationalEndDate != null ? operationalEndDate : string.Empty,
                             LearnDirectClassSystemCode1 = string.Empty,
                             KeySkillsIndicator = string.Empty,
                             Created_On = string.Empty,

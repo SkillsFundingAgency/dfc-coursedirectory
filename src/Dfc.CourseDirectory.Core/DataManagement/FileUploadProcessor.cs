@@ -200,7 +200,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        protected internal async Task<(FileMatchesSchemaResult Result, string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
+       /* protected internal async Task<(FileMatchesSchemaResult Result, string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
         {
             CheckStreamIsProcessable(stream);
 
@@ -227,7 +227,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         rowCount++;
                         string larsRow = row.LearnAimRef.Trim();
                         var validLearningAimRef = validLearningAimRefs.Where(l => l.LearnAimRef == larsRow).FirstOrDefault();
-                        //validLearningAimRef.
+
                         if (string.IsNullOrWhiteSpace(larsRow))
                         {
                             missing.Add(rowCount.ToString());
@@ -258,7 +258,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 stream.Seek(0L, SeekOrigin.Begin);
             }
-        }
+        }*/
 
         internal async Task<(string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
         {
@@ -296,7 +296,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             invalid.Add(rowNumber.ToString());
                         }
-                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
+                        else if ((learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
+                            || (!learningDelivery.OperationalEndDate.IsEmpty()
+                            && DateTime.Parse(learningDelivery.OperationalEndDate) < DateTime.Now))
                         {
                             expired.Add(string.Format("Row {0}, expired code {1}", rowNumber.ToString(), learnAimRef));
                         }
