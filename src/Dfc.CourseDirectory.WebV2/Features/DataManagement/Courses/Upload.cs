@@ -130,14 +130,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     await CreateViewModel(),
                     "The file contains errors",
                     null,
-                    saveFileResult.MissingLarsRows);
-            }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
-            {
-                return new UploadFailedResult(
-                    await CreateViewModel(),
-                    "The file contains errors",
-                    null,
                     saveFileResult.MissingLarsRows,
                     saveFileResult.InvalidLarsRows,
                     saveFileResult.ExpiredLarsRows);

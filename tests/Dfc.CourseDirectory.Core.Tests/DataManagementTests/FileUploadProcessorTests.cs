@@ -158,7 +158,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory));
 
-            // Add missing lars
+            //Add missing lars
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, 1).ToList();
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());

@@ -383,6 +383,28 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         UploadStatus.ProcessedSuccessfully);
                 }
 
+        public async Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (courseUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (courseUpload.UploadStatus.IsUnprocessed())
+                {
+                    throw new InvalidUploadStatusException(
+                        courseUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
                 if (courseUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
                 {
                     return PublishResult.UploadHasErrors();
@@ -434,12 +456,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             if (missingLars.Length > 0 || invalidLars.Length > 0 || expiredLars.Length > 0)
             {
                 return SaveFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
-            }
-
-            var (invalideLarsResult, invalidLars) = await FileInvalidLars(stream);
-            if (invalideLarsResult == FileMatchesSchemaResult.InvalidLars)
-            {
-                return SaveFileResult.MissingLars(invalidLars);
             }
 
             var courseUploadId = Guid.NewGuid();

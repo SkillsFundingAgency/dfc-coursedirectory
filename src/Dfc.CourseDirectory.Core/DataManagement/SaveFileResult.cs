@@ -62,16 +62,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Status = SaveFileResultStatus.InvalidLars
             };
 
-        public static SaveFileResult InvalidLars(IEnumerable<string> invalidLars) =>
-            new SaveFileResult()
-            {
-                MissingHeaders = Array.Empty<string>(),
-                MissingLarsRows = Array.Empty<string>(),
-                InvalidLarsRows = invalidLars.ToArray(),
-                ExpiredLarsRows = expiredLars.ToArray(),
-                Status = SaveFileResultStatus.InvalidLars
-            };
-
         public static SaveFileResult Success(Guid venueUploadId, UploadStatus uploadStatus) =>
             new SaveFileResult()
             {
