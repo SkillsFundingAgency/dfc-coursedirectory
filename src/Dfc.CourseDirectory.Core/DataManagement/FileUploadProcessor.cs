@@ -300,6 +300,59 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        internal async Task<(string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                var missing = new List<string>();
+                var invalid = new List<string>();
+                var expired = new List<string>();
+
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    List<CsvCourseRow> rows = csvReader.GetRecords<CsvCourseRow>().ToList();
+
+                    var validLearningDeliveries = await dispatcher.ExecuteQuery(
+                        new GetLearningDeliveries() { LearnAimRefs = rows.Select(r => r.LearnAimRef).Distinct() });
+
+                    int rowNumber = 2;
+
+                    foreach (var row in rows)
+                    {
+                        var learnAimRef = row.LearnAimRef.Trim();
+
+                        if (string.IsNullOrWhiteSpace(learnAimRef))
+                        {
+                            missing.Add(rowNumber.ToString());
+                        }
+                        else if (!validLearningDeliveries.TryGetValue(learnAimRef, out var learningDelivery))
+                        {
+                            invalid.Add(rowNumber.ToString());
+                        }
+                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
+                        {
+                            expired.Add(string.Format("Row {0}, expired code {1}", rowNumber.ToString(), learnAimRef));
+                        }
+
+                        rowNumber++;
+                    }
+                }
+
+                return (missing.ToArray(), invalid.ToArray(), expired.ToArray());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
         protected internal enum FileMatchesSchemaResult
         {
             Ok,
