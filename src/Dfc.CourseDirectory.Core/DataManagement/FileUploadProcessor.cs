@@ -200,66 +200,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-       /* protected internal async Task<(FileMatchesSchemaResult Result, string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
-        {
-            CheckStreamIsProcessable(stream);
-
-            try
-            {
-                using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-                {
-                    await csvReader.ReadAsync();
-                    csvReader.ReadHeader();
-
-                    List<string> missing = new List<string>();
-                    List<string> invalid = new List<string>();
-                    List<string> expired = new List<string>();
-                    List<CsvCourseRow> csvRecords = csvReader.GetRecords<CsvCourseRow>().ToList();
-
-                    var validLearningAimRefs = await dispatcher.ExecuteQuery(new GetLearningDeliveries() { LearningAimRefs = csvRecords.Select(l=>l.LearnAimRef) });
-
-                    int rowCount = 1;
-
-                    foreach (var row in csvRecords)
-                    {
-                        rowCount++;
-                        string larsRow = row.LearnAimRef.Trim();
-                        var validLearningAimRef = validLearningAimRefs.Where(l => l.LearnAimRef == larsRow).FirstOrDefault();
-
-                        if (string.IsNullOrWhiteSpace(larsRow))
-                        {
-                            missing.Add(rowCount.ToString());
-                        }
-                        if (!string.IsNullOrWhiteSpace(larsRow) && validLearningAimRef == null)
-                        {
-                            invalid.Add(rowCount.ToString());
-                        }
-                        if (validLearningAimRef != null
-                            && ((validLearningAimRef.EffectiveTo.HasValue
-                            && validLearningAimRef.EffectiveTo < DateTime.Now)
-                          || (validLearningAimRef.OperationalEndDate != null
-                            && !validLearningAimRef.OperationalEndDate.IsEmpty()
-                            && DateTime.Parse(validLearningAimRef.OperationalEndDate) < DateTime.Now)))
-                        {
-                            expired.Add(string.Format("Row {0}, expired code {1}", rowCount.ToString(), larsRow));
-                        }
-                    }
-                    if (missing.Count > 0 || invalid.Count > 0 || expired.Count > 0)
-                    {
-                        return (FileMatchesSchemaResult.InvalidLars, missing.ToArray(), invalid.ToArray(), expired.ToArray());
-                    }
-                }
-
-                return (FileMatchesSchemaResult.Ok, Array.Empty<string>(), Array.Empty<string>(), Array.Empty<string>());
-            }
-            finally
-            {
-                stream.Seek(0L, SeekOrigin.Begin);
-            }
-        }*/
-
         internal async Task<(string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
         {
             CheckStreamIsProcessable(stream);
