@@ -360,29 +360,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return new CourseDataUploadRowInfoCollection(rowInfos);
             }
         }
-
-        public async Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy)
-        {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
-                {
-                    ProviderId = providerId
-                });
-
-                if (courseUpload == null)
-                {
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
-                }
-
-                if (courseUpload.UploadStatus.IsUnprocessed())
-                {
-                    throw new InvalidUploadStatusException(
-                        courseUpload.UploadStatus,
-                        UploadStatus.ProcessedWithErrors,
-                        UploadStatus.ProcessedSuccessfully);
-                }
-
         public async Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())

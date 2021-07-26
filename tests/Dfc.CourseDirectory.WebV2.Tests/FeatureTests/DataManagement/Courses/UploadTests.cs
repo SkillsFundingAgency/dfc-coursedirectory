@@ -282,53 +282,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             doc.AssertHasError("File", "The selected file must be smaller than 5MB");
         }
 
-        [Fact]
-        public async Task Post_FileWithLarsErrors_RendersExpectedResult()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;
-            var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
-
-            //Add missing lars
-            List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList();
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("", 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
-
-            //Add invalid and expired lars
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
-            courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
-
-            var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
-
-            var requestContent = CreateMultiPartDataContent("text/csv", stream);
-
-            // Act
-            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var doc = await response.GetDocument();
-            doc.AssertHasError("File", "The file contains errors and could not be uploaded");
-            doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-            {
-                "Row 3",
-                "Row 5"
-            });
-            doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-            {
-                "Row 6",
-                "Row 8"
-            });
-            doc.GetAllElementsByTestId("ExpiredLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-            {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef)
-            });
-        }
-
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
@@ -346,15 +299,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             }
             return content;
         }
-
-            //doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
-           // {
-           //     "Row 3",
-           //     "Row 5"
-           // });
         
-
-
         [Fact]
         public async Task Post_FileWithLarsErrors_RendersExpectedResult()
         {
