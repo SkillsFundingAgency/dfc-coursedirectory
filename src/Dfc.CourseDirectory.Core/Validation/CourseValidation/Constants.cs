@@ -9,7 +9,7 @@
         public const int EntryRequirementsMaxLength = 500;
         public const int HowYouWillBeAssessedMaxLength = 500;
         public const int HowYoullLearnMaxLength = 500;
-        public const int WhatYouWillLearnMaxLength = 500;
+        public const int WhatYouWillLearnMaxLength = 1500;
         public const int WhatYouWillNeedToBringMaxLength = 500;
         public const int WhatYouCanDoNextMaxLength = 500;
         public const int WhereNextMaxLength = 500;
