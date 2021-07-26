@@ -68,7 +68,8 @@ namespace Dfc.CourseDirectory.Functions
                 { "CampaignDataContainerName", "campaign-data" },
                 { "DataUploadsContainerName", Core.DataManagement.Constants.ContainerName },
                 { "CourseUploadsFolderName", Core.DataManagement.Constants.CoursesFolder },
-                { "VenueUploadsFolderName", Core.DataManagement.Constants.VenuesFolder }
+                { "VenueUploadsFolderName", Core.DataManagement.Constants.VenuesFolder },
+                { "ApprenticeshipUploadsFolderName", Core.DataManagement.Constants.ApprenticeshipsFolder }
             });
         }
     }

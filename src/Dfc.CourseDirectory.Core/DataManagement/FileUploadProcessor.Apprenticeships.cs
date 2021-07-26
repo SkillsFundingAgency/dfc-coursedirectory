@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -77,12 +84,207 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     _containerIsKnownToExist = true;
                 }
 
-                var blobName = $"{Constants.ApprenticeshipFolder}/{apprenticeshipUploadId}.csv";
+                var blobName = $"{Constants.ApprenticeshipsFolder}/{apprenticeshipUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
             }
 
             return SaveFileResult.Success(apprenticeshipUploadId, UploadStatus.Created);
         }
 
+        public async Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var setProcessingResult = await dispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessing()
+                {
+                    ApprenticeshipUploadId = apprenticeshipUploadId,
+                    ProcessingStartedOn = _clock.UtcNow
+                });
+
+                if (setProcessingResult != SetApprenticeshipUploadProcessingResult.Success)
+                {
+                    await DeleteBlob();
+
+                    return;
+                }
+
+                await dispatcher.Commit();
+            }
+
+            List<CsvApprenticeshipRow> rows;
+            using (var streamReader = new StreamReader(stream))
+            using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            {
+                rows = await csvReader.GetRecordsAsync<CsvApprenticeshipRow>().ToListAsync();
+            }
+
+            var rowsCollection = CreateApprenticeshipDataUploadRowInfoCollection();
+
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var venueUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
+                var providerId = venueUpload.ProviderId;
+
+                await ValidateApprenticeshipUploadRows(dispatcher, apprenticeshipUploadId, providerId, rowsCollection);
+
+                await dispatcher.Commit();
+            }
+
+            await DeleteBlob();
+
+            Task DeleteBlob()
+            {
+                var blobName = $"{Constants.ApprenticeshipsFolder}/{apprenticeshipUploadId}.csv";
+                return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
+            }
+
+            ApprenticeshipDataUploadRowInfoCollection CreateApprenticeshipDataUploadRowInfoCollection()
+            {
+                var apprenticeshipId = Guid.NewGuid();
+                var rowInfos = new List<ApprenticeshipDataUploadRowInfo>();
+                foreach (var row in rows)
+                {
+                    rowInfos.Add(new ApprenticeshipDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, apprenticeshipId));
+                }
+                return new ApprenticeshipDataUploadRowInfoCollection(rowInfos);
+            }
+        }
+
+        // internal for testing
+        internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<ApprenticeshipUploadRow> Rows)> ValidateApprenticeshipUploadRows(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            Guid apprenticeshipUploadId,
+            Guid providerId,
+            ApprenticeshipDataUploadRowInfoCollection rows)
+        {
+            var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+
+            var rowsAreValid = true;
+
+            var upsertRecords = new List<UpsertApprenticeshipUploadRowsRecord>();
+
+            foreach (var row in rows)
+            {
+                var rowNumber = row.RowNumber;
+                var courseRunId = Guid.NewGuid();
+
+                var parsedRow = ParsedCsvApprenticeshipRow.FromCsvCourseRow(row.Data);
+
+                var matchedVenue = FindVenue(row, providerVenues);
+
+                var validator = new ApprenticeshipUploadRowValidator(_clock);
+
+                var rowValidationResult = validator.Validate(parsedRow);
+                var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
+                var rowIsValid = rowValidationResult.IsValid;
+                rowsAreValid &= rowIsValid;
+
+                upsertRecords.Add(new UpsertApprenticeshipUploadRowsRecord()
+                {
+                    RowNumber = rowNumber,
+                    IsValid = rowIsValid,
+                    Errors = errors,
+                    ApprenticeshipId = row.ApprenticeshipId,
+                    //StandardCode = parsedRow.StandardCode,
+                    //StandardVersion = parsedRow.StandardVersion,
+                    ApprenticeshipInformation = parsedRow.ApprenticeshipInformation,
+                    ApprenticeshipWebpage = parsedRow.ApprenticeshipWebpage,
+                    ContactEmail = parsedRow.ContactEmail,
+                    ContactPhone = parsedRow.ContactPhone,
+                    ContactUrl = parsedRow.ContactUrl,
+                    DeliveryMode = parsedRow.DeliveryMode,
+                    Venue = parsedRow.Venue,
+                    YourVenueReference = parsedRow.YourVenueReference,
+                    Radius = parsedRow.Radius,
+                    NationalDelivery = parsedRow.NationalDelivery,
+                    SubRegions = parsedRow.SubRegion
+                });
+            }
+
+            var updatedRows = await sqlQueryDispatcher.ExecuteQuery(new UpsertApprenticeshipUploadRows()
+            {
+                ApprenticeshipUploadId = apprenticeshipUploadId,
+                ValidatedOn = _clock.UtcNow,
+                Records = upsertRecords
+            });
+
+            // If all the provided rows are valid check if there are any more invalid rows
+            var uploadIsValid = rowsAreValid ?
+                (await sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipUploadInvalidRowCount() { ApprenticeshipUploadId = apprenticeshipUploadId })) == 0 :
+                false;
+
+            await sqlQueryDispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessed()
+            {
+                ApprenticeshipUploadId = apprenticeshipUploadId,
+                ProcessingCompletedOn = _clock.UtcNow,
+                IsValid = uploadIsValid
+            });
+
+            var uploadStatus = rowsAreValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
+
+            return (uploadStatus, updatedRows);
+        }
+
+        internal class ApprenticeshipUploadRowValidator : AbstractValidator<ParsedCsvApprenticeshipRow>
+        {
+            public ApprenticeshipUploadRowValidator(
+                IClock clock)
+            {
+            }
+        }
+
+        internal Venue FindVenue(ApprenticeshipDataUploadRowInfo row, IReadOnlyCollection<Venue> providerVenues)
+        {
+            if (row.VenueIdHint.HasValue)
+            {
+                return providerVenues.Single(v => v.VenueId == row.VenueIdHint);
+            }
+
+            if (!string.IsNullOrEmpty(row.Data.YourVenueReference))
+            {
+                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
+
+                var matchedVenues = providerVenues
+                    .Where(v => RefMatches(row.Data.YourVenueReference, v))
+                    .ToArray();
+
+                if (matchedVenues.Length != 1)
+                {
+                    return null;
+                }
+
+                var venue = matchedVenues[0];
+
+                // If VenueName was provided too then it must match
+                if (!string.IsNullOrEmpty(row.Data.Venue) && !NameMatches(row.Data.Venue, venue))
+                {
+                    return null;
+                }
+
+                return venue;
+            }
+
+            if (!string.IsNullOrEmpty(row.Data.Venue))
+            {
+                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
+
+                var matchedVenues = providerVenues
+                    .Where(v => NameMatches(row.Data.Venue, v))
+                    .ToArray();
+
+                if (matchedVenues.Length != 1)
+                {
+                    return null;
+                }
+
+                return matchedVenues[0];
+            }
+
+            return null;
+
+            static bool NameMatches(string name, Venue venue) => name.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase);
+
+            static bool RefMatches(string providerVenueRef, Venue venue) => providerVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

@@ -11,6 +11,6 @@
         public const string CourseFileMaxSizeLabel = "5MB";
         public const int ApprenticeshipFileMaxSizeBytes = 5242880;
         public const string ApprenticeshipFileMaxSizeLabel = "5MB";
-        public const string ApprenticeshipFolder = "apprenticeships";
+        public const string ApprenticeshipsFolder = "apprenticeships";
     }
 }
