@@ -36,7 +36,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidHeader(missingHeaders);
             }
 
-
             var apprenticeshipUploadId = Guid.NewGuid();
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -165,19 +164,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             foreach (var row in rows)
             {
-                var rowNumber = row.RowNumber;
-                var courseRunId = Guid.NewGuid();
-
+                var rowNumber = row.RowNumber;;
                 var parsedRow = ParsedCsvApprenticeshipRow.FromCsvCourseRow(row.Data);
-
-                var matchedVenue = FindVenue(row, providerVenues);
-
                 var validator = new ApprenticeshipUploadRowValidator(_clock);
-
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;
+
+                int.TryParse(parsedRow.StandardCode, out int standardCode);
+                int.TryParse(parsedRow.StandardVersion, out int standardVersion);
 
                 upsertRecords.Add(new UpsertApprenticeshipUploadRowsRecord()
                 {
@@ -185,8 +181,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     IsValid = rowIsValid,
                     Errors = errors,
                     ApprenticeshipId = row.ApprenticeshipId,
-                    //StandardCode = parsedRow.StandardCode,
-                    //StandardVersion = parsedRow.StandardVersion,
+                    StandardCode = standardCode,
+                    StandardVersion = standardVersion,
                     ApprenticeshipInformation = parsedRow.ApprenticeshipInformation,
                     ApprenticeshipWebpage = parsedRow.ApprenticeshipWebpage,
                     ContactEmail = parsedRow.ContactEmail,
@@ -231,60 +227,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IClock clock)
             {
             }
-        }
-
-        internal Venue FindVenue(ApprenticeshipDataUploadRowInfo row, IReadOnlyCollection<Venue> providerVenues)
-        {
-            if (row.VenueIdHint.HasValue)
-            {
-                return providerVenues.Single(v => v.VenueId == row.VenueIdHint);
-            }
-
-            if (!string.IsNullOrEmpty(row.Data.YourVenueReference))
-            {
-                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
-
-                var matchedVenues = providerVenues
-                    .Where(v => RefMatches(row.Data.YourVenueReference, v))
-                    .ToArray();
-
-                if (matchedVenues.Length != 1)
-                {
-                    return null;
-                }
-
-                var venue = matchedVenues[0];
-
-                // If VenueName was provided too then it must match
-                if (!string.IsNullOrEmpty(row.Data.Venue) && !NameMatches(row.Data.Venue, venue))
-                {
-                    return null;
-                }
-
-                return venue;
-            }
-
-            if (!string.IsNullOrEmpty(row.Data.Venue))
-            {
-                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
-
-                var matchedVenues = providerVenues
-                    .Where(v => NameMatches(row.Data.Venue, v))
-                    .ToArray();
-
-                if (matchedVenues.Length != 1)
-                {
-                    return null;
-                }
-
-                return matchedVenues[0];
-            }
-
-            return null;
-
-            static bool NameMatches(string name, Venue venue) => name.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase);
-
-            static bool RefMatches(string providerVenueRef, Venue venue) => providerVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
