@@ -166,8 +166,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("    ", 1).ToList());
 
             //Add invalid and expired lars
-            var expiredLearningAimRef = await TestData.CreateLearningAimRef(DateTime.Now.AddDays(-1));
-            var expiredOperationalEndDate = await TestData.CreateLearningAimRef(operationalEndDate: DateTime.Now.AddDays(-1).ToString());
+            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Now.AddDays(-1))).LearnAimRef;
+            var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1).ToString())).LearnAimRef;
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFG", 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GFEDCBA", 1).ToList());
@@ -191,7 +191,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             });
             expired.Should().BeEquivalentTo(new[]
             {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearningAimRef),
+                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef),
                 string.Format("Row {0}, expired code {1}", 9, expiredOperationalEndDate)
             });
         }

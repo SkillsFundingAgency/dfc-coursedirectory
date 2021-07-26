@@ -298,7 +298,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 stream.Seek(0L, SeekOrigin.Begin);
             }
-        }
+        }*/
 
         internal async Task<(string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
         {
@@ -336,7 +336,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             invalid.Add(rowNumber.ToString());
                         }
-                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
+                        else if ((learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
+                            || (!learningDelivery.OperationalEndDate.IsEmpty()
+                            && DateTime.Parse(learningDelivery.OperationalEndDate) < DateTime.Now))
                         {
                             expired.Add(string.Format("Row {0}, expired code {1}", rowNumber.ToString(), learnAimRef));
                         }
