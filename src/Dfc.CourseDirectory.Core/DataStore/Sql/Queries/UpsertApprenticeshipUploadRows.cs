@@ -26,10 +26,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string ContactEmail { get; set; }
         public string ContactPhone { get; set; }
         public string ContactUrl { get; set; }
-        public string DeliveryMode { get; set; }
+        public string DeliveryMethod { get; set; }
         public string Venue { get; set; }
         public string YourVenueReference { get; set; }
         public string Radius { get; set; }
+        public string DeliveryMode { get; set; }
         public string NationalDelivery { get; set; }
         public string SubRegions { get; set; }
     }

@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT
 RowNumber, IsValid, Errors AS ErrorList, ApprenticeshipId, LastUpdated, LastValidated,
 StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage, ContactEmail,
-ContactPhone,ContactUrl, DeliveryMode, Venue,YourVenueReference,Radius,NationalDelivery, SubRegion
+ContactPhone,ContactUrl, DeliveryMethod, Venue,YourVenueReference,Radius,DeliveryMode, NationalDelivery, SubRegions
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId AND RowNumber = @RowNumber
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}

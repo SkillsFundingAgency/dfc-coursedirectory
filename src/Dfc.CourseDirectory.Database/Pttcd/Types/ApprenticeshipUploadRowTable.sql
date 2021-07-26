@@ -13,10 +13,11 @@
     [ContactEmail] NVARCHAR(MAX) NOT NULL,
     [ContactPhone] NVARCHAR(MAX) NOT NULL,
     [ContactUrl] NVARCHAR(MAX) NULL,
-    [DeliveryMode] NVARCHAR(MAX) NOT NULL,
+    [DeliveryMethod] NVARCHAR(MAX) NOT NULL,
     [Venue] NVARCHAR(MAX) NULL,
     [YourVenueReference] NVARCHAR(MAX) NOT NULL,
     [Radius] NVARCHAR(MAX) NULL,
+    [DeliveryMode] NVARCHAR(MAX) NOT NULL,
     [NationalDelivery] NVARCHAR(MAX) NULL,
     [SubRegions] NVARCHAR(MAX) NULL
 )

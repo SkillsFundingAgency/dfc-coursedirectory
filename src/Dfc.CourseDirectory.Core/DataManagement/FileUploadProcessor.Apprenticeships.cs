@@ -165,7 +165,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             foreach (var row in rows)
             {
                 var rowNumber = row.RowNumber;;
-                var parsedRow = ParsedCsvApprenticeshipRow.FromCsvCourseRow(row.Data);
+                var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row.Data);
                 var validator = new ApprenticeshipUploadRowValidator(_clock);
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -188,10 +188,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ContactEmail = parsedRow.ContactEmail,
                     ContactPhone = parsedRow.ContactPhone,
                     ContactUrl = parsedRow.ContactUrl,
-                    DeliveryMode = parsedRow.DeliveryMode,
+                    DeliveryMethod = parsedRow.DeliveryMethod,
                     Venue = parsedRow.Venue,
                     YourVenueReference = parsedRow.YourVenueReference,
                     Radius = parsedRow.Radius,
+                    DeliveryMode = parsedRow.DeliveryMode,
                     NationalDelivery = parsedRow.NationalDelivery,
                     SubRegions = parsedRow.SubRegion
                 });

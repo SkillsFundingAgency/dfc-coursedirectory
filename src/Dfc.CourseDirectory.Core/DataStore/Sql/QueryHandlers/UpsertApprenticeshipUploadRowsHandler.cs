@@ -37,10 +37,11 @@ WHEN NOT MATCHED THEN
       ContactEmail,
       ContactPhone,
       ContactUrl,
-      DeliveryMode,
+      DeliveryMethod,
       Venue,
       YourVenueReference,
       Radius,
+      DeliveryMode,
       NationalDelivery,
       SubRegions
     ) VALUES (
@@ -63,6 +64,7 @@ WHEN NOT MATCHED THEN
         source.Venue,
         source.YourVenueReference,
         source.Radius,
+        source.DeliveryMode,
         source.NationalDelivery,
         source.SubRegions
     )
@@ -80,10 +82,11 @@ WHEN MATCHED THEN UPDATE SET
     ContactEmail = source.ContactEmail,
     ContactPhone = source.ContactPhone,
     ContactUrl = source.ContactUrl,
-    DeliveryMode = source.DeliveryMode,
+    DeliveryMethod = source.DeliveryMethod,
     Venue = source.Venue,
     YourVenueReference = source.YourVenueReference,
     Radius = source.Radius,
+    DeliveryMode = source.DeliveryMode,
     NationalDelivery = source.NationalDelivery,
     SubRegions = source.SubRegions
 ;
@@ -91,7 +94,7 @@ WHEN MATCHED THEN UPDATE SET
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
-    ContactPhone, ContactUrl, DeliveryMode, Venue,YourVenueReference, Radius, NationalDelivery,
+    ContactPhone, ContactUrl, DeliveryMode, Venue,YourVenueReference, Radius, DeliveryMode, NationalDelivery,
     SubRegions
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
@@ -130,10 +133,11 @@ ORDER BY RowNumber";
                 table.Columns.Add("ContactEmail", typeof(string));
                 table.Columns.Add("ContactPhone", typeof(string));
                 table.Columns.Add("ContactUrl", typeof(string));
-                table.Columns.Add("DeliveryMode", typeof(string));
+                table.Columns.Add("DeliveryMethod", typeof(string));
                 table.Columns.Add("Venue", typeof(string));
                 table.Columns.Add("YourVenueReference", typeof(string));
                 table.Columns.Add("Radius", typeof(string));
+                table.Columns.Add("DeliveryMode", typeof(string));
                 table.Columns.Add("NationalDelivery", typeof(string));
                 table.Columns.Add("SubRegions", typeof(string));
 
@@ -157,6 +161,7 @@ ORDER BY RowNumber";
                         record.Venue,
                         record.YourVenueReference,
                         record.Radius,
+                        record.DeliveryMode,
                         record.NationalDelivery,
                         record.SubRegions);
                 }

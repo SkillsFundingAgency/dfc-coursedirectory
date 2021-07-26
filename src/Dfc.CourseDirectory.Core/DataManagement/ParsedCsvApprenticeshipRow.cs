@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.Models;
+﻿using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Mapster;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
@@ -16,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
         }
 
-        public static ParsedCsvApprenticeshipRow FromCsvCourseRow(CsvApprenticeshipRow row)
+        public static ParsedCsvApprenticeshipRow FromCsvApprenticeshipRow(CsvApprenticeshipRow row)
         {
             var parsedRow = row.Adapt(new ParsedCsvApprenticeshipRow());
             return parsedRow;
