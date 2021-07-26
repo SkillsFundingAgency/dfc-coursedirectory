@@ -536,7 +536,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 (
                     WhoThisCourseIsFor: "Who this course is for",
                     EntryRequirements: "",
-                    WhatYouWillLearn: new string('x', 501),
+                    WhatYouWillLearn: new string('x', 1501),
                     HowYouWillLearn: "",
                     WhatYouWillNeedToBring: "",
                     HowYouWillBeAssessed: "",
