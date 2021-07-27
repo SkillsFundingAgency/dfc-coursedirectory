@@ -41,7 +41,10 @@
                         @foreach (var row in Model.ErrorRows)
                         {
                             <tr class="govuk-table__row @(row.CourseRows.Count == 0 ? "pttcd-table__row-!-border" : "")" data-testid="CourseRow">
-                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s"><strong>LARS</strong> @row.LearnAimRef</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                                    <div><strong>LARS title</strong> @row.LearnAimRefTitle</div>
+                                    <div><strong>LARS</strong> @row.LearnAimRef</div>
+                                </td>
                                 <td class="govuk-table__cell pttcd-table--no-border"></td>
                                 <td class="govuk-table__cell pttcd-table--no-border"></td>
                                 <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
@@ -58,7 +61,7 @@
                                 <tr class="govuk-table__row @(course == row.CourseRows.Last() ? "pttcd-table__row-!-border" : "")" data-testid="CourseRunRow">
                                     <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
                                     <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.DeliveryMode</td>
-                                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.StartDate</td>
+                                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s" style="text-align: right">@course.StartDate</td>
                                     <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="Errors">
                                         @for (var i = 0; i < course.ErrorFields.Count; i++)
                                         {

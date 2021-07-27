@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
@@ -36,6 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
     {
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
+        public string LearnAimRefTitle { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
@@ -61,13 +64,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
-            IFileUploadProcessor fileUploadProcessor)
+            IFileUploadProcessor fileUploadProcessor,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -80,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 return new UploadHasNoErrors();
             }
 
-            return CreateViewModel(errorRows, totalRows);
+            return await CreateViewModel(errorRows, totalRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -93,17 +99,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 var (errorRows, totalRows) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                     _providerContextProvider.GetProviderId());
 
-                var vm = CreateViewModel(errorRows, totalRows);
+                var vm = await CreateViewModel(errorRows, totalRows);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
             return new Success();
         }
 
-        private ViewModel CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, int totalRows)
+        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, int totalRows)
         {
             var errorRowCount = rows.Count;
             var canResolveOnScreen = errorRowCount <= 30;
+
+            var learnAimRefs = rows.Select(r => r.LearnAimRef).Distinct();
+            var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
 
             return new ViewModel()
             {
@@ -122,24 +131,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                         );
                     })
                     .GroupBy(t => t.Row.CourseId)
-                    .Select(g => new ViewModelErrorRowGroup()
+                    .Select(g =>
                     {
-                        CourseId = g.Key,
-                        LearnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single(),
-                        CourseRows = g
-                            .Select(r => new ViewModelErrorRow()
-                            {
-                                CourseName = r.Row.CourseName,
-                                StartDate = r.Row.StartDate,
-                                DeliveryMode = r.Row.DeliveryMode,
-                                ErrorFields = r.NonGroupErrorFields
-                            })
-                            .Where(r => r.ErrorFields.Count > 0)
-                            .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
-                            .ThenBy(r => r.StartDate)
-                            .ThenBy(r => r.DeliveryMode)
-                            .ToArray(),
-                        ErrorFields = g.First().GroupErrorFields
+                        var learnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single();
+
+                        return new ViewModelErrorRowGroup()
+                        {
+                            CourseId = g.Key,
+                            LearnAimRef = learnAimRef,
+                            LearnAimRefTitle = learningDeliveries[learnAimRef].LearnAimRefTitle,
+                            CourseRows = g
+                                .Select(r => new ViewModelErrorRow()
+                                {
+                                    CourseName = r.Row.CourseName,
+                                    StartDate = r.Row.StartDate,
+                                    DeliveryMode = r.Row.DeliveryMode,
+                                    ErrorFields = r.NonGroupErrorFields
+                                })
+                                .Where(r => r.ErrorFields.Count > 0)
+                                .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
+                                .ThenBy(r => r.StartDate)
+                                .ThenBy(r => r.DeliveryMode)
+                                .ToArray(),
+                            ErrorFields = g.First().GroupErrorFields
+                        };
                     })
                     .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
                     .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
