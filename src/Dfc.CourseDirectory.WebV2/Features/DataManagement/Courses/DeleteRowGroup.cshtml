@@ -27,8 +27,11 @@
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
-                <tr class="govuk-table__row @(Model.Rows.Count == 0 ? "pttcd-table__row-!-border" : "")">
-                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s"><strong>LARS</strong> @Model.LearnAimRef</td>
+                <tr class="govuk-table__row pttcd-table__row-!-border">
+                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                        <div><strong>LARS title</strong> @Model.LearnAimRefTitle</div>
+                        <div><strong>LARS</strong> @Model.LearnAimRef</div>
+                    </td>
                     <td class="govuk-table__cell pttcd-table--no-border"></td>
                     <td class="govuk-table__cell pttcd-table--no-border"></td>
                     <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
@@ -40,22 +43,6 @@
                         }
                     </td>
                 </tr>
-                @foreach (var course in Model.Rows)
-                {
-                    <tr class="govuk-table__row @(course == Model.Rows.Last() ? "pttcd-table__row-!-border" : "")">
-                        <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
-                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.DeliveryMode</td>
-                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.StartDate</td>
-                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="ErrorRow">
-                            @for (var i = 0; i < course.ErrorFields.Count; i++)
-                            {
-                                <span class="govuk-!-display-inline-block">
-                                    @course.ErrorFields.ElementAt(i)@(i != course.ErrorFields.Count - 1 ? "," : "")
-                                </span>
-                            }
-                        </td>
-                    </tr>
-                }
             </tbody>
         </table>
     </div>
