@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 using OneOf;
 
@@ -25,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public int RowNumber { get; set; }
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
+        public string LearnAimRefTitle { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
         public bool HasDescriptionErrors { get; set; }
@@ -47,11 +50,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
+        public Handler(
+            IFileUploadProcessor fileUploadProcessor,
+            IProviderContextProvider providerContextProvider,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -63,6 +71,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
             {
                 return new UploadHasNoErrors();
             }
+
+            var learnAimRefs = errorRows.Select(r => r.LearnAimRef).Distinct();
+            var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
 
             return new ViewModel()
             {
@@ -81,31 +92,37 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                         );
                     })
                     .GroupBy(t => t.Row.CourseId)
-                    .Select(g => new ViewModelErrorRowGroup()
+                    .Select(g =>
                     {
-                        RowNumber = g.First().Row.RowNumber,
-                        CourseId = g.Key,
-                        LearnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single(),
-                        CourseRows = g
-                            .Select(r => new ViewModelErrorRow()
-                            {
-                                RowNumber = r.Row.RowNumber,
-                                CourseName = r.Row.CourseName,
-                                ProviderCourseRef = r.Row.ProviderCourseRef,
-                                StartDate = r.Row.StartDate,
-                                VenueName = r.Row.VenueName,
-                                DeliveryMode = r.Row.DeliveryMode,
-                                ErrorFields = r.NonGroupErrorFields,
-                                HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
-                                HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode" }).Any()
-                            })
-                            .Where(r => r.ErrorFields.Count > 0)
-                            .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
-                            .ThenBy(r => r.StartDate)
-                            .ThenBy(r => r.DeliveryMode)
-                            .ToArray(),
-                        ErrorFields = g.First().GroupErrorFields,
-                        HasDescriptionErrors = g.First().GroupErrorFields.Any()
+                        var learnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single();
+
+                        return new ViewModelErrorRowGroup()
+                        {
+                            RowNumber = g.First().Row.RowNumber,
+                            CourseId = g.Key,
+                            LearnAimRef = learnAimRef,
+                            LearnAimRefTitle = learningDeliveries[learnAimRef].LearnAimRefTitle,
+                            CourseRows = g
+                                .Select(r => new ViewModelErrorRow()
+                                {
+                                    RowNumber = r.Row.RowNumber,
+                                    CourseName = r.Row.CourseName,
+                                    ProviderCourseRef = r.Row.ProviderCourseRef,
+                                    StartDate = r.Row.StartDate,
+                                    VenueName = r.Row.VenueName,
+                                    DeliveryMode = r.Row.DeliveryMode,
+                                    ErrorFields = r.NonGroupErrorFields,
+                                    HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
+                                    HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode" }).Any()
+                                })
+                                .Where(r => r.ErrorFields.Count > 0)
+                                .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
+                                .ThenBy(r => r.StartDate)
+                                .ThenBy(r => r.DeliveryMode)
+                                .ToArray(),
+                            ErrorFields = g.First().GroupErrorFields,
+                            HasDescriptionErrors = g.First().GroupErrorFields.Any()
+                        };
                     })
                     .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
                     .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
