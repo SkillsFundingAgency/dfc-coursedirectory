@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Services.Models.Courses;
+﻿@using Dfc.CourseDirectory.Core.Models;
 @using Dfc.CourseDirectory.Web.Helpers;
 
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyModeModel
@@ -18,16 +18,16 @@
         <div class="govuk-radios govuk-radios" val-required-message="Select study mode" id="StudyModeRadioButtons">
 
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.StudyMode, StudyMode.FullTime, new { @class = "govuk-radios__input", id = StudyMode.FullTime })
-                <label class="govuk-label govuk-radios__label" for="@StudyMode.FullTime">@WebHelper.GetEnumDescription(StudyMode.FullTime)</label>
+                @Html.RadioButtonFor(m => m.StudyMode, CourseStudyMode.FullTime, new { @class = "govuk-radios__input", id = CourseStudyMode.FullTime })
+                <label class="govuk-label govuk-radios__label" for="@CourseStudyMode.FullTime">@CourseStudyMode.FullTime.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.StudyMode, StudyMode.PartTime, new { @class = "govuk-radios__input", id = StudyMode.PartTime })
-                <label class="govuk-label govuk-radios__label" for="@StudyMode.PartTime">@WebHelper.GetEnumDescription(StudyMode.PartTime)</label>
+                @Html.RadioButtonFor(m => m.StudyMode, CourseStudyMode.PartTime, new { @class = "govuk-radios__input", id = CourseStudyMode.PartTime })
+                <label class="govuk-label govuk-radios__label" for="@CourseStudyMode.PartTime">@CourseStudyMode.PartTime.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.StudyMode, StudyMode.Flexible, new { @class = "govuk-radios__input", id = StudyMode.Flexible })
-                <label class="govuk-label govuk-radios__label" for="@StudyMode.Flexible">@WebHelper.GetEnumDescription(StudyMode.Flexible)</label>
+                @Html.RadioButtonFor(m => m.StudyMode, CourseStudyMode.Flexible, new { @class = "govuk-radios__input", id = CourseStudyMode.Flexible })
+                <label class="govuk-label govuk-radios__label" for="@CourseStudyMode.Flexible">@CourseStudyMode.Flexible.ToDescription()</label>
             </div>
 
         </div>

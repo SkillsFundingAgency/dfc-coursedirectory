@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
@@ -24,12 +25,12 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public List<SelectListItem> Venues { get; set; }
         public Guid? VenueId { get; set; }
         public ChooseRegionModel ChooseRegion { get; set; }
-        public DeliveryMode DeliveryMode { get; set; }
+        public CourseDeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
         public string Url { get; set; }
-        public DurationUnit DurationUnit { get; set; }
-        public StudyMode StudyMode { get; set; }
-        public AttendancePattern AttendanceMode { get; set; }
+        public CourseDurationUnit DurationUnit { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }
+        public CourseAttendancePattern? AttendanceMode { get; set; }
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
         public string QualificationType { get; set; }

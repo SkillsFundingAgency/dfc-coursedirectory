@@ -46,8 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
 
             var courses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
             {
-                ProviderId = providerContext.ProviderInfo.ProviderId,
-                CourseRunStatuses = new[] { Core.Models.CourseStatus.Live }
+                ProviderId = providerContext.ProviderInfo.ProviderId
             });
 
             var allRegions = await _regionCache.GetAllRegions();

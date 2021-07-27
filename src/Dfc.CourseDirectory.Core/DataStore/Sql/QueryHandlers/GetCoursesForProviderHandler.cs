@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -21,14 +20,15 @@ SELECT c.CourseId
 FROM Pttcd.Courses c
 JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 WHERE p.ProviderId = @ProviderId
-AND (c.CourseStatus & @CourseStatusMask) <> 0
+AND c.CourseStatus <> {(int)CourseStatus.Archived}
 
 SELECT
-    c.CourseId, c.CourseStatus, c.CreatedOn, c.UpdatedOn, @ProviderId ProviderId, p.Ukprn ProviderUkprn, c.LearnAimRef,
+    c.CourseId, c.CreatedOn, c.UpdatedOn, @ProviderId ProviderId, p.Ukprn ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded,
     lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
 FROM Pttcd.Courses c
+JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 JOIN @CourseIds x ON c.CourseId = x.Id
 JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
@@ -60,7 +60,7 @@ SELECT
 FROM Pttcd.CourseRuns cr
 JOIN @CourseIds x ON cr.CourseId = x.Id
 LEFT JOIN Pttcd.Venues v on v.VenueId = cr.VenueId
-AND (cr.CourseRunStatus & @CourseStatusMask) <> 0
+AND cr.CourseRunStatus = {(int)CourseStatus.Live}
 
 SELECT crsr.CourseRunId, crsr.RegionId
 FROM Pttcd.CourseRunSubRegions crsr
@@ -68,12 +68,9 @@ JOIN Pttcd.CourseRuns cr ON crsr.CourseRunId = cr.CourseRunId
 JOIN @CourseIds x ON cr.CourseId = x.Id
 ";
 
-            var courseStatusMask = query.CourseRunStatuses.Aggregate(CourseStatus.None, (current, status) => current | status);
-
             var paramz = new
             {
-                query.ProviderId,
-                CourseStatusMask = courseStatusMask
+                query.ProviderId
             };
 
             using var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);

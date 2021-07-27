@@ -69,25 +69,7 @@
 
             <button type="submit" class="govuk-button" id="save">Publish changes</button>
 
-            @switch (Model.Mode)
-            {
-                case PublishMode.Summary:
-                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-button govuk-button--secondary" })
-                    break;
-                default:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new
-                    {
-                        level = @Model.NotionalNVQLevelv2,
-                        courseId = @Model.CourseId,
-                        courseRunId = Model.CourseRunId,
-                        learnAimRef = @Model.LearnAimRef,
-                        notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
-                        awardOrgCode = @Model.AwardOrgCode,
-                        learnAimRefTitle = @Model.LearnAimRefTitle,
-                        learnAimRefTypeDesc = @Model.QualificationType
-                    }, new { @class = "govuk-button govuk-button--secondary" })
-                    break;
-            }
+            @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-button govuk-button--secondary" })
 
         </form>
     </div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Extensions
@@ -27,36 +28,34 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Extensions
             return extendee ? cssClasses : string.Empty;
         }
 
-        public static string IfNotWorkBasedDisplayNone(this DeliveryMode deliveryMode)
+        public static string IfNotWorkBasedDisplayNone(this CourseDeliveryMode deliveryMode)
         {
             var noDisplay = "display: none;";
             var disp = string.Empty;
 
             switch (deliveryMode)
             {
-                case DeliveryMode.Undefined:
-                case DeliveryMode.ClassroomBased:
-                case DeliveryMode.Online:
+                case CourseDeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.Online:
                     return noDisplay;
-                case DeliveryMode.WorkBased:
+                case CourseDeliveryMode.WorkBased:
                     return disp;
                 default:
                     return noDisplay;
             }
         }
 
-        public static string IfNotClassroomBasedDisplayNone(this DeliveryMode deliveryMode)
+        public static string IfNotClassroomBasedDisplayNone(this CourseDeliveryMode deliveryMode)
         {
             var noDisplay = "display: none;";
             var disp = string.Empty;
 
             switch (deliveryMode)
             {
-                case DeliveryMode.Undefined:
-                case DeliveryMode.WorkBased:
-                case DeliveryMode.Online:
+                case CourseDeliveryMode.WorkBased:
+                case CourseDeliveryMode.Online:
                     return noDisplay;
-                case DeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.ClassroomBased:
                     return disp;
                 default:
                     return noDisplay;

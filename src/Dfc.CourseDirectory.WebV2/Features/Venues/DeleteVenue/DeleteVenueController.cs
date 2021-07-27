@@ -27,36 +27,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 
         [AuthorizeVenue]
         [HttpGet("delete")]
-        public Task<IActionResult> DeleteVenue(Guid venueId) =>
-            _mediator.SendAndMapResponse(
+        public async Task<IActionResult> DeleteVenue(Guid venueId) =>
+            await _mediator.SendAndMapResponse(
                 new Query
                 {
                     VenueId = venueId,
                     ProviderId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId
                 },
-                r => r.Match<IActionResult>(
-                    _ => NotFound(),
-                    vm => View(vm)));
+                vm => View(vm));
 
         [AuthorizeVenue]
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteVenue(Command request)
-        {
-            var providerContext = _providerContextProvider.GetProviderContext();
-
-            if (request.ProviderId != providerContext.ProviderInfo.ProviderId)
-            {
-                return BadRequest();
-            }
-
-            return await _mediator.SendAndMapResponse(
-                request,
-                r => r.Match<IActionResult>(
-                    _ => NotFound(),
-                    errors => this.ViewFromErrors(errors),
-                    _ => RedirectToAction(nameof(VenueDeleted), new { request.VenueId })
-                        .WithProviderContext(providerContext)));
-        }
+        public async Task<IActionResult> DeleteVenue(Command request) => await _mediator.SendAndMapResponse(
+            request,
+            r => r.Match<IActionResult>(
+                errors => this.ViewFromErrors(errors),
+                _ => RedirectToAction(nameof(VenueDeleted), new { request.VenueId })
+                    .WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [RequireJourneyInstance]
         [HttpGet("delete-success")]

@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.BlobStorageService;
-using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Validation;
@@ -29,7 +28,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private readonly IBlobStorageService _blobService;
-        private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -37,14 +35,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public BulkUploadApprenticeshipsController(
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IBlobStorageService blobService,
-            ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider)
         {
             _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService ?? throw new ArgumentNullException(nameof(apprenticeshipBulkUploadService));
             _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
-            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
             _providerContextProvider = providerContextProvider;

@@ -1,7 +1,7 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using System.Net
+@using Dfc.CourseDirectory.Core.Models
 @using Dfc.CourseDirectory.Services.Models
-@using Dfc.CourseDirectory.Services.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.Views.Shared
 @using Dfc.CourseDirectory.WebV2
@@ -17,10 +17,6 @@
         BackLinkHref = Url.Action("Index", "ProviderCourses"),
         BackLinkText = "Back to course list"
     });
-
-    var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
-    var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
-    var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
 
     Func<(string name, string fragment), object> editCourseRunChangeLink = @<a asp-controller="EditCourseRun"
                                                        asp-action="Index"
@@ -230,14 +226,7 @@
                     Course type
                 </dt>
                 <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                    @if (string.IsNullOrEmpty(deliveryModeAttribute.Name))
-                    {
-                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                    }
-                    else
-                    {
-                        @deliveryModeAttribute.Name
-                    }
+                    @Model.DeliveryMode.ToDescription()
                 </dd>
                 <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
                     @editCourseRunChangeLink(("course type", "sectionDeliveryType"))
@@ -265,7 +254,7 @@
                 </dd>
             </div>
 
-        @if (Model.DeliveryMode == DeliveryMode.WorkBased)
+        @if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
@@ -291,7 +280,7 @@
                 </div>
             }
 
-            @if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
             {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -382,21 +371,14 @@
                 </dd>
             </div>
 
-            @if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
             {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Course hours
                     </dt>
                     <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                        @if (string.IsNullOrEmpty(@studyModeAttribute.Name))
-                        {
-                            <span class="govuk-visually-hidden">Data Unavailable</span>
-                        }
-                        else
-                        {
-                            @studyModeAttribute.Name
-                        }
+                        @Model.StudyMode.ToDescription()
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
                         @editCourseRunChangeLink(("course hours", "FullPartTimeRadioButtons"))
@@ -408,14 +390,7 @@
                         Attendance pattern
                     </dt>
                     <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                        @if (string.IsNullOrEmpty(@attendanceAttribute.Name))
-                        {
-                            <span class="govuk-visually-hidden">Data Unavailable</span>
-                        }
-                        else
-                        {
-                            @attendanceAttribute.Name
-                        }
+                        @Model.AttendancePattern.ToDescription()
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
                         @editCourseRunChangeLink(("attendance pattern", "AttendancePatternRadioButtons"))

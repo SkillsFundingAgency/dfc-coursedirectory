@@ -267,34 +267,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
         }
 
         [Fact]
-        public async Task DeleteVenue_Post_WithProviderContextProviderIdNotEqualToPostProviderId_ReturnsBadRequest()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE);
-
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-
-            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
-
-            var requestContent = new FormUrlEncodedContentBuilder()
-                .Add(nameof(Command.Confirm), true)
-                .Add(nameof(Command.ProviderId), Guid.NewGuid())
-                .ToContent();
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/venues/{venue.VenueId}/delete")
-            {
-                Content = requestContent
-            };
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-        }
-
-        [Fact]
         public async Task DeleteVenue_Post_WithExistingCourse_RendersExpectedOutputWithErrorMessageAndDeleteDisabled()
         {
             // Arrange

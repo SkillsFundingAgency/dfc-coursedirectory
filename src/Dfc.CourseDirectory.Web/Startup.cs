@@ -75,8 +75,6 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
-            services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
-            services.Configure<FindACourseServiceSettings>(Configuration.GetSection(nameof(FindACourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
 
             services.AddScoped<ICSVHelper, CSVHelper>();

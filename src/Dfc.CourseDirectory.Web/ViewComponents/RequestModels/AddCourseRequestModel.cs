@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
     {
         public string CourseName { get; set; }
         public string CourseProviderReference { get; set; }
-        public DeliveryMode DeliveryMode { get; set; }
+        public CourseDeliveryMode DeliveryMode { get; set; }
         public string StartDateType { get; set; }
         public string Day { get; set; }
         public string Month { get; set; }
@@ -18,10 +18,10 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
-        public DurationUnit DurationUnit { get; set; }
+        public CourseDurationUnit? DurationUnit { get; set; }
         public int DurationLength { get; set; }
-        public StudyMode StudyMode { get; set; }
-        public AttendancePattern AttendanceMode { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }
+        public CourseAttendancePattern? AttendanceMode { get; set; }
         public bool National { get; set; }
 
         public Guid[] SelectedVenues { get; set; }

@@ -50,7 +50,7 @@
 
                             @if (row.StudyMode.HasValue)
                             {
-                                <li>@row.StudyMode.Value.ToDescription()</li>
+                                <li>@row.StudyMode.ToDescription()</li>
                             }
 
                             <li data-testid="StartDate">@row.StartDate.ToString("dd/MM/yyyy")</li>

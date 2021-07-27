@@ -41,7 +41,7 @@ BEGIN
 				1, 2, NULL) AS VenueAddress,
 			v.Town AS VenueTown,
 			COALESCE(v.Position, r.Position) AS Position,
-			CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 OR cd.DeliveryMode = 2 THEN 'National' ELSE '' END AS RegionName,
+			CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 OR cr.DeliveryMode = 2 THEN 'National' ELSE '' END AS RegionName,
 
 			-- Magic numbers and logic from https://github.com/SkillsFundingAgency/dfc-providerportal-changefeedlistener/commit/608340dcfaa5c74ee8b1ae422ad902ee0c529c01#diff-5f9ef9c9ca0b0bc9af8b5c7926cfcfe31fa7e8367b9104357104ad568fbe0302R103-R104
 			CAST(CASE
@@ -55,7 +55,7 @@ BEGIN
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr WITH (UPDLOCK) ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
-		LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId AND cr.[National] = 0
+		LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId AND cr.DeliveryMode = 3 AND cr.[National] = 0
 		LEFT JOIN Pttcd.Regions r ON crr.RegionId = r.RegionId
 		INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 		INNER JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef

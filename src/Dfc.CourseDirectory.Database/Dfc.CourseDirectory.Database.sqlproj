@@ -294,6 +294,8 @@
     <Build Include="Pttcd\Tables\ApprenticeshipUploadRows.sql" />
     <Build Include="Pttcd\Tables\ApprenticeshipUploads.sql" />
     <Build Include="Pttcd\Types\ApprenticeshipUploadRowTable.sql" />
+    <Build Include="Pttcd\Types\CourseRunSubRegionsTable.sql" />
+    <Build Include="Pttcd\Types\CourseRunsTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

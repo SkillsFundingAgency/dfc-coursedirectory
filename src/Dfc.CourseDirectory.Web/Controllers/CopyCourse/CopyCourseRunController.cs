@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -17,13 +19,15 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
+using FluentValidation;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 {
@@ -33,31 +37,27 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private const string CopyCourseRunPublishedCourseSessionKey = "CopyCourseRunPublishedCourse";
 
         private readonly ILogger<CopyCourseRunController> _logger;
-        private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         private ISession _session => HttpContext.Session;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
+        private readonly IRegionCache _regionCache;
 
         public CopyCourseRunController(
             ILogger<CopyCourseRunController> logger,
-            IOptions<CourseServiceSettings> courseSearchSettings,
-            HtmlEncoder htmlEncoder,
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock,
+            IRegionCache regionCache)
         {
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (courseSearchSettings == null)
-            {
-                throw new ArgumentNullException(nameof(courseSearchSettings));
             }
 
             if (courseService == null)
@@ -66,11 +66,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             }
 
             _logger = logger;
-            _htmlEncoder = htmlEncoder;
             _courseService = courseService;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
+            _regionCache = regionCache;
         }
 
         [Authorize]
@@ -124,26 +125,26 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             var ukprn = _session.GetInt32("UKPRN").Value;
 
             var cachedData = _session.GetObject<CopyCourseRunViewModel>("CopyCourseRunObject");
-            var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(cachedData.CourseId.Value));
-            var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == cachedData.CourseRunId);
+            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = cachedData.CourseId.Value });
+            var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == cachedData.CourseRunId);
             var venues = await GetVenuesForProvider();
 
             var regions = _courseService.GetRegions();
 
             foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
             {
-                subRegion.Checked = courseRun.Regions?.Contains(subRegion.Id);
+                subRegion.Checked = courseRun.SubRegionIds?.Contains(subRegion.Id);
             }
 
             CopyCourseRunViewModel vm = new CopyCourseRunViewModel
             {
-                AwardOrgCode = course.Value.AwardOrgCode,
-                LearnAimRef = course.Value.LearnAimRef,
-                LearnAimRefTitle = course.Value.QualificationCourseTitle,
+                AwardOrgCode = course.AwardOrgCode,
+                LearnAimRef = course.LearnAimRef,
+                LearnAimRefTitle = course.LearnAimRefTitle,
 
                 //Mode = mode,
-                CourseId = course.Value.id,
-                CourseRunId = courseRun.id,
+                CourseId = course.CourseId,
+                CourseRunId = courseRun.CourseRunId,
                 CourseName = courseRun?.CourseName,
                 Venues = venues.VenueItems.Select(v => new SelectListItem { Text = v.VenueName, Value = v.Id }).ToList(),
                 VenueId = courseRun.VenueId ?? null,
@@ -153,7 +154,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     Regions = regions,
                 },
                 DeliveryMode = courseRun.DeliveryMode,
-                CourseProviderReference = courseRun?.ProviderCourseID,
+                CourseProviderReference = courseRun?.ProviderCourseId,
                 DurationUnit = courseRun.DurationUnit,
                 DurationLength = courseRun?.DurationValue?.ToString(),
                 StartDateType = courseRun.FlexibleStartDate
@@ -163,12 +164,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 Month = courseRun.StartDate?.Month.ToString("00"),
                 Year = courseRun.StartDate?.Year.ToString("0000"),
                 StudyMode = courseRun.StudyMode,
-                Url = courseRun.CourseURL,
+                Url = courseRun.CourseWebsite,
                 Cost = courseRun.Cost?.ToString("F"),
                 CostDescription = courseRun.CostDescription,
                 AttendanceMode = courseRun.AttendancePattern,
-                QualificationType = course.Value.QualificationType,
-                NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
+                QualificationType = course.LearnAimRefTypeDesc,
+                NotionalNVQLevelv2 = course.NotionalNVQLevelv2
             };
 
             vm.CourseName = cachedData.CourseName;
@@ -251,14 +252,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
 
-            var result = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
+            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
 
-            if (!result.IsSuccess)
+            if (course == null)
             {
                 return NotFound();
             }
 
-            var courseRun = result.Value.CourseRuns.SingleOrDefault(cr => cr.id == courseRunId);
+            var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == courseRunId);
 
             if (courseRun == null)
             {
@@ -270,14 +271,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
             {
-                subRegion.Checked = courseRun.Regions?.Contains(subRegion.Id);
+                subRegion.Checked = courseRun.SubRegionIds?.Contains(subRegion.Id);
             }
 
             var vm = new CopyCourseRunViewModel
             {
-                AwardOrgCode = result.Value.AwardOrgCode,
-                LearnAimRef = result.Value.LearnAimRef,
-                LearnAimRefTitle = result.Value.QualificationCourseTitle,
+                AwardOrgCode = course.AwardOrgCode,
+                LearnAimRef = course.LearnAimRef,
+                LearnAimRefTitle = course.LearnAimRefTitle,
 
                 CourseId = courseId.Value,
                 CourseRunId = courseRunId.Value,
@@ -290,7 +291,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     Regions = regions
                 },
                 DeliveryMode = courseRun.DeliveryMode,
-                CourseProviderReference = courseRun?.ProviderCourseID,
+                CourseProviderReference = courseRun?.ProviderCourseId,
                 DurationUnit = courseRun.DurationUnit,
                 DurationLength = courseRun?.DurationValue?.ToString(),
                 StartDateType = courseRun.FlexibleStartDate
@@ -300,12 +301,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 Month = courseRun.StartDate?.Month.ToString("00"),
                 Year = courseRun.StartDate?.Year.ToString("0000"),
                 StudyMode = courseRun.StudyMode,
-                Url = courseRun.CourseURL,
+                Url = courseRun.CourseWebsite,
                 Cost = courseRun.Cost?.ToString("F"),
                 CostDescription = courseRun.CostDescription,
                 AttendanceMode = courseRun.AttendancePattern,
-                QualificationType = result.Value.QualificationType,
-                NotionalNVQLevelv2 = result.Value.NotionalNVQLevelv2,
+                QualificationType = course.LearnAimRefTypeDesc,
+                NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
                 PublishMode = PublishMode.Summary,
                 RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath
             };
@@ -330,7 +331,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 vm.StudyMode = savedModel.StudyMode;
                 vm.RefererAbsolutePath = savedModel.RefererAbsolutePath;
 
-                if (savedModel.DeliveryMode == DeliveryMode.ClassroomBased)
+                if (savedModel.DeliveryMode == CourseDeliveryMode.ClassroomBased)
                 {
                     foreach (var venue in vm.Venues)
                     {
@@ -338,7 +339,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     }
                 }
 
-                if (savedModel.DeliveryMode == DeliveryMode.WorkBased && !savedModel.National)
+                if (savedModel.DeliveryMode == CourseDeliveryMode.WorkBased && !savedModel.National)
                 {
                     foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
                     {
@@ -397,12 +398,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 StartDate = model.StartDateType == StartDateType.FlexibleStartDate
                     ? "Flexible"
                     : $"{model.Day}/{model.Month}/{model.Year}",
-                Venues = model.DeliveryMode == DeliveryMode.ClassroomBased
+                Venues = model.DeliveryMode == CourseDeliveryMode.ClassroomBased
                     ? (await GetVenuesForProvider()).VenueItems
                         .Where(v => v.Id == model.VenueId.ToString())
                         .Select(v => v.VenueName)
                     : Enumerable.Empty<string>(),
-                Regions = model.DeliveryMode == DeliveryMode.WorkBased
+                Regions = model.DeliveryMode == CourseDeliveryMode.WorkBased
                     ? model.National
                         ? new[] { "National"}
                         : availableRegions.Value.RegionItems
@@ -445,107 +446,101 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
 
-            var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
+            var allRegions = await _regionCache.GetAllRegions();
+            var allSubRegionIds = allRegions.SelectMany(r => r.SubRegions).Select(sr => sr.Id).ToHashSet();
 
-            if (!course.IsSuccess)
-            {
-                return NotFound();
-            }
+            bool flexibleStartDate = model.StartDateType != StartDateType.SpecifiedStartDate;
+            DateTime? specifiedStartDate = null;
 
-            var courseRun = new CourseRun
+            if (!flexibleStartDate)
             {
-                id = Guid.NewGuid(),
-                DurationUnit = model.DurationUnit,
-                AttendancePattern = model.AttendanceMode,
-                DeliveryMode = model.DeliveryMode,
-                StudyMode = model.StudyMode,
-                CostDescription = _htmlEncoder.Encode(model.CostDescription ?? ""),
-                CourseName = _htmlEncoder.Encode(model.CourseName ?? ""),
-                CourseURL = model.Url,
-                DurationValue = Convert.ToInt32(model.DurationLength),
-                ProviderCourseID = _htmlEncoder.Encode(model.CourseProviderReference ?? ""),
-                RecordStatus = RecordStatus.Live,
-                Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
-                FlexibleStartDate = model.StartDateType != StartDateType.SpecifiedStartDate,
-                CreatedDate = DateTime.Now,
-                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-            };
-
-            if (!courseRun.FlexibleStartDate)
-            {
-                courseRun.StartDate = DateTime.ParseExact(
+                specifiedStartDate = DateTime.ParseExact(
                     $"{int.Parse(model.Day):00}-{int.Parse(model.Month):00}-{model.Year}",
                     "dd-MM-yyyy",
                     System.Globalization.CultureInfo.InvariantCulture);
             }
 
+            if (model.National == true)
+            {
+                model.SelectedRegions = null;
+            }
+
+            var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var createCommand = new CreateCourseRun()
+            {
+                CourseId = model.CourseId.Value,
+                CourseRunId = Guid.NewGuid(),
+                DurationUnit = model.DurationUnit,
+                DeliveryMode = model.DeliveryMode,
+                Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
+                CostDescription = model.CostDescription ?? "",
+                CourseName = model.CourseName,
+                CourseUrl = model.Url,
+                DurationValue = Convert.ToInt32(model.DurationLength),
+                ProviderCourseId = model.CourseProviderReference ?? "",
+                FlexibleStartDate = flexibleStartDate,
+                StartDate = specifiedStartDate,
+                CreatedBy = _currentUserProvider.GetCurrentUser(),
+                CreatedOn = _clock.UtcNow
+            };
+
             switch (model.DeliveryMode)
             {
-                case DeliveryMode.ClassroomBased:
-                    courseRun.AttendancePattern = model.AttendanceMode;
-                    courseRun.StudyMode = model.StudyMode;
+                case CourseDeliveryMode.ClassroomBased:
+                    createCommand.AttendancePattern = model.AttendanceMode;
+                    createCommand.StudyMode = model.StudyMode;
 
-                    courseRun.Regions = null;
-                    courseRun.VenueId = model.VenueId;
+                    createCommand.SubRegionIds = null;
+                    createCommand.VenueId = model.VenueId;
                     break;
-                case DeliveryMode.WorkBased:
-                    courseRun.VenueId = null;
+                case CourseDeliveryMode.WorkBased:
+                    createCommand.VenueId = null;
 
                     var availableRegions = new SelectRegionModel();
 
                     if (model.National)
                     {
-                        courseRun.National = true;
-                        courseRun.Regions = availableRegions.RegionItems.Select(x => x.Id).ToList();
+                        createCommand.National = true;
+                        createCommand.SubRegionIds = availableRegions.RegionItems.Select(x => x.Id).ToList();
                     }
                     else
                     {
-                        courseRun.National = false;
-                        courseRun.Regions = model.SelectedRegions;
-                        string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRun.Regions.ToList());
+                        createCommand.National = false;
+                        createCommand.SubRegionIds = model.SelectedRegions.Where(id => allSubRegionIds.Contains(id));
 
-                        var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetSubRegionItemByRegionCode(selectedRegion)).ToList();
-                        courseRun.SubRegions = subRegions;
-
-                        courseRun.AttendancePattern = AttendancePattern.Undefined;
-                        courseRun.StudyMode = StudyMode.Undefined;
+                        createCommand.AttendancePattern = null;
+                        createCommand.StudyMode = null;
                     }
                     break;
-                case DeliveryMode.Online:
+                case CourseDeliveryMode.Online:
 
-                    courseRun.Regions = null;
-                    courseRun.VenueId = null;
-                    courseRun.AttendancePattern = AttendancePattern.Undefined;
-                    courseRun.StudyMode = StudyMode.Undefined;
+                    createCommand.SubRegionIds = null;
+                    createCommand.VenueId = null;
+                    createCommand.AttendancePattern = null;
+                    createCommand.StudyMode = null;
                     break;
             }
 
-            course.Value.CourseRuns = course.Value.CourseRuns.Append(courseRun);
+            var createResult = await _sqlQueryDispatcher.ExecuteQuery(createCommand);
 
-            try
+            if (!(createResult.Value is Success))
             {
-                var result = await _courseService.UpdateCourseAsync(course.Value);
-
-                if (!result.IsSuccess)
-                {
-                    throw new Exception($"{nameof(_courseService.UpdateCourseAsync)} failed during CopyCourseRun: {result.Error}");
-                }
-
-                _session.SetObject(CopyCourseRunPublishedCourseSessionKey, new PublishedCourseViewModel
-                {
-                    CourseId = course.Value.id,
-                    CourseRunId = courseRun.id,
-                    CourseName = courseRun.CourseName
-                });
-
-                return RedirectToAction("Published");
+                return BadRequest();
             }
-            finally
+
+            _session.SetObject(CopyCourseRunPublishedCourseSessionKey, new PublishedCourseViewModel
             {
-                _session.Remove("NewAddedVenue");
-                _session.Remove("Option");
-                _session.Remove(CopyCourseRunSaveViewModelSessionKey);
-            }
+                CourseId = createCommand.CourseId,
+                CourseRunId = createCommand.CourseRunId,
+                CourseName = createCommand.CourseName
+            });
+
+            return RedirectToAction("Published");
         }
 
         [HttpGet]
@@ -561,6 +556,60 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _session.Remove(CopyCourseRunPublishedCourseSessionKey);
 
             return View(publishedCourse);
+        }
+
+        private class CopyCourseRunSaveViewModelValidator : AbstractValidator<CopyCourseRunSaveViewModel>
+        {
+            public CopyCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock)
+            {
+                RuleFor(c => c.AttendanceMode)
+                    .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
+
+                RuleFor(c => c.Cost)
+                    .Transform(v => decimal.TryParse(v, out var d) ? d : (decimal?)null)
+                    .Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), getCostDescription: c => c.CostDescription);
+
+                RuleFor(c => c.CostDescription)
+                    .CostDescription();
+
+                RuleFor(c => c.CourseName).CourseName();
+
+                RuleFor(c => c.CourseProviderReference).ProviderCourseRef();
+
+                RuleFor(c => c.DeliveryMode).IsInEnum();
+
+                RuleFor(c => c.DurationLength)
+                    .Transform(v => int.TryParse(v, out var i) ? i : (int?)i)
+                    .Duration();
+
+                RuleFor(c => c.DurationUnit).IsInEnum();
+
+                RuleFor(c => c.National)
+                    .Transform(v => (bool?)v)
+                    .NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
+
+                RuleFor(c => c.SelectedRegions)
+                    .Transform(v =>
+                    {
+                        if (v == null)
+                        {
+                            return null;
+                        }
+
+                        var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
+                        return v.Select(id => allSubRegions[id]).ToArray();
+                    })
+                    .SubRegions(subRegionsWereSpecified: c => c.SelectedRegions?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.National);
+
+                RuleFor(c => c.StudyMode)
+                    .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
+
+                RuleFor(c => c.Url).CourseWebPage();
+
+                RuleFor(c => c.VenueId)
+                    .Transform(v => v == default ? (Guid?)null : v)
+                    .VenueId(getDeliveryMode: c => c.DeliveryMode);
+            }
         }
     }
 }

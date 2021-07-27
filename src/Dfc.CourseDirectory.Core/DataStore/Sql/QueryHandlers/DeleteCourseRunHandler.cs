@@ -21,7 +21,7 @@ UPDATE Pttcd.CourseRuns SET
     UpdatedBy = @DeletedByUserId
 WHERE CourseRunId = @CourseRunId
 AND CourseId = @CourseId
-AND CourseRunStatus NOT IN ({(int)CourseStatus.Archived}, {(int)CourseStatus.Deleted})
+AND CourseRunStatus<> {(int)CourseStatus.Archived}
 
 SET @Deleted = @@ROWCOUNT
 
@@ -31,6 +31,12 @@ SET CourseStatus = (
     WHERE CourseId = @CourseId
 )
 WHERE CourseId = @CourseId
+
+DECLARE @CourseRunIds Pttcd.GuidIdTable
+
+INSERT INTO @CourseRunIds VALUES (@CourseRunId)
+
+EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @DeletedOn
 
 SELECT @Deleted Deleted";
 

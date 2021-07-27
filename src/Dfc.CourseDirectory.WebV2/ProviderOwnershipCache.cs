@@ -30,12 +30,12 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
             {
-                var ukprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetProviderUkprnForCourse() { CourseId = courseId });
+                var course = await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetCourse() { CourseId = courseId });
 
-                if (ukprn.HasValue)
+                if (course != null)
                 {
-                    providerId = await GetProviderIdByUkprn(ukprn);
+                    providerId = course.ProviderId;
                     _cache.Set(cacheKey, providerId);
                 }
                 else

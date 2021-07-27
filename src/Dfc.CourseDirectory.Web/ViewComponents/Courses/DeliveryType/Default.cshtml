@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Services.Models.Courses;
+﻿@using Dfc.CourseDirectory.Core.Models;
 @using Dfc.CourseDirectory.Web.Helpers;
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType.DeliveryTypeModel
 
@@ -16,16 +16,16 @@
         <div class="govuk-radios govuk-radios" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
 
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = DeliveryMode.ClassroomBased })
-                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.ClassroomBased">@WebHelper.GetEnumDescription(DeliveryMode.ClassroomBased)</label>
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.ClassroomBased })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.ClassroomBased">@CourseDeliveryMode.ClassroomBased.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.Online, new { @class = "govuk-radios__input", id = DeliveryMode.Online })
-                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.Online">@WebHelper.GetEnumDescription(DeliveryMode.Online)</label>
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.Online, new { @class = "govuk-radios__input", id = CourseDeliveryMode.Online })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.Online">@CourseDeliveryMode.Online.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = DeliveryMode.WorkBased })
-                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.WorkBased">@WebHelper.GetEnumDescription(DeliveryMode.WorkBased)</label>
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.WorkBased })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.WorkBased">@CourseDeliveryMode.WorkBased.ToDescription()</label>
             </div>
 
         </div>

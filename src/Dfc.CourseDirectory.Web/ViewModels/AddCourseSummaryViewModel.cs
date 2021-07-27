@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
@@ -31,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string WhatYouWillNeedToBring { get; set; }
         public string HowAssessed { get; set; }
         public string HowYouWillLearn { get; set; }
-        public DeliveryMode DeliveryModeEnum { get; set; }
+        public CourseDeliveryMode? DeliveryModeEnum { get; set; }
 
         public IEnumerable<string> Venues;
         public IEnumerable<string> Regions;

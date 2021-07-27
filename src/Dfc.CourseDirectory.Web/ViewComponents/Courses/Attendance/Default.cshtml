@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Services.Models.Courses;
+﻿@using Dfc.CourseDirectory.Core.Models;
 @using Dfc.CourseDirectory.Web.Helpers;
 
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance.AttendanceModel
@@ -17,20 +17,20 @@
         <div class="govuk-radios govuk-radios" val-required-message="Select Attendance Mode" id="AttendanceRadioButtons">
 
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new { @class = "govuk-radios__input", id = AttendancePattern.Daytime })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Daytime">@WebHelper.GetEnumDescription(AttendancePattern.Daytime)</label>
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.Daytime, new { @class = "govuk-radios__input", id = CourseAttendancePattern.Daytime })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.Daytime">@CourseAttendancePattern.Daytime.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Evening, new { @class = "govuk-radios__input", id = AttendancePattern.Evening })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Evening">@WebHelper.GetEnumDescription(AttendancePattern.Evening)</label>
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.Evening, new { @class = "govuk-radios__input", id = CourseAttendancePattern.Evening })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.Evening">@CourseAttendancePattern.Evening.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Weekend, new { @class = "govuk-radios__input", id = AttendancePattern.Weekend })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Weekend">@WebHelper.GetEnumDescription(AttendancePattern.Weekend)</label>
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.Weekend, new { @class = "govuk-radios__input", id = CourseAttendancePattern.Weekend })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.Weekend">@CourseAttendancePattern.Weekend.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input", id = AttendancePattern.DayOrBlockRelease })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.DayOrBlockRelease">@WebHelper.GetEnumDescription(AttendancePattern.DayOrBlockRelease)</label>
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input", id = CourseAttendancePattern.DayOrBlockRelease })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.DayOrBlockRelease">@CourseAttendancePattern.DayOrBlockRelease.ToDescription()</label>
             </div>
 
         </div>
