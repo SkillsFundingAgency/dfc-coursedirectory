@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
@@ -25,11 +23,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
+
             await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedWithErrors);
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/courses/resolve/{rowNumber}/details/delete");
+            var response = await HttpClient.GetAsync($"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -40,59 +38,71 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
-                  configureRows: rowBuilder =>
-                  {
-                      rowBuilder.AddValidRow("some Radndom Ref");
-                  });
-            var courseRunId = courseUploadRows.FirstOrDefault().RowNumber;
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.Errors = new[] { "COURSERUN_COURSE_NAME_REQUIRED" };
+                        record.IsValid = false;
+                        record.CourseName = string.Empty;
+                    });
+                });
+
+            var courseRunId = courseUploadRows.First().RowNumber;
 
             // Act
-            var response = await HttpClient.GetAsync($"/data-upload/courses/resolve/{courseRunId}/details/delete");
+            var response = await HttpClient.GetAsync($"/data-upload/courses/resolve/{courseRunId}/details/delete?providerId={provider.ProviderId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
-
 
         [Fact]
         public async Task Get_DeletedCoursesRow_ReturnError()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
-                  configureRows: rowBuilder =>
-                  {
-                      rowBuilder.AddValidRow("some Radndom Ref");
-                  });
-            var rowNumber = courseUploadRows.FirstOrDefault().RowNumber;
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.Errors = new[] { "COURSERUN_COURSE_NAME_REQUIRED" };
+                        record.IsValid = false;
+                        record.CourseName = string.Empty;
+                    });
+                });
 
-            // Act
-            var postrequest = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/details/delete")
+            var rowNumber = courseUploadRows.First().RowNumber;
+
+            var deleteRequest = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Confirm", "true")
-                .ToContent()
+                    .Add("Confirm", "true")
+                    .ToContent()
             };
-            var postresponse = await HttpClient.SendAsync(postrequest);
-            var getresponse = await HttpClient.GetAsync($"/data-upload/courses/resolve/{rowNumber}/details/delete");
+            var deleteResponse = await HttpClient.SendAsync(deleteRequest);
+            deleteResponse.EnsureNonErrorStatusCode();
+
+            // Act
+            var getResponse = await HttpClient.GetAsync($"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}");
 
             // Assert
-            postresponse.StatusCode.Should().Be(HttpStatusCode.Found);
-            getresponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
-
 
         [Theory]
         [InlineData(-1)]
@@ -101,25 +111,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
-                  configureRows: rowBuilder =>
-                  {
-                      rowBuilder.AddValidRow("some Radndom Ref");
-                  });
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.Errors = new[] { "COURSERUN_COURSE_NAME_REQUIRED" };
+                        record.IsValid = false;
+                        record.CourseName = string.Empty;
+                    });
+                });
 
-            // Act
-            var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/details/delete")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Confirm", "true")
-                .ToContent()
+                    .Add("Confirm", "true")
+                    .ToContent()
             };
+
+            // Act
             var response = await HttpClient.SendAsync(request);
 
             // Assert
@@ -131,26 +147,33 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
-                  configureRows: rowBuilder =>
-                  {
-                      rowBuilder.AddValidRow("some Radndom Ref");
-                  });
-            var rowNumber = courseUploadRows.FirstOrDefault().RowNumber;
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.Errors = new[] { "COURSERUN_COURSE_NAME_REQUIRED" };
+                        record.IsValid = false;
+                        record.CourseName = string.Empty;
+                    });
+                });
 
-            // Act
-            var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/details/delete")
+            var rowNumber = courseUploadRows.First().RowNumber;
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Confirm", "false")
-                .ToContent()
+                    .Add("Confirm", "false")
+                    .ToContent()
             };
+
+            // Act
             var response = await HttpClient.SendAsync(request);
 
             // Assert
@@ -162,26 +185,33 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
-                  configureRows: rowBuilder =>
-                  {
-                      rowBuilder.AddValidRow("some Radndom Ref");
-                  });
-            var rowNumber = courseUploadRows.FirstOrDefault().RowNumber;
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.Errors = new[] { "COURSERUN_COURSE_NAME_REQUIRED" };
+                        record.IsValid = false;
+                        record.CourseName = string.Empty;
+                    });
+                });
 
-            // Act
-            var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/details/delete")
+            var rowNumber = courseUploadRows.First().RowNumber;
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Confirm", "true")
-                .ToContent()
+                    .Add("Confirm", "true")
+                    .ToContent()
             };
+
+            // Act
             var response = await HttpClient.SendAsync(request);
 
             // Assert
@@ -194,40 +224,45 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
-                  configureRows: rowBuilder =>
-                  {
-                      rowBuilder.AddValidRow("some Radndom Ref");
-                  });
-            var rowNumber = courseUploadRows.FirstOrDefault().RowNumber;
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.Errors = new[] { "COURSERUN_COURSE_NAME_REQUIRED" };
+                        record.IsValid = false;
+                        record.CourseName = string.Empty;
+                    });
+                });
+
+            var rowNumber = courseUploadRows.First().RowNumber;
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("Confirm", "true")
+                    .ToContent()
+            };
+            var response = await HttpClient.SendAsync(request);
+            response.EnsureNonErrorStatusCode();
 
             // Act
-            var request = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/details/delete")
+            var request2 = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/details/delete?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                .Add("Confirm", "true")
-                .ToContent()
-            };
-            var request2 = new HttpRequestMessage(
-            HttpMethod.Post, $"/data-upload/Courses/resolve/{rowNumber}/details/delete")
-            {
-                Content = new FormUrlEncodedContentBuilder()
-                .Add("Confirm", "true")
-                .ToContent()
+                    .Add("Confirm", "true")
+                    .ToContent()
             };
 
-            var response = await HttpClient.SendAsync(request);
             var response2 = await HttpClient.SendAsync(request2);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Found);
-            response.Headers.Location.Should().Be($"/data-upload/courses/check-publish?providerId={provider.ProviderId}");
             response2.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }

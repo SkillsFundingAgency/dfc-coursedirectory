@@ -27,7 +27,10 @@
                 </thead>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <td class="govuk-body-s" scope="row"> <strong>LARS</strong> @Model.LarsQan</td>
+                        <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
+                            <div><strong>LARS title</strong> @Model.LearnAimRefTitle</div>
+                            <div><strong>LARS</strong> @Model.LearnAimRef</div>
+                        </td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -35,7 +38,7 @@
                     <tr class="govuk-table__row pttcd-table__row-!-border">
                         <td class="govuk-table__cell pttcd-table--no-border" data-testid="CourseName">@Model.CourseName</td>
                         <td class="govuk-table__cell pttcd-table--no-border" data-testid="DeliveryMode">@Model.DeliveryMode</td>
-                        <td class="govuk-table__cell pttcd-table--no-border" data-testid="StartDate">@Model.StartDate</td>
+                        <td class="govuk-table__cell pttcd-table--no-border" data-testid="StartDate" style="text-align: right">@Model.StartDate</td>
                         <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" style="color: #d4351c;" data-testid="Errors">
                             @for (var i = 0; i < Model.ErrorFields.Count; i++)
                             {
