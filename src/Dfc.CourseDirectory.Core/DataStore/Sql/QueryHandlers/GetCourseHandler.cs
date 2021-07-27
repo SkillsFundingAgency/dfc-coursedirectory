@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT
-    c.CourseId, c.CourseStatus, p.ProviderId, c.LearnAimRef,
+    c.CourseId, c.CourseStatus, c.CreatedOn, c.UpdatedOn, p.ProviderId, p.Ukprn ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded,
     lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
@@ -30,6 +30,8 @@ SELECT
     cr.CourseId,
     cr.CourseRunId,
     cr.CourseRunStatus,
+    cr.CreatedOn,
+    cr.UpdatedOn,
     cr.CourseName,
     cr.VenueId,
     cr.ProviderCourseId,
