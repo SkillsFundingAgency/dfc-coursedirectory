@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
@@ -26,17 +28,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
     public class ViewModel : Command
     {
         public string LearnAimRef { get; set; }
+        public string LearnAimRefTitle { get; set; }
         public IReadOnlyCollection<CourseDeliveryMode> DeliveryModes { get; set; }
-        public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
         public IReadOnlyCollection<string> GroupErrorFields { get; set; }
-    }
-
-    public class ViewModelRow
-    {
-        public string CourseName { get; set; }
-        public string DeliveryMode { get; set; }
-        public string StartDate { get; set; }
-        public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
 
     public class Handler :
@@ -52,11 +46,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
 
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
+        public Handler(
+            IFileUploadProcessor fileUploadProcessor,
+            IProviderContextProvider providerContextProvider,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber);
@@ -101,24 +100,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
                 .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.Course)
                 .ToArray();
 
+            var learnAimRef = rowGroup.Select(r => r.LearnAimRef).Distinct().Single();
+            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = new[] { learnAimRef } }))[learnAimRef];
+
             return new ViewModel()
             {
                 DeliveryModes = deliveryModes,
-                LearnAimRef = rowGroup.Select(r => r.LearnAimRef).Distinct().Single(),
+                LearnAimRef = learnAimRef,
+                LearnAimRefTitle = learningDelivery.LearnAimRefTitle,
                 RowNumber = rowNumber,
-                Rows = rowGroup
-                    .Select(r => new ViewModelRow()
-                    {
-                        CourseName = r.CourseName,
-                        DeliveryMode = r.DeliveryMode,
-                        ErrorFields = r.Errors.Except(groupErrors).Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray(),
-                        StartDate = r.StartDate
-                    })
-                    .Where(r => r.ErrorFields.Count > 0)
-                    .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
-                    .ThenBy(r => r.StartDate)
-                    .ThenBy(r => r.DeliveryMode)
-                    .ToArray(),
                 GroupErrorFields = groupErrors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
             };
 
