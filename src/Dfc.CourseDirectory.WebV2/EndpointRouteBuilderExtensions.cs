@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.WebV2
         public static IEndpointRouteBuilder MapV2Hubs(this IEndpointRouteBuilder endpoints)
         {
             endpoints.MapHub<CoursesDataManagementHub>("/data-upload/courses/hub");
+            endpoints.MapHub<ApprenticeshipsDataManagementHub>("/data-upload/apprenticeships/hub");
             endpoints.MapHub<VenuesDataManagementHub>("/data-upload/venues/hub");
 
             return endpoints;

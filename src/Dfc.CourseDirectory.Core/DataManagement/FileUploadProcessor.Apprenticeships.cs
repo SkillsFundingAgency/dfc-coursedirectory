@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
@@ -10,7 +13,10 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
+using OneOf.Types;
+
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -149,6 +155,45 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId)
+        {
+            return GetApprenticeshipUploadId().ToObservable()
+                .SelectMany(apprenticeshipUploadId => GetApprenticeshipUploadStatusUpdates(apprenticeshipUploadId))
+                .DistinctUntilChanged()
+                .TakeUntil(status => status.IsTerminal());
+
+            async Task<Guid> GetApprenticeshipUploadId()
+            {
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider() { ProviderId = providerId });
+
+                if (apprenticeshipUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedApprenticeshipUpload);
+                }
+
+                return apprenticeshipUpload.ApprenticeshipUploadId;
+            }
+        }
+
+        protected virtual IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdates(Guid courseUploadId) =>
+            Observable.Interval(_statusUpdatesPollInterval)
+            .SelectMany(_ => Observable.FromAsync(() => GetApprenticeshipUploadStatus(courseUploadId)));
+
+
+        protected async Task<UploadStatus> GetApprenticeshipUploadStatus(Guid apprenticeshipUploadId)
+        {
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            var courseUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
+
+            if (courseUpload == null)
+            {
+                throw new ArgumentException("Specified apprenticeship upload does not exist.", nameof(apprenticeshipUploadId));
+            }
+
+            return courseUpload.UploadStatus;
+        }
+
         // internal for testing
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<ApprenticeshipUploadRow> Rows)> ValidateApprenticeshipUploadRows(
             ISqlQueryDispatcher sqlQueryDispatcher,
@@ -172,17 +217,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;
 
-                int.TryParse(parsedRow.StandardCode, out int standardCode);
-                int.TryParse(parsedRow.StandardVersion, out int standardVersion);
-
                 upsertRecords.Add(new UpsertApprenticeshipUploadRowsRecord()
                 {
                     RowNumber = rowNumber,
                     IsValid = rowIsValid,
                     Errors = errors,
                     ApprenticeshipId = row.ApprenticeshipId,
-                    StandardCode = standardCode,
-                    StandardVersion = standardVersion,
+                    StandardCode = int.Parse(parsedRow.StandardCode),
+                    StandardVersion = int.Parse(parsedRow.StandardVersion),
                     ApprenticeshipInformation = parsedRow.ApprenticeshipInformation,
                     ApprenticeshipWebpage = parsedRow.ApprenticeshipWebpage,
                     ContactEmail = parsedRow.ContactEmail,
@@ -217,9 +259,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IsValid = uploadIsValid
             });
 
-            var uploadStatus = rowsAreValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
+            var uploadStatus = await RefreshApprenticeshipUploadValidationStatus(apprenticeshipUploadId, sqlQueryDispatcher);
 
             return (uploadStatus, updatedRows);
+        }
+
+        private async Task<UploadStatus> RefreshApprenticeshipUploadValidationStatus(Guid apprenticeshipUploadId, ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            var uploadIsValid = (await sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipUploadInvalidRowCount() { ApprenticeshipUploadId = apprenticeshipUploadId })) == 0;
+
+            await sqlQueryDispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessed()
+            {
+                ApprenticeshipUploadId = apprenticeshipUploadId,
+                ProcessingCompletedOn = _clock.UtcNow,
+                IsValid = uploadIsValid
+            });
+
+            return uploadIsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
         }
 
         internal class ApprenticeshipUploadRowValidator : AbstractValidator<ParsedCsvApprenticeshipRow>
