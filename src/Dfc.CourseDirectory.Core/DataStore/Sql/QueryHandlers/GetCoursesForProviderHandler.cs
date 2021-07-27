@@ -24,7 +24,7 @@ WHERE p.ProviderId = @ProviderId
 AND (c.CourseStatus & @CourseStatusMask) <> 0
 
 SELECT
-    c.CourseId, c.CourseStatus, @ProviderId ProviderId, c.LearnAimRef,
+    c.CourseId, c.CourseStatus, c.CreatedOn, c.UpdatedOn, @ProviderId ProviderId, p.Ukprn ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded,
     lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
@@ -38,6 +38,8 @@ SELECT
     cr.CourseId,
     cr.CourseRunId,
     cr.CourseRunStatus,
+    cr.CreatedOn,
+    cr.UpdatedOn,
     cr.CourseName,
     cr.VenueId,
     cr.ProviderCourseId,

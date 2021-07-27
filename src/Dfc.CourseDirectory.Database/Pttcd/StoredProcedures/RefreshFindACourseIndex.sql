@@ -29,7 +29,7 @@ BEGIN
 			cr.DurationValue,
 			cr.StudyMode,
 			CASE WHEN cr.DeliveryMode = 1 THEN cr.AttendancePattern ELSE null END AttendancePattern,
-			cr.[National],
+			CASE WHEN cr.DeliveryMode = 2 THEN 1 ELSE cr.[National] END AS [National],  -- Treat Online as National for the purposes of searching
 			v.VenueName,
 			STUFF(
 				CONCAT(
@@ -41,7 +41,7 @@ BEGIN
 				1, 2, NULL) AS VenueAddress,
 			v.Town AS VenueTown,
 			COALESCE(v.Position, r.Position) AS Position,
-			CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 THEN 'National' ELSE '' END AS RegionName,
+			CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 OR cd.DeliveryMode = 2 THEN 'National' ELSE '' END AS RegionName,
 
 			-- Magic numbers and logic from https://github.com/SkillsFundingAgency/dfc-providerportal-changefeedlistener/commit/608340dcfaa5c74ee8b1ae422ad902ee0c529c01#diff-5f9ef9c9ca0b0bc9af8b5c7926cfcfe31fa7e8367b9104357104ad568fbe0302R103-R104
 			CAST(CASE

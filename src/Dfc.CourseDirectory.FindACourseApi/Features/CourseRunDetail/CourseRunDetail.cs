@@ -43,23 +43,23 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
         public async Task<OneOf<NotFound, CourseRunDetailViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var course = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseById { CourseId = request.CourseId });
+            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = request.CourseId });
 
             if (course == null)
             {
                 return new NotFound();
             }
 
-            var courseRun = course.CourseRuns.SingleOrDefault(c => c.Id == request.CourseRunId && c.RecordStatus == CourseStatus.Live);
+            var courseRun = course.CourseRuns.SingleOrDefault(c => c.CourseRunId == request.CourseRunId && c.CourseRunStatus == CourseStatus.Live);
 
             if (courseRun == null)
             {
                 return new NotFound();
             }
 
-            var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUKPRN });
+            var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUkprn });
             var getQualification = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery { LearnAimRef = course.LearnAimRef });
-            var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUKPRN });
+            var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUkprn });
 
             await Task.WhenAll(getProvider, getQualification, getFeChoice);
 
@@ -83,23 +83,23 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             var providerAddressLines = NormalizeAddress(providerContact?.ContactAddress);
 
             var alternativeCourseRuns = course.CourseRuns
-                .Where(r => r.Id != request.CourseRunId && r.RecordStatus == CourseStatus.Live)
+                .Where(r => r.CourseRunId != request.CourseRunId && r.CourseRunStatus == CourseStatus.Live)
                 .Select(r => new { CourseRun = r, Venue = venues.SingleOrDefault(v => v.VenueId == r.VenueId) });
 
             var regions = await _regionCache.GetAllRegions();
 
             return new CourseRunDetailViewModel
             {
-                CourseRunId = courseRun.Id,
+                CourseRunId = courseRun.CourseRunId,
                 OfferingType = Core.Search.Models.FindACourseOfferingType.Course,
                 AttendancePattern = courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)courseRun.AttendancePattern : null,
                 Cost = courseRun.Cost,
                 CostDescription = courseRun.CostDescription,
                 CourseName = courseRun.CourseName,
-                CourseURL = ViewModelFormatting.EnsureHttpPrefixed(courseRun.CourseURL),
-                CreatedDate = courseRun.CreatedDate,
+                CourseURL = ViewModelFormatting.EnsureHttpPrefixed(courseRun.CourseWebsite),
+                CreatedDate = courseRun.CreatedOn,
                 DeliveryMode = courseRun.DeliveryMode,
-                DurationUnit = courseRun.DurationUnit,
+                DurationUnit = courseRun.DurationUnit.Value,
                 DurationValue = courseRun.DurationValue,
                 FlexibleStartDate = courseRun.FlexibleStartDate,
                 StartDate = !courseRun.FlexibleStartDate ? courseRun.StartDate : null,
@@ -107,10 +107,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 National = courseRun.National,
                 Course = new CourseViewModel
                 {
-                    AdvancedLearnerLoan = course.AdvancedLearnerLoan,
                     AwardOrgCode = qualification.Record.AwardOrgCode,
                     CourseDescription = course.CourseDescription,
-                    CourseId = course.Id,
+                    CourseId = course.CourseId,
                     EntryRequirements = course.EntryRequirements,
                     HowYoullBeAssessed = course.HowYoullBeAssessed,
                     HowYoullLearn = course.HowYoullLearn,
@@ -168,15 +167,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 },
                 AlternativeCourseRuns = alternativeCourseRuns.Select(c => new AlternativeCourseRunViewModel
                 {
-                    CourseRunId = c.CourseRun.Id,
+                    CourseRunId = c.CourseRun.CourseRunId,
                     AttendancePattern = c.CourseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)c.CourseRun.AttendancePattern : null,
                     Cost = c.CourseRun.Cost,
                     CostDescription = c.CourseRun.CostDescription,
                     CourseName = c.CourseRun.CourseName,
-                    CourseURL = ViewModelFormatting.EnsureHttpPrefixed(c.CourseRun.CourseURL),
-                    CreatedDate = c.CourseRun.CreatedDate,
+                    CourseURL = ViewModelFormatting.EnsureHttpPrefixed(c.CourseRun.CourseWebsite),
+                    CreatedDate = c.CourseRun.CreatedOn,
                     DeliveryMode = c.CourseRun.DeliveryMode,
-                    DurationUnit = c.CourseRun.DurationUnit,
+                    DurationUnit = c.CourseRun.DurationUnit.Value,
                     DurationValue = c.CourseRun.DurationValue,
                     FlexibleStartDate = c.CourseRun.FlexibleStartDate,
                     StartDate = !c.CourseRun.FlexibleStartDate ? c.CourseRun.StartDate : null,
@@ -199,7 +198,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                         : null
                 }).ToArray(),
                 SubRegions = regions.SelectMany(
-                    r => r.SubRegions.Where(sr => courseRun.Regions?.Contains(sr.Id) ?? false),
+                    r => r.SubRegions.Where(sr => courseRun.SubRegionIds?.Contains(sr.Id) ?? false),
                     (r, sr) => new SubRegionViewModel
                     {
                         SubRegionId = sr.Id,
