@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -36,7 +37,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class AddCourseController : Controller
     {
-        private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
 
         private ISession Session => HttpContext.Session;
@@ -53,14 +53,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
         private const string SessionPublishedCourse = "PublishedCourse";
 
-        public AddCourseController(HtmlEncoder htmlEncoder,
+        public AddCourseController(
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider)
         {
-            _htmlEncoder = htmlEncoder ?? throw new ArgumentNullException(nameof(htmlEncoder));
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher;
@@ -80,12 +79,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetString("LearnAimRefTitle", learnAimRefTitle);
             Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            Course course = null;
+            Core.DataStore.Sql.Models.Course course = null;
             Core.DataStore.CosmosDb.Models.CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
-                course = (await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value))).Value;
+                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
             }
             else
             {
@@ -284,10 +283,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
 
             } else {
-                viewModel.StudyMode = StudyMode.FullTime;
-                viewModel.AttendanceMode = AttendancePattern.Daytime;
-                viewModel.DurationUnit = DurationUnit.Months;
-                viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
+                viewModel.StudyMode = CourseStudyMode.FullTime;
+                viewModel.AttendanceMode = CourseAttendancePattern.Daytime;
+                viewModel.DurationUnit = CourseDurationUnit.Months;
+                viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
 
@@ -349,7 +348,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             switch (model.DeliveryMode)
             {
-                case DeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.ClassroomBased:
 
                     if (model.SelectedVenues != null)
                     {
@@ -361,7 +360,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         summaryViewModel.Venues = venues;
                     }
                     break;
-                case DeliveryMode.WorkBased:
+                case CourseDeliveryMode.WorkBased:
                     regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
                                      from subRegionItemModel in availableRegionsRegionItem.SubRegion
                                      from modelSelectedRegion in model.SelectedRegions
@@ -461,7 +460,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             switch (model.DeliveryMode)
             {
-                case DeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.ClassroomBased:
                     venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
                         from modelSelectedVenue in model.SelectedVenues
                         where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
@@ -469,7 +468,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     summaryViewModel.Venues = venues;
                     break;
-                case DeliveryMode.WorkBased:
+                case CourseDeliveryMode.WorkBased:
 
                     if(model.National)
                     {
@@ -571,7 +570,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             switch (addCourseRun.DeliveryMode)
             {
-                case DeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.ClassroomBased:
                     venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
                         from modelSelectedVenue in addCourseRun.SelectedVenues
                         where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
@@ -579,7 +578,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
                     break;
-                case DeliveryMode.WorkBased:
+                case CourseDeliveryMode.WorkBased:
                     if(model.National)
                     {
                         regions.Add("National");
@@ -679,7 +678,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var advancedLearnerLoan = addCourseSection1.AdvancedLearnerLoan;
             var adultEducationBudget = addCourseSection1.AdultEducationBudget;
 
-            if (addCourseSection2.DeliveryMode == DeliveryMode.ClassroomBased)
+            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased)
             {
                 if (addCourseSection2.SelectedVenues == null || addCourseSection2.SelectedVenues.Count() < 1)
                 {
@@ -697,7 +696,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
             // For each Venue => Course Run
-            var courseRuns = new List<CourseRun>();
+            var courseRuns = new List<CreateCourseCourseRun>();
 
             bool flexibleStartDate = false;
             DateTime? specifiedStartDate = null;
@@ -720,60 +719,49 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 flexibleStartDate = true;
             }
 
-            if (addCourseSection2.DeliveryMode == DeliveryMode.ClassroomBased
+            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased
                 && addCourseSection2.SelectedVenues != null
                 && addCourseSection2.SelectedVenues.Any())
             {
                 foreach (var venue in addCourseSection2.SelectedVenues)
                 {
-                    var courseRun = new CourseRun
+                    var courseRun = new CreateCourseCourseRun
                     {
-                        id = Guid.NewGuid(),
+                        CourseRunId = Guid.NewGuid(),
                         VenueId = venue,
-
-                        CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
-                        ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference??""),
-                        DeliveryMode = addCourseSection2.DeliveryMode,
+                        CourseName = addCourseSection2.CourseName,
+                        ProviderCourseId = addCourseSection2.CourseProviderReference ?? "",
+                        DeliveryMode = CourseDeliveryMode.ClassroomBased,
                         FlexibleStartDate = flexibleStartDate,
                         StartDate = specifiedStartDate,
-                        CourseURL = addCourseSection2.Url,
+                        CourseUrl = addCourseSection2.Url,
                         Cost = addCourseSection2.Cost,
-                        CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription??""),
-                        DurationUnit = addCourseSection2.DurationUnit,
+                        CostDescription = addCourseSection2.CostDescription ?? "",
+                        DurationUnit = addCourseSection2.DurationUnit.Value,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
-                        AttendancePattern = addCourseSection2.AttendanceMode,
-                        Regions = addCourseSection2.SelectedRegions,
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
-                        RecordStatus = RecordStatus.Live // TODO - To Be Decided
+                        AttendancePattern = addCourseSection2.AttendanceMode
                     };
 
                     courseRuns.Add(courseRun);
                 }
             }
 
-            if (addCourseSection2.DeliveryMode == DeliveryMode.WorkBased)
+            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.WorkBased)
             {
-                var courseRun = new CourseRun
+                var courseRun = new CreateCourseCourseRun
                 {
-                    id = Guid.NewGuid(),
-
-                    CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
-                    ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference??""),
-                    DeliveryMode = addCourseSection2.DeliveryMode,
+                    CourseRunId = Guid.NewGuid(),
+                    CourseName = addCourseSection2.CourseName,
+                    ProviderCourseId = addCourseSection2.CourseProviderReference ?? "",
+                    DeliveryMode = CourseDeliveryMode.WorkBased,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = addCourseSection2.Url,
+                    CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription??""),
-                    DurationUnit = addCourseSection2.DurationUnit,
-                    DurationValue = addCourseSection2.DurationLength,
-                    StudyMode = StudyMode.Undefined,
-                    AttendancePattern = AttendancePattern.Undefined,
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
-                    RecordStatus = RecordStatus.Live, // TODO - To Be Decided
+                    CostDescription = addCourseSection2.CostDescription ?? "",
+                    DurationUnit = addCourseSection2.DurationUnit.Value,
+                    DurationValue = addCourseSection2.DurationLength
                 };
                 var availableRegions = new SelectRegionModel();
 
@@ -781,11 +769,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     if (addCourseSection2.SelectedRegions != null && addCourseSection2.SelectedRegions.Any())
                     {
-                        courseRun.National = addCourseSection2.National;
-                        courseRun.Regions = addCourseSection2.SelectedRegions;
-                        string[] selectedRegions = availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
-
-                        courseRun.SubRegions = selectedRegions.Select(selectedRegion => availableRegions.GetSubRegionItemByRegionCode(selectedRegion)).ToList();
+                        courseRun.National = false;
+                        courseRun.SubRegionIds = addCourseSection2.SelectedRegions;
                     }
                 }
                 else
@@ -800,92 +785,56 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
 
-            if (addCourseSection2.DeliveryMode == DeliveryMode.Online)
+            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.Online)
             {
-                var courseRun = new CourseRun
+                var courseRun = new CreateCourseCourseRun
                 {
-                    id = Guid.NewGuid(),
-
-                    CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
-                    ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference??""),
+                    CourseRunId = Guid.NewGuid(),
+                    CourseName = addCourseSection2.CourseName,
+                    ProviderCourseId = addCourseSection2.CourseProviderReference ?? "",
                     DeliveryMode = addCourseSection2.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = addCourseSection2.Url,
+                    CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription??""),
-                    DurationUnit = addCourseSection2.DurationUnit,
-                    DurationValue = addCourseSection2.DurationLength,
-                    StudyMode = StudyMode.Undefined,
-                    AttendancePattern = AttendancePattern.Undefined,
-                    Regions = _courseService.GetRegions().RegionItems.Select(x => x.Id),
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
-                    RecordStatus = RecordStatus.Live // TODO - To Be Decided
+                    CostDescription = addCourseSection2.CostDescription ?? "",
+                    DurationUnit = addCourseSection2.DurationUnit.Value,
+                    DurationValue = addCourseSection2.DurationLength
                 };
 
                 courseRuns.Add(courseRun);
             }
 
-            // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
-            int UKPRN = 0;
-            if (Session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = Session.GetInt32("UKPRN").Value;
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
-            }
+            var courseId = Guid.NewGuid();
+            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
-            var course = new Course
+            await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
-                id = Guid.NewGuid(),
-
-                QualificationCourseTitle = learnAimRefTitle,
+                CourseId = Guid.NewGuid(),
+                ProviderId = providerId,
                 LearnAimRef = learnAimRef,
-                NotionalNVQLevelv2 = notionalNvqLevelv2,
-                AwardOrgCode = awardOrgCode,
-                QualificationType = learnAimRefTypeDesc,
-                ProviderUKPRN = UKPRN, // TODO: ToBeChanged
-                CourseDescription = _htmlEncoder.Encode(courseFor??""),
-                EntryRequirements = _htmlEncoder.Encode(entryRequirements??""),
-                WhatYoullLearn = _htmlEncoder.Encode(whatWillLearn??""),
-                HowYoullLearn = _htmlEncoder.Encode(howYouWillLearn??""),
-                WhatYoullNeed = _htmlEncoder.Encode(whatYouNeed??""),
-                HowYoullBeAssessed = _htmlEncoder.Encode(howAssessed??""),
-                WhereNext = _htmlEncoder.Encode(whereNext??""),
-                AdvancedLearnerLoan = advancedLearnerLoan,
-                AdultEducationBudget = adultEducationBudget,
-                IsValid = true,
+                WhoThisCourseIsFor = courseFor ?? "",
+                EntryRequirements = entryRequirements ?? "",
+                WhatYoullLearn = whatWillLearn ?? "",
+                HowYoullLearn = howYouWillLearn ?? "",
+                WhatYoullNeed = whatYouNeed ?? "",
+                HowYoullBeAssessed = howAssessed ?? "",
+                WhereNext = whereNext ?? "",
                 CourseRuns = courseRuns,
-
-                CreatedDate = DateTime.Now,
-                CreatedBy = _currentUserProvider.GetCurrentUser().UserId,
-
-                //RecordStatus = RecordStatus.Live // TODO - To Be Decided
-            };
-
-            var result = await _courseService.AddCourseAsync(course);
+                CreatedOn = DateTime.UtcNow,
+                CreatedBy = _currentUserProvider.GetCurrentUser()
+            });
 
             RemoveSessionVariables();
 
-            if (result.IsSuccess)
+            Session.SetObject(SessionPublishedCourse, new PublishedCourseViewModel
             {
-                Session.SetObject(SessionPublishedCourse, new PublishedCourseViewModel
-                {
-                    CourseId = course.id,
-                    CourseRunId = courseRuns[0].id,
-                    CourseName = courseRuns[0].CourseName
-                });
+                CourseId = courseId,
+                CourseRunId = courseRuns[0].CourseRunId,
+                CourseName = courseRuns[0].CourseName
+            });
 
-                return RedirectToAction("Published");
-            }
-
-            return RedirectToAction("Index",
-                new {status = "bad", learnAimRef = learnAimRef, errmsg = result.Error});
-
-            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Published");
         }
 
         [Authorize]
@@ -1142,10 +1091,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                viewModel.DurationUnit = DurationUnit.Months;
-                viewModel.StudyMode = StudyMode.FullTime;
-                viewModel.AttendanceMode = AttendancePattern.Daytime;
-                viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
+                viewModel.DurationUnit = CourseDurationUnit.Months;
+                viewModel.StudyMode = CourseStudyMode.FullTime;
+                viewModel.AttendanceMode = CourseAttendancePattern.Daytime;
+                viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
 

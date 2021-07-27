@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -126,14 +127,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             var liveCourseIds = await Task.WhenAll(
                 Enumerable.Range(0, 3).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo())));
 
-            var pendingCourseIds = await Task.WhenAll(
-                Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.Pending))));
-
             var archivedCourseIds = await Task.WhenAll(
-                Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.Archived))));
+                Enumerable.Range(0, 1).Select(async _ =>
+                {
+                    var course = await TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun());
 
-            var deletedCourseIds = await Task.WhenAll(
-                Enumerable.Range(0, 1).Select(_ => TestData.CreateCourse(provider.ProviderId, User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: CourseStatus.Deleted))));
+                    await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new DeleteCourseRun()
+                    {
+                        CourseId = course.CourseId,
+                        CourseRunId = course.CourseRuns.Single().CourseRunId,
+                        DeletedBy = User.ToUserInfo(),
+                        DeletedOn = Clock.UtcNow
+                    }));
+
+                    return course.CourseId;
+                }));
 
             var standard = await TestData.CreateStandard(123, 456, "TestStandard1");
             var liveApprenticeships = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateApprenticeship(provider.ProviderId, standard, User.ToUserInfo())));
@@ -176,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 record.ProviderStatusDescription.Should().Be(provider.ProviderStatus.ToString());
                 record.UkrlpProviderStatus.Should().Be(provider.UkrlpProviderStatusDescription);
                 record.LiveCourseCount.Should().Be(liveCourseIds.Length);
-                record.OtherCourseCount.Should().Be(pendingCourseIds.Length + archivedCourseIds.Length + deletedCourseIds.Length);
+                record.OtherCourseCount.Should().Be(archivedCourseIds.Length);
                 record.LiveApprenticeshipCount.Should().Be(liveApprenticeships.Length);
                 record.OtherApprenticeshipCount.Should().Be(0);
                 record.LiveTLevelCount.Should().Be(liveTLevels.Length);

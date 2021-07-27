@@ -464,19 +464,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             records.Length.Should().Be(0);
         }
 
-        [Theory]
-        [InlineData(CourseStatus.Pending)]
-        [InlineData(CourseStatus.None)]
-        [InlineData(CourseStatus.Deleted)]
-        [InlineData(CourseStatus.Archived)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_ProvidersWithNonLiveCourses_ReturnsEmptyCsv(CourseStatus courseStatus)
+        [Fact]
+        public async Task ProvidersMissingPrimaryContactReport_Get_ProvidersWithNonLiveCourses_ReturnsEmptyCsv()
         {
             //Arange
             var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
             {
                 CreateContact("CV4 1AA", "some Street", null, null)
             });
-            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo(), configureCourseRuns: builder => builder.WithCourseRun(status: courseStatus));
 
             await User.AsHelpdesk();
             var request = new HttpRequestMessage(

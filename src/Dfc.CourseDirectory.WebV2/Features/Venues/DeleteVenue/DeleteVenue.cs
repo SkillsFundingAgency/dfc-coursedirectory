@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -19,7 +20,6 @@ using OneOf;
 using OneOf.Types;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 {
@@ -29,13 +29,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
         public string VenueName { get; set; }
     }
 
-    public class Query : IRequest<OneOf<NotFound, ViewModel>>
+    public class Query : IRequest<ViewModel>
     {
         public Guid VenueId { get; set; }
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<OneOf<NotFound, ModelWithErrors<ViewModel>, Success>>
+    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public Guid VenueId { get; set; }
         public Guid ProviderId { get; set; }
@@ -81,13 +81,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
     }
 
     public class Handler :
-        IRequestHandler<Query, OneOf<NotFound, ViewModel>>,
-        IRequestHandler<Command, OneOf<NotFound, ModelWithErrors<ViewModel>, Success>>,
+        IRequestHandler<Query, ViewModel>,
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>,
         IRequestHandler<DeletedQuery, DeletedViewModel>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IProviderInfoCache _providerInfoCache;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
@@ -96,7 +95,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderInfoCache providerInfoCache,
             IProviderOwnershipCache providerOwnershipCache,
             ICurrentUserProvider currentUserProvider,
             JourneyInstanceProvider journeyInstanceProvider,
@@ -104,82 +102,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _providerInfoCache = providerInfoCache;
             _providerOwnershipCache = providerOwnershipCache;
             _currentUserProvider = currentUserProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
             _clock = clock;
         }
 
-        public async Task<OneOf<NotFound, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue { VenueId = request.VenueId });
+        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.VenueId);
 
-            if (venue == null)
+        public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
+        {
+            var vm = await CreateViewModel(request.VenueId);
+            var validationResult = await new CommandValidator(vm).ValidateAsync(request);
+
+            if (!validationResult.IsValid)
             {
-                return new NotFound();
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var providerUkprn = (await _providerInfoCache.GetProviderInfo(venue.ProviderId)).Ukprn;
-
-            var getCourses = _cosmosDbQueryDispatcher.ExecuteQuery(new GetAllCoursesForProvider
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.DeleteVenue()
             {
-                ProviderUkprn = providerUkprn,
-                CourseStatuses = CourseStatus.Live | CourseStatus.Pending | CourseStatus.BulkUploadPending | CourseStatus.BulkUploadReadyToGoLive | CourseStatus.APIPending | CourseStatus.APIReadyToGoLive | CourseStatus.MigrationPending | CourseStatus.MigrationReadyToGoLive
-            });
-            
-            var getApprenticeships = _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
-            {
-                Predicate = a => a.ProviderUKPRN == providerUkprn && a.ApprenticeshipLocations.Any(al =>
-                    al.RecordStatus != (int)ApprenticeshipStatus.Archived
-                    && al.RecordStatus != (int)ApprenticeshipStatus.Deleted
-                    && al.VenueId == request.VenueId)
-            });
-            
-            var getTLevels = _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelsForProvider
-            {
-                ProviderId = request.ProviderId
+                VenueId = request.VenueId,
+                DeletedOn = _clock.UtcNow,
+                DeletedBy = _currentUserProvider.GetCurrentUser()
             });
 
-            await Task.WhenAll(getCourses, getApprenticeships, getTLevels);
+            if (result.Value is NotFound)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.Venue, request.VenueId);
+            }
 
-            return CreateViewModel(venue, request.ProviderId, await getCourses, (await getApprenticeships).Values, await getTLevels);
-        }
+            _providerOwnershipCache.OnVenueDeleted(request.VenueId);
 
-        public async Task<OneOf<NotFound, ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
-        {
-            var queryResult = await Handle(new Query { VenueId = request.VenueId, ProviderId = request.ProviderId }, cancellationToken);
+            _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel { VenueName = vm.VenueName })
+                .Complete();
 
-            return await queryResult.Match(
-                notFound => Task.FromResult<OneOf<NotFound, ModelWithErrors<ViewModel>, Success>>(notFound),
-                async vm =>
-                {
-                    var validationResult = await new CommandValidator(vm).ValidateAsync(request);
-
-                    if (!validationResult.IsValid)
-                    {
-                        return new ModelWithErrors<ViewModel>(vm, validationResult);
-                    }
-
-                    var result = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.DeleteVenue()
-                    {
-                        VenueId = request.VenueId,
-                        DeletedOn = _clock.UtcNow,
-                        DeletedBy = _currentUserProvider.GetCurrentUser()
-                    });
-
-                    if (!(result.Value is Success))
-                    {
-                        return new NotFound();
-                    }
-
-                    _providerOwnershipCache.OnVenueDeleted(request.VenueId);
-
-                    _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel { VenueName = vm.VenueName })
-                        .Complete();
-
-                    return new Success();
-                });
+            return new Success();
         }
 
         public Task<DeletedViewModel> Handle(DeletedQuery request, CancellationToken cancellationToken)
@@ -193,59 +151,76 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
             });
         }
 
-        private static ViewModel CreateViewModel(
-            Venue venue,
-            Guid providerId,
-            IEnumerable<Course> courseRuns,
-            IEnumerable<Apprenticeship> apprenticeships,
-            IEnumerable<SqlModels.TLevel> tLevels) => new ViewModel
+        private async Task<ViewModel> CreateViewModel(Guid venueId)
         {
-            VenueId = venue.VenueId,
-            ProviderId = providerId,
-            AffectedCourses = GetAffectedCourses(courseRuns, venue.VenueId),
-            AffectedApprenticeships = GetAffectedApprenticeships(apprenticeships, venue.VenueId),
-            AffectedTLevels = GetAffectedTLevels(tLevels, venue.VenueId),
-            VenueName = venue.VenueName,
-            AddressParts = new[]
+            var offeringInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueOfferingInfo() { VenueId = venueId });
+
+            if (offeringInfo == null)
             {
-                venue.AddressLine1,
-                venue.AddressLine2,
-                venue.Town,
-                venue.County
-            }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray(),
-            PostCode = venue.Postcode
-        };
+                throw new ResourceDoesNotExistException(ResourceType.Venue, venueId);
+            }
 
-        private static IReadOnlyCollection<AffectedCourseViewModel> GetAffectedCourses(IEnumerable<Course> affectedCourses, Guid venueId) => affectedCourses
-            .SelectMany(c =>
-                c.CourseRuns.Where(cr => cr.VenueId == venueId && cr.RecordStatus != CourseStatus.Deleted && cr.RecordStatus != CourseStatus.Archived),
-                (c, cr) => new AffectedCourseViewModel
-                {
-                    CourseId = c.Id,
-                    CourseRunId = cr.Id,
-                    CourseName = cr.CourseName
-                })
-            .ToArray();
+            var providerId = offeringInfo.Venue.ProviderId;
 
-        private static IReadOnlyCollection<AffectedApprenticeshipViewModel> GetAffectedApprenticeships(IEnumerable<Apprenticeship> affectedApprenticeships, Guid venueId) => affectedApprenticeships
-            .Where(a => a.ApprenticeshipLocations.Any(al => al.VenueId == venueId && al.RecordStatus != (int)ApprenticeshipStatus.Deleted && al.RecordStatus != (int)ApprenticeshipStatus.Archived))
-            .Select(
-                a => new AffectedApprenticeshipViewModel
-                {
-                    ApprenticeshipId = a.Id,
-                    ApprenticeshipName = a.ApprenticeshipTitle
-                })
-            .ToArray();
+            var linkedCourses = offeringInfo.LinkedCourses.Count > 0 ?
+                (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId })) :
+                Array.Empty<SqlModels.Course>();
 
-        private static IReadOnlyCollection<AffectedTLevelViewModel> GetAffectedTLevels(IEnumerable<SqlModels.TLevel> tLevels, Guid venueId) => tLevels
-            .Where(t => t.Locations.Any(l => l.VenueId == venueId && l.TLevelLocationStatus != TLevelLocationStatus.Deleted))
-            .Select(t =>
-                new AffectedTLevelViewModel
+            var linkedApprenticeships = offeringInfo.LinkedApprenticeships.Count > 0 ?
+                (await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new GetApprenticeships()
+                    {
+                        Predicate = a => a.ProviderUKPRN == offeringInfo.Venue.ProviderUkprn &&
+                            a.ApprenticeshipLocations.Any(al => al.VenueId == venueId && al.RecordStatus != (int)ApprenticeshipStatus.Deleted)
+                    })) :
+                new Dictionary<Guid, Apprenticeship>();
+
+            var linkedTLevels = offeringInfo.LinkedTLevels.Count > 0 ?
+                (await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelsForProvider() { ProviderId = providerId })) :
+                Array.Empty<TLevel>();
+
+            return new ViewModel()
+            {
+                VenueId = offeringInfo.Venue.VenueId,
+                ProviderId = offeringInfo.Venue.ProviderId,
+                AffectedCourses = offeringInfo.LinkedCourses
+                    .Select(c => new AffectedCourseViewModel()
+                    {
+                        CourseId = c.CourseId,
+                        CourseRunId = c.CourseRunId,
+                        CourseName = linkedCourses
+                            .Single(x => c.CourseId == x.CourseId)
+                            .CourseRuns.Single(cr => cr.CourseRunId == c.CourseRunId)
+                            .CourseName
+                    })
+                    .ToArray(),
+                AffectedApprenticeships = offeringInfo.LinkedApprenticeships
+                    .Select(a => new AffectedApprenticeshipViewModel()
+                    {
+                        ApprenticeshipId = a.ApprenticeshipId,
+                        ApprenticeshipName = linkedApprenticeships[a.ApprenticeshipId].ApprenticeshipTitle
+                    })
+                    .ToArray(),
+                AffectedTLevels = offeringInfo.LinkedTLevels
+                    .Select(t => new AffectedTLevelViewModel()
+                    {
+                        TLevelId = t.TLevelId,
+                        TLevelName = linkedTLevels
+                            .Single(tl => tl.TLevelId == t.TLevelId)
+                            .TLevelDefinition.Name
+                    })
+                    .ToArray(),
+                VenueName = offeringInfo.Venue.VenueName,
+                AddressParts = new[]
                 {
-                    TLevelId = t.TLevelId,
-                    TLevelName = t.TLevelDefinition.Name
-                })
-            .ToArray();
+                    offeringInfo.Venue.AddressLine1,
+                    offeringInfo.Venue.AddressLine2,
+                    offeringInfo.Venue.Town,
+                    offeringInfo.Venue.County
+                }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray(),
+                PostCode = offeringInfo.Venue.Postcode
+            };
+        }
 
         private class CommandValidator : AbstractValidator<Command>
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
@@ -10,7 +11,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string LearnAimRefTitle { get; set; }
         public string CourseName { get; set; }
         public string CourseProviderReference { get; set; }
-        public DeliveryMode DeliveryMode { get; set; }
+        public CourseDeliveryMode DeliveryMode { get; set; }
         public StartDateType StartDateType { get; set; }
         public string Day { get; set; }
         public string Month { get; set; }
@@ -22,9 +23,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string Cost { get; set; }
         public string CostDescription { get; set; }
         public string DurationLength { get; set; }
-        public DurationUnit DurationUnit { get; set; }
-        public AttendancePattern AttendanceMode { get; set; }
-        public StudyMode StudyMode { get; set; }
+        public CourseDurationUnit DurationUnit { get; set; }
+        public CourseAttendancePattern? AttendanceMode { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }
         public string RefererAbsolutePath { get; set; }
     }
 }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.Logging;
 using UkrlpService;
@@ -20,17 +22,20 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private readonly IUkrlpService _ukrlpService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly IClock _clock;
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UkrlpSyncHelper(
             IUkrlpService ukrlpService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             IClock clock,
             ILoggerFactory loggerFactory)
         {
             _ukrlpService = ukrlpService;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _clock = clock;
             _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
         }
@@ -173,10 +178,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             var contact = SelectContact(providerData.ProviderContact);
 
+            var providerId = existingProvider?.Id ?? Guid.NewGuid();
+
             if (existingProvider == null)
             {
-                var providerId = Guid.NewGuid();
-
                 await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new CreateProviderFromUkrlpData()
                     {
@@ -205,7 +210,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
                         Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
-                        ProviderId = existingProvider.Id,
+                        ProviderId = providerId,
                         Contacts = contact != null ?
                             new List<ProviderContact>() { MapContact(contact) } :
                             new List<ProviderContact>(),
@@ -222,7 +227,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 if (deactivating)
                 {
                     await _cosmosDbQueryDispatcher.ExecuteQuery(new ArchiveApprenticeshipsForProvider() { Ukprn = ukprn });
-                    await _cosmosDbQueryDispatcher.ExecuteQuery(new ArchiveCoursesForProvider() { Ukprn = ukprn });
+
+                    using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                    {
+                        await sqlDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
+                        await sqlDispatcher.Commit();
+                    }
                 }
 
                 return CreateOrUpdateResult.Updated;

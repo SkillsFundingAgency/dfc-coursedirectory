@@ -196,6 +196,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             return new UkrlpSyncHelper(
                 ukrlpWcfService.Object,
                 CosmosDbQueryDispatcher.Object,
+                SqlQueryDispatcherFactory,
                 Clock,
                 loggerFactory.Object);
         }

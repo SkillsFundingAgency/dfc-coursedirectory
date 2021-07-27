@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Services.Models.Courses
+﻿@using Dfc.CourseDirectory.Core.Models
 @using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryList
 @using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
@@ -62,7 +62,7 @@
                 })
 
                 @{
-                    if (Model.DeliveryModeEnum == DeliveryMode.ClassroomBased)
+                    if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased)
                     {
                         @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
                         {
@@ -72,7 +72,7 @@
                             Section = "VenueItemsCheckboxList"
                         })
                     }
-                    if (Model.DeliveryModeEnum == DeliveryMode.WorkBased)
+                    if (Model.DeliveryModeEnum == CourseDeliveryMode.WorkBased)
                     {
                         @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
                         {
@@ -120,7 +120,7 @@
                     Section = "sectionDuration"
                 })
 
-                @if (Model.DeliveryModeEnum == DeliveryMode.ClassroomBased)
+                @if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased)
                 {
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                     {
