@@ -1,8 +1,10 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
@@ -14,34 +16,31 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
     public class EditCourseController : Controller
     {
-        private readonly ICourseService _courseService;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         private ISession Session => HttpContext.Session;
 
         public EditCourseController(
-            IOptions<CourseServiceSettings> courseSearchSettings,
-            ICourseService courseService)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
-            if (courseSearchSettings == null)
-            {
-                throw new ArgumentNullException(nameof(courseSearchSettings));
-            }
-
-            if (courseService == null)
-            {
-                throw new ArgumentNullException(nameof(courseService));
-            }
-
-            _courseService = courseService;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         [HttpGet]
@@ -58,20 +57,20 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            var result = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
 
-            if (!result.IsSuccess)
+            if (result == null)
             {
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
             var vm = new EditCourseViewModel
             {
-                CourseName = result.Value.QualificationCourseTitle,
+                CourseName = result.LearnAimRefTitle,
                 AwardOrgCode = awardOrgCode,
                 LearnAimRef = learnAimRef,
                 LearnAimRefTitle = learnAimRefTitle,
-                NotionalNVQLevelv2 = result.Value.NotionalNVQLevelv2,
+                NotionalNVQLevelv2 = result.NotionalNVQLevelv2,
                 CourseId = courseId,
                 CourseRunId = courseRunId,
                 Mode = mode,
@@ -80,7 +79,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     LabelText = "Who this course is for",
                     HintText = "Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.",
                     AriaDescribedBy = "Please enter who this course is for.",
-                    CourseFor = result.Value.CourseDescription
+                    CourseFor = result.CourseDescription
                 },
 
                 EntryRequirements = new EntryRequirementsModel()
@@ -88,14 +87,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     LabelText = "Entry requirements",
                     HintText = "Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.",
                     AriaDescribedBy = "Please list entry requirements.",
-                    EntryRequirements = result.Value.EntryRequirements
+                    EntryRequirements = result.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
                     LabelText = "What you’ll learn",
                     HintText = "The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.",
                     AriaDescribedBy = "Please enter what will be learned.",
-                    WhatWillLearn = result.Value.WhatYoullLearn
+                    WhatWillLearn = result.WhatYoullLearn
 
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
@@ -103,14 +102,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     LabelText = "How you’ll learn",
                     HintText = "The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.",
                     AriaDescribedBy = "Please enter how you’ll learn.",
-                    HowYouWillLearn = result.Value.HowYoullLearn
+                    HowYouWillLearn = result.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
                     LabelText = "What you’ll need to bring",
                     HintText = "What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.",
                     AriaDescribedBy = "Please enter what you need.",
-                    WhatYouNeed = result.Value.WhatYoullNeed
+                    WhatYouNeed = result.WhatYoullNeed
 
                 },
                 HowAssessed = new HowAssessedModel()
@@ -118,18 +117,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     LabelText = "How you’ll be assessed",
                     HintText = "The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.",
                     AriaDescribedBy = "Please enter how you’ll be assessed.",
-                    HowAssessed = result.Value.HowYoullBeAssessed
+                    HowAssessed = result.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
                     LabelText = "What you can do next",
                     HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
                     AriaDescribedBy = "Please enter what you can do next.",
-                    WhereNext = result.Value.WhereNext
+                    WhereNext = result.WhereNext
                 },
-                QualificationType = result.Value.QualificationType,
-                AdultEducationBudget = result.Value.AdultEducationBudget,
-                AdvancedLearnerLoan = result.Value.AdvancedLearnerLoan
+                QualificationType = result.LearnAimRefTypeDesc
             };
 
             return View("EditCourse", vm);
@@ -139,69 +136,74 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public async Task<IActionResult> Index(EditCourseSaveViewModel model)
         {
-            if (model.CourseId.HasValue)
+            if (!model.CourseId.HasValue)
             {
-                var courseForEdit = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
-
-                if (courseForEdit.IsSuccess)
-                {
-                    courseForEdit.Value.CourseDescription = model?.CourseFor;
-                    courseForEdit.Value.EntryRequirements = model?.EntryRequirements;
-                    courseForEdit.Value.WhatYoullLearn = model?.WhatWillLearn;
-                    courseForEdit.Value.HowYoullLearn = model?.HowYouWillLearn;
-                    courseForEdit.Value.WhatYoullNeed = model?.WhatYouNeed;
-                    courseForEdit.Value.HowYoullBeAssessed = model?.HowAssessed;
-                    courseForEdit.Value.WhereNext = model?.WhereNext;
-                    courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
-                    courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
-                    courseForEdit.Value.IsValid = true; // The same for Live, BulkUpload, Migration
-                    courseForEdit.Value.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
-                    courseForEdit.Value.UpdatedDate = DateTime.Now;
-
-                    courseForEdit.Value.ValidationErrors = _courseService.ValidateCourse(courseForEdit.Value).Select(x => x.Value);
-
-                    var message = string.Empty;
-                    bool isCourseValid = !(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any());
-
-                    RecordStatus[] validStatuses = new[] { RecordStatus.Live };
-
-                    if (isCourseValid && !(courseForEdit.Value.CourseRuns.Where(x => !validStatuses.Contains(x.RecordStatus)).Any()))
-                    {
-                        // Course run was fixed
-                        message = $"'{courseForEdit.Value.QualificationCourseTitle}' was successfully fixed and published.";
-                    }
-                    else
-                    {
-                        // Course was fixed
-                        message = $"'{courseForEdit.Value.QualificationCourseTitle}' was successfully fixed.";
-                    }
-
-                    var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
-
-                    switch (model.Mode)
-                    {
-                        case PublishMode.Summary:
-                            TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
-                            return RedirectToAction("Index", "CourseSummary",
-                                new
-                                {
-                                    courseId = model.CourseId,
-                                    courseRunId = model.CourseRunId
-                                });
-                        default:
-                            return RedirectToAction("Courses", "Provider",
-                                new
-                                {
-                                    NotificationTitle = "Course edited",
-                                    NotificationMessage = "You edited",
-                                    qualificationType = courseForEdit.Value.QualificationType,
-                                    courseId = updatedCourse.Value.id
-                                });
-                    }
-                }
+                return BadRequest();
             }
 
-            return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var courseId = model.CourseId.Value;
+
+            var validationResult = new EditCourseSaveViewModelValidator().Validate(model);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var updateResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
+            {
+                CourseId = courseId,
+                WhoThisCourseIsFor = model.CourseFor,
+                EntryRequirements = model.EntryRequirements,
+                WhatYoullLearn = model.WhatWillLearn,
+                HowYoullLearn = model.HowYouWillLearn,
+                WhatYoullNeed = model.WhatYouNeed,
+                HowYoullBeAssessed = model.HowAssessed,
+                WhereNext = model.WhereNext,
+                UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                UpdatedOn = _clock.UtcNow
+            });
+
+            if (!(updateResult.Value is Success))
+            {
+                return BadRequest();
+            }
+
+            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
+
+            switch (model.Mode)
+            {
+                case PublishMode.Summary:
+                    TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
+                    return RedirectToAction("Index", "CourseSummary",
+                        new
+                        {
+                            courseId = model.CourseId,
+                            courseRunId = model.CourseRunId
+                        });
+                default:
+                    return RedirectToAction("Courses", "Provider",
+                        new
+                        {
+                            NotificationTitle = "Course edited",
+                            NotificationMessage = "You edited",
+                            qualificationType = course.LearnAimRefTypeDesc,
+                            courseId = courseId
+                        });
+            }
+        }
+
+        private class EditCourseSaveViewModelValidator : AbstractValidator<EditCourseSaveViewModel>
+        {
+            public EditCourseSaveViewModelValidator()
+            {
+                RuleFor(c => c.CourseFor).WhoThisCourseIsFor();
+                RuleFor(c => c.EntryRequirements).EntryRequirements();
+                RuleFor(c => c.WhatWillLearn).WhatYouWillLearn();
+                RuleFor(c => c.HowYouWillLearn).HowYouWillLearn();
+                RuleFor(c => c.WhatYouNeed).WhatYouWillNeedToBring();
+                RuleFor(c => c.HowAssessed).HowYouWillBeAssessed();
+                RuleFor(c => c.WhereNext).WhereNext();
+            }
         }
     }
 }

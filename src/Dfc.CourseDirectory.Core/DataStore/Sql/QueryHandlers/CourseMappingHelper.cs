@@ -35,7 +35,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 return new Course()
                 {
                     CourseId = row.CourseId,
-                    CourseStatus = row.CourseStatus,
                     CreatedOn = row.CreatedOn,
                     UpdatedOn = row.UpdatedOn,
                     ProviderId = row.ProviderId,
@@ -58,7 +57,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     LearnAimRefTitle = row.LearnAimRefTitle
                 };
 
-                string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded ? HtmlDecode(field) : field;
+                string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded != false ? HtmlDecode(field) : field;
             }
 
             CourseRun MapCourseRun(CourseRunResult row)
@@ -88,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ProviderVenueRef = row.ProviderVenueRef
                 };
 
-                string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded ? HtmlDecode(field) : field;
+                string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded != false ? HtmlDecode(field) : field;
             }
         }
 
@@ -108,7 +107,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string WhatYoullNeed { get; set; }
             public string HowYoullBeAssessed { get; set; }
             public string WhereNext { get; set; }
-            public bool DataIsHtmlEncoded { get; set; }
+            public bool? DataIsHtmlEncoded { get; set; }
             public string LearnAimRefTypeDesc { get; set; }
             public string AwardOrgCode { get; set; }
             public string NotionalNVQLevelv2 { get; set; }
@@ -138,7 +137,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public bool? National { get; set; }
             public string VenueName { get; set; }
             public string ProviderVenueRef { get; set; }
-            public bool DataIsHtmlEncoded { get; set; }
+            public bool? DataIsHtmlEncoded { get; set; }
         }
 
         private class CourseRunSubRegionResult

@@ -195,9 +195,6 @@
 
             @switch (Model.Mode)
             {
-                case PublishMode.DataQualityIndicator:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-button govuk-button--secondary" })
-                    break;
                 case PublishMode.Summary:
                     @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-button govuk-button--secondary" })
                     break;
@@ -769,9 +766,6 @@
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
 
-                var $attendancePattern = $("#@Model.AttendanceMode");
-                var $studyMode = $("#@Model.StudyMode");
-
                 switch (this.id) {
                     case "ClassroomBased":
                         {
@@ -784,8 +778,6 @@
                             isClassroomBased = true;
                             isOnline = false;
                             isWorkBased = false;
-                            $attendancePattern.prop("checked", true);
-                            $studyMode.prop("checked", true);
                             $regionSection.hide();
 
                             $("#govuk-label-start_date").show();
@@ -803,8 +795,6 @@
                             isClassroomBased = false;
                             isOnline = true;
                             isWorkBased = false;
-                            $attendancePattern.prop("checked", false);
-                            $studyMode.prop("checked", false);
                             $("#govuk-label-start_date").hide();
                             $regionSection.hide();
 
@@ -821,8 +811,6 @@
                             isClassroomBased = false;
                             isOnline = false;
                             isWorkBased = true;
-                            $attendancePattern.prop("checked", false);
-                            $studyMode.prop("checked", false);
 
                             if ($national.find("input[type='radio']:checked").val() === "False") {
                                 $regionSection.show();

@@ -20,5 +20,5 @@
 	[HowYoullBeAssessed] NVARCHAR(MAX),
 	[WhereNext] NVARCHAR(MAX),
 	[BulkUploadErrorCount] INT,
-	[DataIsHtmlEncoded] BIT NOT NULL CONSTRAINT [DF_Courses_DataIsHtmlEncoded] DEFAULT (1)
+	[DataIsHtmlEncoded] BIT CONSTRAINT [DF_Courses_DataIsHtmlEncoded] DEFAULT (0)
 )

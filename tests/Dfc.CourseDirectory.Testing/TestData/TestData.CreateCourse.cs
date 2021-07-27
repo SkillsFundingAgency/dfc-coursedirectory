@@ -1,45 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
 
 namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<Core.DataStore.Sql.Models.Course> CreateCourse(
+        public async Task<Course> CreateCourse(
             Guid providerId,
             UserInfo createdBy,
             string learnAimRef = null,
-            string courseDescription = "The description",
+            string whoThisCourseIsFor = "The description",
             string entryRequirements = "To be eligible for ESFA government funding, you must be 19 or over. You must be a UK or EU citizen or have indefinite leave to remain in the UK. Learners will be ineligible if they have previously achieved a GCSE grade A* to C in the subject.",
             string whatYoullLearn = "DIGITAL EMPLOYABILITY SKILLS",
             string howYoullLearn = "Group coaching and 1-2-1 support through Tutor led learning, written assignments throughout courses, Independent Learning, access to comprehensive online and paper based learning resources.",
             string whatYoullNeed = "Valid ID (driving licence, passport, birth certificate)",
             string howYoullBeAssessed = "Paper based or online assessments",
             string whereNext = "We will actively signpost and support you to achieve the next level of progression for all certificated aims.",
-            bool adultEducationBudget = false,
-            bool advancedLearnerLoan = false,
             DateTime? createdUtc = null,
             Action<CreateCourseCourseRunBuilder> configureCourseRuns = null)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderById()
+            if (learnAimRef == null)
             {
-                ProviderId = providerId
-            });
-
-            if (provider == null)
-            {
-                throw new ArgumentException("Provider does not exist.", nameof(providerId));
+                var learningDelivery = await CreateLearningDelivery();
+                learnAimRef = learningDelivery.LearnAimRef;
             }
-
-            var learningDelivery = learnAimRef != null ?
-                (await WithSqlQueryDispatcher(
-                    dispatcher => dispatcher.ExecuteQuery(
-                        new GetLearningDeliveries() { LearnAimRefs = new[] { learnAimRef } })))[learnAimRef] :
-                await CreateLearningDelivery();
 
             var courseId = Guid.NewGuid();
 
@@ -50,42 +38,35 @@ namespace Dfc.CourseDirectory.Testing
 
             if (courseRunBuilder.CourseRuns.Count == 0)
             {
-                throw new InvalidOperationException("At least one CourseRun must be specified.");
+                throw new ArgumentException("At least one CourseRun must be specified.", nameof(configureCourseRuns));
             }
 
             var courseRuns = courseRunBuilder.CourseRuns;
 
-            await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new CreateCourse()
-                {
-                    CourseId = courseId,
-                    ProviderId = providerId,
-                    ProviderUkprn = provider.Ukprn,
-                    QualificationCourseTitle = learningDelivery.LearnAimRefTitle,
-                    LearnAimRef = learningDelivery.LearnAimRef,
-                    NotionalNVQLevelv2 = learningDelivery.NotionalNVQLevelv2,
-                    AwardOrgCode = learningDelivery.AwardOrgCode,
-                    QualificationType = learningDelivery.LearnAimRefTypeDesc,
-                    CourseDescription = courseDescription,
-                    EntryRequirements = entryRequirements,
-                    WhatYoullLearn = whatYoullLearn,
-                    HowYoullLearn = howYoullLearn,
-                    WhatYoullNeed = whatYoullNeed,
-                    HowYoullBeAssessed = howYoullBeAssessed,
-                    WhereNext = whereNext,
-                    AdultEducationBudget = adultEducationBudget,
-                    AdvancedLearnerLoan = advancedLearnerLoan,
-                    CourseRuns = courseRuns,
-                    CreatedDate = createdUtc ?? _clock.UtcNow,
-                    CreatedByUser = createdBy
-                });
+            return await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                await dispatcher.ExecuteQuery(
+                    new CreateCourse()
+                    {
+                        CourseId = courseId,
+                        ProviderId = providerId,
+                        LearnAimRef = learnAimRef,
+                        WhoThisCourseIsFor = whoThisCourseIsFor,
+                        EntryRequirements = entryRequirements,
+                        WhatYoullLearn = whatYoullLearn,
+                        HowYoullLearn = howYoullLearn,
+                        WhatYoullNeed = whatYoullNeed,
+                        HowYoullBeAssessed = howYoullBeAssessed,
+                        WhereNext = whereNext,
+                        CourseRuns = courseRuns,
+                        CreatedOn = createdUtc ?? _clock.UtcNow,
+                        CreatedBy = createdBy
+                    });
 
-            var cosmosCourse = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseById() { CourseId = courseId });
-            await _sqlDataSync.SyncCourse(cosmosCourse);
+                var course = await dispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
 
-            var course = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId }));
-
-            return course;
+                return course;
+            });
         }
 
         public class CreateCourseCourseRunBuilder
@@ -103,9 +84,8 @@ namespace Dfc.CourseDirectory.Testing
                     string costDescription = null,
                     CourseDurationUnit durationUnit = CourseDurationUnit.Months,
                     int durationValue = 3,
-                    string providerCourseRef = null,
-                    CourseStatus status = CourseStatus.Live) =>
-                WithOnlineCourseRun(courseName, flexibleStartDate, startDate, courseUrl, cost, costDescription, durationUnit, durationValue, providerCourseRef, status);
+                    string providerCourseRef = null) =>
+                WithOnlineCourseRun(courseName, flexibleStartDate, startDate, courseUrl, cost, costDescription, durationUnit, durationValue, providerCourseRef);
 
             public CreateCourseCourseRunBuilder WithClassroomBasedCourseRun(
                 Guid venueId,
@@ -119,15 +99,13 @@ namespace Dfc.CourseDirectory.Testing
                 string costDescription = null,
                 CourseDurationUnit durationUnit = CourseDurationUnit.Months,
                 int durationValue = 3,
-                string providerCourseRef = null,
-                CourseStatus status = CourseStatus.Live)
+                string providerCourseRef = null)
             {
                 var courseRunId = Guid.NewGuid();
 
                 _courseRuns.Add(new CreateCourseCourseRun()
                 {
                     CourseRunId = courseRunId,
-                    CourseRunStatus = status,
                     CourseName = courseName,
                     DeliveryMode = CourseDeliveryMode.ClassroomBased,
                     FlexibleStartDate = flexibleStartDate ?? !startDate.HasValue,
@@ -163,7 +141,6 @@ namespace Dfc.CourseDirectory.Testing
                 _courseRuns.Add(new CreateCourseCourseRun()
                 {
                     CourseRunId = courseRunId,
-                    CourseRunStatus = status,
                     CourseName = courseName,
                     DeliveryMode = CourseDeliveryMode.Online,
                     FlexibleStartDate = flexibleStartDate ?? !startDate.HasValue,
@@ -191,15 +168,13 @@ namespace Dfc.CourseDirectory.Testing
                 string costDescription = null,
                 CourseDurationUnit durationUnit = CourseDurationUnit.Months,
                 int durationValue = 3,
-                string providerCourseRef = null,
-                CourseStatus status = CourseStatus.Live)
+                string providerCourseRef = null)
             {
                 var courseRunId = Guid.NewGuid();
 
                 _courseRuns.Add(new CreateCourseCourseRun()
                 {
                     CourseRunId = courseRunId,
-                    CourseRunStatus = status,
                     CourseName = courseName,
                     DeliveryMode = CourseDeliveryMode.WorkBased,
                     FlexibleStartDate = flexibleStartDate ?? !startDate.HasValue,

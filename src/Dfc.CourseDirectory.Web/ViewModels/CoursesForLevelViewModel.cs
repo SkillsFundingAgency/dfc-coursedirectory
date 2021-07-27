@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Models.Courses;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
 {

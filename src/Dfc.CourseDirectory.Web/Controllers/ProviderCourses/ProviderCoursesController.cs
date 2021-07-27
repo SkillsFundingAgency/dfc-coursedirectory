@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
@@ -20,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using CourseRun = Dfc.CourseDirectory.Core.DataStore.Sql.Models.CourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
@@ -29,14 +28,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         private readonly ILogger<ProviderCoursesController> _logger;
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
 
         public ProviderCoursesController(
             ILogger<ProviderCoursesController> logger,
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
@@ -52,7 +49,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             _logger = logger;
             _courseService = courseService;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
         }
@@ -116,19 +112,18 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
-            var venueResult = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+            var providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId }))
+                .OrderBy(c => c.LearnAimRefTypeDesc)
+                .ThenBy(c => c.LearnAimRef)
+                .ToArray();
+
+            var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+
             var allRegions = _courseService.GetRegions().RegionItems;
-
-            var allCourses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-
-            var filteredLiveCourses = from Course c in allCourses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle) select c;
-            var pendingCourses = from Course c in allCourses.Where(c => c.CourseStatus == RecordStatus.BulkUploadPending)
-                                 select c;
 
             var model = new ProviderCoursesViewModel()
             {
-                PendingCoursesCount = pendingCourses?.SelectMany(c => c.CourseRuns)?.Count(),
+                PendingCoursesCount = 0,
                 ProviderCourseRuns = new List<ProviderCourseRunViewModel>()
             };
 
@@ -138,16 +133,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             List<ProviderCoursesFilterItemModel> regionFilterItems = new List<ProviderCoursesFilterItemModel>();
             List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new List<ProviderCoursesFilterItemModel>();
 
-            foreach (var course in filteredLiveCourses)
+            foreach (var course in providerCourses)
             {
                 var filteredLiveCourseRuns = new List<CourseRun>();
 
                 filteredLiveCourseRuns = course.CourseRuns.ToList();
-                filteredLiveCourseRuns.RemoveAll(x => x.RecordStatus != RecordStatus.Live);
 
                 foreach (var cr in filteredLiveCourseRuns)
                 {
-                    var national = cr.DeliveryMode == DeliveryMode.WorkBased & !cr.National.HasValue ||
+                    var national = cr.DeliveryMode == CourseDeliveryMode.WorkBased & !cr.National.HasValue ||
                                    cr.National.GetValueOrDefault();
 
                     ProviderCourseRunViewModel courseRunModel = new ProviderCourseRunViewModel()
@@ -155,11 +149,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         AwardOrgCode = course.AwardOrgCode,
                         LearnAimRef = course.LearnAimRef,
                         NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                        QualificationType = course.QualificationType,
-                        CourseId = course.id,
-                        QualificationCourseTitle = course.QualificationCourseTitle,
-                        CourseRunId = cr.id.ToString(),
-                        CourseTextId = cr.ProviderCourseID,
+                        QualificationType = course.LearnAimRefTitle,
+                        CourseId = course.CourseId,
+                        QualificationCourseTitle = course.LearnAimRefTypeDesc,
+                        CourseRunId = cr.CourseRunId.ToString(),
+                        CourseTextId = cr.ProviderCourseId,
                         AttendancePattern = cr.AttendancePattern.ToDescription(),
                         Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
                         CourseName = cr.CourseName,
@@ -168,15 +162,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
                                                         : $"0 {cr.DurationUnit.ToDescription()}",
                         Venue = cr.VenueId.HasValue
-                                                        ? FormatAddress(GetVenueByIdFrom(venueResult, cr.VenueId.Value))
+                                                        ? FormatAddress(GetVenueByIdFrom(providerVenues, cr.VenueId.Value))
                                                         : string.Empty,
                         StartDate = cr.FlexibleStartDate
                                                         ? "Flexible start date"
                                                         : cr.StartDate?.ToString("dd MMM yyyy"),
-                        StudyMode = cr.StudyMode == Services.Models.Courses.StudyMode.Undefined
+                        StudyMode = !cr.StudyMode.HasValue
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
-                        Url = cr.CourseURL,
+                        Url = cr.CourseWebsite,
                         National = national
 
 
@@ -190,8 +184,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                     }
                     else
                     {
-                        courseRunModel.Region = cr.Regions != null ? FormattedRegionsByIds(allRegions, cr.Regions) : string.Empty;
-                        courseRunModel.RegionIdList = cr.Regions != null ? FormattedRegionIds(allRegions, cr.Regions) : string.Empty;
+                        courseRunModel.Region = cr.SubRegionIds?.Count() > 0 ? FormattedRegionsByIds(allRegions, cr.SubRegionIds) : string.Empty;
+                        courseRunModel.RegionIdList = cr.SubRegionIds?.Count() > 0 ? FormattedRegionIds(allRegions, cr.SubRegionIds) : string.Empty;
                     }
                     model.ProviderCourseRuns.Add(courseRunModel);
 
@@ -266,7 +260,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 Name = "venue"
             }).ToList();
 
-            attendanceModeFilterItems = model.ProviderCourseRuns.Where(x => x.AttendancePattern != AttendancePattern.Undefined.ToString()).GroupBy(x => x.AttendancePattern).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            attendanceModeFilterItems = model.ProviderCourseRuns.Where(x => x.AttendancePattern != string.Empty).GroupBy(x => x.AttendancePattern).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
             {
                 Id = "attendancepattern-" + s++.ToString(),
                 Value = r.Key,
@@ -471,7 +465,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 IsSelected = requestModel.VenueFilter.Length > 0 && requestModel.VenueFilter.Contains(r.Key)
             }).ToList();
 
-            attendanceModeFilterItems = model.ProviderCourseRuns.Where(x => x.AttendancePattern != AttendancePattern.Undefined.ToString()).GroupBy(x => x.AttendancePattern).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            attendanceModeFilterItems = model.ProviderCourseRuns.Where(x => x.AttendancePattern != string.Empty).GroupBy(x => x.AttendancePattern).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
             {
                 Id = "attendancepattern-" + s++.ToString(),
                 Value = r.Key,

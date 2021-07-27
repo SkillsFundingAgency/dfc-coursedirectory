@@ -15,12 +15,14 @@ namespace Dfc.CourseDirectory.Core.Models
         public static string ToDescription(this CourseAttendancePattern attendancePattern) =>
             attendancePattern switch
             {
-                0 => "Undefined",
                 CourseAttendancePattern.Daytime => "Daytime",
                 CourseAttendancePattern.Evening => "Evening",
                 CourseAttendancePattern.Weekend => "Weekend",
                 CourseAttendancePattern.DayOrBlockRelease => "Day/Block Release",
                 _ => throw new NotSupportedException($"Unknown attendance pattern: '{attendancePattern}'.")
             };
+
+        public static string ToDescription(this CourseAttendancePattern? attendancePattern) =>
+            attendancePattern.HasValue ? attendancePattern.Value.ToDescription() : string.Empty;
     }
 }

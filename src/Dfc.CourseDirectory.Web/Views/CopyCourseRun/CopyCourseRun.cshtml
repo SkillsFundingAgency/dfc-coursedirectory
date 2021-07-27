@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Services.Models
+﻿@using Dfc.CourseDirectory.Core.Models
 @using Dfc.CourseDirectory.Services.Models.Courses
 @using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
@@ -16,7 +16,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 @using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Http
-@using StudyMode = Dfc.CourseDirectory.Services.Models.Courses.StudyMode
+@using StudyMode = Dfc.CourseDirectory.Core.Models.CourseStudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
 @{
     ViewData["Title"] = "Copy course";
@@ -611,7 +611,7 @@
             var $specifiedStartDate = $("#SpecifiedStartDate");
             var $flexibleStartDate = $("#FlexibleStartDate");
 
-            var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
+            var $dayTimeAttendance = $("#@CourseAttendancePattern.Daytime");
             var $studyMode = $("#@StudyMode.FullTime");
             switch (this.id) {
                 case "ClassroomBased":
