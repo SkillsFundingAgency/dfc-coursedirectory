@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
@@ -26,7 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
     public class ViewModel : Command
     {
         public string CourseName { get; set; }
-        public string LarsQan { get; set; }
+        public string LearnAimRef { get; set; }
+        public string LearnAimRefTitle { get; set; }
         public string StartDate { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
         public string DeliveryMode { get; set; }
@@ -38,13 +41,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
-            IFileUploadProcessor fileUploadProcessor)
+            IFileUploadProcessor fileUploadProcessor,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber);
@@ -72,6 +78,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
             }
 
+            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = new[] { row.LearnAimRef } }))[row.LearnAimRef];
+
             return new ViewModel()
             {
                 RowNumber = rowNumber,
@@ -83,7 +91,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                     .Distinct()
                     .ToArray(),
                 StartDate = row.StartDate,
-                LarsQan = row.LearnAimRef
+                LearnAimRef = row.LearnAimRef,
+                LearnAimRefTitle = learningDelivery.LearnAimRefTitle
             };
         }
     }
