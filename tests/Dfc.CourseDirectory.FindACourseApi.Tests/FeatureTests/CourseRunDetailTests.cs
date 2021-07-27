@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using FluentAssertions;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
+using Provider = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Provider;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
@@ -29,7 +30,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var courseId = Guid.NewGuid();
             var courseRunId = Guid.NewGuid();
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourseById>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourse>()))
                 .ReturnsAsync((Course)null);
 
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(courseId, courseRunId));
@@ -42,16 +43,16 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         {
             var course = new Course
             {
-                Id = Guid.NewGuid(),
-                CourseRuns = Enumerable.Empty<CourseRun>()
+                CourseId = Guid.NewGuid(),
+                CourseRuns = Array.Empty<CourseRun>()
             };
 
             var courseRunId = Guid.NewGuid();
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourseById>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourse>()))
                 .ReturnsAsync(course);
 
-            var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.Id, courseRunId));
+            var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRunId));
 
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
         }
@@ -73,22 +74,26 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var courseRun = new CourseRun
             {
-                Id = Guid.NewGuid(),
-                RecordStatus = CourseStatus.Live,
+                CourseRunId = Guid.NewGuid(),
+                CourseRunStatus = CourseStatus.Live,
+                DurationUnit = CourseDurationUnit.Months,
+                DurationValue = 3,
                 VenueId = venue.VenueId
             };
 
             var alternativeCourseRun = new CourseRun
             {
-                Id = Guid.NewGuid(),
-                RecordStatus = CourseStatus.Live,
+                CourseRunId = Guid.NewGuid(),
+                CourseRunStatus = CourseStatus.Live,
+                DurationUnit = CourseDurationUnit.Months,
+                DurationValue = 3,
                 VenueId = venue.VenueId
             };
 
             var course = new Course
             {
-                Id = Guid.NewGuid(),
-                ProviderUKPRN = 12345678,
+                CourseId = Guid.NewGuid(),
+                ProviderUkprn = 12345678,
                 LearnAimRef = lars.LearnAimRef,
                 CourseRuns = new[]
                 {
@@ -103,7 +108,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 UnitedKingdomProviderReferenceNumber = "12345678",
                 ProviderContact = new[]
                 {
-                    new ProviderContact
+                    new Core.DataStore.CosmosDb.Models.ProviderContact
                     {
                         ContactEmail = "test@test.com",
                         ContactType = "P"
@@ -118,14 +123,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 DisplayNameSource = ProviderDisplayNameSource.ProviderName
             };
 
-            var feChoice = new FeChoice
+            var feChoice = new Core.DataStore.CosmosDb.Models.FeChoice
             {
-                UKPRN = course.ProviderUKPRN,
+                UKPRN = course.ProviderUkprn,
                 EmployerSatisfaction = 1.2M,
                 LearnerSatisfaction = 3.4M
             };
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourseById>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourse>()))
                 .ReturnsAsync(course);
 
             CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderByUkprn>()))
@@ -137,7 +142,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     Items = new[] { new SearchResultItem<Core.Search.Models.Lars> { Record = lars } }
                 });
 
-            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetVenuesByProvider>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
                 .ReturnsAsync(new[] { venue });
 
             CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoiceForProvider>()))
@@ -146,7 +151,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderById>()))
                 .ReturnsAsync(sqlProvider);
 
-            var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.Id, courseRun.Id));
+            var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRun.CourseRunId));
 
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
 
@@ -163,14 +168,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 resultJson["provider"]["learnerSatisfaction"].ToObject<decimal>().Should().Be(feChoice.LearnerSatisfaction);
                 resultJson["provider"]["employerSatisfaction"].ToObject<decimal>().Should().Be(feChoice.EmployerSatisfaction);
                 resultJson["course"].ToObject<object>().Should().NotBeNull();
-                resultJson["course"]["courseId"].ToObject<Guid>().Should().Be(course.Id);
+                resultJson["course"]["courseId"].ToObject<Guid>().Should().Be(course.CourseId);
                 resultJson["venue"].ToObject<object>().Should().NotBeNull();
                 resultJson["venue"]["venueName"].ToObject<string>().Should().Be(venue.VenueName);
                 resultJson["qualification"].ToObject<object>().Should().NotBeNull();
                 resultJson["qualification"]["learnAimRef"].ToObject<string>().Should().Be(lars.LearnAimRef);
                 resultJson["qualification"]["learnAimRefTitle"].ToObject<string>().Should().Be(lars.LearnAimRefTitle);
-                resultJson["alternativeCourseRuns"][0]["courseRunId"].ToObject<Guid>().Should().Be(alternativeCourseRun.Id);
-                resultJson["courseRunId"].ToObject<Guid>().Should().Be(courseRun.Id);
+                resultJson["alternativeCourseRuns"][0]["courseRunId"].ToObject<Guid>().Should().Be(alternativeCourseRun.CourseRunId);
+                resultJson["courseRunId"].ToObject<Guid>().Should().Be(courseRun.CourseRunId);
             }
         }
 

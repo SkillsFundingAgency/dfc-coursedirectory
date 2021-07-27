@@ -36,7 +36,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 {
                     CourseId = row.CourseId,
                     CourseStatus = row.CourseStatus,
+                    CreatedOn = row.CreatedOn,
+                    UpdatedOn = row.UpdatedOn,
                     ProviderId = row.ProviderId,
+                    ProviderUkprn = row.ProviderUkprn,
                     LearnAimRef = row.LearnAimRef,
                     CourseDescription = DecodeIfNecessary(row.CourseDescription),
                     EntryRequirements = DecodeIfNecessary(row.EntryRequirements),
@@ -64,6 +67,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 {
                     CourseRunId = row.CourseRunId,
                     CourseRunStatus = row.CourseRunStatus,
+                    CreatedOn = row.CreatedOn,
+                    UpdatedOn = row.UpdatedOn,
                     CourseName = DecodeIfNecessary(row.CourseName),
                     VenueId = row.VenueId,
                     ProviderCourseId = DecodeIfNecessary(row.ProviderCourseId),
@@ -91,7 +96,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             public Guid CourseId { get; set; }
             public CourseStatus CourseStatus { get; set; }
+            public DateTime CreatedOn { get; set; }
+            public DateTime? UpdatedOn { get; set; }
             public Guid ProviderId { get; set; }
+            public int ProviderUkprn { get; set; }
             public string LearnAimRef { get; set; }
             public string CourseDescription { get; set; }
             public string EntryRequirements { get; set; }
@@ -112,6 +120,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public Guid CourseId { get; set; }
             public Guid CourseRunId { get; set; }
             public CourseStatus CourseRunStatus { get; set; }
+            public DateTime CreatedOn { get; set; }
+            public DateTime? UpdatedOn { get; set; }
             public string CourseName { get; set; }
             public Guid? VenueId { get; set; }
             public string ProviderCourseId { get; set; }

@@ -8,6 +8,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
     {
         public Guid CourseRunId { get; set; }
         public CourseStatus CourseRunStatus { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
         public string CourseName { get; set; }
         public Guid? VenueId { get; set; }
         public string ProviderCourseId { get; set; }
