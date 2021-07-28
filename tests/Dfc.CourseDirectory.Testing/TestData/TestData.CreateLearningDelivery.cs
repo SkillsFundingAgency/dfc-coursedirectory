@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.Testing
                             NotionalNVQLevelv2 = notionalNVQLevelv2,
                             AwardOrgCode = awardOrgCode,
                             LearnAimRefType = learnAimRefType,
+                            LearnAimRefTitle = learnAimRefTitle,
 
                             // Unused columns that have `not null` constraints :-/
                             SourceURLLinkType = string.Empty,
@@ -82,7 +83,6 @@ namespace Dfc.CourseDirectory.Testing
                             GCEIndicator = string.Empty,
                             GCSEIndicator = string.Empty,
                             GuidedLearningHours = string.Empty,
-                            LearnAimRefTitle = string.Empty,
                             LearnDirectClassSystemCode3 = string.Empty,
                             MI_NotionalNVQLevel = string.Empty,
                             MI_NotionalNVQLevelv2 = string.Empty,
@@ -108,7 +108,12 @@ namespace Dfc.CourseDirectory.Testing
                 return new LearningDelivery()
                 {
                     LearnAimRef = learnAimRef,
-                    EffectiveTo = effectiveTo
+                    LearnAimRefTitle = learnAimRefTitle,
+                    EffectiveTo = effectiveTo,
+                    NotionalNVQLevelv2 = notionalNVQLevelv2,
+                    AwardOrgCode = awardOrgCode,
+                    LearnAimRefTypeDesc = learnAimRefTypeDesc,
+                    OperationalEndDate = operationalEndDate
                 };
             });
     }
