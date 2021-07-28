@@ -15,8 +15,7 @@
         <p class="govuk-body">Your course data has been uploaded.</p>
     
         <p class="govuk-body">
-            Your data upload has <span data-testid="ErrorRowCount">@Model.ErrorRowCount</span> error@(Model.ErrorRowCount != 1 ? "s" : "") in
-            <span data-testid="TotalRowCount">@Model.TotalRowCount</span> courses.
+            Your data upload has <span data-testid="ErrorCount">@Model.ErrorCount</span> error@(Model.ErrorCount != 1 ? "s" : "").
             
             You must resolve these errors before your data can be published.
         </p>

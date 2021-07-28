@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -58,12 +59,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     rowBuilder.AddRow(learnAimRef: learnAimRef, record =>
                     {
                         record.CourseName = string.Empty;
+                        record.Cost = null;
+                        record.CostDescription = null;
                         record.DeliveryMode = "Classroom Based";
                         record.StartDate = "09/01/2021"; 
                         record.IsValid = false;
                         record.Errors = new[]
                         {
                             ErrorRegistry.All["COURSERUN_COURSE_NAME_REQUIRED"].ErrorCode,
+                            ErrorRegistry.All["COURSERUN_COST_REQUIRED"].ErrorCode
                         };
                     });
                 });
@@ -82,11 +86,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 // Should only have one error row in the table
                 var errorRows = doc.GetAllElementsByTestId("CourseRunRow");
 
+                doc.GetElementByTestId("ErrorCount").TextContent.Should().Be("2");
+
                 errorRows.Count().Should().Be(1);
 
-                var firstRowCells = errorRows.Single().GetElementByTestId("Errors").TextContent.Trim();
-                firstRowCells.Should().BeEquivalentTo(
-                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED")
+                var errors = errorRows.Single().GetElementByTestId("Errors").GetTrimmedTextContent();
+                errors.Should().BeEquivalentTo(
+                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
+                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
                 );
 
                 doc.GetElementByTestId("ResolveOnScreenOption").Should().NotBeNull();

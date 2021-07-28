@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (errorRows, _) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                 _providerContextProvider.GetProviderId());
 
             if (errorRows.Count == 0)
