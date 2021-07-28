@@ -9,3 +9,8 @@
 .pttcd-list--small > li:last-child {
     margin-bottom: 0px;
 }
+
+.pttcd-list--inline li {
+    display: inline;
+    padding-right: 1em;
+}
