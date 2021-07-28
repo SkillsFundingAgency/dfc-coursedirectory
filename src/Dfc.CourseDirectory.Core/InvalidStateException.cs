@@ -31,6 +31,7 @@ namespace Dfc.CourseDirectory.Core
         InvalidUploadStatus,
         NoUnpublishedVenueUpload,
         VenueUploadRowCannotBeDeleted,
-        NoUnpublishedCourseUpload
+        NoUnpublishedCourseUpload,
+        NoUnpublishedApprenticeshipUpload
     }
 }

@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         // Apprenticeships
         Task<SaveFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream);
-        
+        IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId);
+
     }
 }

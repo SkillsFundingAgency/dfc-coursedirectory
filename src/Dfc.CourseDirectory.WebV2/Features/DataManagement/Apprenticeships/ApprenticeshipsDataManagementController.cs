@@ -50,9 +50,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
         }
 
         [HttpGet("in-progress")]
-        public IActionResult InProgress() => View();
+        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query(),
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    _ => View(status)
+                }));
 
         [HttpGet("formatting")]
         public IActionResult Formatting() => View();
+
+        [HttpGet("check-publish")]
+        public IActionResult CheckAndPublish() => View();
+
+        [HttpGet("errors")]
+        public IActionResult Errors() => View();
     }
 }
