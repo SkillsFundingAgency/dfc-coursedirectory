@@ -6,7 +6,7 @@
 {
     <pttcd-notification title="Course start dates" data-testid="courseStartDateNotification">
         <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount courses are in the past.</p>
-        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="DQI" asp-action="Index" class="govuk-link">Update course start dates</a></p>
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course start dates</a></p>
     </pttcd-notification>
 }
 
