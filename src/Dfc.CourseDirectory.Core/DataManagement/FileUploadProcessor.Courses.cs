@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, int TotalRows)> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
+        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 await dispatcher.Commit();
 
-                return (errorRows, totalRows);
+                return errorRows;
             }
         }
 

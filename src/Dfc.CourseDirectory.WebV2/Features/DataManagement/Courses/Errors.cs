@@ -30,8 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
     {
         public IReadOnlyCollection<ViewModelErrorRowGroup> ErrorRows { get; set; }
         public bool CanResolveOnScreen { get; set; }
-        public int ErrorRowCount { get; set; }
-        public int TotalRowCount { get; set; }
+        public int ErrorCount { get; set; }
     }
 
     public class ViewModelErrorRowGroup
@@ -78,7 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (errorRows, totalRows) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                 _providerContextProvider.GetProviderId());
 
             if (errorRows.Count == 0)
@@ -86,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 return new UploadHasNoErrors();
             }
 
-            return await CreateViewModel(errorRows, totalRows);
+            return await CreateViewModel(errorRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -96,20 +95,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 
             if (!validationResult.IsValid)
             {
-                var (errorRows, totalRows) = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
+                var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
                     _providerContextProvider.GetProviderId());
 
-                var vm = await CreateViewModel(errorRows, totalRows);
+                var vm = await CreateViewModel(errorRows);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
             return new Success();
         }
 
-        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, int totalRows)
+        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
         {
             var errorRowCount = rows.Count;
             var canResolveOnScreen = errorRowCount <= 30;
+            var errorCount = rows.SelectMany(r => r.Errors).Count();
 
             var learnAimRefs = rows.Select(r => r.LearnAimRef).Distinct();
             var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
@@ -162,8 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                     .ThenBy(g => g.CourseId)
                     .ToArray(),
                 CanResolveOnScreen = canResolveOnScreen,
-                ErrorRowCount = errorRowCount,
-                TotalRowCount = totalRows
+                ErrorCount = errorCount
             };
         }
 
