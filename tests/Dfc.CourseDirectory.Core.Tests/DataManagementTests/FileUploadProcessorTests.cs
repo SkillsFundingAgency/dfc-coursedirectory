@@ -149,7 +149,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
-        public async Task CheckLearnAimRefs_ReturnsExpectedResult()
+        public async Task ValidateLearnAimRefs_ReturnsExpectedResult()
         {
             // Arrange
             var fileUploadProcessor = new FileUploadProcessor(
@@ -176,23 +176,23 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(courseUploadRows.ToArray());
 
             // Act
-            var (missing, invalid, expired) = await fileUploadProcessor.CheckLearnAimRefs(stream);
+            var (missing, invalid, expired) = await fileUploadProcessor.ValidateLearnAimRefs(stream);
 
             // Assert
             missing.Should().BeEquivalentTo(new[]
             {
-                "3",
-                "5"
+                3,
+                5
             });
             invalid.Should().BeEquivalentTo(new[]
             {
-                "6",
-                "8"
+                ("ABCDEFG", 6),
+                ("GFEDCBA", 8)
             });
             expired.Should().BeEquivalentTo(new[]
             {
-                string.Format("Row {0}, expired code {1}", 7, expiredLearnAimRef),
-                string.Format("Row {0}, expired code {1}", 9, expiredOperationalEndDate)
+                ( expiredLearnAimRef, 7),
+                (expiredOperationalEndDate, 9)
             });
         }
     }

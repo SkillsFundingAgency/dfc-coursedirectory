@@ -430,7 +430,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveFileResult.InvalidHeader(missingHeaders);
             }
 
-            var (missingLars, invalidLars, expiredLars) = await CheckLearnAimRefs(stream);
+            var (missingLars, invalidLars, expiredLars) = await ValidateLearnAimRefs(stream);
             if (missingLars.Length > 0 || invalidLars.Length > 0 || expiredLars.Length > 0)
             {
                 return SaveFileResult.InvalidLars(missingLars, invalidLars, expiredLars);

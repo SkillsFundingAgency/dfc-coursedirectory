@@ -11,14 +11,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public SaveFileResultStatus Status { get; private set; }
         public UploadStatus UploadStatus { get; private set; }
         public IReadOnlyCollection<string> MissingHeaders { get; private set; }
-        public IReadOnlyCollection<string> MissingLarsRows { get; private set; }
-        public IReadOnlyCollection<string> InvalidLarsRows { get; private set; }
-        public IReadOnlyCollection<string> ExpiredLarsRows { get; private set; }
+        public IReadOnlyCollection<int> MissingLearnAimRefs { get; private set; }
+        public IReadOnlyCollection<(string LearnAimRef, int RowNumber)> InvalidLearnAimRefs { get; private set; }
+        public IReadOnlyCollection<(string LearnAimRef, int RowNumber)> ExpiredLearnAimRefs { get; private set; }
 
         public static SaveFileResult EmptyFile() =>
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
+                MissingLearnAimRefs = Array.Empty<int>(),
+                InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
+                ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
                 Status = SaveFileResultStatus.EmptyFile
             };
 
@@ -26,6 +29,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
+                MissingLearnAimRefs = Array.Empty<int>(),
+                InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
+                ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
                 Status = SaveFileResultStatus.ExistingFileInFlight
             };
 
@@ -33,6 +39,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
+                MissingLearnAimRefs = Array.Empty<int>(),
+                InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
+                ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
                 Status = SaveFileResultStatus.InvalidFile
             };
 
@@ -40,6 +49,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             new SaveFileResult()
             {
                 MissingHeaders = missingHeaders.ToArray(),
+                MissingLearnAimRefs = Array.Empty<int>(),
+                InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
+                ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
                 Status = SaveFileResultStatus.InvalidHeader
             };
 
@@ -47,18 +59,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
+                MissingLearnAimRefs = Array.Empty<int>(),
+                InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
+                ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
                 Status = SaveFileResultStatus.InvalidRows
             };
 
-        public static SaveFileResult InvalidLars(IEnumerable<string> missingLars, 
-            IEnumerable<string> invalidLars,
-            IEnumerable<string> expiredLars) =>
+        public static SaveFileResult InvalidLars(
+                IEnumerable<int> missingLearnAimRefs, 
+                IEnumerable<(string LearnAimRef, int RowNumber)> invalidLearnAimRefs,
+                IEnumerable<(string LearnAimRef, int RowNumber)> expiredLearnAimRefs) =>
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
-                MissingLarsRows = missingLars.ToArray(),
-                InvalidLarsRows = invalidLars.ToArray(),
-                ExpiredLarsRows = expiredLars.ToArray(),
+                MissingLearnAimRefs = missingLearnAimRefs.ToArray(),
+                InvalidLearnAimRefs = invalidLearnAimRefs.ToArray(),
+                ExpiredLearnAimRefs = expiredLearnAimRefs.ToArray(),
                 Status = SaveFileResultStatus.InvalidLars
             };
 
@@ -66,9 +82,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             new SaveFileResult()
             {
                 MissingHeaders = Array.Empty<string>(),
-                MissingLarsRows = Array.Empty<string>(),
-                InvalidLarsRows = Array.Empty<string>(),
-                ExpiredLarsRows = Array.Empty<string>(),
+                MissingLearnAimRefs = Array.Empty<int>(),
+                InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
+                ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>(),
                 Status = SaveFileResultStatus.Success,
                 UploadStatus = uploadStatus,
                 VenueUploadId = venueUploadId
