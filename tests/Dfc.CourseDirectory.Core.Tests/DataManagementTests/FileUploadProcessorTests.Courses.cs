@@ -473,11 +473,15 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
             var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created);
 
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(
-                // Empty record will always yield errors
-                new CsvCourseRow());
+                // Empty record will always yield errors (but we will always have a valid LARS code at this point)
+                new CsvCourseRow()
+                {
+                    LearnAimRef = learnAimRef
+                });
 
             // Act
             await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
@@ -492,6 +496,44 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
                 courseUpload.ProcessingStartedOn.Should().NotBeNull();
             }
+        }
+
+        [Fact]
+        public async Task ProcessCourseFile_EmptyCourseName_GetsCourseNameFromLearningDelivery()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created);
+
+            var learningDelivery = await TestData.CreateLearningDelivery(learnAimRefTitle: "LARS title");
+
+            var uploadRows = DataManagementFileHelper.CreateCourseUploadRows(learningDelivery.LearnAimRef, rowCount: 1).ToArray();
+            uploadRows[0].CourseName = string.Empty;
+
+            var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
+
+            // Act
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
+
+            // Assert
+            var rows = await WithSqlQueryDispatcher(async dispatcher =>
+                (await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    WithErrorsOnly = false
+                })).Rows);
+
+            rows.Single().CourseName.Should().Be(learningDelivery.LearnAimRefTitle);
         }
 
         [Fact]

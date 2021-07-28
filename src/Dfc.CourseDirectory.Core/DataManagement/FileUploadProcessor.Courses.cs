@@ -327,6 +327,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                // If CourseName is empty, use the LearnAimRefTitle from LARS
+                var learnAimRefs = rowsCollection.Select(r => r.Data.LearnAimRef).Distinct();
+                var learningDeliveries = await dispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
+
+                foreach (var row in rowsCollection)
+                {
+                    if (string.IsNullOrWhiteSpace(row.Data.CourseName))
+                    {
+                        row.Data.CourseName = learningDeliveries[row.Data.LearnAimRef].LearnAimRefTitle;
+                    }
+                }
+
                 var venueUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
                 var providerId = venueUpload.ProviderId;
 
