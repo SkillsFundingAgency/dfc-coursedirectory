@@ -200,15 +200,15 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        internal async Task<(string[] Missing, string[] Invalid, string[] Expired)> CheckLearnAimRefs(Stream stream)
+        internal async Task<(int[] Missing, (string LearnAimRef, int RowNumber)[] Invalid, (string LearnAimRef, int RowNumber)[] Expired)> ValidateLearnAimRefs(Stream stream)
         {
             CheckStreamIsProcessable(stream);
 
             try
             {
-                var missing = new List<string>();
-                var invalid = new List<string>();
-                var expired = new List<string>();
+                var missing = new List<int>();
+                var invalid = new List<(string LearnAimRef, int RowNumber)>();
+                var expired = new List<(string LearnAimRef, int RowNumber)>();
 
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
@@ -230,17 +230,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                         if (string.IsNullOrWhiteSpace(learnAimRef))
                         {
-                            missing.Add(rowNumber.ToString());
+                            missing.Add(rowNumber);
                         }
                         else if (!validLearningDeliveries.TryGetValue(learnAimRef, out var learningDelivery))
                         {
-                            invalid.Add(rowNumber.ToString());
+                            invalid.Add((learnAimRef, rowNumber));
                         }
                         else if ((learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
                             || (!learningDelivery.OperationalEndDate.IsEmpty()
                             && DateTime.Parse(learningDelivery.OperationalEndDate) < DateTime.Now))
                         {
-                            expired.Add(string.Format("Row {0}, expired code {1}", rowNumber.ToString(), learnAimRef));
+                            expired.Add((learnAimRef, rowNumber));
                         }
 
                         rowNumber++;

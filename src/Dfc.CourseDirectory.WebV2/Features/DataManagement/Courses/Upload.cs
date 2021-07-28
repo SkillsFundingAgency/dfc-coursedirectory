@@ -38,24 +38,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             : base(model, validationResult)
         {
             MissingHeaders = Array.Empty<string>();
-            MissingLarsRows = Array.Empty<string>();
-            InvalidLarsRows = Array.Empty<string>();
-            ExpiredLarsRows = Array.Empty<string>();
+            MissingLearnAimRefs = Array.Empty<int>();
+            InvalidLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>();
+            ExpiredLearnAimRefs = Array.Empty<(string LearnAimRef, int RowNumber)>();
         }
 
-        public UploadFailedResult(ViewModel model, string fileErrorMessage, IEnumerable<string> missingHeaders = null, IEnumerable<string> missingLars = null, IEnumerable<string> invalidLars = null, IEnumerable<string> expiredLars = null)
+        public UploadFailedResult(
+                ViewModel model,
+                string fileErrorMessage,
+                IEnumerable<string> missingHeaders = null,
+                IEnumerable<int> missingLearnAimRefs = null,
+                IEnumerable<(string LearnAimRef, int RowNumber)> invalidLearnAimRefs = null,
+                IEnumerable<(string LearnAimRef, int RowNumber)> expiredLearnAimRefs = null)
             : base(model, CreateValidationResult(fileErrorMessage))
         {
             MissingHeaders = missingHeaders?.ToArray() ?? Array.Empty<string>();
-            MissingLarsRows = missingLars?.ToArray() ?? Array.Empty<string>();
-            InvalidLarsRows = invalidLars?.ToArray() ?? Array.Empty<string>();
-            ExpiredLarsRows = expiredLars?.ToArray() ?? Array.Empty<string>();
+            MissingLearnAimRefs = missingLearnAimRefs?.ToArray() ?? Array.Empty<int>();
+            InvalidLearnAimRefs = invalidLearnAimRefs?.ToArray() ?? Array.Empty<(string LearnAimRef, int RowNumber)>();
+            ExpiredLearnAimRefs = expiredLearnAimRefs?.ToArray() ?? Array.Empty<(string LearnAimRef, int RowNumber)>();
         }
 
         public IReadOnlyCollection<string> MissingHeaders { get; }
-        public IReadOnlyCollection<string> MissingLarsRows { get; }
-        public IReadOnlyCollection<string> InvalidLarsRows { get; }
-        public IReadOnlyCollection<string> ExpiredLarsRows { get; }
+        public IReadOnlyCollection<int> MissingLearnAimRefs { get; }
+        public IReadOnlyCollection<(string LearnAimRef, int RowNumber)> InvalidLearnAimRefs { get; }
+        public IReadOnlyCollection<(string LearnAimRef, int RowNumber)> ExpiredLearnAimRefs { get; }
+
         private static ValidationResult CreateValidationResult(string fileErrorMessage) =>
             new ValidationResult(new[]
             {
@@ -130,9 +137,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                     await CreateViewModel(),
                     "The file contains errors",
                     null,
-                    saveFileResult.MissingLarsRows,
-                    saveFileResult.InvalidLarsRows,
-                    saveFileResult.ExpiredLarsRows);
+                    saveFileResult.MissingLearnAimRefs,
+                    saveFileResult.InvalidLearnAimRefs,
+                    saveFileResult.ExpiredLearnAimRefs);
             }
             else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
             {
