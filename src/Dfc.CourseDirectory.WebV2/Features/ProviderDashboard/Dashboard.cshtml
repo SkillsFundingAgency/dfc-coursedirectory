@@ -115,15 +115,15 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
+                        </li>
                         @if (Model.LiveCourseRunCount > 0)
                         {
                             <li>
                                 <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="courses-view-edit-link">View and edit courses</a>
                             </li>
                         }
-                        <li>
-                            <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
-                        </li>
                     </ul>
                 </div>
             </div>
