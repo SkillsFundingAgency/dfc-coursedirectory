@@ -357,16 +357,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             CourseDataUploadRowInfoCollection CreateCourseDataUploadRowInfoCollection()
             {
-                var rowInfos = new List<CourseDataUploadRowInfo>();
+                // N.B. It's important we maintain ordering here; RowNumber needs to match the input
 
-                foreach (var group in CsvCourseRow.GroupRows(rows))
+                var grouped = CsvCourseRow.GroupRows(rows);
+                var groupCourseIds = grouped.Select(g => (CourseId: Guid.NewGuid(), Rows: g)).ToArray();
+
+                var rowInfos = new List<CourseDataUploadRowInfo>(rows.Count);
+
+                foreach (var row in rows)
                 {
-                    var courseId = Guid.NewGuid();
+                    var courseId = groupCourseIds.Single(g => g.Rows.Contains(row)).CourseId;
 
-                    foreach (var row in group)
-                    {
-                        rowInfos.Add(new CourseDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
-                    }
+                    rowInfos.Add(new CourseDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
                 }
 
                 return new CourseDataUploadRowInfoCollection(rowInfos);
