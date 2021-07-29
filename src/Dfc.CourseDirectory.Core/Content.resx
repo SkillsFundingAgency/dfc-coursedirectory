@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
-    <value>Attendance pattern</value>
+    <value>Select an attendance pattern</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED" xml:space="preserve">
     <value>Select an attendance pattern</value>
@@ -163,7 +163,7 @@
     <value>Enter start date</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED" xml:space="preserve">
-    <value>Location</value>
+    <value>Select National or at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED" xml:space="preserve">
     <value>Select National delivery</value>
@@ -175,10 +175,10 @@
     <value>Your reference must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
-    <value>Your venue reference</value>
+    <value>Enter a venue reference</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
-    <value>Your venue reference</value>
+    <value>Enter a venue reference</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
     <value>Enter a real start date</value>
@@ -190,28 +190,28 @@
     <value>Enter start date</value>
   </data>
   <data name="ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED" xml:space="preserve">
-    <value>Course hours</value>
+    <value>Select course hours</value>
   </data>
   <data name="ERROR_COURSERUN_STUDY_MODE_REQUIRED" xml:space="preserve">
     <value>Select course hours</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_INVALID" xml:space="preserve">
-    <value>Location</value>
+    <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_NOT_ALLOWED" xml:space="preserve">
-    <value>Location</value>
+    <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_REQUIRED" xml:space="preserve">
     <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_INVALID" xml:space="preserve">
-    <value>Venue name</value>
+    <value>Select a venue</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED" xml:space="preserve">
-    <value>Venue name</value>
+    <value>Select a venue</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF" xml:space="preserve">
-    <value>Venue name</value>
+    <value>Select a venue</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_REQUIRED" xml:space="preserve">
     <value>Select a venue</value>
@@ -226,10 +226,10 @@
     <value>How you'll learn must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSE_LARS_QAN_INVALID" xml:space="preserve">
-    <value>LARS</value>
+    <value>Enter a LARS code</value>
   </data>
   <data name="ERROR_COURSE_LARS_QAN_REQUIRED" xml:space="preserve">
-    <value>LARS</value>
+    <value>Enter a LARS code</value>
   </data>
   <data name="ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH" xml:space="preserve">
     <value>What you can do next must be {0} characters or fewer</value>
