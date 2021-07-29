@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to LARS.
         /// </summary>
         public static string ERROR_COURSE_LARS_QAN_INVALID {
             get {
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to LARS.
         /// </summary>
         public static string ERROR_COURSE_LARS_QAN_REQUIRED {
             get {
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Attendance pattern.
         /// </summary>
         public static string ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED {
             get {
@@ -295,7 +295,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Location.
         /// </summary>
         public static string ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED {
             get {
@@ -331,7 +331,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Your venue reference.
         /// </summary>
         public static string ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID {
             get {
@@ -340,7 +340,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Your venue reference.
         /// </summary>
         public static string ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED {
             get {
@@ -376,7 +376,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Course hours.
         /// </summary>
         public static string ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED {
             get {
@@ -394,7 +394,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Location.
         /// </summary>
         public static string ERROR_COURSERUN_SUBREGIONS_INVALID {
             get {
@@ -403,7 +403,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Location.
         /// </summary>
         public static string ERROR_COURSERUN_SUBREGIONS_NOT_ALLOWED {
             get {
@@ -421,7 +421,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Venue name.
         /// </summary>
         public static string ERROR_COURSERUN_VENUE_NAME_INVALID {
             get {
@@ -430,7 +430,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Venue name.
         /// </summary>
         public static string ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED {
             get {
@@ -439,7 +439,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Venue name.
         /// </summary>
         public static string ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF {
             get {
