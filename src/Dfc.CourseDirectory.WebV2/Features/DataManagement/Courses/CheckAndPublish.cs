@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
         private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
         {
-            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = rows.Select(x => x.LearnAimRef).ToArray() }));
+            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = rows.Select(x => x.LearnAimRef).Distinct().ToArray() }));
 
             return new ViewModel()
             {
