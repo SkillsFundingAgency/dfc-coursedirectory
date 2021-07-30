@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove attendance pattern</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED" xml:space="preserve">
     <value>Select an attendance pattern</value>
@@ -163,7 +163,7 @@
     <value>Enter start date</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove National delivery</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED" xml:space="preserve">
     <value>Select National delivery</value>
@@ -175,10 +175,10 @@
     <value>Your reference must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a Venue reference</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove Venue reference</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
     <value>Start date cannot be earlier than today's date</value>
@@ -190,28 +190,28 @@
     <value>Enter start date</value>
   </data>
   <data name="ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove Study mode</value>
   </data>
   <data name="ERROR_COURSERUN_STUDY_MODE_REQUIRED" xml:space="preserve">
     <value>Select course hours</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Enter a real Sub region</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove Sub regions</value>
   </data>
   <data name="ERROR_COURSERUN_SUBREGIONS_REQUIRED" xml:space="preserve">
     <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_INVALID" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must enter a Venue that is in Publish to the course directory</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove Venue name</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>You must remove Venue name</value>
   </data>
   <data name="ERROR_COURSERUN_VENUE_REQUIRED" xml:space="preserve">
     <value>Select a venue</value>
