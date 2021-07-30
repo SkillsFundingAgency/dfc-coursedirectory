@@ -13,12 +13,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<IReadOnlyCollection<VenueMatchInfo>> Execute(SqlTransaction transaction, GetVenueMatchInfoForProvider query)
         {
             var sql = $@"
-SELECT v.VenueId, p.ProviderId, p.Ukprn ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
+SELECT v.VenueId, v.ProviderId, v.ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
 v.Telephone, v.Email, v.Website, v.Position.Lat Latitude, v.Position.Long Longitude,
 v.ProviderUkprn,
 CASE WHEN c.VenueId IS NOT NULL OR a.VenueId IS NOT NULL OR t.VenueId IS NOT NULL THEN 1 ELSE 0 END AS HasLiveOfferings
 FROM Pttcd.Venues v (HOLDLOCK)
-JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
 LEFT JOIN (
 	SELECT VenueId FROM Pttcd.CourseRuns (HOLDLOCK)
 	WHERE CourseRunStatus <> {(int)CourseStatus.Archived}
@@ -35,7 +34,7 @@ LEFT JOIN (
 	GROUP BY VenueId
 ) t ON t.VenueId = v.VenueId
 WHERE v.VenueStatus = {(int)VenueStatus.Live}
-AND p.ProviderId = @ProviderId";
+AND v.ProviderId = @ProviderId";
 
             var param = new
             {

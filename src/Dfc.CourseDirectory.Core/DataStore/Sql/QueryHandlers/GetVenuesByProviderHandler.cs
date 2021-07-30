@@ -12,19 +12,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<IReadOnlyCollection<Venue>> Execute(SqlTransaction transaction, GetVenuesByProvider query)
         {
-            const string sql = @"
-SELECT v.VenueId, p.ProviderId, p.Ukprn ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
+            var sql = $@"
+SELECT v.VenueId, v.ProviderId, v.ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
 v.Telephone, v.Email, v.Website, v.Position.Lat Latitude, v.Position.Long Longitude
 FROM Pttcd.Venues v
-JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
-WHERE v.VenueStatus = @LiveVenueStatus
-AND p.ProviderId = @ProviderId
+WHERE v.VenueStatus = {(int)VenueStatus.Live}
+AND v.ProviderId = @ProviderId
 ORDER BY v.VenueName";
 
             var param = new
             {
-                ProviderId = query.ProviderId,
-                LiveVenueStatus = VenueStatus.Live
+                ProviderId = query.ProviderId
             };
 
             return (await transaction.Connection.QueryAsync<Venue>(sql, param, transaction))

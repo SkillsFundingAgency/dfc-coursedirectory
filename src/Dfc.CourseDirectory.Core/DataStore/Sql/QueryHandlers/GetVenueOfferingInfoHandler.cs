@@ -13,10 +13,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<VenueOfferingInfo> Execute(SqlTransaction transaction, GetVenueOfferingInfo query)
         {
             var sql = $@"
-SELECT v.VenueId, v.ProviderId, p.Ukprn ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
+SELECT v.VenueId, v.ProviderId, v.ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
 v.Telephone, v.Email, v.Website, v.Position.Lat Latitude, v.Position.Long Longitude
 FROM Pttcd.Venues v
-JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
 WHERE v.VenueStatus = {(int)VenueStatus.Live}
 AND v.VenueId = @VenueId
 
