@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                     {
                         CourseId = g.Key,
                         LearnAimRef = g.Select(r => r.LearnAimRef).Distinct().Single(),
-                        LearnAimRefTitle = learningDelivery[g.Select(r => r.LearnAimRef).Distinct().Single()]?.LearnAimRefTitle,
+                        LearnAimRefTitle = learningDelivery[g.Select(r => r.LearnAimRef).Distinct().Single()].LearnAimRefTitle,
                         CourseRows = g
                             .Select(r => new ViewModelRow()
                             {
