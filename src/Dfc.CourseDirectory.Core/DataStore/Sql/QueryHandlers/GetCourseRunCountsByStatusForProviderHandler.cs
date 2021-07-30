@@ -19,8 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT cr.CourseRunStatus Status, COUNT(*) Count
 FROM Pttcd.CourseRuns cr
 JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-WHERE p.ProviderId = @ProviderId
+WHERE c.ProviderId = @ProviderId
 AND cr.CourseRunStatus <> ${(int)CourseStatus.Archived}";
 
             var paramz = new { query.ProviderId };

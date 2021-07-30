@@ -16,18 +16,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             SqlTransaction transaction,
             GetVenuesByIds query)
         {
-            var sql = @"
-SELECT v.VenueId, p.ProviderId, p.Ukprn ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
+            var sql = $@"
+SELECT v.VenueId, v.ProviderId, v.ProviderUkprn, v.VenueName, v.ProviderVenueRef, v.AddressLine1, v.AddressLine2, v.Town, v.County, v.Postcode,
 v.Telephone, v.Email, v.Website, v.Position.Lat Latitude, v.Position.Long Longitude
 FROM Pttcd.Venues v
-JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
 JOIN @VenueIds x ON v.VenueId = x.Id
-WHERE v.VenueStatus = @LiveVenueStatus";
+WHERE v.VenueStatus = {(int)VenueStatus.Live}";
 
             var param = new
             {
-                VenueIds = TvpHelper.CreateGuidIdTable(query.VenueIds),
-                LiveVenueStatus = VenueStatus.Live
+                VenueIds = TvpHelper.CreateGuidIdTable(query.VenueIds)
             };
 
             return (await transaction.Connection.QueryAsync<Venue>(sql, param, transaction))

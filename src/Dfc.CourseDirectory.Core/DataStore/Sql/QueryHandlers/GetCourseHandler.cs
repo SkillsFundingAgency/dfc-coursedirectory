@@ -14,12 +14,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT
-    c.CourseId, c.CreatedOn, c.UpdatedOn, p.ProviderId, p.Ukprn ProviderUkprn, c.LearnAimRef,
+    c.CourseId, c.CreatedOn, c.UpdatedOn, c.ProviderId, c.ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded,
     lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
 FROM Pttcd.Courses c
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
 WHERE c.CourseId = @CourseId
