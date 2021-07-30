@@ -81,6 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             request.LocationVenueIds.Intersect(providerVenues.Select(v => v.VenueId));
 
             var validator = new CommandValidator(
+                _journeyInstance.State.TLevelId,
                 _journeyInstance.State.ProviderId,
                 _journeyInstance.State.TLevelDefinitionId,
                 _sqlQueryDispatcher);
@@ -145,12 +146,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher)
+            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
                 RuleFor(c => c.StartDate)
-                    .StartDate(providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()
