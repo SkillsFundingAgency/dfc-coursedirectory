@@ -37,13 +37,13 @@ GROUP BY    t.TLevelStatus
 
 SELECT      COUNT(*)
 FROM        Pttcd.Venues v
-WHERE       v.ProviderUkprn = @ProviderUkprn
+WHERE       v.ProviderId = @ProviderId
 AND         v.VenueStatus = 1
 
 SELECT      COUNT(*)
 FROM        Pttcd.CourseRuns cr
 INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE       c.ProviderUkprn = @ProviderUkprn
+WHERE       c.ProviderId = @ProviderId
 AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.Live}
 AND         cr.StartDate < @{nameof(query.Date)}
 
@@ -64,7 +64,7 @@ SELECT COUNT(*)
 FROM Pttcd.CourseUploads cu
 INNER JOIN Pttcd.CourseUploadRows cr
 ON cu.CourseUploadId = cr.CourseUploadId
-WHERE cu.UploadStatus IN({ (int)UploadStatus.ProcessedWithErrors}, { (int)UploadStatus.ProcessedSuccessfully})
+WHERE cu.UploadStatus IN ({(int)UploadStatus.ProcessedWithErrors}, { (int)UploadStatus.ProcessedSuccessfully})
 AND cr.CourseUploadRowStatus = 0
 AND cu.ProviderId = @{ nameof(query.ProviderId)}";
 

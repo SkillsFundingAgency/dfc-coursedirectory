@@ -296,6 +296,12 @@
     <Build Include="Pttcd\Types\ApprenticeshipUploadRowTable.sql" />
     <Build Include="Pttcd\Types\CourseRunSubRegionsTable.sql" />
     <Build Include="Pttcd\Types\CourseRunsTable.sql" />
+    <Build Include="Pttcd\Indexes\IX_Courses_ProviderId.sql" />
+    <Build Include="Pttcd\Indexes\IX_TLevels_ProviderId.sql" />
+    <Build Include="Pttcd\Indexes\IX_VenueUploads_ProviderId.sql" />
+    <Build Include="Pttcd\Indexes\IX_VenueUploadRows_VenueUploadId.sql" />
+    <Build Include="Pttcd\Indexes\IX_CourseUploads_ProviderId.sql" />
+    <Build Include="Pttcd\Indexes\IX_CourseUploadRows_CourseUploadId.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
