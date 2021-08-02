@@ -1004,7 +1004,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
                 CourseFor = new CourseForModel
                 {
-                    LabelText = "Who is the course for",
+                    LabelText = "Who this course is for",
                     HintText = "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
                     AriaDescribedBy = "Please enter who this course is for."
                 },
