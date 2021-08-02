@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
     [Route("data-upload/apprenticeships")]
     [RequireFeatureFlag(FeatureFlags.ApprenticeshipsDataManagement)]
     [RequireProviderContext]
-    [RestrictProviderTypes(ProviderType.FE)]
+    [RestrictProviderTypes(ProviderType.Apprenticeships)]
     public class ApprenticeshipsDataManagementController : Controller
     {
         private readonly IMediator _mediator;
