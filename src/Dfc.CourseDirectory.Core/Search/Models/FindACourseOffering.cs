@@ -48,5 +48,7 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public string RegionName { get; set; }
         public decimal ScoreBoost { get; set; }
         public IEnumerable<string> CampaignCodes { get; set; }
+        public bool? CourseDataIsHtmlEncoded { get; set; }
+        public bool? CourseRunDataIsHtmlEncoded { get; set; }
     }
 }

@@ -33,7 +33,9 @@
       { "name": "ScoreBoost", "type": "Edm.Double", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
       { "name": "TLevelId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
       { "name": "TLevelLocationId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
-      { "name": "CampaignCodes", "type": "Collection(Edm.String)", "facetable": false, "filterable": true, "searchable": false, "sortable": false }
+      { "name": "CampaignCodes", "type": "Collection(Edm.String)", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "CourseDataIsHtmlEncoded", "type": "Edm.Boolean", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "CourseRunDataIsHtmlEncoded", "type": "Edm.Boolean", "facetable": false, "filterable": false, "searchable": false, "sortable": false }
     ]
   }
 ]

@@ -233,54 +233,69 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         Value = v.Key.ToString(),
                         Count = v.Value.Value
                     })),
-                Results = result.Items.Select(i => new SearchResultViewModel()
+                Results = result.Items.Select(i =>
                 {
-                    Cost = !string.IsNullOrEmpty(i.Record.Cost) ?
-                        Convert.ToInt32(decimal.Parse(i.Record.Cost)) :
-                        (int?)null,
-                    CostDescription = i.Record.CostDescription,
-                    CourseDescription = i.Record.CourseDescription,
-                    CourseName = i.Record.CourseName,
-                    CourseId = i.Record.CourseId,
-                    CourseRunId = i.Record.CourseRunId,
-                    CourseText = i.Record.CourseDescription,
-                    DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
-                    DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
-                    Distance = GetDistanceFromLatLngForResult(i),
-                    DurationUnit = i.Record.DurationUnit ?? 0,
-                    DurationValue = i.Record.DurationValue,
-                    FlexibleStartDate = i.Record.FlexibleStartDate,
-                    LearnAimRef = i.Record.LearnAimRef,
-                    National = i.Record.National,
-                    QualificationLevel = i.Record.NotionalNVQLevelv2,
-                    OfferingType = i.Record.OfferingType,
-                    ProviderName = i.Record.ProviderDisplayName,
-                    QualificationCourseTitle = i.Record.QualificationCourseTitle,
-                    Region = i.Record.RegionName,
-                    SearchScore = i.Score.Value,
-                    StartDate = !i.Record.FlexibleStartDate.GetValueOrDefault() ? i.Record.StartDate : null,
-                    TLevelId = i.Record.TLevelId,
-                    TLevelLocationId = i.Record.TLevelLocationId,
-                    Ukprn = i.Record.ProviderUkprn.ToString(),
-                    UpdatedOn = i.Record.UpdatedOn,
-                    VenueAddress = i.Record.VenueAddress,
-                    VenueAttendancePattern = ((int?)i.Record.AttendancePattern)?.ToString(),
-                    VenueAttendancePatternDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
-                        i.Record.AttendancePattern?.ToDescription() :
-                        null,
-                    VenueLocation = i.Record.Position != null ?
-                        new CoordinatesViewModel()
-                        {
-                            Latitude = i.Record.Position.Latitude,
-                            Longitude = i.Record.Position.Longitude
-                        } :
-                        null,
-                    VenueName = i.Record.VenueName,
-                    VenueStudyMode = ((int?)i.Record.StudyMode)?.ToString(),
-                    VenueStudyModeDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ? 
-                        i.Record.StudyMode?.ToDescription() :
-                        null,
-                    VenueTown = i.Record.VenueTown
+                    return new SearchResultViewModel()
+                    {
+                        Cost = !string.IsNullOrEmpty(i.Record.Cost) ?
+                            Convert.ToInt32(decimal.Parse(i.Record.Cost)) :
+                            (int?)null,
+                        CostDescription = i.Record.CostDescription,
+                        CourseDescription = NormalizeCourseDataEncodedString(i.Record.CourseDescription),
+                        CourseName = NormalizeCourseRunDataEncodedString(i.Record.CourseName),
+                        CourseId = i.Record.CourseId,
+                        CourseRunId = i.Record.CourseRunId,
+                        CourseText = NormalizeCourseDataEncodedString(i.Record.CourseDescription),
+                        DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
+                        DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
+                        Distance = GetDistanceFromLatLngForResult(i),
+                        DurationUnit = i.Record.DurationUnit ?? 0,
+                        DurationValue = i.Record.DurationValue,
+                        FlexibleStartDate = i.Record.FlexibleStartDate,
+                        LearnAimRef = i.Record.LearnAimRef,
+                        National = i.Record.National,
+                        QualificationLevel = i.Record.NotionalNVQLevelv2,
+                        OfferingType = i.Record.OfferingType,
+                        ProviderName = i.Record.ProviderDisplayName,
+                        QualificationCourseTitle = i.Record.QualificationCourseTitle,
+                        Region = i.Record.RegionName,
+                        SearchScore = i.Score.Value,
+                        StartDate = !i.Record.FlexibleStartDate.GetValueOrDefault() ? i.Record.StartDate : null,
+                        TLevelId = i.Record.TLevelId,
+                        TLevelLocationId = i.Record.TLevelLocationId,
+                        Ukprn = i.Record.ProviderUkprn.ToString(),
+                        UpdatedOn = i.Record.UpdatedOn,
+                        VenueAddress = i.Record.VenueAddress,
+                        VenueAttendancePattern = ((int?)i.Record.AttendancePattern)?.ToString(),
+                        VenueAttendancePatternDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
+                            i.Record.AttendancePattern?.ToDescription() :
+                            null,
+                        VenueLocation = i.Record.Position != null ?
+                            new CoordinatesViewModel()
+                            {
+                                Latitude = i.Record.Position.Latitude,
+                                Longitude = i.Record.Position.Longitude
+                            } :
+                            null,
+                        VenueName = i.Record.VenueName,
+                        VenueStudyMode = ((int?)i.Record.StudyMode)?.ToString(),
+                        VenueStudyModeDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ? 
+                            i.Record.StudyMode?.ToDescription() :
+                            null,
+                        VenueTown = i.Record.VenueTown
+                    };
+
+                    // We have a mixture of HTML encoded course / course run data; normalize it here
+
+                    string NormalizeCourseDataEncodedString(string value) =>
+                        value != null && i.Record.CourseDataIsHtmlEncoded != false ?
+                        System.Net.WebUtility.HtmlDecode(value) :
+                        value;
+
+                    string NormalizeCourseRunDataEncodedString(string value) =>
+                        value != null && i.Record.CourseRunDataIsHtmlEncoded != false ?
+                        System.Net.WebUtility.HtmlDecode(value) :
+                        value;
                 }).ToList()
             };
 

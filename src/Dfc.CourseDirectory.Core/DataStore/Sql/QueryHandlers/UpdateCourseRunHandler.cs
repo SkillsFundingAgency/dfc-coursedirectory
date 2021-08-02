@@ -30,7 +30,8 @@ UPDATE Pttcd.CourseRuns SET
     AttendancePattern = @AttendancePattern,
     StudyMode = @StudyMode,
     UpdatedBy = @UpdatedByUserId,
-    UpdatedOn = @UpdatedOn
+    UpdatedOn = @UpdatedOn,
+    DataIsHtmlEncoded = 0
 WHERE CourseRunId = @CourseRunId
 AND CourseRunStatus = {(int)CourseStatus.Live}
 

@@ -34,5 +34,7 @@
 	[RegionName] NVARCHAR(100),
 	[ScoreBoost] FLOAT NOT NULL,
 	[VenueId] UNIQUEIDENTIFIER,
-	[CampaignCodes] NVARCHAR(MAX)
+	[CampaignCodes] NVARCHAR(MAX),
+	[CourseDataIsHtmlEncoded] BIT,
+	[CourseRunDataIsHtmlEncoded] BIT
 )

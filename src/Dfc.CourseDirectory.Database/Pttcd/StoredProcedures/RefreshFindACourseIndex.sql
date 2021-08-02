@@ -51,7 +51,9 @@ BEGIN
 				END AS float) AS ScoreBoost,
 
 			v.VenueId,
-			cc.CampaignCodesJson CampaignCodes
+			cc.CampaignCodesJson CampaignCodes,
+			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
+			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr WITH (UPDLOCK) ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
@@ -98,7 +100,9 @@ BEGIN
 		RegionName = source.RegionName,
 		ScoreBoost = source.ScoreBoost,
 		VenueId = source.VenueId,
-		CampaignCodes = source.CampaignCodes
+		CampaignCodes = source.CampaignCodes,
+		CourseDataIsHtmlEncoded = source.CourseDataIsHtmlEncoded,
+		CourseRunDataIsHtmlEncoded = source.CourseRunDataIsHtmlEncoded
 	WHEN NOT MATCHED THEN INSERT (
 		Id,
 		LastSynced,
@@ -132,7 +136,9 @@ BEGIN
 		RegionName,
 		ScoreBoost,
 		VenueId,
-		CampaignCodes)
+		CampaignCodes,
+		CourseDataIsHtmlEncoded,
+		CourseRunDataIsHtmlEncoded)
 	VALUES (
 		source.Id,
 		@Now,
@@ -166,7 +172,9 @@ BEGIN
 		source.RegionName,
 		source.ScoreBoost,
 		source.VenueId,
-		source.CampaignCodes)
+		source.CampaignCodes,
+		source.CourseDataIsHtmlEncoded,
+		source.CourseRunDataIsHtmlEncoded)
 	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET
 		Live = 0,
 		LastSynced = @Now;
