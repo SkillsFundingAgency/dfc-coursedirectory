@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         public async Task Post_MissingFile_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         public async Task Post_InvalidFile_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             // This data is a small PNG file
             var nonCsvContent = Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAABcAAAAbCAIAAAAYioOMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYcAAB2HAY/l8WUAAAEkSURBVEhLY/hPDTBqCnYwgkz5tf/ge0sHIPqxai1UCDfAacp7Q8u3MipA9E5ZGyoEA7+vXPva0IJsB05TgJohpgARVOj//++LlgF1wsWBCGIHTlO+TZkBVwoV6Z0IF0FGQCkUU36fPf8pJgkeEMjqcBkBVA+URZjy99UruC+ADgGKwJV+a++GsyEIGGpfK2t/HTsB0YswBRhgcEUQ38K5yAhrrCFMgUcKBAGdhswFIjyxjjAFTc87LSMUrrL2n9t3oUoxAE5T0BAkpHABqCmY7kdGn5MzIcpwAagpyEGLiSBq8AAGzOQIQT937IKzoWpxAwa4UmQESUtwLkQpHgA1BS0VQQBppgBt/vfjB1QACZBmClYjgIA0UwgiqFrcgBqm/P8PAGN09WCiWJ70AAAAAElFTkSuQmCC");
@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         public async Task Post_EmptyFile_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var csvStream = new MemoryStream(Convert.FromBase64String(""));
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         public async Task Post_FileIsTooLarge_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var csvStream = new MemoryStream(new byte[5242880 + 1]);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
