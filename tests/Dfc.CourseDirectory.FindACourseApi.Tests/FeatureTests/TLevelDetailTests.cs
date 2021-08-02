@@ -11,6 +11,7 @@ using FluentAssertions.Execution;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using static System.Net.WebUtility;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
@@ -197,18 +198,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 json["qualification"]["frameworkCode"].ToObject<int>().Should().Be(tLevelDefinitionFrameworkCode);
                 json["qualification"]["progType"].ToObject<int>().Should().Be(tLevelDefinitionProgType);
                 json["qualification"]["qualificationLevel"].ToObject<string>().Should().Be(tLevelDefinitionQualificationLevel.ToString());
-                json["qualification"]["tLevelName"].ToObject<string>().Should().Be(tLevelDefinitionName);
-                json["provider"]["providerName"].ToObject<string>().Should().Be(providerName);
+                json["qualification"]["tLevelName"].ToObject<string>().Should().Be(HtmlEncode(tLevelDefinitionName));
+                json["provider"]["providerName"].ToObject<string>().Should().Be(HtmlEncode(providerName));
                 json["provider"]["ukprn"].ToObject<int>().Should().Be(providerUkprn);
                 json["provider"]["email"].ToObject<string>().Should().Be(providerContactEmail);
                 json["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(providerEmployerSatisfaction);
                 json["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(providerLearnerSatisfaction);
-                json["whoFor"].ToObject<string>().Should().Be(whoFor);
-                json["entryRequirements"].ToObject<string>().Should().Be(entryRequirements);
-                json["whatYoullLearn"].ToObject<string>().Should().Be(whatYoullLearn);
-                json["howYoullLearn"].ToObject<string>().Should().Be(howYoullLearn);
-                json["howYoullBeAssessed"].ToObject<string>().Should().Be(howYoullBeAssessed);
-                json["whatYouCanDoNext"].ToObject<string>().Should().Be(whatYouCanDoNext);
+                json["whoFor"].ToObject<string>().Should().Be(HtmlEncode(whoFor));
+                json["entryRequirements"].ToObject<string>().Should().Be(HtmlEncode(entryRequirements));
+                json["whatYoullLearn"].ToObject<string>().Should().Be(HtmlEncode(whatYoullLearn));
+                json["howYoullLearn"].ToObject<string>().Should().Be(HtmlEncode(howYoullLearn));
+                json["howYoullBeAssessed"].ToObject<string>().Should().Be(HtmlEncode(howYoullBeAssessed));
+                json["whatYouCanDoNext"].ToObject<string>().Should().Be(HtmlEncode(whatYouCanDoNext));
                 json["website"].ToObject<string>().Should().Be(website);
                 json["startDate"].ToObject<DateTime>().Should().Be(startDate);
                 json["deliveryMode"].ToObject<string>().Should().Be("ClassroomBased");
@@ -221,11 +222,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
                 var location = json["locations"].ToArray().Should().ContainSingle().Subject;
                 location["tLevelLocationId"].ToObject<string>().Should().Be(tLevelLocationId.ToString());
-                location["venueName"].ToObject<string>().Should().Be(venueName);
-                location["addressLine1"].ToObject<string>().Should().Be(venueAddressLine1);
-                location["addressLine2"].ToObject<string>().Should().Be(venueAddressLine2);
-                location["town"].ToObject<string>().Should().Be(venueTown);
-                location["county"].ToObject<string>().Should().Be(venueCounty);
+                location["venueName"].ToObject<string>().Should().Be(HtmlEncode(venueName));
+                location["addressLine1"].ToObject<string>().Should().Be(HtmlEncode(venueAddressLine1));
+                location["addressLine2"].ToObject<string>().Should().Be(HtmlEncode(venueAddressLine2));
+                location["town"].ToObject<string>().Should().Be(HtmlEncode(venueTown));
+                location["county"].ToObject<string>().Should().Be(HtmlEncode(venueCounty));
                 location["postcode"].ToObject<string>().Should().Be(venuePostcode);
                 location["telephone"].ToObject<string>().Should().Be(venueTelephone);
                 location["email"].ToObject<string>().Should().Be(venueEmail);
