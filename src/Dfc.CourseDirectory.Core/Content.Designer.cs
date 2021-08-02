@@ -304,7 +304,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select National delivery.
+        ///   Looks up a localized string similar to Select National or at least one sub region.
         /// </summary>
         public static string ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED {
             get {

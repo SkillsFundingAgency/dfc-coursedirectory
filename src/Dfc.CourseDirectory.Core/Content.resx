@@ -166,7 +166,7 @@
     <value>You must remove National delivery</value>
   </data>
   <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED" xml:space="preserve">
-    <value>Select National delivery</value>
+    <value>Select National or at least one sub region</value>
   </data>
   <data name="ERROR_COURSERUN_PROVIDER_COURSE_REF_FORMAT" xml:space="preserve">
     <value>Your reference must only include letters, numbers, hyphens, brackets and spaces</value>
