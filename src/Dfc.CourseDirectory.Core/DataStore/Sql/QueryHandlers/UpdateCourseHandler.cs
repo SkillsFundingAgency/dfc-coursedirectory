@@ -22,7 +22,8 @@ UPDATE Pttcd.Courses SET
     HowYoullBeAssessed = @HowYoullBeAssessed,
     WhereNext = @WhereNext,
     UpdatedBy = @UpdatedByUserId,
-    UpdatedOn = @UpdatedOn
+    UpdatedOn = @UpdatedOn,
+    DataIsHtmlEncoded = 0
 WHERE CourseId = @CourseId
 AND CourseStatus <> {(int)CourseStatus.Archived}
 
