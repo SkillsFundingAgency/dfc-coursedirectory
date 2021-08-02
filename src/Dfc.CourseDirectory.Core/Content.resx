@@ -184,7 +184,7 @@
     <value>Start date cannot be earlier than today's date</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_NOT_ALLOWED" xml:space="preserve">
-    <value>&lt;TODO&gt;</value>
+    <value>Start date cannot be earlier than today's date</value>
   </data>
   <data name="ERROR_COURSERUN_START_DATE_REQUIRED" xml:space="preserve">
     <value>Enter start date</value>
