@@ -276,8 +276,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         } :
                         null,
                     VenueName = i.Record.VenueName,
-                    VenueStudyMode = ((int)i.Record.StudyMode).ToString(),
-                    VenueStudyModeDescription = i.Record.StudyMode.ToDescription(),
+                    VenueStudyMode = ((int?)i.Record.StudyMode)?.ToString(),
+                    VenueStudyModeDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ? 
+                        i.Record.StudyMode?.ToDescription() :
+                        null,
                     VenueTown = i.Record.VenueTown
                 }).ToList()
             };
