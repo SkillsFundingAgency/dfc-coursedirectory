@@ -259,7 +259,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter duration between 0-999.
+        ///   Looks up a localized string similar to Enter duration between 1-999.
         /// </summary>
         public static string ERROR_COURSERUN_DURATION_RANGE {
             get {
@@ -358,7 +358,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
+        ///   Looks up a localized string similar to Start date cannot be earlier than today&apos;s date.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_NOT_ALLOWED {
             get {

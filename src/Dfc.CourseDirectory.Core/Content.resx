@@ -151,7 +151,7 @@
     <value>Select a delivery mode</value>
   </data>
   <data name="ERROR_COURSERUN_DURATION_RANGE" xml:space="preserve">
-    <value>Enter duration between 0-999</value>
+    <value>Enter duration between 1-999</value>
   </data>
   <data name="ERROR_COURSERUN_DURATION_REQUIRED" xml:space="preserve">
     <value>Enter duration</value>
