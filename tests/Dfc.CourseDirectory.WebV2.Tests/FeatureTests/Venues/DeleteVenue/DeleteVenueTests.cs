@@ -503,7 +503,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             using (new AssertionScope())
             {
-                locationDeletedMessage.Should().Contain($"Location deleted");
+                locationDeletedMessage.Should().Contain($"Venue deleted");
                 locationDeletedMessage.Should().Contain(venue.VenueName);
             }
         }
