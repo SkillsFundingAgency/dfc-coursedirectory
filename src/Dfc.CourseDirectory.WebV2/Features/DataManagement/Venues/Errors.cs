@@ -29,8 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors
     {
         public IReadOnlyCollection<ViewModelRow> ErrorRows { get; set; }
         public bool CanResolveOnScreen { get; set; }
-        public int ErrorRowCount { get; set; }
-        public int TotalRowCount { get; set; }
+        public int ErrorCount { get; set; }
     }
 
     public class ViewModelRow
@@ -95,13 +94,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors
 
         private ViewModel CreateViewModel(IReadOnlyCollection<VenueUploadRow> rows)
         {
-            var errorRows = rows.Where(row => !row.IsValid).ToArray();
-            var errorRowCount = errorRows.Length;
+            var errorRowCount = rows.Where(row => !row.IsValid).Count();
             var canResolveOnScreen = errorRowCount <= 30;
+            var errorCount = rows.SelectMany(r => r.Errors).Count();
 
             return new ViewModel()
             {
-                ErrorRows = errorRows
+                ErrorRows = rows
+                    .Where(r => !r.IsValid)
                     .Select(row => new ViewModelRow()
                     {
                         ProviderVenueReference = row.ProviderVenueRef,
@@ -121,8 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors
                     })
                     .ToArray(),
                 CanResolveOnScreen = canResolveOnScreen,
-                ErrorRowCount = errorRowCount,
-                TotalRowCount = rows.Count
+                ErrorCount = errorCount
             };
         }
 
