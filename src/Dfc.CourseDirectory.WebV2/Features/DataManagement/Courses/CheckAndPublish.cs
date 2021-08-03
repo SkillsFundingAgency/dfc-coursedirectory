@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -37,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
         public IReadOnlyCollection<ViewModelRow> CourseRows { get; set; }
+        public string LearnAimRefTitle { get; set; }
     }
 
     public class ViewModelRow
@@ -54,17 +57,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
             ICurrentUserProvider currentUserProvider,
-            JourneyInstanceProvider journeyInstanceProvider)
+            JourneyInstanceProvider journeyInstanceProvider,
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _currentUserProvider = currentUserProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -76,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 return new UploadHasErrors();
             }
 
-            return CreateViewModel(uploadRows);
+            return await CreateViewModel(uploadRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, PublishResult>> Handle(Command request, CancellationToken cancellationToken)
@@ -87,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
             {
                 var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId);
 
-                var vm = CreateViewModel(uploadRows);
+                var vm = await CreateViewModel(uploadRows);
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to publish these courses")
@@ -106,8 +112,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
             return publishResult;
         }
 
-        private ViewModel CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows) =>
-            new ViewModel()
+        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
+        {
+            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = rows.Select(x => x.LearnAimRef).Distinct().ToArray() }));
+
+            return new ViewModel()
             {
                 RowGroups = rows
                     .GroupBy(t => t.CourseId)
@@ -115,6 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                     {
                         CourseId = g.Key,
                         LearnAimRef = g.Select(r => r.LearnAimRef).Distinct().Single(),
+                        LearnAimRefTitle = learningDelivery[g.Select(r => r.LearnAimRef).Distinct().Single()].LearnAimRefTitle,
                         CourseRows = g
                             .Select(r => new ViewModelRow()
                             {
@@ -131,5 +141,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                     .ToArray(),
                 RowCount = rows.Count
             };
+        }
     }
 }
