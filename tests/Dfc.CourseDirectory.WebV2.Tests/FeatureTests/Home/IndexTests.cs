@@ -69,5 +69,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Home
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be("/dashboard");
         }
+
+        [Fact]
+        public async Task Get_Accessibility_ReturnsOk()
+        {
+            // Arrange
+
+            var request = new HttpRequestMessage(HttpMethod.Get, "/home/accessibility");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
