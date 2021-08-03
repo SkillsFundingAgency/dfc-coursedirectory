@@ -144,7 +144,7 @@
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="WhoCourseFor", Title = "Who is the course for", Value = Model.WhoIsThisCourseFor,
+                    Id="WhoCourseFor", Title = "Who this course is for", Value = Model.WhoIsThisCourseFor,
                     Action = "SummaryToAddCourse",
                     Controller = "AddCourse",
                     Section = "sectionCourseFor"

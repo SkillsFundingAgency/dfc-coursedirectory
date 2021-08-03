@@ -451,13 +451,13 @@
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Who is the course for
+                    Who this course is for
                 </dt>
                 <dd class="govuk-summary-list__value" style="word-break: break-word;">
                     @WebUtility.HtmlDecode(@Model.CourseDescription)
                 </dd>
                 <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    @editCourseChangeLink(("who is this course for", "sectionCourseFor"))
+                    @editCourseChangeLink(("Who this course is for", "sectionCourseFor"))
                 </dd>
             </div>
 
