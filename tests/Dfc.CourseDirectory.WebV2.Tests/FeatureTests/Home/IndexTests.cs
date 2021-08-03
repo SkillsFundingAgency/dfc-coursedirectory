@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Home
         {
             // Arrange
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "/home/accessibility");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/accessibility");
 
             // Act
             var response = await HttpClient.SendAsync(request);
