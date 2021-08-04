@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
 
         public static void StartDate<T>(
             this IRuleBuilderInitial<T, DateInput> field,
+            Guid? tLevelId,
             Guid providerId,
             Guid tLevelDefinitionId,
             ISqlQueryDispatcher sqlQueryDispatcher)
@@ -48,7 +49,8 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
 
                     if (existingTLevels.Any(tl =>
                         tl.TLevelDefinition.TLevelDefinitionId == tLevelDefinitionId &&
-                        tl.StartDate == v.Value))
+                        tl.StartDate == v.Value &&
+                        tl.TLevelId != tLevelId))
                     {
                         ctx.AddFailure("Start date already exists");
                     }
