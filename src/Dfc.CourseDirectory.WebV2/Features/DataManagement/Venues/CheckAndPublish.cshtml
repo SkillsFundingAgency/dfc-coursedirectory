@@ -49,7 +49,7 @@
                 <div class="pttcd-dm-publish-summary__row">
                     <div class="pttcd-dm-publish-summary__row__header govuk-!-width-two-thirds">
                         <div class="pttcd-dm-publish-summary__row__label">Your venue data file</div>
-                        <div><span data-testid="UploadedRowCount">@Model.UploadedRowCount</span> venues</div>
+                        <div><span data-testid="UploadedRowCount">@Model.UploadedRowCount</span> venue@(Model.UploadedRowCount != 1 ? "s" : "")</div>
                     </div>
                     <div class="pttcd-dm-publish-summary__row__details">
                         <govuk-details>
@@ -74,13 +74,13 @@
                         </div>
                         <div class="pttcd-dm-publish-summary__row__details">
                             <govuk-details>
-                            <govuk-details-summary>
-                                View
-                            </govuk-details-summary>
-                            <govuk-details-text>
-                                @{ RenderRows(Model.SupplementaryRows); }
-                            </govuk-details-text>
-                        </govuk-details>
+                                <govuk-details-summary>
+                                    View
+                                </govuk-details-summary>
+                                <govuk-details-text>
+                                    @{ RenderRows(Model.SupplementaryRows); }
+                                </govuk-details-text>
+                            </govuk-details>
                         </div>
                     </div>
                 </div>
