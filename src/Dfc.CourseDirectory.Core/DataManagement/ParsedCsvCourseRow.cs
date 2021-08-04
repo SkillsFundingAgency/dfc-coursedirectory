@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
         {
-            CourseDeliveryMode.ClassroomBased => "Classroom based",
+            CourseDeliveryMode.ClassroomBased => "Classroom",
             CourseDeliveryMode.Online => "Online",
             CourseDeliveryMode.WorkBased => "Work based",
             null => null,
