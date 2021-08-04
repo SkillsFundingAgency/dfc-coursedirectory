@@ -483,7 +483,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             {
                 row.IsValid.Should().BeTrue();
                 row.Errors.Should().BeEmpty();
-                row.DeliveryMode.Should().BeEquivalentTo("classroom based");
+                row.DeliveryMode.Should().BeEquivalentTo("classroom");
                 row.ResolvedDeliveryMode.Should().Be(CourseDeliveryMode.ClassroomBased);
                 row.CourseName.Should().Be(courseName);
                 row.ProviderCourseRef.Should().Be(providerCourseRef);
