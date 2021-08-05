@@ -1,1 +1,448 @@
-﻿
+﻿@{
+    ViewBag.Title = "Data Upload - Apprenticeship file format requirements";
+}
+
+@section BackLink {
+    <govuk-back-link asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back to apprenticeship data upload</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Apprenticeship file format requirements</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <p class="govuk-body">Your data upload file must be a CSV file type.  If you have more than one option when saving as a CSV, choose, <br> CSV UTF-8 (Comma delimited) (.csv).</p>
+        <p class="govuk-body">The tables below show information about each field in the apprenticeship data upload file and how to complete it correctly.</p><p>
+        </p><div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number">
+                    <li><a class="govuk-link" href="#STANDARD_CODE">Standard code</a></li>
+                    <li><a class="govuk-link" href="#STANDARD_VERSION">Standard version</a></li>
+                    <li><a class="govuk-link" href="#APPRENTICESHIP_INFORMATION">Apprenticeship information</a></li>
+                    <li><a class="govuk-link" href="#APPRENTICESHIP_WEBPAGE">Apprenticeship webpage</a></li>
+                    <li><a class="govuk-link" href="#CONTACT_EMAIL">Contact email</a></li>
+                    <li><a class="govuk-link" href="#CONTACT_PHONE">Contact phone</a></li>
+                </ol>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number" start="7">
+                    <li><a class="govuk-link" href="#CONTACT_URL">Contact URL</a></li>
+                    <li><a class="govuk-link" href="#DELIVERY_METHOD">Delivery method</a></li>
+                    <li><a class="govuk-link" href="#VENUE">Venue</a></li>
+                    <li><a class="govuk-link" href="#VENUE">Your venue reference</a></li>
+                    <li><a class="govuk-link" href="#RADIUS">Radius</a></li>
+                    <li><a class="govuk-link" href="#DELIVERY_MODE">Delivery mode</a></li>
+
+                </ol>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ol class="govuk-list govuk-list--number" start="13">
+                    <li><a class="govuk-link" href="#NATIONAL_DELIVERY">National delivery</a></li>
+                    <li><a class="govuk-link" href="#SUB_REGION">Sub-region</a></li>
+                </ol>
+            </div>
+        </div>
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="STANDARD_CODE">STANDARD_CODE</h2>
+
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Standards are listed by <a target="_blank" href="https://findalearningaimbeta.fasst.org.uk/" class="govuk-link">LARS (opens in new tab)</a> (Learning Aims Reference Service).
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="STANDARD_VERSION">STANDARD_VERSION</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    1
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Standards on Publish to the course directory are version 1.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="APPRENTICESHIP_INFORMATION">APPRENTICESHIP_INFORMATION</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    750
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <p class="govuk-body">Provide information for employers about how you will deliver this apprenticeship training course.</p> <p class="govuk-body">The information should meet style and compliance guidelines.</p>
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="APPRENTICESHIP_WEBPAGE">APPRENTICESHIP_WEBPAGE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    https://www.provider.com/apprenticeshipname
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    The webpage for this apprenticeship training course.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="CONTACT_EMAIL">CONTACT_EMAIL</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    name@example.com
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    The email address for this apprenticeship training course.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="CONTACT_PHONE">CONTACT_PHONE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    01632 960 001<br>
+                    07700 900 982<br>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    The telephone number for this apprenticeship training course.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="CONTACT_URL">CONTACT_URL</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    https://www.provider.com/contact
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    The contact webpage for your organisation.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="DELIVERY_METHOD">DELIVERY_METHOD</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Classroom<br>
+                    Employer<br>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Apprenticeship training can be delivered by the following methods:<br>
+                    <p></p>
+                    Classroom - at your location on day or block release<br>
+
+                    Employer - at the employer's location<br>
+
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="VENUE">VENUE</h2>
+        <p class="govuk-body">You can only enter a venue that is already added to Publish to the course directory.</p>
+        <p class="govuk-body">You must add new venues <a asp-action="add" asp-controller="Venues" >on screen</a> or by <a asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-controller="VenuesDataManagement">venue upload</a> prior to an apprenticeship upload</p>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_METHOD</strong> is <strong>Classroom</strong>.
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Character limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    My location name
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    For apprenticeship training courses with more than one venue, each apprenticeship must be entered on a separate row.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="VENUEREF">YOUR_VENUE_REFERENCE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Chartacter limit
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    255
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    A unique reference that will help you identify this venue in your internal systems.
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="RADIUS">RADIUS</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_METHOD</strong> is <strong>Classroom</strong>.
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    How far you are willing to travel from the venue to deliver this apprenticeship training course. <br><br>The radius must be between 1 and 874.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="DELIVERY_MODE">DELIVERY_MODE</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_METHOD</strong> is <strong>Classroom</strong> or <strong>Employer</strong>.
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Day;Block;Employer
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    How the training is delivered for this apprenticeship training course.<br>
+                    Day - for example one day a week at the training provider's location<br>
+                    Block - for example 3-4 weeks at the training provider's location<br>
+                    Employer - training is delivered at the employer's location
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="NATIONAL_DELIVERY">NATIONAL_DELIVERY</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_METHOD</strong> is <strong>Employer</strong>.
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Yes/No
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    You can deliver the apprenticeship training course anywhere in England and you will be shown as a national provider for this apprenticeship training course.
+                </dd>
+            </div>
+        </dl>
+        <!-- -->
+        <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="SUB_REGION">SUB_REGION</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Mandatory
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    When <strong>DELIVERY_METHOD</strong> is <strong>Employer</strong>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Example
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Derby;Norfolk;Leicester;Brent
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    All the areas where you can deliver the apprenticeship training course.
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+    </div>
+</div>
