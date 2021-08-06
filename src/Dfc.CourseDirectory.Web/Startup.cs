@@ -5,9 +5,7 @@ using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
@@ -77,14 +75,8 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddScoped<ICourseService, CourseService>();
 
-            services.AddScoped<ICSVHelper, CSVHelper>();
-
-            services.AddScoped<IApprenticeshipBulkUploadService, ApprenticeshipBulkUploadService>();
-            services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
-            services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
-            services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
 
             services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));
 
