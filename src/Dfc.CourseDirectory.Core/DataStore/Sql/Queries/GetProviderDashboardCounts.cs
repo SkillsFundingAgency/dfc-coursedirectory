@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public IReadOnlyDictionary<TLevelStatus, int> TLevelCounts { get; set; }
         public int VenueCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
-        public int ApprenticeshipsBulkUploadErrorCount { get; set; }
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
     }

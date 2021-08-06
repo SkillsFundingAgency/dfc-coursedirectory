@@ -47,11 +47,6 @@ WHERE       c.ProviderId = @ProviderId
 AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.Live}
 AND         cr.StartDate < @{nameof(query.Date)}
 
-SELECT      ISNULL(SUM(a.BulkUploadErrorCount), 0)
-FROM        Pttcd.Apprenticeships a
-WHERE       a.ProviderUkprn = @ProviderUkprn
-AND         a.ApprenticeshipStatus = {(int)ApprenticeshipStatus.BulkUploadPending}
-
 SELECT COUNT(*)
 FROM Pttcd.VenueUploads vu
 INNER JOIN Pttcd.VenueUploadRows vr
@@ -75,7 +70,6 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
                 var tLevelCounts = reader.Read().ToDictionary(r => (TLevelStatus)r.TLevelStatus, r => (int)r.Count);
                 var venueCount = reader.ReadSingle<int>();
                 var pastStartDateCourseRunCount = reader.ReadSingle<int>();
-                var apprenticeshipsBulkUploadErrorCount = reader.ReadSingle<int>();
                 var unpublishedVenueCount = reader.ReadSingle<int>();
                 var unpublishedCourseCount = reader.ReadSingle<int>();
 
@@ -86,7 +80,6 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
                     TLevelCounts = tLevelCounts,
                     VenueCount = venueCount,
                     PastStartDateCourseRunCount = pastStartDateCourseRunCount,
-                    ApprenticeshipsBulkUploadErrorCount = apprenticeshipsBulkUploadErrorCount,
                     UnpublishedVenueCount = unpublishedVenueCount,
                     UnpublishedCourseCount = unpublishedCourseCount
                 };

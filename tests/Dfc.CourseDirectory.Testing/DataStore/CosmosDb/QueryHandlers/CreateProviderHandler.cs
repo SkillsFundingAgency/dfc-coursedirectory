@@ -22,13 +22,7 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 ProviderContact = request.ProviderContact?.ToList() ?? new List<ProviderContact>(),
                 Status = request.Status,
                 DateUpdated = request.DateUpdated,
-                UpdatedBy = request.UpdatedBy,
-                BulkUploadStatus = request.BulkUploadInProgress.HasValue
-                    ? new ProviderBulkUploadStatus
-                        {
-                            InProgress = request.BulkUploadInProgress.Value
-                        }
-                    : null
+                UpdatedBy = request.UpdatedBy
             };
             inMemoryDocumentStore.Providers.Save(provider);
 

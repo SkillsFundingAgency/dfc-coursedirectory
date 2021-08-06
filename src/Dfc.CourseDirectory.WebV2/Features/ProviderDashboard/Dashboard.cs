@@ -27,9 +27,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int LiveCourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
         public int ApprenticeshipCount { get; set; }
-        public int BulkUploadPendingApprenticeshipsCount { get; set; }
-        public int BulkUploadReadyToGoLiveApprenticeshipsCount { get; set; }
-        public int ApprenticeshipsBulkUploadErrorCount { get; set; }
         public int TLevelCount { get; set; }
         public int VenueCount { get; set; }
         public bool IsNewProvider { get; set; }
@@ -96,9 +93,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 LiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live),
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
                 ApprenticeshipCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
-                BulkUploadPendingApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadPending),
-                BulkUploadReadyToGoLiveApprenticeshipsCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.BulkUploadReadyToGoLive),
-                ApprenticeshipsBulkUploadErrorCount = dashboardCounts.ApprenticeshipsBulkUploadErrorCount,
                 TLevelCount = dashboardCounts.TLevelCounts.GetValueOrDefault(TLevelStatus.Live),
                 VenueCount = dashboardCounts.VenueCount,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
