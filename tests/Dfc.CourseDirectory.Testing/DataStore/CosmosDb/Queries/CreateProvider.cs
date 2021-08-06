@@ -19,7 +19,6 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries
         public IEnumerable<ProviderContact> ProviderContact { get; set; }
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
-        public bool? BulkUploadInProgress { get; set; }
         public ProviderStatus Status { get; set; }
     }
 

@@ -24,7 +24,6 @@ namespace Dfc.CourseDirectory.Testing
             ProviderDisplayNameSource displayNameSource = default,
             IEnumerable<CreateProviderContact> contacts = null,
             IReadOnlyCollection<Guid> tLevelDefinitionIds = null,
-            bool? bulkUploadInProgress = null,
             ProviderStatus status = ProviderStatus.Onboarded)
         {
             if (!providerType.HasFlag(ProviderType.TLevels) &&
@@ -48,7 +47,6 @@ namespace Dfc.CourseDirectory.Testing
                 MarketingInformation = marketingInformation,
                 CourseDirectoryName = courseDirectoryName,
                 Alias = alias,
-                BulkUploadInProgress = bulkUploadInProgress,
                 ProviderContact = contacts?.Select(c => new ProviderContact()
                 {
                     ContactAddress = new ProviderContactAddress()
