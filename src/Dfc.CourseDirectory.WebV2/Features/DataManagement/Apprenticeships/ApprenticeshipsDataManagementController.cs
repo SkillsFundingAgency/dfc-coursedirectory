@@ -71,5 +71,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
 
         [HttpGet("errors")]
         public IActionResult Errors() => View();
+
+        [HttpGet("template")]
+        public IActionResult Template() =>
+            new CsvResult<CsvApprenticeshipRow>("apprenticeships-template.csv", Enumerable.Empty<CsvApprenticeshipRow>());
     }
 }
