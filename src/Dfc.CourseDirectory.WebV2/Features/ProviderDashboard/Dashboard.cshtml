@@ -252,7 +252,7 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                             @if (Model.ApprenticeshipCount > 0)
                             {
                                 <li>
-                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
+                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
                                 </li>
                             }
                             <li>
