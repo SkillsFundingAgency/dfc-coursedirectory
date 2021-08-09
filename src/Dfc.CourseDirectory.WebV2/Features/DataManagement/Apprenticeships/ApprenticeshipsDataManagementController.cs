@@ -69,6 +69,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
         [HttpGet("check-publish")]
         public IActionResult CheckAndPublish() => View();
 
+        [HttpGet("download")]
+        [RequireProviderContext]
+        public IActionResult Download() => Ok();
+
         [HttpGet("errors")]
         public IActionResult Errors() => View();
 
