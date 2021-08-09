@@ -47,7 +47,7 @@
 
             <div class="pttcd-dm-publish-summary">
                 <div class="pttcd-dm-publish-summary__row">
-                    <div class="pttcd-dm-publish-summary__row__header govuk-!-width-two-thirds">
+                    <div class="pttcd-dm-publish-summary__row__header">
                         <div class="pttcd-dm-publish-summary__row__label">Your venue data file</div>
                         <div><span data-testid="UploadedRowCount">@Model.UploadedRowCount</span> venue@(Model.UploadedRowCount != 1 ? "s" : "")</div>
                     </div>
@@ -68,7 +68,7 @@
             {
                 <div class="pttcd-dm-publish-summary" data-testid="SupplementaryRowsBlock">
                     <div class="pttcd-dm-publish-summary__row">
-                        <div class="pttcd-dm-publish-summary__row__header govuk-!-width-two-thirds">
+                        <div class="pttcd-dm-publish-summary__row__header">
                             <div class="pttcd-dm-publish-summary__row__label">Existing venues linked to live courses</div>
                             <div><span data-testid="SupplementaryRowCount">@Model.SupplementaryRowCount</span> venues</div>
                         </div>
@@ -78,6 +78,7 @@
                                     View
                                 </govuk-details-summary>
                                 <govuk-details-text>
+                                    <p>A venue linked to a course, apprenticeship or T Level missing from a data upload will be added and shown here. Linked venues can not be deleted in data upload.</p>
                                     @{ RenderRows(Model.SupplementaryRows); }
                                 </govuk-details-text>
                             </govuk-details>
@@ -88,13 +89,13 @@
 
             <div class="pttcd-dm-publish-summary">
                 <div class="pttcd-dm-publish-summary__row">
-                    <div class="pttcd-dm-publish-summary__row__header govuk-!-width-two-thirds">
+                    <div class="pttcd-dm-publish-summary__row__header">
                         <div class="pttcd-dm-publish-summary__row__label">Ready to be published</div>
                         <div><span data-testid="TotalRowCount">@Model.TotalRowCount</span> venues</div>
                     </div>
                 </div>
             </div>
-        
+
             <govuk-warning-text icon-fallback-text="warning">
                 Publishing will replace all of your venues on Publish to the course directory
             </govuk-warning-text>
@@ -111,7 +112,7 @@
                     Yes - I want to publish these venues
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
-        
+
             <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-venueupload__delete-btn" class="govuk-!-margin-right-3">Publish</govuk-button>
 
             <govuk-button asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary" data-testid="cancel-btn">Cancel</govuk-button>
