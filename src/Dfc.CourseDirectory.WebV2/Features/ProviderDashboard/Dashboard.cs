@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -24,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool ShowCourses { get; set; }
         public bool ShowApprenticeships { get; set; }
         public bool ShowTLevels { get; set; }
-        public int LiveCourseRunCount { get; set; }
+        public int CourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
         public int ApprenticeshipCount { get; set; }
         public int TLevelCount { get; set; }
@@ -91,10 +89,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
                 ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) && provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
                 ShowTLevels = provider.ProviderType.HasFlag(ProviderType.TLevels),
-                LiveCourseRunCount = dashboardCounts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live),
+                CourseRunCount = dashboardCounts.CourseRunCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
                 ApprenticeshipCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
-                TLevelCount = dashboardCounts.TLevelCounts.GetValueOrDefault(TLevelStatus.Live),
+                TLevelCount = dashboardCounts.TLevelCount,
                 VenueCount = dashboardCounts.VenueCount,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),

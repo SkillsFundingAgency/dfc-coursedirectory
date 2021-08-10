@@ -59,7 +59,7 @@
         <div class="govuk-grid-column-one-third">
             <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
                 <h2 class="govuk-heading-s">Published courses</h2>
-                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.LiveCourseRunCount</p>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseRunCount</p>
                 @if (Model.UnpublishedCourseCount > 0)
                 {
                     <h2 class="govuk-heading-s govuk-!-margin-top-5">Unpublished courses</h2>
@@ -79,7 +79,7 @@
                         <li>
                             <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
                         </li>
-                        @if (Model.LiveCourseRunCount > 0)
+                        @if (Model.CourseRunCount > 0)
                         {
                             <li>
                                 <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="courses-view-edit-link">View and edit courses</a>
@@ -120,7 +120,7 @@
                                     Course file format requirements
                                 </a>
                             </li>
-                            @if (Model.LiveCourseRunCount > 0)
+                            @if (Model.CourseRunCount > 0)
                             {
                                 <li>
                                     <a asp-action="Download" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadCourses">
