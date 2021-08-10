@@ -16,9 +16,8 @@ DECLARE @Changes TABLE (
     LearnAimRef VARCHAR(50)
 )
 
-INSERT INTO @Changes (ProviderUkprn, LearnAimRef)
-SELECT ProviderUkprn, LearnAimRef
-FROM Pttcd.CampaignProviderCourses
+DELETE FROM Pttcd.CampaignProviderCourses
+OUTPUT deleted.ProviderUkprn, deleted.LearnAimRef INTO @Changes
 WHERE CampaignCode = @CampaignCode AND ImportJobId <> @ImportJobId
 ;
 
@@ -51,7 +50,7 @@ USING (
     JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
     JOIN Pttcd.FindACourseIndexCampaignCodes cc ON p.ProviderId = cc.ProviderId AND c.LearnAimRef = cc.LearnAimRef
 ) AS source
-ON target.ProviderId = source.ProviderId AND target.LearnAimRef = source.LearnAimRef
+ON target.ProviderId = source.ProviderId AND target.LearnAimRef = source.LearnAimRef AND target.Live = 1
 WHEN MATCHED THEN UPDATE SET CampaignCodes = source.CampaignCodesJson
 ;";
 
