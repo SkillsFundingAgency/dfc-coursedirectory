@@ -15,37 +15,33 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             GetProviderDashboardCounts query)
         {
             var sql = @$"
-DECLARE @ProviderUkprn INT
+SELECT COUNT(*)
+FROM Pttcd.CourseRuns cr
+JOIN Pttcd.Courses c ON c.CourseId = cr.CourseId
+WHERE c.ProviderId = @ProviderId
+AND cr.CourseRunStatus = {(int)CourseStatus.Live}
 
-SELECT TOP 1 @ProviderUkprn = Ukprn FROM Pttcd.Providers WHERE ProviderId = @{nameof(query.ProviderId)}
+SELECT a.ApprenticeshipStatus, COUNT(*) as Count
+FROM Pttcd.Apprenticeships a
+WHERE a.ProviderId = @ProviderId
+GROUP BY a.ApprenticeshipStatus
 
-SELECT      cr.CourseRunStatus, COUNT(*) as Count
-FROM        Pttcd.CourseRuns cr
-INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE       c.ProviderUkprn = @ProviderUkprn
-GROUP BY    cr.CourseRunStatus
+SELECT COUNT(*)
+FROM Pttcd.TLevels t
+WHERE t.ProviderId = @{nameof(query.ProviderId)}
+AND t.TLevelStatus = {(int)TLevelStatus.Live}
 
-SELECT      a.ApprenticeshipStatus, COUNT(*) as Count
-FROM        Pttcd.Apprenticeships a
-WHERE       a.ProviderUkprn = @ProviderUkprn
-GROUP BY    a.ApprenticeshipStatus
+SELECT COUNT(*)
+FROM Pttcd.Venues v
+WHERE v.ProviderId = @ProviderId
+AND v.VenueStatus = {(int)VenueStatus.Live}
 
-SELECT      t.TLevelStatus, COUNT(*) as Count
-FROM        Pttcd.TLevels t
-WHERE       t.ProviderId = @{nameof(query.ProviderId)}
-GROUP BY    t.TLevelStatus
-
-SELECT      COUNT(*)
-FROM        Pttcd.Venues v
-WHERE       v.ProviderId = @ProviderId
-AND         v.VenueStatus = 1
-
-SELECT      COUNT(*)
-FROM        Pttcd.CourseRuns cr
-INNER JOIN  Pttcd.Courses c ON c.CourseId = cr.CourseId
-WHERE       c.ProviderId = @ProviderId
-AND         c.CourseStatus = c.CourseStatus & {(int)CourseStatus.Live}
-AND         cr.StartDate < @{nameof(query.Date)}
+SELECT COUNT(*)
+FROM Pttcd.CourseRuns cr
+JOIN Pttcd.Courses c ON c.CourseId = cr.CourseId
+WHERE c.ProviderId = @ProviderId
+AND cr.CourseRunStatus = {(int)CourseStatus.Live}
+AND cr.StartDate < @{nameof(query.Date)}
 
 SELECT COUNT(*)
 FROM Pttcd.VenueUploads vu
@@ -65,9 +61,9 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
             {
-                var courseRunCounts = reader.Read().ToDictionary(r => (CourseStatus)r.CourseRunStatus, r => (int)r.Count);
+                var courseRunCount = reader.ReadSingle<int>();
                 var apprenticeshipCounts = reader.Read().ToDictionary(r => (ApprenticeshipStatus)r.ApprenticeshipStatus, r => (int)r.Count);
-                var tLevelCounts = reader.Read().ToDictionary(r => (TLevelStatus)r.TLevelStatus, r => (int)r.Count);
+                var tLevelCount = reader.ReadSingle<int>();
                 var venueCount = reader.ReadSingle<int>();
                 var pastStartDateCourseRunCount = reader.ReadSingle<int>();
                 var unpublishedVenueCount = reader.ReadSingle<int>();
@@ -75,9 +71,9 @@ AND cu.ProviderId = @{ nameof(query.ProviderId)}";
 
                 return new DashboardCounts
                 {
-                    CourseRunCounts = courseRunCounts,
+                    CourseRunCount = courseRunCount,
                     ApprenticeshipCounts = apprenticeshipCounts,
-                    TLevelCounts = tLevelCounts,
+                    TLevelCount = tLevelCount,
                     VenueCount = venueCount,
                     PastStartDateCourseRunCount = pastStartDateCourseRunCount,
                     UnpublishedVenueCount = unpublishedVenueCount,
