@@ -339,7 +339,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     }
                 }
 
-                if (savedModel.DeliveryMode == CourseDeliveryMode.WorkBased && !savedModel.National)
+                if (savedModel.DeliveryMode == CourseDeliveryMode.WorkBased && savedModel.National == false)
                 {
                     foreach (var subRegion in regions.RegionItems.SelectMany(r => r.SubRegion))
                     {
@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         .Select(v => v.VenueName)
                     : Enumerable.Empty<string>(),
                 Regions = model.DeliveryMode == CourseDeliveryMode.WorkBased
-                    ? model.National
+                    ? model.National == true
                         ? new[] { "National"}
                         : availableRegions.Value.RegionItems
                             .Select(r => new { r.Id, r.RegionName })
@@ -503,7 +503,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
                     var availableRegions = new SelectRegionModel();
 
-                    if (model.National)
+                    if (model.National == true)
                     {
                         createCommand.National = true;
                         createCommand.SubRegionIds = availableRegions.RegionItems.Select(x => x.Id).ToList();
