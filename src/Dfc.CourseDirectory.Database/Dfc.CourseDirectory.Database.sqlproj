@@ -302,6 +302,7 @@
     <Build Include="Pttcd\Indexes\IX_VenueUploadRows_VenueUploadId.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseUploads_ProviderId.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseUploadRows_CourseUploadId.sql" />
+    <Build Include="Pttcd\Indexes\IX_FindACourseIndexCampaignCodes_ProviderLearnAimRef.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
