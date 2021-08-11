@@ -264,6 +264,40 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return (uploadStatus, updatedRows);
         }
 
+        public async Task DeleteApprenticeshipUploadForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (apprenticeshipUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedApprenticeshipUpload);
+                }
+
+                if (apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
+                    apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
+                {
+                    throw new InvalidUploadStatusException(
+                        apprenticeshipUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                await dispatcher.ExecuteQuery(
+                    new SetApprenticeshipUploadAbandoned()
+                    {
+                        ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId,
+                        AbandonedOn = _clock.UtcNow
+                    });
+
+                await dispatcher.Commit();
+            }
+        }
+
         private async Task<UploadStatus> RefreshApprenticeshipUploadValidationStatus(Guid apprenticeshipUploadId, ISqlQueryDispatcher sqlQueryDispatcher)
         {
             var uploadIsValid = (await sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipUploadInvalidRowCount() { ApprenticeshipUploadId = apprenticeshipUploadId })) == 0;
