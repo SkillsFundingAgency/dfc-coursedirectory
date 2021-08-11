@@ -28,7 +28,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -61,7 +62,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -93,7 +95,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -125,7 +128,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -158,7 +162,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -191,7 +196,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -223,7 +229,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -255,7 +262,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -302,7 +310,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -344,7 +353,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -389,7 +399,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -433,7 +444,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -469,7 +481,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -509,7 +522,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 blobServiceClient.Object,
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -552,7 +566,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
@@ -603,7 +618,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
@@ -632,7 +648,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var rows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, rowCount: 2).ToArray();
             rows[0].LearnAimRef = string.Empty;

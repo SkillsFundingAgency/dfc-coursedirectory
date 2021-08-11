@@ -1,5 +1,6 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
@@ -80,6 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
             services.AddTransient<DateValidationTestsValidator>();
+            services.AddSingleton<IBackgroundWorkScheduler, ExecuteImmediatelyBackgroundWorkScheduler>();
 
             services.Configure<DataManagementOptions>(
                 options => options.ProcessedImmediatelyThreshold = TimeSpan.FromMilliseconds(2000));

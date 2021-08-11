@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
@@ -15,6 +16,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
@@ -420,7 +422,40 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 await dispatcher.Commit();
 
-                return PublishResult.Success(publishResult.AsT1.PublishedCount);
+                Debug.Assert(publishResult.IsT1);
+                var publishedCourseRunIds = publishResult.AsT1.PublishedCourseRunIds;
+
+                // Update the FAC index - we do this in a separate transaction in the background since it can cause timeouts
+                // when done inside the PublishCourseUpload handler.
+                // A mop-up job inside the Functions project ensures that any updates that fail here get captured eventually.
+                await _backgroundWorkScheduler.Schedule(UpdateFindACourseIndex, state: publishedCourseRunIds);
+
+                return PublishResult.Success(publishedCourseRunIds.Count);
+            }
+
+            static async Task UpdateFindACourseIndex(object state, IServiceProvider serviceProvider, CancellationToken cancellationToken)
+            {
+                const int batchSize = 200;
+
+                var publishedCourseRunIds = (IReadOnlyCollection<Guid>)state;
+
+                var sqlQueryDispatcherFactory = serviceProvider.GetRequiredService<ISqlQueryDispatcherFactory>();
+                var clock = serviceProvider.GetRequiredService<IClock>();
+
+                // Batch the updates to keep the transactions smaller & shorter
+                foreach (var chunk in publishedCourseRunIds.Buffer(batchSize))
+                {
+                    using (var dispatcher = sqlQueryDispatcherFactory.CreateDispatcher())
+                    {
+                        await dispatcher.ExecuteQuery(new UpdateFindACourseIndexForCourseRuns()
+                        {
+                            CourseRunIds = chunk,
+                            Now = clock.UtcNow
+                        });
+
+                        await dispatcher.Commit();
+                    }
+                }
             }
         }
 

@@ -4,6 +4,7 @@
     "AzureWebJobs.SyncUkrlpChanges.Disabled": "true",
     "AzureWebJobs.RealTimeSyncCosmosUkrlpToSql.Disabled": "true",
     "AzureWebJobs.ImportLarsData.Disabled": "true",
+    "AzureWebJobs.RefreshFindACourseIndex.Disabled": "true",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   }

@@ -23,6 +23,8 @@ namespace Dfc.CourseDirectory.Testing
 
         public IServiceProvider Services { get; }
 
+        public IServiceScopeFactory ServiceScopeFactory => DatabaseFixture.ServiceScopeFactory;
+
         public TestData CreateTestData() => Services.GetRequiredService<TestData>();
 
         public void Dispose() => DatabaseFixture.Dispose();

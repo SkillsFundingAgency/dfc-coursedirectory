@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -174,19 +175,11 @@ WHERE cur.CourseUploadId = @CourseUploadId
 AND cur.CourseUploadRowStatus = {(int)UploadRowStatus.Default}
 
 
-DECLARE @AddedCourseRunIds Pttcd.GuidIdTable
+SELECT 1 AS Status
 
-INSERT INTO @AddedCourseRunIds
 SELECT CourseRunId FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
-
-EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @AddedCourseRunIds, @Now = @PublishedOn
-
-
-SELECT 1 AS Status
-
-SELECT COUNT(*) FROM @AddedCourseRunIds
 ";
 
             var paramz = new
@@ -202,11 +195,11 @@ SELECT COUNT(*) FROM @AddedCourseRunIds
 
             if (status == 1)
             {
-                var publishedCourseRunCount = await reader.ReadSingleAsync<int>();
+                var publishedCourseRunIds = (await reader.ReadAsync<Guid>()).AsList();
 
                 return new PublishCourseUploadResult()
                 {
-                    PublishedCount = publishedCourseRunCount
+                    PublishedCourseRunIds = publishedCourseRunIds
                 };
             }
             else
