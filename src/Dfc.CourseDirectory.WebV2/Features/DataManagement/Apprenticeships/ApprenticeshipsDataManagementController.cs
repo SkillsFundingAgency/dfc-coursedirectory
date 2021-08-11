@@ -79,5 +79,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
         [HttpGet("template")]
         public IActionResult Template() =>
             new CsvResult<CsvApprenticeshipRow>("apprenticeships-template.csv", Enumerable.Empty<CsvApprenticeshipRow>());
+
+        [HttpGet("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload() =>
+            await _mediator.SendAndMapResponse(
+                new DeleteUpload.Query(),
+                command => View(command));
+
+        [HttpPost("delete")]
+        [RequireProviderContext]
+        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("resolve/delete/success")]
+        public IActionResult DeleteUploadSuccess() => View();
+
     }
 }
