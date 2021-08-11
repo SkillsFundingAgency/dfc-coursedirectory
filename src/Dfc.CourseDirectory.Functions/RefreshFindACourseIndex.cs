@@ -26,6 +26,9 @@ namespace Dfc.CourseDirectory.Functions
 
             const int batchSize = 100;
 
+            // Exclude course runs that have only just been created so we don't race with the background worker
+            var createdBefore = _clock.UtcNow.AddHours(-1);
+
             int updated;
 
             do
@@ -35,6 +38,7 @@ namespace Dfc.CourseDirectory.Functions
                 updated = await dispatcher.ExecuteQuery(new UpdateFindACourseIndexFromMissingCourses()
                 {
                     MaxCourseRunCount = batchSize,
+                    CreatedBefore = createdBefore,
                     Now = _clock.UtcNow
                 });
 
