@@ -50,7 +50,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var stream = new MemoryStream(Convert.FromBase64String(base64Content));
             stream.Seek(0L, SeekOrigin.Begin);
@@ -71,7 +72,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var stream = new MemoryStream(content);
             stream.Seek(0L, SeekOrigin.Begin);
@@ -91,7 +93,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
             {
@@ -129,7 +132,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
             {
@@ -156,7 +160,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SqlQueryDispatcherFactory,
                 Mock.Of<BlobServiceClient>(),
                 Clock,
-                new RegionCache(SqlQueryDispatcherFactory));
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
 
             // Add missing lars
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;

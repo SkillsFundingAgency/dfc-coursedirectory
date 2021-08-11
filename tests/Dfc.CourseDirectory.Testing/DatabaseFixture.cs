@@ -61,6 +61,8 @@ namespace Dfc.CourseDirectory.Testing
 
         public InMemoryDocumentStore InMemoryDocumentStore => _services.GetRequiredService<InMemoryDocumentStore>();
 
+        public IServiceScopeFactory ServiceScopeFactory => _services.GetRequiredService<IServiceScopeFactory>();
+
         public ISqlQueryDispatcherFactory SqlQueryDispatcherFactory => _services.GetRequiredService<ISqlQueryDispatcherFactory>();
 
         public SqlQuerySpy SqlQuerySpy => _services.GetRequiredService<SqlQuerySpy>();
