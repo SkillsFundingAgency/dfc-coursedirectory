@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 if (apprenticeshipUpload == null)
                 {
-                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedApprenticeshipUpload);
                 }
 
                 if (apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
