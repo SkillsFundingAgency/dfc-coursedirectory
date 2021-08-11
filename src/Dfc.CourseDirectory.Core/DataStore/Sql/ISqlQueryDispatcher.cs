@@ -11,5 +11,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
         Task Commit();
         Task<T> ExecuteQuery<T>(ISqlQuery<T> query);
         IAsyncEnumerable<T> ExecuteQuery<T>(ISqlQuery<IAsyncEnumerable<T>> query);
+        void RegisterPostCommitAction(Action action);
     }
 }

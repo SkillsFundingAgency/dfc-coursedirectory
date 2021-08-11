@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             private readonly IServiceProvider _serviceProvider;
             private readonly SemaphoreSlim _executeLock = new SemaphoreSlim(1, 1);
             private readonly SqlConnection _connection;
+            private List<Action> _postCommitActions;
 
             internal SqlQueryDispatcher(IServiceProvider serviceProvider, SqlTransaction transaction)
             {
@@ -46,7 +47,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             public SqlTransaction Transaction { get; }
 
-            public Task Commit() => Transaction.CommitAsync();
+            public async Task Commit()
+            {
+                await Transaction.CommitAsync();
+
+                if (_postCommitActions != null)
+                {
+                    foreach (var action in _postCommitActions)
+                    {
+                        action();
+                    }
+                }
+            }
 
             public void Dispose()
             {
@@ -101,6 +113,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 {
                     _executeLock.Release();
                 }
+            }
+
+            public void RegisterPostCommitAction(Action action)
+            {
+                if (action is null)
+                {
+                    throw new ArgumentNullException(nameof(action));
+                }
+
+                _postCommitActions ??= new List<Action>();
+                _postCommitActions.Add(action);
             }
 
             private abstract class AsyncEnumerableQueryHandler<T>

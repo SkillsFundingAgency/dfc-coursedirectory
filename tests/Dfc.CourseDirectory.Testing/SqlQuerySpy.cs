@@ -83,6 +83,11 @@ namespace Dfc.CourseDirectory.Testing
                 _spy.RegisterCall(query);
                 return _inner.ExecuteQuery(query);
             }
+
+            public void RegisterPostCommitAction(Action action)
+            {
+                _inner.RegisterPostCommitAction(action);
+            }
         }
     }
 }
