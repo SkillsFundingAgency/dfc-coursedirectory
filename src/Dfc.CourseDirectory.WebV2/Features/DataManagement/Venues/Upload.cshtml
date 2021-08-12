@@ -35,7 +35,9 @@
 </govuk-error-summary>
 
 <div class="govuk-grid-row">
-    <h1 class="govuk-heading-xl">Upload your venue data</h1>
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Upload your venue data</h1>
+    </div>
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" enctype="multipart/form-data">
             <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
