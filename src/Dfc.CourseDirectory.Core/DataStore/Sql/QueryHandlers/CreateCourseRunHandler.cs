@@ -76,7 +76,7 @@ DECLARE @CourseRunIds Pttcd.GuidIdTable
 
 INSERT INTO @CourseRunIds VALUES (@CourseRunId)
 
-EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @CreatedOn = @Now";
+EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @CreatedOn";
 
             var paramz = new
             {
