@@ -540,6 +540,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 CourseName = createCommand.CourseName
             });
 
+            _session.Remove("NewAddedVenue");
+            _session.Remove("Option");
+            _session.Remove(CopyCourseRunSaveViewModelSessionKey);
+
             return RedirectToAction("Published");
         }
 
