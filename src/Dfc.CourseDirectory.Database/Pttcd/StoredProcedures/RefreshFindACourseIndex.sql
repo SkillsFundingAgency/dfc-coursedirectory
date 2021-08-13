@@ -27,7 +27,7 @@ BEGIN
 			cr.CostDescription,
 			cr.DurationUnit,
 			cr.DurationValue,
-			cr.StudyMode,
+			CASE WHEN cr.DeliveryMode = 1 THEN cr.StudyMode ELSE null END StudyMode,
 			CASE WHEN cr.DeliveryMode = 1 THEN cr.AttendancePattern ELSE null END AttendancePattern,
 			CASE WHEN cr.DeliveryMode = 2 THEN 1 ELSE cr.[National] END AS [National],  -- Treat Online as National for the purposes of searching
 			v.VenueName,
