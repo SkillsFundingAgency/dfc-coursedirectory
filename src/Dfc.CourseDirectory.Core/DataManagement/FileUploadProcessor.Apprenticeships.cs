@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Validation.CourseValidation;
+using Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation;
 using FluentValidation;
-using OneOf.Types;
 
 
 namespace Dfc.CourseDirectory.Core.DataManagement
@@ -118,7 +115,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             List<CsvApprenticeshipRow> rows;
             using (var streamReader = new StreamReader(stream))
-            using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            using (var csvReader = new CsvHelper.CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
                 rows = await csvReader.GetRecordsAsync<CsvApprenticeshipRow>().ToListAsync();
             }
@@ -317,6 +314,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             public ApprenticeshipUploadRowValidator(
                 IClock clock)
             {
+                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode();
+                RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
+                RuleFor(c => c.ApprenticeshipInformation).MarketingInformation();
+                RuleFor(c => c.ApprenticeshipWebpage).ApprenticeshipWebpage();
+                RuleFor(c => c.ContactEmail).ContactEmail();
+                RuleFor(c => c.ContactPhone).ContactTelephone();
+                RuleFor(c => c.ContactUrl).ContactWebsite();
+                RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode(c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
+                RuleFor(c => c.ResolvedSubRegions).SubRegions(
+                    subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
+                    c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(
+                    c => c.ResolvedDeliveryMethod);
             }
         }
     }
