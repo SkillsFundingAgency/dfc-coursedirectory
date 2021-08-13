@@ -217,14 +217,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;
 
+
+                int.TryParse(parsedRow.StandardCode, out int standardCode);
+                int.TryParse(parsedRow.StandardVersion, out int standardVersion);
+
                 upsertRecords.Add(new UpsertApprenticeshipUploadRowsRecord()
                 {
                     RowNumber = rowNumber,
                     IsValid = rowIsValid,
                     Errors = errors,
                     ApprenticeshipId = row.ApprenticeshipId,
-                    StandardCode = int.Parse(parsedRow.StandardCode),
-                    StandardVersion = int.Parse(parsedRow.StandardVersion),
+                    StandardCode = standardCode,
+                    StandardVersion = standardVersion,
                     ApprenticeshipInformation = parsedRow.ApprenticeshipInformation,
                     ApprenticeshipWebpage = parsedRow.ApprenticeshipWebpage,
                     ContactEmail = parsedRow.ContactEmail,
