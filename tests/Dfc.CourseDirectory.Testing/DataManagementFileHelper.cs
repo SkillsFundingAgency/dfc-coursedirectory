@@ -227,5 +227,95 @@ namespace Dfc.CourseDirectory.Testing
                 lastRowNumber: rowsArray.Length + 1,
                 rows.Select((r, i) => new VenueDataUploadRowInfo(r, rowNumber: i + 2, isSupplementary: false)));
         }
+
+        public static Stream CreateApprenticeshipUploadCsvStream(Action<CsvWriter> writeRows) => CreateCsvStream(csvWriter =>
+        {
+            csvWriter.WriteField("STANDARD_CODE");
+            csvWriter.WriteField("STANDARD_VERSION");
+            csvWriter.WriteField("APPRENTICESHIP_INFORMATION");
+            csvWriter.WriteField("APPRENTICESHIP_WEBPAGE");
+            csvWriter.WriteField("CONTACT_EMAIL");
+            csvWriter.WriteField("CONTACT_PHONE");
+            csvWriter.WriteField("CONTACT_URL");
+            csvWriter.WriteField("DELIVERY_METHOD");
+            csvWriter.WriteField("VENUE");
+            csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+            csvWriter.WriteField("RADIUS");
+            csvWriter.WriteField("DELIVERY_MODE");
+            csvWriter.WriteField("NATIONAL_DELIVERY");
+            csvWriter.WriteField("SUB_REGION");
+            csvWriter.NextRecord();
+            writeRows(csvWriter);
+        });
+
+        public static Stream CreateApprenticeshipUploadCsvStream(params CsvApprenticeshipRow[] rows) => CreateCourseUploadCsvStream(csvWriter =>
+        {
+            foreach (var row in rows)
+            {
+                csvWriter.WriteField(row.StandardCode);
+                csvWriter.WriteField(row.StandardVersion);
+                csvWriter.WriteField(row.ApprenticeshipInformation);
+                csvWriter.WriteField(row.ApprenticeshipWebpage);
+                csvWriter.WriteField(row.ContactEmail);
+                csvWriter.WriteField(row.ContactPhone);
+                csvWriter.WriteField(row.ContactUrl);
+                csvWriter.WriteField(row.DeliveryMethod);
+                csvWriter.WriteField(row.Venue);
+                csvWriter.WriteField(row.YourVenueReference);
+                csvWriter.WriteField(row.Radius);
+                csvWriter.WriteField(row.DeliveryMode);
+                csvWriter.WriteField(row.NationalDelivery);
+                csvWriter.WriteField(row.SubRegion);
+                csvWriter.NextRecord();
+            }
+        });
+
+        public static Stream CreateApprenticeshipUploadCsvStream(int rowCount) => CreateApprenticeshipUploadCsvStream(CreateApprenticeshipUploadRows(rowCount).ToArray());
+
+        public static IEnumerable<CsvApprenticeshipRow> CreateApprenticeshipUploadRows(int rowCount)
+        {
+            var venueNames = new HashSet<string>();
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                // Venue names have to be unique
+                string venueName;
+                do
+                {
+                    venueName = Faker.Company.Name();
+                }
+                while (!venueNames.Add(venueName));
+
+                yield return new CsvApprenticeshipRow()
+                {
+                    Venue = venueName,
+                    StandardVersion = "1",
+                    StandardCode = "1",
+                    ApprenticeshipInformation = "",
+                    ApprenticeshipWebpage = "",
+                    ContactEmail = "",
+                    ContactPhone = "",
+                    ContactUrl = "",
+                    DeliveryMethod = "",
+                    YourVenueReference = "",
+                    Radius = "",
+                    DeliveryMode = "",
+                    NationalDelivery = "",
+                    SubRegion = ""
+                };
+            }
+        }
+
+        public static ApprenticeshipDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvApprenticeshipRow> rows)
+        {
+            var rowInfos = new List<ApprenticeshipDataUploadRowInfo>();
+
+            foreach (var row in rows)
+            {
+                var courseId = Guid.NewGuid();
+                rowInfos.Add(new ApprenticeshipDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
+            }
+            return new ApprenticeshipDataUploadRowInfoCollection(rowInfos);
+        }
     }
 }

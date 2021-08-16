@@ -198,10 +198,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             Guid providerId,
             ApprenticeshipDataUploadRowInfoCollection rows)
         {
-            var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
-
             var rowsAreValid = true;
-
+            var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+            var allRegions = await _regionCache.GetAllRegions();
             var upsertRecords = new List<UpsertApprenticeshipUploadRowsRecord>();
 
             foreach (var row in rows)
@@ -227,13 +226,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ContactEmail = parsedRow.ContactEmail,
                     ContactPhone = parsedRow.ContactPhone,
                     ContactUrl = parsedRow.ContactUrl,
-                    DeliveryMethod = parsedRow.DeliveryMethod,
+                    DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod), 
                     Venue = parsedRow.Venue,
                     YourVenueReference = parsedRow.YourVenueReference,
-                    Radius = parsedRow.Radius,
-                    DeliveryMode = parsedRow.DeliveryMode,
-                    NationalDelivery = parsedRow.NationalDelivery,
-                    SubRegions = parsedRow.SubRegion
+                    Radius = parsedRow.Radius, 
+                    DeliveryMode = ParsedCsvApprenticeshipRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode),  
+                    NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery), 
+                    SubRegions = parsedRow.SubRegion,
+                    ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
+                    ResolvedDeliveryMethod = parsedRow.ResolvedDeliveryMethod,
+                    ResolvedDeliveryMode = parsedRow.ResolvedDeliveryMode,
+                    ResolvedNationalDelivery = parsedRow.ResolvedNationalDelivery,
+                    ResolvedRadius = parsedRow.ResolvedRadius
                 });
             }
 
@@ -323,6 +327,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ContactUrl).ContactWebsite();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
+                RuleFor(c => c.YourVenueReference).YourVenueReference();
+                RuleFor(c => c.Venue).Venue(c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
                     c => c.ResolvedDeliveryMethod);

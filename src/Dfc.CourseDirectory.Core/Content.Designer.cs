@@ -61,6 +61,78 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_RADIUS_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_RADIUS_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_SUBREGIONS_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_SUBREGIONS_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Entry requirements must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH {
