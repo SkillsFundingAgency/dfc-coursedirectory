@@ -170,11 +170,11 @@ namespace Dfc.CourseDirectory.Services.Models
     {
         [Description("Undefined")]
         Undefined = 0,
-        [Description("Add a new course")]
+        [Description("Add a course")]
         Add = 1,
-        [Description("Upload a file to update your courses (bulk upload)")]
+        [Description("Upload your courses with a CSV file")]
         Upload = 2,
-        [Description("View or make changes to your published courses")]
+        [Description("View and edit courses")]
         View = 3
     }
 
