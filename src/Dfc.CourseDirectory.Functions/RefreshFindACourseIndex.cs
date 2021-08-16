@@ -25,12 +25,19 @@ namespace Dfc.CourseDirectory.Functions
             // This function exists to ensure any courses added via Data Management are added to the FAC API index.
             // (Data Management is currently the only place that doesn't synchronously update the index.)
 
+            if (timer.IsPastDue)
+            {
+                return;
+            }
+
             const int batchSize = 100;
+            const int maxRecordsPerInvocation = 10000;
 
             // Exclude course runs that have only just been created so we don't race with the background worker
             var createdBefore = _clock.UtcNow.AddHours(-1);
 
             int updated;
+            int total = 0;
 
             do
             {
@@ -43,9 +50,14 @@ namespace Dfc.CourseDirectory.Functions
                     Now = _clock.UtcNow
                 });
 
+                total += updated;
+
                 await dispatcher.Commit();
             }
-            while (updated == batchSize && !cancellationToken.IsCancellationRequested);
+            while (
+                updated == batchSize &&
+                (total + batchSize) <= maxRecordsPerInvocation &&  
+                !cancellationToken.IsCancellationRequested);
         }
     }
 }
