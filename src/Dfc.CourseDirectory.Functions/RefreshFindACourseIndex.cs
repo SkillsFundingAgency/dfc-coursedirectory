@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -19,7 +20,7 @@ namespace Dfc.CourseDirectory.Functions
 
         [FunctionName("RefreshFindACourseIndex")]
         [Singleton]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer)
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer, CancellationToken cancellationToken)
         {
             // This function exists to ensure any courses added via Data Management are added to the FAC API index.
             // (Data Management is currently the only place that doesn't synchronously update the index.)
@@ -44,7 +45,7 @@ namespace Dfc.CourseDirectory.Functions
 
                 await dispatcher.Commit();
             }
-            while (updated == batchSize);
+            while (updated == batchSize && !cancellationToken.IsCancellationRequested);
         }
     }
 }
