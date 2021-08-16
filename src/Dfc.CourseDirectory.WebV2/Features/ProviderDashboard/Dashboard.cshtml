@@ -1,5 +1,16 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard.ViewModel
 
+@if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement))
+{
+    <pttcd-notification title="New to Publish to the course directory" class="govuk-!-margin-bottom-8">
+        <p class="govuk-body">We've replaced bulk upload with data upload, allowing easier and quicker uploads for your courses, apprenticeships and venues.</p>
+        <p class="govuk-body">Courses and venue data upload will be available from Friday 20 August.  Apprenticeship data upload will be available in September 2021.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+            <a href="https://www.gov.uk/government/news/new-data-upload-facility-on-publish-to-the-course-directory" class="govuk-link" target="_blank">News and communications (opens in new tab)</a>
+        </p>
+    </pttcd-notification>
+}
+
 <vc:qa-notifications />
 
 @if (Model.PastStartDateCourseRunCount > 0)
