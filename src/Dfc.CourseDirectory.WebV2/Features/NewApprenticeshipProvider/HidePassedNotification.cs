@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -16,7 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
 
     public class Command : IRequest<CommandResponse>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class CommandViewModel : Command
@@ -26,13 +24,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
     public class CommandHandler : IRequestHandler<Command, CommandResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public CommandHandler(
             ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
         }
 
@@ -49,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
             var latestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
-                    ProviderId = request.ProviderId
+                    ProviderId = _providerContextProvider.GetProviderId()
                 });
 
             if (latestSubmission == null)

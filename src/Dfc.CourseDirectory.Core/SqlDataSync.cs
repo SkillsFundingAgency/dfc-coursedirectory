@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.Logging;
 using Polly;
 
@@ -38,16 +37,7 @@ namespace Dfc.CourseDirectory.Core
         public async Task SyncAll()
         {
             await SyncAllProviders();
-            await SyncAllApprenticeships();
         }
-
-        public Task SyncAllApprenticeships() => WithExclusiveSqlLock(
-            nameof(SyncAllApprenticeships),
-            () => _cosmosDbQueryDispatcher.ExecuteQuery(
-                new ProcessAllApprenticeships()
-                {
-                    ProcessChunk = GetSyncWithBatchingHandler<Apprenticeship>(SyncApprenticeships)
-                }));
 
         public Task SyncAllProviders() => WithExclusiveSqlLock(
             nameof(SyncAllProviders),
@@ -56,59 +46,6 @@ namespace Dfc.CourseDirectory.Core
                 {
                     ProcessChunk = GetSyncWithBatchingHandler<Provider>(SyncProviders)
                 }));
-
-        public Task SyncApprenticeship(Apprenticeship apprenticeship) => SyncApprenticeships(new[] { apprenticeship });
-
-        public Task SyncApprenticeships(IEnumerable<Apprenticeship> apprenticeships) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertApprenticeshipsFromCosmos()
-            {
-                Records = apprenticeships.Select(apprenticeship => new UpsertApprenticeshipRecord()
-                {
-                    ApprenticeshipId = apprenticeship.Id,
-                    ApprenticeshipStatus = (ApprenticeshipStatus)apprenticeship.RecordStatus,
-                    CreatedOn = apprenticeship.CreatedDate,
-                    CreatedBy = apprenticeship.CreatedBy,
-                    UpdatedOn = apprenticeship.UpdatedDate,
-                    UpdatedBy = apprenticeship.UpdatedBy,
-                    TribalApprenticeshipId = apprenticeship.ApprenticeshipId,
-                    ProviderUkprn = apprenticeship.ProviderUKPRN,
-                    ProviderId = apprenticeship.ProviderId,
-                    ApprenticeshipType = apprenticeship.ApprenticeshipType,
-                    ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle,
-                    StandardCode = apprenticeship.StandardCode,
-                    StandardVersion = apprenticeship.Version,
-                    FrameworkCode = apprenticeship.FrameworkCode,
-                    FrameworkProgType = apprenticeship.ProgType,
-                    FrameworkPathwayCode = apprenticeship.PathwayCode,
-                    MarketingInformation = apprenticeship.MarketingInformation,
-                    ApprenticeshipWebsite = apprenticeship.Url,
-                    ContactTelephone = apprenticeship.ContactTelephone,
-                    ContactEmail = apprenticeship.ContactEmail,
-                    ContactWebsite = apprenticeship.ContactWebsite,
-                    BulkUploadErrorCount = apprenticeship.BulkUploadErrors?.Count ?? 0,
-                    Locations = apprenticeship.ApprenticeshipLocations.Select(location => new UpsertApprenticeshipRecordLocation()
-                    {
-                        ApprenticeshipLocationId = location.Id,
-                        ApprenticeshipLocationStatus = (ApprenticeshipStatus)location.RecordStatus,
-                        CreatedOn = location.CreatedDate,
-                        CreatedBy = location.CreatedBy,
-                        UpdatedOn = location.UpdatedDate,
-                        UpdatedBy = location.UpdatedBy,
-                        Telephone = location.Phone,
-                        VenueId = location.VenueId,
-                        TribalApprenticeshipLocationId = location.ApprenticeshipLocationId,
-                        National = location.National,
-                        Radius = location.Radius,
-                        LocationType = location.LocationType,
-                        ApprenticeshipLocationType = location.ApprenticeshipLocationType,
-                        Name = location.Name,
-                        DeliveryModes = location.DeliveryModes,
-                        Regions = location.Regions ?? Array.Empty<string>(),
-                        LocationGuidId = location.LocationGuidId
-                    })
-                }),
-                LastSyncedFromCosmos = _clock.UtcNow
-            }));
 
         public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
 

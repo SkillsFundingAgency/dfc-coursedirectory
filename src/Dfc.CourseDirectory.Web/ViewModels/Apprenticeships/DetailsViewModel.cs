@@ -1,5 +1,4 @@
-﻿using System;
-using Dfc.CourseDirectory.Core.Models;
+﻿using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 
@@ -7,14 +6,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
     public class DetailViewModel
     {
-        public Guid Id { get; set; }
-        public int? StandardCode { get; set; }
-        public int? FrameworkCode { get; set; }
+        public int StandardCode { get; set; }
         public string ApprenticeshipTitle { get; set; }
-        public int? ProgType { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
-        public int? Version { get; set; }
-        public int? PathwayCode { get; set; }
+        public int Version { get; set; }
         public ApprenticeshipType ApprenticeshipType { get; set; }
         public ApprenticeShipPreviousPage ApprenticeshipPreviousPage { get; set; }
         public string Information { get; set; }

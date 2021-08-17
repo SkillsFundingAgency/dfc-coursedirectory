@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -12,15 +11,14 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Security;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,32 +30,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     [Authorize("Apprenticeship")]
     [SelectedProviderNeeded]
-    [RestrictApprenticeshipQAStatus(Core.Models.ApprenticeshipQAStatus.Passed)]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class ApprenticeshipsController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsCache _standardsAndFrameworksCache;
+        private readonly IProviderInfoCache _providerInfoCache;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         private ISession _session => HttpContext.Session;
 
         public ApprenticeshipsController(
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
             IStandardsCache standardsAndFrameworksCache,
-            IProviderContextProvider providerContextProvider)
+            IProviderInfoCache providerInfoCache,
+            IProviderContextProvider providerContextProvider,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+            _providerInfoCache = providerInfoCache;
             _providerContextProvider = providerContextProvider;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         [Authorize]
@@ -105,11 +109,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Items = results.Select(r => new ApprenticeShipsSearchResultItemModel
                 {
                     ApprenticeshipTitle = r.StandardName,
-                    id = r.CosmosId,
                     StandardCode = r.StandardCode,
                     Version = r.Version,
                     OtherBodyApprovalRequired = r.OtherBodyApprovalRequired,
-                    ApprenticeshipType = ApprenticeshipType.StandardCode,
+                    ApprenticeshipType = ApprenticeshipType.Standard,
                     NotionalNVQLevelv2 = r.NotionalNVQLevelv2
                 })
             });
@@ -143,29 +146,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                model.Id = request.Id;
                 model.ApprenticeshipTitle = request.ApprenticeshipTitle;
                 model.ApprenticeshipPreviousPage = request.PreviousPage;
-                model.ApprenticeshipType = request.ApprenticeshipType;
-                model.ProgType = request.ProgType;
-                model.PathwayCode = request.PathwayCode;
-                model.Version = request.Version.HasValue ? request.Version.Value : (int?)null;
+                model.StandardCode = request.StandardCode;
+                model.Version = request.Version;
                 model.NotionalNVQLevelv2 = request.NotionalNVQLevelv2;
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
                 model.Mode = mode;
-                switch (request.ApprenticeshipType)
-                {
-                    case ApprenticeshipType.StandardCode:
-                        {
-                            model.StandardCode = request.StandardCode;
-                            break;
-                        }
-                    case ApprenticeshipType.FrameworkCode:
-                        {
-                            model.FrameworkCode = request.FrameworkCode;
-                            break;
-                        }
-                }
             }
 
             if (request.ShowCancelled.HasValue)
@@ -194,14 +181,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 apprenticeship.ApprenticeshipTitle = model.ApprenticeshipTitle;
                 apprenticeship.ApprenticeshipType = model.ApprenticeshipType;
                 apprenticeship.StandardCode = model.StandardCode;
-                apprenticeship.FrameworkCode = model.FrameworkCode;
-                apprenticeship.ProgType = model.ProgType;
                 apprenticeship.MarketingInformation = model.Information;
                 apprenticeship.Url = model.Website;
                 apprenticeship.ContactTelephone = model.Telephone;
                 apprenticeship.ContactEmail = model.Email;
                 apprenticeship.ContactWebsite = model.ContactUsIUrl;
-                apprenticeship.PathwayCode = model.PathwayCode;
                 apprenticeship.NotionalNVQLevelv2 = model.NotionalNVQLevelv2;
             }
 
@@ -212,14 +196,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case ApprenticeshipMode.Add:
                     if (model.ShowCancelled.HasValue && model.ShowCancelled.Value == true)
                     {
-                        return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { Id = model.Id.ToString(), SummaryOnly = false });
+                        return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { SummaryOnly = false });
                     }
                     return RedirectToAction("Delivery", "Apprenticeships", new DeliveryRequestModel() { Mode = model.Mode });
                 case ApprenticeshipMode.EditApprenticeship:
                     return RedirectToAction("Summary", "Apprenticeships",
                         new SummaryRequestModel() { SummaryOnly = false });
                 case ApprenticeshipMode.EditYourApprenticeships:
-                    return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { Id = model.Id.ToString(), SummaryOnly = false });
+                    return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { SummaryOnly = false });
                 default:
                     return RedirectToAction("Delivery", "Apprenticeships", new DeliveryRequestModel() { Mode = model.Mode });
             }
@@ -271,36 +255,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            var location = apprenticeship.ApprenticeshipLocations.FirstOrDefault(x =>
-                x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
-
             switch (model.NationalApprenticeship)
             {
                 case NationalApprenticeship.Yes:
+                    apprenticeship.ApprenticeshipLocations.RemoveAll(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
 
-                    if (location == null)
+                    apprenticeship.ApprenticeshipLocations.Add(new ApprenticeshipLocation()
                     {
-                        apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], true));
-                    }
-                    else
-                    {
-                        apprenticeship.ApprenticeshipLocations.RemoveAll(x =>
-                            x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
-                        apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], true));
-                    }
+                        ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
+                        DeliveryModes = new List<int> { (int)ApprenticeshipDeliveryMode.EmployerAddress },
+                        Id = Guid.NewGuid(),
+                        National = true,
+                    });
 
                     _session.SetObject("selectedApprenticeship", apprenticeship);
                     return RedirectToAction("Summary", "Apprenticeships", new {});
 
                 case NationalApprenticeship.No:
-
-                    if (location != null)
-                    {
-                        apprenticeship.ApprenticeshipLocations.RemoveAll(x =>
-                            x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
-                        apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], false));
-                    }
-                    _session.SetObject("selectedApprenticeship", apprenticeship);
                     return RedirectToAction("Regions", "Apprenticeships", new {});
 
                 default:
@@ -388,21 +359,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return BadRequest();
             }
 
-            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = apprenticeshipId });
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeship { ApprenticeshipId = apprenticeshipId });
 
-            if (result == null || result.RecordStatus != (int)RecordStatus.Live)
+            if (result == null)
             {
                 return NotFound();
             }
 
-            var selectedApprenticeship = Apprenticeship.FromCosmosDbModel(result);
+            var selectedApprenticeship = Apprenticeship.FromSqlModel(result);
 
             model.Apprenticeship = selectedApprenticeship;
 
             var type = result.ApprenticeshipLocations.FirstOrDefault();
 
             model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
-                ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions)
+                ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.SubRegionIds)
                 : null;
 
             model.SummaryOnly = true;
@@ -442,7 +413,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 model.Apprenticeship = selectedApprenticeship;
                 model.Regions = model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
-                    ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
+                    ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.SubRegionIds) : null;
 
                 model.HasAllLocationTypes = model.Apprenticeship.ApprenticeshipLocations.Any(x =>
                                                 x.ApprenticeshipLocationType ==
@@ -478,11 +449,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
+            var locations = apprenticeship.ApprenticeshipLocations
+                .Select(l => new CreateApprenticeshipLocation()
+                {
+                    ApprenticeshipLocationId = l.Id,
+                    ApprenticeshipLocationType = l.ApprenticeshipLocationType,
+                    DeliveryModes = l.DeliveryModes.Cast<ApprenticeshipDeliveryMode>(),
+                    National = l.National,
+                    Radius = l.Radius,
+                    SubRegionIds = l.SubRegionIds,
+                    VenueId = l.VenueId
+                });
+
             var mode =_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
 
             if (mode == ApprenticeshipMode.EditYourApprenticeships)
             {
-                var result = await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToUpdateApprenticeship());
+                var result = await _sqlQueryDispatcher.ExecuteQuery(new UpdateApprenticeship()
+                {
+                    ApprenticeshipId = apprenticeship.id,
+                    ApprenticeshipWebsite = apprenticeship.Url,
+                    ContactEmail = apprenticeship.ContactEmail,
+                    ContactTelephone = apprenticeship.ContactTelephone,
+                    ContactWebsite = apprenticeship.ContactWebsite,
+                    UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                    UpdatedOn = _clock.UtcNow,
+                    MarketingInformation = apprenticeship.MarketingInformation,
+                    Standard = await _standardsAndFrameworksCache.GetStandard(apprenticeship.StandardCode, apprenticeship.StandardVersion),
+                    ApprenticeshipLocations = locations
+                });
 
                 return result.Match(
                     _ => RedirectToAction("Summary", "Apprenticeships"),
@@ -490,7 +485,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeship.ToCreateApprenticeship());
+                await _sqlQueryDispatcher.ExecuteQuery(new CreateApprenticeship()
+                {
+                    ApprenticeshipId = Guid.NewGuid(),
+                    ApprenticeshipWebsite = apprenticeship.Url,
+                    ContactEmail = apprenticeship.ContactEmail,
+                    ContactTelephone = apprenticeship.ContactTelephone,
+                    ContactWebsite = apprenticeship.ContactWebsite,
+                    CreatedBy = _currentUserProvider.GetCurrentUser(),
+                    CreatedOn = _clock.UtcNow,
+                    MarketingInformation = apprenticeship.MarketingInformation,
+                    ProviderId = _providerContextProvider.GetProviderId(withLegacyFallback: true),
+                    Standard = await _standardsAndFrameworksCache.GetStandard(apprenticeship.StandardCode, apprenticeship.StandardVersion),
+                    ApprenticeshipLocations = locations
+                });
 
                 return RedirectToAction("Complete", "Apprenticeships");
             }
@@ -518,7 +526,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                     {
-                        if (employerBased.Regions.Contains(subRegionItemModel.Id))
+                        if (employerBased.SubRegionIds.Contains(subRegionItemModel.Id))
                         {
                             subRegionItemModel.Checked = true;
                         }
@@ -533,28 +541,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult Regions(string[] SelectedRegions, RegionsViewModel model)
         {
-            var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            var employerBased = Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x =>
-                 x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+            apprenticeship.ApprenticeshipLocations.RemoveAll(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
 
             if (SelectedRegions.Any())
             {
-                if (employerBased != null)
+                apprenticeship.ApprenticeshipLocations.Add(new ApprenticeshipLocation()
                 {
-                    employerBased.Regions = SelectedRegions;
-                }
-                else
-                {
-                    Apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(SelectedRegions, null));
-                }
-            }
-            else
-            {
-                Apprenticeship.ApprenticeshipLocations.RemoveAll(x=>x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
+                    DeliveryModes = new List<int> { (int)ApprenticeshipDeliveryMode.EmployerAddress },
+                    Id = Guid.NewGuid(),
+                    National = false,
+                    SubRegionIds = SelectedRegions
+                });
             }
 
-            _session.SetObject("selectedApprenticeship", Apprenticeship);
+            _session.SetObject("selectedApprenticeship", apprenticeship);
 
             return RedirectToAction("Summary", "Apprenticeships");
         }
@@ -571,30 +574,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = model.LocationId.Value });
 
-            string deliveryMethod;
-            if (model.BlockRelease && model.DayRelease)
+            var deliveryModes = new List<ApprenticeshipDeliveryMode>() { ApprenticeshipDeliveryMode.EmployerAddress };
+            if (model.BlockRelease)
             {
-                deliveryMethod = "Employer address, Day release, Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.BlockRelease);
             }
-            else
+            if (model.DayRelease)
             {
-                deliveryMethod = model.DayRelease
-                    ? "Employer address, Day release"
-                    : "Employer address, Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.DayRelease);
             }
 
-            apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(
-                new DeliveryOption()
-                {
-                    Delivery = deliveryMethod,
-                    LocationId = venue.VenueId.ToString(),
-                    LocationName = venue.VenueName,
-                    PostCode = venue.Postcode,
-                    Radius = model.Radius,
-                    National = model.National,
-                    Venue = venue
-                },
-                ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
+            apprenticeship.ApprenticeshipLocations.Add(new ApprenticeshipLocation()
+            {
+                Id = Guid.NewGuid(),
+                ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
+                DeliveryModes = deliveryModes.Cast<int>().ToList(),
+                National = model.National,
+                Radius = int.Parse(model.Radius),
+                VenueId = venue.VenueId
+            });
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
 
@@ -606,11 +604,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            if (apprenticeship.ApprenticeshipLocations == null)
-            {
-                apprenticeship.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
-            }
-
             if (!model.LocationId.HasValue)
             {
                 return RedirectToAction("Summary", "Apprenticeships");
@@ -618,27 +611,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = model.LocationId.Value });
 
-            string deliveryMethod;
-            if (model.BlockRelease && model.DayRelease)
+            var deliveryModes = new List<ApprenticeshipDeliveryMode>();
+            if (model.BlockRelease)
             {
-                deliveryMethod = "Day release, Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.BlockRelease);
             }
-            else
+            if (model.DayRelease)
             {
-                deliveryMethod = model.DayRelease ? "Day release" : "Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.DayRelease);
             }
 
-            apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(
-                new DeliveryOption()
-                {
-                    Delivery = deliveryMethod,
-                    LocationId = venue.VenueId.ToString(),
-                    LocationName = venue.VenueName,
-                    PostCode = venue.Postcode,
-                    Venue = venue,
-                    Radius = _apprenticeshipSettings.Value.DefaultRadius.ToString()
-                },
-                ApprenticeshipLocationType.ClassroomBased));
+            apprenticeship.ApprenticeshipLocations.Add(new ApprenticeshipLocation()
+            {
+                ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBased,
+                DeliveryModes = deliveryModes.Cast<int>().ToList(),
+                Id = Guid.NewGuid(),
+                National = false,
+                Name = venue.VenueName,
+                Radius = _apprenticeshipSettings.Value.DefaultRadius,
+                Venue = venue,
+                VenueId = venue.VenueId
+            });
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
 
@@ -649,35 +642,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            if (apprenticeship.ApprenticeshipLocations == null)
-            {
-                apprenticeship.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
-            }
-
             var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = Guid.Parse(LocationId) });
 
-            string deliveryMethod;
-            if (BlockRelease && DayRelease)
+            var deliveryModes = new List<ApprenticeshipDeliveryMode>();
+            if (BlockRelease)
             {
-                deliveryMethod = "Day release, Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.BlockRelease);
             }
-            else
+            if (DayRelease)
             {
-                deliveryMethod = DayRelease ? "Day release" : "Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.DayRelease);
             }
 
-            apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(
-                new DeliveryOption()
-                {
-                    Delivery = deliveryMethod,
-                    LocationId = venue.VenueId.ToString(),
-                    LocationName = venue.VenueName,
-                    PostCode = venue.Postcode,
-                    Venue = venue,
-                    Radius = _apprenticeshipSettings.Value.DefaultRadius.ToString()
-
-                },
-                ApprenticeshipLocationType.ClassroomBased));
+            apprenticeship.ApprenticeshipLocations.Add(new ApprenticeshipLocation()
+            {
+                ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBased,
+                DeliveryModes = deliveryModes.Cast<int>().ToList(),
+                Id = Guid.NewGuid(),
+                National = false,
+                Name = venue.VenueName,
+                Radius = _apprenticeshipSettings.Value.DefaultRadius,
+                Venue = venue,
+                VenueId = venue.VenueId
+            });
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
 
@@ -690,32 +677,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var venue = await _sqlQueryDispatcher.ExecuteQuery(new GetVenue() { VenueId = Guid.Parse(LocationId) });
 
-            string deliveryMethod;
-            if (BlockRelease && DayRelease)
+            var deliveryModes = new List<ApprenticeshipDeliveryMode>() { ApprenticeshipDeliveryMode.EmployerAddress };
+            if (BlockRelease)
             {
-                deliveryMethod = "Employers address, Day release, Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.BlockRelease);
             }
-            else
+            if (DayRelease)
             {
-                deliveryMethod = DayRelease ? "Employers address, Day release" : "Employers address, Block release";
+                deliveryModes.Add(ApprenticeshipDeliveryMode.DayRelease);
             }
 
             var radiusValue = National
                 ? _apprenticeshipSettings.Value.NationalRadius
                 : Convert.ToInt32(Radius);
 
-            apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(
-                new DeliveryOption()
-                {
-                    Delivery = deliveryMethod,
-                    LocationId = venue.VenueId.ToString(),
-                    LocationName = venue.VenueName,
-                    PostCode = venue.Postcode,
-                    National = National,
-                    Radius = radiusValue.ToString(),
-                    Venue = venue
-                },
-                ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
+            apprenticeship.ApprenticeshipLocations.Add(new ApprenticeshipLocation()
+            {
+                Id = Guid.NewGuid(),
+                ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
+                DeliveryModes = deliveryModes.Cast<int>().ToList(),
+                National = National,
+                Radius = radiusValue,
+                VenueId = venue.VenueId
+            });
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
 
@@ -798,21 +782,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (theModel.ApprenticeshipDelete)
             {
                 case ApprenticeshipDelete.Delete:
-                    //call delete service
-                    var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = theModel.ApprenticeshipId });
-
-                    if (result != null)
+                    var deleteResult = await _sqlQueryDispatcher.ExecuteQuery(new DeleteApprenticeship()
                     {
-                        var getApprenticehipByIdResult = Apprenticeship.FromCosmosDbModel(result);
+                        ApprenticeshipId = theModel.ApprenticeshipId,
+                        DeletedBy = _currentUserProvider.GetCurrentUser(),
+                        DeletedOn = _clock.UtcNow
+                    });
 
-                        getApprenticehipByIdResult.RecordStatus = ApprenticeshipStatus.Deleted;
-
-                        var updateResult = await _cosmosDbQueryDispatcher.ExecuteQuery(getApprenticehipByIdResult.ToUpdateApprenticeship());
-
-                        if (updateResult.Value is Success)
-                        {
-                            return RedirectToAction("DeleteConfirm", "Apprenticeships", new { ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });
-                        }
+                    if (deleteResult.Value is Success)
+                    {
+                        return RedirectToAction("DeleteConfirm", "Apprenticeships", new { ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });
                     }
                     return RedirectToAction("Index", "ProviderApprenticeships");
 
@@ -885,7 +864,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             SelectRegionModel selectRegionModel = new SelectRegionModel();
             Dictionary<string, List<string>> regionsAndSubregions = new Dictionary<string, List<string>>();
 
-            foreach (var subRegionCode in subRegions)
+            foreach (var subRegionCode in subRegions ?? Array.Empty<string>())
             {
                 var isRegionCode = selectRegionModel.RegionItems.FirstOrDefault(x => String.Equals(x.Id, subRegionCode, StringComparison.CurrentCultureIgnoreCase));
 
@@ -923,111 +902,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return subregions.Contains(subregionName);
         }
 
-        private ApprenticeshipLocation CreateDeliveryLocation(DeliveryOption loc, ApprenticeshipLocationType apprenticeshipLocationType)
-        {
-            List<int> deliveryModes = new List<int>();
-
-            ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-            {
-                Name = loc.LocationName,
-                CreatedDate = DateTime.Now,
-                CreatedBy =
-                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                ApprenticeshipLocationType = apprenticeshipLocationType,
-                Id = Guid.NewGuid(),
-                LocationType = LocationType.Venue,
-                RecordStatus = ApprenticeshipStatus.Live,
-                Regions = loc.Regions,
-                National = loc.National ?? false,
-                UpdatedDate = DateTime.Now,
-                UpdatedBy =
-                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-
-            };
-            if (loc.Venue != null)
-            {
-                apprenticeshipLocation.VenueId = loc.Venue.VenueId;
-                apprenticeshipLocation.Address = new ApprenticeshipLocationAddress
-                {
-                    Address1 = loc.Venue.AddressLine1,
-                    Address2 = loc.Venue.AddressLine2,
-                    Town = loc.Venue.Town,
-                    County = loc.Venue.County,
-                    Postcode = loc.Venue.Postcode,
-                    Email = loc.Venue.Email,
-                    Phone = loc.Venue.Telephone,
-                    Website = loc.Venue.Website,
-                    Latitude = Convert.ToDecimal(loc.Venue.Latitude),
-                    Longitude = Convert.ToDecimal(loc.Venue.Longitude)
-                };
-            }
-            if (!string.IsNullOrEmpty(loc.LocationId))
-            {
-                apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
-            }
-
-            if (!string.IsNullOrEmpty(loc.Radius))
-            {
-                apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
-            }
-
-            if (!string.IsNullOrEmpty(loc.Delivery))
-            {
-                var delModes = loc.Delivery.Split(",");
-
-                foreach (var delMode in delModes)
-                {
-                    if (delMode.ToLower().Trim() ==
-                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
-                    {
-                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
-                    }
-
-                    if (delMode.ToLower().Trim() == @WebHelper
-                            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                    {
-                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                    }
-                }
-            }
-
-            if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased || apprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
-            {
-                deliveryModes.Add((int)ApprenticeShipDeliveryLocation.EmployerAddress);
-            }
-
-            apprenticeshipLocation.DeliveryModes = deliveryModes;
-
-            return apprenticeshipLocation;
-        }
-
         private async Task<Apprenticeship> MapToApprenticeship(DetailViewModel model, int ukprn, List<ApprenticeshipLocation> locations)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = ukprn });
+            var providerId = (await _providerInfoCache.GetProviderIdForUkprn(ukprn)).Value;
 
             return new Apprenticeship
             {
-                ProviderId = provider.Id,
-                ProviderUKPRN = ukprn,
+                ProviderId = providerId,
+                ProviderUkprn = ukprn,
                 ApprenticeshipTitle = model.ApprenticeshipTitle,
                 ApprenticeshipType = model.ApprenticeshipType,
                 StandardCode = model.StandardCode,
-                FrameworkCode = model.FrameworkCode,
-                ProgType = model.ProgType,
                 MarketingInformation = model.Information,
                 Url = model.Website,
                 ContactTelephone = model.Telephone,
                 ContactEmail = model.Email,
                 ContactWebsite = model.ContactUsIUrl,
                 CreatedDate = DateTime.Now,
-                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                RecordStatus = ApprenticeshipStatus.Live,
-                PathwayCode = model.PathwayCode,
-                Version = model.Version ?? (int?)null,
+                StandardVersion = model.Version,
                 NotionalNVQLevelv2 = model.NotionalNVQLevelv2,
                 ApprenticeshipLocations = locations,
                 UpdatedDate = DateTime.UtcNow,
-                UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
             };
         }
 
@@ -1038,26 +933,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle,
                 ApprenticeshipType = apprenticeship.ApprenticeshipType,
                 StandardCode = apprenticeship.StandardCode,
-                FrameworkCode = apprenticeship.FrameworkCode,
-                ProgType = apprenticeship.ProgType,
                 Information = apprenticeship.MarketingInformation,
                 Website = apprenticeship.Url,
                 Telephone = apprenticeship.ContactTelephone,
                 Email = apprenticeship.ContactEmail,
                 ContactUsIUrl = apprenticeship.ContactWebsite,
-                PathwayCode = apprenticeship.PathwayCode,
                 NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2,
                 Mode = mode
             };
-        }
-
-        private ApprenticeshipLocation CreateRegionLocation(string[] regions, bool? national)
-        {
-            return CreateDeliveryLocation(new DeliveryOption
-            {
-                Regions = regions,
-                National = national
-            }, ApprenticeshipLocationType.EmployerBased);
         }
     }
 }

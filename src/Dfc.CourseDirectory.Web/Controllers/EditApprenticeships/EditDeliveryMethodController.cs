@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
+using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +19,20 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class EditDeliveryMethodController : Controller
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         private ISession Session => HttpContext.Session;
 
-        public EditDeliveryMethodController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public EditDeliveryMethodController(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         [HttpGet]
@@ -42,14 +49,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = apprenticeshipId.Value });
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeship { ApprenticeshipId = apprenticeshipId.Value });
 
             if (result == null)
             {
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            var apprenticeship = Apprenticeship.FromCosmosDbModel(result);
+            var apprenticeship = Apprenticeship.FromSqlModel(result);
 
             if (apprenticeship.ApprenticeshipLocations == null)
             {
@@ -68,26 +75,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
         {
             if (model.ApprenticeshipId.HasValue)
             {
-                var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipById { ApprenticeshipId = model.ApprenticeshipId.Value });
-                var apprenticeshipForEdit = Apprenticeship.FromCosmosDbModel(result);
+                var result = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeship { ApprenticeshipId = model.ApprenticeshipId.Value });
 
-                if (apprenticeshipForEdit != null)
+                await _sqlQueryDispatcher.ExecuteQuery(new UpdateApprenticeship()
                 {
-                    apprenticeshipForEdit.MarketingInformation = model?.Information;
-                    apprenticeshipForEdit.ContactEmail = model?.Email;
-                    apprenticeshipForEdit.ContactWebsite = model?.WebSite;
-                    apprenticeshipForEdit.ContactTelephone = model?.Telephone;
-                    apprenticeshipForEdit.Url = model?.ContactUsURL;
-                    apprenticeshipForEdit.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
-                    apprenticeshipForEdit.UpdatedDate = DateTime.Now;
-                    apprenticeshipForEdit.BulkUploadErrors = new List<BulkUploadError> { };
-                    if (apprenticeshipForEdit.BulkUploadErrors.Count() == 0)
-                    {
-                        apprenticeshipForEdit.RecordStatus = ApprenticeshipStatus.BulkUploadReadyToGoLive;
-                    }
-
-                    await _cosmosDbQueryDispatcher.ExecuteQuery(apprenticeshipForEdit.ToUpdateApprenticeship());
-                }
+                    ApprenticeshipId = result.ApprenticeshipId,
+                    ApprenticeshipLocations = result.ApprenticeshipLocations.Select(CreateApprenticeshipLocation.FromModel),
+                    ApprenticeshipWebsite = model.ContactUsURL,
+                    ContactEmail = model.Email,
+                    ContactTelephone = model.Telephone,
+                    ContactWebsite = model.WebSite,
+                    MarketingInformation = model.Information,
+                    Standard = result.Standard,
+                    UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                    UpdatedOn = _clock.UtcNow
+                });
 
                 return RedirectToAction("Index", "PublishApprenticeships");
             }

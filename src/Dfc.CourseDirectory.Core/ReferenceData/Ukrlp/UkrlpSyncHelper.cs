@@ -226,11 +226,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
                 if (deactivating)
                 {
-                    await _cosmosDbQueryDispatcher.ExecuteQuery(new ArchiveApprenticeshipsForProvider() { Ukprn = ukprn });
-
                     using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                     {
                         await sqlDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
+                        await sqlDispatcher.ExecuteQuery(new DeleteApprenticeshipsForProvider() { ProviderId = providerId });
                         await sqlDispatcher.Commit();
                     }
                 }

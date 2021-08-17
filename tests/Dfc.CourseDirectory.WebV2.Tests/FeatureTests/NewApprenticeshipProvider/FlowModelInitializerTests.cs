@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
@@ -45,8 +44,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 website: website,
                 locations: new[]
                 {
-                    CreateApprenticeshipLocation.CreateRegions(regions)
-                })).Id;
+                    CreateApprenticeshipLocation.CreateRegionalEmployerBased(regions)
+                })).ApprenticeshipId;
 
             var standardsAndFrameworksCache = new StandardsCache(CosmosDbQueryDispatcher.Object);
 
@@ -59,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher);
 
                 // Act
                 var model = await initializer.Initialize(provider.ProviderId);
@@ -112,8 +111,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 website: website,
                 locations: new[]
                 {
-                    CreateApprenticeshipLocation.CreateNational()
-                })).Id;
+                    CreateApprenticeshipLocation.CreateNationalEmployerBased()
+                })).ApprenticeshipId;
 
             var standardsAndFrameworksCache = new StandardsCache(CosmosDbQueryDispatcher.Object);
 
@@ -126,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher);
 
                 // Act
                 var model = await initializer.Initialize(provider.ProviderId);
@@ -160,7 +159,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher);
 
                 // Act
                 var model = await initializer.Initialize(provider.ProviderId);
@@ -213,12 +212,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 website: website,
                 locations: new[]
                 {
-                    CreateApprenticeshipLocation.CreateNational(),
-                    CreateApprenticeshipLocation.CreateFromVenue(
-                        venue,
+                    CreateApprenticeshipLocation.CreateNationalEmployerBased(),
+                    CreateApprenticeshipLocation.CreateClassroomBased(
+                        new[] { deliveryMode },
                         radius,
-                        new[] { deliveryMode })
-                })).Id;
+                        venue.VenueId)
+                })).ApprenticeshipId;
 
             var standardsAndFrameworksCache = new StandardsCache(CosmosDbQueryDispatcher.Object);
 
@@ -231,7 +230,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher);
 
                 // Act
                 var model = await initializer.Initialize(provider.ProviderId);
@@ -285,8 +284,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 website: website,
                 locations: new[]
                 {
-                    CreateApprenticeshipLocation.CreateNational()
-                })).Id;
+                    CreateApprenticeshipLocation.CreateNationalEmployerBased()
+                })).ApprenticeshipId;
 
             var standardsAndFrameworksCache = new StandardsCache(CosmosDbQueryDispatcher.Object);
 
@@ -299,7 +298,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
-                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher, standardsAndFrameworksCache);
+                var initializer = new FlowModelInitializer(CosmosDbQueryDispatcher.Object, dispatcher);
 
                 // Act
                 var model = await initializer.Initialize(provider.ProviderId);

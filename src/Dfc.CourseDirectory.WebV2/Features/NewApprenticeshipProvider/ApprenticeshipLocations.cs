@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -13,12 +12,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 {
     public class Query : IRequest<Command>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
-        public Guid ProviderId { get; set; }
         public ApprenticeshipLocationType? LocationType { get; set; }
     }
 
@@ -38,7 +35,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var command = new Command()
             {
                 LocationType = _flow.State.ApprenticeshipLocationType,
-                ProviderId = request.ProviderId
             };
             return Task.FromResult(command);
         }

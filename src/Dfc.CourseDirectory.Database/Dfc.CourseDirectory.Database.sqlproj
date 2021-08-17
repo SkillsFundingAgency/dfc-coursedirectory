@@ -305,6 +305,8 @@
     <Build Include="Pttcd\Indexes\IX_FindACourseIndexCampaignCodes_ProviderLearnAimRef.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseRuns_CreatedOn.sql" />
     <Build Include="Pttcd\Indexes\IX_FindACourseIndex_CourseRunId.sql" />
+    <Build Include="Pttcd\Types\ApprenticeshipLocationsTable.sql" />
+    <Build Include="Pttcd\Types\ApprenticeshipLocationSubRegionsTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
