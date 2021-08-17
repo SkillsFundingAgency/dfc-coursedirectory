@@ -142,30 +142,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        //[Fact]
-        //public async Task Post_ValidCoursesFile_CreatesRecordAndRedirectsToInProgress()
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider();
-        //    var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
-
-        //    var csvStream = DataManagementFileHelper.CreA(learnAimRef, rowCount: 1);
-        //    var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
-
-        //    // Act
-        //    var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
-
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        //    response.Headers.Location.Should().Be($"/data-upload/courses/in-progress?providerId={provider.ProviderId}");
-
-        //    SqlQuerySpy.VerifyQuery<CreateCourseUpload, Success>(q =>
-        //        q.CreatedBy.UserId == User.UserId &&
-        //        q.CreatedOn == Clock.UtcNow &&
-        //        q.ProviderId == provider.ProviderId);
-        //}
-
-
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
