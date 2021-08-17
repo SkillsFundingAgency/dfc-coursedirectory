@@ -90,6 +90,24 @@ namespace Dfc.CourseDirectory.Core {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED {
             get {
                 return ResourceManager.GetString("ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED", resourceCulture);
@@ -126,9 +144,54 @@ namespace Dfc.CourseDirectory.Core {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string ERROR_APPRENTICESHIP_SUBREGIONS_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_SUBREGIONS_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_VENUE_NAME_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_VENUE_NAME_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED {
             get {
                 return ResourceManager.GetString("ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_VENUE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_VENUE_REQUIRED", resourceCulture);
             }
         }
         

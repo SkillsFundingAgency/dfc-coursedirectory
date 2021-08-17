@@ -126,6 +126,12 @@
   <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED" xml:space="preserve">
     <value />
   </data>
+  <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
+    <value />
+  </data>
   <data name="ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED" xml:space="preserve">
     <value />
   </data>
@@ -138,7 +144,22 @@
   <data name="ERROR_APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED" xml:space="preserve">
     <value />
   </data>
+  <data name="ERROR_APPRENTICESHIP_SUBREGIONS_REQUIRED" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NAME_INVALID" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF" xml:space="preserve">
+    <value />
+  </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_REQUIRED" xml:space="preserve">
     <value />
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">

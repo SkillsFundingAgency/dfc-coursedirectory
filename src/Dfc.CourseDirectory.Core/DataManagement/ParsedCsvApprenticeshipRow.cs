@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using Mapster;
@@ -19,14 +20,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
         }
 
-        public static ParsedCsvApprenticeshipRow FromCsvApprenticeshipRow(CsvApprenticeshipRow row)
+        public static ParsedCsvApprenticeshipRow FromCsvApprenticeshipRow(CsvApprenticeshipRow row, IEnumerable<Region> allRegions)
         {
             var parsedRow = row.Adapt(new ParsedCsvApprenticeshipRow());
             parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(row.DeliveryMode);
             parsedRow.ResolvedDeliveryMethod = ResolveDeliveryMethod(row.DeliveryMethod);
             parsedRow.ResolvedNationalDelivery = ResolveNationalDelivery(row.NationalDelivery);
             parsedRow.ResolvedRadius = ResolveRadius(row.Radius);
-
+            parsedRow.ResolvedSubRegions = ResolveSubRegions(parsedRow.SubRegion, allRegions);
             return parsedRow;
         }
 
@@ -44,6 +45,37 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return radius;
             return null;
         }
+
+        public static IReadOnlyCollection<Region> ResolveSubRegions(string value, IEnumerable<Region> allRegions)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
+            var comparer = StringComparer.OrdinalIgnoreCase;
+
+            var allSubRegions = allRegions
+                .SelectMany(sr => sr.SubRegions)
+                .ToDictionary(sr => sr.Name, sr => sr, comparer);
+
+            var subRegionNames = value
+                .Split(SubRegionDelimiter, StringSplitOptions.RemoveEmptyEntries)
+                .Select(v => v.Trim())
+                .ToArray();
+
+            var matchedRegions = subRegionNames
+                .SelectMany(v => allSubRegions.TryGetValue(v, out var sr) ? new[] { sr } : Array.Empty<Region>())
+                .ToArray();
+
+            if (subRegionNames.Length != matchedRegions.Length)
+            {
+                return null;
+            }
+
+            return matchedRegions;
+        }
+
 
         public static ApprenticeshipDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
         {

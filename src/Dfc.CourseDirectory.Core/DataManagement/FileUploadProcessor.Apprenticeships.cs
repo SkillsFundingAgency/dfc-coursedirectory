@@ -206,8 +206,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             foreach (var row in rows)
             {
                 var rowNumber = row.RowNumber;;
-                var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row.Data);
-                var validator = new ApprenticeshipUploadRowValidator(_clock);
+                var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row.Data, allRegions);
+                var matchedVenue = FindVenue(row, providerVenues);
+                var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId);
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
@@ -226,8 +227,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ContactEmail = parsedRow.ContactEmail,
                     ContactPhone = parsedRow.ContactPhone,
                     ContactUrl = parsedRow.ContactUrl,
-                    DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod), 
-                    Venue = parsedRow.Venue,
+                    DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod),
+                    Venue = matchedVenue?.VenueName ?? parsedRow.Venue,
                     YourVenueReference = parsedRow.YourVenueReference,
                     Radius = parsedRow.Radius, 
                     DeliveryMode = ParsedCsvApprenticeshipRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode),  
@@ -313,10 +314,66 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return uploadIsValid ? UploadStatus.ProcessedSuccessfully : UploadStatus.ProcessedWithErrors;
         }
 
+        internal Venue FindVenue(ApprenticeshipDataUploadRowInfo row, IReadOnlyCollection<Venue> providerVenues)
+        {
+            if (row.VenueIdHint.HasValue)
+            {
+                return providerVenues.Single(v => v.VenueId == row.VenueIdHint);
+            }
+
+            if (!string.IsNullOrEmpty(row.Data.YourVenueReference))
+            {
+                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
+
+                var matchedVenues = providerVenues
+                    .Where(v => RefMatches(row.Data.YourVenueReference, v))
+                    .ToArray();
+
+                if (matchedVenues.Length != 1)
+                {
+                    return null;
+                }
+
+                var venue = matchedVenues[0];
+
+                // If VenueName was provided too then it must match
+                if (!string.IsNullOrEmpty(row.Data.Venue) && !NameMatches(row.Data.Venue, venue))
+                {
+                    return null;
+                }
+
+                return venue;
+            }
+
+            if (!string.IsNullOrEmpty(row.Data.Venue))
+            {
+                // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
+
+                var matchedVenues = providerVenues
+                    .Where(v => NameMatches(row.Data.Venue, v))
+                    .ToArray();
+
+                if (matchedVenues.Length != 1)
+                {
+                    return null;
+                }
+
+                return matchedVenues[0];
+            }
+
+            return null;
+
+            static bool NameMatches(string name, Venue venue) => name.Equals(venue.VenueName, StringComparison.OrdinalIgnoreCase);
+
+            static bool RefMatches(string providerVenueRef, Venue venue) => providerVenueRef.Equals(venue.ProviderVenueRef, StringComparison.OrdinalIgnoreCase);
+        }
+
+
         internal class ApprenticeshipUploadRowValidator : AbstractValidator<ParsedCsvApprenticeshipRow>
         {
             public ApprenticeshipUploadRowValidator(
-                IClock clock)
+                IClock clock,
+                Guid? matchedVenueId)
             {
                 RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode();
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
@@ -327,7 +384,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ContactUrl).ContactWebsite();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
-                RuleFor(c => c.YourVenueReference).YourVenueReference();
+                RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.Venue, matchedVenueId);
                 RuleFor(c => c.Venue).Venue(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
@@ -335,6 +392,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(
                     c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedSubRegions).SubRegions(
+                    subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
+                    c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.Venue).VenueName(c => c.ResolvedDeliveryMethod, c => c.YourVenueReference, matchedVenueId);
             }
         }
     }

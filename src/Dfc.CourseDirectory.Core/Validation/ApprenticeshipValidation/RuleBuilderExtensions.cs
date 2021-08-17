@@ -55,12 +55,52 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 .WithMessage("Website must be a real webpage, like http://www.provider.com/apprenticeship");
 
 
-        public static void YourVenueReference<T>(this IRuleBuilderInitial<T, string> field) =>
+        public static void YourVenueReference<T>(
+          this IRuleBuilderInitial<T, string> field,
+          Func<T, ApprenticeshipLocationType?> getDeliveryMode,
+          Func<T, string> getVenueName,
+          Guid? matchedVenueId)
+        {
             field
-                .NotEmpty()
-                .WithMessage("Enter Your Venue Reference")
-                .MaximumLength(Constants.YourVenueReferenceMaxLength)
-                .WithErrorCode("APPRENTICESHIP_YOUR_VENUE_REFERENCE_MAXLENGTH");
+                .Cascade(CascadeMode.Stop)
+                .NormalizeWhitespace()
+                .Custom((v, ctx) =>
+                {
+                    var obj = (T)ctx.InstanceToValidate;
+
+                    var deliveryMode = getDeliveryMode(obj);
+                    var isSpecified = !string.IsNullOrEmpty(v);
+
+                    // Not allowed for delivery modes other than classroom based
+                    if (isSpecified && deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    {
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"));
+                        return;
+                    }
+
+                    if (deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    {
+                        return;
+                    }
+
+                    // If not specified and Venue Name isn't specified then it's required
+                    if (!isSpecified && string.IsNullOrEmpty(getVenueName(obj)))
+                    {
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_VENUE_REQUIRED"));
+                        return;
+                    }
+
+                    // If specified then it must match a venue
+                    if (isSpecified && !matchedVenueId.HasValue)
+                    {
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID"));
+                        return;
+                    }
+
+                    ValidationFailure CreateFailure(string errorCode) =>
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                });
+        }
 
 
         public static void Venue<T>(
@@ -163,6 +203,8 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                          {
                              ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED"));
                          }
+                         else
+                             return;
                      }
 
                      ValidationFailure CreateFailure(string errorCode) =>
@@ -191,7 +233,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                     var deliveryMethod = getDeliveryMethod(obj);
                     var isSpecified = subRegionsWereSpecified(obj);
 
-                    if (isSpecified && (deliveryMethod != ApprenticeshipLocationType.ClassroomBased))
+                    if (isSpecified && (deliveryMethod != ApprenticeshipLocationType.EmployerBased))
                     {
                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED"));
                     }
@@ -203,6 +245,59 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                     {
                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_SUBREGIONS_INVALID"));
                     }
+
+                    if(!isSpecified && (v == null || v.Count == 0) && deliveryMethod == ApprenticeshipLocationType.EmployerBased)
+                    {
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_SUBREGIONS_REQUIRED"));
+                    }
+
+                    ValidationFailure CreateFailure(string errorCode) =>
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                });
+        }
+
+        public static void VenueName<T>(
+            this IRuleBuilderInitial<T, string> field,
+            Func<T, ApprenticeshipLocationType?> getDeliveryMethod,
+            Func<T, string> getProviderVenueRef,
+            Guid? matchedVenueId)
+        {
+            field
+                .NormalizeWhitespace()
+                .Custom((v, ctx) =>
+                {
+                    var obj = (T)ctx.InstanceToValidate;
+
+                    var deliveryMode = getDeliveryMethod(obj);
+                    var isSpecified = !string.IsNullOrEmpty(v);
+
+                    // Not allowed for delivery modes other than classroom based
+                    if (isSpecified && deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    {
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED"));
+                        return;
+                    }
+
+                    if (deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    {
+                        return;
+                    }
+
+                    if (isSpecified && !matchedVenueId.HasValue)
+                    {
+                        // We don't want both a ref and a name but if the ref resolves a venue and that venue's name
+                        // matches this name then we let it go. If it doesn't match then yield an error.
+                        if (!string.IsNullOrEmpty(getProviderVenueRef(obj)))
+                        {
+                            ctx.AddFailure(CreateFailure("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF"));
+                            return;
+                        }
+
+                        // Couldn't find a match from name
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_VENUE_NAME_INVALID"));
+                        return;
+                    }
+
                     ValidationFailure CreateFailure(string errorCode) =>
                         ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                 });
