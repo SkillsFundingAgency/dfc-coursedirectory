@@ -33,5 +33,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string DeliveryMode { get; set; }
         public string NationalDelivery { get; set; }
         public string SubRegions { get; set; }
+        public ApprenticeshipDeliveryMode? ResolvedDeliveryMode { get; set; }
+        public ApprenticeshipLocationType? ResolvedDeliveryMethod { get; set; }
+        public IEnumerable<string> ResolvedSubRegions { get; set; }
+        public bool? ResolvedNationalDelivery { get; set; }
+        public int? ResolvedRadius { get; set; }
     }
 }

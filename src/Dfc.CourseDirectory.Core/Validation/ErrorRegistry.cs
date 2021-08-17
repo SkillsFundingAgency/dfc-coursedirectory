@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CourseConstants = Dfc.CourseDirectory.Core.Validation.CourseValidation.Constants;
 using VenueConstants = Dfc.CourseDirectory.Core.Validation.VenueValidation.Constants;
+using ApprenticeshipConstants = Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation.Constants;
 
 namespace Dfc.CourseDirectory.Core.Validation
 {
@@ -74,7 +75,25 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("VENUE_TOWN_FORMAT"),
             new Error("VENUE_TOWN_MAXLENGTH", VenueConstants.TownMaxLength),
             new Error("VENUE_TOWN_REQUIRED"),
-            new Error("VENUE_WEBSITE_FORMAT")
+            new Error("VENUE_WEBSITE_FORMAT"),
+            new Error("APPRENTICESHIP_DELIVERY_MODE_REQUIRED"),
+            new Error("APPRENTICESHIP_DELIVERY_METHOD_REQUIRED"),
+            new Error("APPRENTICESHIP_YOUR_VENUE_REFERENCE_MAXLENGTH", ApprenticeshipConstants.YourVenueReferenceMaxLength),
+            new Error("APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK"),
+            new Error("APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_RADIUS_REQUIRED"),
+            new Error("APPRENTICESHIP_RADIUS_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_VENUE_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_SUBREGIONS_INVALID"),
+            new Error("APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_SUBREGIONS_REQUIRED"),
+            new Error("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_VENUE_NAME_INVALID"),
+            new Error("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF"),
+            new Error("APPRENTICESHIP_VENUE_REQUIRED"),
+            new Error("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID")
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 
