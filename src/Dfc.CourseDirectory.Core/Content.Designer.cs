@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Delivery Mode must be Day Release or Block Release.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK {
             get {
@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Delivery mode not allowed.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED {
             get {
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove National Delivery.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED {
             get {
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Enter a Venue reference.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID {
             get {
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove Venue Reference.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED {
             get {
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove Radius.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED {
             get {
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Enter a Radius.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_RADIUS_REQUIRED {
             get {
@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Enter a real Sub region.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_SUBREGIONS_INVALID {
             get {
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove Sub Regions.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED {
             get {
@@ -142,7 +142,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Select at least one sub region.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_SUBREGIONS_REQUIRED {
             get {
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must enter a Venue that is in Publish to the course directory.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_NAME_INVALID {
             get {
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove Venue name.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED {
             get {
@@ -169,7 +169,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove Venue name.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF {
             get {
@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to You must remove Venue name.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED {
             get {
@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Select a venue.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_REQUIRED {
             get {

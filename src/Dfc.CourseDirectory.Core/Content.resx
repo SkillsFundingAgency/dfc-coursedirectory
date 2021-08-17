@@ -118,49 +118,49 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK" xml:space="preserve">
-    <value />
+    <value>Delivery Mode must be Day Release or Block Release</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>Delivery mode not allowed</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>You must remove National Delivery</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
-    <value />
+    <value>Enter a Venue reference</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>You must remove Venue Reference</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>You must remove Radius</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_RADIUS_REQUIRED" xml:space="preserve">
-    <value />
+    <value>Enter a Radius</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_SUBREGIONS_INVALID" xml:space="preserve">
-    <value />
+    <value>Enter a real Sub region</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>You must remove Sub Regions</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_SUBREGIONS_REQUIRED" xml:space="preserve">
-    <value />
+    <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_NAME_INVALID" xml:space="preserve">
-    <value />
+    <value>You must enter a Venue that is in Publish to the course directory</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>You must remove Venue name</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF" xml:space="preserve">
-    <value />
+    <value>You must remove Venue name</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED" xml:space="preserve">
-    <value />
+    <value>You must remove Venue name</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_REQUIRED" xml:space="preserve">
-    <value />
+    <value>Select a venue</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove attendance pattern</value>
