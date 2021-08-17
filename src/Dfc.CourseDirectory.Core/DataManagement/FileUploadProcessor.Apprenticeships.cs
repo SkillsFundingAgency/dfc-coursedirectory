@@ -378,7 +378,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode();
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
                 RuleFor(c => c.ApprenticeshipInformation).MarketingInformation();
-                RuleFor(c => c.ApprenticeshipWebpage).ApprenticeshipWebpage();
+                RuleFor(c => c.ApprenticeshipWebpage).Website();
                 RuleFor(c => c.ContactEmail).ContactEmail();
                 RuleFor(c => c.ContactPhone).ContactTelephone();
                 RuleFor(c => c.ContactUrl).ContactWebsite();

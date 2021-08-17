@@ -49,17 +49,11 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 .NotNull()
                     .WithMessage("Enter standard version");
 
-        public static void ApprenticeshipWebpage<T>(this IRuleBuilderInitial<T, string> field) =>
-            field
-            .Apply(Rules.Website)
-                .WithMessage("Website must be a real webpage, like http://www.provider.com/apprenticeship");
-
-
         public static void YourVenueReference<T>(
-          this IRuleBuilderInitial<T, string> field,
-          Func<T, ApprenticeshipLocationType?> getDeliveryMode,
-          Func<T, string> getVenueName,
-          Guid? matchedVenueId)
+              this IRuleBuilderInitial<T, string> field,
+              Func<T, ApprenticeshipLocationType?> getDeliveryMode,
+              Func<T, string> getVenueName,
+              Guid? matchedVenueId)
         {
             field
                 .Cascade(CascadeMode.Stop)
@@ -246,7 +240,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_SUBREGIONS_INVALID"));
                     }
 
-                    if(!isSpecified && (v == null || v.Count == 0) && deliveryMethod == ApprenticeshipLocationType.EmployerBased)
+                    if (!isSpecified && (v == null || v.Count == 0) && deliveryMethod == ApprenticeshipLocationType.EmployerBased)
                     {
                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_SUBREGIONS_REQUIRED"));
                     }
