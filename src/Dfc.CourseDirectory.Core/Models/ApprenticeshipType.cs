@@ -2,7 +2,7 @@
 {
     public enum ApprenticeshipType
     {
-        StandardCode = 1,
-        FrameworkCode = 2
+        Standard = 1,
+        Framework = 2
     }
 }

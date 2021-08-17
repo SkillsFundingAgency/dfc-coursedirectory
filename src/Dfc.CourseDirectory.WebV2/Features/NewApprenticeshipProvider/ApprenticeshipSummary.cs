@@ -5,8 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -17,13 +15,11 @@ using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
 {
     public class Query : IRequest<OneOf<ModelWithErrors<ViewModel>, ViewModel>>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class ViewModel
@@ -57,7 +53,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class CompleteCommand : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Handler :
@@ -66,28 +61,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IRegionCache _regionCache;
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly IProviderInfoCache _providerInfoCache;
 
         public Handler(
             MptxInstanceContext<FlowModel> flow,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IRegionCache regionCache,
+            IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
-            IClock clock,
-            IProviderInfoCache providerInfoCache)
+            IClock clock)
         {
             _flow = flow;
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _regionCache = regionCache;
+            _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
-            _providerInfoCache = providerInfoCache;
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, ViewModel>> Handle(
@@ -96,10 +88,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         {
             ValidateFlowState();
 
-            var providerId = request.ProviderId;
-            var provider = await _providerInfoCache.GetProviderInfo(providerId);
+            var providerId = _providerContextProvider.GetProviderId();
 
-            ViewModel vm = await CreateViewModel(provider);
+            ViewModel vm = await CreateViewModel(providerId);
 
             var validator = new CompleteValidator();
             var validationResult = await validator.ValidateAsync(_flow.State);
@@ -120,15 +111,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         {
             ValidateFlowState();
 
-            var providerId = request.ProviderId;
-            var provider = await _providerInfoCache.GetProviderInfo(providerId);
+            var providerId = _providerContextProvider.GetProviderId();
 
             var validator = new CompleteValidator();
             var validationResult = await validator.ValidateAsync(_flow.State);
 
             if (!validationResult.IsValid)
             {
-                var vm = await CreateViewModel(provider);
+                var vm = await CreateViewModel(providerId);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
@@ -136,7 +126,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var now = _clock.UtcNow;
 
             var apprenticeshipId = _flow.State.ApprenticeshipId.GetValueOrDefault(Guid.NewGuid());
-            var providerUkprn = provider.Ukprn;
 
             var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByProvider()
@@ -144,50 +133,44 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     ProviderId = providerId
                 });
 
-            var locations = CreateLocations(providerVenues, providerUkprn);
+            var locations = CreateLocations();
 
             if (_flow.State.ApprenticeshipId.HasValue)
             {
                 // Update existing apprenticeship
-                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                await _sqlQueryDispatcher.ExecuteQuery(
                     new UpdateApprenticeship()
                     {
-                        ApprenticeshipLocations = locations,
-                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandard.StandardName,
-                        ApprenticeshipType = ApprenticeshipType.StandardCode,
+                        ApprenticeshipId = apprenticeshipId,
+                        MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
+                        ApprenticeshipWebsite = _flow.State.ApprenticeshipWebsite,
                         ContactEmail = _flow.State.ApprenticeshipContactEmail,
                         ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
                         ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
+                        ApprenticeshipLocations = locations,
                         UpdatedBy = currentUser,
-                        UpdatedDate = now,
-                        Id = _flow.State.ApprenticeshipId.Value,
-                        MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                        ProviderUkprn = providerUkprn,
-                        Standard = _flow.State.ApprenticeshipStandard,
-                        Url = _flow.State.ApprenticeshipWebsite
+                        UpdatedOn = now,
+                        Standard = _flow.State.ApprenticeshipStandard
                     });
             }
             else
             {
                 // Create apprenticeship
-                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                await _sqlQueryDispatcher.ExecuteQuery(
                     new CreateApprenticeship()
                     {
-                        ApprenticeshipLocations = locations,
-                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandard.StandardName,
-                        ApprenticeshipType = ApprenticeshipType.StandardCode,
+                        ApprenticeshipId = apprenticeshipId,
+                        ProviderId = providerId,
+                        MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
+                        ApprenticeshipWebsite = _flow.State.ApprenticeshipWebsite,
                         ContactEmail = _flow.State.ApprenticeshipContactEmail,
                         ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
                         ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
-                        CreatedByUser = currentUser,
-                        CreatedDate = now,
-                        Id = apprenticeshipId,
-                        MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                        ProviderId = request.ProviderId,
-                        ProviderUkprn = providerUkprn,
+                        ApprenticeshipLocations = locations,
+                        Status = ApprenticeshipStatus.Pending,
+                        CreatedBy = currentUser,
+                        CreatedOn = now,
                         Standard = _flow.State.ApprenticeshipStandard,
-                        Url = _flow.State.ApprenticeshipWebsite,
-                        Status = 2  // Pending
                     });
             }
 
@@ -195,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             await _sqlQueryDispatcher.ExecuteQuery(
                 new CreateApprenticeshipQASubmission()
                 {
-                    ProviderId = request.ProviderId,
+                    ProviderId = providerId,
                     Apprenticeships = new List<CreateApprenticeshipQASubmissionApprenticeship>()
                     {
                         new CreateApprenticeshipQASubmissionApprenticeship()
@@ -218,7 +201,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                                         new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocation(
                                             new CreateApprenticeshipQASubmissionApprenticeshipEmployerLocationRegions()
                                             {
-                                                SubRegionIds = l.Regions.ToList()
+                                                SubRegionIds = l.SubRegionIds.ToArray()
                                             })),
                                 _ => throw new NotSupportedException()
                             }).ToList()
@@ -232,7 +215,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             await _sqlQueryDispatcher.ExecuteQuery(
                 new SetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = request.ProviderId,
+                    ProviderId = providerId,
                     ApprenticeshipQAStatus = ApprenticeshipQAStatus.Submitted
                 });
 
@@ -241,9 +224,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
 
-            IEnumerable<CreateApprenticeshipLocation> CreateLocations(
-                IReadOnlyCollection<Venue> providerVenues,
-                int providerUkprn)
+            IEnumerable<CreateApprenticeshipLocation> CreateLocations()
             {
                 var locations = new List<CreateApprenticeshipLocation>();
 
@@ -252,40 +233,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 if (locationType.HasFlag(ApprenticeshipLocationType.EmployerBased))
                 {
                     locations.Add(_flow.State.ApprenticeshipIsNational.Value ?
-                        CreateApprenticeshipLocation.CreateNational() :
-                        CreateApprenticeshipLocation.CreateRegions(_flow.State.ApprenticeshipLocationSubRegionIds));
+                        CreateApprenticeshipLocation.CreateNationalEmployerBased() :
+                        CreateApprenticeshipLocation.CreateRegionalEmployerBased(_flow.State.ApprenticeshipLocationSubRegionIds));
                 }
 
                 if (locationType.HasFlag(ApprenticeshipLocationType.ClassroomBased))
                 {
                     locations.AddRange(_flow.State.ApprenticeshipClassroomLocations.Select(l =>
-                    {
-                        var venue = providerVenues.Single(v => v.VenueId == l.Value.VenueId);
-
-                        return CreateApprenticeshipLocation.CreateFromVenue(
-                            venue,
-                            l.Value.Radius,
-                            l.Value.DeliveryModes);
-                    }));
+                        CreateApprenticeshipLocation.CreateClassroomBased(l.Value.DeliveryModes, l.Value.Radius, l.Value.VenueId)));
                 }
 
                 return locations;
             }
         }
 
-        private async Task<ViewModel> CreateViewModel(ProviderInfo provider)
+        private async Task<ViewModel> CreateViewModel(Guid providerId)
         {
             var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByProvider()
                 {
-                    ProviderId = provider.ProviderId
+                    ProviderId = providerId
                 });
 
             var regions = await _regionCache.GetAllRegions();
 
             return new ViewModel()
             {
-                ProviderId = provider.ProviderId,
+                ProviderId = providerId,
                 StandardOrFrameworkTitle = _flow.State.ApprenticeshipStandard.StandardName,
                 MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
                 Website = _flow.State.ApprenticeshipWebsite,

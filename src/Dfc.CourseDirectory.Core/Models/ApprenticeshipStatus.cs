@@ -5,16 +5,18 @@ namespace Dfc.CourseDirectory.Core.Models
     [Flags]
     public enum ApprenticeshipStatus
     {
-        None = 0,
         Live = 1,
-        Pending = 2,
+        Pending = 2,  // Used for QA
         Archived = 4,
-        Deleted = 8,
-        BulkUploadPending = 16,
-        BulkUploadReadyToGoLive = 32,
-        APIPending = 64,
-        APIReadyToGoLive = 128,
-        MigrationPending = 256,
-        MigrationReadyToGoLive = 512,
+
+        // Legacy statuses that are no longer in use:
+        //None = 0,
+        //Deleted = 8,
+        //BulkUploadPending = 16,
+        //BulkUploadReadyToGoLive = 32,
+        //APIPending = 64,
+        //APIReadyToGoLive = 128,
+        //MigrationPending = 256,
+        //MigrationReadyToGoLive = 512,
     }
 }

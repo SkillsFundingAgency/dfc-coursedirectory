@@ -21,12 +21,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class Query : IRequest<ViewModel>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<CommandResponse>
     {
-        public Guid ProviderId { get; set; }
         public string MarketingInformation { get; set; }
     }
 
@@ -37,11 +35,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class ConfirmationQuery : IRequest<ConfirmationViewModel>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class ConfirmationViewModel : ConfirmationCommand
     {
+        public Guid ProviderId { get; set; }
         public string ProviderName { get; set; }
         public string CourseDirectoryStatus { get; set; }
         public int Ukprn { get; set; }
@@ -52,7 +50,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class ConfirmationCommand : IRequest<Success>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Handler :
@@ -63,23 +60,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly MptxInstanceContext<FlowModel> _flow;
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
 
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             MptxInstanceContext<FlowModel> flow,
+            IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _flow = flow;
+            _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) =>
-            CreateViewModel(request.ProviderId);
+            CreateViewModel();
 
         public async Task<CommandResponse> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
             if (!validationResult.IsValid)
             {
-                var vm = await CreateViewModel(request.ProviderId);
+                var vm = await CreateViewModel();
                 request.Adapt(vm);
 
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
@@ -106,15 +106,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 throw new InvalidStateException();
             }
 
+            var providerId = _providerContextProvider.GetProviderId();
+
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
                 {
-                    ProviderId = request.ProviderId
+                    ProviderId = providerId
                 });
 
             return new ConfirmationViewModel()
             {
-                ProviderId = request.ProviderId,
+                ProviderId = providerId,
                 ProviderName = provider.ProviderName,
                 CourseDirectoryStatus = provider.ProviderStatus,
                 MarketingInformation = _flow.State.ProviderMarketingInformation,
@@ -131,10 +133,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 throw new InvalidStateException();
             }
 
+            var providerId = _providerContextProvider.GetProviderId();
+
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new UpdateProviderInfo()
                 {
-                    ProviderId = request.ProviderId,
+                    ProviderId = providerId,
                     MarketingInformation = _flow.State.ProviderMarketingInformation,
                     UpdatedBy = _currentUserProvider.GetCurrentUser(),
                     UpdatedOn = _clock.UtcNow
@@ -143,8 +147,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             return new Success();
         }
 
-        private async Task<ViewModel> CreateViewModel(Guid providerId)
+        private async Task<ViewModel> CreateViewModel()
         {
+            var providerId = _providerContextProvider.GetProviderId();
+
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
                 {
@@ -153,7 +159,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
             return new ViewModel()
             {
-                ProviderId = provider.Id,
                 MarketingInformation = _flow.State.ProviderMarketingInformation,
                 ProviderName = provider.ProviderName
             };

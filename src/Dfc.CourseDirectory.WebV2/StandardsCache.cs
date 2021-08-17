@@ -53,7 +53,6 @@ namespace Dfc.CourseDirectory.WebV2
                 s => (s.StandardCode, s.Version),
                 s => new Standard()
                 {
-                    CosmosId = s.Id,
                     StandardCode = s.StandardCode,
                     Version = s.Version,
                     StandardName = s.StandardName,
