@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,16 +8,13 @@ namespace Dfc.CourseDirectory.WebV2
 {
     public class ProviderOwnershipCache : IProviderOwnershipCache
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IMemoryCache _cache;
 
         public ProviderOwnershipCache(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IMemoryCache cache)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cache = cache;
         }
@@ -53,12 +48,12 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
             {
-                var ukprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetProviderUkprnForApprenticeship() { ApprenticeshipId = apprenticeshipId });
+                var apprenticeship = await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetApprenticeship() { ApprenticeshipId = apprenticeshipId });
 
-                if (ukprn.HasValue)
+                if (apprenticeship != null)
                 {
-                    providerId = await GetProviderIdByUkprn(ukprn);
+                    providerId = apprenticeship.ProviderId;
                     _cache.Set(cacheKey, providerId);
                 }
                 else
@@ -151,8 +146,5 @@ namespace Dfc.CourseDirectory.WebV2
 
         private static string GetVenueCacheKey(Guid venueId) =>
             $"venue-providers:{venueId}";
-
-        private async Task<Guid> GetProviderIdByUkprn(int? ukprn) =>
-            (await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn.Value })).Id;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
@@ -18,12 +17,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class Query : IRequest<ViewModel>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<CommandResponse>
     {
-        public Guid ProviderId { get; set; }
         public string MarketingInformation { get; set; }
         public string Website { get; set; }
         public string ContactTelephone { get; set; }
@@ -56,7 +53,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             var vm = new ViewModel()
             {
-                ProviderId = request.ProviderId,
                 Standard = _flow.State.ApprenticeshipStandard,
                 MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
                 Website = _flow.State.ApprenticeshipContactWebsite,

@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Dfc.CourseDirectory.Core.Models
+﻿namespace Dfc.CourseDirectory.Core.Models
 {
     public class Standard
     {
-        public Guid CosmosId { get; set; }
         public int StandardCode { get; set; }
         public int Version { get; set; }
         public string StandardName { get; set; }

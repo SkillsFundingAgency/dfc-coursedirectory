@@ -16,7 +16,7 @@ SELECT MAX(ISNULL(UpdatedOn, CreatedOn))
 FROM Pttcd.Courses WITH (HOLDLOCK)
 WHERE ProviderId = @ProviderId
 
-SELECT MAX(LastSyncedFromCosmos)
+SELECT MAX(ISNULL(UpdatedOn, CreatedOn))
 FROM Pttcd.Apprenticeships WITH (HOLDLOCK)
 WHERE ProviderId = @ProviderId
 

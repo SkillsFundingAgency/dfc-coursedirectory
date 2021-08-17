@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await User.AsDeveloper();
 
             // Act
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await User.AsHelpdesk();
 
             // Act
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await User.AsProviderSuperUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var provider = await TestData.CreateProvider();
             var anotherProvider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await User.AsProviderUser(anotherProvider.ProviderId, ProviderType.Apprenticeships);
 
             // Act
@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var provider = await TestData.CreateProvider();
             var anotherProvider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await User.AsProviderSuperUser(anotherProvider.ProviderId, ProviderType.Apprenticeships);
 
             // Act

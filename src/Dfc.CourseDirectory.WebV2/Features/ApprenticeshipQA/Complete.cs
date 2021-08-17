@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
@@ -32,14 +32,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
         IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         public CommandHandler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses => new[]
@@ -94,11 +97,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             {
                 foreach (var app in latestSubmission.Apprenticeships)
                 {
-                    await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateApprenticeshipStatus()
+                    await _sqlQueryDispatcher.ExecuteQuery(new PublishApprenticeship()
                     {
                         ApprenticeshipId = app.ApprenticeshipId,
-                        ProviderUkprn = provider.Ukprn,
-                        Status = 1  // Live
+                        PublishedBy = _currentUserProvider.GetCurrentUser(),
+                        PublishedOn = _clock.UtcNow
                     });
                 }
             }

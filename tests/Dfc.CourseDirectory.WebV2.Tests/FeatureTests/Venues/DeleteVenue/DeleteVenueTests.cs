@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Http;
-using Moq;
 using OneOf;
 using OneOf.Types;
 using Xunit;
@@ -107,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
                 standard,
                 User.ToUserInfo(),
                 ApprenticeshipStatus.Live,
-                locations: new[] { CreateApprenticeshipLocation.CreateFromVenue(venue, 30, new[] { ApprenticeshipDeliveryMode.DayRelease }) });
+                locations: new[] { CreateApprenticeshipLocation.CreateClassroomBased(new[] { ApprenticeshipDeliveryMode.DayRelease }, 30, venue.VenueId) });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/venues/{venue.VenueId}/delete");
 
@@ -120,7 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             var doc = await response.GetDocument();
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-apprenticeship-{apprenticeship.Id}"));
+            Assert.NotNull(doc.GetElementByTestId($"affected-apprenticeship-{apprenticeship.ApprenticeshipId}"));
         }
 
         [Fact]
@@ -322,7 +321,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
                 standard,
                 User.ToUserInfo(),
                 ApprenticeshipStatus.Live,
-                locations: new[] { CreateApprenticeshipLocation.CreateFromVenue(venue, 30, new[] { ApprenticeshipDeliveryMode.DayRelease }) });
+                locations: new[] { CreateApprenticeshipLocation.CreateClassroomBased(new[] { ApprenticeshipDeliveryMode.DayRelease }, 30, venue.VenueId) });
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add(nameof(Command.Confirm), true)
@@ -343,7 +342,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             var doc = await response.GetDocument();
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-apprenticeship-{apprenticeship.Id}"));
+            Assert.NotNull(doc.GetElementByTestId($"affected-apprenticeship-{apprenticeship.ApprenticeshipId}"));
             doc.GetElementByTestId("affected-apprenticeships-error-message").TextContent.Should().Be("The affected apprenticeships have changed");
         }
 
