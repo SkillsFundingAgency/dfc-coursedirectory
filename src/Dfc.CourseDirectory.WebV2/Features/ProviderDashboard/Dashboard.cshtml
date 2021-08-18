@@ -206,17 +206,17 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                             <li>
                                 <a asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
                             </li>
+                            <li>
+                                <a asp-action="Formatting" asp-controller="ApprenticeshipsDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Apprenticeship file format requirements
+                                </a>
+                            </li>
                             @if (Model.ApprenticeshipCount > 0)
                             {
                                 <li>
                                     <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
                                 </li>
                             }
-                            <li>
-                                <a asp-action="Formatting" asp-controller="ApprenticeshipsDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                    Apprenticeship file format requirements
-                                </a>
-                            </li>
                             <li>
                                 <a asp-controller="ApprenticeshipsDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download apprenticeship data template (CSV)</a>
                             </li>
