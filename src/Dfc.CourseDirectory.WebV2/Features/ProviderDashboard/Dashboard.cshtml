@@ -130,6 +130,11 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                                     <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="courses-upload-new-link" class="govuk-link">Upload new course data</a>
                                 }
                             </li>
+                            <li>
+                                <a asp-action="Formatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Course file format requirements
+                                </a>
+                            </li>
                             @if (Model.LiveCourseRunCount > 0)
                             {
                                 <li>
@@ -207,6 +212,11 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                                     <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
                                 </li>
                             }
+                            <li>
+                                <a asp-action="Formatting" asp-controller="ApprenticeshipsDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Apprenticeship file format requirements
+                                </a>
+                            </li>
                             <li>
                                 <a asp-controller="ApprenticeshipsDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download apprenticeship data template (CSV)</a>
                             </li>
@@ -351,6 +361,11 @@ else if (Model.BulkUploadReadyToGoLiveApprenticeshipsCount > 0)
                             {
                                 <a asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
                             }
+                        </li>
+                        <li>
+                            <a asp-action="Formatting" asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Venue file format requirements
+                            </a>
                         </li>
                         @if (Model.VenueCount > 0)
                         {
