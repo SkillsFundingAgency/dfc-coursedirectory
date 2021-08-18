@@ -4,7 +4,6 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
-using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -81,14 +80,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
             new CsvResult<CsvApprenticeshipRow>("apprenticeships-template.csv", Enumerable.Empty<CsvApprenticeshipRow>());
 
         [HttpGet("delete")]
-        [RequireProviderContext]
         public async Task<IActionResult> DeleteUpload() =>
             await _mediator.SendAndMapResponse(
                 new DeleteUpload.Query(),
                 command => View(command));
 
         [HttpPost("delete")]
-        [RequireProviderContext]
         public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
@@ -98,6 +95,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
 
         [HttpGet("resolve/delete/success")]
         public IActionResult DeleteUploadSuccess() => View();
-
     }
 }

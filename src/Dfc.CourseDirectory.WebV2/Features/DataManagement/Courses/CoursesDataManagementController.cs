@@ -64,7 +64,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("resolve")]
-        [RequireProviderContext]
         public async Task<IActionResult> ResolveList() =>
             await _mediator.SendAndMapResponse(
                 new ResolveList.Query(),
@@ -175,14 +174,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 }));
 
         [HttpGet("delete")]
-        [RequireProviderContext]
         public async Task<IActionResult> DeleteUpload() =>
             await _mediator.SendAndMapResponse(
                 new DeleteUpload.Query(),
                 command => View(command));
 
         [HttpPost("delete")]
-        [RequireProviderContext]
         public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
@@ -194,7 +191,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         public IActionResult DeleteUploadSuccess() => View();
 
         [HttpGet("download")]
-        [RequireProviderContext]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
             new Download.Query(),
             result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
@@ -256,7 +252,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         public IActionResult Formatting() => View();
 
         [HttpGet("download-errors")]
-        [RequireProviderContext]
         public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
             new DownloadErrors.Query(),
             result => new CsvResult<CsvCourseRowWithErrors>(result.FileName, result.Rows));
@@ -284,14 +279,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("resolve/{rowNumber}/details/delete")]
-        [RequireProviderContext]
         public async Task<IActionResult> DeleteRow(DeleteRow.Query request) =>
             await _mediator.SendAndMapResponse(
                 request,
                 vm => View(vm));
 
         [HttpPost("resolve/{rowNumber}/details/delete")]
-        [RequireProviderContext]
         public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
         {
             command.RowNumber = rowNumber;
