@@ -15,6 +15,44 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <p class="govuk-body">Your data upload file must be a CSV file type.  If you have more than one option when saving as a CSV, choose, <br> CSV UTF-8 (Comma delimited) (.csv).</p>
+
+        <govuk-details>
+            <govuk-details-summary>
+                What changes have been made?
+            </govuk-details-summary>
+            <govuk-details-text>
+                <p>
+                    To help manage your data from a previous bulk upload (CSV) or data extracted from other sources, we have listed below the columns that have been changed.
+                </p>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Old bulk upload</th>
+                            <th scope="col" class="govuk-table__header">New data upload</th>
+                            <th scope="col" class="govuk-table__header">Change</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td scope="row" class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell">YOUR_VENUE_REFERENCE</td>
+                            <td class="govuk-table__cell">New column</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td scope="row" class="govuk-table__cell">ACROSS_ENGLAND</td>
+                            <td class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell">Removed column</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td scope="row" class="govuk-table__cell">REGION</td>
+                            <td class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell">Removed column</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </govuk-details-text>
+        </govuk-details>
+
         <p class="govuk-body">The tables below show information about each field in the apprenticeship data upload file and how to complete it correctly.</p><p>
         </p><div class="govuk-grid-row">
             <div class="govuk-grid-column-one-third">
@@ -307,7 +345,6 @@
                 </dd>
             </div>
         </dl>
-        <!-- -->
         <h2 class="govuk-heading-m govuk-!-margin-top-9 " id="VENUEREF">YOUR_VENUE_REFERENCE</h2>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
@@ -320,7 +357,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Chartacter limit
+                    Character limit
                 </dt>
                 <dd class="govuk-summary-list__value">
                     255
@@ -331,7 +368,7 @@
                     Notes
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    A unique reference that will help you identify this venue in your internal systems.
+                    This information is used to identify the venue and link the venue to an apprenticeship.
                 </dd>
             </div>
         </dl>
