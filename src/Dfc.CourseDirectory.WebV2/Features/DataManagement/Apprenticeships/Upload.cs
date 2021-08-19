@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
@@ -24,6 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
     public class ViewModel : Command
     {
+        public int ApprenticeshipCount { get; set; }
     }
 
     public class Command : IRequest<OneOf<UploadFailedResult, Success>>
@@ -62,17 +64,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClock _clock;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
             IFileUploadProcessor fileUploadProcessor,
             IProviderContextProvider providerContextProvider,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
+            _clock = clock;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel();
@@ -132,7 +137,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
         private async Task<ViewModel> CreateViewModel()
         {
-            return await Task.FromResult(new ViewModel());
+            var apprenticeshipCount = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderDashboardCounts() { ProviderId = _providerContextProvider.GetProviderId(), Date = _clock.UtcNow.Date });
+            return new ViewModel()
+            {
+                ApprenticeshipCount = apprenticeshipCount.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live)
+            };
         }
 
         private class CommandValidator : AbstractValidator<Command>
