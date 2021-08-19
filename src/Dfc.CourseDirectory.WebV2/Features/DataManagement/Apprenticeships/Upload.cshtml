@@ -65,9 +65,12 @@
             </h2>
             <nav role="navigation" aria-labelledby="subsection-title">
                 <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
-                    <li>
-                        <a href="#" class="govuk-link" data-testid="DownloadLink">Download your published apprenticeship data (CSV)</a>
-                    </li>
+                    @if (Model.ApprenticeshipCount > 0)
+                    {
+                        <li>
+                            <a asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadLink">Download your published apprenticeship data (CSV)</a>
+                        </li>
+                    }
                     <li>
                         <a asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download an empty apprenticeship data template (CSV)</a>
                     </li>
