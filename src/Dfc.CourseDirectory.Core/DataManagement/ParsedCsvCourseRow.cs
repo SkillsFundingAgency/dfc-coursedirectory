@@ -172,7 +172,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static CourseStudyMode? ResolveStudyMode(string value) => value?.ToLower() switch
         {
             "full time" => CourseStudyMode.FullTime,
+            "full-time" => CourseStudyMode.FullTime,
             "part time" => CourseStudyMode.PartTime,
+            "part-time" => CourseStudyMode.PartTime,
             "flexible" => CourseStudyMode.Flexible,
             _ => (CourseStudyMode?)null
         };
