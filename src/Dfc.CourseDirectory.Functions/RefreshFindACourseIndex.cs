@@ -33,6 +33,10 @@ namespace Dfc.CourseDirectory.Functions
             const int batchSize = 100;
             const int maxRecordsPerInvocation = 10000;
 
+            // Add a filter to exclude courses that were created some time ago.
+            // (We need this so we don't repeatedly try to re-index invalid courses e.g. where LARS data is missing.)
+            var createdAfter = _clock.UtcNow.AddDays(-1);
+
             // Exclude course runs that have only just been created so we don't race with the background worker
             var createdBefore = _clock.UtcNow.AddHours(-1);
 
@@ -47,6 +51,7 @@ namespace Dfc.CourseDirectory.Functions
                 {
                     MaxCourseRunCount = batchSize,
                     CreatedBefore = createdBefore,
+                    CreatedAfter = createdAfter,
                     Now = _clock.UtcNow
                 });
 
