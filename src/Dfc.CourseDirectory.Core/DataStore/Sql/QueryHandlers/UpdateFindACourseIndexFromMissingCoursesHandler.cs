@@ -19,13 +19,22 @@ LEFT JOIN Pttcd.FindACourseIndex i ON cr.CourseRunId = i.CourseRunId
 WHERE cr.CourseRunStatus = {(int)CourseStatus.Live}
 AND i.CourseRunId IS NULL
 AND cr.CreatedOn < @CreatedBefore
+AND cr.CreatedOn > @CreatedAfter
 
 EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds, @Now
 
 SELECT COUNT(*) FROM @CourseRunIds
 ";
 
-            return transaction.Connection.QuerySingleAsync<int>(sql, new { query.Now, query.CreatedBefore }, transaction: transaction);
+            return transaction.Connection.QuerySingleAsync<int>(
+                sql,
+                new
+                {
+                    query.Now,
+                    query.CreatedAfter,
+                    query.CreatedBefore
+                },
+                transaction: transaction);
         }
     }
 }
