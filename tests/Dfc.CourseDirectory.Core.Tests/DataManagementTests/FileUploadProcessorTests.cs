@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
@@ -51,7 +52,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var stream = new MemoryStream(Convert.FromBase64String(base64Content));
             stream.Seek(0L, SeekOrigin.Begin);
@@ -73,7 +75,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var stream = new MemoryStream(content);
             stream.Seek(0L, SeekOrigin.Begin);
@@ -94,7 +97,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
             {
@@ -133,7 +137,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
             {
@@ -161,7 +166,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             // Add missing lars
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;

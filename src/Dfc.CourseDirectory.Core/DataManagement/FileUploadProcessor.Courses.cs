@@ -327,27 +327,29 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var rowsCollection = CreateCourseDataUploadRowInfoCollection();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                // If CourseName is empty, use the LearnAimRefTitle from LARS
-                var learnAimRefs = rowsCollection.Select(r => r.Data.LearnAimRef).Distinct();
-                var learningDeliveries = await dispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
-
-                foreach (var row in rowsCollection)
+            await RetryOnDeadlock(
+                async dispatcher =>
                 {
-                    if (string.IsNullOrWhiteSpace(row.Data.CourseName))
+                    // If CourseName is empty, use the LearnAimRefTitle from LARS
+                    var learnAimRefs = rowsCollection.Select(r => r.Data.LearnAimRef).Distinct();
+                    var learningDeliveries = await dispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
+
+                    foreach (var row in rowsCollection)
                     {
-                        row.Data.CourseName = learningDeliveries[row.Data.LearnAimRef].LearnAimRefTitle;
+                        if (string.IsNullOrWhiteSpace(row.Data.CourseName))
+                        {
+                            row.Data.CourseName = learningDeliveries[row.Data.LearnAimRef].LearnAimRefTitle;
+                        }
                     }
-                }
 
-                var venueUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
-                var providerId = venueUpload.ProviderId;
+                    var venueUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
+                    var providerId = venueUpload.ProviderId;
 
-                await ValidateCourseUploadRows(dispatcher, courseUploadId, providerId, rowsCollection);
+                    await ValidateCourseUploadRows(dispatcher, courseUploadId, providerId, rowsCollection);
 
-                await dispatcher.Commit();
-            }
+                    await dispatcher.Commit();
+                },
+                retryLogMessage: "Deadlocked persisting course upload rows.");
 
             await DeleteBlob();
 

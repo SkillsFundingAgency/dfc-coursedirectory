@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using FluentAssertions;
-using FluentAssertions.Execution;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -29,7 +25,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,8 @@ using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -28,19 +31,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
+        private readonly ILogger<FileUploadProcessor> _logger;
 
         public FileUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             BlobServiceClient blobServiceClient,
             IClock clock,
             IRegionCache regionCache,
-            IBackgroundWorkScheduler backgroundWorkScheduler)
+            IBackgroundWorkScheduler backgroundWorkScheduler,
+            ILogger<FileUploadProcessor> logger)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
             _clock = clock;
             _regionCache = regionCache;
             _backgroundWorkScheduler = backgroundWorkScheduler;
+            _logger = logger;
         }
 
         protected internal async Task<bool> FileIsEmpty(Stream stream)
@@ -257,6 +263,25 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 stream.Seek(0L, SeekOrigin.Begin);
             }
+        }
+
+        private async Task RetryOnDeadlock(Func<ISqlQueryDispatcher, Task> action, string retryLogMessage)
+        {
+            await Policy
+                .Handle<SqlException>(ex => ex.Number == 1205)  // deadlock
+                .WaitAndRetryAsync(
+                    retryCount: 10,
+                    sleepDurationProvider: retryAttempty => TimeSpan.FromSeconds(30),
+                    onRetry: (ex, delay) => _logger.LogWarning(ex, retryLogMessage))
+                .ExecuteAsync(async () =>
+                {
+                    using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                    {
+                        await dispatcher.ExecuteQuery(new SetDeadlockPriority() { Priority = -5 });
+
+                        await action(dispatcher);
+                    }
+                });
         }
 
         protected internal enum FileMatchesSchemaResult

@@ -186,15 +186,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 lastRowNumber: rows.Count + 1,
                 rows: rows.Select((r, i) => new VenueDataUploadRowInfo(r, rowNumber: i + 2, isSupplementary: false)));
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-            {
-                var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
-                var providerId = venueUpload.ProviderId;
+            await RetryOnDeadlock(
+                async dispatcher =>
+                {
+                    var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
+                    var providerId = venueUpload.ProviderId;
 
-                await ValidateVenueUploadFile(dispatcher, venueUploadId, providerId, rowsCollection);
+                    await ValidateVenueUploadFile(dispatcher, venueUploadId, providerId, rowsCollection);
 
-                await dispatcher.Commit();
-            }
+                    await dispatcher.Commit();
+                },
+                retryLogMessage: "Deadlocked persisting venue upload rows.");
 
             await DeleteBlob();
 

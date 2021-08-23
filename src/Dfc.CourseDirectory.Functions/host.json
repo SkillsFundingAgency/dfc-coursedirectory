@@ -5,5 +5,9 @@
     "applicationInsights": {
       "enableDependencyTracking": false
     }
+  },
+  "queues": {
+    // Limit the amount of Data Management files to process at once
+    "batchSize": 2
   }
 }

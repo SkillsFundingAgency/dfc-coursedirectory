@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -29,7 +30,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -63,7 +65,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -96,7 +99,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -129,7 +133,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -163,7 +168,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -197,7 +203,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -230,7 +237,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -263,7 +271,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -311,7 +320,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -354,7 +364,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -400,7 +411,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -445,7 +457,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -482,7 +495,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -523,7 +537,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 blobServiceClient.Object,
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -567,7 +582,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
@@ -619,7 +635,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
@@ -649,7 +666,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<BlobServiceClient>(),
                 Clock,
                 new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                new NullLogger<FileUploadProcessor>());
 
             var rows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, rowCount: 2).ToArray();
             rows[0].LearnAimRef = string.Empty;
