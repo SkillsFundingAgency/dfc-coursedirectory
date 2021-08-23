@@ -13,7 +13,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json
                 TypeNameHandling = TypeNameHandling.Auto
             };
 
-            settings.Converters.Add(new StandardOrFrameworkJsonConverter());
             settings.Converters.Add(new UrlJsonConverter());
 
             return settings;

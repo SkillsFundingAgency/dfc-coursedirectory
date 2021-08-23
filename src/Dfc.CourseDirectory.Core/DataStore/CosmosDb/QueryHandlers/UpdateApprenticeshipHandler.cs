@@ -69,22 +69,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             apprenticeship.UpdatedDate = request.UpdatedDate;
             apprenticeship.UpdatedBy = request.UpdatedBy.UserId;
             apprenticeship.BulkUploadErrors = request.BulkUploadErrors?.ToList() ?? apprenticeship.BulkUploadErrors;
-
-            request.StandardOrFramework.Switch(
-                standard =>
-                {
-                    apprenticeship.StandardId = standard.CosmosId;
-                    apprenticeship.StandardCode = standard.StandardCode;
-                    apprenticeship.Version = standard.Version;
-                    apprenticeship.NotionalNVQLevelv2 = standard.NotionalNVQLevelv2;
-                },
-                framework =>
-                {
-                    apprenticeship.FrameworkId = framework.CosmosId;
-                    apprenticeship.FrameworkCode = framework.FrameworkCode;
-                    apprenticeship.ProgType = framework.ProgType;
-                    apprenticeship.PathwayCode = framework.PathwayCode;
-                });
+            apprenticeship.StandardId = request.Standard.CosmosId;
+            apprenticeship.StandardCode = request.Standard.StandardCode;
+            apprenticeship.Version = request.Standard.Version;
+            apprenticeship.NotionalNVQLevelv2 = request.Standard.NotionalNVQLevelv2;
 
             await client.ReplaceDocumentAsync(
                 documentUri,

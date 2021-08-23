@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsHelpdesk();
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsHelpdesk();
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -188,7 +188,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -218,7 +218,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -253,7 +253,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -292,7 +292,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -327,7 +327,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -360,7 +360,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -395,7 +395,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()

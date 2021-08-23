@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Testing
     {
         public async Task<Apprenticeship> CreateApprenticeship(
             Guid providerId,
-            StandardOrFramework standardOrFramework,
+            Core.Models.Standard standard,
             UserInfo createdBy,
             ApprenticeshipStatus status = ApprenticeshipStatus.Live,
             string marketingInformation = "Marketing info",
@@ -40,11 +40,9 @@ namespace Dfc.CourseDirectory.Testing
                 ProviderId = providerId,
                 ProviderUkprn = provider.Ukprn,
                 Status = (int)status,
-                ApprenticeshipTitle = standardOrFramework.StandardOrFrameworkTitle,
-                ApprenticeshipType = standardOrFramework.IsStandard ?
-                    ApprenticeshipType.StandardCode :
-                    ApprenticeshipType.FrameworkCode,
-                StandardOrFramework = standardOrFramework,
+                ApprenticeshipTitle = standard.StandardName,
+                ApprenticeshipType = ApprenticeshipType.StandardCode,
+                Standard = standard,
                 MarketingInformation = marketingInformation,
                 Url = website,
                 ContactTelephone = contactTelephone,

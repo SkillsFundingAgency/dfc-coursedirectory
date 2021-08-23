@@ -47,24 +47,12 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb.QueryHandlers
                 CreatedBy = request.CreatedByUser.UserId,
                 UpdatedDate = request.CreatedDate,
                 UpdatedBy = request.CreatedByUser.UserId,
-                BulkUploadErrors = request.BulkUploadErrors?.ToList()
+                BulkUploadErrors = request.BulkUploadErrors?.ToList(),
+                StandardId = request.Standard.CosmosId,
+                StandardCode = request.Standard.StandardCode,
+                Version = request.Standard.Version,
+                NotionalNVQLevelv2 = request.Standard.NotionalNVQLevelv2,
             };
-
-            request.StandardOrFramework.Switch(
-                standard =>
-                {
-                    apprenticeship.StandardId = standard.CosmosId;
-                    apprenticeship.StandardCode = standard.StandardCode;
-                    apprenticeship.Version = standard.Version;
-                    apprenticeship.NotionalNVQLevelv2 = standard.NotionalNVQLevelv2;
-                },
-                framework =>
-                {
-                    apprenticeship.FrameworkId = framework.CosmosId;
-                    apprenticeship.FrameworkCode = framework.FrameworkCode;
-                    apprenticeship.ProgType = framework.ProgType;
-                    apprenticeship.PathwayCode = framework.PathwayCode;
-                });
 
             inMemoryDocumentStore.Apprenticeships.Save(apprenticeship);
 

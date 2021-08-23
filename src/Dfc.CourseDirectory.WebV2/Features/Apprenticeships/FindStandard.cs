@@ -45,9 +45,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandard
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<SearchQuery, QueryResponse>
     {
-        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IStandardsCache _standardsAndFrameworksCache;
 
-        public Handler(IStandardsAndFrameworksCache standardsAndFrameworksCache)
+        public Handler(IStandardsCache standardsAndFrameworksCache)
         {
             _standardsAndFrameworksCache = standardsAndFrameworksCache;
         }
