@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -194,7 +194,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -233,7 +233,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -273,7 +273,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -311,7 +311,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -369,7 +369,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -410,7 +410,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -444,8 +444,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 q.CreatedDate == Clock.UtcNow &&
                 q.MarketingInformation == "My apprenticeship" &&
                 q.ProviderId == provider.ProviderId &&
-                q.StandardOrFramework.Standard.StandardCode == standardCode &&
-                q.StandardOrFramework.Standard.Version == standardVersion &&
+                q.Standard.StandardCode == standardCode &&
+                q.Standard.Version == standardVersion &&
                 q.Url == "http://provider.com/apprenticeship" &&
                 q.Status == 2)));
 
@@ -482,7 +482,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -526,7 +526,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -579,7 +579,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -630,7 +630,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -712,7 +712,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",

@@ -153,10 +153,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     new UpdateApprenticeship()
                     {
                         ApprenticeshipLocations = locations,
-                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
-                        ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
-                            ApprenticeshipType.StandardCode :
-                            ApprenticeshipType.FrameworkCode,
+                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandard.StandardName,
+                        ApprenticeshipType = ApprenticeshipType.StandardCode,
                         ContactEmail = _flow.State.ApprenticeshipContactEmail,
                         ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
                         ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
@@ -165,7 +163,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         Id = _flow.State.ApprenticeshipId.Value,
                         MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
                         ProviderUkprn = providerUkprn,
-                        StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
+                        Standard = _flow.State.ApprenticeshipStandard,
                         Url = _flow.State.ApprenticeshipWebsite
                     });
             }
@@ -176,10 +174,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     new CreateApprenticeship()
                     {
                         ApprenticeshipLocations = locations,
-                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
-                        ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
-                            ApprenticeshipType.StandardCode :
-                            ApprenticeshipType.FrameworkCode,
+                        ApprenticeshipTitle = _flow.State.ApprenticeshipStandard.StandardName,
+                        ApprenticeshipType = ApprenticeshipType.StandardCode,
                         ContactEmail = _flow.State.ApprenticeshipContactEmail,
                         ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
                         ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
@@ -189,7 +185,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
                         ProviderId = request.ProviderId,
                         ProviderUkprn = providerUkprn,
-                        StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
+                        Standard = _flow.State.ApprenticeshipStandard,
                         Url = _flow.State.ApprenticeshipWebsite,
                         Status = 2  // Pending
                     });
@@ -206,7 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         {
                             ApprenticeshipId = apprenticeshipId,
                             ApprenticeshipMarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                            ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
+                            ApprenticeshipTitle = _flow.State.ApprenticeshipStandard.StandardName,
                             Locations = locations.Select(l => l.ApprenticeshipLocationType switch
                             {
                                 ApprenticeshipLocationType.ClassroomBased => new CreateApprenticeshipQASubmissionApprenticeshipLocation(
@@ -290,7 +286,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             return new ViewModel()
             {
                 ProviderId = provider.ProviderId,
-                StandardOrFrameworkTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
+                StandardOrFrameworkTitle = _flow.State.ApprenticeshipStandard.StandardName,
                 MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
                 Website = _flow.State.ApprenticeshipWebsite,
                 ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
@@ -334,7 +330,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var state = _flow.State;
 
             var isValid = state.GotProviderDetails &&
-                state.ApprenticeshipStandardOrFramework != null &&
+                state.ApprenticeshipStandard != null &&
                 state.ApprenticeshipLocationType != null &&
                 (
                     (state.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased)) ||

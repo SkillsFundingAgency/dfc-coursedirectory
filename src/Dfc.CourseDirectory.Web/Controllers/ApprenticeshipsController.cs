@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
-        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IStandardsCache _standardsAndFrameworksCache;
         private readonly IProviderContextProvider _providerContextProvider;
 
         private ISession _session => HttpContext.Session;
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
-            IStandardsAndFrameworksCache standardsAndFrameworksCache,
+            IStandardsCache standardsAndFrameworksCache,
             IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));

@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries
         public int ProviderUkprn { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public ApprenticeshipType ApprenticeshipType { get; set; }
-        public StandardOrFramework StandardOrFramework { get; set; }
+        public Core.Models.Standard Standard { get; set; }
         public string MarketingInformation { get; set; }
         public string Url { get; set; }
         public string ContactTelephone { get; set; }

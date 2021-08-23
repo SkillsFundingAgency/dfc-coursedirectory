@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -16,12 +15,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlDbQueryDispatcher;
-        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IStandardsCache _standardsAndFrameworksCache;
 
         public FlowModelInitializer(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlDbQueryDispatcher,
-            IStandardsAndFrameworksCache standardsAndFrameworksCache)
+            IStandardsCache standardsAndFrameworksCache)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlDbQueryDispatcher = sqlDbQueryDispatcher;
@@ -54,44 +53,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 var apprenticeship = (await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new GetApprenticeshipsByIds() { ApprenticeshipIds = new Guid[] { apprenticeshipId } }))[apprenticeshipId];
 
-                StandardOrFramework standardOrFramework;
+                var standard = await _standardsAndFrameworksCache.GetStandard(
+                    apprenticeship.StandardCode.Value,
+                    apprenticeship.Version.Value);
 
-                if (apprenticeship.StandardCode.HasValue)
-                {
-                    var standard = await _standardsAndFrameworksCache.GetStandard(
-                        apprenticeship.StandardCode.Value,
-                        apprenticeship.Version.Value);
-
-                    standardOrFramework = new StandardOrFramework(
-                        new Standard()
-                        {
-                            StandardCode = apprenticeship.StandardCode.Value,
-                            CosmosId = apprenticeship.StandardId.Value,
-                            Version = standard.Version,
-                            StandardName = standard.StandardName,
-                            NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2,
-                            OtherBodyApprovalRequired = standard.OtherBodyApprovalRequired
-                        });
-                }
-                else  // apprenticeship.FrameworkCode.HasValue
-                {
-                    var framework = await _standardsAndFrameworksCache.GetFramework(
-                        apprenticeship.FrameworkCode.Value,
-                        apprenticeship.ProgType.Value,
-                        apprenticeship.PathwayCode.Value);
-
-                    standardOrFramework = new StandardOrFramework(
-                        new Framework()
-                        {
-                            FrameworkCode = apprenticeship.FrameworkCode.Value,
-                            CosmosId = apprenticeship.FrameworkId.Value,
-                            ProgType = apprenticeship.ProgType.Value,
-                            PathwayCode = apprenticeship.PathwayCode.Value,
-                            NasTitle = framework.NasTitle
-                        });
-                }
-
-                model.SetApprenticeshipStandardOrFramework(standardOrFramework);
+                model.SetApprenticeshipStandard(standard);
 
                 model.SetApprenticeshipId(apprenticeship.Id);
 

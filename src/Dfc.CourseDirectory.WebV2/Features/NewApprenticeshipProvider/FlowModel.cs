@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
     public class FlowModel : IMptxState, ClassroomLocation.IFlowModelCallback
     {
         public string ProviderMarketingInformation { get; private set; }
-        public StandardOrFramework ApprenticeshipStandardOrFramework { get; private set; }
+        public Standard ApprenticeshipStandard { get; private set; }
         public string ApprenticeshipMarketingInformation { get; private set; }
         public string ApprenticeshipWebsite { get; private set; }
         public string ApprenticeshipContactTelephone { get; private set; }
@@ -95,8 +95,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             }
         }
 
-        public void SetApprenticeshipStandardOrFramework(StandardOrFramework standardOrFramework) =>
-            ApprenticeshipStandardOrFramework = standardOrFramework;
+        public void SetApprenticeshipStandard(Standard standard) =>
+            ApprenticeshipStandard = standard;
 
         void ClassroomLocation.IFlowModelCallback.ReceiveLocation(
             string instanceId,
