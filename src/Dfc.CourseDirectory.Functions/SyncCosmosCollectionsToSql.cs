@@ -22,16 +22,8 @@ namespace Dfc.CourseDirectory.Functions
         [NoAutomaticTrigger]
         public Task SyncApprenticeshipsCosmosCollectionToSql(string input) => _sqlDataSync.SyncAllApprenticeships();
 
-        [FunctionName(nameof(SyncCoursesCosmosCollectionToSql))]
-        [NoAutomaticTrigger]
-        public Task SyncCoursesCosmosCollectionToSql(string input) => _sqlDataSync.SyncAllCourses();
-
         [FunctionName(nameof(SyncUkrlpCosmosCollectionToSql))]
         [NoAutomaticTrigger]
         public Task SyncUkrlpCosmosCollectionToSql(string input) => _sqlDataSync.SyncAllProviders();
-
-        [FunctionName(nameof(SyncVenuesCosmosCollectionToSql))]
-        [NoAutomaticTrigger]
-        public Task SyncVenuesCosmosCollectionToSql(string input) => _sqlDataSync.SyncAllVenues();
     }
 }
