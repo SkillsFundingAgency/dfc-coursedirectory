@@ -4,12 +4,10 @@ using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2
 {
-    public interface IStandardsAndFrameworksCache
+    public interface IStandardsCache
     {
         void Clear();
-        Task<IReadOnlyCollection<Framework>> GetAllFrameworks();
         Task<IReadOnlyCollection<Standard>> GetAllStandards();
-        Task<Framework> GetFramework(int frameworkCode, int progType, int pathwayCode);
         Task<Standard> GetStandard(int standardCode, int version);
     }
 }

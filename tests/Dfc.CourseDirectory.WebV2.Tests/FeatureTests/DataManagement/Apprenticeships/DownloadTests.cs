@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
 
             var apprenticeship = await TestData.CreateApprenticeship(
                 providerId: provider.ProviderId,
-                standardOrFramework: standard,
+                standard: standard,
                 createdBy: User.ToUserInfo(),
                 locations: new[]
                 {

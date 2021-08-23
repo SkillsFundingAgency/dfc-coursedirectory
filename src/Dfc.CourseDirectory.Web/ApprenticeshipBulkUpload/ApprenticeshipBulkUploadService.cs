@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-            private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+            private readonly IStandardsCache _standardsCache;
             private readonly AuthenticatedUserInfo _authUserDetails;
             private readonly Guid _providerId;
 
@@ -98,12 +98,12 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
             public ApprenticeshipCsvRecordMap(
                 ISqlQueryDispatcher sqlQueryDispatcher,
-                IStandardsAndFrameworksCache standardsAndFrameworksCache,
+                IStandardsCache standardsCache,
                 AuthenticatedUserInfo userInfo,
                 Guid providerId)
             {
                 _sqlQueryDispatcher = sqlQueryDispatcher;
-                _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+                _standardsCache = standardsCache ?? throw new ArgumentNullException(nameof(standardsCache));
                 _authUserDetails = userInfo ?? throw new ArgumentNullException(nameof(userInfo));
                 _providerId = providerId;
 
@@ -836,7 +836,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             }
 
             private Task<Core.Models.Standard> GetStandard(int standardCode, int version)
-                => _standardsAndFrameworksCache.GetStandard(standardCode, version);
+                => _standardsCache.GetStandard(standardCode, version);
 
             private IEnumerable<string> ParseRegionData(string regions)
             {
@@ -927,7 +927,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             }
         }
 
-        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IStandardsCache _standardsCache;
         private readonly IBinaryStorageProvider _binaryStorageProvider;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -936,7 +936,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         private readonly ApprenticeshipBulkUploadSettings _settings;
 
         public ApprenticeshipBulkUploadService(
-            IStandardsAndFrameworksCache standardsAndFrameworksCache,
+            IStandardsCache standardsCache,
             IBinaryStorageProvider binaryStorageProvider,
             IBackgroundWorkScheduler backgroundWorkScheduler,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
@@ -944,7 +944,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             IProviderInfoCache providerInfoCache,
             IOptions<ApprenticeshipBulkUploadSettings> settings)
         {
-            _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
+            _standardsCache = standardsCache ?? throw new ArgumentNullException(nameof(standardsCache));
             _binaryStorageProvider = binaryStorageProvider ?? throw new ArgumentNullException(nameof(binaryStorageProvider));
             _backgroundWorkScheduler = backgroundWorkScheduler ?? throw new ArgumentNullException(nameof(backgroundWorkScheduler));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
@@ -1005,7 +1005,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                         var classMap = new ApprenticeshipCsvRecordMap(
                             _sqlQueryDispatcher,
-                            _standardsAndFrameworksCache,
+                            _standardsCache,
                             userInfo,
                             providerId);
 

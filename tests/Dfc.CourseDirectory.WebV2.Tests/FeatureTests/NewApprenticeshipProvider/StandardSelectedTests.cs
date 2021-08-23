@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var standard = await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "My standard");
 
             var flowModel = new FlowModel();
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             var request = new HttpRequestMessage(
@@ -48,8 +48,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             using (new AssertionScope())
             {
-                mptxInstance.State.ApprenticeshipStandardOrFramework.Standard.StandardCode.Should().Be(123);
-                mptxInstance.State.ApprenticeshipStandardOrFramework.Standard.Version.Should().Be(1);
+                mptxInstance.State.ApprenticeshipStandard.StandardCode.Should().Be(123);
+                mptxInstance.State.ApprenticeshipStandard.Version.Should().Be(1);
             }
         }
     }
