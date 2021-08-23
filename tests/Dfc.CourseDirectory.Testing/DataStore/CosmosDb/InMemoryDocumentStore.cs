@@ -9,7 +9,6 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
     public class InMemoryDocumentStore
     {
         public InMemoryDocumentCollection<Apprenticeship> Apprenticeships { get; } = new InMemoryDocumentCollection<Apprenticeship>();
-        public InMemoryDocumentCollection<Course> Courses { get; } = new InMemoryDocumentCollection<Course>();
         public InMemoryDocumentCollection<Framework> Frameworks { get; } = new InMemoryDocumentCollection<Framework>();
         public InMemoryDocumentCollection<ProgType> ProgTypes { get; set; } = new InMemoryDocumentCollection<ProgType>();
         public InMemoryDocumentCollection<Provider> Providers { get; } = new InMemoryDocumentCollection<Provider>();
@@ -17,12 +16,10 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
         public InMemoryDocumentCollection<SectorSubjectAreaTier2> SectorSubjectAreaTier2s { get; set; } = new InMemoryDocumentCollection<SectorSubjectAreaTier2>();
         public InMemoryDocumentCollection<Standard> Standards { get; } = new InMemoryDocumentCollection<Standard>();
         public InMemoryDocumentCollection<StandardSectorCode> StandardSectorCodes { get; } = new InMemoryDocumentCollection<StandardSectorCode>();
-        public InMemoryDocumentCollection<Venue> Venues { get; } = new InMemoryDocumentCollection<Venue>();
 
         public void Clear()
         {
             Apprenticeships.Clear();
-            Courses.Clear();
             Frameworks.Clear();
             ProgTypes.Clear();
             Providers.Clear();
@@ -30,7 +27,6 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
             SectorSubjectAreaTier2s.Clear();
             Standards.Clear();
             StandardSectorCodes.Clear();
-            Venues.Clear();
         }
     }
 

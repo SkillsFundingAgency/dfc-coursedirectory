@@ -38,8 +38,6 @@ namespace Dfc.CourseDirectory.Core
         public async Task SyncAll()
         {
             await SyncAllProviders();
-            await SyncAllVenues();
-            await SyncAllCourses();
             await SyncAllApprenticeships();
         }
 
@@ -50,14 +48,6 @@ namespace Dfc.CourseDirectory.Core
                 {
                     ProcessChunk = GetSyncWithBatchingHandler<Apprenticeship>(SyncApprenticeships)
                 }));
-			
-        public Task SyncAllCourses() => WithExclusiveSqlLock(
-            nameof(SyncAllCourses),
-            () =>_cosmosDbQueryDispatcher.ExecuteQuery(
-                new ProcessAllCourses()
-                {
-                    ProcessChunk = GetSyncWithBatchingHandler<Course>(SyncCourses)
-                }));
 
         public Task SyncAllProviders() => WithExclusiveSqlLock(
             nameof(SyncAllProviders),
@@ -65,14 +55,6 @@ namespace Dfc.CourseDirectory.Core
                 new ProcessAllProviders()
                 {
                     ProcessChunk = GetSyncWithBatchingHandler<Provider>(SyncProviders)
-                }));
-
-        public Task SyncAllVenues() => WithExclusiveSqlLock(
-            nameof(SyncAllVenues),
-            () => _cosmosDbQueryDispatcher.ExecuteQuery(
-                new ProcessAllVenues()
-                {
-                    ProcessChunk = GetSyncWithBatchingHandler<Venue>(SyncVenues)
                 }));
 
         public Task SyncApprenticeship(Apprenticeship apprenticeship) => SyncApprenticeships(new[] { apprenticeship });
@@ -127,72 +109,6 @@ namespace Dfc.CourseDirectory.Core
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
-			
-        public Task SyncCourse(Course course) => SyncCourses(new[] { course });
-
-        public Task SyncCourses(IEnumerable<Course> courses) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertCoursesFromCosmos()
-            {
-                Records = courses.Select(course => new UpsertCoursesRecord()
-                {
-                    CourseId = course.Id,
-                    CourseStatus = course.CourseStatus,
-                    CreatedOn = course.CreatedDate,
-                    CreatedBy = course.CreatedBy,
-                    UpdatedOn = course.UpdatedDate,
-                    UpdatedBy = course.UpdatedBy,
-                    TribalCourseId = course.CourseId,
-                    LearnAimRef = course.LearnAimRef,
-                    ProviderUkprn = course.ProviderUKPRN,
-                    CourseDescription = course.CourseDescription,
-                    EntryRequirements = course.EntryRequirements,
-                    WhatYoullLearn = course.WhatYoullLearn,
-                    HowYoullLearn = course.HowYoullLearn,
-                    WhatYoullNeed = course.WhatYoullNeed,
-                    HowYoullBeAssessed = course.HowYoullBeAssessed,
-                    WhereNext = course.WhereNext,
-                    CourseRuns = course.CourseRuns.Select(courseRun => new UpsertCoursesRecordCourseRun()
-                    {
-                        CourseRunId = courseRun.Id,
-                        CourseRunStatus = courseRun.RecordStatus,
-                        CreatedOn = courseRun.CreatedDate,
-                        CreatedBy = courseRun.CreatedBy,
-                        UpdatedOn = courseRun.UpdatedDate,
-                        UpdatedBy = courseRun.UpdatedBy,
-                        CourseName = courseRun.CourseName,
-                        VenueId = courseRun.VenueId,
-                        ProviderCourseId = courseRun.ProviderCourseID,
-                        DeliveryMode = courseRun.DeliveryMode,
-                        FlexibleStartDate = courseRun.FlexibleStartDate,
-                        StartDate = courseRun.StartDate,
-                        CourseWebsite = courseRun.CourseURL,
-                        Cost = courseRun.Cost,
-                        CostDescription = courseRun.CostDescription,
-                        DurationUnit = courseRun.DurationUnit,
-                        DurationValue = courseRun.DurationValue,
-                        StudyMode = courseRun.StudyMode != 0 ? courseRun.StudyMode : null,  // Normalize 0 to null
-                        AttendancePattern = courseRun.AttendancePattern != 0 ? courseRun.AttendancePattern : null,  // Normalize 0 to null
-                        National = courseRun.National,
-                        RegionIds = courseRun.Regions ?? Array.Empty<string>(),
-                        SubRegionIds = courseRun.SubRegions?.Select(r => r.Id) ?? Array.Empty<string>(),
-                        BulkUploadErrors = (courseRun.BulkUploadErrors ?? Enumerable.Empty<BulkUploadError>())
-                            .Select(e => new UpsertCoursesRecordBulkUploadError()
-                            {
-                                LineNumber = e.LineNumber,
-                                Header = e.Header,
-                                Error = e.Error
-                            })
-                    }),
-                    BulkUploadErrors = (course.BulkUploadErrors ?? Enumerable.Empty<BulkUploadError>())
-                        .Select(e => new UpsertCoursesRecordBulkUploadError()
-                        {
-                            LineNumber = e.LineNumber,
-                            Header = e.Header,
-                            Error = e.Error
-                        })
-                }),
-                LastSyncedFromCosmos = _clock.UtcNow
-            }));
 
         public Task SyncProvider(Provider provider) => SyncProviders(new[] { provider });
 
@@ -240,36 +156,6 @@ namespace Dfc.CourseDirectory.Core
                         WebsiteAddress = c.ContactWebsiteAddress,
                         Email = c.ContactEmail
                     })
-                }),
-                LastSyncedFromCosmos = _clock.UtcNow
-            }));
-
-        public Task SyncVenue(Venue venue) => SyncVenues(new[] { venue });
-
-        public Task SyncVenues(IEnumerable<Venue> venues) => WithSqlDispatcher(dispatcher =>
-            dispatcher.ExecuteQuery(new UpsertVenuesFromCosmos()
-            {
-                Records = venues.Select(venue => new UpsertVenuesRecord()
-                {
-                    VenueId = venue.Id,
-                    VenueStatus = (VenueStatus)venue.Status,
-                    CreatedOn = venue.CreatedDate != default ? (DateTime?)venue.CreatedDate : null,
-                    CreatedBy = venue.CreatedBy,
-                    UpdatedOn = venue.DateUpdated != default ? (DateTime?)venue.DateUpdated : null,
-                    UpdatedBy = venue.UpdatedBy,
-                    VenueName = venue.VenueName,
-                    ProviderUkprn = venue.Ukprn,
-                    TribalVenueId = venue.LocationId,
-                    ProviderVenueRef = venue.ProvVenueID,
-                    AddressLine1 = venue.AddressLine1,
-                    AddressLine2 = venue.AddressLine2,
-                    Town = venue.Town,
-                    County = venue.County,
-                    Postcode = venue.Postcode,
-                    Position = ((double)venue.Latitude, (double)venue.Longitude),
-                    Telephone = venue.PHONE,
-                    Email = venue.Email,
-                    Website = venue.Website
                 }),
                 LastSyncedFromCosmos = _clock.UtcNow
             }));
