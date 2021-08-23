@@ -70,7 +70,7 @@
                     <h2 class="govuk-heading-m">Apprenticeships</h2>
                     @if (Model.PublishedApprenticeshipsCount > 0)
                     {
-                        <p class="govuk-body-s">You have <strong data-testid="PublishedApprenticeshipCount">@Model.PublishedApprenticeshipsCount</strong> published @string.Format("apprenticeship{0}", Model.PublishedApprenticeshipsCount > 1 || Model.PublishedApprenticeshipsCount == 0 ? "s" : string.Empty)</p>
+                        <p class="govuk-body-s">You have <strong data-testid="PublishedApprenticeshipCount">@Model.PublishedApprenticeshipsCount</strong> published @string.Format("apprenticeship{0}", Model.PublishedApprenticeshipsCount != 0 ? "s" : string.Empty)</p>
                     }
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
