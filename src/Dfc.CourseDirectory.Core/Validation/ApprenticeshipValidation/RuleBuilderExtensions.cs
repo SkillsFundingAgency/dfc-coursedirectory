@@ -11,43 +11,43 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
         public static void ContactEmail<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .NotEmpty()
-                    .WithMessage("Enter email")
+                    .WithMessageFromErrorCode("APPRENTICESHIP_EMAIL_REQUIRED")
                 .EmailAddress()
-                    .WithMessage("Email must be a valid email address");
+                    .WithMessageFromErrorCode("APPRENTICESHIP_EMAIL_FORMAT");
 
         public static void ContactTelephone<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .NotEmpty()
-                    .WithMessage("Enter telephone")
+                    .WithMessageFromErrorCode("APPRENTICESHIP_TELEPHONE_REQUIRED")
                 .Apply(Rules.PhoneNumber)
-                    .WithMessage("Telephone must be a valid UK phone number");
+                    .WithMessageFromErrorCode("APPRENTICESHIP_TELEPHONE_FORMAT");
 
         public static void ContactWebsite<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .Apply(Rules.Website)
-                    .WithMessage("Contact us page must be a real webpage, like http://www.provider.com/apprenticeship");
+                    .WithMessageFromErrorCode("APPRENTICESHIP_CONTACTUS_FORMAT");
 
         public static void MarketingInformation<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .NotEmpty()
-                    .WithMessage("Enter apprenticeship information for employers")
+                    .WithMessageFromErrorCode("APPRENTICESHIP_INFORMATION_REQUIRED")
                 .ValidHtml(maxLength: Constants.MarketingInformationStrippedMaxLength)
-                    .WithMessage($"Apprenticeship information for employers must be {Constants.MarketingInformationStrippedMaxLength} characters or fewer");
+                .WithMessageFromErrorCode("APPRENTICESHIP_INFORMATION_MAXLENGTH");
 
         public static void Website<T>(this IRuleBuilderInitial<T, string> field) =>
             field
                 .Apply(Rules.Website)
-                    .WithMessage("Website must be a real webpage, like http://www.provider.com/apprenticeship");
+                    .WithMessageFromErrorCode("APPRENTICESHIP_WEBSITE_FORMAT");
 
         public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field) =>
             field
                 .NotNull()
-                    .WithMessage("Enter standard code");
+                    .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED");
 
         public static void StandardVersion<T>(this IRuleBuilderInitial<T, int?> field) =>
             field
                 .NotNull()
-                    .WithMessage("Enter standard version");
+                    .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_VERSION_REQUIRED");
 
         public static void YourVenueReference<T>(
               this IRuleBuilderInitial<T, string> field,

@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Website must be a real webpage, like http://www.provider.com/apprenticeship");
+                error => error.ErrorMessage == $"Website must be a real webpage, like https://www.provider.com/apprenticeship");
         }
 
         [Fact]
@@ -167,7 +167,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Contact us page must be a real webpage, like http://www.provider.com/apprenticeship");
+                error => error.ErrorMessage == $"Contact us page must be a real webpage, like https://www.provider.com/apprenticeship");
         }
 
         [Fact]
