@@ -568,7 +568,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             // Figuring out these scenarios exactly isn't practical so we check if any
             // venue, course, apprenticeship or T Level has been added/updated/removed for the provider.
 
-            var lastUpdatedOffering = await sqlQueryDispatcher.ExecuteQuery(new GetProviderVenuesLastUpdated()
+            var lastUpdatedOffering = await sqlQueryDispatcher.ExecuteQuery(new GetProviderOfferingsLastUpdated()
             {
                 ProviderId = venueUpload.ProviderId
             });

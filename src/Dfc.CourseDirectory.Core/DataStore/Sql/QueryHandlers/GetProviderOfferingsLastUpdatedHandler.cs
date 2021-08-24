@@ -7,29 +7,26 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetProviderVenuesLastUpdatedHandler : ISqlQueryHandler<GetProviderVenuesLastUpdated, DateTime?>
+    public class GetProviderOfferingsLastUpdatedHandler : ISqlQueryHandler<GetProviderOfferingsLastUpdated, DateTime?>
     {
-        public async Task<DateTime?> Execute(SqlTransaction transaction, GetProviderVenuesLastUpdated query)
+        public async Task<DateTime?> Execute(SqlTransaction transaction, GetProviderOfferingsLastUpdated query)
         {
             var sql = @"
-DECLARE @ProviderUkprn INT
-SELECT @ProviderUkprn = Ukprn FROM Pttcd.Providers WHERE ProviderId = @ProviderId
-
-SELECT MAX(LastSyncedFromCosmos)
+SELECT MAX(ISNULL(UpdatedOn, CreatedOn))
 FROM Pttcd.Courses WITH (HOLDLOCK)
-WHERE ProviderUkprn = @ProviderUkprn
+WHERE ProviderId = @ProviderId
 
 SELECT MAX(LastSyncedFromCosmos)
 FROM Pttcd.Apprenticeships WITH (HOLDLOCK)
-WHERE ProviderUkprn = @ProviderUkprn
+WHERE ProviderId = @ProviderId
 
 SELECT MAX(ISNULL(DeletedOn, UpdatedOn))
 FROM Pttcd.TLevels WITH (HOLDLOCK)
 WHERE ProviderId = @ProviderId
 
-SELECT MAX(UpdatedOn)
+SELECT MAX(ISNULL(UpdatedOn, CreatedOn))
 FROM Pttcd.Venues WITH (HOLDLOCK)
-WHERE ProviderUkprn = @ProviderUkprn";
+WHERE ProviderId = @ProviderId";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, new { query.ProviderId }, transaction))
             {

@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class GetProviderVenuesLastUpdated : ISqlQuery<DateTime?>
+    public class GetProviderOfferingsLastUpdated : ISqlQuery<DateTime?>
     {
         public Guid ProviderId { get; set; }
     }
