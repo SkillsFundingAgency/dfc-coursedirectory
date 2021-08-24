@@ -93,7 +93,17 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF"),
             new Error("APPRENTICESHIP_VENUE_REQUIRED"),
             new Error("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"),
-            new Error("APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID")
+            new Error("APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID"),
+            new Error("APPRENTICESHIP_STANDARD_CODE_REQUIRED"),
+            new Error("APPRENTICESHIP_STANDARD_VERSION_REQUIRED"),
+            new Error("APPRENTICESHIP_TELEPHONE_REQUIRED"),
+            new Error("APPRENTICESHIP_TELEPHONE_FORMAT"),
+            new Error("APPRENTICESHIP_EMAIL_FORMAT"),
+            new Error("APPRENTICESHIP_EMAIL_REQUIRED"),
+            new Error("APPRENTICESHIP_WEBSITE_FORMAT"),
+            new Error("APPRENTICESHIP_CONTACTUS_FORMAT"),
+            new Error("APPRENTICESHIP_INFORMATION_REQUIRED"),
+            new Error("APPRENTICESHIP_INFORMATION_MAXLENGTH", ApprenticeshipConstants.MarketingInformationStrippedMaxLength)
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 
