@@ -314,5 +314,35 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 doc.GetElementByTestId("apprenticeship-in-progress-link").TextContent.Should().Be("Upload in progress");
             }
         }
+
+        [Fact]
+        public async Task Get_ApprenticeshipQAInProcess_DoesNotRenderApprenticeshipCard()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
+                providerType: ProviderType.Apprenticeships);
+
+            //Create some venue upload rows to test new data in UI
+            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing,
+                rowBuilder =>
+                {
+                    rowBuilder.AddValidRow();
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("ApprenticeshipsCard").Should().BeNull();
+            }
+        }
     }
 }
