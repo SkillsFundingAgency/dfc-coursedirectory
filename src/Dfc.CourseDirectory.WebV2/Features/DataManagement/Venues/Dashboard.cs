@@ -24,6 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
+        public bool ApprenticeshipUploadInProgress { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -66,6 +67,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                     ProviderId = providerContext.ProviderInfo.ProviderId
                 });
 
+            var apprenticeshipUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = providerContext.ProviderInfo.ProviderId
+                });
+
             return new ViewModel()
             {
                 PublishedApprenticeshipsCount = counts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live, 0),
@@ -76,7 +83,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = counts.UnpublishedVenueCount,
                 UnpublishedCourseCount = counts.UnpublishedCourseCount,
-                CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created)
+                CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
+                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created)
             };
         }
     }

@@ -77,9 +77,18 @@
                     @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipsDataManagement))
                     {
                         <ul class="govuk-list pttcd-list--small">
-                            <li>
-                                <a asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
-                            </li>
+                            @if (Model.ApprenticeshipUploadInProgress)
+                            {
+                                <li>
+                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="apprenticeship-in-progress-link">Upload in progress</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
+                                </li>
+                            }
                             <li>
                                 <a asp-action="Formatting" asp-controller="ApprenticeshipsDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Apprenticeship file format requirements
