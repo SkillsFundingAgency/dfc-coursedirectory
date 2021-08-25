@@ -53,6 +53,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 Date = _clock.UtcNow.Date
             });
 
+            var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetProviderApprenticeshipQAStatus()
+                {
+                    ProviderId = providerContext.ProviderInfo.ProviderId,
+                });
+
             var providerType = providerContext.ProviderInfo.ProviderType;
 
             var venueUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
@@ -78,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 PublishedApprenticeshipsCount = counts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live, 0),
                 PublishedCourseCount = counts.CourseRunCounts.GetValueOrDefault(CourseStatus.Live, 0),
                 PublishedVenueCount = counts.VenueCount,
-                ShowApprenticeships = providerType.HasFlag(ProviderType.Apprenticeships),
+                ShowApprenticeships = providerType.HasFlag(ProviderType.Apprenticeships) && qaStatus == ApprenticeshipQAStatus.Passed,
                 ShowCourses = providerType.HasFlag(ProviderType.FE),
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = counts.UnpublishedVenueCount,
