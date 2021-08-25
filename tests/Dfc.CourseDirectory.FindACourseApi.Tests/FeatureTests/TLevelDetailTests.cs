@@ -204,11 +204,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 json["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(providerEmployerSatisfaction);
                 json["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(providerLearnerSatisfaction);
                 json["whoFor"].ToObject<string>().Should().Be(whoFor);
-                json["entryRequirements"].ToObject<string>().Should().Be(entryRequirements);
-                json["whatYoullLearn"].ToObject<string>().Should().Be(whatYoullLearn);
-                json["howYoullLearn"].ToObject<string>().Should().Be(howYoullLearn);
-                json["howYoullBeAssessed"].ToObject<string>().Should().Be(howYoullBeAssessed);
-                json["whatYouCanDoNext"].ToObject<string>().Should().Be(whatYouCanDoNext);
+                json["entryRequirements"].ToObject<string>().Should().Be(HtmlEncode(entryRequirements));
+                json["whatYoullLearn"].ToObject<string>().Should().Be(HtmlEncode(whatYoullLearn));
+                json["howYoullLearn"].ToObject<string>().Should().Be(HtmlEncode(howYoullLearn));
+                json["howYoullBeAssessed"].ToObject<string>().Should().Be(HtmlEncode(howYoullBeAssessed));
+                json["whatYouCanDoNext"].ToObject<string>().Should().Be(HtmlEncode(whatYouCanDoNext));
                 json["website"].ToObject<string>().Should().Be(website);
                 json["startDate"].ToObject<DateTime>().Should().Be(startDate);
                 json["deliveryMode"].ToObject<string>().Should().Be("ClassroomBased");
@@ -233,6 +233,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 location["latitude"].ToObject<double>().Should().Be(venueLatitude);
                 location["longitude"].ToObject<double>().Should().Be(venueLongitude);
             }
+
+            static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);
         }
     }
 }

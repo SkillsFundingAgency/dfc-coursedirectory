@@ -94,8 +94,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 OfferingType = Core.Search.Models.FindACourseOfferingType.Course,
                 AttendancePattern = courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)courseRun.AttendancePattern : null,
                 Cost = courseRun.Cost,
-                CostDescription = courseRun.CostDescription,
-                CourseName = courseRun.CourseName,
+                CostDescription = HtmlEncode(courseRun.CostDescription),
+                CourseName = HtmlEncode(courseRun.CourseName),
                 CourseURL = ViewModelFormatting.EnsureHttpPrefixed(courseRun.CourseWebsite),
                 CreatedDate = courseRun.CreatedOn,
                 DeliveryMode = courseRun.DeliveryMode,
@@ -108,28 +108,28 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 Course = new CourseViewModel
                 {
                     AwardOrgCode = qualification.Record.AwardOrgCode,
-                    CourseDescription = course.CourseDescription,
+                    CourseDescription = HtmlEncode(course.CourseDescription),
                     CourseId = course.CourseId,
-                    EntryRequirements = course.EntryRequirements,
-                    HowYoullBeAssessed = course.HowYoullBeAssessed,
-                    HowYoullLearn = course.HowYoullLearn,
+                    EntryRequirements = HtmlEncode(course.EntryRequirements),
+                    HowYoullBeAssessed = HtmlEncode(course.HowYoullBeAssessed),
+                    HowYoullLearn = HtmlEncode(course.HowYoullLearn),
                     LearnAimRef = course.LearnAimRef,
                     QualificationLevel = qualification.Record.NotionalNVQLevelv2,
-                    WhatYoullLearn = course.WhatYoullLearn,
-                    WhatYoullNeed = course.WhatYoullNeed,
-                    WhereNext = course.WhereNext
+                    WhatYoullLearn = HtmlEncode(course.WhatYoullLearn),
+                    WhatYoullNeed = HtmlEncode(course.WhatYoullNeed),
+                    WhereNext = HtmlEncode(course.WhereNext)
                 },
                 Venue = venue != null
                     ? new VenueViewModel
                     {
-                        AddressLine1 = venue.AddressLine1,
-                        AddressLine2 = venue.AddressLine2,
-                        County = venue.County,
+                        AddressLine1 = HtmlEncode(venue.AddressLine1),
+                        AddressLine2 = HtmlEncode(venue.AddressLine2),
+                        County = HtmlEncode(venue.County),
                         Email = venue.Email,
                         Postcode = venue.Postcode,
                         Telephone = venue.Telephone,
-                        Town = venue.Town,
-                        VenueName = venue.VenueName,
+                        Town = HtmlEncode(venue.Town),
+                        VenueName = HtmlEncode(venue.VenueName),
                         Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website),
                         Latitude = Convert.ToDecimal(venue.Latitude),
                         Longitude = Convert.ToDecimal(venue.Longitude)
@@ -142,11 +142,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     CourseDirectoryName = provider.CourseDirectoryName,
                     Alias = provider.Alias,
                     Ukprn = provider.UnitedKingdomProviderReferenceNumber,
-                    AddressLine1 = providerAddressLines.AddressLine1,
-                    AddressLine2 = providerAddressLines.AddressLine2,
-                    Town = providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString(),
+                    AddressLine1 = HtmlEncode(providerAddressLines.AddressLine1),
+                    AddressLine2 = HtmlEncode(providerAddressLines.AddressLine2),
+                    Town = HtmlEncode(providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString()),
                     Postcode = providerContact?.ContactAddress?.PostCode,
-                    County = providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Locality,
+                    County = HtmlEncode(providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Locality),
                     Telephone = providerContact?.ContactTelephone1,
                     Fax = providerContact?.ContactFax,
                     Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
@@ -157,21 +157,21 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 Qualification = new QualificationViewModel
                 {
                     AwardOrgCode = qualification.Record.AwardOrgCode,
-                    AwardOrgName = qualification.Record.AwardOrgName,
+                    AwardOrgName = HtmlEncode(qualification.Record.AwardOrgName),
                     LearnAimRef = qualification.Record.LearnAimRef,
-                    LearnAimRefTitle = qualification.Record.LearnAimRefTitle,
-                    LearnAimRefTypeDesc = qualification.Record.LearnAimRefTypeDesc,
+                    LearnAimRefTitle = HtmlEncode(qualification.Record.LearnAimRefTitle),
+                    LearnAimRefTypeDesc = HtmlEncode(qualification.Record.LearnAimRefTypeDesc),
                     QualificationLevel = qualification.Record.NotionalNVQLevelv2,
-                    SectorSubjectAreaTier1Desc = qualification.Record.SectorSubjectAreaTier1Desc,
-                    SectorSubjectAreaTier2Desc = qualification.Record.SectorSubjectAreaTier2Desc
+                    SectorSubjectAreaTier1Desc = HtmlEncode(qualification.Record.SectorSubjectAreaTier1Desc),
+                    SectorSubjectAreaTier2Desc = HtmlEncode(qualification.Record.SectorSubjectAreaTier2Desc)
                 },
                 AlternativeCourseRuns = alternativeCourseRuns.Select(c => new AlternativeCourseRunViewModel
                 {
                     CourseRunId = c.CourseRun.CourseRunId,
                     AttendancePattern = c.CourseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)c.CourseRun.AttendancePattern : null,
                     Cost = c.CourseRun.Cost,
-                    CostDescription = c.CourseRun.CostDescription,
-                    CourseName = c.CourseRun.CourseName,
+                    CostDescription = HtmlEncode(c.CourseRun.CostDescription),
+                    CourseName = HtmlEncode(c.CourseRun.CourseName),
                     CourseURL = ViewModelFormatting.EnsureHttpPrefixed(c.CourseRun.CourseWebsite),
                     CreatedDate = c.CourseRun.CreatedOn,
                     DeliveryMode = c.CourseRun.DeliveryMode,
@@ -183,14 +183,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     Venue = c.Venue != null
                         ? new VenueViewModel
                         {
-                            AddressLine1 = c.Venue.AddressLine1,
-                            AddressLine2 = c.Venue.AddressLine2,
-                            County = c.Venue.County,
+                            AddressLine1 = HtmlEncode(c.Venue.AddressLine1),
+                            AddressLine2 = HtmlEncode(c.Venue.AddressLine2),
+                            County = HtmlEncode(c.Venue.County),
                             Email = c.Venue.Email,
                             Postcode = c.Venue.Postcode,
                             Telephone = c.Venue.Telephone,
-                            Town = c.Venue.Town,
-                            VenueName = c.Venue.VenueName,
+                            Town = HtmlEncode(c.Venue.Town),
+                            VenueName = HtmlEncode(c.Venue.VenueName),
                             Website = ViewModelFormatting.EnsureHttpPrefixed(c.Venue.Website),
                             Latitude = Convert.ToDecimal(c.Venue.Latitude),
                             Longitude = Convert.ToDecimal(c.Venue.Longitude)
@@ -210,6 +210,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                         }
                     }).ToArray()
             };
+
+            static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);
 
             static (string AddressLine1, string AddressLine2) NormalizeAddress(ProviderContactAddress address)
             {

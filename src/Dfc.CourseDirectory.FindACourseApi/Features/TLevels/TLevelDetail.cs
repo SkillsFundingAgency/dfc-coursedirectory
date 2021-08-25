@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
             var venues = await getVenues;
 
             var feChoice = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetFeChoiceForProvider() { ProviderUkprn = provider.Ukprn });
+                new GetFeChoiceForProvider() { ProviderUkprn = provider.Ukprn });
 
             var providerContact = provider.ProviderContact
                 .SingleOrDefault(c => c.ContactType == "P");
@@ -67,17 +67,21 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     FrameworkCode = tLevel.TLevelDefinition.FrameworkCode,
                     ProgType = tLevel.TLevelDefinition.ProgType,
                     QualificationLevel = tLevel.TLevelDefinition.QualificationLevel.ToString(),
-                    TLevelName = tLevel.TLevelDefinition.Name
+                    TLevelName = HtmlEncode(tLevel.TLevelDefinition.Name)
                 },
                 Provider = new ProviderViewModel()
                 {
                     ProviderName = sqlProvider.DisplayName,
                     Ukprn = provider.UnitedKingdomProviderReferenceNumber,
-                    AddressLine1 = ViewModelFormatting.ConcatAddressLines(providerContact?.ContactAddress?.SAON?.Description, providerContact?.ContactAddress?.PAON?.Description, providerContact?.ContactAddress?.StreetDescription),
-                    AddressLine2 = providerContact?.ContactAddress?.Locality,
-                    Town = providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(0),
+                    AddressLine1 = HtmlEncode(
+                        ViewModelFormatting.ConcatAddressLines(
+                            providerContact?.ContactAddress?.SAON?.Description,
+                            providerContact?.ContactAddress?.PAON?.Description,
+                            providerContact?.ContactAddress?.StreetDescription)),
+                    AddressLine2 = HtmlEncode(providerContact?.ContactAddress?.Locality),
+                    Town = HtmlEncode(providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(0)),
                     Postcode = providerContact?.ContactAddress?.PostCode,
-                    County = providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(1),
+                    County = HtmlEncode(providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(1)),
                     Email = providerContact?.ContactEmail,
                     Telephone = providerContact?.ContactTelephone1,
                     Fax = providerContact?.ContactFax,
@@ -85,12 +89,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     LearnerSatisfaction = feChoice?.LearnerSatisfaction,
                     EmployerSatisfaction = feChoice?.EmployerSatisfaction
                 },
-                WhoFor = tLevel.WhoFor,
-                EntryRequirements = tLevel.EntryRequirements,
-                WhatYoullLearn = tLevel.WhatYoullLearn,
-                HowYoullLearn = tLevel.HowYoullLearn,
-                HowYoullBeAssessed = tLevel.HowYoullBeAssessed,
-                WhatYouCanDoNext = tLevel.WhatYouCanDoNext,
+                WhoFor = HtmlEncode(tLevel.WhoFor),
+                EntryRequirements = HtmlEncode(tLevel.EntryRequirements),
+                WhatYoullLearn = HtmlEncode(tLevel.WhatYoullLearn),
+                HowYoullLearn = HtmlEncode(tLevel.HowYoullLearn),
+                HowYoullBeAssessed = HtmlEncode(tLevel.HowYoullBeAssessed),
+                WhatYouCanDoNext = HtmlEncode(tLevel.WhatYouCanDoNext),
                 Website = ViewModelFormatting.EnsureHttpPrefixed(tLevel.Website),
                 StartDate = tLevel.StartDate,
                 Locations = tLevel.Locations
@@ -98,12 +102,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     .Select(t => new TLevelLocationViewModel()
                     {
                         TLevelLocationId = t.Location.TLevelLocationId,
-                        VenueName = t.Venue.VenueName,
-                        AddressLine1 = t.Venue.AddressLine1,
-                        AddressLine2 = t.Venue.AddressLine2,
-                        Town = t.Venue.Town,
-                        County = t.Venue.County,
-                        Postcode = t.Venue.Postcode,
+                        VenueName = HtmlEncode(t.Venue.VenueName),
+                        AddressLine1 = HtmlEncode(t.Venue.AddressLine1),
+                        AddressLine2 = HtmlEncode(t.Venue.AddressLine2),
+                        Town = HtmlEncode(t.Venue.Town),
+                        County = HtmlEncode(t.Venue.County),
+                        Postcode = HtmlEncode(t.Venue.Postcode),
                         Telephone = t.Venue.Telephone,
                         Email = t.Venue.Email,
                         Website = ViewModelFormatting.EnsureHttpPrefixed(t.Venue.Website),
@@ -112,6 +116,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     })
                     .ToArray()
             };
+
+            static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);
         }
     }
 }
