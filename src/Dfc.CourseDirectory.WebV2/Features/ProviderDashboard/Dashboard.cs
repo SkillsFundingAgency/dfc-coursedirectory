@@ -37,6 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
+        public bool ApprenticeshipUploadInProgress { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -79,6 +80,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                     ProviderId = provider.ProviderId
                 });
 
+            var apprenticeshipUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = provider.ProviderId
+                });
+
             var vm = new ViewModel()
             {
                 ProviderName = provider.ProviderName,
@@ -98,7 +105,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
                 UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
-                CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created)
+                CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
+                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created)
             };
 
             return vm;
