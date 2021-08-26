@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Models.Regions;
-using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Enums;
-using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.Providers;
 using Dfc.ProviderPortal.Packages;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
@@ -31,7 +30,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 
         [Obsolete("Please don't use this any more, instead replace with a mapper class using something like AutoMapper",
             false)]
-        public DasProvider CreateDasProviderFromProvider(int exportKey, Provider provider, Core.DataStore.CosmosDb.Models.FeChoice feChoice)
+        public DasProvider CreateDasProviderFromProvider(int exportKey, Models.Providers.Provider provider, Core.DataStore.CosmosDb.Models.FeChoice feChoice)
         {
             if (!int.TryParse(provider.UnitedKingdomProviderReferenceNumber, out var ukprn))
                 throw new InvalidUkprnException(provider.UnitedKingdomProviderReferenceNumber);
@@ -74,27 +73,27 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
             if (locations.Any())
                 foreach (var (key, currentLocation) in locations)
                     // Regions
-                    if (currentLocation.Regions != null && currentLocation.Regions.Length > 0)
-                        DASLocations.AddRange(RegionsToLocations(exportKey, currentLocation.Regions));
+                    if (currentLocation.SubRegionIds != null && currentLocation.SubRegionIds.Count > 0)
+                        DASLocations.AddRange(RegionsToLocations(exportKey, currentLocation.SubRegionIds));
                     // Venues
-                    else if (currentLocation.Address != null)
+                    else if (currentLocation.Venue != null)
                         DASLocations.Add(new DasLocation
                         {
                             Id = int.Parse(key),
                             Address = new DasAddress
                             {
-                                Address1 = currentLocation.Address?.Address1,
-                                Address2 = currentLocation.Address?.Address2,
-                                County = currentLocation.Address?.County,
-                                Lat = currentLocation.Address?.Latitude,
-                                Long = currentLocation.Address?.Longitude,
-                                Postcode = currentLocation.Address?.Postcode,
-                                Town = currentLocation.Address?.Town
+                                Address1 = currentLocation.Venue.AddressLine1,
+                                Address2 = currentLocation.Venue.AddressLine2,
+                                County = currentLocation.Venue.County,
+                                Lat = currentLocation.Venue.Latitude,
+                                Long = currentLocation.Venue.Longitude,
+                                Postcode = currentLocation.Venue.Postcode,
+                                Town = currentLocation.Venue.Town
                             },
-                            Name = currentLocation.Name,
-                            Email = currentLocation.Address?.Email,
-                            Website = currentLocation.Address?.Website,
-                            Phone = currentLocation.Phone ?? currentLocation.Address?.Phone
+                            Name = currentLocation.Venue.VenueName,
+                            Email = currentLocation.Venue.Email,
+                            Website = currentLocation.Venue.Website,
+                            Phone = currentLocation.Telephone ?? currentLocation.Venue.Telephone
                         });
                     // National
                     else if (currentLocation.National != null && currentLocation.National.Value)
@@ -117,15 +116,14 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
             var standards = new List<DasStandard>();
             foreach (var apprenticeship in apprenticeships)
             {
-                if (!apprenticeship.StandardCode.HasValue) continue;
                 var apprenticeshipLocations =
                     LinkApprenticeshipLocationsToProvider(validLocations, apprenticeship);
 
                 standards.Add(new DasStandard
                 {
-                    StandardCode = apprenticeship.StandardCode.Value,
+                    StandardCode = apprenticeship.Standard.StandardCode,
                     MarketingInfo = apprenticeship.MarketingInformation,
-                    StandardInfoUrl = apprenticeship.Url,
+                    StandardInfoUrl = apprenticeship.ApprenticeshipWebsite,
                     Contact = new DasContact
                     {
                         ContactUsUrl = apprenticeship.ContactWebsite,
@@ -139,39 +137,6 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
             return standards;
         }
 
-        public List<DasFramework> ApprenticeshipsToFrameworks(int exportKey,
-            IEnumerable<Apprenticeship> apprenticeships,
-            Dictionary<string, ApprenticeshipLocation> validLocations)
-        {
-            var frameworks = new List<DasFramework>();
-
-            foreach (var apprenticeship in apprenticeships)
-            {
-                if (!apprenticeship.FrameworkCode.HasValue) continue;
-
-                var apprenticeshipLocations =
-                    LinkApprenticeshipLocationsToProvider(validLocations, apprenticeship);
-
-                frameworks.Add(new DasFramework
-                {
-                    FrameworkCode = apprenticeship.FrameworkCode.Value,
-                    FrameworkInfoUrl = apprenticeship.Url,
-                    MarketingInfo = HtmlHelper.StripHtmlTags(apprenticeship.MarketingInformation, true),
-                    PathwayCode = apprenticeship.PathwayCode,
-                    ProgType = apprenticeship.ProgType,
-                    Contact = new DasContact
-                    {
-                        ContactUsUrl = apprenticeship.ContactWebsite,
-                        Email = apprenticeship.ContactEmail,
-                        Phone = apprenticeship.ContactTelephone
-                    },
-                    Locations = CreateLocationRef(exportKey, apprenticeshipLocations)
-                });
-            }
-
-            return frameworks;
-        }
-
         private List<DasLocationRef> CreateLocationRef(int exportKey,
             Dictionary<string, ApprenticeshipLocation> locations)
         {
@@ -179,9 +144,9 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
             var subRegionItemModels = new SelectRegionModel().RegionItems.SelectMany(x => x.SubRegion);
             foreach (var (key, currentLocation) in locations)
                 // Regions
-                if (currentLocation.Regions != null && currentLocation.Regions.Length > 0)
+                if (currentLocation.SubRegionIds != null && currentLocation.SubRegionIds.Count > 0)
                 {
-                    foreach (var region in currentLocation.Regions)
+                    foreach (var region in currentLocation.SubRegionIds)
                     {
                         var locationId = subRegionItemModels
                             .Where(x => x.Id == region)
@@ -244,7 +209,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 
                 _telemetryClient.TrackException(
                     new LocationExportException(
-                        location.Id.ToString(),
+                        location.ApprenticeshipLocationId.ToString(),
                         new InvalidCastException(errorMessage)));
             }
 
@@ -254,7 +219,7 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
         }
 
 
-        private IEnumerable<DasLocation> RegionsToLocations(int exportKey, string[] regionCodes)
+        private IEnumerable<DasLocation> RegionsToLocations(int exportKey, IEnumerable<string> regionCodes)
         {
             var apprenticeshipLocations = new List<DasLocation>();
             var regions =

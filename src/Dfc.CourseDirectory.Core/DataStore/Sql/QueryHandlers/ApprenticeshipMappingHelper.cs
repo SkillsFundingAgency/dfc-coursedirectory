@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     },
                     splitOn: "VenueId"))
                 .GroupBy(al => al.ApprenticeshipId)
-                .ToDictionary(g => g.Key);
+                .ToDictionary(g => g.Key, g => g.AsEnumerable());
 
             var apprenticeshipLocationSubRegions = (await reader.ReadAsync<ApprenticeshipLocationSubRegionResult>())
                 .GroupBy(r => r.ApprenticeshipLocationId)
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ContactEmail = a.ContactEmail,
                     ContactTelephone = a.ContactTelephone,
                     ContactWebsite = a.ContactWebsite,
-                    ApprenticeshipLocations = locations[a.ApprenticeshipId]
+                    ApprenticeshipLocations = locations.GetValueOrDefault(a.ApprenticeshipId, Enumerable.Empty<ApprenticeshipLocationResult>())
                         .Select(al => new ApprenticeshipLocation()
                         {
                             ApprenticeshipLocationId = al.ApprenticeshipLocationId,
