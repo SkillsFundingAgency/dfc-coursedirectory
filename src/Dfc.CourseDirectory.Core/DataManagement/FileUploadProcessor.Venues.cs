@@ -24,6 +24,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
+
                 var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
                 {
                     ProviderId = providerId
@@ -58,6 +60,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
+
                 var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
                 {
                     ProviderId = providerId
@@ -100,6 +104,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
+
                 var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
                 {
                     ProviderId = providerId
@@ -191,6 +197,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
                 var providerId = venueUpload.ProviderId;
 
+                await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
+
                 await ValidateVenueUploadFile(dispatcher, venueUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
@@ -209,6 +217,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
+
                 var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
                 {
                     ProviderId = providerId
@@ -282,6 +292,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
+
                 // Check there isn't an existing unprocessed upload for this provider
 
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
@@ -335,6 +347,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public async Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
             var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider()
             {
@@ -574,6 +588,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             });
 
             return lastUpdatedOffering.HasValue && lastUpdatedOffering >= venueUpload.LastValidated;
+        }
+
+        private async Task AcquireExclusiveVenueUploadLockForProvider(Guid providerId, ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            var lockName = $"DM_Venues:{providerId}";
+            const int timeoutMilliseconds = 3000;
+
+            var acquired = await sqlQueryDispatcher.ExecuteQuery(new GetExclusiveLock()
+            {
+                Name = lockName,
+                TimeoutMilliseconds = timeoutMilliseconds
+            });
+
+            if (!acquired)
+            {
+                throw new Exception($"Failed to acquire exclusive venue upload lock for provider {providerId}.");
+            }
         }
 
         private async Task<IDictionary<Postcode, PostcodeInfo>> GetPostcodeInfoForRows(

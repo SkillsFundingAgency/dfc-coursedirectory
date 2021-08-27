@@ -27,6 +27,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -61,6 +63,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -94,6 +98,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -127,6 +133,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -165,6 +173,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -185,7 +195,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
+                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
 
                 var rows = await dispatcher.ExecuteQuery(new GetCourseUploadRowsByCourseId()
                 {
@@ -203,6 +213,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -240,6 +252,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -262,7 +276,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
                 await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId);
 
-                var (errorRows, totalRows) = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                var (errorRows, _) = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
                 {
                     CourseUploadId = courseUpload.CourseUploadId,
                     WithErrorsOnly = true
@@ -344,6 +358,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venueUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
                 var providerId = venueUpload.ProviderId;
 
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 await ValidateCourseUploadRows(dispatcher, courseUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
@@ -381,6 +397,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
                     ProviderId = providerId
@@ -489,6 +507,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 // Check there isn't an existing unprocessed upload for this provider
 
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
@@ -542,6 +562,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public async Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
             var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
             {
@@ -623,6 +645,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public async Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+            await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
             var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
             {
@@ -955,6 +979,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             finally
             {
                 stream.Seek(0L, SeekOrigin.Begin);
+            }
+        }
+
+        private async Task AcquireExclusiveCourseUploadLockForProvider(Guid providerId, ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            var lockName = $"DM_Courses:{providerId}";
+            const int timeoutMilliseconds = 3000;
+
+            var acquired = await sqlQueryDispatcher.ExecuteQuery(new GetExclusiveLock()
+            {
+                Name = lockName,
+                TimeoutMilliseconds = timeoutMilliseconds
+            });
+
+            if (!acquired)
+            {
+                throw new Exception($"Failed to acquire exclusive course upload lock for provider {providerId}.");
             }
         }
 
