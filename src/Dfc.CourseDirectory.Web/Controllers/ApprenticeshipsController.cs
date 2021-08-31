@@ -800,7 +800,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DeletedBy = _currentUserProvider.GetCurrentUser(),
                         DeletedOn = _clock.UtcNow
                     });
-
                     if (deleteResult.Value is Success)
                     {
                         return RedirectToAction("DeleteConfirm", "Apprenticeships", new { ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });

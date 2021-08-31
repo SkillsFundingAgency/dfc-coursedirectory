@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 return new NotFound();
             }
 
-            var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUkprn });
+            var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderByUkprn { Ukprn = course.ProviderUkprn });
             var getQualification = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery { LearnAimRef = course.LearnAimRef });
             var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUkprn });
 

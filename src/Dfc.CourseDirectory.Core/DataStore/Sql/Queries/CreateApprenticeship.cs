@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 
     public class CreateApprenticeshipLocation
     {
-        public Guid ApprenticeshipLocationId { get; set; }
+        public Guid ApprenticeshipLocationId { get; set; } = Guid.NewGuid();
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public Guid? VenueId { get; set; }
         public bool? National { get; set; }
