@@ -22,6 +22,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearc
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

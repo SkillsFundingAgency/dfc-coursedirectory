@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.Web
+namespace Dfc.CourseDirectory.WebV2.Filters
 {
     public class RestrictApprenticeshipQAStatusAttribute : ActionFilterAttribute
     {
