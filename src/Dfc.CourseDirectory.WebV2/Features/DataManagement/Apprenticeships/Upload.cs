@@ -35,19 +35,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
 
     public class UploadFailedResult : ModelWithErrors<ViewModel>
     {
+
         public UploadFailedResult(ViewModel model, ValidationResult validationResult)
             : base(model, validationResult)
         {
             MissingHeaders = Array.Empty<string>();
+            MissingStandardRows = Array.Empty<int>();
+            InvalidStandardRows = Array.Empty<(int StandardCode, int StandardVersion, int RowNumber)>();
         }
 
-        public UploadFailedResult(ViewModel model, string fileErrorMessage, IEnumerable<string> missingHeaders = null)
+        public UploadFailedResult(
+                ViewModel model,
+                string fileErrorMessage,
+                IEnumerable<string> missingHeaders = null,
+                IEnumerable<int> missingStandardRows = null,
+                IEnumerable<(int StandardCode, int StandardVersion, int RowNumber)> invalidStandardRows = null)
             : base(model, CreateValidationResult(fileErrorMessage))
         {
             MissingHeaders = missingHeaders?.ToArray() ?? Array.Empty<string>();
+            MissingStandardRows = missingStandardRows?.ToArray() ?? Array.Empty<int>();
+            InvalidStandardRows = invalidStandardRows?.ToArray() ?? Array.Empty<(int StandardCode, int StandardVersion, int RowNumber)>();
         }
 
         public IReadOnlyCollection<string> MissingHeaders { get; }
+        public IReadOnlyCollection<int> MissingStandardRows { get; }
+        public IReadOnlyCollection<(int StandardCode, int StandardVersion, int RowNumber)> InvalidStandardRows { get; }
 
         private static ValidationResult CreateValidationResult(string fileErrorMessage) =>
             new ValidationResult(new[]
@@ -101,32 +113,41 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Uplo
                 stream,
                 _currentUserProvider.GetCurrentUser());
 
-            if (saveFileResult.Status == SaveFileResultStatus.InvalidFile)
+            if (saveFileResult.Status == SaveApprenticeshipFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must be a CSV");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidRows)
+            else if (saveFileResult.Status == SaveApprenticeshipFileResultStatus.InvalidRows)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must use the template");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidHeader)
+            else if (saveFileResult.Status == SaveApprenticeshipFileResultStatus.InvalidHeader)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
+            else if (saveFileResult.Status == SaveApprenticeshipFileResultStatus.InvalidStandards)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(),
+                    "The file contains errors",
+                    null,
+                    saveFileResult.MissingStandardRows,
+                    saveFileResult.InvalidStandardRows);
+            }
+            else if (saveFileResult.Status == SaveApprenticeshipFileResultStatus.EmptyFile)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file is empty");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
+            else if (saveFileResult.Status == SaveApprenticeshipFileResultStatus.ExistingFileInFlight)
             {
                 // UI Should stop us getting here so a generic error is sufficient
                 throw new InvalidStateException();

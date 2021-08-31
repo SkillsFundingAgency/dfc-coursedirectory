@@ -95,6 +95,20 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             return table.AsTableValuedParameter(typeName: "Pttcd.GuidIdTable");
         }
 
+        public static SqlMapper.ICustomQueryParameter CreateStandardCodesTable(IEnumerable<(int StandardCode, int Version)> rows)
+        {
+            var table = new DataTable();
+            table.Columns.Add("StandardCode", typeof(int));
+            table.Columns.Add("Version", typeof(int));
+
+            foreach (var row in rows)
+            {
+                table.Rows.Add(row.StandardCode, row.Version);
+            }
+
+            return table.AsTableValuedParameter(typeName: "Pttcd.StandardCodesTable");
+        }
+
         public static SqlMapper.ICustomQueryParameter CreateStringTable(IEnumerable<string> rows)
         {
             var table = new DataTable();

@@ -254,28 +254,28 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy)
+        public async Task<SaveVenueFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
             if (await FileIsEmpty(stream))
             {
-                return SaveFileResult.EmptyFile();
+                return SaveVenueFileResult.EmptyFile();
             }
 
             if (!await LooksLikeCsv(stream))
             {
-                return SaveFileResult.InvalidFile();
+                return SaveVenueFileResult.InvalidFile();
             }
 
             var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvVenueRow>(stream);
             if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
             {
-                return SaveFileResult.InvalidHeader(missingHeaders);
+                return SaveVenueFileResult.InvalidHeader(missingHeaders);
             }
             else if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidRows)
             {
-                return SaveFileResult.InvalidRows();
+                return SaveVenueFileResult.InvalidRows();
             }
 
             var venueUploadId = Guid.NewGuid();
@@ -291,7 +291,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 if (existingUpload != null && existingUpload.UploadStatus.IsUnprocessed())
                 {
-                    return SaveFileResult.ExistingFileInFlight();
+                    return SaveVenueFileResult.ExistingFileInFlight();
                 }
 
                 // Abandon any existing un-published upload (there will be one at most)
@@ -317,7 +317,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             await UploadToBlobStorage();
 
-            return SaveFileResult.Success(venueUploadId, UploadStatus.Created);
+            return SaveVenueFileResult.Success(venueUploadId, UploadStatus.Created);
 
             async Task UploadToBlobStorage()
             {
