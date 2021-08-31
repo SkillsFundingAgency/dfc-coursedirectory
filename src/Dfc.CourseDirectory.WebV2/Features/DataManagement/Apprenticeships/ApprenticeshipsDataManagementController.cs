@@ -16,6 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
     [RequireFeatureFlag(FeatureFlags.ApprenticeshipsDataManagement)]
     [RequireProviderContext]
     [RestrictProviderTypes(ProviderType.Apprenticeships)]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class ApprenticeshipsDataManagementController : Controller
     {
         private readonly IMediator _mediator;

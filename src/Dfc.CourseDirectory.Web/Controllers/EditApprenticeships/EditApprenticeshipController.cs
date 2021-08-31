@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

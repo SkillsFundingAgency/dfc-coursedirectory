@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

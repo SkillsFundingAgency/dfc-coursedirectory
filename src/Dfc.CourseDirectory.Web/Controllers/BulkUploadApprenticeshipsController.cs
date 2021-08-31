@@ -14,6 +14,7 @@ using Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload;
 using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
