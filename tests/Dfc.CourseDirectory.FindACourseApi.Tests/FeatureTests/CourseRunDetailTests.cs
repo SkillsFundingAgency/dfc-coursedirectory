@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourse>()))
                 .ReturnsAsync(course);
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderByUkprn>()))
+            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.CosmosDb.Queries.GetProviderByUkprn>()))
                 .ReturnsAsync(provider);
 
             LarsSearchClient.Setup(s => s.Search(It.IsAny<LarsLearnAimRefSearchQuery>()))

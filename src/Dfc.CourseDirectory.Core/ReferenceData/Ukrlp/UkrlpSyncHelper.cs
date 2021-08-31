@@ -255,7 +255,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         };
 
         private Task<Provider> GetProvider(int ukprn) =>
-           _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
+           _cosmosDbQueryDispatcher.ExecuteQuery(new DataStore.CosmosDb.Queries.GetProviderByUkprn() { Ukprn = ukprn });
 
         private enum CreateOrUpdateResult { Created, Updated }
     }
