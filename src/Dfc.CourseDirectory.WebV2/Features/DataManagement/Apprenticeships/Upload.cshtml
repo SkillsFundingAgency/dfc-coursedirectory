@@ -1,6 +1,9 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Upload.ViewModel;
 @{
     ViewBag.Title = "Data Upload - Upload apprenticeship data";
+
+    var missingStandardCodes = ViewBag.MissingStandardRows as IReadOnlyCollection<int> ?? Array.Empty<int>();
+    var invalidStandardCodes = ViewBag.InvalidStandardRows as IReadOnlyCollection<(int StandardCode, int StandardVersion, int RowNumber)> ?? Array.Empty<(int StandardCode, int StandardVersion, int RowNumber)>();
 }
 
 @section BackLink {
@@ -26,6 +29,77 @@
                     </ul>
                 </govuk-details-text>
             </govuk-details>
+        </govuk-error-summary-item>
+    }
+    else if (missingStandardCodes.Count != 0 || invalidStandardCodes.Count != 0)
+    {
+        <govuk-error-summary-item>
+            <a href="#@(Html.IdFor(m => m.File))">The file contains errors</a>
+
+            @{
+                var standardCodeErrorTypes = (missingStandardCodes.Count != 0 ? 1 : 0) +
+                    (invalidStandardCodes.Count != 0 ? 1 : 0);
+            }
+
+            @if (missingStandardCodes.Count != 0)
+            {
+                async Task RenderMissingStandardCodesError()
+                {
+                    <p>You must enter a Standard in the STANDARD_CODE and STANDARD_VERSION columns</p>
+                    <ul class="govuk-list govuk-!-margin-0">
+                        @foreach (var rowNumber in missingStandardCodes)
+                        {
+                            <li data-testid="MissingStandardCode">Row @rowNumber</li>
+                        }
+                    </ul>
+                }
+
+                @if (standardCodeErrorTypes != 1)
+                {
+                    <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+                        <govuk-details-summary>Missing apprenticeship standard code or version</govuk-details-summary>
+                        <govuk-details-text>
+                            @{ await RenderMissingStandardCodesError(); }
+                        </govuk-details-text>
+                    </govuk-details>
+                }
+                else
+                {
+                    <div class="govuk-!-margin-top-4 pttcd-!-error">
+                        @{ await RenderMissingStandardCodesError(); }
+                    </div>
+                }
+            }
+
+            @if (invalidStandardCodes.Count != 0)
+            {
+                async Task RenderInvalidStandardCodesError()
+                {
+                    <p>You must enter a valid Standard in the STANDARD_CODE and STANDARD_VERSION columns</p>
+                    <ul class="govuk-list govuk-!-margin-0">
+                        @foreach (var (_, _, rowNumber) in invalidStandardCodes)
+                        {
+                            <li data-testid="InvalidStandardCode">Row @rowNumber</li>
+                        }
+                    </ul>
+                }
+
+                @if (standardCodeErrorTypes != 1)
+                {
+                    <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+                        <govuk-details-summary>Invalid apprenticeship standard code or version</govuk-details-summary>
+                        <govuk-details-text>
+                            @{ await RenderInvalidStandardCodesError(); }
+                        </govuk-details-text>
+                    </govuk-details>
+                }
+                else
+                {
+                    <div class="govuk-!-margin-top-4 pttcd-!-error">
+                        @{ await RenderInvalidStandardCodesError(); }
+                    </div>
+                }
+            }
         </govuk-error-summary-item>
     }
     else

@@ -459,30 +459,30 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy)
+        public async Task<SaveCourseFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
             if (await FileIsEmpty(stream))
             {
-                return SaveFileResult.EmptyFile();
+                return SaveCourseFileResult.EmptyFile();
             }
 
             if (!await LooksLikeCsv(stream))
             {
-                return SaveFileResult.InvalidFile();
+                return SaveCourseFileResult.InvalidFile();
             }
 
             var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvCourseRow>(stream);
             if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
             {
-                return SaveFileResult.InvalidHeader(missingHeaders);
+                return SaveCourseFileResult.InvalidHeader(missingHeaders);
             }
 
             var (missingLars, invalidLars, expiredLars) = await ValidateLearnAimRefs(stream);
             if (missingLars.Length > 0 || invalidLars.Length > 0 || expiredLars.Length > 0)
             {
-                return SaveFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
+                return SaveCourseFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
             }
 
             var courseUploadId = Guid.NewGuid();
@@ -498,7 +498,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 if (existingUpload != null && existingUpload.UploadStatus.IsUnprocessed())
                 {
-                    return SaveFileResult.ExistingFileInFlight();
+                    return SaveCourseFileResult.ExistingFileInFlight();
                 }
 
                 // Abandon any existing un-published upload (there will be one at most)
@@ -524,7 +524,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             await UploadToBlobStorage();
 
-            return SaveFileResult.Success(courseUploadId, UploadStatus.Created);
+            return SaveCourseFileResult.Success(courseUploadId, UploadStatus.Created);
 
             async Task UploadToBlobStorage()
             {
@@ -901,6 +901,61 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var uploadStatus = await RefreshCourseUploadValidationStatus(courseUploadId, sqlQueryDispatcher);
 
             return (uploadStatus, updatedRows);
+        }
+
+        internal async Task<(int[] Missing, (string LearnAimRef, int RowNumber)[] Invalid, (string LearnAimRef, int RowNumber)[] Expired)> ValidateLearnAimRefs(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                var missing = new List<int>();
+                var invalid = new List<(string LearnAimRef, int RowNumber)>();
+                var expired = new List<(string LearnAimRef, int RowNumber)>();
+
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    var rows = csvReader.GetRecords<CsvCourseRow>().ToList();
+
+                    var validLearningDeliveries = await dispatcher.ExecuteQuery(
+                        new GetLearningDeliveries() { LearnAimRefs = rows.Select(r => r.LearnAimRef).Distinct() });
+
+                    int rowNumber = 2;
+
+                    foreach (var row in rows)
+                    {
+                        var learnAimRef = row.LearnAimRef.Trim();
+
+                        if (string.IsNullOrWhiteSpace(learnAimRef))
+                        {
+                            missing.Add(rowNumber);
+                        }
+                        else if (!validLearningDeliveries.TryGetValue(learnAimRef, out var learningDelivery))
+                        {
+                            invalid.Add((learnAimRef, rowNumber));
+                        }
+                        else if ((learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
+                            || (!learningDelivery.OperationalEndDate.IsEmpty()
+                            && DateTime.Parse(learningDelivery.OperationalEndDate) < DateTime.Now))
+                        {
+                            expired.Add((learnAimRef, rowNumber));
+                        }
+
+                        rowNumber++;
+                    }
+                }
+
+                return (missing.ToArray(), invalid.ToArray(), expired.ToArray());
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
         }
 
         private async Task<UploadStatus> RefreshCourseUploadValidationStatus(Guid courseUploadId, ISqlQueryDispatcher sqlQueryDispatcher)
