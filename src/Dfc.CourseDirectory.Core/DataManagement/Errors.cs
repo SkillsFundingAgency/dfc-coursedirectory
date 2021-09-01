@@ -54,25 +54,25 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             switch (errorCode)
             {
                 case "APPRENTICESHIP_CONTACTUS_FORMAT":
-                    return "Contact Us";
+                    return "Contact us";
                 case "APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK":
                 case "APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED":
-                    return "Delivery Mode";
+                    return "Delivery mode";
                 case "APPRENTICESHIP_EMAIL_FORMAT":
                 case "APPRENTICESHIP_EMAIL_REQUIRED":
-                    return "Apprenticeship Email";
+                    return "Apprenticeship email";
                 case "APPRENTICESHIP_INFORMATION_MAXLENGTH":
                 case "APPRENTICESHIP_INFORMATION_REQUIRED":
-                    return "Apprenticeship Information";
+                    return "Apprenticeship information";
                 case "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED":
-                    return "National Delivery";
+                    return "National delivery";
                 case "APPRENTICESHIP_RADIUS_NOT_ALLOWED":
                 case "APPRENTICESHIP_RADIUS_REQUIRED":
                     return "Radius";
                 case "APPRENTICESHIP_STANDARD_CODE_REQUIRED":
-                    return "Standard Code";
+                    return "Standard code";
                 case "APPRENTICESHIP_STANDARD_VERSION_REQUIRED":
-                    return "Standard Version";
+                    return "Standard version";
                 case "APPRENTICESHIP_TELEPHONE_FORMAT":
                 case "APPRENTICESHIP_TELEPHONE_REQUIRED":
                     return "Telephone";

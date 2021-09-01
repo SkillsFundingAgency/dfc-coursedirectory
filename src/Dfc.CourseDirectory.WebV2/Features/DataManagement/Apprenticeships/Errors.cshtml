@@ -30,11 +30,11 @@
                 <table class="govuk-table" data-testid="ErrorRows">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header" style="width: 200px">Row</th>
-                            <th scope="col" class="govuk-table__header" style="width: 150px">Code</th>
-                            <th scope="col" class="govuk-table__header" style="width: 90px">Version</th>
-                            <th scope="col" class="govuk-table__header" style="width: 90px">Name</th>
-                            <th scope="col" class="govuk-table__header" style="width: 90px">Delivery method</th>
+                            <th scope="col" class="govuk-table__header" style="width: 80px">Row</th>
+                            <th scope="col" class="govuk-table__header" style="width: 80px">Code</th>
+                            <th scope="col" class="govuk-table__header" style="width: 80px">Version</th>
+                            <th scope="col" class="govuk-table__header" style="width: 250px">Name</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery method</th>
                             <th scope="col" class="govuk-table__header">Error(s)</th>
                         </tr>
                     </thead>
@@ -47,7 +47,7 @@
                             <td class="govuk-table__cell pttcd-table--no-border">@row.Version</td>
                             <td class="govuk-table__cell pttcd-table--no-border">@row.ApprenticeshipName</td>
                             <td class="govuk-table__cell pttcd-table--no-border">@row.DeliveryMode</td>
-                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="Errors">
                                 @for (var i = 0; i < row.ErrorFields.Count; i++)
                                 {
                                     <span class="govuk-!-display-inline-block">

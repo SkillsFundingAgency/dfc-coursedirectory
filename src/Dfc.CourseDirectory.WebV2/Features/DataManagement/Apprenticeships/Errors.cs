@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
@@ -9,8 +10,6 @@ using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using System.Linq;
-using System;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Errors
 {
@@ -31,7 +30,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
         public bool CanResolveOnScreen { get; set; }
         public int ErrorCount { get; set; }
     }
-
 
     public class ViewModelErrorRow
     {
@@ -78,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
                 return new UploadHasNoErrors();
             }
 
-            return await CreateViewModel(errorRows);
+            return CreateViewModel(errorRows);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -91,15 +89,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
                 var errorRows = await _fileUploadProcessor.GetApprenticeshipUploadRowsWithErrorsForProvider(
                     _providerContextProvider.GetProviderId());
 
-                var vm = await CreateViewModel(errorRows);
+                var vm = CreateViewModel(errorRows);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
             return new Success();
         }
 
-
-        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<ApprenticeshipUploadRow> rows)
+        private ViewModel CreateViewModel(IReadOnlyCollection<ApprenticeshipUploadRow> rows)
         {
             var errorRowCount = rows.Count;
             var canResolveOnScreen = errorRowCount <= 30;
