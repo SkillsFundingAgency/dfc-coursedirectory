@@ -194,9 +194,9 @@ namespace Dfc.CourseDirectory.Services.Models
         Undefined = 0,
         [Description("Add an apprenticeship")]
         Add = 1,
-        [Description("Add multiple apprenticeships via a file upload")]
+        [Description("Upload your apprenticeships with a CSV file")]
         Upload = 2,
-        [Description("View or make changes to an existing apprenticeship")]
+        [Description("View and edit apprenticeships")]
         View = 3
     }
 
