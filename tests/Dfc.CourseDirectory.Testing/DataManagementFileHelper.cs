@@ -248,7 +248,7 @@ namespace Dfc.CourseDirectory.Testing
             writeRows(csvWriter);
         });
 
-        public static Stream CreateApprenticeshipUploadCsvStream(params CsvApprenticeshipRow[] rows) => CreateCourseUploadCsvStream(csvWriter =>
+        public static Stream CreateApprenticeshipUploadCsvStream(params CsvApprenticeshipRow[] rows) => CreateApprenticeshipUploadCsvStream(csvWriter =>
         {
             foreach (var row in rows)
             {

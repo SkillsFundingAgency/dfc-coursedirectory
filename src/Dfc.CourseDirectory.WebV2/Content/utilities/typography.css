@@ -1,3 +1,8 @@
 ﻿.pttcd-text-nowrap {
     white-space: nowrap;
 }
+
+.pttcd-\!-error, .pttcd-\!-error>* {
+    color: #d4351c !important;
+    font-weight: 700 !important;
+}

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
+using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -14,29 +15,34 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation;
 using FluentValidation;
 
-
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-        public async Task<SaveFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy)
+        public async Task<SaveApprenticeshipFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
             if (await FileIsEmpty(stream))
             {
-                return SaveFileResult.EmptyFile();
+                return SaveApprenticeshipFileResult.EmptyFile();
             }
 
             if (!await LooksLikeCsv(stream))
             {
-                return SaveFileResult.InvalidFile();
+                return SaveApprenticeshipFileResult.InvalidFile();
             }
 
             var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvApprenticeshipRow>(stream);
             if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
             {
-                return SaveFileResult.InvalidHeader(missingHeaders);
+                return SaveApprenticeshipFileResult.InvalidHeader(missingHeaders);
+            }
+
+            var (missingStandards, invalidStandards) = await ValidateStandardCodes(stream);
+            if (missingStandards.Length > 0 || invalidStandards.Length > 0)
+            {
+                return SaveApprenticeshipFileResult.InvalidStandards(missingStandards, invalidStandards);
             }
 
             var apprenticeshipUploadId = Guid.NewGuid();
@@ -52,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 if (existingUpload != null && existingUpload.UploadStatus.IsUnprocessed())
                 {
-                    return SaveFileResult.ExistingFileInFlight();
+                    return SaveApprenticeshipFileResult.ExistingFileInFlight();
                 }
 
                 // Abandon any existing un-published upload (there will be one at most)
@@ -75,8 +81,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 await dispatcher.Transaction.CommitAsync();
             }
+
             await UploadToBlobStorage();
 
+            return SaveApprenticeshipFileResult.Success(apprenticeshipUploadId, UploadStatus.Created);
 
             async Task UploadToBlobStorage()
             {
@@ -89,8 +97,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var blobName = $"{Constants.ApprenticeshipsFolder}/{apprenticeshipUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
             }
-
-            return SaveFileResult.Success(apprenticeshipUploadId, UploadStatus.Created);
         }
 
         public async Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream)
@@ -267,7 +273,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return (uploadStatus, updatedRows);
         }
 
-
         public async Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
@@ -352,6 +357,58 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             return await sqlQueryDispatcher.ExecuteQuery(
                 new GetApprenticeshipUploadRowsToRevalidate() { ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId });
+        }
+
+
+       internal async Task<(int[] Missing, (int StandardCode, int StandardVersion, int RowNumber)[] Invalid)> ValidateStandardCodes(Stream stream)
+        {
+            CheckStreamIsProcessable(stream);
+
+            try
+            {
+                using (var streamReader = new StreamReader(stream, leaveOpen: true))
+                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                {
+                    await csvReader.ReadAsync();
+                    csvReader.ReadHeader();
+
+                    var rowStandards = csvReader.GetRecords<CsvApprenticeshipRow>()
+                        .Select((row, i) =>
+                        {
+                            int? standardCode = int.TryParse(row.StandardCode, out var parsed) ? parsed : (int?)null;
+                            int? standardVersion = int.TryParse(row.StandardVersion, out parsed) ? parsed : (int?)null;
+
+                            return (RowNumber: i + 2, StandardCode: standardCode, StandardVersion: standardVersion);
+                        })
+                        .ToArray();
+
+                    var standards = await dispatcher.ExecuteQuery(new GetStandards()
+                    {
+                        StandardCodes = rowStandards
+                            .Where(r => r.StandardCode.HasValue && r.StandardVersion.HasValue)
+                            .Select(r => (r.StandardCode.Value, r.StandardVersion.Value))
+                            .Distinct()
+                    });
+
+                    var missing = rowStandards
+                        .Where(r => !r.StandardCode.HasValue || !r.StandardVersion.HasValue)
+                        .Select(r => r.RowNumber)
+                        .ToArray();
+
+                    var invalid = rowStandards
+                        .Where(r => r.StandardCode.HasValue && r.StandardVersion.HasValue)
+                        .Select(r => (StandardCode: r.StandardCode.Value, StandardVersion: r.StandardVersion.Value, r.RowNumber))
+                        .Where(r => !standards.ContainsKey((r.StandardCode, r.StandardVersion)))
+                        .ToArray();
+
+                    return (missing, invalid);
+                }
+            }
+            finally
+            {
+                stream.Seek(0L, SeekOrigin.Begin);
+            }
         }
 
 

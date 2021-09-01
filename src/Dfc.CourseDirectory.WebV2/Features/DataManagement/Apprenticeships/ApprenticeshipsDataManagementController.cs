@@ -45,6 +45,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
                     errors =>
                     {
                         ViewBag.MissingHeaders = errors.MissingHeaders;
+                        ViewBag.MissingStandardRows = errors.MissingStandardRows;
+                        ViewBag.InvalidStandardRows = errors.InvalidStandardRows;
+
+                        if (errors.MissingStandardRows.Count > 0 ||
+                            errors.InvalidStandardRows.Count > 0)
+                        {
+                            ModelState.AddModelError(nameof(command.File), "The file contains errors");
+                        }
                         return this.ViewFromErrors(errors);
                     },
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));

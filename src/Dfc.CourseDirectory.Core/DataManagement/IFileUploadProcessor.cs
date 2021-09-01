@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
         Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy);
-        Task<SaveFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task<SaveCourseFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update);
         Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update);
 
@@ -33,12 +33,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         IObservable<UploadStatus> GetVenueUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessVenueFile(Guid venueUploadId, Stream stream);
         Task<PublishResult> PublishVenueUploadForProvider(Guid providerId, UserInfo publishedBy);
-        Task<SaveFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task<SaveVenueFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow);
         Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
 
         // Apprenticeships
-        Task<SaveFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task<SaveApprenticeshipFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream);
         IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId);
         Task DeleteApprenticeshipUploadForProvider(Guid providerId);

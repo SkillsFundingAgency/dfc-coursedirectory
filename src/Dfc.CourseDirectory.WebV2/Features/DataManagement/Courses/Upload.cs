@@ -112,43 +112,43 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
                 stream,
                 _currentUserProvider.GetCurrentUser());
 
-            if (saveFileResult.Status == SaveFileResultStatus.InvalidFile)
+            if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must be a CSV");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidRows)
+            else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidRows)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must use the template");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidHeader)
+            else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidHeader)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidLars)
+            else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The file contains errors",
                     null,
-                    saveFileResult.MissingLearnAimRefs,
-                    saveFileResult.InvalidLearnAimRefs,
-                    saveFileResult.ExpiredLearnAimRefs);
+                    saveFileResult.MissingLearnAimRefRows,
+                    saveFileResult.InvalidLearnAimRefRows,
+                    saveFileResult.ExpiredLearnAimRefRows);
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
+            else if (saveFileResult.Status == SaveCourseFileResultStatus.EmptyFile)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file is empty");
             }
 
-            else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
+            else if (saveFileResult.Status == SaveCourseFileResultStatus.ExistingFileInFlight)
             {
                 // UI Should stop us getting here so a generic error is sufficient
                 throw new InvalidStateException();

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
@@ -142,24 +143,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
-        {
-            var content = new MultipartFormDataContent();
-            content.Headers.ContentType.MediaType = "multipart/form-data";
-
-            using (var mem = new MemoryStream())
-            using (var writer = new StreamWriter(mem))
-            {
-                if (csvStream != null)
-                {
-                    var byteArrayContent = new StreamContent(csvStream);
-                    byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
-                    content.Add(byteArrayContent, "File", "someFileName.csv");
-                }
-            }
-            return content;
-        }
-
         [Fact]
         public async Task Post_FileHasMissingHeaders_RendersError()
         {
@@ -200,6 +183,73 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
                 "STANDARD_CODE",
                 "VENUE"
             });
+        }
+
+        [Fact]
+        public async Task Post_FileWithLarsErrors_RendersExpectedResult()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 2, standardName: "Test Standard");
+
+            // Create a file with three rows;
+            // one that references a valid standard;
+            // one that references a standard that doesn't exist;
+            // one that doesn't have a standard at all.
+            var csvStream = DataManagementFileHelper.CreateApprenticeshipUploadCsvStream(
+                new CsvApprenticeshipRow()
+                {
+                    StandardCode = standard.StandardCode.ToString(),
+                    StandardVersion = standard.Version.ToString()
+                },
+                new CsvApprenticeshipRow()
+                {
+                    StandardCode = "9",
+                    StandardVersion = "0"
+                },
+                new CsvApprenticeshipRow()
+                {
+                    StandardCode = string.Empty,
+                    StandardVersion = string.Empty
+                });
+
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/apprenticeships/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("File", "The file contains errors");
+            doc.GetAllElementsByTestId("MissingStandardCode").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "Row 4"
+            });
+            doc.GetAllElementsByTestId("InvalidStandardCode").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
+            {
+                "Row 3"
+            });
+        }
+
+        private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
+        {
+            var content = new MultipartFormDataContent();
+            content.Headers.ContentType.MediaType = "multipart/form-data";
+
+            using (var mem = new MemoryStream())
+            using (var writer = new StreamWriter(mem))
+            {
+                if (csvStream != null)
+                {
+                    var byteArrayContent = new StreamContent(csvStream);
+                    byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
+                    content.Add(byteArrayContent, "File", "someFileName.csv");
+                }
+            }
+            return content;
         }
     }
 }

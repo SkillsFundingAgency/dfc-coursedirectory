@@ -111,38 +111,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
                 stream,
                 _currentUserProvider.GetCurrentUser());
 
-            if (saveFileResult.Status == SaveFileResultStatus.InvalidFile)
+            if (saveFileResult.Status == SaveVenueFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must be a CSV");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidRows)
+            else if (saveFileResult.Status == SaveVenueFileResultStatus.InvalidRows)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must use the template");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.InvalidHeader)
+            else if (saveFileResult.Status == SaveVenueFileResultStatus.InvalidHeader)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.EmptyFile)
+            else if (saveFileResult.Status == SaveVenueFileResultStatus.EmptyFile)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file is empty");
             }
-            else if (saveFileResult.Status == SaveFileResultStatus.ExistingFileInFlight)
+            else if (saveFileResult.Status == SaveVenueFileResultStatus.ExistingFileInFlight)
             {
                 // UI Should stop us getting here so a generic error is sufficient
                 throw new InvalidStateException();
             }
 
-            Debug.Assert(saveFileResult.Status == SaveFileResultStatus.Success);
+            Debug.Assert(saveFileResult.Status == SaveVenueFileResultStatus.Success);
 
             // Wait for a little bit to see if the file gets processed quickly
             // (so we can skip the In Progress UI)

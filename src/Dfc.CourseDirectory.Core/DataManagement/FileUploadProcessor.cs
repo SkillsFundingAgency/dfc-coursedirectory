@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,10 +8,8 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
-using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -201,61 +198,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             if (!stream.CanSeek)
             {
                 throw new ArgumentException("Stream must be seekable.", nameof(stream));
-            }
-        }
-
-        internal async Task<(int[] Missing, (string LearnAimRef, int RowNumber)[] Invalid, (string LearnAimRef, int RowNumber)[] Expired)> ValidateLearnAimRefs(Stream stream)
-        {
-            CheckStreamIsProcessable(stream);
-
-            try
-            {
-                var missing = new List<int>();
-                var invalid = new List<(string LearnAimRef, int RowNumber)>();
-                var expired = new List<(string LearnAimRef, int RowNumber)>();
-
-                using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-                {
-                    await csvReader.ReadAsync();
-                    csvReader.ReadHeader();
-
-                    List<CsvCourseRow> rows = csvReader.GetRecords<CsvCourseRow>().ToList();
-
-                    var validLearningDeliveries = await dispatcher.ExecuteQuery(
-                        new GetLearningDeliveries() { LearnAimRefs = rows.Select(r => r.LearnAimRef).Distinct() });
-
-                    int rowNumber = 2;
-
-                    foreach (var row in rows)
-                    {
-                        var learnAimRef = row.LearnAimRef.Trim();
-
-                        if (string.IsNullOrWhiteSpace(learnAimRef))
-                        {
-                            missing.Add(rowNumber);
-                        }
-                        else if (!validLearningDeliveries.TryGetValue(learnAimRef, out var learningDelivery))
-                        {
-                            invalid.Add((learnAimRef, rowNumber));
-                        }
-                        else if ((learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
-                            || (!learningDelivery.OperationalEndDate.IsEmpty()
-                            && DateTime.Parse(learningDelivery.OperationalEndDate) < DateTime.Now))
-                        {
-                            expired.Add((learnAimRef, rowNumber));
-                        }
-
-                        rowNumber++;
-                    }
-                }
-
-                return (missing.ToArray(), invalid.ToArray(), expired.ToArray());
-            }
-            finally
-            {
-                stream.Seek(0L, SeekOrigin.Begin);
             }
         }
 
