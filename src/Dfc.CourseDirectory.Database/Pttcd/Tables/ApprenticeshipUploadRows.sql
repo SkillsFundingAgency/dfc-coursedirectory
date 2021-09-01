@@ -16,10 +16,15 @@
     [ContactPhone] NVARCHAR(MAX) NOT NULL,
     [ContactUrl] NVARCHAR(MAX) NULL,
     [DeliveryMethod] NVARCHAR(MAX) NOT NULL,
-    [Venue] NVARCHAR(MAX) NULL,
+    [VenueName] NVARCHAR(MAX) NULL,
     [YourVenueReference] NVARCHAR(MAX) NOT NULL,
     [Radius] NVARCHAR(MAX) NULL,
     [DeliveryMode] NVARCHAR(MAX) NULL,
     [NationalDelivery] NVARCHAR(MAX) NULL,
-    [SubRegions] NVARCHAR(MAX) NULL
+    [SubRegions] NVARCHAR(MAX) NULL,
+    [VenueId] UNIQUEIDENTIFIER CONSTRAINT [FK_ApprenticeshipUploadRows_Venue] FOREIGN KEY REFERENCES [Pttcd].[Venues] ([VenueId]),
+    [ResolvedDeliveryMethod] TINYINT,
+    [ResolvedDeliveryMode] TINYINT,
+    [ResolvedNationalDelivery] BIT,
+    [ResolvedRadius] INT,
 )

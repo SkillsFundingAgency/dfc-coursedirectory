@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream);
         IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId);
         Task DeleteApprenticeshipUploadForProvider(Guid providerId);
+        Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId);
 
     }
 }

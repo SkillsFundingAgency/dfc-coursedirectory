@@ -484,7 +484,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
                 YourVenueReference = string.Empty,
-                Venue = "SomeVenue"
+                VenueName = "SomeVenue"
             };
 
             var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
@@ -644,7 +644,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "1",
                 SubRegion = "County Durham",
-                Venue = string.Empty,
+                VenueName = string.Empty,
                 YourVenueReference = string.Empty
             };
 

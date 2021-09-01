@@ -1,0 +1,91 @@
+@using Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Errors
+@model ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Apprenticeship data errors");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="WhatNext" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Apprenticeship data errors</h1>
+
+        <p class="govuk-body">Your apprenticeship data has been uploaded.</p>
+
+        <p class="govuk-body">
+            Your data upload has <span data-testid="ErrorCount">@Model.ErrorCount</span> error@(Model.ErrorCount != 1 ? "s" : "").
+
+            You must resolve these errors before your data can be published.
+        </p>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <govuk-details>
+            <govuk-details-summary>View errors in your upload</govuk-details-summary>
+            <govuk-details-text>
+                <table class="govuk-table" data-testid="ErrorRows">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" style="width: 200px">Row</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Code</th>
+                            <th scope="col" class="govuk-table__header" style="width: 90px">Version</th>
+                            <th scope="col" class="govuk-table__header" style="width: 90px">Name</th>
+                            <th scope="col" class="govuk-table__header" style="width: 90px">Delivery method</th>
+                            <th scope="col" class="govuk-table__header">Error(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var row in Model.ErrorRows)
+                        {
+                        <tr class="govuk-table__row @(Model.ErrorRows.Count == 0 ? "pttcd-table__row-!-border" : "")" data-testid="ApprenticeshipRow">
+                            <td class="govuk-table__cell pttcd-table--no-border">@row.Row</td>
+                            <td class="govuk-table__cell pttcd-table--no-border">@row.Code</td>
+                            <td class="govuk-table__cell pttcd-table--no-border">@row.Version</td>
+                            <td class="govuk-table__cell pttcd-table--no-border">@row.ApprenticeshipName</td>
+                            <td class="govuk-table__cell pttcd-table--no-border">@row.DeliveryMode</td>
+                            <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
+                                @for (var i = 0; i < row.ErrorFields.Count; i++)
+                                {
+                                    <span class="govuk-!-display-inline-block">
+                                        @row.ErrorFields.ElementAt(i)@(i != row.ErrorFields.Count - 1 ? "," : "")
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </govuk-details-text>
+        </govuk-details>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Errors" asp-all-route-data="@ProviderContext.RouteValues">
+            <p class="govuk-body">
+                You can
+                <a asp-action="DownloadErrors" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    download all of your apprenticeship data including the errors (opens in a CSV file)
+                </a>
+                to edit and upload.
+            </p>
+
+            <govuk-radios asp-for="WhatNext">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        What do you want to do?
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-item value="@WhatNext.UploadNewFile">Upload a new data file</govuk-radios-item>
+                <govuk-radios-item value="@WhatNext.DeleteUpload">Delete upload</govuk-radios-item>
+            </govuk-radios>
+
+            <govuk-button type="submit">Continue</govuk-button>
+        </form>
+    </div>
+</div>

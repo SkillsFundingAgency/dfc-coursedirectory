@@ -228,12 +228,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ContactPhone = parsedRow.ContactPhone,
                     ContactUrl = parsedRow.ContactUrl,
                     DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod),
-                    Venue = matchedVenue?.VenueName ?? parsedRow.Venue,
+                    VenueName = matchedVenue?.VenueName ?? parsedRow.VenueName,
                     YourVenueReference = parsedRow.YourVenueReference,
                     Radius = parsedRow.Radius, 
                     DeliveryMode = ParsedCsvApprenticeshipRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode),  
                     NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery), 
                     SubRegions = parsedRow.SubRegion,
+                    VenueId = matchedVenue?.VenueId,
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
                     ResolvedDeliveryMethod = parsedRow.ResolvedDeliveryMethod,
                     ResolvedDeliveryMode = parsedRow.ResolvedDeliveryMode,
@@ -265,6 +266,94 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             return (uploadStatus, updatedRows);
         }
+
+
+        public async Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (apprenticeshipUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        apprenticeshipUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                await RevalidateApprenticeshipUploadIfRequired(dispatcher, apprenticeshipUpload.ApprenticeshipUploadId);
+
+                var (errorRows, totalRows) = await dispatcher.ExecuteQuery(new GetApprenticeshipUploadRows()
+                {
+                    ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId,
+                    WithErrorsOnly = true
+                });
+
+                await dispatcher.Commit();
+
+                return errorRows;
+            }
+        }
+
+        internal async Task<UploadStatus> RevalidateApprenticeshipUploadIfRequired(
+         ISqlQueryDispatcher sqlQueryDispatcher,
+         Guid apprenticeshipUploadId)
+        {
+            var apprenticeshipUpload = await sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
+
+            if (apprenticeshipUpload == null)
+            {
+                throw new ArgumentException("Course upload does not exist.", nameof(apprenticeshipUploadId));
+            }
+
+            var toBeRevalidated = await GetApprenticeshipUploadRowsRequiringRevalidation(sqlQueryDispatcher, apprenticeshipUpload);
+
+            if (toBeRevalidated.Count == 0)
+            {
+                return apprenticeshipUpload.UploadStatus;
+            }
+
+            var rowsCollection = new ApprenticeshipDataUploadRowInfoCollection(
+                toBeRevalidated.Select(r => new ApprenticeshipDataUploadRowInfo(CsvApprenticeshipRow.FromModel(r), r.RowNumber, r.ApprenticeshipId)));
+
+            var (uploadStatus, _) = await ValidateApprenticeshipUploadRows(sqlQueryDispatcher, apprenticeshipUploadId, apprenticeshipUpload.ApprenticeshipUploadId, rowsCollection);
+
+            return uploadStatus;
+        }
+
+        // internal for testing
+        internal async Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsRequiringRevalidation(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            ApprenticeshipUpload apprenticeshipUpload)
+        {
+            if (apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedWithErrors &&
+                apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedSuccessfully)
+            {
+                throw new InvalidOperationException($"Apprenticeship upload at status {apprenticeshipUpload.UploadStatus} cannot be revalidated.");
+            }
+
+            // We need to revalidate any rows that are linked to venues where either
+            // the linked venue has been amended/deleted (it may not match now)
+            // or where a new venue has been added (there may be a match where there wasn't before).
+            //
+            // Note this is a different approach to venues (where we have to revalidate the entire file);
+            // for courses we want to minimize the amount of data we're shuttling back and forth from the DB.
+
+            return await sqlQueryDispatcher.ExecuteQuery(
+                new GetApprenticeshipUploadRowsToRevalidate() { ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId });
+        }
+
 
         public async Task DeleteApprenticeshipUploadForProvider(Guid providerId)
         {
@@ -337,7 +426,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venue = matchedVenues[0];
 
                 // If VenueName was provided too then it must match
-                if (!string.IsNullOrEmpty(row.Data.Venue) && !NameMatches(row.Data.Venue, venue))
+                if (!string.IsNullOrEmpty(row.Data.VenueName) && !NameMatches(row.Data.VenueName, venue))
                 {
                     return null;
                 }
@@ -345,12 +434,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return venue;
             }
 
-            if (!string.IsNullOrEmpty(row.Data.Venue))
+            if (!string.IsNullOrEmpty(row.Data.VenueName))
             {
                 // N.B. Using `Count()` here instead of `Single()` to protect against bad data where we have duplicates
 
                 var matchedVenues = providerVenues
-                    .Where(v => NameMatches(row.Data.Venue, v))
+                    .Where(v => NameMatches(row.Data.VenueName, v))
                     .ToArray();
 
                 if (matchedVenues.Length != 1)
@@ -384,8 +473,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ContactUrl).ContactWebsite();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
-                RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.Venue, matchedVenueId);
-                RuleFor(c => c.Venue).Venue(c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.VenueName, matchedVenueId);
+                RuleFor(c => c.VenueName).Venue(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
@@ -395,7 +484,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
                     c => c.ResolvedDeliveryMethod);
-                RuleFor(c => c.Venue).VenueName(c => c.ResolvedDeliveryMethod, c => c.YourVenueReference, matchedVenueId);
+                RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMethod, c => c.YourVenueReference, matchedVenueId);
             }
         }
     }

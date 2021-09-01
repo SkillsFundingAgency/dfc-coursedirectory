@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.Testing
                     ContactPhone = contactPhone,
                     ContactUrl = contactUrl,
                     DeliveryMethod = deliveryMethod,
-                    Venue = venue,
+                    VenueName = venue,
                     YourVenueReference = yourVenueReference,
                     Radius = radius,
                     DeliveryMode = deliveryMode,
