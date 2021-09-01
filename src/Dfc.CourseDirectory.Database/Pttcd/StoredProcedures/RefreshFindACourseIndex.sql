@@ -55,7 +55,7 @@ BEGIN
 			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
 			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded
 		FROM @CourseRunIds d
-		INNER JOIN Pttcd.CourseRuns cr WITH (UPDLOCK) ON d.Id = cr.CourseRunId
+		INNER JOIN Pttcd.CourseRuns cr ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
 		LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId AND cr.DeliveryMode = 3 AND cr.[National] = 0
 		LEFT JOIN Pttcd.Regions r ON crr.RegionId = r.RegionId
