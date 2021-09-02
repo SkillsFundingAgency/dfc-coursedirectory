@@ -90,6 +90,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED":
                 case "APPRENTICESHIP_SUBREGIONS_REQUIRED":
                     return "Location";
+                case "APPRENTICESHIP_DELIVERY_METHOD_REQUIRED":
+                    return "Delivery method";
             }
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
