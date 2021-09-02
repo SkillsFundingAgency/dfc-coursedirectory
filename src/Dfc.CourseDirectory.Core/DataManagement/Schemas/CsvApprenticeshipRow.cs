@@ -41,8 +41,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
         public static CsvApprenticeshipRow FromModel(ApprenticeshipUploadRow row) => new CsvApprenticeshipRow()
         {
-            //StandardCode = row.StandardCode,
-            //StandardVersion = row.StandardVersion,
+            StandardCode = row.StandardCode.ToString(),
+            StandardVersion = row.StandardVersion.ToString(),
             ApprenticeshipInformation = row.ApprenticeshipInformation,
             ApprenticeshipWebpage = row.ApprenticeshipWebpage,
             ContactEmail = row.ContactEmail,
