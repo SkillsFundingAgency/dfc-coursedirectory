@@ -327,14 +327,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         }
 
         [Fact]
-        public async Task Get_UnpublishedVenueUploads()
+        public async Task Get_ProviderHasUnpublishedVenues_RendersUnpublishedCount()
         {
             // Arrange
             var provider = await TestData.CreateProvider(
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            //Create some venue upload rows to test new data in UI
             var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
@@ -359,7 +358,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         }
 
         [Fact]
-        public async Task Get_UnpublishedCourseUploads()
+        public async Task Get_ProviderHasUnpublishedCourses_RendersUnpublishedCount()
         {
             // Arrange
             var provider = await TestData.CreateProvider(
@@ -368,7 +367,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
-            // Create some course upload rows to test new data in UI
             var (courseUpload, _) = await TestData.CreateCourseUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
@@ -388,6 +386,39 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             using (new AssertionScope())
             {
                 doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
+            }
+        }
+
+        [Fact]
+        public async Task Get_ProviderHasUnpublishedApprenticeships_RendersUnpublishedCount()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed,
+                providerType: ProviderType.Apprenticeships);
+
+            var standard1 = await TestData.CreateStandard();
+            var standard2 = await TestData.CreateStandard();
+
+            await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddRow(standard1.StandardCode, standard1.Version, record => record.IsValid = false);
+                    rowBuilder.AddRow(standard2.StandardCode, standard2.Version, record => record.IsValid = false);
+                });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("unpublished-apprenticeship-count").TextContent.Should().Be("2");
             }
         }
 
@@ -545,6 +576,61 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             var doc = await response.GetDocument();
             doc.GetElementByTestId("DownloadApprenticeships").Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData(UploadStatus.ProcessedWithErrors)]
+        [InlineData(UploadStatus.ProcessedSuccessfully)]
+        public async Task Get_UnpublishedApprenticeshipUploadRows_RendersLink(UploadStatus uploadStatus)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: uploadStatus);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("apprenticeships-unpublished-link").Should().NotBeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(UploadStatus.Created)]
+        //[InlineData(UploadStatus.Published)]  // TODO Uncomment when we can publish apprenticeship uploads
+        [InlineData(UploadStatus.Abandoned)]
+        public async Task Get_NoUnpublishedApprenticeshipUploadRows_DoesNotRenderLink(UploadStatus? uploadStatus)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            if (uploadStatus.HasValue)
+            {
+                await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: uploadStatus.Value);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("apprenticeships-unpublished-link").Should().BeNull();
+            }
         }
 
         private async Task<IReadOnlyCollection<Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>

@@ -136,7 +136,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
                 doc.GetElementByTestId("courses-upload-new-link").TextContent.Should().Be("Upload new course data");
             }
-
         }
 
         [Fact]
@@ -147,11 +146,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
-            //Create some venue upload rows to test new data in UI
             var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing,
                 rowBuilder =>
                 {
-                    rowBuilder.AddRow(record => record.IsValid = false);
+                    rowBuilder.AddValidRow();
                 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
@@ -293,12 +291,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed,
                 providerType: ProviderType.Apprenticeships);
 
-            //Create some venue upload rows to test new data in UI
-            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing,
-                rowBuilder =>
-                {
-                    rowBuilder.AddValidRow();
-                });
+            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
 
@@ -323,12 +316,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 providerType: ProviderType.Apprenticeships);
 
-            //Create some venue upload rows to test new data in UI
-            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing,
-                rowBuilder =>
-                {
-                    rowBuilder.AddValidRow();
-                });
+            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
 
@@ -342,6 +330,61 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
             using (new AssertionScope())
             {
                 doc.GetElementByTestId("ApprenticeshipsCard").Should().BeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(UploadStatus.ProcessedWithErrors)]
+        [InlineData(UploadStatus.ProcessedSuccessfully)]
+        public async Task Get_UnpublishedApprenticeshipUploadRows_RendersLink(UploadStatus uploadStatus)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: uploadStatus);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("apprenticeships-unpublished-link").Should().NotBeNull();
+            }
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(UploadStatus.Created)]
+        //[InlineData(UploadStatus.Published)]  // TODO Uncomment when we can publish apprenticeship uploads
+        [InlineData(UploadStatus.Abandoned)]
+        public async Task Get_NoUnpublishedApprenticeshipUploadRows_DoesNotRenderLink(UploadStatus? uploadStatus)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            if (uploadStatus.HasValue)
+            {
+                await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: uploadStatus.Value);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("apprenticeships-unpublished-link").Should().BeNull();
             }
         }
     }

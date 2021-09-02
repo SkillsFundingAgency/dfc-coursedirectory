@@ -30,10 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
 
             if (uploadStatus != null)
             {
-                await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value, r =>
-                {
-                    r.AddValidRow();
-                });
+                await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value);
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/apprenticeships/delete?providerId={provider.ProviderId}")
@@ -82,10 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
-            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus, r =>
-            {
-                r.AddValidRow();
-            });
+            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus);
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/apprenticeships/delete?providerId={provider.ProviderId}")
             {

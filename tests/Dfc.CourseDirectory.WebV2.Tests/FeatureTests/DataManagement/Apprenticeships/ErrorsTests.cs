@@ -33,10 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
             if (uploadStatus != null)
             {
-                await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value, rb =>
-                {
-                    rb.AddValidRow();
-                });
+                await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value);
             }
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/apprenticeships/errors?providerId={provider.ProviderId}");
 
@@ -56,25 +53,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             var (_, apprenticeshipUploadRows) = await TestData.CreateApprenticeshipUpload(
-                           provider.ProviderId,
-                           createdBy: User.ToUserInfo(),
-                           UploadStatus.ProcessedWithErrors,
-                           rowBuilder =>
-                           {
-                               for (int i = 0; i < 1; i++)
-                               {
-                                   rowBuilder.AddRow(1, 1, record =>
-                                   {
-                                       record.ApprenticeshipInformation = string.Empty;
-                                       record.IsValid = false;
-                                       record.Errors = new[]
-                                       {
-                                            ErrorRegistry.All["APPRENTICESHIP_INFORMATION_REQUIRED"].ErrorCode,
-                                            ErrorRegistry.All["APPRENTICESHIP_EMAIL_FORMAT"].ErrorCode,
-                                       };
-                                   });
-                               }
-                           });
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    for (int i = 0; i < 1; i++)
+                    {
+                        rowBuilder.AddRow(1, 1, record =>
+                        {
+                            record.ApprenticeshipInformation = string.Empty;
+                            record.IsValid = false;
+                            record.Errors = new[]
+                            {
+                                ErrorRegistry.All["APPRENTICESHIP_INFORMATION_REQUIRED"].ErrorCode,
+                                ErrorRegistry.All["APPRENTICESHIP_EMAIL_FORMAT"].ErrorCode,
+                            };
+                        });
+                    }
+                });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/apprenticeships/errors?providerId={provider.ProviderId}");
 
@@ -149,9 +146,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+
+            var standard = await TestData.CreateStandard();
+
             await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedWithErrors, rb =>
             {
-                rb.AddValidRow();
+                rb.AddRow(
+                    standardCode: standard.StandardCode,
+                    standardVersion: standard.Version,
+                    record =>
+                    {
+                        record.IsValid = false;
+                        record.ApprenticeshipInformation = string.Empty;
+                        record.Errors = new[]
+                        {
+                            "APPRENTICESHIP_INFORMATION_REQUIRED"
+                        };
+                    });
             });
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/apprenticeships/errors?providerId={provider.ProviderId}")
@@ -179,9 +190,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
+            var standard = await TestData.CreateStandard();
+
             await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedWithErrors, rb =>
             {
-                rb.AddValidRow();
+                rb.AddRow(
+                    standardCode: standard.StandardCode,
+                    standardVersion: standard.Version,
+                    record =>
+                    {
+                        record.IsValid = false;
+                        record.ApprenticeshipInformation = string.Empty;
+                        record.Errors = new[]
+                        {
+                            "APPRENTICESHIP_INFORMATION_REQUIRED"
+                        };
+                    });
             });
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/apprenticeships/errors?providerId={provider.ProviderId}")

@@ -25,10 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
 
             if (uploadStatus != null)
             {
-                await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value, rb =>
-                {
-                    rb.AddValidRow();
-                });
+                await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value);
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/apprenticeships/in-progress?providerId={provider.ProviderId}");
@@ -50,10 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus, rb =>
-            {
-                rb.AddValidRow();
-            });
+            await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/apprenticeships/in-progress?providerId={provider.ProviderId}");
 
@@ -76,10 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), processedStatus, rb =>
-            {
-                rb.AddValidRow();
-            });
+            await TestData.CreateApprenticeshipUpload(provider.ProviderId, createdBy: User.ToUserInfo(), processedStatus);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/apprenticeships/in-progress?providerId={provider.ProviderId}");
 
