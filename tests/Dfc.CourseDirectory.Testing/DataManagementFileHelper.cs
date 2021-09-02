@@ -260,7 +260,7 @@ namespace Dfc.CourseDirectory.Testing
                 csvWriter.WriteField(row.ContactPhone);
                 csvWriter.WriteField(row.ContactUrl);
                 csvWriter.WriteField(row.DeliveryMethod);
-                csvWriter.WriteField(row.Venue);
+                csvWriter.WriteField(row.VenueName);
                 csvWriter.WriteField(row.YourVenueReference);
                 csvWriter.WriteField(row.Radius);
                 csvWriter.WriteField(row.DeliveryMode);
@@ -288,7 +288,7 @@ namespace Dfc.CourseDirectory.Testing
 
                 yield return new CsvApprenticeshipRow()
                 {
-                    Venue = venueName,
+                    VenueName = venueName,
                     StandardVersion = "1",
                     StandardCode = "1",
                     ApprenticeshipInformation = "",

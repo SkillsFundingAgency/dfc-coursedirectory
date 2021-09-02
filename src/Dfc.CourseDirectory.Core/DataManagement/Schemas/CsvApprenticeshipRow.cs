@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
@@ -26,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(7), Name("DELIVERY_METHOD")]
         public string DeliveryMethod { get; set; }
         [Index(8), Name("VENUE")]
-        public string Venue { get; set; }
+        public string VenueName { get; set; }
         [Index(9), Name("YOUR_VENUE_REFERENCE")]
         public string YourVenueReference { get; set; }
         [Index(10), Name("RADIUS")]
@@ -37,5 +38,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public string NationalDelivery { get; set; }
         [Index(13), Name("SUB_REGION")]
         public string SubRegion { get; set; }
+
+        public static CsvApprenticeshipRow FromModel(ApprenticeshipUploadRow row) => new CsvApprenticeshipRow()
+        {
+            StandardCode = row.StandardCode.ToString(),
+            StandardVersion = row.StandardVersion.ToString(),
+            ApprenticeshipInformation = row.ApprenticeshipInformation,
+            ApprenticeshipWebpage = row.ApprenticeshipWebpage,
+            ContactEmail = row.ContactEmail,
+            ContactPhone = row.ContactPhone,
+            ContactUrl = row.ContactUrl,
+            DeliveryMethod = row.DeliveryMethod,
+            VenueName = row.VenueName,
+            YourVenueReference = row.YourVenueReference,
+            Radius = row.Radius,
+            DeliveryMode = row.DeliveryMode,
+            NationalDelivery = row.NationalDelivery,
+            SubRegion = row.SubRegions
+        };
     }
 }

@@ -141,11 +141,11 @@ namespace Dfc.CourseDirectory.Testing
                         throw new ArgumentNullException(nameof(processingCompletedOn));
                     }
 
-                    await dispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessed()
+                    await dispatcher.ExecuteQuery(new PublishApprenticeshipUpload()
                     {
                         ApprenticeshipUploadId = apprenticeshipUploadId,
-                        ProcessingCompletedOn = processingCompletedOn.Value,
-                        IsValid = isValid.Value
+                        PublishedBy = createdBy,
+                        PublishedOn = publishedOn.Value
                     });
                 }
                 else if (abandonedOn.HasValue)
@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.Testing
                     ContactPhone = contactPhone,
                     ContactUrl = contactUrl,
                     DeliveryMethod = deliveryMethod,
-                    Venue = venue,
+                    VenueName = venue,
                     YourVenueReference = yourVenueReference,
                     Radius = radius,
                     DeliveryMode = deliveryMode,

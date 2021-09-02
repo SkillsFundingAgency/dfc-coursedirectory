@@ -38,12 +38,17 @@ WHEN NOT MATCHED THEN
       ContactPhone,
       ContactUrl,
       DeliveryMethod,
-      Venue,
+      VenueName,
       YourVenueReference,
       Radius,
       DeliveryMode,
       NationalDelivery,
-      SubRegions
+      SubRegions,
+      VenueId,
+      ResolvedDeliveryMethod,
+      ResolvedDeliveryMode,
+      ResolvedNationalDelivery,
+      ResolvedRadius
     ) VALUES (
         @ApprenticeshipUploadId,
         source.RowNumber,
@@ -61,12 +66,17 @@ WHEN NOT MATCHED THEN
         source.ContactPhone,
         source.ContactUrl,
         source.DeliveryMode,
-        source.Venue,
+        source.VenueName,
         source.YourVenueReference,
         source.Radius,
         source.DeliveryMode,
         source.NationalDelivery,
-        source.SubRegions
+        source.SubRegions,
+        source.VenueId,
+        source.ResolvedDeliveryMethod,
+        source.ResolvedDeliveryMode,
+        source.ResolvedNationalDelivery,
+        source.ResolvedRadius
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -83,19 +93,36 @@ WHEN MATCHED THEN UPDATE SET
     ContactPhone = source.ContactPhone,
     ContactUrl = source.ContactUrl,
     DeliveryMethod = source.DeliveryMethod,
-    Venue = source.Venue,
+    VenueName = source.VenueName,
     YourVenueReference = source.YourVenueReference,
     Radius = source.Radius,
     DeliveryMode = source.DeliveryMode,
     NationalDelivery = source.NationalDelivery,
-    SubRegions = source.SubRegions
+    SubRegions = source.SubRegions,
+    VenueId = source.VenueId,
+    ResolvedDeliveryMethod = source.ResolvedDeliveryMethod,
+    ResolvedDeliveryMode =  source.ResolvedDeliveryMode,
+    ResolvedNationalDelivery = source.ResolvedNationalDelivery,
+    ResolvedRadius =  source.ResolvedRadius
+
 ;
+
+MERGE Pttcd.ApprenticeshipUploadRowSubRegions AS target
+USING (SELECT RowNumber, RegionId FROM @RowSubRegions) AS source
+ON
+    target.ApprenticeshipUploadId = @ApprenticeshipUploadId AND
+    target.RowNumber = source.RowNumber AND
+    target.RegionId = source.RegionId
+WHEN NOT MATCHED THEN INSERT (ApprenticeshipUploadId, RowNumber, RegionId) VALUES (@ApprenticeshipUploadId, source.RowNumber, source.RegionId)
+WHEN NOT MATCHED BY SOURCE AND target.ApprenticeshipUploadId = @ApprenticeshipUploadId AND target.RowNumber IN (SELECT RowNumber FROM @Rows) THEN DELETE
+;
+
 
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
-    ContactPhone, ContactUrl, DeliveryMode, Venue,YourVenueReference, Radius, DeliveryMode, NationalDelivery,
-    SubRegions
+    ContactPhone, ContactUrl, DeliveryMode, VenueName,YourVenueReference, Radius, DeliveryMode, NationalDelivery,
+    SubRegions, VenueId, ResolvedDeliveryMethod, ResolvedDeliveryMode, ResolvedNationalDelivery, ResolvedRadius
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -104,7 +131,8 @@ ORDER BY RowNumber";
             var paramz = new
             {
                 query.ApprenticeshipUploadId,
-                Rows = CreateRowsTvp()
+                Rows = CreateRowsTvp(),
+                RowSubRegions = CreateRowSubRegionsTvp()
             };
 
             var results = (await transaction.Connection.QueryAsync<Result>(sql, paramz, transaction))
@@ -134,12 +162,17 @@ ORDER BY RowNumber";
                 table.Columns.Add("ContactPhone", typeof(string));
                 table.Columns.Add("ContactUrl", typeof(string));
                 table.Columns.Add("DeliveryMethod", typeof(string));
-                table.Columns.Add("Venue", typeof(string));
+                table.Columns.Add("VenueName", typeof(string));
                 table.Columns.Add("YourVenueReference", typeof(string));
                 table.Columns.Add("Radius", typeof(string));
                 table.Columns.Add("DeliveryMode", typeof(string));
                 table.Columns.Add("NationalDelivery", typeof(string));
                 table.Columns.Add("SubRegions", typeof(string));
+                table.Columns.Add("VenueId", typeof(Guid));
+                table.Columns.Add("ResolvedDeliveryMethod", typeof(byte));
+                table.Columns.Add("ResolvedDeliveryMode", typeof(byte));
+                table.Columns.Add("ResolvedNationalDelivery", typeof(byte));
+                table.Columns.Add("ResolvedRadius", typeof(int));
 
                 foreach (var record in query.Records)
                 {
@@ -158,15 +191,40 @@ ORDER BY RowNumber";
                         record.ContactPhone,
                         record.ContactUrl,
                         record.DeliveryMode,
-                        record.Venue,
+                        record.VenueName,
                         record.YourVenueReference,
                         record.Radius,
                         record.DeliveryMode,
                         record.NationalDelivery,
-                        record.SubRegions);
+                        record.SubRegions,
+                        record.VenueId,
+                        record.ResolvedDeliveryMethod,
+                        record.ResolvedDeliveryMode,
+                        record.ResolvedNationalDelivery,
+                        record.ResolvedRadius);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.ApprenticeshipUploadRowTable");
+            }
+
+            ICustomQueryParameter CreateRowSubRegionsTvp()
+            {
+                var table = new DataTable();
+                table.Columns.Add("RowNumber", typeof(int));
+                table.Columns.Add("RegionId", typeof(string));
+
+                var subRegionIds = query.Records
+                    .SelectMany(r => (r.ResolvedSubRegions ?? Array.Empty<string>()).Select(sr => (SubRegionId: sr, RowNumber: r.RowNumber)))
+                    .Where(t => t.SubRegionId != null);
+
+                foreach (var record in subRegionIds)
+                {
+                    table.Rows.Add(
+                        record.RowNumber,
+                        record.SubRegionId);
+                }
+
+                return table.AsTableValuedParameter("Pttcd.ApprenticeshipUploadRowSubRegionsTable");
             }
         }
 
