@@ -296,7 +296,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         UploadStatus.ProcessedWithErrors);
                 }
 
-                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                // If the world around us has changed (apprenticeship added etc.) then we might need to revalidate
                 await RevalidateApprenticeshipUploadIfRequired(dispatcher, apprenticeshipUpload.ApprenticeshipUploadId);
 
                 var (errorRows, totalRows) = await dispatcher.ExecuteQuery(new GetApprenticeshipUploadRows()
@@ -319,7 +319,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             if (apprenticeshipUpload == null)
             {
-                throw new ArgumentException("Course upload does not exist.", nameof(apprenticeshipUploadId));
+                throw new ArgumentException("Apprenticeship upload does not exist.", nameof(apprenticeshipUploadId));
             }
 
             var toBeRevalidated = await GetApprenticeshipUploadRowsRequiringRevalidation(sqlQueryDispatcher, apprenticeshipUpload);

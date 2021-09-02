@@ -27,7 +27,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
     public class ViewModel : Command
     {
         public IReadOnlyCollection<ViewModelErrorRow> ErrorRows { get; set; }
-        public bool CanResolveOnScreen { get; set; }
         public int ErrorCount { get; set; }
     }
 
@@ -43,7 +42,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
 
     public enum WhatNext
     {
-        ResolveOnScreen,
         UploadNewFile,
         DeleteUpload
     }
@@ -99,7 +97,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
         private ViewModel CreateViewModel(IReadOnlyCollection<ApprenticeshipUploadRow> rows)
         {
             var errorRowCount = rows.Count;
-            var canResolveOnScreen = errorRowCount <= 30;
             var errorCount = rows.SelectMany(r => r.Errors).Count();
 
             return new ViewModel()
@@ -117,7 +114,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
                                         ErrorFields = r.Errors.Select(e => Core.DataManagement.Errors.MapApprenticeshipErrorToFieldGroup(e)).Distinct().ToArray()
                                     };
                                 }).ToArray(),
-                CanResolveOnScreen = canResolveOnScreen,
                 ErrorCount = errorCount
             };
         }
