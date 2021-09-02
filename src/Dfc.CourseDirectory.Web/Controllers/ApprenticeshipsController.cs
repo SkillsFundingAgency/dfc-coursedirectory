@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
         private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly IFeatureFlagProvider _featureFlagProvider;
 
         private ISession _session => HttpContext.Session;
 
@@ -50,7 +52,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ISqlQueryDispatcher sqlQueryDispatcher,
             IOptions<ApprenticeshipSettings> apprenticeshipSettings,
             IStandardsAndFrameworksCache standardsAndFrameworksCache,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider,
+            IFeatureFlagProvider featureFlagProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
@@ -58,6 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _apprenticeshipSettings = apprenticeshipSettings ?? throw new ArgumentNullException(nameof(apprenticeshipSettings));
             _standardsAndFrameworksCache = standardsAndFrameworksCache ?? throw new ArgumentNullException(nameof(standardsAndFrameworksCache));
             _providerContextProvider = providerContextProvider;
+            _featureFlagProvider = featureFlagProvider;
         }
 
         [Authorize]
@@ -760,7 +764,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case ApprenticeshipWhatWouldYouLikeToDo.Add:
                     return RedirectToAction("Index", "Apprenticeships");
                 case ApprenticeshipWhatWouldYouLikeToDo.Upload:
-                    return RedirectToAction("Index", "BulkUploadApprenticeships");
+                    if (_featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipsDataManagement))
+                    {
+                        return RedirectToAction("Index", "ApprenticeshipsDataManagement")
+                            .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "BulkUploadApprenticeships");
+                    }
                 case ApprenticeshipWhatWouldYouLikeToDo.View:
                     return RedirectToAction("Index", "ProviderApprenticeships");
                 default:
