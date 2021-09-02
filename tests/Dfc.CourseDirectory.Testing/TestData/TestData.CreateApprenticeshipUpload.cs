@@ -110,17 +110,18 @@ namespace Dfc.CourseDirectory.Testing
                     }
                     else
                     {
+                        var standard = await CreateStandard();
+
                         if (isValid.Value)
                         {
-                            rowBuilder.AddValidRows(3);
+                            rowBuilder.AddValidRow(standard.StandardCode, standard.Version);
                         }
                         else
                         {
-                            rowBuilder.AddRow(0,0, record =>
+                            rowBuilder.AddRow(standard.StandardCode, standard.Version, record =>
                             {
                                 record.IsValid = false;
-                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_STANDARDVERSION_REQUIRED"].ErrorCode };
-                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_STANDARDCODE_REQUIRED"].ErrorCode };
+                                record.Errors = new[] { ErrorRegistry.All["APPRENTICESHIP_INFORMATION_REQUIRED"].ErrorCode };
                             });
                         }
                     }
@@ -222,20 +223,10 @@ namespace Dfc.CourseDirectory.Testing
                 return this;
             }
 
-            public ApprenticeshipUploadRowBuilder AddValidRow()
+            public ApprenticeshipUploadRowBuilder AddValidRow(int standardCode, int standardVersion)
             {
-                var record = CreateValidRecord(1,1);
+                var record = CreateValidRecord(standardCode, standardVersion);
                 _records.Add(record);
-                return this;
-            }
-
-            public ApprenticeshipUploadRowBuilder AddValidRows(int count)
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    AddValidRow();
-                }
-
                 return this;
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlTypes;
+using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -9,22 +10,26 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
+        private static int _lastStandardCode = 1;
+
         public async Task<Standard> CreateStandard(
-            int standardCode,
-            int version,
-            string standardName,
+            int? standardCode = null,
+            int? version = null,
+            string standardName = "Test Standard",
             string notionalEndLevel = null,
             bool otherBodyApprovalRequired = false)
         {
             var id = Guid.NewGuid();
             notionalEndLevel ??= string.Empty;
+            standardCode ??= Interlocked.Increment(ref _lastStandardCode);
+            version ??= 1;
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new Query()
                 {
                     Id = id,
-                    StandardCode = standardCode,
-                    Version = version,
+                    StandardCode = standardCode.Value,
+                    Version = version.Value,
                     StandardName = standardName,
                     NotionalEndLevel = notionalEndLevel,
                     OtherBodyApprovalRequired = otherBodyApprovalRequired ? "Y" : "N"
@@ -36,8 +41,8 @@ namespace Dfc.CourseDirectory.Testing
                 {
                     new UpsertLarsStandardRecord()
                     {
-                        StandardCode = standardCode,
-                        Version = version,
+                        StandardCode = standardCode.Value,
+                        Version = version.Value,
                         StandardName = standardName,
                         NotionalEndLevel = notionalEndLevel,
                         OtherBodyApprovalRequired = otherBodyApprovalRequired,
@@ -50,8 +55,8 @@ namespace Dfc.CourseDirectory.Testing
 
             return new Standard()
             {
-                StandardCode = standardCode,
-                Version = version,
+                StandardCode = standardCode.Value,
+                Version = version.Value,
                 StandardName = standardName,
                 NotionalNVQLevelv2 = notionalEndLevel,
                 OtherBodyApprovalRequired = otherBodyApprovalRequired

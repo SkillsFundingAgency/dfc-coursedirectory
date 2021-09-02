@@ -20,5 +20,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public int ApprenticeshipsBulkUploadErrorCount { get; set; }
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
+        public int UnpublishedApprenticeshipCount { get; set; }
     }
 }

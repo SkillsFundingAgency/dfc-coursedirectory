@@ -25,6 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
         public bool ApprenticeshipUploadInProgress { get; set; }
+        public int UnpublishedApprenticeshipCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -90,7 +91,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
                 UnpublishedVenueCount = counts.UnpublishedVenueCount,
                 UnpublishedCourseCount = counts.UnpublishedCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
-                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created)
+                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created),
+                UnpublishedApprenticeshipCount = counts.UnpublishedApprenticeshipCount
             };
         }
     }

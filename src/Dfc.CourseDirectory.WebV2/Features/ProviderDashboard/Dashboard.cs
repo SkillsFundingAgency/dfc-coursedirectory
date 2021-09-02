@@ -38,6 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int UnpublishedCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
         public bool ApprenticeshipUploadInProgress { get; set; }
+        public int UnpublishedApprenticeshipCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -106,7 +107,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
                 UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
-                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created)
+                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created),
+                UnpublishedApprenticeshipCount = dashboardCounts.UnpublishedApprenticeshipCount
             };
 
             return vm;

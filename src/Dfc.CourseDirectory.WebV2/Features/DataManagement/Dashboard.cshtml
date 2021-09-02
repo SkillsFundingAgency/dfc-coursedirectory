@@ -24,7 +24,7 @@
                             @if (Model.UnpublishedCourseCount > 0)
                             {
                                 <li>
-                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-view-edit-link">Your unpublished courses</a>
+                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-unpublished-link">Your unpublished courses</a>
                                 </li>
                             }
                             <li>
@@ -77,18 +77,22 @@
                     @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipsDataManagement))
                     {
                         <ul class="govuk-list pttcd-list--small">
-                            @if (Model.ApprenticeshipUploadInProgress)
+                            @if (Model.UnpublishedApprenticeshipCount > 0)
                             {
                                 <li>
+                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="apprenticeships-unpublished-link">Your unpublished apprenticeships</a>
+                                </li>
+                            }
+                            <li>
+                                @if (Model.ApprenticeshipUploadInProgress)
+                                {
                                     <a asp-controller="ApprenticeshipsDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="apprenticeship-in-progress-link">Upload in progress</a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li>
+                                }
+                                else
+                                {
                                     <a asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
-                                </li>
-                            }
+                                }
+                            </li>
                             <li>
                                 <a asp-action="Formatting" asp-controller="ApprenticeshipsDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Apprenticeship file format requirements
@@ -144,7 +148,7 @@
                         @if (Model.UnpublishedVenueCount > 0)
                         {
                             <li>
-                                <a asp-controller="VenuesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">Your unpublished venues</a>
+                                <a asp-controller="VenuesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-unpublished-link">Your unpublished venues</a>
                             </li>
                         }
                         <li>
