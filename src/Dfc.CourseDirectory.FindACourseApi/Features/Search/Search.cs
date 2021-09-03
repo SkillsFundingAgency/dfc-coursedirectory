@@ -240,12 +240,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         Cost = !string.IsNullOrEmpty(i.Record.Cost) ?
                             Convert.ToInt32(decimal.Parse(i.Record.Cost)) :
                             (int?)null,
-                        CostDescription = i.Record.CostDescription,
-                        CourseDescription = NormalizeCourseDataEncodedString(i.Record.CourseDescription),
+                        CostDescription = HtmlEncode(i.Record.CostDescription),
+                        CourseDescription = HtmlEncode(NormalizeCourseDataEncodedString(i.Record.CourseDescription)),
                         CourseName = NormalizeCourseRunDataEncodedString(i.Record.CourseName),
                         CourseId = i.Record.CourseId,
                         CourseRunId = i.Record.CourseRunId,
-                        CourseText = NormalizeCourseDataEncodedString(i.Record.CourseDescription),
+                        CourseText = HtmlEncode(NormalizeCourseDataEncodedString(i.Record.CourseDescription)),
                         DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
                         DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
                         Distance = GetDistanceFromLatLngForResult(i),
@@ -257,7 +257,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         QualificationLevel = i.Record.NotionalNVQLevelv2,
                         OfferingType = i.Record.OfferingType,
                         ProviderName = i.Record.ProviderDisplayName,
-                        QualificationCourseTitle = i.Record.QualificationCourseTitle,
+                        QualificationCourseTitle = HtmlEncode(i.Record.QualificationCourseTitle),
                         Region = i.Record.RegionName,
                         SearchScore = i.Score.Value,
                         StartDate = !i.Record.FlexibleStartDate.GetValueOrDefault() ? i.Record.StartDate : null,
@@ -265,7 +265,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         TLevelLocationId = i.Record.TLevelLocationId,
                         Ukprn = i.Record.ProviderUkprn.ToString(),
                         UpdatedOn = i.Record.UpdatedOn,
-                        VenueAddress = i.Record.VenueAddress,
+                        VenueAddress = HtmlEncode(i.Record.VenueAddress),
                         VenueAttendancePattern = ((int?)i.Record.AttendancePattern)?.ToString(),
                         VenueAttendancePatternDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
                             i.Record.AttendancePattern?.ToDescription() :
@@ -277,13 +277,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                                 Longitude = i.Record.Position.Longitude
                             } :
                             null,
-                        VenueName = i.Record.VenueName,
+                        VenueName = HtmlEncode(i.Record.VenueName),
                         VenueStudyMode = ((int?)i.Record.StudyMode)?.ToString(),
                         VenueStudyModeDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ? 
                             i.Record.StudyMode?.ToDescription() :
                             null,
-                        VenueTown = i.Record.VenueTown
+                        VenueTown = HtmlEncode(i.Record.VenueTown)
                     };
+
+                    static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);
 
                     // We have a mixture of HTML encoded course / course run data; normalize it here
 
