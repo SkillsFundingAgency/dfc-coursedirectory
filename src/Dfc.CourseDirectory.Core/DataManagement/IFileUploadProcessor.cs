@@ -43,6 +43,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId);
         Task DeleteApprenticeshipUploadForProvider(Guid providerId);
         Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId);
+        Task<(IReadOnlyCollection<ApprenticeshipUploadRow> Rows, UploadStatus UploadStatus)> GetApprenticeshipUploadRowsForProvider(Guid providerId);
 
     }
 }

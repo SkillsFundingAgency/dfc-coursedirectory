@@ -121,7 +121,7 @@ WHEN NOT MATCHED BY SOURCE AND target.ApprenticeshipUploadId = @ApprenticeshipUp
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
-    ContactPhone, ContactUrl, DeliveryMode, VenueName,YourVenueReference, Radius, DeliveryMode, NationalDelivery,
+    ContactPhone, ContactUrl,DeliveryMethod, DeliveryMode, VenueName,YourVenueReference, Radius, DeliveryMode, NationalDelivery,
     SubRegions, VenueId, ResolvedDeliveryMethod, ResolvedDeliveryMode, ResolvedNationalDelivery, ResolvedRadius
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
