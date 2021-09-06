@@ -125,6 +125,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
         public IActionResult DeleteUploadSuccess() => View();
 
         [HttpGet("download-errors")]
-        public IActionResult DownloadErrors() => Ok();
+        public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
+            new DownloadErrors.Query(),
+            result => new CsvResult<CsvApprenticeshipRowWithErrors>(result.FileName, result.Rows));
     }
 }

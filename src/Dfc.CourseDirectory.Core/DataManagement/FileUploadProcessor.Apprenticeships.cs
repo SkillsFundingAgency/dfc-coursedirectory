@@ -411,6 +411,62 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        private async Task AcquireExclusiveApprenticeshipUploadLockForProvider(Guid providerId, ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            var lockName = $"DM_Apprenticeship:{providerId}";
+            const int timeoutMilliseconds = 3000;
+
+            var acquired = await sqlQueryDispatcher.ExecuteQuery(new GetExclusiveLock()
+            {
+                Name = lockName,
+                TimeoutMilliseconds = timeoutMilliseconds
+            });
+
+            if (!acquired)
+            {
+                throw new Exception($"Failed to acquire exclusive apprenticeship upload lock for provider {providerId}.");
+            }
+        }
+
+        public async Task<(IReadOnlyCollection<ApprenticeshipUploadRow> Rows, UploadStatus UploadStatus)> GetApprenticeshipUploadRowsForProvider(Guid providerId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
+
+                var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (apprenticeshipUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedCourseUpload);
+                }
+
+                if (apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedSuccessfully &&
+                    apprenticeshipUpload.UploadStatus != UploadStatus.ProcessedWithErrors)
+                {
+                    throw new InvalidUploadStatusException(
+                        apprenticeshipUpload.UploadStatus,
+                        UploadStatus.ProcessedSuccessfully,
+                        UploadStatus.ProcessedWithErrors);
+                }
+
+                // If the world around us has changed (courses added etc.) then we might need to revalidate
+                var uploadStatus = await RevalidateApprenticeshipUploadIfRequired(dispatcher, apprenticeshipUpload.ApprenticeshipUploadId);
+
+                var (rows, _) = await dispatcher.ExecuteQuery(new GetApprenticeshipUploadRows()
+                {
+                    ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId
+                });
+
+                await dispatcher.Commit();
+
+                return (rows, uploadStatus);
+            }
+        }
+
 
         public async Task DeleteApprenticeshipUploadForProvider(Guid providerId)
         {
