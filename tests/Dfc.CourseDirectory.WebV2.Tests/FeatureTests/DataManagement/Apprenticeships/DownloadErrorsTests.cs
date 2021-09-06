@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         }
 
         /// <summary>
-        /// TODO: Stop published status from skipping wehen PublishApprenticeshipUploadHandler is wired up.
+        /// TODO: Stop published status from skipping when PublishApprenticeshipUploadHandler is wired up.
         /// </summary>
         /// <param name="uploadStatus"></param>
         /// <returns></returns>
