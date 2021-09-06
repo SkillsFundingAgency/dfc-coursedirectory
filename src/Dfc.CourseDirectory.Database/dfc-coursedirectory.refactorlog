@@ -89,4 +89,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[LearnAimRef]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="f8ab00c5-85bc-4ac5-9e80-f86b765b25ed" ChangeDateTime="09/06/2021 11:20:12">
+    <Property Name="ElementName" Value="[Pttcd].[ApprenticeshipUploadRows].[ResolvedDeliveryMode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[ApprenticeshipUploadRows]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[ResolvedDeliveryModes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c175f59c-eef7-4e94-b04e-8c83da70821f" ChangeDateTime="09/06/2021 11:20:22">
+    <Property Name="ElementName" Value="[Pttcd].[ApprenticeshipUploadRows].[DeliveryMode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[ApprenticeshipUploadRows]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[DeliveryModes]" />
+  </Operation>
 </Operations>

@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             VenueName = row.VenueName,
             YourVenueReference = row.YourVenueReference,
             Radius = row.Radius,
-            DeliveryMode = row.DeliveryMode,
+            DeliveryModes = row.DeliveryModes,
             NationalDelivery = row.NationalDelivery,
             SubRegion = row.SubRegions,
             Errors = string.Join(

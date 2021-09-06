@@ -239,13 +239,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     VenueName = matchedVenue?.VenueName ?? parsedRow.VenueName,
                     YourVenueReference = parsedRow.YourVenueReference,
                     Radius = parsedRow.Radius, 
-                    DeliveryMode = ParsedCsvApprenticeshipRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode),  
+                    DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(parsedRow.ResolvedDeliveryModes),  
                     NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery), 
                     SubRegions = parsedRow.SubRegion,
                     VenueId = matchedVenue?.VenueId,
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
                     ResolvedDeliveryMethod = parsedRow.ResolvedDeliveryMethod,
-                    ResolvedDeliveryMode = parsedRow.ResolvedDeliveryMode,
+                    ResolvedDeliveryModes = parsedRow.ResolvedDeliveryModes,
                     ResolvedNationalDelivery = parsedRow.ResolvedNationalDelivery,
                     ResolvedRadius = parsedRow.ResolvedRadius
                 });
@@ -315,8 +315,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         internal async Task<UploadStatus> RevalidateApprenticeshipUploadIfRequired(
-         ISqlQueryDispatcher sqlQueryDispatcher,
-         Guid apprenticeshipUploadId)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            Guid apprenticeshipUploadId)
         {
             var apprenticeshipUpload = await sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
 
@@ -589,7 +589,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ContactEmail).ContactEmail();
                 RuleFor(c => c.ContactPhone).ContactTelephone();
                 RuleFor(c => c.ContactUrl).ContactWebsite();
-                RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode(c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedDeliveryModes).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
                 RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.VenueName, matchedVenueId);
                 RuleFor(c => c.VenueName).Venue(c => c.ResolvedDeliveryMethod);

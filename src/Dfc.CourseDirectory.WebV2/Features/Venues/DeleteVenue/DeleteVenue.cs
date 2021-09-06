@@ -173,7 +173,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                         Predicate = a => a.ProviderUKPRN == offeringInfo.Venue.ProviderUkprn &&
                             a.ApprenticeshipLocations.Any(al => al.VenueId == venueId && al.RecordStatus != (int)ApprenticeshipStatus.Deleted)
                     })) :
-                new Dictionary<Guid, Apprenticeship>();
+                new Dictionary<Guid, Core.DataStore.CosmosDb.Models.Apprenticeship>();
 
             var linkedTLevels = offeringInfo.LinkedTLevels.Count > 0 ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelsForProvider() { ProviderId = providerId })) :

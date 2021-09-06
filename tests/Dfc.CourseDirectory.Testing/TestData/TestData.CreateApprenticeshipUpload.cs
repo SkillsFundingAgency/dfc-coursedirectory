@@ -245,7 +245,7 @@ namespace Dfc.CourseDirectory.Testing
                 string venue,
                 string yourVenueReference,
                 string radius,
-                string deliveryMode,
+                string deliveryModes,
                 string nationalDelivery,
                 string subRegions,
                 IEnumerable<string> errors = null)
@@ -269,7 +269,7 @@ namespace Dfc.CourseDirectory.Testing
                     VenueName = venue,
                     YourVenueReference = yourVenueReference,
                     Radius = radius,
-                    DeliveryMode = deliveryMode,
+                    DeliveryModes = deliveryModes,
                     NationalDelivery = nationalDelivery,
                     SubRegions = subRegions,
                     Errors = errors
@@ -287,7 +287,7 @@ namespace Dfc.CourseDirectory.Testing
                     contactEmail: "",
                     contactPhone: "",
                     contactUrl: "",
-                    deliveryMode: "1",
+                    deliveryModes: "1",
                     venue: "Some venue",
                     yourVenueReference: "Some Reference",
                     radius: "1",

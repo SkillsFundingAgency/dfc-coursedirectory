@@ -41,12 +41,12 @@ WHEN NOT MATCHED THEN
       VenueName,
       YourVenueReference,
       Radius,
-      DeliveryMode,
+      DeliveryModes,
       NationalDelivery,
       SubRegions,
       VenueId,
       ResolvedDeliveryMethod,
-      ResolvedDeliveryMode,
+      ResolvedDeliveryModes,
       ResolvedNationalDelivery,
       ResolvedRadius
     ) VALUES (
@@ -65,16 +65,16 @@ WHEN NOT MATCHED THEN
         source.ContactEmail,
         source.ContactPhone,
         source.ContactUrl,
-        source.DeliveryMode,
+        source.DeliveryMethod,
         source.VenueName,
         source.YourVenueReference,
         source.Radius,
-        source.DeliveryMode,
+        source.DeliveryModes,
         source.NationalDelivery,
         source.SubRegions,
         source.VenueId,
         source.ResolvedDeliveryMethod,
-        source.ResolvedDeliveryMode,
+        source.ResolvedDeliveryModes,
         source.ResolvedNationalDelivery,
         source.ResolvedRadius
     )
@@ -96,12 +96,12 @@ WHEN MATCHED THEN UPDATE SET
     VenueName = source.VenueName,
     YourVenueReference = source.YourVenueReference,
     Radius = source.Radius,
-    DeliveryMode = source.DeliveryMode,
+    DeliveryModes = source.DeliveryModes,
     NationalDelivery = source.NationalDelivery,
     SubRegions = source.SubRegions,
     VenueId = source.VenueId,
     ResolvedDeliveryMethod = source.ResolvedDeliveryMethod,
-    ResolvedDeliveryMode =  source.ResolvedDeliveryMode,
+    ResolvedDeliveryModes =  source.ResolvedDeliveryModes,
     ResolvedNationalDelivery = source.ResolvedNationalDelivery,
     ResolvedRadius =  source.ResolvedRadius
 
@@ -121,8 +121,8 @@ WHEN NOT MATCHED BY SOURCE AND target.ApprenticeshipUploadId = @ApprenticeshipUp
 SELECT
     RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
-    ContactPhone, ContactUrl,DeliveryMethod, DeliveryMode, VenueName,YourVenueReference, Radius, DeliveryMode, NationalDelivery,
-    SubRegions, VenueId, ResolvedDeliveryMethod, ResolvedDeliveryMode, ResolvedNationalDelivery, ResolvedRadius
+    ContactPhone, ContactUrl, DeliveryMethod, VenueName,YourVenueReference, Radius, DeliveryModes, NationalDelivery,
+    SubRegions, VenueId
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -165,12 +165,12 @@ ORDER BY RowNumber";
                 table.Columns.Add("VenueName", typeof(string));
                 table.Columns.Add("YourVenueReference", typeof(string));
                 table.Columns.Add("Radius", typeof(string));
-                table.Columns.Add("DeliveryMode", typeof(string));
+                table.Columns.Add("DeliveryModes", typeof(string));
                 table.Columns.Add("NationalDelivery", typeof(string));
                 table.Columns.Add("SubRegions", typeof(string));
                 table.Columns.Add("VenueId", typeof(Guid));
                 table.Columns.Add("ResolvedDeliveryMethod", typeof(byte));
-                table.Columns.Add("ResolvedDeliveryMode", typeof(byte));
+                table.Columns.Add("ResolvedDeliveryModes", typeof(byte));
                 table.Columns.Add("ResolvedNationalDelivery", typeof(byte));
                 table.Columns.Add("ResolvedRadius", typeof(int));
 
@@ -190,16 +190,16 @@ ORDER BY RowNumber";
                         record.ContactEmail,
                         record.ContactPhone,
                         record.ContactUrl,
-                        record.DeliveryMode,
+                        record.DeliveryMethod,
                         record.VenueName,
                         record.YourVenueReference,
                         record.Radius,
-                        record.DeliveryMode,
+                        record.DeliveryModes,
                         record.NationalDelivery,
                         record.SubRegions,
                         record.VenueId,
                         record.ResolvedDeliveryMethod,
-                        record.ResolvedDeliveryMode,
+                        ApprenticeshipMappingHelper.MapDeliveryModesToSqlValue(record.ResolvedDeliveryModes ?? Enumerable.Empty<ApprenticeshipDeliveryMode>()),
                         record.ResolvedNationalDelivery,
                         record.ResolvedRadius);
                 }

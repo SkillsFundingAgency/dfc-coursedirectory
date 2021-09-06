@@ -30,11 +30,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string VenueName { get; set; }
         public string YourVenueReference { get; set; }
         public string Radius { get; set; }
-        public string DeliveryMode { get; set; }
+        public string DeliveryModes { get; set; }
         public string NationalDelivery { get; set; }
         public string SubRegions { get; set; }
         public Guid? VenueId { get; set; }
-        public ApprenticeshipDeliveryMode? ResolvedDeliveryMode { get; set; }
+        public IEnumerable<ApprenticeshipDeliveryMode> ResolvedDeliveryModes { get; set; }
         public ApprenticeshipLocationType? ResolvedDeliveryMethod { get; set; }
         public IEnumerable<string> ResolvedSubRegions { get; set; }
         public bool? ResolvedNationalDelivery { get; set; }

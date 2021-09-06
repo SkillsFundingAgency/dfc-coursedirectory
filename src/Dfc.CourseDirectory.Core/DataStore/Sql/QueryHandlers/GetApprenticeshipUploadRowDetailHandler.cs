@@ -15,10 +15,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT
-RowNumber, IsValid, Errors AS ErrorList, ApprenticeshipId, LastUpdated, LastValidated,
-StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage, ContactEmail,
-ContactPhone,ContactUrl, DeliveryMethod, VenueName,YourVenueReference,Radius,DeliveryMode, NationalDelivery, SubRegions, VenueId, ResolvedDeliveryMethod,
-ResolvedDeliveryMode,ResolvedNationalDelivery,ResolvedRadius
+    RowNumber, IsValid, Errors AS ErrorList, ApprenticeshipId, LastUpdated, LastValidated,
+    StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage, ContactEmail,
+    ContactPhone, ContactUrl, DeliveryMethod, VenueName, YourVenueReference, Radius, DeliveryModes, NationalDelivery, SubRegions, VenueId
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId AND RowNumber = @RowNumber
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -39,6 +38,7 @@ ORDER BY RowNumber
                 {
                     return null;
                 }
+
                 return result;
             }
         }

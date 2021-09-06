@@ -80,8 +80,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
         public IActionResult CheckAndPublish() => View();
 
         [HttpGet("download")]
-        [RequireProviderContext]
-        public IActionResult Download() => Ok();
+        public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
+            new Download.Query(),
+            result => new CsvResult<CsvApprenticeshipRow>(result.FileName, result.Rows));
 
         [HttpGet("errors")]
         public async Task<IActionResult> Errors() =>

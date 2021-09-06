@@ -9,8 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public class ParsedCsvApprenticeshipRow : CsvApprenticeshipRow
     {
-        private const string DateFormat = "dd/MM/yyyy";
-        public ApprenticeshipDeliveryMode? ResolvedDeliveryMode { get; private set; }
+        public IReadOnlyCollection<ApprenticeshipDeliveryMode> ResolvedDeliveryModes { get; private set; }
         public IReadOnlyCollection<Region> ResolvedSubRegions { get; private set; }
         public ApprenticeshipLocationType? ResolvedDeliveryMethod { get; private set; }
         public bool? ResolvedNationalDelivery { get; private set; }
@@ -23,14 +22,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static ParsedCsvApprenticeshipRow FromCsvApprenticeshipRow(CsvApprenticeshipRow row, IEnumerable<Region> allRegions)
         {
             var parsedRow = row.Adapt(new ParsedCsvApprenticeshipRow());
-            parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(row.DeliveryMode);
-            parsedRow.ResolvedDeliveryMethod = ResolveDeliveryMethod(row.DeliveryMethod);
+            parsedRow.ResolvedDeliveryModes = ResolveDeliveryModes(row.DeliveryModes);
+            parsedRow.ResolvedDeliveryMethod = ResolveDeliveryMethod(row.DeliveryMethod, parsedRow.ResolvedDeliveryModes);
             parsedRow.ResolvedNationalDelivery = ResolveNationalDelivery(row.NationalDelivery);
             parsedRow.ResolvedRadius = ResolveRadius(row.Radius);
             parsedRow.ResolvedSubRegions = ResolveSubRegions(parsedRow.SubRegion, allRegions);
             return parsedRow;
         }
-
 
         public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
         {
@@ -76,42 +74,64 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return matchedRegions;
         }
 
-
-        public static ApprenticeshipDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
+        public static IReadOnlyCollection<ApprenticeshipDeliveryMode> ResolveDeliveryModes(string value)
         {
-            "block release" => ApprenticeshipDeliveryMode.BlockRelease,
-            "block" => ApprenticeshipDeliveryMode.BlockRelease,
-            "day release" => ApprenticeshipDeliveryMode.DayRelease,
-            "day" => ApprenticeshipDeliveryMode.DayRelease,
-            "employer address" => ApprenticeshipDeliveryMode.EmployerAddress,
-            "employer" => ApprenticeshipDeliveryMode.EmployerAddress,
-            _ => (ApprenticeshipDeliveryMode?)null
-        };
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return Array.Empty<ApprenticeshipDeliveryMode>();
+            }
 
-        public static ApprenticeshipLocationType? ResolveDeliveryMethod(string value) => value?.ToLower() switch
-        {
-            "classroom based" => ApprenticeshipLocationType.ClassroomBased,
-            "classroom" => ApprenticeshipLocationType.ClassroomBased,
-            "employer based" => ApprenticeshipLocationType.EmployerBased,
-            "emplyoer" => ApprenticeshipLocationType.EmployerBased,
-            "both" => ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
-            "classroom based and employer based" => ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
-            _ => (ApprenticeshipLocationType?)null
-        };
+            var parsed = value.ToLower()
+                .Split(DeliveryModeDelimiter, StringSplitOptions.RemoveEmptyEntries)
+                .Select(dm => dm switch
+                {
+                    "block release" => ApprenticeshipDeliveryMode.BlockRelease,
+                    "block" => ApprenticeshipDeliveryMode.BlockRelease,
+                    "day release" => ApprenticeshipDeliveryMode.DayRelease,
+                    "day" => ApprenticeshipDeliveryMode.DayRelease,
+                    "employer address" => ApprenticeshipDeliveryMode.EmployerAddress,
+                    "employer" => ApprenticeshipDeliveryMode.EmployerAddress,
+                    _ => (ApprenticeshipDeliveryMode?)null
+                })
+                .Distinct()
+                .ToArray();
 
-        public static string MapDeliveryMode(ApprenticeshipDeliveryMode? value) => value switch
-        {
-            ApprenticeshipDeliveryMode.BlockRelease => "Block Release",
-            ApprenticeshipDeliveryMode.DayRelease => "Day Release",
-            ApprenticeshipDeliveryMode.EmployerAddress => "Employer Address",
-            null => null,
-            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
-        };
+            // If any element failed parsing return an empty collection
+            if (parsed.Any(v => !v.HasValue))
+            {
+                return Array.Empty<ApprenticeshipDeliveryMode>();
+            }
+
+            return parsed.Cast<ApprenticeshipDeliveryMode>().ToArray();
+        }
+
+        public static ApprenticeshipLocationType? ResolveDeliveryMethod(string value, IReadOnlyCollection<ApprenticeshipDeliveryMode> deliveryModes) =>
+            (value?.ToLower(), deliveryModes?.Contains(ApprenticeshipDeliveryMode.EmployerAddress) ?? false) switch
+            {
+                ("classroom based", false) => ApprenticeshipLocationType.ClassroomBased,
+                ("classroom", false) => ApprenticeshipLocationType.ClassroomBased,
+                ("classroom based", true) => ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
+                ("classroom", true) => ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
+                ("employer based", _) => ApprenticeshipLocationType.EmployerBased,
+                ("employer", _) => ApprenticeshipLocationType.EmployerBased,
+                _ => (ApprenticeshipLocationType?)null
+            };
+
+        public static string MapDeliveryModes(IEnumerable<ApprenticeshipDeliveryMode> value) =>
+            string.Join(
+                DeliveryModeDelimiter,
+                value.Select(v => v switch
+                {
+                    ApprenticeshipDeliveryMode.BlockRelease => "Block Release",
+                    ApprenticeshipDeliveryMode.DayRelease => "Day Release",
+                    ApprenticeshipDeliveryMode.EmployerAddress => "Employer Address",
+                    _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+                }));
 
         public static string MapDeliveryMethod(ApprenticeshipLocationType? value) => value switch
         {
             ApprenticeshipLocationType.ClassroomBased => "Classroom Based",
-            ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Classroom Based And Employer Based",
+            ApprenticeshipLocationType.ClassroomBasedAndEmployerBased => "Classroom Based",
             ApprenticeshipLocationType.EmployerBased => "Employer Based",
             null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
@@ -123,5 +143,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             false => "No",
             null => null
         };
+
+        public static string MapSubRegions(IReadOnlyCollection<string> value, IReadOnlyCollection<Region> allRegions) =>
+            value == null ?
+                string.Empty :
+                string.Join(
+                    SubRegionDelimiter + " ",
+                    allRegions
+                        .SelectMany(r => r.SubRegions)
+                        .Where(r => value.Contains(r.Id))
+                        .Select(r => r.Name));
+
+        public static string MapStandardCode(int standardCode) => standardCode.ToString();
+
+        public static string MapStandardVersion(int standardVersion) => standardVersion.ToString();
     }
 }
