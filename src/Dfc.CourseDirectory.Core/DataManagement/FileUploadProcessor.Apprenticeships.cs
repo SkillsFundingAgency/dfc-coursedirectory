@@ -49,8 +49,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+                
                 // Check there isn't an existing unprocessed upload for this provider
-
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
                     ProviderId = providerId
@@ -133,6 +134,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venueUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
                 var providerId = venueUpload.ProviderId;
 
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
                 await ValidateApprenticeshipUploadRows(dispatcher, apprenticeshipUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
@@ -277,6 +279,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
                     ProviderId = providerId
@@ -472,6 +475,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
+                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
                     ProviderId = providerId
