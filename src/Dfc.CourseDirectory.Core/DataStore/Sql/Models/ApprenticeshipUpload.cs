@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string VenueName { get; set; }
         public string YourVenueReference { get; set; }
         public string Radius { get; set; }
-        public string DeliveryMode { get; set; }
+        public string DeliveryModes { get; set; }
         public string NationalDelivery { get; set; }
         public string SubRegions { get; set; }
         public Guid? VenueId { get; set; }

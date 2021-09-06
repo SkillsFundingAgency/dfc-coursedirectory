@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
 using FluentValidation.Results;
@@ -155,24 +156,27 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                  });
         }
 
-        public static void DeliveryMode<T>(this IRuleBuilderInitial<T, ApprenticeshipDeliveryMode?> field, Func<T, ApprenticeshipLocationType?> getDeliveryMethod)
+        public static void DeliveryMode<T>(this IRuleBuilderInitial<T, IEnumerable<ApprenticeshipDeliveryMode>> field, Func<T, ApprenticeshipLocationType?> getDeliveryMethod)
         {
             field
                  .Custom((v, ctx) =>
                  {
                      var obj = (T)ctx.InstanceToValidate;
                      var deliveryMethod = getDeliveryMethod(obj);
-                     if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased)
-                     {
-                         if (v == ApprenticeshipDeliveryMode.BlockRelease || v == ApprenticeshipDeliveryMode.DayRelease)
-                             return;
 
-                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK"));
+                     if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased ||
+                        deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                     {
+                         if (!v.Contains(ApprenticeshipDeliveryMode.BlockRelease) && !v.Contains(ApprenticeshipDeliveryMode.DayRelease))
+                         {
+                            ctx.AddFailure(CreateFailure("APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK"));
+                         }
                      }
 
                      if (deliveryMethod == ApprenticeshipLocationType.EmployerBased)
                      {
-                         if (v.HasValue)
+                         // Allow Employer to be specified but nothing else
+                         if (v != null && v.Any() && !v.SequenceEqual(new[] { ApprenticeshipDeliveryMode.EmployerAddress }))
                          {
                              ctx.AddFailure(CreateFailure("APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED"));
                          }
@@ -266,7 +270,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                     var isSpecified = !string.IsNullOrEmpty(v);
 
                     // Not allowed for delivery modes other than classroom based
-                    if (isSpecified && deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    if (isSpecified && deliveryMode != ApprenticeshipLocationType.ClassroomBased && deliveryMode != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                     {
                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED"));
                         return;

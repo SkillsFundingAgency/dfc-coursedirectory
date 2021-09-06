@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 {
     public class CsvApprenticeshipRow
     {
+        public const char DeliveryModeDelimiter = ';';
         public const char SubRegionDelimiter = ';';
 
         [Index(0), Name("STANDARD_CODE")]
@@ -33,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(10), Name("RADIUS")]
         public string Radius { get; set; }
         [Index(11), Name("DELIVERY_MODE")]
-        public string DeliveryMode { get; set; }
+        public string DeliveryModes { get; set; }
         [Index(12), Name("NATIONAL_DELIVERY")]
         public string NationalDelivery { get; set; }
         [Index(13), Name("SUB_REGION")]
@@ -52,9 +54,31 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             VenueName = row.VenueName,
             YourVenueReference = row.YourVenueReference,
             Radius = row.Radius,
-            DeliveryMode = row.DeliveryMode,
+            DeliveryModes = row.DeliveryModes,
             NationalDelivery = row.NationalDelivery,
             SubRegion = row.SubRegions
         };
+
+        public static IEnumerable<CsvApprenticeshipRow> FromModel(Apprenticeship apprenticeship, IReadOnlyCollection<Region> allRegions) =>
+            apprenticeship.ApprenticeshipLocations
+                .OrderBy(l => l.Venue?.VenueName ?? string.Empty)
+                .ThenBy(l => l.ApprenticeshipLocationType)
+                .Select(l => new CsvApprenticeshipRow()
+                {
+                    ApprenticeshipInformation = apprenticeship.MarketingInformation,
+                    ApprenticeshipWebpage = apprenticeship.ApprenticeshipWebsite,
+                    ContactEmail = apprenticeship.ContactEmail,
+                    ContactPhone = apprenticeship.ContactTelephone,
+                    ContactUrl = apprenticeship.ContactWebsite,
+                    DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(l.ApprenticeshipLocationType),
+                    DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(l.DeliveryModes),
+                    NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(l.National),
+                    Radius = l.Radius?.ToString() ?? string.Empty,
+                    StandardCode = ParsedCsvApprenticeshipRow.MapStandardCode(apprenticeship.Standard.StandardCode),
+                    StandardVersion = ParsedCsvApprenticeshipRow.MapStandardVersion(apprenticeship.Standard.Version),
+                    SubRegion = ParsedCsvApprenticeshipRow.MapSubRegions(l.SubRegionIds, allRegions),
+                    VenueName = l.Venue?.VenueName,
+                    YourVenueReference = l.Venue?.ProviderVenueRef
+                });
     }
 }

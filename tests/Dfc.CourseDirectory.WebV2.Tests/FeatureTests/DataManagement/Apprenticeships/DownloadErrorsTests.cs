@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
                     VenueName = apprenticeshipUploadRows[0].VenueName,
                     YourVenueReference = apprenticeshipUploadRows[0].YourVenueReference,
                     Radius = apprenticeshipUploadRows[0].Radius,
-                    DeliveryMode = apprenticeshipUploadRows[0].DeliveryMode,
+                    DeliveryModes = apprenticeshipUploadRows[0].DeliveryModes,
                     NationalDelivery = apprenticeshipUploadRows[0].NationalDelivery,
                     SubRegion = apprenticeshipUploadRows[0].SubRegions,
                     Errors = ErrorRegistry.All["APPRENTICESHIP_TELEPHONE_REQUIRED"].GetMessage() + "\n"

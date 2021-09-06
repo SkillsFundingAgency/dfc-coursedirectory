@@ -263,7 +263,7 @@ namespace Dfc.CourseDirectory.Testing
                 csvWriter.WriteField(row.VenueName);
                 csvWriter.WriteField(row.YourVenueReference);
                 csvWriter.WriteField(row.Radius);
-                csvWriter.WriteField(row.DeliveryMode);
+                csvWriter.WriteField(row.DeliveryModes);
                 csvWriter.WriteField(row.NationalDelivery);
                 csvWriter.WriteField(row.SubRegion);
                 csvWriter.NextRecord();
@@ -299,7 +299,7 @@ namespace Dfc.CourseDirectory.Testing
                     DeliveryMethod = "",
                     YourVenueReference = "",
                     Radius = "",
-                    DeliveryMode = "",
+                    DeliveryModes = "",
                     NationalDelivery = "",
                     SubRegion = ""
                 };

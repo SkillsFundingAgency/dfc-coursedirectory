@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var row = new CsvApprenticeshipRow()
             {
                 ApprenticeshipInformation = string.Empty,
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based"
             };
 
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var row = new CsvApprenticeshipRow()
             {
                 ApprenticeshipInformation = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx2222222222222222222",
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based"
             };
 
@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "ttp://someapprenticeship.com",
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based"
             };
 
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "@invalid.com"
             };
@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "INVALID NUMBER"
@@ -152,7 +152,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -180,7 +180,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "employer address",
+                DeliveryModes = "employer address",
                 DeliveryMethod = "employer based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = deliveryMode,
+                DeliveryModes = deliveryMode,
                 DeliveryMethod = "employer based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -245,7 +245,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = deliveryMode,
+                DeliveryModes = deliveryMode,
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -276,7 +276,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = deliveryMode,
+                DeliveryModes = deliveryMode,
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -305,7 +305,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "day release",
+                DeliveryModes = "day release",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -337,7 +337,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "day release",
+                DeliveryModes = "day release",
                 DeliveryMethod = "employer based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -369,7 +369,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "day release",
+                DeliveryModes = "day release",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -411,7 +411,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StandardVersion = "1",
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "day release",
+                DeliveryModes = "day release",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -447,7 +447,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StandardVersion = "1",
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "day release",
+                DeliveryModes = "day release",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
@@ -478,7 +478,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StandardVersion = "1",
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMode = "day release",
+                DeliveryModes = "day release",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",

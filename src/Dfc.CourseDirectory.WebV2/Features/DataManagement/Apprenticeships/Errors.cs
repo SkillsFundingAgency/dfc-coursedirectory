@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Erro
                                         Code = r.StandardCode,
                                         Version = r.StandardVersion,
                                         ApprenticeshipName = r.ApprenticeshipInformation,
-                                        DeliveryMode = r.DeliveryMode,
+                                        DeliveryMode = r.DeliveryModes,
                                         ErrorFields = r.Errors.Select(e => Core.DataManagement.Errors.MapApprenticeshipErrorToFieldGroup(e)).Distinct().ToArray()
                                     };
                                 }).ToArray(),

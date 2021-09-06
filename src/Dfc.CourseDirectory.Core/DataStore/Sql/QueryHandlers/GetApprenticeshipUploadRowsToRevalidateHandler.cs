@@ -24,15 +24,14 @@ JOIN Pttcd.Venues v ON p.Ukprn = v.ProviderUkprn
 WHERE au.ApprenticeshipUploadId = @ApprenticeshipUploadId
 
 SELECT
-       RowNumber,ApprenticeshipUploadRowStatus,IsValid,Errors,LastUpdated,LastValidated,ApprenticeshipId
-      ,StandardCode,StandardVersion,ApprenticeshipInformation,ApprenticeshipWebpage,ContactEmail,ContactPhone,ContactUrl
-      ,DeliveryMethod,aur.VenueName,YourVenueReference,Radius,DeliveryMode,NationalDelivery,SubRegions, aur.VenueId, ResolvedDeliveryMethod, 
-      ResolvedDeliveryMode, ResolvedNationalDelivery, ResolvedRadius
+    RowNumber, ApprenticeshipUploadRowStatus, IsValid, Errors, LastUpdated, LastValidated, ApprenticeshipId,
+    StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage, ContactEmail, ContactPhone, ContactUrl,
+    DeliveryMethod, aur.VenueName, YourVenueReference, Radius, DeliveryModes, NationalDelivery, SubRegions, aur.VenueId
 FROM Pttcd.ApprenticeshipUploadRows aur
 LEFT JOIN Pttcd.Venues v ON aur.VenueId = v.VenueId
 WHERE aur.ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND aur.ApprenticeshipUploadRowStatus =  {(int)UploadRowStatus.Default}
-AND aur.ResolvedDeliveryMode =   {(int)ApprenticeshipDeliveryMode.DayRelease}
+AND aur.ResolvedDeliveryMethod = {(int)ApprenticeshipLocationType.ClassroomBased}
 AND (
     -- Matched venue has been updated or deleted since we last validated row
     (aur.VenueId IS NOT NULL AND ISNULL(v.UpdatedOn, v.CreatedOn) > aur.LastValidated)
