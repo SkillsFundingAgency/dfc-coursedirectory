@@ -108,7 +108,8 @@ namespace Dfc.CourseDirectory.Testing
                         IsValid = isValid.Value
                     });
 
-                    var rowBuilder = new CourseUploadRowBuilder();
+                    var allRegions = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetAllRegions()));
+                    var rowBuilder = new CourseUploadRowBuilder(allRegions);
 
                     if (configureRows != null)
                     {
@@ -180,6 +181,12 @@ namespace Dfc.CourseDirectory.Testing
         public class CourseUploadRowBuilder
         {
             private readonly List<UpsertCourseUploadRowsRecord> _records = new List<UpsertCourseUploadRowsRecord>();
+            private readonly IEnumerable<Region> _allRegions;
+
+            public CourseUploadRowBuilder(IEnumerable<Region> allRegions)
+            {
+                _allRegions = allRegions;
+            }
 
             public CourseUploadRowBuilder AddRow(string learnAimRef, Action<UpsertCourseUploadRowsRecord> configureRecord)
             {
@@ -346,7 +353,8 @@ namespace Dfc.CourseDirectory.Testing
                     ResolvedDuration = ParsedCsvCourseRow.ResolveDuration(duration),
                     ResolvedDurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(durationUnit),
                     ResolvedStudyMode = ParsedCsvCourseRow.ResolveStudyMode(studyMode),
-                    ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern)
+                    ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern),
+                    ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id)
                 };
             }
 
