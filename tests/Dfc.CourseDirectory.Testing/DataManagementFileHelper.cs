@@ -270,40 +270,28 @@ namespace Dfc.CourseDirectory.Testing
             }
         });
 
-        public static Stream CreateApprenticeshipUploadCsvStream(int rowCount) => CreateApprenticeshipUploadCsvStream(CreateApprenticeshipUploadRows(rowCount).ToArray());
+        public static Stream CreateApprenticeshipUploadCsvStream(int standardCode, int standardVersion) =>
+            CreateApprenticeshipUploadCsvStream(new[] { CreateApprenticeshipUploadRow(standardCode, standardVersion) });
 
-        public static IEnumerable<CsvApprenticeshipRow> CreateApprenticeshipUploadRows(int rowCount)
+        public static CsvApprenticeshipRow CreateApprenticeshipUploadRow(int standardCode, int standardVersion)
         {
-            var venueNames = new HashSet<string>();
-
-            for (int i = 0; i < rowCount; i++)
+            return new CsvApprenticeshipRow()
             {
-                // Venue names have to be unique
-                string venueName;
-                do
-                {
-                    venueName = Faker.Company.Name();
-                }
-                while (!venueNames.Add(venueName));
-
-                yield return new CsvApprenticeshipRow()
-                {
-                    VenueName = venueName,
-                    StandardVersion = "1",
-                    StandardCode = "1",
-                    ApprenticeshipInformation = "",
-                    ApprenticeshipWebpage = "",
-                    ContactEmail = "",
-                    ContactPhone = "",
-                    ContactUrl = "",
-                    DeliveryMethod = "",
-                    YourVenueReference = "",
-                    Radius = "",
-                    DeliveryModes = "",
-                    NationalDelivery = "",
-                    SubRegion = ""
-                };
-            }
+                StandardCode = standardCode.ToString(),
+                StandardVersion = standardVersion.ToString(),
+                ApprenticeshipInformation = "Some Apprenticeship Information",
+                ApprenticeshipWebpage = "provider.com/apprenticeship",
+                ContactEmail = "info@provider.com",
+                ContactPhone = "01234 567890",
+                ContactUrl = "provider.com",
+                DeliveryMethod = "employer based",
+                VenueName = "",
+                YourVenueReference = "",
+                Radius = "",
+                DeliveryModes = "employer",
+                NationalDelivery = "yes",
+                SubRegion = ""
+            };
         }
 
         public static ApprenticeshipDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvApprenticeshipRow> rows)
