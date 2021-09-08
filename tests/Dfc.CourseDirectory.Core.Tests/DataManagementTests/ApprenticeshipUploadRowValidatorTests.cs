@@ -39,6 +39,35 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorMessage == "Enter apprenticeship information for employers");
         }
 
+
+        [Theory]
+        [InlineData("-1")]
+        [InlineData("0")]
+        [InlineData("876")]
+        public async Task InvalidRadiusRange_ReturnsValidationError(string radius)
+        {
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                ApprenticeshipInformation = string.Empty,
+                DeliveryModes = "employer address",
+                DeliveryMethod = "employer based",
+                Radius = radius
+            };
+
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult.Errors,
+                error => error.ErrorMessage == "You must enter a radius between 1 and 874");
+        }
+
+
         [Fact]
         public async Task ApprenticeshipInformationLargerThanMaxLength_ReturnsValidationError()
         {
@@ -85,7 +114,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Website must be a real webpage, like https://www.provider.com/apprenticeship");
+                error => error.ErrorMessage == $"Website must be a real webpage");
         }
 
         [Fact]
@@ -111,7 +140,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Email must be a valid email address");
+                error => error.ErrorMessage == $"Enter an email address in the correct format");
         }
 
         [Fact]
@@ -138,7 +167,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Telephone must be a valid UK phone number");
+                error => error.ErrorMessage == $"Enter a telephone number in the correct format");
         }
 
 

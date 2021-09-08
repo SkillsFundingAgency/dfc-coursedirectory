@@ -103,7 +103,9 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("APPRENTICESHIP_WEBSITE_FORMAT"),
             new Error("APPRENTICESHIP_CONTACTUS_FORMAT"),
             new Error("APPRENTICESHIP_INFORMATION_REQUIRED"),
-            new Error("APPRENTICESHIP_INFORMATION_MAXLENGTH", ApprenticeshipConstants.MarketingInformationStrippedMaxLength)
+            new Error("APPRENTICESHIP_INFORMATION_MAXLENGTH", ApprenticeshipConstants.MarketingInformationStrippedMaxLength),
+            new Error("APPRENTICESHIP_RADIUS_INVALID", ApprenticeshipConstants.RadiusRangeMin,ApprenticeshipConstants.RadiusRangeMax )
+        
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 

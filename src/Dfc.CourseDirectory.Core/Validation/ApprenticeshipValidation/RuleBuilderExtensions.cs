@@ -149,6 +149,8 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                          {
                              ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_REQUIRED"));
                          }
+                         else if(v.Value < Constants.RadiusRangeMin || v.Value > Constants.RadiusRangeMax)
+                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_INVALID"));
                      }
 
                      ValidationFailure CreateFailure(string errorCode) =>
