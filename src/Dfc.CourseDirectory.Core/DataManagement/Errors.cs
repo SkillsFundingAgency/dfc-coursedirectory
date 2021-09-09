@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "APPRENTICESHIP_STANDARD_VERSION_REQUIRED":
                     return "Standard version";
                 case "APPRENTICESHIP_TELEPHONE_REQUIRED":
+                case "APPRENTICESHIP_TELEPHONE_FORMAT":
                     return "Telephone";
                 case "APPRENTICESHIP_VENUE_NAME_INVALID":
                 case "APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED":

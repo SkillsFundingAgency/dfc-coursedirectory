@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
 
         public static void ContactTelephone<T>(this IRuleBuilderInitial<T, string> field) =>
             field
+                .NormalizeWhitespace()
                 .NotEmpty()
                     .WithMessageFromErrorCode("APPRENTICESHIP_TELEPHONE_REQUIRED")
                 .Apply(Rules.PhoneNumber)
