@@ -150,12 +150,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             ApprenticeshipDataUploadRowInfoCollection CreateApprenticeshipDataUploadRowInfoCollection()
             {
-                var apprenticeshipId = Guid.NewGuid();
-                var rowInfos = new List<ApprenticeshipDataUploadRowInfo>();
+                // N.B. It's important we maintain ordering here; RowNumber needs to match the input
+
+                var grouped = CsvApprenticeshipRow.GroupRows(rows);
+                var groupApprenticeshipIds = grouped.Select(g => (ApprenticeshipId: Guid.NewGuid(), Rows: g)).ToArray();
+
+                var rowInfos = new List<ApprenticeshipDataUploadRowInfo>(rows.Count);
+
                 foreach (var row in rows)
                 {
+                    var apprenticeshipId = groupApprenticeshipIds.Single(g => g.Rows.Contains(row)).ApprenticeshipId;
+
                     rowInfos.Add(new ApprenticeshipDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, apprenticeshipId));
                 }
+
                 return new ApprenticeshipDataUploadRowInfoCollection(rowInfos);
             }
         }
@@ -207,16 +215,24 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             ApprenticeshipDataUploadRowInfoCollection rows)
         {
             var rowsAreValid = true;
+
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+
             var allRegions = await _regionCache.GetAllRegions();
+
             var upsertRecords = new List<UpsertApprenticeshipUploadRowsRecord>();
 
             foreach (var row in rows)
             {
-                var rowNumber = row.RowNumber; ;
+                var rowNumber = row.RowNumber;
+                var apprenticeshipLocationId = Guid.NewGuid();
+
                 var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row.Data, allRegions);
+
                 var matchedVenue = FindVenue(row, providerVenues);
+
                 var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId);
+
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
@@ -228,6 +244,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     IsValid = rowIsValid,
                     Errors = errors,
                     ApprenticeshipId = row.ApprenticeshipId,
+                    ApprenticeshipLocationId = apprenticeshipLocationId,
                     StandardCode = int.Parse(parsedRow.StandardCode),
                     StandardVersion = int.Parse(parsedRow.StandardVersion),
                     ApprenticeshipInformation = parsedRow.ApprenticeshipInformation,

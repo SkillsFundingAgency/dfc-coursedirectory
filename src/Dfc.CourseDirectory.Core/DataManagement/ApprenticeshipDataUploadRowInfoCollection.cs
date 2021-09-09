@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         public Guid ApprenticeshipId { get; set; }
+
         public Guid? VenueIdHint { get; set; }
     }
 }

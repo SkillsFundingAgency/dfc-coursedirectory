@@ -194,6 +194,7 @@ namespace Dfc.CourseDirectory.Testing
 
             public ApprenticeshipUploadRowBuilder AddRow(
                 Guid apprenticeshipId,
+                Guid apprenticeshipLocationId,
                 int standardCode,
                 int standardVersion,
                 string apprenticeshipInformation,
@@ -213,6 +214,7 @@ namespace Dfc.CourseDirectory.Testing
             {
                 var record = CreateRecord(
                     apprenticeshipId,
+                    apprenticeshipLocationId,
                     standardCode,
                     standardVersion,
                     apprenticeshipInformation,
@@ -246,6 +248,7 @@ namespace Dfc.CourseDirectory.Testing
 
             private UpsertApprenticeshipUploadRowsRecord CreateRecord(
                 Guid apprenticeshipId,
+                Guid apprenticeshipLocationId,
                 int standardCode,
                 int standardVersion,
                 string apprenticeshipInformation,
@@ -273,6 +276,7 @@ namespace Dfc.CourseDirectory.Testing
                     RowNumber = _records.Count + 2,
                     IsValid = isValid,
                     ApprenticeshipId = apprenticeshipId,
+                    ApprenticeshipLocationId = apprenticeshipLocationId,
                     StandardCode = standardCode,
                     StandardVersion = standardVersion,
                     ApprenticeshipInformation = apprenticeshipInformation,
@@ -301,6 +305,7 @@ namespace Dfc.CourseDirectory.Testing
             {
                 return CreateRecord(
                     apprenticeshipId: Guid.NewGuid(),
+                    apprenticeshipLocationId: Guid.NewGuid(),
                     standardCode: standardCode,
                     standardVersion: standardVersion,
                     apprenticeshipInformation: "Some Apprenticeship Information",

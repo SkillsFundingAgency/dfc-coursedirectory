@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT
-      RowNumber, ApprenticeshipUploadRowStatus,IsValid,Errors AS ErrorList,LastUpdated,LastValidated,ApprenticeshipId,
-      StandardCode,StandardVersion,ApprenticeshipInformation,ApprenticeshipWebpage,ContactEmail,ContactPhone, ContactUrl,
+      RowNumber, ApprenticeshipUploadRowStatus, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId, ApprenticeshipLocationId,
+      StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage, ContactEmail, ContactPhone, ContactUrl,
       DeliveryMethod, VenueName, YourVenueReference, Radius, DeliveryModes, NationalDelivery, SubRegions, VenueId
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
