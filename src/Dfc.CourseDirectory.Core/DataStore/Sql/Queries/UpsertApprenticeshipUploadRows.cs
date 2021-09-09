@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public bool IsValid { get; set; }
         public IEnumerable<string> Errors { get; set; }
         public Guid ApprenticeshipId { get; set; }
+        public Guid ApprenticeshipLocationId { get; set; }
         public int StandardCode { get; set; }
         public int StandardVersion { get; set; }
         public string ApprenticeshipInformation { get; set; }

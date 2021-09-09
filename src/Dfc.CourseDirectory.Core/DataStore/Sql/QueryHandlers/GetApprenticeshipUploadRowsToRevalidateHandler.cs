@@ -24,7 +24,7 @@ JOIN Pttcd.Venues v ON p.Ukprn = v.ProviderUkprn
 WHERE au.ApprenticeshipUploadId = @ApprenticeshipUploadId
 
 SELECT
-    RowNumber, ApprenticeshipUploadRowStatus, IsValid, Errors, LastUpdated, LastValidated, ApprenticeshipId,
+    RowNumber, ApprenticeshipUploadRowStatus, IsValid, Errors, LastUpdated, LastValidated, ApprenticeshipId, ApprenticeshipLocationId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage, ContactEmail, ContactPhone, ContactUrl,
     DeliveryMethod, aur.VenueName, YourVenueReference, Radius, DeliveryModes, NationalDelivery, SubRegions, aur.VenueId
 FROM Pttcd.ApprenticeshipUploadRows aur

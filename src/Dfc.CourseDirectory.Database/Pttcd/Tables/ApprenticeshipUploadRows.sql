@@ -8,6 +8,7 @@
     [LastUpdated] DATETIME NOT NULL,
     [LastValidated] DATETIME NOT NULL,
     [ApprenticeshipId] UNIQUEIDENTIFIER,
+    [ApprenticeshipLocationId] UNIQUEIDENTIFIER/* NOT NULL*/,
     [StandardCode] INT NOT NULL,
     [StandardVersion] INT NOT NULL,
     [ApprenticeshipInformation] NVARCHAR(MAX),

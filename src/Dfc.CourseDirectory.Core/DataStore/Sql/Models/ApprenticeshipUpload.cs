@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public bool IsValid { get; set; }
         public IReadOnlyCollection<string> Errors { get; set; }
         public Guid ApprenticeshipId { get; set; }
+        public Guid ApprenticeshipLocationId { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }
         public int StandardCode{ get; set; }
