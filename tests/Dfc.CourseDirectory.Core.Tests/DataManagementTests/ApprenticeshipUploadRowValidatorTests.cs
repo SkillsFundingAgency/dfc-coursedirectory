@@ -51,8 +51,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var row = new CsvApprenticeshipRow()
             {
                 ApprenticeshipInformation = string.Empty,
-                DeliveryModes = "employer address",
-                DeliveryMethod = "employer based",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
                 Radius = radius
             };
 
@@ -196,11 +196,11 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Contact us page must be a real webpage, like https://www.provider.com/apprenticeship");
+                error => error.ErrorMessage == $"The contact us webpage must be a real website");
         }
 
         [Fact]
-        public async Task ApprenticeshipMissingRadiusWhenEmployerBased_ReturnsValidationError()
+        public async Task ApprenticeshipMissingRadiusWhenEmployerBased_DoesNotReturnsValidationError()
         {
             // Arrange
             var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
@@ -211,6 +211,37 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
                 DeliveryModes = "employer address",
                 DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                Radius = "",
+                //Regions
+
+            };
+
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_RADIUS_REQUIRED");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipMissingRadiusWhenClassroomBased_ReturnsValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
@@ -445,7 +476,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
-                YourVenueReference = "VENUE1"
+                YourVenueReference = "VENUE1",
+                Radius = "10"
             };
 
             var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venue.VenueId);
@@ -543,7 +575,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
-                Radius = "1",
                 SubRegion = "County Durham"
             };
 
