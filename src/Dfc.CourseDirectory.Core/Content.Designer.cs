@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can only enter a venue that is already added to Publish to the course directory..
+        ///   Looks up a localized string similar to You must enter a Venue that is in Publish to the course directory.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_VENUE_NAME_INVALID {
             get {
