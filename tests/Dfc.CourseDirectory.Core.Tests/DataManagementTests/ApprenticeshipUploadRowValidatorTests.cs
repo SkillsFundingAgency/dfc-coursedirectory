@@ -790,6 +790,75 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
+        public async Task ApprenticeshipWhenEmployerBasedHasVenueReference_ReturnValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                Radius = "1",
+                SubRegion = "",
+                VenueName = string.Empty,
+                YourVenueReference = "SOME VENUE REFERENCE",
+                NationalDelivery = "yes"
+            };
+
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipWhenEmployerBasedHasVenueName_ReturnValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                Radius = "1",
+                SubRegion = "",
+                VenueName = "Some Venue name",
+                YourVenueReference = string.Empty,
+                NationalDelivery = "yes"
+            };
+
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED");
+        }
+
+
+        [Fact]
         public async Task ApprenticeshipWhenEmployerBasedNationalFalseWithValidSubregion_DoesNotReturnValidationError()
         {
             // Arrange

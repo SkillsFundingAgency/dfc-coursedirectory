@@ -70,6 +70,8 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
 
                     if (deliveryMode != ApprenticeshipLocationType.ClassroomBased)
                     {
+                        if(isSpecified)
+                            ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"));
                         return;
                     }
 
