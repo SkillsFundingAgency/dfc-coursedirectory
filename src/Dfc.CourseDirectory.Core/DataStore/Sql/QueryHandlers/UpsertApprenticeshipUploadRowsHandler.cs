@@ -125,7 +125,7 @@ SELECT
     RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId, ApprenticeshipLocationId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
     ContactPhone, ContactUrl, DeliveryMethod, VenueName,YourVenueReference, Radius, DeliveryModes, NationalDelivery,
-    SubRegions, VenueId
+    SubRegions, VenueId, ResolvedDeliveryMethod
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}

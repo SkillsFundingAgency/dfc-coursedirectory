@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
 
                 // Check there isn't an existing unprocessed upload for this provider
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
@@ -134,7 +135,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var venueUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
                 var providerId = venueUpload.ProviderId;
 
-                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
                 await ValidateApprenticeshipUploadRows(dispatcher, apprenticeshipUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
@@ -168,6 +169,60 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        public async Task<PublishResult> PublishApprenticeshipUploadForProvider(Guid providerId, UserInfo publishedBy)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            {
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
+
+                var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (apprenticeshipUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedApprenticeshipUpload);
+                }
+
+                if (apprenticeshipUpload.UploadStatus.IsUnprocessed())
+                {
+                    throw new InvalidUploadStatusException(
+                        apprenticeshipUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                if (apprenticeshipUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var uploadStatus = await RevalidateApprenticeshipUploadIfRequired(dispatcher, apprenticeshipUpload.ApprenticeshipUploadId);
+
+                if (uploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var publishedOn = _clock.UtcNow;
+
+                var publishResult = await dispatcher.ExecuteQuery(new PublishApprenticeshipUpload()
+                {
+                    ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId,
+                    PublishedBy = publishedBy,
+                    PublishedOn = publishedOn
+                });
+
+                await dispatcher.Commit();
+
+                Debug.Assert(publishResult.IsT1);
+                var publishedApprenticeshipsCount = publishResult.AsT1.PublishedCount;
+
+                return PublishResult.Success(publishedApprenticeshipsCount);
+            }
+        }
+
         public IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId)
         {
             return GetApprenticeshipUploadId().ToObservable()
@@ -189,22 +244,21 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        protected virtual IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdates(Guid courseUploadId) =>
+        protected virtual IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdates(Guid apprenticeshipUploadId) =>
             Observable.Interval(_statusUpdatesPollInterval)
-            .SelectMany(_ => Observable.FromAsync(() => GetApprenticeshipUploadStatus(courseUploadId)));
-
+                .SelectMany(_ => Observable.FromAsync(() => GetApprenticeshipUploadStatus(apprenticeshipUploadId)));
 
         protected async Task<UploadStatus> GetApprenticeshipUploadStatus(Guid apprenticeshipUploadId)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
-            var courseUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
+            var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
 
-            if (courseUpload == null)
+            if (apprenticeshipUpload == null)
             {
                 throw new ArgumentException("Specified apprenticeship upload does not exist.", nameof(apprenticeshipUploadId));
             }
 
-            return courseUpload.UploadStatus;
+            return apprenticeshipUpload.UploadStatus;
         }
 
         // internal for testing
@@ -296,7 +350,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
-                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
+
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
                     ProviderId = providerId

@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public Guid ApprenticeshipLocationId { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }
-        public int StandardCode{ get; set; }
+        public int StandardCode { get; set; }
         public int StandardVersion { get; set; }
         public string ApprenticeshipInformation { get; set; }
         public string ApprenticeshipWebpage { get; set; }
@@ -40,5 +40,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string NationalDelivery { get; set; }
         public string SubRegions { get; set; }
         public Guid? VenueId { get; set; }
+        public ApprenticeshipLocationType? ResolvedDeliveryMethod { get; set; }
     }
 }
