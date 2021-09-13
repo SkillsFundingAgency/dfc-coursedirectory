@@ -274,7 +274,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var doc = await response.GetDocument();
             doc.AssertHasError(
                 "Website",
-                "Website must be a real webpage");
+                "The website must be a real webpage");
         }
 
         [Theory]

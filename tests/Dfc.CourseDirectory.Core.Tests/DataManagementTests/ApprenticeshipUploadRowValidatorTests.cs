@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Apprenticeship information for employers must be {constants.MarketingInformationStrippedMaxLength} characters or fewer");
+                error => error.ErrorMessage == $"Apprenticeship information must be {constants.MarketingInformationStrippedMaxLength} characters or fewer");
         }
 
 
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error => error.ErrorMessage == $"Website must be a real webpage");
+                error => error.ErrorMessage == $"The website must be a real webpage");
         }
 
 
