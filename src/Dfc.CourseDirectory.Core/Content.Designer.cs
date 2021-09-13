@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apprenticeship information for employers must be {0} characters or fewer.
+        ///   Looks up a localized string similar to Apprenticeship information must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_INFORMATION_MAXLENGTH {
             get {
@@ -295,7 +295,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Website must be a real webpage.
+        ///   Looks up a localized string similar to The website must be a real webpage.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_WEBSITE_FORMAT {
             get {

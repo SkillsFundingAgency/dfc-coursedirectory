@@ -136,7 +136,7 @@
     <value>You must enter an email address</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_INFORMATION_MAXLENGTH" xml:space="preserve">
-    <value>Apprenticeship information for employers must be {0} characters or fewer</value>
+    <value>Apprenticeship information must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_INFORMATION_REQUIRED" xml:space="preserve">
     <value>Enter apprenticeship information for employers</value>
@@ -196,7 +196,7 @@
     <value>Select a venue</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_WEBSITE_FORMAT" xml:space="preserve">
-    <value>Website must be a real webpage</value>
+    <value>The website must be a real webpage</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove attendance pattern</value>
