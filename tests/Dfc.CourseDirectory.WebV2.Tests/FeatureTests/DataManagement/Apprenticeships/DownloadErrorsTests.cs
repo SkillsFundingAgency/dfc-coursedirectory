@@ -20,17 +20,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         {
         }
 
-        /// <summary>
-        /// TODO: Stop published status from skipping when PublishApprenticeshipUploadHandler is wired up.
-        /// </summary>
-        /// <param name="uploadStatus"></param>
-        /// <returns></returns>
         [Theory]
         [InlineData(null)]
         [InlineData(UploadStatus.Created)]
         [InlineData(UploadStatus.Processing)]
         [InlineData(UploadStatus.ProcessedSuccessfully)]
-        //[InlineData(UploadStatus.Published, Skip = "Skip is ignored under PublishApprenticeshipUploadHandler is wired up")]
+        [InlineData(UploadStatus.Published)]
         [InlineData(UploadStatus.Abandoned)]
         public async Task Get_ProviderHasNoApprenticeshipUploadAtProcessedWithErrorsStatus_ReturnsError(UploadStatus? uploadStatus)
         {

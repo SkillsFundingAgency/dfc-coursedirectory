@@ -18,14 +18,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
         {
         }
 
-        /// <summary>
-        /// TODO: Uncomment published once PublishApprenticeshipUploadHandler has been created.
-        /// </summary>
-        /// <param name="uploadStatus"></param>
-        /// <returns></returns>
         [Theory]
         [InlineData(null)]
-        //[InlineData(UploadStatus.Published, Skip = "Test has been disabled until TestData.CreateApprenticeship can use PublishApprenticeshipUploadHandler")]
+        [InlineData(UploadStatus.Published)]
         [InlineData(UploadStatus.Abandoned)]
         public async Task Get_NoUnpublishedCourseUpload_ReturnsBadRequest(UploadStatus? uploadStatus)
         {
