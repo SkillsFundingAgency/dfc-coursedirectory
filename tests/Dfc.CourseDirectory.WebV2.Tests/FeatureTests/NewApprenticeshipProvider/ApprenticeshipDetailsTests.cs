@@ -274,7 +274,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var doc = await response.GetDocument();
             doc.AssertHasError(
                 "Website",
-                "Website must be a real webpage");
+                "The website must be a real webpage");
         }
 
         [Theory]
@@ -315,7 +315,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
         [Theory]
         [InlineData("", "Enter a UK telephone number")]
-        [InlineData("xx", "Enter a telephone number in the correct format")]
         public async Task Post_InvalidContactTelephoneRendersError(
             string contactTelephone,
             string expectedErrorMessage)
@@ -382,7 +381,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var doc = await response.GetDocument();
             doc.AssertHasError(
                 "ContactWebsite",
-                "Contact us page must be a real webpage, like https://www.provider.com/apprenticeship");
+                "The contact us webpage must be a real website");
         }
 
         [Fact]

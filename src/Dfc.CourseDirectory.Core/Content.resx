@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ERROR_APPRENTICESHIP_CONTACTUS_FORMAT" xml:space="preserve">
-    <value>Contact us page must be a real webpage, like https://www.provider.com/apprenticeship</value>
+    <value>The contact us webpage must be a real website</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK" xml:space="preserve">
     <value>Enter day, block or employer for delivery mode</value>
@@ -136,7 +136,7 @@
     <value>You must enter an email address</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_INFORMATION_MAXLENGTH" xml:space="preserve">
-    <value>Apprenticeship information for employers must be {0} characters or fewer</value>
+    <value>Apprenticeship information must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_INFORMATION_REQUIRED" xml:space="preserve">
     <value>Enter apprenticeship information for employers</value>
@@ -196,7 +196,7 @@
     <value>Select a venue</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_WEBSITE_FORMAT" xml:space="preserve">
-    <value>Website must be a real webpage</value>
+    <value>The website must be a real webpage</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove attendance pattern</value>

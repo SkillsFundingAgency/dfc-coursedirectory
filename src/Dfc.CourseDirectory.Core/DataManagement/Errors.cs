@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Apprenticeship information";
                 case "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED":
                     return "National delivery";
-                case "ERROR_APPRENTICESHIP_RADIUS_INVALID":
+                case "APPRENTICESHIP_RADIUS_INVALID":
                 case "APPRENTICESHIP_RADIUS_NOT_ALLOWED":
                 case "APPRENTICESHIP_RADIUS_REQUIRED":
                     return "Radius";
@@ -74,8 +74,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Standard code";
                 case "APPRENTICESHIP_STANDARD_VERSION_REQUIRED":
                     return "Standard version";
-                case "APPRENTICESHIP_TELEPHONE_FORMAT":
                 case "APPRENTICESHIP_TELEPHONE_REQUIRED":
+                case "APPRENTICESHIP_TELEPHONE_FORMAT":
                     return "Telephone";
                 case "APPRENTICESHIP_VENUE_NAME_INVALID":
                 case "APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED":

@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
-                
+
                 // Check there isn't an existing unprocessed upload for this provider
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             foreach (var row in rows)
             {
-                var rowNumber = row.RowNumber;;
+                var rowNumber = row.RowNumber; ;
                 var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row.Data, allRegions);
                 var matchedVenue = FindVenue(row, providerVenues);
                 var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId);
@@ -238,9 +238,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod),
                     VenueName = matchedVenue?.VenueName ?? parsedRow.VenueName,
                     YourVenueReference = parsedRow.YourVenueReference,
-                    Radius = parsedRow.Radius, 
-                    DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(parsedRow.ResolvedDeliveryModes),  
-                    NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery), 
+                    Radius = parsedRow.Radius,
+                    DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(parsedRow.ResolvedDeliveryModes),
+                    NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery),
                     SubRegions = parsedRow.SubRegion,
                     VenueId = matchedVenue?.VenueId,
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
@@ -363,7 +363,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
 
-       internal async Task<(int[] Missing, (int StandardCode, int StandardVersion, int RowNumber)[] Invalid)> ValidateStandardCodes(Stream stream)
+        internal async Task<(int[] Missing, (int StandardCode, int StandardVersion, int RowNumber)[] Invalid)> ValidateStandardCodes(Stream stream)
         {
             CheckStreamIsProcessable(stream);
 
@@ -592,16 +592,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ResolvedDeliveryModes).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
                 RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.VenueName, matchedVenueId);
-                RuleFor(c => c.VenueName).Venue(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
-                RuleFor(c => c.ResolvedSubRegions).SubRegions(
-                    subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
-                    c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(
                     c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
-                    c => c.ResolvedDeliveryMethod);
+                    c => c.ResolvedDeliveryMethod,
+                    c => c.ResolvedNationalDelivery.HasValue ? c.ResolvedNationalDelivery.Value : false);
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMethod, c => c.YourVenueReference, matchedVenueId);
             }
         }
