@@ -94,6 +94,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Sub region";
                 case "APPRENTICESHIP_DELIVERY_METHOD_REQUIRED":
                     return "Delivery method";
+                case "APPRENTICESHIP_DUPLICATE_STANDARDCODE":
+                    return "Standard code";
             }
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));

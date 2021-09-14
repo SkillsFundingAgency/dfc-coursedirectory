@@ -275,6 +275,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var allRegions = await _regionCache.GetAllRegions();
 
             var upsertRecords = new List<UpsertApprenticeshipUploadRowsRecord>();
+            var allRows = rows.Select(x => ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(x.Data, allRegions));
 
             foreach (var row in rows)
             {
@@ -285,7 +286,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row, providerVenues);
 
-                var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId);
+                var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId, allRows.ToList());
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -652,9 +653,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             public ApprenticeshipUploadRowValidator(
                 IClock clock,
-                Guid? matchedVenueId)
+                Guid? matchedVenueId,
+                IList<ParsedCsvApprenticeshipRow> allRows)
             {
-                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode();
+                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode(allRows, x=>x.DeliveryMethod);
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
                 RuleFor(c => c.ApprenticeshipInformation).MarketingInformation();
                 RuleFor(c => c.ApprenticeshipWebpage).Website();

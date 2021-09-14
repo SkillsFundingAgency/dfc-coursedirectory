@@ -129,6 +129,9 @@
   <data name="ERROR_APPRENTICESHIP_DELIVERY_METHOD_REQUIRED" xml:space="preserve">
     <value>Enter a Delivery method</value>
   </data>
+  <data name="ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE" xml:space="preserve">
+    <value>Standards delivered at an employer’s location cannot be duplicated.  You must remove duplicates and enter national or sub-regions.</value>
+  </data>
   <data name="ERROR_APPRENTICESHIP_EMAIL_FORMAT" xml:space="preserve">
     <value>Enter an email address in the correct format</value>
   </data>

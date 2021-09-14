@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
@@ -29,7 +30,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMethod = "classroom based"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -53,7 +55,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMethod = "classroom based"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -78,8 +81,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based"
             };
-
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -106,7 +109,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactEmail = "@invalid.com"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -134,7 +138,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "INVALID NUMBER"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -163,7 +169,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactUrl = "invalid"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -194,7 +202,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 YourVenueReference = "Valid Reference"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -232,7 +241,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 YourVenueReference = "VENUE2"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -264,7 +275,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Radius = "1",
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -297,7 +310,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = nationalDelivery
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -329,7 +344,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = null
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -370,7 +387,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Radius = "10"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venue.VenueId);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venue.VenueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -400,7 +419,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "SomeVenue"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -432,7 +453,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegion = "County Durham"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -459,7 +482,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Radius = radius
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -488,7 +512,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Radius = "",
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -521,7 +546,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 YourVenueReference = string.Empty
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -534,6 +560,119 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         #endregion
 
         #region Employer based tests
+        [Fact]
+        public async Task ApprenticeshipWhenEmployerWithDuplicateStandardCode_ReturnsValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row2 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+            var validationResult2 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.Contains(
+                validationResult2.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipEmployerAndClassroomWithDuplicateStandardCode_DoesNotReturnsValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row2 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+            var validationResult2 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.DoesNotContain(
+                validationResult2.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+        }
+
         [Theory]
         [InlineData("yes")]
         [InlineData("no")]
@@ -556,7 +695,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = nationalDelivery
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -589,7 +729,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 //Regions
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -620,7 +761,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Radius = "1",
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -650,7 +792,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegion = "County Durham"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -679,7 +822,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -708,7 +852,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Radius = "11",
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -744,7 +889,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegion = "SOME INVALID REGION"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -778,7 +924,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = "yes"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -812,7 +959,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = "yes"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -846,7 +994,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = "yes"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -881,7 +1030,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = "false"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -915,7 +1065,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = "false"
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -949,7 +1100,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 //Regions
             };
 
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null);
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
