@@ -133,7 +133,8 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                  {
                      var obj = (T)ctx.InstanceToValidate;
                      var deliveryMethod = getDeliveryMethod(obj);
-                     if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased)
+                     if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased ||
+                        deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                      {
                          if (!v.HasValue)
                          {
