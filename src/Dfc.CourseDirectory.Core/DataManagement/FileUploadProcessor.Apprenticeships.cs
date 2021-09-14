@@ -162,6 +162,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 foreach (var row in rows)
                 {
                     var apprenticeshipId = groupApprenticeshipIds.Single(g => g.Rows.Contains(row)).ApprenticeshipId;
+                    row.ContactPhone = NormalizePhoneNumber(row.ContactPhone);
 
                     rowInfos.Add(new ApprenticeshipDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, apprenticeshipId));
                 }

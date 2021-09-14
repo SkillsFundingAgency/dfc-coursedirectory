@@ -186,6 +186,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
                 rows = await csvReader.GetRecordsAsync<CsvVenueRow>().ToListAsync();
+
+                foreach (var row in rows)
+                {
+                    row.Telephone = NormalizePhoneNumber(row.Telephone);
+                }
             }
 
             var rowsCollection = new VenueDataUploadRowInfoCollection(

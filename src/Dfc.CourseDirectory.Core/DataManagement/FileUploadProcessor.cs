@@ -188,6 +188,21 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
+        private static string NormalizePhoneNumber(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+
+            if (value.Replace(" ", "").All(c => char.IsDigit(c)) && value[0] != '0')
+            {
+                value = "0" + value;
+            }
+
+            return value;
+        }
+
         private void CheckStreamIsProcessable(Stream stream)
         {
             if (!stream.CanRead)
