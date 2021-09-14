@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Testing
     public partial class TestData
     {
         public Task<LearningDelivery> CreateLearningDelivery(
+                string learnAimRef = null,
                 string learnAimRefTitle = "National Certificate in Building Studies",
                 DateTime? effectiveTo = null,
                 string notionalNVQLevelv2 = "3",
@@ -16,7 +17,7 @@ namespace Dfc.CourseDirectory.Testing
                 string operationalEndDate = null) => 
             WithSqlQueryDispatcher(async dispatcher =>
             {
-                var learnAimRef = new Random().Next(100000, 109999).ToString("D8");
+                learnAimRef ??= new Random().Next(100000, 109999).ToString("D8");
                 var learnAimRefType = Guid.NewGuid().ToString();
 
                 await dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()

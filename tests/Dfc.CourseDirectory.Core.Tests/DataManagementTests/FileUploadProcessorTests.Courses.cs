@@ -551,6 +551,45 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
 
         [Fact]
+        public async Task ProcessCourseFile_LearnAimRefWithMissingLeadingZero_HasLeadingZeroAdded()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory));
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created);
+
+            var learningDelivery = await TestData.CreateLearningDelivery(learnAimRef: "01234567");
+
+            var uploadRows = DataManagementFileHelper.CreateCourseUploadRows(learningDelivery.LearnAimRef.TrimStart('0'), rowCount: 1).ToArray();
+            uploadRows[0].CourseName = string.Empty;
+
+            var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
+
+            // Act
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
+
+            // Assert
+            var rows = await WithSqlQueryDispatcher(async dispatcher =>
+                (await dispatcher.ExecuteQuery(new GetCourseUploadRows()
+                {
+                    CourseUploadId = courseUpload.CourseUploadId,
+                    WithErrorsOnly = false
+                })).Rows);
+
+            rows.Single().LearnAimRef.Should().Be(learningDelivery.LearnAimRef);
+        }
+
+        [Fact]
         public async Task PublishCourseUpload_StatusIsProcessedWithErrors_ReturnsUploadHasErrors()
         {
             // Arrange
