@@ -385,6 +385,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 foreach (var row in rows)
                 {
                     var courseId = groupCourseIds.Single(g => g.Rows.Contains(row)).CourseId;
+                    row.LearnAimRef = NormalizeLearnAimRef(row.LearnAimRef);
 
                     rowInfos.Add(new CourseDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
                 }
@@ -944,17 +945,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
 
-                    var rows = csvReader.GetRecords<CsvCourseRow>().ToList();
+                    var rowLearnAimRefs = csvReader.GetRecords<CsvCourseRow>()
+                        .Select(row => NormalizeLearnAimRef(row.LearnAimRef))
+                        .ToList();
 
                     var validLearningDeliveries = await dispatcher.ExecuteQuery(
-                        new GetLearningDeliveries() { LearnAimRefs = rows.Select(r => r.LearnAimRef).Distinct() });
+                        new GetLearningDeliveries() { LearnAimRefs = rowLearnAimRefs.Distinct() });
 
                     int rowNumber = 2;
 
-                    foreach (var row in rows)
+                    foreach (var learnAimRef in rowLearnAimRefs)
                     {
-                        var learnAimRef = row.LearnAimRef.Trim();
-
                         if (string.IsNullOrWhiteSpace(learnAimRef))
                         {
                             missing.Add(rowNumber);
@@ -980,6 +981,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 stream.Seek(0L, SeekOrigin.Begin);
             }
+        }
+
+        private static string NormalizeLearnAimRef(string value)
+        {
+            var trimmed = value?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(trimmed))
+            {
+                return trimmed;
+            }
+
+            return trimmed.PadLeft(8, '0');
         }
 
         private async Task AcquireExclusiveCourseUploadLockForProvider(Guid providerId, ISqlQueryDispatcher sqlQueryDispatcher)

@@ -332,6 +332,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             });
         }
 
+        [Fact]
+        public async Task Post_FileWithLearnAimRefWithMissingLeadingZero_UploadsSuccessfully()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var learnAimRef = (await TestData.CreateLearningDelivery(learnAimRef: "01234567")).LearnAimRef;
+
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef.TrimStart('0'), rowCount: 1);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+        }
+
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
         {
             var content = new MultipartFormDataContent();
