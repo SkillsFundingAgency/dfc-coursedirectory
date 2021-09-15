@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var apprenticeshipUploadId = Guid.NewGuid();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
 
@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessing()
                 {
@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var rowsCollection = CreateApprenticeshipDataUploadRowInfoCollection();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var venueUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
                 var providerId = venueUpload.ProviderId;
@@ -171,7 +171,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<PublishResult> PublishApprenticeshipUploadForProvider(Guid providerId, UserInfo publishedBy)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
 
@@ -232,7 +232,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             async Task<Guid> GetApprenticeshipUploadId()
             {
-                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider() { ProviderId = providerId });
 
                 if (apprenticeshipUpload == null)
@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         protected async Task<UploadStatus> GetApprenticeshipUploadStatus(Guid apprenticeshipUploadId)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
             var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
 
             if (apprenticeshipUpload == null)
@@ -349,7 +349,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
 
@@ -444,7 +444,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
@@ -506,7 +506,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<(IReadOnlyCollection<ApprenticeshipUploadRow> Rows, UploadStatus UploadStatus)> GetApprenticeshipUploadRowsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
 
@@ -546,7 +546,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task DeleteApprenticeshipUploadForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
