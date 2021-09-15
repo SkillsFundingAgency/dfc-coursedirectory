@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     {
         public async Task DeleteCourseUploadForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -171,7 +171,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -211,7 +211,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -297,7 +297,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             async Task<Guid> GetCourseUploadId()
             {
-                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider() { ProviderId = providerId });
 
                 if (courseUpload == null)
@@ -311,7 +311,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessCourseFile(Guid courseUploadId, Stream stream)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetCourseUploadProcessing()
                 {
@@ -341,7 +341,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var rowsCollection = CreateCourseDataUploadRowInfoCollection();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 // If CourseName is empty, use the LearnAimRefTitle from LARS
                 var learnAimRefs = rowsCollection.Select(r => r.Data.LearnAimRef).Distinct();
@@ -395,7 +395,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -463,7 +463,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 // Batch the updates to keep the transactions smaller & shorter
                 foreach (var chunk in publishedCourseRunIds.Buffer(batchSize))
                 {
-                    using (var dispatcher = sqlQueryDispatcherFactory.CreateDispatcher())
+                    using (var dispatcher = sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                     {
                         await dispatcher.ExecuteQuery(new UpdateFindACourseIndexForCourseRuns()
                         {
@@ -505,7 +505,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var courseUploadId = Guid.NewGuid();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -561,7 +561,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
 
             await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -644,7 +644,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
 
             await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -720,7 +720,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         protected async Task<UploadStatus> GetCourseUploadStatus(Guid courseUploadId)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
             var courseUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
 
             if (courseUpload == null)
@@ -939,7 +939,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
