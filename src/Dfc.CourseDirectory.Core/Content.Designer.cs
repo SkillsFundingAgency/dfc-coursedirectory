@@ -97,6 +97,15 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Standards delivered at an employer’s location cannot be duplicated.  You must remove duplicates and enter national or sub-regions..
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter an email address in the correct format.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_EMAIL_FORMAT {

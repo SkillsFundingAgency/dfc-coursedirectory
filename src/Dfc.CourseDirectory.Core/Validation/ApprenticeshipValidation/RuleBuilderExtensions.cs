@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using FluentValidation;
 using FluentValidation.Results;
@@ -42,10 +44,25 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 .Apply(Rules.Website)
                     .WithMessageFromErrorCode("APPRENTICESHIP_WEBSITE_FORMAT");
 
-        public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field) =>
+        public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field, IList<ParsedCsvApprenticeshipRow> allRows, Func<T, string> getDeliveryMethod) =>
             field
-                .NotNull()
-                    .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED");
+            .NotNull()
+            .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED")
+            .Custom((v, ctx) =>
+             {
+                 var obj = (T)ctx.InstanceToValidate;
+                 var deliveryMethod = getDeliveryMethod(obj);
+                 var count = allRows.Count(c => c.StandardCode == v?.ToString() && c.DeliveryMethod == deliveryMethod);
+                 if (count > 1)
+                 {
+                     ctx.AddFailure(CreateFailure("APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
+                 }
+
+
+                 ValidationFailure CreateFailure(string errorCode) =>
+                    ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+             });
+
 
         public static void StandardVersion<T>(this IRuleBuilderInitial<T, int?> field) =>
             field
@@ -70,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
 
                     if (deliveryMode != ApprenticeshipLocationType.ClassroomBased)
                     {
-                        if(isSpecified)
+                        if (isSpecified)
                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"));
                         return;
                     }
