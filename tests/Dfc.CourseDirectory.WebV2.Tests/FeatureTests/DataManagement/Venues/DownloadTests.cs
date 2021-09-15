@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
             csvReader.Read();
             csvReader.ReadHeader();
-            csvReader.Context.HeaderRecord.Should().BeEquivalentTo(new[]
+            csvReader.Context.Reader.HeaderRecord.Should().BeEquivalentTo(new[]
             {
                 "YOUR_VENUE_REFERENCE",
                 "VENUE_NAME",

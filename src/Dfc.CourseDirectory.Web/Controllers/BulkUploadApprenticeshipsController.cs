@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
                 }
-                if (!Validate.ValidateFile(bulkUploadFile, out var errorMessage))
+                if (!Validation.Validate.ValidateFile(bulkUploadFile, out var errorMessage))
                 {
                     return View(new BulkUploadViewModel {errors = new[] {errorMessage}});
                 }
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 bulkUploadFile.CopyTo(ms);
 
                 ms.Position = 0;
-                if (Validate.IsBinaryStream(ms))
+                if (Validation.Validate.IsBinaryStream(ms))
                 {
                     return View(new BulkUploadViewModel {errors = new[] {"Invalid file content."}});
                 }

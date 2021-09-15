@@ -107,26 +107,26 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 _authUserDetails = userInfo ?? throw new ArgumentNullException(nameof(userInfo));
                 _providerId = providerId;
 
-                Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
-                Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
-                Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
+                Map(m => m.STANDARD_CODE).Convert(args => Mandatory_Checks_STANDARD_CODE(args.Row));
+                Map(m => m.STANDARD_VERSION).Convert(args => Mandatory_Checks_STANDARD_VERSION(args.Row));
+                Map(m => m.Standard).Convert(args => Mandatory_Checks_GetStandard(args.Row));
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
                 Map(m => m.CONTACT_PHONE);
                 Map(m => m.CONTACT_URL);
-                Map(m => m.DELIVERY_METHOD).ConvertUsing(Mandatory_Checks_DELIVERY_METHOD);
-                Map(m => m.VENUE).ConvertUsing(Mandatory_Checks_VENUE); ;
-                Map(m => m.RADIUS).ConvertUsing(Mandatory_Checks_RADIUS);
-                Map(m => m.DELIVERY_MODE).ConvertUsing(Mandatory_Checks_DELIVERY_MODE);
-                Map(m => m.ACROSS_ENGLAND).ConvertUsing(Mandatory_Checks_ACROSS_ENGLAND);
-                Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
+                Map(m => m.DELIVERY_METHOD).Convert(args => Mandatory_Checks_DELIVERY_METHOD(args.Row));
+                Map(m => m.VENUE).Convert(args => Mandatory_Checks_VENUE(args.Row)); ;
+                Map(m => m.RADIUS).Convert(args => Mandatory_Checks_RADIUS(args.Row));
+                Map(m => m.DELIVERY_MODE).Convert(args => Mandatory_Checks_DELIVERY_MODE(args.Row));
+                Map(m => m.ACROSS_ENGLAND).Convert(args => Mandatory_Checks_ACROSS_ENGLAND(args.Row));
+                Map(m => m.NATIONAL_DELIVERY).Convert(args => Mandatory_Checks_NATIONAL_DELIVERY(args.Row));
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
-                Map(m => m.RegionsList).ConvertUsing(GetRegionList);
-                Map(m => m.ErrorsList).ConvertUsing(ValidateData);
-                Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
-                Map(m => m.Base64Row).ConvertUsing(Base64Encode);
+                Map(m => m.RegionsList).Convert(args => GetRegionList(args.Row));
+                Map(m => m.ErrorsList).Convert(args => ValidateData(args.Row));
+                Map(m => m.RowNumber).Convert(row => row.Row.CurrentIndex);
+                Map(m => m.Base64Row).Convert(args => Base64Encode(args.Row));
             }
 
             #region Mandatory Checks
@@ -143,19 +143,19 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         var result = GetStandard(standardCode.Value, standardVersion.Value).GetAwaiter().GetResult();
                         if (result == null)
                         {
-                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Standard Code or Version Number. Standard not found.");
+                            throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Invalid Standard Code or Version Number. Standard not found.");
                         }
 
                         return result;
                     }
                     else
                     {
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Version.");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Missing Standard Version.");
                     }
                 }
                 if (!standardCode.HasValue && standardVersion.HasValue)
                 {
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
+                    throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Missing Standard Code.");
                 }
 
                 return null;
@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. DELIVERY_METHOD is required.");
+                    throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. DELIVERY_METHOD is required.");
                 }
                 var deliveryMethod = ToEnum(value, DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
@@ -414,18 +414,18 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} is required."
                     });
                 }
                 if (!String.IsNullOrEmpty(value) && value.Length > 750)
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 750 characters."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} maximum length is 750 characters."
                     });
                 }
                 return errors;
@@ -444,10 +444,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     {
                         errors.Add(new BulkUploadError
                         {
-                            LineNumber = row.Context.Row,
+                            LineNumber = row.CurrentIndex,
                             Header = fieldName,
                             Error =
-                                $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect."
+                                $"Validation error on row {row.CurrentIndex}. Field {fieldName} format of URL is incorrect."
                         });
                     }
 
@@ -455,10 +455,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     {
                         errors.Add(new BulkUploadError
                         {
-                            LineNumber = row.Context.Row,
+                            LineNumber = row.CurrentIndex,
                             Header = fieldName,
                             Error =
-                                $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
+                                $"Validation error on row {row.CurrentIndex}. Field {fieldName} maximum length is 255 characters."
                         });
                     }
                 }
@@ -476,10 +476,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
                         Error =
-                            $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                            $"Validation error on row {row.CurrentIndex}. Field {fieldName} is required."
                     });
                     return errors;
                 }
@@ -487,10 +487,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
                         Error =
-                            $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
+                            $"Validation error on row {row.CurrentIndex}. Field {fieldName} maximum length is 255 characters."
                     });
                     return errors;
                 }
@@ -500,10 +500,10 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
                         Error =
-                            $"Validation error on row {row.Context.Row}. Field {fieldName} needs a valid email."
+                            $"Validation error on row {row.CurrentIndex}. Field {fieldName} needs a valid email."
                     });
                 }
                 return errors;
@@ -521,9 +521,9 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} is required."
                     });
                     return errors;
                 }
@@ -531,9 +531,9 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} maximum length is 30 characters."
                     });
                     return errors;
                 }
@@ -541,9 +541,9 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} must be numeric if present."
                     });
                     return errors;
                 }
@@ -563,9 +563,9 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} maximum length is 255 characters."
                     });
                 }
 
@@ -575,9 +575,9 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     errors.Add(new BulkUploadError
                     {
-                        LineNumber = row.Context.Row,
+                        LineNumber = row.CurrentIndex,
                         Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect."
+                        Error = $"Validation error on row {row.CurrentIndex}. Field {fieldName} format of URL is incorrect."
                     });
                 }
                 return errors;
@@ -592,13 +592,13 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 if (String.IsNullOrWhiteSpace(value))
                 {                  
 
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} is required.");
                 }
 
                 var deliveryMethod = ToEnum(value, DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
                 {
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
+                    throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} is invalid.");
                 }
                 return errors;
             }
@@ -611,7 +611,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 row.TryGetField(fieldName, out string value);
                 if (String.IsNullOrWhiteSpace(value))
                 {                   
-                   throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Venue is missing.");                  
+                   throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Venue is missing.");                  
                    
                 }
 
@@ -619,13 +619,13 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
 
                 if (venues == null)
                 {
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Provide a Valid {fieldName}.");
+                    throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} is invalid. Provide a Valid {fieldName}.");
                     
                 }
 
                 if (venues.Count > 1)
                 {                   
-                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Multiple venues identified with value entered.");
+                    throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} is invalid. Multiple venues identified with value entered.");
                 }
                 return errors;
             }
@@ -641,13 +641,13 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     if (value <= 0)
                     {
                        
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid number.");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must be a valid number.");
                     }
 
                     if (value > 874)
                     {                     
                        
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must be between 1 and 874");
                        
                     }
                 }
@@ -659,7 +659,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         if (!value.HasValue)
                         {
                           
-                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must have a value if not ACROSS_ENGLAND.");
+                            throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must have a value if not ACROSS_ENGLAND.");
                         }
                     }
                 }
@@ -681,7 +681,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     if (modeArray.Length == 0)
                     {
                       
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} contain delivery modes if Delivery Method is BOTH");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} contain delivery modes if Delivery Method is BOTH");
                     }
                 }
                 foreach (var mode in modeArray)
@@ -690,13 +690,13 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     if (deliveryMode == DeliveryMode.Undefined)
                     {                        
 
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid Delivery Mode");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must be a valid Delivery Mode");
                     }
 
                     if (!modes.TryAdd(deliveryMode, deliveryMode.ToString()))
                     {                      
 
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must contain unique Delivery Modes");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must contain unique Delivery Modes");
                     }
                 }
                 return errors;
@@ -712,7 +712,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
                     if (!isAcrossEngland.HasValue)
                     {                        
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must contain a value when Delivery Method is 'Both");
                         
                     }
                 }
@@ -731,7 +731,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                     if (!isNational.HasValue)
                     {
                       
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Employer'");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must contain a value when Delivery Method is 'Employer'");
                     }
                 }
 
@@ -754,7 +754,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                             var results = ParseRegionData(value);
                             if (!results.Any())
                             {                              
-                                throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName}  contains invalid Region names");
+                                throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName}  contains invalid Region names");
                             }
                         }
                     }
@@ -780,7 +780,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                             if (!results.Any())
                             {
                                
-                                throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName}  contains invalid SubRegion names");
+                                throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Field {fieldName}  contains invalid SubRegion names");
                             }
                         }
 
@@ -788,7 +788,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                         if (!anyRegions.Any() && !results.Any())
                         {
                           
-                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Fields REGION/SUB_REGION are mandatory");
+                            throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Fields REGION/SUB_REGION are mandatory");
                         }
                     }
                 }
@@ -813,7 +813,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
             {
                 if (!row.TryGetField<int?>(fieldName, out var value))
                 {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.CurrentIndex}. Field {fieldName} must be numeric if present.");
                 }
                 return value;
             }
@@ -830,7 +830,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                 {
                     if (FRAMEWORK_CODE.HasValue || FRAMEWORK_PROG_TYPE.HasValue || FRAMEWORK_PATHWAY_CODE.HasValue)
                     {
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Values for Both Standard AND Framework cannot be present in the same row.");
+                        throw new BadDataException(row.Context, $"Validation error on row {row.CurrentIndex}. Values for Both Standard AND Framework cannot be present in the same row.");
                     }
                 }
             }
@@ -1009,7 +1009,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
                             userInfo,
                             providerId);
 
-                        csv.Configuration.RegisterClassMap(classMap);
+                        csv.Context.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
                         while (csv.Read())
                         {
@@ -1131,7 +1131,7 @@ namespace Dfc.CourseDirectory.Web.ApprenticeshipBulkUpload
         private void ValidateHeader(CsvReader csv)
         {
             // Ignore whitespace in the headers.
-            csv.Configuration.PrepareHeaderForMatch = (string header, int index) => Regex.Replace(header, @"\s", String.Empty);
+            csv.Context.Configuration.PrepareHeaderForMatch = (PrepareHeaderForMatchArgs args) => Regex.Replace(args.Header, @"\s", String.Empty);
             // Validate the header.
             csv.Read();
             csv.ReadHeader();

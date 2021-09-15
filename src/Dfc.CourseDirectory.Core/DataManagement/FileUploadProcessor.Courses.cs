@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
-using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -334,7 +332,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             // We also don't expect massive files here so reading everything into memory is ok.
             List<CsvCourseRow> rows;
             using (var streamReader = new StreamReader(stream))
-            using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            using (var csvReader = CreateCsvReader(streamReader))
             {
                 rows = await csvReader.GetRecordsAsync<CsvCourseRow>().ToListAsync();
             }
@@ -938,7 +936,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var expired = new List<(string LearnAimRef, int RowNumber)>();
 
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var csvReader = CreateCsvReader(streamReader))
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                 {
                     await csvReader.ReadAsync();
