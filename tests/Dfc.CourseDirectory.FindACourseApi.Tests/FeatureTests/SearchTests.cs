@@ -81,6 +81,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             yield return new object[] { "'foo(bar'", "(foo\\(bar)" };
             yield return new object[] { "'foo)bar'", "(foo\\)bar)" };
 
+            // Includes 'T Level'
+            yield return new object[] { "T Level", "\"T Level\"" };
+            yield return new object[] { "T Level computer science", "\"T Level\" AND (computer* || computer~ || science* || science~)" };
+
             // Combinations...
             yield return new object[] { "foo 'bar baz' \"qux qu|ux\"", "(bar && baz) || (\"qux qu\\|ux\") || foo* || foo~" };
         }
