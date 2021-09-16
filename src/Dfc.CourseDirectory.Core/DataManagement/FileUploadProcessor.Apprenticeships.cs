@@ -656,7 +656,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Guid? matchedVenueId,
                 IList<ParsedCsvApprenticeshipRow> allRows)
             {
-                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode(allRows, x=>x.DeliveryMethod);
+                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode(allRows, x=>x.ResolvedDeliveryMethod);
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
                 RuleFor(c => c.ApprenticeshipInformation).MarketingInformation();
                 RuleFor(c => c.ApprenticeshipWebpage).Website();

@@ -661,7 +661,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
 
             // Act
-            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
             var validationResult2 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
 
             // Assert
@@ -670,6 +670,176 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
             Assert.DoesNotContain(
                 validationResult2.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipEmployerAndTwoClassroomWithDuplicateStandardCode_DoesNotReturnsValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row2 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row3 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
+            var parsedRow3 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row3, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2, parsedRow3 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
+            var validationResult2 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+            var validationResult3 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row3, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.DoesNotContain(
+                validationResult2.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.DoesNotContain(
+                validationResult3.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipMultipleEmployerAndMultipleClassroomWithDuplicateStandardCode_DoesNotReturnsValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row2 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row3 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryModes = "day release",
+                DeliveryMethod = "classroom based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var row4 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "employer based",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
+            var parsedRow3 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row3, allRegions);
+            var parsedRow4 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row4, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2, parsedRow3, parsedRow4 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
+            var validationResult2 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+            var validationResult3 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row3, allRegions));
+            var validationResult4 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row4, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.Contains(
+                validationResult2.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.DoesNotContain(
+                validationResult3.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
+            Assert.Contains(
+                validationResult4.Errors,
                 error => error.ErrorCode == "APPRENTICESHIP_DUPLICATE_STANDARDCODE");
         }
 
