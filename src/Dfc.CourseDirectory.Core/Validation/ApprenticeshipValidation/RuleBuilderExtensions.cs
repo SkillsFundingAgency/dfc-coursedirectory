@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 .Apply(Rules.Website)
                     .WithMessageFromErrorCode("APPRENTICESHIP_WEBSITE_FORMAT");
 
-        public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field, IList<ParsedCsvApprenticeshipRow> allRows, Func<T, string> getDeliveryMethod) =>
+        public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field, IList<ParsedCsvApprenticeshipRow> allRows, Func<T, ApprenticeshipLocationType?> getDeliveryMethod) =>
             field
             .NotNull()
             .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED")
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
              {
                  var obj = (T)ctx.InstanceToValidate;
                  var deliveryMethod = getDeliveryMethod(obj);
-                 var count = allRows.Count(c => c.StandardCode == v?.ToString() && c.DeliveryMethod == deliveryMethod);
+                 var count = allRows.Count(c => c.StandardCode == v?.ToString() && c.ResolvedDeliveryMethod == deliveryMethod && (deliveryMethod == ApprenticeshipLocationType.EmployerBased || deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
                  if (count > 1)
                  {
                      ctx.AddFailure(CreateFailure("APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
