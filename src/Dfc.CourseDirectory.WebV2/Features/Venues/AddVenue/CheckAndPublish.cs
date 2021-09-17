@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
 
     public class ViewModel
     {
+        public string ProviderVenueRef { get; set; }
         public string Name { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
         public string Email { get; set; }
@@ -72,6 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
 
             var vm = new ViewModel()
             {
+                ProviderVenueRef = journeyInstance.State.ProviderVenueRef,
                 AddressParts = addressParts,
                 Email = journeyInstance.State.Email,
                 Name = journeyInstance.State.Name,
@@ -96,6 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
             {
                 VenueId = venueId,
                 ProviderId = providerId,
+                ProviderVenueRef = journeyInstance.State.ProviderVenueRef,
                 Name = journeyInstance.State.Name,
                 Email = journeyInstance.State.Email,
                 Telephone = journeyInstance.State.Telephone,

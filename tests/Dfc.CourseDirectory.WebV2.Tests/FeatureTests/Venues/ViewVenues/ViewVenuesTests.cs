@@ -62,9 +62,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
                     var venueRow = doc.GetElementByTestId($"venue-row-{venue.VenueId}");
                     venueRow.Should().NotBeNull();
 
+                    venueRow.GetElementByTestId("venue-ref").TextContent.Should().Be(venue.ProviderVenueRef);
                     venueRow.GetElementByTestId("venue-name").TextContent.Should().Be(venue.VenueName);
-                    venueRow.GetElementByTestId("venue-address").TextContent.Trim().Should().Be(string.Join("\n", new[] { venue.AddressLine1, venue.AddressLine2, venue.Town, venue.County }.Where(part => !string.IsNullOrWhiteSpace(part))));
-                    venueRow.GetElementByTestId("venue-postcode").TextContent.Should().Be(venue.Postcode);
+                    venueRow.GetElementByTestId("venue-address").TextContent.Trim().Should().Be(string.Join("\n", new[] { venue.AddressLine1, venue.AddressLine2, venue.Town, venue.County, venue.Postcode }.Where(part => !string.IsNullOrWhiteSpace(part))));
                     venueRow.GetElementByTestId("venue-view-link").Attributes["href"].Value.Should().Be($"/venues/{venue.VenueId}");
                     venueRow.GetElementByTestId("venue-delete-link").Attributes["href"].Value.Should().Be($"/venues/{venue.VenueId}/delete");
                 }
