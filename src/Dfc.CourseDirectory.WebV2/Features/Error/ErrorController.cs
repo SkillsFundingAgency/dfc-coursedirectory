@@ -33,5 +33,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
             result.StatusCode = statusCode;
             return result;
         }
+
+        [HttpGet("waferror")]
+        public IActionResult WAFError() => View();
     }
 }
