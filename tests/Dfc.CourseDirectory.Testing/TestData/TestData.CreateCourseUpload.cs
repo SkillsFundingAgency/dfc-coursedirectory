@@ -348,7 +348,7 @@ namespace Dfc.CourseDirectory.Testing
                     ResolvedDeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(deliveryMode),
                     ResolvedStartDate = ParsedCsvCourseRow.ResolveStartDate(startDate),
                     ResolvedFlexibleStartDate = ParsedCsvCourseRow.ResolveFlexibleStartDate(flexibleStartDate),
-                    ResolvedNationalDelivery = ParsedCsvCourseRow.ResolveNationalDelivery(nationalDelivery),
+                    ResolvedNationalDelivery = ParsedCsvCourseRow.ResolveNationalDelivery(nationalDelivery, subRegions),
                     ResolvedCost = ParsedCsvCourseRow.ResolveCost(cost),
                     ResolvedDuration = ParsedCsvCourseRow.ResolveDuration(duration),
                     ResolvedDurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(durationUnit),
