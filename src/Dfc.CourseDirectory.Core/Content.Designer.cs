@@ -151,6 +151,15 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter national or a radius.
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a Venue reference.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID {
@@ -187,7 +196,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a Radius.
+        ///   Looks up a localized string similar to Enter national or a radius.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_RADIUS_REQUIRED {
             get {

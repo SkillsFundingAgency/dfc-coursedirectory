@@ -147,6 +147,9 @@
   <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove National Delivery</value>
   </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED" xml:space="preserve">
+    <value>Enter national or a radius</value>
+  </data>
   <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
     <value>Enter a Venue reference</value>
   </data>
@@ -160,7 +163,7 @@
     <value>You must remove Radius</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_RADIUS_REQUIRED" xml:space="preserve">
-    <value>Enter a Radius</value>
+    <value>Enter national or a radius</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_STANDARD_CODE_REQUIRED" xml:space="preserve">
     <value>Enter standard code</value>

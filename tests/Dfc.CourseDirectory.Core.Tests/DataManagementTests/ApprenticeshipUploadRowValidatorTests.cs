@@ -559,6 +559,180 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         }
         #endregion
 
+        #region both tests
+        [Fact]
+        public async Task ApprenticeshipClassroomAndEmployerProvidesBothRadiusAndNational_ReturnsValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "Classroom based",
+                DeliveryModes = "Employer Address;Day Release",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2",
+                Radius = "100",
+                NationalDelivery = "yes"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow1 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_REQUIRED");
+            Assert.Contains(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_RADIUS_REQUIRED");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipClassroomAndEmployerWithoutRadiusAndNational_ReturnsValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "Classroom based",
+                DeliveryModes = "Employer Address;Day Release",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2",
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow1 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_REQUIRED");
+            Assert.Contains(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_RADIUS_REQUIRED");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipClassroomAndEmployerWithOnlyRadiusSet_DoesNotReturnValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "Classroom based",
+                DeliveryModes = "Employer Address;Day Release",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2",
+                Radius = "100"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow1 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_REQUIRED");
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_RADIUS_REQUIRED");
+        }
+
+        [Fact]
+        public async Task ApprenticeshipClassroomAndEmployerWithOnlyNationalSet_DoesNotReturnValidationError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
+            var user = await TestData.CreateUser();
+            var venue = await TestData.CreateVenue(
+                providerId: provider.ProviderId,
+                createdBy: user,
+                venueName: "My Venue",
+                providerVenueRef: "VENUE1");
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row1 = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "Classroom based",
+                DeliveryModes = "Employer Address;Day Release",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE2",
+                NationalDelivery = "yes"
+            };
+
+            var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow1 });
+
+            // Act
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
+
+            // Assert
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_REQUIRED");
+            Assert.DoesNotContain(
+                validationResult1.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_RADIUS_REQUIRED");
+        }
+        #endregion
+
         #region Employer based tests
         [Fact]
         public async Task ApprenticeshipWhenEmployerWithDuplicateStandardCode_ReturnsValidationError()
@@ -604,7 +778,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
 
             // Act
-            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
+            var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
             var validationResult2 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
 
             // Assert

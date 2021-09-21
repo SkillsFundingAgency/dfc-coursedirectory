@@ -656,7 +656,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Guid? matchedVenueId,
                 IList<ParsedCsvApprenticeshipRow> allRows)
             {
-                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode(allRows, x=>x.ResolvedDeliveryMethod);
+                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode(allRows, x => x.ResolvedDeliveryMethod);
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
                 RuleFor(c => c.ApprenticeshipInformation).MarketingInformation();
                 RuleFor(c => c.ApprenticeshipWebpage).Website();
@@ -666,9 +666,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ResolvedDeliveryModes).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
                 RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.VenueName, matchedVenueId);
-                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod, r => r.ResolvedNationalDelivery);
                 RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(
-                    c => c.ResolvedDeliveryMethod);
+                    c => c.ResolvedDeliveryMethod, r => r.ResolvedRadius);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
                     c => c.ResolvedDeliveryMethod,

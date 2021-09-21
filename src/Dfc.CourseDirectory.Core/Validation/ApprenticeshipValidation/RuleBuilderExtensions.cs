@@ -49,19 +49,19 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
             .NotNull()
             .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED")
             .Custom((v, ctx) =>
-             {
-                 var obj = (T)ctx.InstanceToValidate;
-                 var deliveryMethod = getDeliveryMethod(obj);
-                 var count = allRows.Count(c => c.StandardCode == v?.ToString() && c.ResolvedDeliveryMethod == deliveryMethod && (deliveryMethod == ApprenticeshipLocationType.EmployerBased || deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
-                 if (count > 1)
-                 {
-                     ctx.AddFailure(CreateFailure("APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
-                 }
+            {
+                var obj = (T)ctx.InstanceToValidate;
+                var deliveryMethod = getDeliveryMethod(obj);
+                var count = allRows.Count(c => c.StandardCode == v?.ToString() && c.ResolvedDeliveryMethod == deliveryMethod && (deliveryMethod == ApprenticeshipLocationType.EmployerBased));
+                if (count > 1)
+                {
+                    ctx.AddFailure(CreateFailure("APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
+                }
 
 
-                 ValidationFailure CreateFailure(string errorCode) =>
-                    ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
-             });
+                ValidationFailure CreateFailure(string errorCode) =>
+                   ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+            });
 
 
         public static void StandardVersion<T>(this IRuleBuilderInitial<T, int?> field) =>
@@ -143,22 +143,33 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
         }
 
         public static void Radius<T>(this IRuleBuilderInitial<T, int?> field,
-            Func<T, ApprenticeshipLocationType?> getDeliveryMethod)
+            Func<T, ApprenticeshipLocationType?> getDeliveryMethod, Func<T, bool?> getNationalDelivery)
         {
             field
                  .Custom((v, ctx) =>
                  {
                      var obj = (T)ctx.InstanceToValidate;
                      var deliveryMethod = getDeliveryMethod(obj);
+                     var nationalDelivery = getNationalDelivery(obj);
                      if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased ||
                         deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                      {
-                         if (!v.HasValue)
+                         if (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                          {
-                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_REQUIRED"));
+                             //both
+                             if ((v.HasValue && nationalDelivery.HasValue || !v.HasValue && !nationalDelivery.HasValue))
+                                 ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_REQUIRED"));
                          }
-                         else if (v.Value < Constants.RadiusRangeMin || v.Value > Constants.RadiusRangeMax)
-                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_INVALID"));
+                         else
+                         {
+                             //classroom
+                             if (!v.HasValue)
+                             {
+                                 ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_REQUIRED"));
+                             }
+                             else if (v.Value < Constants.RadiusRangeMin || v.Value > Constants.RadiusRangeMax)
+                                 ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_INVALID"));
+                         }
                      }
                      else
                      {
@@ -205,13 +216,22 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
 
         }
 
-        public static void NationalDelivery<T>(this IRuleBuilderInitial<T, bool?> field, Func<T, ApprenticeshipLocationType?> getDeliveryMethod)
+        public static void NationalDelivery<T>(this IRuleBuilderInitial<T, bool?> field, Func<T, ApprenticeshipLocationType?> getDeliveryMethod, Func<T, int?> getRadius)
         {
             field
                  .Custom((v, ctx) =>
                  {
                      var obj = (T)ctx.InstanceToValidate;
                      var deliveryMethod = getDeliveryMethod(obj);
+                     var radius = getRadius(obj);
+
+                     if ((deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased && !radius.HasValue && !v.HasValue) ||
+                          (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased && radius.HasValue && v.HasValue))
+                     {
+                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALDELIVERY_REQUIRED"));
+                         return;
+                     }
+
                      if (deliveryMethod != ApprenticeshipLocationType.EmployerBased)
                      {
                          if (v.HasValue)
@@ -223,7 +243,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                      }
 
                      ValidationFailure CreateFailure(string errorCode) =>
-                         ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                            ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                  });
         }
 
