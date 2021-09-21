@@ -203,7 +203,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 FlexibleStartDate = "No",
                 VenueName = "",
                 ProviderVenueRef = "",
-                NationalDelivery = "Yes",
+                NationalDelivery = "",
                 SubRegions = "",
                 CourseWebPage = "https://someonlinecourse.com",
                 Cost = 61.ToString("0.00"),
