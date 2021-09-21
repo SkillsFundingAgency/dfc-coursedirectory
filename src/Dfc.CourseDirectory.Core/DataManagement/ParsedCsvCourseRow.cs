@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(parsedRow.DeliveryMode);
             parsedRow.ResolvedStartDate = ResolveStartDate(parsedRow.StartDate);
             parsedRow.ResolvedFlexibleStartDate = ResolveFlexibleStartDate(parsedRow.FlexibleStartDate);
-            parsedRow.ResolvedNationalDelivery = ResolveNationalDelivery(parsedRow.NationalDelivery);
+            parsedRow.ResolvedNationalDelivery = ResolveNationalDelivery(parsedRow.NationalDelivery, parsedRow.SubRegions);
             parsedRow.ResolvedCost = ResolveCost(parsedRow.Cost);
             parsedRow.ResolvedDuration = ResolveDuration(parsedRow.Duration);
             parsedRow.ResolvedDurationUnit = ResolveDurationUnit(parsedRow.DurationUnit);
@@ -159,12 +159,29 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
-        public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
+        public static bool? ResolveNationalDelivery(string value, string subRegions)
         {
-            "yes" => true,
-            "no" => false,
-            _ => null
-        };
+            var normalized = value?.ToLower();
+            var subRegionsWereSpecified = !string.IsNullOrWhiteSpace(subRegions);
+
+            if (normalized == "yes")
+            {
+                return true;
+            }
+
+            if (normalized == "no")
+            {
+                return false;
+            }
+
+            // Treat an empty value as 'no' if sub regions were specified
+            if (string.IsNullOrWhiteSpace(value) && subRegionsWereSpecified)
+            {
+                return false;
+            }
+
+            return null;
+        }
 
         public static DateTime? ResolveStartDate(string value) =>
             DateTime.TryParseExact(value, DateFormat, null, DateTimeStyles.None, out var dt) ? dt : (DateTime?)null;
