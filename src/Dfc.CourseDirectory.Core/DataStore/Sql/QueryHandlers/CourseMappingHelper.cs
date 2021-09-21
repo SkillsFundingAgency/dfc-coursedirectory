@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
             CourseRun MapCourseRun(CourseRunResult row)
             {
-                return new CourseRun()
+                var courseRun = new CourseRun()
                 {
                     CourseRunId = row.CourseRunId,
                     CourseRunStatus = row.CourseRunStatus,
@@ -86,6 +86,23 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     VenueName = row.VenueName,
                     ProviderVenueRef = row.ProviderVenueRef
                 };
+
+                // We have some bad data where fields are populated when they shouldn't be for the delivery mode. Fix it up here
+
+                if (courseRun.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                {
+                    courseRun.VenueId = null;
+                    courseRun.StudyMode = null;
+                    courseRun.AttendancePattern = null;
+                }
+
+                if (courseRun.DeliveryMode != CourseDeliveryMode.WorkBased)
+                {
+                    courseRun.National = null;
+                    courseRun.SubRegionIds = Array.Empty<string>();
+                }
+
+                return courseRun;
 
                 string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded != false ? HtmlDecode(field) : field;
             }
