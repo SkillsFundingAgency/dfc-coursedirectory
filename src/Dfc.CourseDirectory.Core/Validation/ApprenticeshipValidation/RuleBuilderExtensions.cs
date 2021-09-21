@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
 
         public static void YourVenueReference<T>(
               this IRuleBuilderInitial<T, string> field,
-              Func<T, ApprenticeshipLocationType?> getDeliveryMode,
+              Func<T, ApprenticeshipLocationType?> getDeliveryMethod,
               Func<T, string> getVenueName,
               Guid? matchedVenueId)
         {
@@ -82,10 +82,10 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 {
                     var obj = (T)ctx.InstanceToValidate;
 
-                    var deliveryMode = getDeliveryMode(obj);
+                    var deliveryMethod = getDeliveryMethod(obj);
                     var isSpecified = !string.IsNullOrEmpty(v);
 
-                    if (deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    if (deliveryMethod != ApprenticeshipLocationType.ClassroomBased && deliveryMethod != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                     {
                         if (isSpecified)
                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"));
