@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 CreateContact(postcode, saonDescription, paonDescription, addressPaonDescription)
             });
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standardOrFramework: standard, createdBy: User.ToUserInfo(), status: ApprenticeshipStatus.Live);
+            await TestData.CreateApprenticeship(provider.ProviderId, standard: standard, createdBy: User.ToUserInfo(), status: ApprenticeshipStatus.Live);
 
             await User.AsHelpdesk();
 
@@ -352,7 +352,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 CreateContact(postcode, addressSaonDescription, addressPaonDescription, addressStreetDescription)
             });
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standardOrFramework: standard, createdBy: User.ToUserInfo());
+            await TestData.CreateApprenticeship(provider.ProviderId, standard: standard, createdBy: User.ToUserInfo());
             await User.AsHelpdesk();
 
             var request = new HttpRequestMessage(
@@ -387,7 +387,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             });
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider1.ProviderId, standardOrFramework: standard, createdBy: User.ToUserInfo());
+            await TestData.CreateApprenticeship(provider1.ProviderId, standard: standard, createdBy: User.ToUserInfo());
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var provider2 = await TestData.CreateProvider(
@@ -441,7 +441,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 CreateContact("CV4 1AA", null, null,"some street")
             });
             var standard1 = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standardOrFramework: standard1, createdBy: User.ToUserInfo(), status: apprenticeshipStatus);
+            await TestData.CreateApprenticeship(provider.ProviderId, standard: standard1, createdBy: User.ToUserInfo(), status: apprenticeshipStatus);
 
             await User.AsHelpdesk();
             var request = new HttpRequestMessage(
@@ -584,9 +584,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             });
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider1.ProviderId, standardOrFramework: standard, createdBy: User.ToUserInfo());
+            await TestData.CreateApprenticeship(provider1.ProviderId, standard: standard, createdBy: User.ToUserInfo());
             var standard1 = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider1.ProviderId, standardOrFramework: standard1, createdBy: User.ToUserInfo());
+            await TestData.CreateApprenticeship(provider1.ProviderId, standard: standard1, createdBy: User.ToUserInfo());
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var provider2 = await TestData.CreateProvider(

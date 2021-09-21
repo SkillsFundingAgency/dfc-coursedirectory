@@ -19,12 +19,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class Query : IRequest<Command>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<CommandResponse>
     {
-        public Guid ProviderId { get; set; }
         public IReadOnlyCollection<string> RegionIds { get; set; }
     }
 
@@ -47,7 +45,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             var command = new Command()
             {
-                ProviderId = request.ProviderId,
                 RegionIds = _flow.State.ApprenticeshipLocationSubRegionIds ?? Array.Empty<string>()
             };
             return Task.FromResult(command);
@@ -75,8 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
         private void ValidateFlowState()
         {
-            if ((_flow.State.ApprenticeshipLocationType != ApprenticeshipLocationType.EmployerBased &&
-                _flow.State.ApprenticeshipLocationType != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased) ||
+            if (_flow.State.ApprenticeshipLocationType?.HasFlag(ApprenticeshipLocationType.EmployerBased) != true ||
                 _flow.State.ApprenticeshipIsNational != false)
             {
                 throw new InvalidStateException();

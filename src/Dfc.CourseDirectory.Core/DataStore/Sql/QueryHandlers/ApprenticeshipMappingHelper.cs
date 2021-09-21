@@ -54,7 +54,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             ApprenticeshipLocationId = al.ApprenticeshipLocationId,
                             ApprenticeshipLocationType = al.ApprenticeshipLocationType,
                             DeliveryModes = MapDeliveryModesFromSqlValue(al.DeliveryModes).ToArray(),
-                            National = al.National,
+                            // Some bad Classroom-based data has a non-null National value; fix that up here
+                            National = al.ApprenticeshipLocationType != ApprenticeshipLocationType.ClassroomBased ? al.National : null,
                             Radius = al.Radius,
                             SubRegionIds = apprenticeshipLocationSubRegions.GetValueOrDefault(al.ApprenticeshipLocationId, Enumerable.Empty<string>()).ToArray(),
                             Telephone = al.Telephone,

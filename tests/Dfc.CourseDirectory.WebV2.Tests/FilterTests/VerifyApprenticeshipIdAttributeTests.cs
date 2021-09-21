@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");

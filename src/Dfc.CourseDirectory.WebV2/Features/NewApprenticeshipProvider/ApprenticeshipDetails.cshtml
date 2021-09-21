@@ -13,7 +13,7 @@
 </govuk-error-summary>
 
 <form asp-action="ApprenticeshipDetails" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
-    <span class="govuk-caption-l" id="pttcd-new-apprenticeship-provider__apprenticeship-details__standard-name">@Model.StandardOrFramework.StandardOrFrameworkTitle</span>
+    <span class="govuk-caption-l" id="pttcd-new-apprenticeship-provider__apprenticeship-details__standard-name">@Model.Standard.StandardName</span>
     <h1 class="govuk-heading-l">Add apprenticeship training details</h1>
 
     <pttcd-rich-text-editor>

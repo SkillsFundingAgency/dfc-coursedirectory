@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Web.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,13 +19,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
     [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed)]
     public class ProviderApprenticeshipsController : Controller
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderContextProvider _providerContextProvider;
 
         private ISession Session => HttpContext.Session;
 
-        public ProviderApprenticeshipsController(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public ProviderApprenticeshipsController(
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderContextProvider providerContextProvider)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerContextProvider = providerContextProvider;
         }
 
         [Authorize]
@@ -37,11 +42,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var liveApprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
+            var liveApprenticeships = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipsForProvider()
             {
-                Predicate = a =>
-                    a.ProviderUKPRN == UKPRN
-                    && a.RecordStatus == (int)ApprenticeshipStatus.Live
+                ProviderId = _providerContextProvider.GetProviderId(withLegacyFallback: true)
             });
 
             if (apprenticeshipId.HasValue)
@@ -58,7 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(new ProviderApprenticeshipsViewModel
             {
-                Apprenticeships = liveApprenticeships.Values.Select(Apprenticeship.FromCosmosDbModel).ToList()
+                Apprenticeships = liveApprenticeships.Select(Apprenticeship.FromSqlModel).ToList()
             });
         }
 
@@ -67,30 +70,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             int? UKPRN = Session.GetInt32("UKPRN");
 
-            var liveApprenticeships = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeships
+            if (!UKPRN.HasValue)
             {
-                Predicate = a =>
-                    a.ProviderUKPRN == UKPRN
-                    && a.RecordStatus == (int)ApprenticeshipStatus.Live
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            var liveApprenticeships = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipsForProvider()
+            {
+                ProviderId = _providerContextProvider.GetProviderId(withLegacyFallback: true)
             });
 
             var model = new ProviderApprenticeshipsSearchResultModel();
 
             if (string.IsNullOrWhiteSpace(requestModel.SearchTerm))
             {
-                model.Items = liveApprenticeships.Values.Select(Apprenticeship.FromCosmosDbModel).ToList();
+                model.Items = liveApprenticeships.Select(Apprenticeship.FromSqlModel).ToList();
             }
             else
             {
                 var searchTermWords = requestModel.SearchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                model.Items = liveApprenticeships.Values
+                model.Items = liveApprenticeships
                     .Where(r =>
-                        $"{r.ApprenticeshipTitle} {r.MarketingInformation} {r.NotionalNVQLevelv2}"
+                        $"{r.Standard.StandardName} {r.MarketingInformation} {r.Standard.NotionalNVQLevelv2}"
                             .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                            .Any(w => searchTermWords.Any(s => s.Equals(w, StringComparison.OrdinalIgnoreCase)))
-                        && r.RecordStatus == (int)ApprenticeshipStatus.Live)
-                    .Select(Apprenticeship.FromCosmosDbModel)
+                            .Any(w => searchTermWords.Any(s => s.Equals(w, StringComparison.OrdinalIgnoreCase))))
+                    .Select(Apprenticeship.FromSqlModel)
                     .ToList();
             }
 

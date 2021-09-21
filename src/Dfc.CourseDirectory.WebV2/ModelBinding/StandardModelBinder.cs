@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
         {
             if (context.Metadata.ModelType == typeof(Standard))
             {
-                var standardsAndFrameworksCache = context.Services.GetRequiredService<IStandardsAndFrameworksCache>();
+                var standardsAndFrameworksCache = context.Services.GetRequiredService<IStandardsCache>();
                 return new StandardModelBinder(standardsAndFrameworksCache);
             }
             else
@@ -27,9 +27,9 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
 
     public class StandardModelBinder : IModelBinder
     {
-        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IStandardsCache _standardsAndFrameworksCache;
 
-        public StandardModelBinder(IStandardsAndFrameworksCache standardsAndFrameworksCache)
+        public StandardModelBinder(IStandardsCache standardsAndFrameworksCache)
         {
             _standardsAndFrameworksCache = standardsAndFrameworksCache;
         }

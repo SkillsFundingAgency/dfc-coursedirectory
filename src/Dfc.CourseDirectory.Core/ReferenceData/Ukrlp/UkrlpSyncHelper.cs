@@ -226,11 +226,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
                 if (deactivating)
                 {
-                    await _cosmosDbQueryDispatcher.ExecuteQuery(new ArchiveApprenticeshipsForProvider() { Ukprn = ukprn });
-
                     using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                     {
                         await sqlDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
+                        await sqlDispatcher.ExecuteQuery(new DeleteApprenticeshipsForProvider() { ProviderId = providerId });
                         await sqlDispatcher.Commit();
                     }
                 }
@@ -256,7 +255,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         };
 
         private Task<Provider> GetProvider(int ukprn) =>
-           _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
+           _cosmosDbQueryDispatcher.ExecuteQuery(new DataStore.CosmosDb.Queries.GetProviderByUkprn() { Ukprn = ukprn });
 
         private enum CreateOrUpdateResult { Created, Updated }
     }

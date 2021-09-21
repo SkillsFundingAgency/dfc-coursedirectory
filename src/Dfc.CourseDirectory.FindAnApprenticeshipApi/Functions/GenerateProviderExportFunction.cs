@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models.DAS;
@@ -98,9 +99,9 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions
                     {
                         var generateStopwatch = Stopwatch.StartNew();
 
-                        var apprenticeships = (List<Apprenticeship>)await _apprenticeshipService.GetLiveApprenticeships();
+                        var apprenticeships = await _apprenticeshipService.GetLiveApprenticeships();
 
-                        results = await _apprenticeshipService.ApprenticeshipsToDasProviders(apprenticeships);
+                        results = await _apprenticeshipService.ApprenticeshipsToDasProviders(apprenticeships.ToList());
 
                         generateStopwatch.Stop();
 

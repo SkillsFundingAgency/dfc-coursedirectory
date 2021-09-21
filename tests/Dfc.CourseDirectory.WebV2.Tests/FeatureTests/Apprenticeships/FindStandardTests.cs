@@ -55,9 +55,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             await TestData.CreateStandard(standardCode: 123, version: 1, standardName: "Hairdressing");
             await TestData.CreateStandard(standardCode: 456, version: 2, standardName: "Hair");
 
-            // Framework should no longer be returned in search results
-            await TestData.CreateFramework(frameworkCode: 789, progType: 2, pathwayCode: 3, nasTitle: "Haircuts");
-
             // Act
             var response = await HttpClient.GetAsync(
                 $"apprenticeships/find-standard/search?providerId={provider.ProviderId}&returnUrl=%2Fcallback&Search=hair");

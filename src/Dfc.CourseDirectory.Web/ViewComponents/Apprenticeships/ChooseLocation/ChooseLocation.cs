@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -14,8 +13,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderContextProvider _providerContextProvider;
-
-        private ISession Session => HttpContext.Session;
 
         public ChooseLocation(ISqlQueryDispatcher sqlQueryDispatcher, IProviderContextProvider providerContextProvider)
         {
@@ -33,17 +30,15 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 
             foreach (var venue in result)
             {
-                var item = new SelectListItem { Text = venue.VenueName, Value = venue.VenueId.ToString() };
-
-                if (model.DeliveryLocations == null || !model.DeliveryLocations.Any(x => x.LocationId.HasValue && x.LocationId.Value.ToString() == item.Value))
+                if (model.DeliveryLocations == null || !model.DeliveryLocations.Any(x => x.VenueId == venue.VenueId))
                 {
+                    var item = new SelectListItem { Text = venue.VenueName, Value = venue.VenueId.ToString() };
                     venues.Add(item);
                 }
             };
 
             model.Locations = venues;
             return View("~/ViewComponents/Apprenticeships/ChooseLocation/Default.cshtml", model);
-
         }
     }
 }

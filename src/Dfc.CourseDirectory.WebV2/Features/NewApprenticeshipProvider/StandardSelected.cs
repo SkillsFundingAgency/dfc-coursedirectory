@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.StandardS
 
         public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
         {
-            _flow.Update(s => s.SetApprenticeshipStandardOrFramework(request.Standard));
+            _flow.Update(s => s.SetApprenticeshipStandard(request.Standard));
 
             return Unit.Task;
         }

@@ -47,20 +47,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Chec
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
-        private readonly IStandardsAndFrameworksCache _standardsAndFrameworksCache;
+        private readonly IStandardsCache _standardsCache;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
             ICurrentUserProvider currentUserProvider,
             JourneyInstanceProvider journeyInstanceProvider,
-            IStandardsAndFrameworksCache standardsAndFrameworksCache)
+            IStandardsCache standardsCache)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _currentUserProvider = currentUserProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
-            _standardsAndFrameworksCache = standardsAndFrameworksCache;
+            _standardsCache = standardsCache;
         }
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Chec
 
         private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<ApprenticeshipUploadRow> rows)
         {
-            var standards = (await _standardsAndFrameworksCache.GetAllStandards())
+            var standards = (await _standardsCache.GetAllStandards())
                 .ToDictionary(s => (s.StandardCode, s.Version), s => s);
 
             return new ViewModel()

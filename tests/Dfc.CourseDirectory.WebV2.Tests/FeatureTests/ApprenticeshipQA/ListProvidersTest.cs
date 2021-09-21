@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
             var provider1User = await TestData.CreateUser(providerId: provider1.ProviderId);
             await TestData.CreateUserSignIn(provider1User.UserId, new DateTime(2018, 4, 1, 10, 4, 3));
-            var provider1ApprenticeshipId = (await TestData.CreateApprenticeship(provider1.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var provider1ApprenticeshipId = (await TestData.CreateApprenticeship(provider1.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await TestData.CreateApprenticeshipQASubmission(
                 provider1.ProviderId,
                 submittedOn: new DateTime(2018, 4, 1, 12, 30, 37),
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
             var provider2User = await TestData.CreateUser(providerId: provider2.ProviderId);
             await TestData.CreateUserSignIn(provider2User.UserId, new DateTime(2019, 5, 3, 14, 55, 17));
-            var provider2ApprenticeshipId = (await TestData.CreateApprenticeship(provider2.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var provider2ApprenticeshipId = (await TestData.CreateApprenticeship(provider2.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
             await TestData.CreateApprenticeshipQASubmission(
                 provider2.ProviderId,
                 submittedOn: new DateTime(2019, 5, 3, 15, 01, 23),

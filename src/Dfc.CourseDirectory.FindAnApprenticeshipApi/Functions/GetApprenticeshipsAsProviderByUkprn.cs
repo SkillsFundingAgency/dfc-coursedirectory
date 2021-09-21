@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Services;
-using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,14 +41,14 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Functions
             {
                 log.LogInformation($"[{DateTime.UtcNow:G}] Retrieving Apprenticeships for {nameof(ukprn)} {{{nameof(ukprn)}}}...", ukprn);
 
-                var apprenticeships = (List<Apprenticeship>)await _apprenticeshipService.GetApprenticeshipsByUkprn(ukprn);
+                var apprenticeships = await _apprenticeshipService.GetApprenticeshipsByUkprn(ukprn);
                 
                 if (!apprenticeships.Any())
                 {
                     return new NotFoundObjectResult(ErrorResult($"No apprentiships found for UKPRN {ukprn}."));
                 }
                     
-                var result = (await _apprenticeshipService.ApprenticeshipsToDasProviders(apprenticeships)).Single();
+                var result = (await _apprenticeshipService.ApprenticeshipsToDasProviders(apprenticeships.ToList())).Single();
 
                 return new OkObjectResult(DasProviderResultViewModel.FromDasProviderResult(result));
             }
