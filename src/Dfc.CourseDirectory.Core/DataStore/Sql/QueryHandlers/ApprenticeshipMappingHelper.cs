@@ -49,17 +49,31 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ContactTelephone = a.ContactTelephone,
                     ContactWebsite = a.ContactWebsite,
                     ApprenticeshipLocations = locations.GetValueOrDefault(a.ApprenticeshipId, Enumerable.Empty<ApprenticeshipLocationResult>())
-                        .Select(al => new ApprenticeshipLocation()
+                        .Select(al =>
                         {
-                            ApprenticeshipLocationId = al.ApprenticeshipLocationId,
-                            ApprenticeshipLocationType = al.ApprenticeshipLocationType,
-                            DeliveryModes = MapDeliveryModesFromSqlValue(al.DeliveryModes).ToArray(),
                             // Some bad Classroom-based data has a non-null National value; fix that up here
-                            National = al.ApprenticeshipLocationType != ApprenticeshipLocationType.ClassroomBased ? al.National : null,
-                            Radius = al.Radius,
-                            SubRegionIds = apprenticeshipLocationSubRegions.GetValueOrDefault(al.ApprenticeshipLocationId, Enumerable.Empty<string>()).ToArray(),
-                            Telephone = al.Telephone,
-                            Venue = al.Venue
+                            if (al.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased)
+                            {
+                                al.National = null;
+                            }
+
+                            // If National is true then remove explicit Radius
+                            if (al.National == true)
+                            {
+                                al.Radius = null;
+                            }
+
+                            return new ApprenticeshipLocation()
+                            {
+                                ApprenticeshipLocationId = al.ApprenticeshipLocationId,
+                                ApprenticeshipLocationType = al.ApprenticeshipLocationType,
+                                DeliveryModes = MapDeliveryModesFromSqlValue(al.DeliveryModes).ToArray(),
+                                National = al.National,
+                                Radius = al.Radius,
+                                SubRegionIds = apprenticeshipLocationSubRegions.GetValueOrDefault(al.ApprenticeshipLocationId, Enumerable.Empty<string>()).ToArray(),
+                                Telephone = al.Telephone,
+                                Venue = al.Venue
+                            };
                         })
                         .ToArray()
                 })
