@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var parsed = value.ToLower()
                 .Split(DeliveryModeDelimiter, StringSplitOptions.RemoveEmptyEntries)
-                .Select(dm => dm switch
+                .Select(dm => dm.Trim() switch
                 {
                     "block release" => ApprenticeshipDeliveryMode.BlockRelease,
                     "block" => ApprenticeshipDeliveryMode.BlockRelease,
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
         public static ApprenticeshipLocationType? ResolveDeliveryMethod(string value, IReadOnlyCollection<ApprenticeshipDeliveryMode> deliveryModes) =>
-            (value?.ToLower(), deliveryModes?.Contains(ApprenticeshipDeliveryMode.EmployerAddress) ?? false) switch
+            (value?.ToLower()?.Trim(), deliveryModes?.Contains(ApprenticeshipDeliveryMode.EmployerAddress) ?? false) switch
             {
                 ("classroom based", false) => ApprenticeshipLocationType.ClassroomBased,
                 ("classroom", false) => ApprenticeshipLocationType.ClassroomBased,
