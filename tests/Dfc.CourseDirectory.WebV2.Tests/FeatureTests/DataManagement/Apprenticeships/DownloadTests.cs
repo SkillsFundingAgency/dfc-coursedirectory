@@ -192,6 +192,51 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
             var rows = csvReader.GetRecords<CsvApprenticeshipRow>();
             rows.Single().Radius.Should().Be("30");
         }
+
+        [Fact]
+        public async Task Get_BothLocationWithNationalAndRadius_HasEmptyRadiusInDownload()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerName: "Test Provider");
+
+            var standard = await TestData.CreateStandard();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), providerVenueRef: "VENUE_REF");
+
+            var apprenticeship = await TestData.CreateApprenticeship(
+                providerId: provider.ProviderId,
+                standard: standard,
+                createdBy: User.ToUserInfo(),
+                locations: new[]
+                {
+                    new CreateApprenticeshipLocation()
+                    {
+                        ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBasedAndEmployerBased,
+                        DeliveryModes = new[] { ApprenticeshipDeliveryMode.EmployerAddress, ApprenticeshipDeliveryMode.BlockRelease },
+                        VenueId = venue.VenueId,
+                        National = true,
+                        Radius = 600
+                    }
+                });
+
+            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/data-upload/apprenticeships/download?providerId={provider.ProviderId}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentType.MediaType.Should().Be("text/csv");
+            response.Content.Headers.ContentDisposition.FileName.Should().Be("\"Test Provider_apprenticeships_202104091300.csv\"");
+
+            using var responseBody = await response.Content.ReadAsStreamAsync();
+            using var responseBodyReader = new StreamReader(responseBody);
+            using var csvReader = new CsvReader(responseBodyReader, CultureInfo.InvariantCulture);
+
+            var row = csvReader.GetRecords<CsvApprenticeshipRow>().Single();
+            row.Radius.Should().Be("");
+            row.NationalDelivery.Should().Be("Yes");
+        }
     }
 }
 
