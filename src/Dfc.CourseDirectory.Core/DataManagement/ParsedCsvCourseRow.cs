@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
-        public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower() switch
+        public static CourseAttendancePattern? ResolveAttendancePattern(string value) => value?.ToLower()?.Trim() switch
         {
             "daytime" => CourseAttendancePattern.Daytime,
             "evening" => CourseAttendancePattern.Evening,
@@ -126,7 +126,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static decimal? ResolveCost(string value) =>
             decimal.TryParse(value, out var result) && GetDecimalPlaces(result) <= 2 ? result : (decimal?)null;
 
-        public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower() switch
+        public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower()?.Trim() switch
         {
             "classroom based" => CourseDeliveryMode.ClassroomBased,
             "classroombased" => CourseDeliveryMode.ClassroomBased,
@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static int? ResolveDuration(string value) =>
             int.TryParse(value, out var duration) ? duration : (int?)null;
 
-        public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower() switch
+        public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower()?.Trim() switch
         {
             "hours" => CourseDurationUnit.Hours,
             "days" => CourseDurationUnit.Days,
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => null
         };
 
-        public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower() switch
+        public static bool? ResolveFlexibleStartDate(string value) => value?.ToLower()?.Trim() switch
         {
             "yes" => true,
             "no" => false,
@@ -186,7 +186,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static DateTime? ResolveStartDate(string value) =>
             DateTime.TryParseExact(value, DateFormat, null, DateTimeStyles.None, out var dt) ? dt : (DateTime?)null;
 
-        public static CourseStudyMode? ResolveStudyMode(string value) => value?.ToLower() switch
+        public static CourseStudyMode? ResolveStudyMode(string value) => value?.ToLower()?.Trim() switch
         {
             "full time" => CourseStudyMode.FullTime,
             "full-time" => CourseStudyMode.FullTime,
