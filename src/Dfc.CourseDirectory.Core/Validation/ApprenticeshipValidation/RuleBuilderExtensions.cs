@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                          if (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                          {
                              //both
-                             if ((v.HasValue && nationalDelivery.HasValue || !v.HasValue && !nationalDelivery.HasValue))
+                             if ((v.HasValue && nationalDelivery == true || !v.HasValue && !nationalDelivery.HasValue))
                                  ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_REQUIRED"));
                          }
                          else
@@ -226,7 +226,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                      var radius = getRadius(obj);
 
                      if ((deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased && !radius.HasValue && !v.HasValue) ||
-                          (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased && radius.HasValue && v.HasValue))
+                          (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased && radius.HasValue && v == true))
                      {
                          ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALDELIVERY_REQUIRED"));
                          return;
