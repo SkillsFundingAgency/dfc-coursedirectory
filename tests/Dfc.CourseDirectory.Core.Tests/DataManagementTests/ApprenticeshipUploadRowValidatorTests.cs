@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         {
         }
 
-        #region general validation
         [Fact]
         public async Task ApprenticeshipInformationEmpty_ReturnsValidationError()
         {
@@ -28,11 +27,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = string.Empty,
                 DeliveryModes = "employer address",
-                DeliveryMethod = "classroom based"
+                DeliveryMethod = "classroom based",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -53,11 +54,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 ApprenticeshipInformation = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx2222222222222222222",
                 DeliveryModes = "employer address",
-                DeliveryMethod = "classroom based"
+                DeliveryMethod = "classroom based",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -80,10 +83,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ApprenticeshipInformation = "Some info",
                 ApprenticeshipWebpage = "ttp://someapprenticeship.com",
                 DeliveryModes = "employer address",
-                DeliveryMethod = "classroom based"
+                DeliveryMethod = "classroom based",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -93,7 +98,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorMessage == $"The website must be a real webpage");
         }
-
 
         [Fact]
         public async Task ApprenticeshipInvalidContactEmail_ReturnsValidationError()
@@ -107,11 +111,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ApprenticeshipWebpage = "https://someapprenticeship.com",
                 DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based",
-                ContactEmail = "@invalid.com"
+                ContactEmail = "@invalid.com",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -121,7 +127,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorMessage == $"Enter an email address in the correct format");
         }
-
 
         [Fact]
         public async Task ApprenticeshipInvalidContactPhoneNumber_ReturnsValidationError()
@@ -136,12 +141,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryModes = "employer address",
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
-                ContactPhone = "INVALID NUMBER"
+                ContactPhone = "INVALID NUMBER",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
-
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -151,7 +157,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorMessage == $"Enter a telephone number in the correct format");
         }
-
 
         [Fact]
         public async Task ApprenticeshipInvalidContactUrl_ReturnsValidationError()
@@ -167,12 +172,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMethod = "classroom based",
                 ContactEmail = "someemail@invalid.com",
                 ContactPhone = "0121 111 1111",
-                ContactUrl = "invalid"
+                ContactUrl = "invalid",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
-
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -182,7 +188,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorMessage == $"The contact us webpage must be a real website");
         }
-        #endregion
 
         [Fact]
         public async Task ApprenticeshipWhenYourVenueReferenceIsValid_ReturnsValidResult()
@@ -200,11 +205,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "1",
-                YourVenueReference = "Valid Reference"
+                YourVenueReference = "Valid Reference",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -242,9 +249,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 YourVenueReference = "VENUE2"
             };
 
-
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -255,312 +261,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorCode == "APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID");
         }
 
-        #region Classroom based tests
-        [Theory]
-        [InlineData("day release")]
-        [InlineData("block release")]
-        public async Task ApprenticeshipWhenClassroomBasedAndDayOrBlockRelease_ReturnsValidResult(string deliveryMode)
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryModes = deliveryMode,
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                Radius = "1",
-            };
-
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.DoesNotContain(
-                validationResult.Errors,
-                error => error.ErrorCode == "APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK");
-        }
-
-        [Theory]
-        [InlineData("yes")]
-        [InlineData("no")]
-        public async Task ApprenticeshipWhenClassroomBasedAndNationalSet_ReturnsValidationError(string nationalDelivery)
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryModes = "day release",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                Radius = "1",
-                YourVenueReference = "Valid Reference",
-                NationalDelivery = nationalDelivery
-            };
-
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED");
-        }
-
-
-        [Fact]
-        public async Task ApprenticeshipWhenClassroomBasedAndNationalNotSet_DoesNotReturnValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryModes = "day release",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                Radius = "1",
-                YourVenueReference = "Valid Reference",
-                NationalDelivery = null
-            };
-
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.DoesNotContain(
-                validationResult.Errors,
-                error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED");
-        }
-
-
-        [Fact]
-        public async Task ApprenticeshipWhenValidClassroomBased_ReturnsValidResult()
-        {
-            // Arrange
-            var user = await TestData.CreateUser();
-            var provider = await TestData.CreateProvider(providerType: Models.ProviderType.Apprenticeships);
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-            var venue = await TestData.CreateVenue(
-                providerId: provider.ProviderId,
-                createdBy: user,
-                venueName: "My Venue",
-                providerVenueRef: "VENUE1");
-
-
-            var row = new CsvApprenticeshipRow()
-            {
-                StandardCode = "1",
-                StandardVersion = "1",
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryModes = "day release",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                YourVenueReference = "VENUE1",
-                Radius = "10"
-            };
-
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venue.VenueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.Empty(validationResult.Errors);
-        }
-
-        [Fact]
-        public async Task ApprenticeshipWhenClassroomBasedWithYourVenueRefEmptyButVenueNotEmpty_DoesNotReturnValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                StandardCode = "1",
-                StandardVersion = "1",
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryModes = "day release",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                YourVenueReference = string.Empty,
-                VenueName = "SomeVenue"
-            };
-
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.DoesNotContain(
-                validationResult.Errors,
-                error => error.PropertyName == nameof(CsvApprenticeshipRow.YourVenueReference));
-        }
-
-        [Fact]
-        public async Task ApprenticeshipWhenClassroomBasedWithSubRegions_ReturnsValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                StandardCode = "1",
-                StandardVersion = "1",
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                YourVenueReference = "Valid Reference",
-                Radius = "1",
-                SubRegion = "County Durham"
-            };
-
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED");
-        }
-
-        [Theory]
-        [InlineData("-1")]
-        [InlineData("0")]
-        [InlineData("876")]
-        public async Task ApprenticeshipWhenClassroomBasedInvalidRadiusRange_ReturnsValidationError(string radius)
-        {
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                ApprenticeshipInformation = string.Empty,
-                DeliveryModes = "day release",
-                DeliveryMethod = "classroom based",
-                Radius = radius
-            };
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorMessage == "You must enter a radius between 1 and 874");
-        }
-
-        [Fact]
-        public async Task ApprenticeshipWhenClassroomBasedMissingRadius_ReturnsValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryModes = "day release",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                Radius = "",
-            };
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "APPRENTICESHIP_RADIUS_REQUIRED");
-        }
-
-        [Fact]
-        public async Task ApprenticeshipWhenClassroomBasedWithEmptyVenueAndVenueReference_ReturnsValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
-
-            var row = new CsvApprenticeshipRow()
-            {
-                StandardCode = "1",
-                StandardVersion = "1",
-                ApprenticeshipInformation = "Some info",
-                ApprenticeshipWebpage = "https://someapprenticeship.com",
-                DeliveryMethod = "classroom based",
-                ContactEmail = "someemail@invalid.com",
-                ContactPhone = "0121 111 1111",
-                ContactUrl = "https://someapprenticeship.com",
-                Radius = "1",
-                SubRegion = "County Durham",
-                VenueName = string.Empty,
-                YourVenueReference = string.Empty
-            };
-
-            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
-
-            // Act
-            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
-
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "APPRENTICESHIP_VENUE_REQUIRED");
-        }
-        #endregion
-
-        #region Employer based tests
         [Fact]
         public async Task ApprenticeshipWhenEmployerWithDuplicateStandardCode_ReturnsValidationError()
         {
@@ -602,7 +302,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
             var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
 
             // Act
             var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions));
@@ -659,7 +359,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
             var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2 });
 
             // Act
             var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
@@ -731,7 +431,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var parsedRow1 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions);
             var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
             var parsedRow3 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row3, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2, parsedRow3 });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2, parsedRow3 });
 
             // Act
             var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
@@ -821,7 +521,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var parsedRow2 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row2, allRegions);
             var parsedRow3 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row3, allRegions);
             var parsedRow4 = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row4, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2, parsedRow3, parsedRow4 });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow1, parsedRow2, parsedRow3, parsedRow4 });
 
             // Act
             var validationResult1 = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row1, allRegions));
@@ -863,11 +563,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "1",
                 YourVenueReference = "Valid Reference",
-                NationalDelivery = nationalDelivery
+                NationalDelivery = nationalDelivery,
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -897,11 +599,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "1",
-                //Regions
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -930,10 +633,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "1",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -964,7 +669,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -989,12 +694,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "",
-                //Regions
-
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1021,10 +726,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactPhone = "0121 111 1111",
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "11",
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1037,7 +744,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorCode == "APPRENTICESHIP_RADIUS_NOT_ALLOWED");
         }
-
 
         [Fact]
         public async Task ApprenticeshipWhenEmployerBasedWithInvalidSubRegion_ReturnsValidResult()
@@ -1061,7 +767,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1096,7 +802,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1131,7 +837,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1166,7 +872,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1202,7 +908,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1237,7 +943,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1267,12 +973,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ContactUrl = "https://someapprenticeship.com",
                 Radius = "1",
                 YourVenueReference = "Valid Reference",
-                NationalDelivery = national
-                //Regions
+                NationalDelivery = national,
+                StandardCode = "1",
+                StandardVersion = "1"
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1282,8 +989,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorCode == "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED");
         }
-
-        #endregion
 
         [Fact]
         public async Task Apprenticeship_BothDeliveryMethodRadiusAndNationalEmpty_ReturnsValidationError()
@@ -1309,7 +1014,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1345,7 +1050,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: venueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
@@ -1379,7 +1084,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             };
 
             var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
-            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+            var validator = new ApprenticeshipUploadRowValidator(matchedVenueId: venueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
 
             // Act
             var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
