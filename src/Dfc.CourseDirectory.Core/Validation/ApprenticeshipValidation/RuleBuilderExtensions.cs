@@ -85,10 +85,17 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                     var deliveryMethod = getDeliveryMethod(obj);
                     var isSpecified = !string.IsNullOrEmpty(v);
 
-                    if (deliveryMethod != ApprenticeshipLocationType.ClassroomBased && deliveryMethod != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                    if (isSpecified &&
+                        deliveryMethod != ApprenticeshipLocationType.ClassroomBased &&
+                        deliveryMethod != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                     {
-                        if (isSpecified)
-                            ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"));
+                        ctx.AddFailure(CreateFailure("APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED"));
+                        return;
+                    }
+
+                    if (deliveryMethod != ApprenticeshipLocationType.ClassroomBased &&
+                        deliveryMethod != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                    {
                         return;
                     }
 
@@ -110,7 +117,6 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                         ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                 });
         }
-
 
         public static void Venue<T>(
             this IRuleBuilderInitial<T, string> field,
@@ -142,32 +148,49 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 });
         }
 
-        public static void Radius<T>(this IRuleBuilderInitial<T, int?> field,
-            Func<T, ApprenticeshipLocationType?> getDeliveryMethod)
+        public static void Radius<T>(
+            this IRuleBuilderInitial<T, int?> field,
+            Func<T, ApprenticeshipLocationType?> getDeliveryMethod,
+            Func<T, bool?> getNational)
         {
             field
                  .Custom((v, ctx) =>
                  {
                      var obj = (T)ctx.InstanceToValidate;
                      var deliveryMethod = getDeliveryMethod(obj);
-                     if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased ||
-                        deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                     var national = getNational(obj);
+
+                     if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased)
                      {
                          if (!v.HasValue)
                          {
                              ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_REQUIRED"));
                          }
-                         else if (v.Value < Constants.RadiusRangeMin || v.Value > Constants.RadiusRangeMax)
-                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_INVALID"));
+                     }
+                     else if (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                     {
+                         if (!v.HasValue && national != true)
+                         {
+                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALORRADIUS_REQUIRED"));
+                         }
                      }
                      else
                      {
                          if (v.HasValue)
                          {
                              ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_NOT_ALLOWED"));
-
+                             return;
                          }
                      }
+
+                     if (v.HasValue)
+                     {
+                         if (v.Value < Constants.RadiusRangeMin || v.Value > Constants.RadiusRangeMax)
+                         {
+                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_RADIUS_INVALID"));
+                         }
+                     }
+
                      ValidationFailure CreateFailure(string errorCode) =>
                          ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                  });
@@ -202,31 +225,49 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                      ValidationFailure CreateFailure(string errorCode) =>
                          ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                  });
-
         }
 
-        public static void NationalDelivery<T>(this IRuleBuilderInitial<T, bool?> field, Func<T, ApprenticeshipLocationType?> getDeliveryMethod)
+        public static void NationalDelivery<T>(
+            this IRuleBuilderInitial<T, bool?> field,
+            Func<T, ApprenticeshipLocationType?> getDeliveryMethod,
+            Func<T, int?> getRadius)
         {
             field
                  .Custom((v, ctx) =>
                  {
                      var obj = (T)ctx.InstanceToValidate;
+
+                     var nationalSpecified = v.HasValue;
                      var deliveryMethod = getDeliveryMethod(obj);
-                     if (deliveryMethod != ApprenticeshipLocationType.EmployerBased)
+                     var radius = getRadius(obj);
+                     var radiusSpecified = radius.HasValue;
+
+                     if (deliveryMethod == ApprenticeshipLocationType.EmployerBased)
                      {
-                         if (v.HasValue)
+                         if (!nationalSpecified)
+                         {
+                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALDELIVERY_REQUIRED"));
+                         }
+                     }
+                     else if (deliveryMethod == ApprenticeshipLocationType.ClassroomBased)
+                     {
+                         if (nationalSpecified)
                          {
                              ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED"));
                          }
-                         else
-                             return;
+                     }
+                     else if (deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                     {
+                         if (!nationalSpecified && !radiusSpecified)
+                         {
+                             ctx.AddFailure("ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED");
+                         }
                      }
 
                      ValidationFailure CreateFailure(string errorCode) =>
                          ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                  });
         }
-
 
         public static void DeliveryMethod<T>(this IRuleBuilderInitial<T, ApprenticeshipLocationType?> field)
         {
@@ -239,8 +280,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
             this IRuleBuilderInitial<T, IReadOnlyCollection<Region>> field,
             Func<T, bool> subRegionsWereSpecified,
             Func<T, ApprenticeshipLocationType?> getDeliveryMethod,
-            Func<T, bool> getNationalDelivery
-            )
+            Func<T, bool> getNationalDelivery)
         {
             field
                 .Custom((v, ctx) =>
@@ -291,13 +331,16 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                     var isSpecified = !string.IsNullOrEmpty(v);
 
                     // Not allowed for delivery modes other than classroom based
-                    if (isSpecified && deliveryMode != ApprenticeshipLocationType.ClassroomBased && deliveryMode != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+                    if (isSpecified &&
+                        deliveryMode != ApprenticeshipLocationType.ClassroomBased &&
+                        deliveryMode != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                     {
                         ctx.AddFailure(CreateFailure("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (deliveryMode != ApprenticeshipLocationType.ClassroomBased)
+                    if (deliveryMode != ApprenticeshipLocationType.ClassroomBased &&
+                        deliveryMode != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
                     {
                         return;
                     }

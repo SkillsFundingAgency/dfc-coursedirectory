@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
@@ -1284,5 +1285,107 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
         #endregion
 
+        [Fact]
+        public async Task Apprenticeship_BothDeliveryMethodRadiusAndNationalEmpty_ReturnsValidationError()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "classroom based",
+                DeliveryModes = "employer;day;block",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "Valid Reference",
+                SubRegion = null,
+                Radius = "",
+                NationalDelivery = ""
+            };
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: null, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.Contains(
+                validationResult.Errors,
+                error => error.ErrorCode == "APPRENTICESHIP_NATIONALORRADIUS_REQUIRED");
+        }
+
+        [Fact]
+        public async Task Apprenticeship_BothDeliveryMethodNationalTrueAndRadius_ReturnsValidResult()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+            var venueId = Guid.NewGuid();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "classroom based",
+                DeliveryModes = "employer;day;block",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE",
+                SubRegion = null,
+                Radius = "50",
+                NationalDelivery = "yes"
+            };
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.Empty(validationResult.Errors);
+        }
+
+        [Fact]
+        public async Task Apprenticeship_BothDeliveryMethodNationalFalseAndRadius_ReturnsValidResult()
+        {
+            // Arrange
+            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+            var venueId = Guid.NewGuid();
+
+            var row = new CsvApprenticeshipRow()
+            {
+                StandardCode = "1",
+                StandardVersion = "1",
+                ApprenticeshipInformation = "Some info",
+                ApprenticeshipWebpage = "https://someapprenticeship.com",
+                DeliveryMethod = "classroom based",
+                DeliveryModes = "employer;day;block",
+                ContactEmail = "someemail@invalid.com",
+                ContactPhone = "0121 111 1111",
+                ContactUrl = "https://someapprenticeship.com",
+                YourVenueReference = "VENUE",
+                SubRegion = null,
+                Radius = "50",
+                NationalDelivery = "no"
+            };
+
+            var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions);
+            var validator = new ApprenticeshipUploadRowValidator(Clock, matchedVenueId: venueId, new List<ParsedCsvApprenticeshipRow>() { parsedRow });
+
+            // Act
+            var validationResult = validator.Validate(ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row, allRegions));
+
+            // Assert
+            Assert.Empty(validationResult.Errors);
+        }
     }
 }
