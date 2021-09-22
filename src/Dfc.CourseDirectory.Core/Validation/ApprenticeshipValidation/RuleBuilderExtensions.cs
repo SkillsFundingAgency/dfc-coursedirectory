@@ -44,25 +44,10 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                 .Apply(Rules.Website)
                     .WithMessageFromErrorCode("APPRENTICESHIP_WEBSITE_FORMAT");
 
-        public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field, IList<ParsedCsvApprenticeshipRow> allRows, Func<T, ApprenticeshipLocationType?> getDeliveryMethod) =>
+        public static void StandardCode<T>(this IRuleBuilderInitial<T, int?> field) =>
             field
-            .NotNull()
-            .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED")
-            .Custom((v, ctx) =>
-             {
-                 var obj = (T)ctx.InstanceToValidate;
-                 var deliveryMethod = getDeliveryMethod(obj);
-                 var count = allRows.Count(c => c.StandardCode == v?.ToString() && c.ResolvedDeliveryMethod == deliveryMethod && (deliveryMethod == ApprenticeshipLocationType.EmployerBased || deliveryMethod == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
-                 if (count > 1)
-                 {
-                     ctx.AddFailure(CreateFailure("APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
-                 }
-
-
-                 ValidationFailure CreateFailure(string errorCode) =>
-                    ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
-             });
-
+                .NotNull()
+                .WithMessageFromErrorCode("APPRENTICESHIP_STANDARD_CODE_REQUIRED");
 
         public static void StandardVersion<T>(this IRuleBuilderInitial<T, int?> field) =>
             field
@@ -364,6 +349,5 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                         ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                 });
         }
-
     }
 }

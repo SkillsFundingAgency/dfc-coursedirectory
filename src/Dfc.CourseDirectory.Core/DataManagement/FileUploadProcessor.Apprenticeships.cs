@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation;
 using FluentValidation;
 
@@ -286,7 +287,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row, providerVenues);
 
-                var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId, allRows.ToList());
+                var validator = new ApprenticeshipUploadRowValidator(matchedVenue?.VenueId, allRows.ToList());
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -652,11 +653,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         internal class ApprenticeshipUploadRowValidator : AbstractValidator<ParsedCsvApprenticeshipRow>
         {
             public ApprenticeshipUploadRowValidator(
-                IClock clock,
                 Guid? matchedVenueId,
                 IList<ParsedCsvApprenticeshipRow> allRows)
             {
-                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode(allRows, x=>x.ResolvedDeliveryMethod);
+                RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode();
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
                 RuleFor(c => c.ApprenticeshipInformation).MarketingInformation();
                 RuleFor(c => c.ApprenticeshipWebpage).Website();
@@ -675,6 +675,29 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     c => c.ResolvedDeliveryMethod,
                     c => c.ResolvedNationalDelivery.HasValue ? c.ResolvedNationalDelivery.Value : false);
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMethod, c => c.YourVenueReference, matchedVenueId);
+
+                RuleFor(c => c).Custom((row, ctx) =>
+                {
+                    if (row.ResolvedDeliveryMethod != ApprenticeshipLocationType.EmployerBased)
+                    {
+                        return;
+                    }
+
+                    // Check there's at most one Employer based row for a given standard+version
+                    var standardCode = int.Parse(row.StandardCode);
+                    var standardVersion = int.Parse(row.StandardVersion);
+
+                    var rowsWithStandard = allRows.Count(r =>
+                        r.ResolvedDeliveryMethod == ApprenticeshipLocationType.EmployerBased &&
+                        int.Parse(r.StandardCode) == standardCode &&
+                        int.Parse(r.StandardVersion) == standardVersion);
+
+                    if (rowsWithStandard > 1)
+                    {
+                        ctx.AddFailure(
+                            ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, "APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
+                    }
+                });
             }
         }
     }
