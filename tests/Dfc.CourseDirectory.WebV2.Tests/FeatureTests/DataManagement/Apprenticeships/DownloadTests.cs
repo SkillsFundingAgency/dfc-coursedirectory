@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
@@ -148,6 +148,49 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
                     SubRegion = string.Empty
                 }
             });
+        }
+
+        [Fact]
+        public async Task Get_ClassroomLocationWithEmptyRadius_HasDefaultRadiusInDownload()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerName: "Test Provider");
+
+            var standard = await TestData.CreateStandard();
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo(), providerVenueRef: "VENUE_REF");
+
+            var apprenticeship = await TestData.CreateApprenticeship(
+                providerId: provider.ProviderId,
+                standard: standard,
+                createdBy: User.ToUserInfo(),
+                locations: new[]
+                {
+                    new CreateApprenticeshipLocation()
+                    {
+                        ApprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBased,
+                        DeliveryModes = new[] { ApprenticeshipDeliveryMode.DayRelease, ApprenticeshipDeliveryMode.BlockRelease },
+                        VenueId = venue.VenueId,
+                        Radius = null
+                    }
+                });
+
+            Clock.UtcNow = new DateTime(2021, 4, 9, 13, 0, 0);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/data-upload/apprenticeships/download?providerId={provider.ProviderId}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Content.Headers.ContentType.MediaType.Should().Be("text/csv");
+            response.Content.Headers.ContentDisposition.FileName.Should().Be("\"Test Provider_apprenticeships_202104091300.csv\"");
+
+            using var responseBody = await response.Content.ReadAsStreamAsync();
+            using var responseBodyReader = new StreamReader(responseBody);
+            using var csvReader = new CsvReader(responseBodyReader, CultureInfo.InvariantCulture);
+
+            var rows = csvReader.GetRecords<CsvApprenticeshipRow>();
+            rows.Single().Radius.Should().Be("30");
         }
     }
 }
