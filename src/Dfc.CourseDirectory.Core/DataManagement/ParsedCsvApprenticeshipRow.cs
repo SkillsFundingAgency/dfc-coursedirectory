@@ -24,18 +24,35 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var parsedRow = row.Adapt(new ParsedCsvApprenticeshipRow());
             parsedRow.ResolvedDeliveryModes = ResolveDeliveryModes(row.DeliveryModes);
             parsedRow.ResolvedDeliveryMethod = ResolveDeliveryMethod(row.DeliveryMethod, parsedRow.ResolvedDeliveryModes);
-            parsedRow.ResolvedNationalDelivery = ResolveNationalDelivery(row.NationalDelivery);
+            parsedRow.ResolvedNationalDelivery = ResolveNationalDelivery(row.NationalDelivery, parsedRow.SubRegion, parsedRow.ResolvedDeliveryMethod);
             parsedRow.ResolvedRadius = ResolveRadius(row.Radius);
             parsedRow.ResolvedSubRegions = ResolveSubRegions(parsedRow.SubRegion, allRegions);
             return parsedRow;
         }
 
-        public static bool? ResolveNationalDelivery(string value) => value?.ToLower() switch
+        public static bool? ResolveNationalDelivery(string value, string subRegions, ApprenticeshipLocationType? deliveryMethod)
         {
-            "yes" => true,
-            "no" => false,
-            _ => null
-        };
+            var normalized = value?.ToLower();
+            var subRegionsWereSpecified = !string.IsNullOrWhiteSpace(subRegions);
+
+            if (normalized == "yes")
+            {
+                return true;
+            }
+
+            if (normalized == "no")
+            {
+                return false;
+            }
+
+            // Treat an empty value as 'no' if sub regions were specified for an Employer-based delivery method
+            if (string.IsNullOrWhiteSpace(value) && subRegionsWereSpecified && deliveryMethod == ApprenticeshipLocationType.EmployerBased)
+            {
+                return false;
+            }
+
+            return null;
+        }
 
         public static int? ResolveRadius(string value)
         {

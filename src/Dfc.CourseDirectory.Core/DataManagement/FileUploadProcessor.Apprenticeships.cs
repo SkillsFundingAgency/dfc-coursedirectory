@@ -666,9 +666,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ResolvedDeliveryModes).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
                 RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.VenueName, matchedVenueId);
-                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod, c => c.ResolvedNationalDelivery);
                 RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(
-                    c => c.ResolvedDeliveryMethod);
+                    c => c.ResolvedDeliveryMethod,
+                    c => c.ResolvedRadius);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
                     c => c.ResolvedDeliveryMethod,

@@ -147,6 +147,12 @@
   <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove National Delivery</value>
   </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED" xml:space="preserve">
+    <value>Select National</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED" xml:space="preserve">
+    <value>Enter national or a radius</value>
+  </data>
   <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
     <value>Enter a Venue reference</value>
   </data>

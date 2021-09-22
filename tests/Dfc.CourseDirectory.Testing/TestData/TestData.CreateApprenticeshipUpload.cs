@@ -270,6 +270,7 @@ namespace Dfc.CourseDirectory.Testing
                 var isValid = !errorsArray.Any();
 
                 var resolvedDeliveryModes = ParsedCsvApprenticeshipRow.ResolveDeliveryModes(deliveryModes);
+                var resolvedDeliveryMethod = ParsedCsvApprenticeshipRow.ResolveDeliveryMethod(deliveryMethod, resolvedDeliveryModes);
 
                 return new UpsertApprenticeshipUploadRowsRecord()
                 {
@@ -294,8 +295,8 @@ namespace Dfc.CourseDirectory.Testing
                     VenueId = venueId,
                     Errors = errors,
                     ResolvedDeliveryModes = resolvedDeliveryModes,
-                    ResolvedDeliveryMethod = ParsedCsvApprenticeshipRow.ResolveDeliveryMethod(deliveryMethod, resolvedDeliveryModes),
-                    ResolvedNationalDelivery = ParsedCsvApprenticeshipRow.ResolveNationalDelivery(nationalDelivery),
+                    ResolvedDeliveryMethod = resolvedDeliveryMethod,
+                    ResolvedNationalDelivery = ParsedCsvApprenticeshipRow.ResolveNationalDelivery(nationalDelivery, subRegions, resolvedDeliveryMethod),
                     ResolvedRadius = ParsedCsvApprenticeshipRow.ResolveRadius(radius),
                     ResolvedSubRegions = ParsedCsvApprenticeshipRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id)
                 };
