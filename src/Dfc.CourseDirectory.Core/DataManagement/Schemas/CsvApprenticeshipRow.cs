@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                     DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(l.ApprenticeshipLocationType),
                     DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(l.DeliveryModes),
                     NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(l.National),
-                    Radius = l.Radius?.ToString() ?? string.Empty,
+                    Radius = (l.Radius ?? (l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased ? 30 : (int?)null))?.ToString() ?? string.Empty,
                     StandardCode = ParsedCsvApprenticeshipRow.MapStandardCode(apprenticeship.Standard.StandardCode),
                     StandardVersion = ParsedCsvApprenticeshipRow.MapStandardVersion(apprenticeship.Standard.Version),
                     SubRegion = ParsedCsvApprenticeshipRow.MapSubRegions(l.SubRegionIds, allRegions),
