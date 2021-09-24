@@ -92,6 +92,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 if (courseRun.DeliveryMode != CourseDeliveryMode.ClassroomBased)
                 {
                     courseRun.VenueId = null;
+                    courseRun.VenueName = null;
+                    courseRun.ProviderVenueRef = null;
                     courseRun.StudyMode = null;
                     courseRun.AttendancePattern = null;
                 }
