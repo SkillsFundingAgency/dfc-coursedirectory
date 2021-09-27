@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Chec
     public class ViewModel : Command
     {
         public IReadOnlyCollection<ViewModelRowGroup> RowGroups { get; set; }
-        public int RowCount { get; set; }
+        public int ApprenticeshipsCount { get; set; }
     }
 
     public class ViewModelRowGroup
@@ -126,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Chec
                             .ToArray()
                     })
                     .ToArray(),
-                RowCount = rows.Count
+                ApprenticeshipsCount = rows.Distinct(r => r.ApprenticeshipId).Count()
             };
         }
     }

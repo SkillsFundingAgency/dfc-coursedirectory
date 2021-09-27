@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 
     public class PublishApprenticeshipUploadResult
     {
-        public int PublishedCount { get; set; }
+        public int PublishedRowCount { get; set; }
+        public int PublishedApprenticeshipsCount { get; set; }
     }
 }

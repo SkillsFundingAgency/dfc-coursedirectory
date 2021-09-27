@@ -218,7 +218,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 await dispatcher.Commit();
 
                 Debug.Assert(publishResult.IsT1);
-                var publishedApprenticeshipsCount = publishResult.AsT1.PublishedCount;
+                var publishedApprenticeshipsCount = publishResult.AsT1.PublishedApprenticeshipsCount;
 
                 return PublishResult.Success(publishedApprenticeshipsCount);
             }
