@@ -245,7 +245,7 @@ namespace Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation
                      {
                          if (!nationalSpecified && !radiusSpecified)
                          {
-                             ctx.AddFailure("ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED");
+                             ctx.AddFailure(CreateFailure("APPRENTICESHIP_NATIONALORRADIUS_REQUIRED"));
                          }
                      }
 
