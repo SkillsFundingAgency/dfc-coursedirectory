@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
         }
 
         [Fact]
-        public void GenerateSearchQuery_WithNullSize_ReturnsQueryWithSize20()
+        public void GenerateSearchQuery_WithNullSize_ReturnsQueryWithSize50()
         {
             var query = new ProviderSearchQuery
             {
@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
 
             var result = query.GenerateSearchQuery();
 
-            result.Options.Size.Should().Be(20);
+            result.Options.Size.Should().Be(50);
         }
     }
 }
