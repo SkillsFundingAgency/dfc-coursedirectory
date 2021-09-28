@@ -66,6 +66,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Apprenticeship information";
                 case "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED":
                 case "APPRENTICESHIP_NATIONALORRADIUS_REQUIRED":
+                case "APPRENTICESHIP_NATIONALDELIVERY_REQUIRED":
                     return "National delivery";
                 case "APPRENTICESHIP_RADIUS_INVALID":
                 case "APPRENTICESHIP_RADIUS_NOT_ALLOWED":
