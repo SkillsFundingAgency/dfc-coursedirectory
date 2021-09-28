@@ -106,13 +106,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -139,13 +139,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -191,13 +191,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 styleFailedReasons: ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded | ApprenticeshipQAProviderStyleFailedReasons.TermCourseUsed,
                 styleComments: "Bad style, yo");
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -242,13 +242,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -281,7 +281,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsTestUser(userType, provider.ProviderId);
 
@@ -292,7 +292,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -324,7 +324,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -335,7 +335,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -363,7 +363,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -373,7 +373,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -415,7 +415,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -446,7 +446,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -458,7 +458,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -489,7 +489,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -499,7 +499,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -530,7 +530,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -541,7 +541,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -572,7 +572,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -584,7 +584,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -615,7 +615,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -626,7 +626,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -657,7 +657,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -671,7 +671,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"/apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"/apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -702,7 +702,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -716,7 +716,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -747,7 +747,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await CreateJourneyInstance(provider.ProviderId);
+            var journeyInstance = await CreateJourneyInstance(provider.ProviderId);
 
             await User.AsHelpdesk();
 
@@ -764,7 +764,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -806,7 +806,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            await CreateJourneyInstance(
+            var journeyInstance = await CreateJourneyInstance(
                 provider.ProviderId,
                 new JourneyModel()
                 {
@@ -822,7 +822,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -857,7 +857,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -897,7 +897,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -944,7 +944,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -991,7 +991,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -1038,7 +1038,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation");
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -1089,7 +1089,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -1136,7 +1136,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation",
+                $"apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -1207,7 +1207,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"/apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation",
+                $"/apprenticeship-qa/provider-assessment/{provider.ProviderId}/confirmation?ffiid={journeyInstance.InstanceId.UniqueKey}",
                 requestContent);
 
             // Assert
@@ -1255,10 +1255,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 return await initializer.Initialize(providerId);
             });
 
+            var uniqueKey = Guid.NewGuid().ToString();
+
             return CreateJourneyInstance(
                 journeyName: "apprenticeship-qa/provider-assessment",
                 configureKeys: keysBuilder => keysBuilder.With("providerId", providerId),
-                state);
+                state,
+                uniqueKey: uniqueKey);
         }
     }
 }

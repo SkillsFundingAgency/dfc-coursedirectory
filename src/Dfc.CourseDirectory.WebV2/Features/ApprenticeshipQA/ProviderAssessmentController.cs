@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
     [JourneyMetadata(
         journeyName: "apprenticeship-qa/provider-assessment",
         stateType: typeof(JourneyModel),
-        appendUniqueKey: false,
+        appendUniqueKey: true,
         requestDataKeys: "providerId")]
     public class ProviderAssessmentController : Controller
     {
