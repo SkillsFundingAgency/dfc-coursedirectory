@@ -17,9 +17,14 @@
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Your venue reference</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.ProviderVenueRef</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="ProviderVenueRef" asp-route-venueId="@Model.VenueId" visually-hidden-text="your venue reference">Change</govuk-summary-list-row-action>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Venue name</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.LocationName</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Name" asp-route-venueId="@Model.VenueId" visually-hidden-text="location name">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="Name" asp-route-venueId="@Model.VenueId" visually-hidden-text="venue name">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Address</govuk-summary-list-row-key>

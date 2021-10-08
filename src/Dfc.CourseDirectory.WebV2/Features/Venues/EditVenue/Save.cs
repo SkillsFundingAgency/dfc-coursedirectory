@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Save
             await _sqlQueryDispatcher.ExecuteQuery(new UpdateVenue()
             {
                 VenueId = request.VenueId,
+                ProviderVenueRef = _journeyInstance.State.ProviderVenueRef,
                 Name = _journeyInstance.State.Name,
                 Email = _journeyInstance.State.Email,
                 Telephone = _journeyInstance.State.PhoneNumber,

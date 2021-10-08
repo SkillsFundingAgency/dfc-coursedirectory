@@ -1,0 +1,26 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef.Command
+@{
+    ViewContext.SetLayoutData(title: "Your venue reference");
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="ProviderVenueRef" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="ProviderVenueRef" asp-route-venueId="@Model.VenueId">
+            <govuk-input asp-for="ProviderVenueRef">
+                <govuk-input-label class="govuk-label--l">Your venue reference</govuk-input-label>
+                <govuk-input-hint>
+                    This information will be used to identify this venue.
+                    <br />
+                    (You must use this reference on a data upload to enable the venue to be linked to courses).
+                </govuk-input-hint>
+            </govuk-input>
+
+            <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
+            <govuk-button asp-action="Details" asp-route-venueId="@Model.VenueId" class="govuk-button--secondary">Cancel</govuk-button>
+        </form>
+    </div>
+</div>

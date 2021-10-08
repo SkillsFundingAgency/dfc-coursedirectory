@@ -21,6 +21,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 UPDATE Pttcd.Venues SET
+    ProviderVenueRef = @ProviderVenueRef,
     VenueName = @Name,
     Email = @Email,
     Telephone = @Telephone,
@@ -39,6 +40,7 @@ AND VenueStatus = {(int)VenueStatus.Live}";
             var paramz = new
             {
                 query.VenueId,
+                query.ProviderVenueRef,
                 query.Name,
                 query.Email,
                 query.Telephone,
