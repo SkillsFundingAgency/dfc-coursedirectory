@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.Testing
             return WithSqlQueryDispatcher(async dispatcher =>
             {
                 var venueId = Guid.NewGuid();
+                providerVenueRef ??= Guid.NewGuid().ToString();
 
                 await dispatcher.ExecuteQuery(new CreateVenue()
                 {

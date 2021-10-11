@@ -113,6 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             // Arrange
             var provider = await TestData.CreateProvider();
 
+            var providerVenueRef = "REF";
             var name = "My Venue";
             var email = "email@example.com";
             var telephone = "020 7946 0000";
@@ -130,6 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
                 $"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
             {
                 Content = new FormUrlEncodedContentBuilder()
+                    .Add("ProviderVenueRef", providerVenueRef)
                     .Add("Name", name)
                     .Add("Email", email)
                     .Add("Telephone", telephone)
