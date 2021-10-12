@@ -156,6 +156,10 @@ SELECT 1 AS Status
 
 SELECT COUNT(*) FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
+AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}
+
+SELECT COUNT(DISTINCT ApprenticeshipId) FROM Pttcd.ApprenticeshipUploadRows
+WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}";
 
             var paramz = new
@@ -171,11 +175,13 @@ AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}";
 
             if (status == 1)
             {
-                var publishedCount = await reader.ReadSingleAsync<int>();
+                var publishedRowCount = await reader.ReadSingleAsync<int>();
+                var publishedApprenticeshipsCount = await reader.ReadSingleAsync<int>();
 
                 return new PublishApprenticeshipUploadResult()
                 {
-                    PublishedCount = publishedCount
+                    PublishedRowCount = publishedRowCount,
+                    PublishedApprenticeshipsCount = publishedApprenticeshipsCount
                 };
             }
             else

@@ -42,9 +42,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 
     public class ViewModel : Command
     {
+        public string ProviderVenueRef { get; set; }
         public string VenueName { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
-        public string PostCode { get; set; }
     }
 
     public class AffectedCourseViewModel
@@ -170,6 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
             {
                 VenueId = offeringInfo.Venue.VenueId,
                 ProviderId = offeringInfo.Venue.ProviderId,
+                ProviderVenueRef = offeringInfo.Venue.ProviderVenueRef,
                 AffectedCourses = offeringInfo.LinkedCourses
                     .Select(c => new AffectedCourseViewModel()
                     {
@@ -205,9 +206,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                     offeringInfo.Venue.AddressLine1,
                     offeringInfo.Venue.AddressLine2,
                     offeringInfo.Venue.Town,
-                    offeringInfo.Venue.County
+                    offeringInfo.Venue.County,
+                    offeringInfo.Venue.Postcode
                 }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray(),
-                PostCode = offeringInfo.Venue.Postcode
             };
         }
 

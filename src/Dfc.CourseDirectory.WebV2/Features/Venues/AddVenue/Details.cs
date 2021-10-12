@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public Guid ProviderId { get; set; }
+        public string ProviderVenueRef { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Telephone { get; set; }
@@ -74,6 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
 
             journeyInstance.UpdateState(state =>
             {
+                state.ProviderVenueRef = request.ProviderVenueRef;
                 state.Name = request.Name;
                 state.Email = request.Email;
                 state.Telephone = request.Telephone;
@@ -99,6 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
 
             return new ViewModel()
             {
+                ProviderVenueRef = journeyInstance.State.ProviderVenueRef,
                 AddressParts = addressParts,
                 Email = journeyInstance.State.Email,
                 Name = journeyInstance.State.Name,
@@ -124,6 +127,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                 Guid providerId,
                 ISqlQueryDispatcher sqlQueryDispatcher)
             {
+                RuleFor(c => c.ProviderVenueRef)
+                    .ProviderVenueRef(providerId, venueId: null, sqlQueryDispatcher);
                 RuleFor(c => c.Name)
                     .VenueName(providerId, venueId: null, sqlQueryDispatcher);
                 RuleFor(c => c.Email).Email();

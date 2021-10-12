@@ -38,6 +38,10 @@
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
+                    <govuk-summary-list-row-key>Your venue reference</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.ProviderVenueRef</govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Venue name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
@@ -49,10 +53,6 @@
                             @part<br />
                         }
                     </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Postcode</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.PostCode</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
             </govuk-summary-list>
 

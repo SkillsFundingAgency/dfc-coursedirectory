@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
     [JourneyState]
     public class EditVenueJourneyModel
     {
+        public string ProviderVenueRef { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
@@ -44,6 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
 
             return new EditVenueJourneyModel()
             {
+                ProviderVenueRef = venue.ProviderVenueRef,
                 Email = venue.Email,
                 Name = venue.VenueName,
                 PhoneNumber = venue.Telephone,

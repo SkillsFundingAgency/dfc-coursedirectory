@@ -4,6 +4,14 @@
     ViewContext.SetLayoutData(title: "Add venue");
 }
 
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="ProviderVenueRef" />
+    <govuk-error-summary-item asp-for="Name" />
+    <govuk-error-summary-item asp-for="Email" />
+    <govuk-error-summary-item asp-for="Telephone" />
+    <govuk-error-summary-item asp-for="Website" />
+</govuk-error-summary>
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Details" asp-all-route-data="RouteValuesHelper.FromQueryString()">
@@ -11,10 +19,20 @@
                 Add venue details
             </h1>
 
-            <p class="govuk-body-l">This information will be linked with the courses you provide.</p>
+            <govuk-input asp-for="ProviderVenueRef" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label class="govuk-label--s">Your venue reference</govuk-input-label>
+                <govuk-input-hint>
+                    This information will be used to identify this venue.
+                    <br />
+                    (You must use this reference on a data upload to enable the venue to be linked to courses).
+                </govuk-input-hint>
+            </govuk-input>
 
             <govuk-input asp-for="Name" input-class="govuk-!-width-two-thirds">
                 <govuk-input-label class="govuk-label--s">Venue name</govuk-input-label>
+                <govuk-input-hint>
+                    This information will be linked with the courses you provide.
+                </govuk-input-hint>
             </govuk-input>
 
             <h2 class="govuk-heading-s govuk-!-margin-bottom-1">Address</h2>
@@ -38,7 +56,7 @@
             </govuk-input>
 
             <govuk-button type="submit" class="govuk-!-margin-right-3">Continue</govuk-button>
-            
+
             @if (ViewBag.FromPublishPage == true)
             {
                 <govuk-button asp-action="CheckAndPublish" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-button--secondary">Cancel</govuk-button>
