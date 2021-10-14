@@ -36,6 +36,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Home
         [AllowDeactivatedProvider]
         public IActionResult Help() => RedirectToAction(nameof(Contact));
 
+        [HttpGet("accessibility")]
+        [AllowDeactivatedProvider]
+        public IActionResult Accessibility() => View();
+
         [HttpGet("privacy")]
         [HttpGet("Home/Privacy", Order = 99)]
         [AllowDeactivatedProvider]

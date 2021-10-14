@@ -24,17 +24,20 @@
                 <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
                     <h2 class="govuk-visually-hidden">Support links</h2>
                     <ul class="govuk-footer__inline-list">
-                        <li class="govuk-footer__inline-list-item">
-                            <a asp-controller="Home" asp-action="Contact" class="govuk-footer__link">Help</a>
-                        </li>
+
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" asp-controller="Cookies" asp-action="Details">
                                 Cookies
                             </a>
                         </li>
+                        <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" asp-controller="Home" asp-action="Accessibility">Accessibility statement</a>
+                        </li>
 
                         <li class="govuk-footer__inline-list-item">
-                            <a target="_blank" class="govuk-footer__link" asp-controller="home" asp-action="privacy">Privacy</a>
+                            <a target="_blank" class="govuk-footer__link" asp-controller="home" asp-action="privacy">
+                                Privacy notice
+                            </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" href=" https://nationalcareers.service.gov.uk/help/terms-and-conditions" target="_blank">
@@ -45,6 +48,9 @@
                             <a class="govuk-footer__link" href="https://nationalcareers.service.gov.uk/help/information-sources" target="_blank">
                                 Information sources
                             </a>
+                        </li>
+                        <li class="govuk-footer__inline-list-item">
+                            <a asp-controller="Home" asp-action="Contact" class="govuk-footer__link">Contact us</a>
                         </li>
                     </ul>
 
