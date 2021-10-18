@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Errors.WhatNext;
@@ -77,7 +78,32 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships
         public IActionResult Formatting() => View();
 
         [HttpGet("check-publish")]
-        public IActionResult CheckAndPublish() => View();
+        public async Task<IActionResult> CheckAndPublish()
+        {
+            var query = new CheckAndPublish.Query();
+
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    hasErrors => RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    command => View(command)));
+        }
+
+        [HttpPost("check-publish")]
+        [JourneyMetadata("PublishApprenticeshipUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
+            await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
+                        RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                        RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+
+        [HttpGet("success")]
+        [RequireJourneyInstance]
+        [JourneyMetadata("PublishApprenticeshipUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm));
 
         [HttpGet("download")]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(

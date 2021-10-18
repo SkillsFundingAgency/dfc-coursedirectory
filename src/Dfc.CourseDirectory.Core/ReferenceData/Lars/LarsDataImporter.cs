@@ -13,7 +13,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
@@ -49,7 +48,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             await DownloadFiles();
 
-            await ImportFrameworksToCosmos();
             await ImportProgTypesToCosmos();
             await ImportSectorSubjectAreaTier1sToCosmos();
             await ImportSectorSubjectAreaTier2sToCosmos();
@@ -94,36 +92,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         entry.ExtractToFile(destination, overwrite: true);
                     }
                 }
-            }
-
-            Task ImportFrameworksToCosmos()
-            {
-                const string csv = "Framework.csv";
-                var records = ReadCsv<FrameworkRow>(csv).ToList();
-
-                var excluded = records.Where(r => !IsValid(r));
-                _logger.LogInformation($"{csv} - Excluded {excluded.Count()} of {records.Count()} rows due to out-of-range {nameof(FrameworkRow.EffectiveTo)}.");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertFrameworks()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records
-                        .Where(IsValid)
-                        .Select(r => new UpsertFrameworksRecord()
-                        {
-                            FrameworkCode = r.FworkCode,
-                            ProgType = r.ProgType,
-                            PathwayCode = r.PwayCode,
-                            PathwayName = r.PathwayName,
-                            NasTitle = r.NASTitle,
-                            EffectiveFrom = r.EffectiveFrom,
-                            EffectiveTo = r.EffectiveTo.Value,
-                            SectorSubjectAreaTier1 = r.SectorSubjectAreaTier1,
-                            SectorSubjectAreaTier2 = r.SectorSubjectAreaTier2
-                        })
-                });
-
-                bool IsValid(FrameworkRow r) => r.EffectiveTo.HasValue && r.EffectiveTo > _clock.UtcNow.Date;
             }
 
             Task ImportProgTypesToCosmos()

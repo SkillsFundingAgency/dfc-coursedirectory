@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Contact us page must be a real webpage, like https://www.provider.com/apprenticeship.
+        ///   Looks up a localized string similar to The contact us webpage must be a real website.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_CONTACTUS_FORMAT {
             get {
@@ -70,7 +70,16 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delivery Mode must be Day Release or Block Release.
+        ///   Looks up a localized string similar to Enter a Delivery method.
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_DELIVERY_METHOD_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_DELIVERY_METHOD_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter day, block or employer for delivery mode.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK {
             get {
@@ -79,7 +88,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delivery mode not allowed.
+        ///   Looks up a localized string similar to You must remove delivery mode.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED {
             get {
@@ -88,7 +97,16 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Email must be a valid email address.
+        ///   Looks up a localized string similar to Standards delivered at an employer’s location cannot be duplicated.  You must remove duplicates and enter national or sub-regions..
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter an email address in the correct format.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_EMAIL_FORMAT {
             get {
@@ -97,7 +115,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter email.
+        ///   Looks up a localized string similar to You must enter an email address.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_EMAIL_REQUIRED {
             get {
@@ -106,7 +124,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apprenticeship information for employers must be {0} characters or fewer.
+        ///   Looks up a localized string similar to Apprenticeship information must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_INFORMATION_MAXLENGTH {
             get {
@@ -133,6 +151,24 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select National.
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter national or a radius.
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a Venue reference.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID {
@@ -147,6 +183,15 @@ namespace Dfc.CourseDirectory.Core {
         public static string ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED {
             get {
                 return ResourceManager.GetString("ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a radius between {0} and {1}.
+        /// </summary>
+        public static string ERROR_APPRENTICESHIP_RADIUS_INVALID {
+            get {
+                return ResourceManager.GetString("ERROR_APPRENTICESHIP_RADIUS_INVALID", resourceCulture);
             }
         }
         
@@ -214,7 +259,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Telephone must be a valid UK phone number.
+        ///   Looks up a localized string similar to Enter a telephone number in the correct format.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_TELEPHONE_FORMAT {
             get {
@@ -223,7 +268,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter telephone.
+        ///   Looks up a localized string similar to Enter a UK telephone number.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_TELEPHONE_REQUIRED {
             get {
@@ -277,7 +322,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Website must be a real webpage, like https://www.provider.com/apprenticeship.
+        ///   Looks up a localized string similar to The website must be a real webpage.
         /// </summary>
         public static string ERROR_APPRENTICESHIP_WEBSITE_FORMAT {
             get {

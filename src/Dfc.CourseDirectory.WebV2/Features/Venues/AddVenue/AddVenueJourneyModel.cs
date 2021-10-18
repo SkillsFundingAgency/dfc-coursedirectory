@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
     public class AddVenueJourneyModel
     {
         public AddVenueCompletedStages ValidStages { get; set; }
+        public string ProviderVenueRef { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Telephone { get; set; }

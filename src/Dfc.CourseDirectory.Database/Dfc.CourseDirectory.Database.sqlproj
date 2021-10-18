@@ -308,6 +308,8 @@
     <Build Include="Pttcd\Tables\ApprenticeshipUploadRowSubRegions.sql" />
     <Build Include="Pttcd\Types\ApprenticeshipUploadRowSubRegionsTable.sql" />
     <Build Include="Pttcd\Types\StandardCodesTable.sql" />
+    <Build Include="Pttcd\Types\ApprenticeshipLocationsTable.sql" />
+    <Build Include="Pttcd\Types\ApprenticeshipLocationSubRegionsTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

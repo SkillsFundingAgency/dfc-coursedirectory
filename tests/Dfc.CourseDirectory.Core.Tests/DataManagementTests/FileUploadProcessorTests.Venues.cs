@@ -205,7 +205,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "name");
+            var venue1 = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "name", providerVenueRef: string.Empty);
 
             var rows = new[] { new CsvVenueRow() { VenueName = "NAME" } }.ToDataUploadRowCollection();
 

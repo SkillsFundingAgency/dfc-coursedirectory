@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper;
 using Dfc.CourseDirectory.FindAnApprenticeshipApi.Interfaces.Helper;
@@ -66,9 +67,10 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi
                         s.GetRequiredService<IConfiguration>().GetValue<string>("AzureWebJobsStorage"),
                         "fatp-providersexport")));
 
-            services.AddScoped<ICosmosDbHelper, CosmosDbHelper>();
             services.AddScoped<IDASHelper, DASHelper>();
             services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
+
+            services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
             #endregion
         }

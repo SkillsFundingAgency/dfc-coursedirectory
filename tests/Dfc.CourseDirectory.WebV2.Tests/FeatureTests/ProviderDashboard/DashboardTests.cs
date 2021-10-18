@@ -282,33 +282,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         }
 
         [Fact]
-        public async Task Notification_WithBulkUploadReadyToGoLiveApprenticeshipsCountGreaterThanZero_DisplaysApprenticeshipsBulkUploadSuccessfulNotification()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships);
-
-            var standard = await TestData.CreateStandard(123, 456, "TestStandard");
-
-            await TestData.CreateApprenticeship(
-                provider.ProviderId,
-                standard,
-                User.ToUserInfo(),
-                ApprenticeshipStatus.BulkUploadReadyToGoLive);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            doc.GetElementByTestId("apprenticeshipsBulkUploadSuccessfulNotification").Should().NotBeNull();
-        }
-
-        [Fact]
         public async Task ProviderTypeNone_RendersNewProviderMessage()
         {
             // Arrange

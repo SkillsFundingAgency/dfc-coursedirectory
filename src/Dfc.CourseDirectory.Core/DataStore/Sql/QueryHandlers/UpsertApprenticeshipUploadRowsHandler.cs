@@ -30,6 +30,7 @@ WHEN NOT MATCHED THEN
       LastUpdated,
       LastValidated,
       ApprenticeshipId,
+      ApprenticeshipLocationId,
       StandardCode,
       StandardVersion,
       ApprenticeshipInformation,
@@ -58,6 +59,7 @@ WHEN NOT MATCHED THEN
         ISNULL(source.LastUpdated, source.LastValidated),
         source.LastValidated,
         source.ApprenticeshipId,
+        source.ApprenticeshipLocationId,
         source.StandardCode,
         source.StandardVersion,
         source.ApprenticeshipInformation,
@@ -85,6 +87,7 @@ WHEN MATCHED THEN UPDATE SET
     LastUpdated = ISNULL(source.LastUpdated, target.LastValidated),
     LastValidated = source.LastValidated,
     ApprenticeshipId = source.ApprenticeshipId,
+    ApprenticeshipLocationId = source.ApprenticeshipLocationId,
     StandardCode = source.StandardCode,
     StandardVersion = source.StandardVersion,
     ApprenticeshipInformation = source.ApprenticeshipInformation,
@@ -119,10 +122,10 @@ WHEN NOT MATCHED BY SOURCE AND target.ApprenticeshipUploadId = @ApprenticeshipUp
 
 
 SELECT
-    RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId,
+    RowNumber, IsValid, Errors AS ErrorList, LastUpdated, LastValidated, ApprenticeshipId, ApprenticeshipLocationId,
     StandardCode, StandardVersion, ApprenticeshipInformation, ApprenticeshipWebpage,ContactEmail,
     ContactPhone, ContactUrl, DeliveryMethod, VenueName,YourVenueReference, Radius, DeliveryModes, NationalDelivery,
-    SubRegions, VenueId
+    SubRegions, VenueId, ResolvedDeliveryMethod
 FROM Pttcd.ApprenticeshipUploadRows
 WHERE ApprenticeshipUploadId = @ApprenticeshipUploadId
 AND ApprenticeshipUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -154,6 +157,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("LastUpdated", typeof(DateTime));
                 table.Columns.Add("LastValidated", typeof(DateTime));
                 table.Columns.Add("ApprenticeshipId", typeof(Guid));
+                table.Columns.Add("ApprenticeshipLocationId", typeof(Guid));
                 table.Columns.Add("StandardCode", typeof(int));
                 table.Columns.Add("StandardVersion", typeof(int));
                 table.Columns.Add("ApprenticeshipInformation", typeof(string));
@@ -183,6 +187,7 @@ ORDER BY RowNumber";
                         query.UpdatedOn,
                         query.ValidatedOn,
                         record.ApprenticeshipId,
+                        record.ApprenticeshipLocationId,
                         record.StandardCode,
                         record.StandardVersion,
                         record.ApprenticeshipInformation,

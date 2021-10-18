@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using Dfc.CourseDirectory.FindAnApprenticeshipApi.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
 {
@@ -10,23 +10,23 @@ namespace Dfc.CourseDirectory.FindAnApprenticeshipApi.Helper
     {
         public static int ToAddressHash(this ApprenticeshipLocation location)
         {
-            var propertiesToHash = new List<string> {location.Name};
+            var propertiesToHash = new List<string> {location.Venue?.VenueName};
 
             if (location.National.HasValue)
             {
                 propertiesToHash.Add($"{location.National}");
             }
 
-            if (location.Regions != null && location.Regions.Length > 0)
+            if (location.SubRegionIds != null && location.SubRegionIds.Count > 0)
             {
-                propertiesToHash.Add(string.Join(",", location.Regions));
+                propertiesToHash.Add(string.Join(",", location.SubRegionIds));
             }
 
-            if (location.Address != null)
+            if (location.Venue != null)
             {
-                propertiesToHash.Add($"{location.Address?.Latitude}");
-                propertiesToHash.Add($"{location.Address?.Longitude}");
-                propertiesToHash.Add($"{location.Address?.Postcode}");
+                propertiesToHash.Add($"{location.Venue.Latitude}");
+                propertiesToHash.Add($"{location.Venue.Longitude}");
+                propertiesToHash.Add($"{location.Venue.Postcode}");
             }
 
             return GenerateHash(string.Join(", ", propertiesToHash));

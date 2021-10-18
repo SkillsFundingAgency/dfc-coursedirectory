@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             SubRegion = row.SubRegions,
             Errors = string.Join(
                 "\n",
-                row.Errors.Select(errorCode => ErrorRegistry.All[errorCode].GetMessage()))
+                row.Errors.Select(errorCode => ErrorRegistry.All[errorCode].GetMessage()).Distinct())
         };
     }
 }

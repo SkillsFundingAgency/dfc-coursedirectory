@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipDetails()
         {
-            var query = new ApprenticeshipDetails.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ApprenticeshipDetails.Query();
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -63,7 +63,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipDetails(ApprenticeshipDetails.Command command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -82,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocations()
         {
-            var query = new ApprenticeshipEmployerLocations.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ApprenticeshipEmployerLocations.Query();
             return await _mediator.SendAndMapResponse(
                 query,
                 response => View(response));
@@ -93,7 +92,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocations(ApprenticeshipEmployerLocations.Command command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -113,7 +111,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions()
         {
-            var query = new ApprenticeshipEmployerLocationsRegions.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ApprenticeshipEmployerLocationsRegions.Query();
             return await _mediator.SendAndMapResponse(query, command => View(command));
         }
 
@@ -123,7 +121,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions(
             ApprenticeshipEmployerLocationsRegions.Command command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -142,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipLocations()
         {
-            var query = new ApprenticeshipLocations.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ApprenticeshipLocations.Query();
             return await _mediator.SendAndMapResponse(
                 query,
                 response => View(response));
@@ -153,7 +150,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipLocations(ApprenticeshipLocations.Command command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -170,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipSummary()
         {
-            var query = new ApprenticeshipSummary.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ApprenticeshipSummary.Query();
             return await _mediator.SendAndMapResponse(
                 query,
                 response => response.Match(
@@ -183,7 +179,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ApprenticeshipSummaryConfirmation()
         {
-            var command = new ApprenticeshipSummary.CompleteCommand() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var command = new ApprenticeshipSummary.CompleteCommand();
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match(
@@ -267,7 +263,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetail()
         {
-            var query = new ProviderDetail.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ProviderDetail.Query();
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -276,7 +272,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetail(ProviderDetail.Command command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -291,7 +286,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetailConfirmation()
         {
-            var query = new ProviderDetail.ConfirmationQuery() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ProviderDetail.ConfirmationQuery();
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -300,7 +295,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [AuthorizeApprenticeshipQASubmission]
         public async Task<IActionResult> ProviderDetailConfirmation(ProviderDetail.ConfirmationCommand command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 success => Flow.State.ApprenticeshipId.HasValue ?
@@ -317,7 +311,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             [LocalUrl] string returnUrl,
             HidePassedNotification.Command command)
         {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(command,
                 success => Redirect(returnUrl));
         }

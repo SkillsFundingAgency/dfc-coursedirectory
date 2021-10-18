@@ -15,7 +15,10 @@
                 <div class="pttcd-provider-dashboard__card__content">
                     <h2 class="govuk-heading-m">Courses</h2>
                     <p class="govuk-body-s">You have <strong data-testid="PublishedCourseCount">@Model.PublishedCourseCount</strong> published @string.Format("course{0}", Model.PublishedCourseCount > 1 || Model.PublishedCourseCount == 0 ? "s" : string.Empty)</p>
-                    <p class="govuk-body-s">You have <strong data-testid="unpublished-course-count">@Model.UnpublishedCourseCount</strong> unpublished  @string.Format("course{0}", Model.UnpublishedCourseCount > 1 || Model.UnpublishedCourseCount == 0 ? "s" : string.Empty)</p>
+                    @if (Model.UnpublishedCourseCount > 0)
+                    {
+                        <p class="govuk-body-s">You have <strong data-testid="unpublished-course-count">@Model.UnpublishedCourseCount</strong> unpublished  @string.Format("course{0}", Model.UnpublishedCourseCount > 1 || Model.UnpublishedCourseCount == 0 ? "s" : string.Empty)</p>
+                    }
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
@@ -109,26 +112,6 @@
                             </li>
                         </ul>
                     }
-                    else
-                    {
-                        <ul class="govuk-list pttcd-list--small">
-                            <li>
-                                <a asp-controller="BulkUpload" asp-action="Apprenticeships" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                    Upload new apprenticeship data
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="BlobStorage" asp-action="GetCurrentApprenticeshipsTemplateFile" class="govuk-link">
-                                    Download your published apprenticeship data (CSV)
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="BlobStorage" asp-action="GetApprenticeshipBulkUploadTemplateFile" class="govuk-link">
-                                    Download apprenticeship data template (CSV)
-                                </a>
-                            </li>
-                        </ul>
-                    }
                 </div>
             </div>
         </div>
@@ -141,7 +124,10 @@
                 <div class="pttcd-provider-dashboard__card__content">
                     <h2 class="govuk-heading-m">Venues</h2>
                     <p class="govuk-body-s">You have <strong data-testid="PublishedVenueCount">@Model.PublishedVenueCount</strong> published @string.Format("venue{0}", Model.PublishedVenueCount > 1 || Model.PublishedVenueCount == 0 ? "s" : string.Empty)</p>
-                    <p class="govuk-body-s">You have <strong data-testid="UnpublishedVenueCount">@Model.UnpublishedVenueCount</strong> unpublished  @string.Format("venue{0}", Model.UnpublishedVenueCount > 1 || Model.UnpublishedVenueCount == 0 ? "s" : string.Empty)</p>
+                    @if (Model.UnpublishedVenueCount > 0)
+                    {
+                        <p class="govuk-body-s">You have <strong data-testid="UnpublishedVenueCount">@Model.UnpublishedVenueCount</strong> unpublished  @string.Format("venue{0}", Model.UnpublishedVenueCount > 1 || Model.UnpublishedVenueCount == 0 ? "s" : string.Empty)</p>
+                    }
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">

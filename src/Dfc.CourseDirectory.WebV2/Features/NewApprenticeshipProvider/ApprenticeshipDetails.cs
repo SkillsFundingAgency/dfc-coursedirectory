@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
@@ -18,12 +17,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class Query : IRequest<ViewModel>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<CommandResponse>
     {
-        public Guid ProviderId { get; set; }
         public string MarketingInformation { get; set; }
         public string Website { get; set; }
         public string ContactTelephone { get; set; }
@@ -33,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class ViewModel : Command
     {
-        public StandardOrFramework StandardOrFramework { get; set; }
+        public Standard Standard { get; set; }
     }
 
     public class Handler :
@@ -49,15 +46,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            if (_flow.State.ApprenticeshipStandardOrFramework == null)
+            if (_flow.State.ApprenticeshipStandard == null)
             {
                 throw new InvalidStateException();
             }
 
             var vm = new ViewModel()
             {
-                ProviderId = request.ProviderId,
-                StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework,
+                Standard = _flow.State.ApprenticeshipStandard,
                 MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
                 Website = _flow.State.ApprenticeshipContactWebsite,
                 ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
@@ -69,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
         public async Task<CommandResponse> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (_flow.State.ApprenticeshipStandardOrFramework == null)
+            if (_flow.State.ApprenticeshipStandard == null)
             {
                 throw new InvalidStateException();
             }
@@ -80,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             if (!validationResult.IsValid)
             {
                 var vm = request.Adapt<ViewModel>();
-                vm.StandardOrFramework = _flow.State.ApprenticeshipStandardOrFramework;
+                vm.Standard = _flow.State.ApprenticeshipStandard;
 
                 return new ModelWithErrors<Command>(vm, validationResult);
             }

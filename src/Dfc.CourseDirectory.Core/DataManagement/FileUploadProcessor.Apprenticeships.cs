@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ApprenticeshipValidation;
 using FluentValidation;
 
@@ -47,10 +49,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var apprenticeshipUploadId = Guid.NewGuid();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
-                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
-                
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
+
                 // Check there isn't an existing unprocessed upload for this provider
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
@@ -102,7 +104,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetApprenticeshipUploadProcessing()
                 {
@@ -129,12 +131,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var rowsCollection = CreateApprenticeshipDataUploadRowInfoCollection();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var venueUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
                 var providerId = venueUpload.ProviderId;
 
-                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
                 await ValidateApprenticeshipUploadRows(dispatcher, apprenticeshipUploadId, providerId, rowsCollection);
 
                 await dispatcher.Commit();
@@ -150,13 +152,76 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             ApprenticeshipDataUploadRowInfoCollection CreateApprenticeshipDataUploadRowInfoCollection()
             {
-                var apprenticeshipId = Guid.NewGuid();
-                var rowInfos = new List<ApprenticeshipDataUploadRowInfo>();
+                // N.B. It's important we maintain ordering here; RowNumber needs to match the input
+
+                var grouped = CsvApprenticeshipRow.GroupRows(rows);
+                var groupApprenticeshipIds = grouped.Select(g => (ApprenticeshipId: Guid.NewGuid(), Rows: g)).ToArray();
+
+                var rowInfos = new List<ApprenticeshipDataUploadRowInfo>(rows.Count);
+
                 foreach (var row in rows)
                 {
+                    var apprenticeshipId = groupApprenticeshipIds.Single(g => g.Rows.Contains(row)).ApprenticeshipId;
+                    row.ContactPhone = NormalizePhoneNumber(row.ContactPhone);
+
                     rowInfos.Add(new ApprenticeshipDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, apprenticeshipId));
                 }
+
                 return new ApprenticeshipDataUploadRowInfoCollection(rowInfos);
+            }
+        }
+
+        public async Task<PublishResult> PublishApprenticeshipUploadForProvider(Guid providerId, UserInfo publishedBy)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+            {
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
+
+                var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+                if (apprenticeshipUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.NoUnpublishedApprenticeshipUpload);
+                }
+
+                if (apprenticeshipUpload.UploadStatus.IsUnprocessed())
+                {
+                    throw new InvalidUploadStatusException(
+                        apprenticeshipUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                if (apprenticeshipUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var uploadStatus = await RevalidateApprenticeshipUploadIfRequired(dispatcher, apprenticeshipUpload.ApprenticeshipUploadId);
+
+                if (uploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return PublishResult.UploadHasErrors();
+                }
+
+                var publishedOn = _clock.UtcNow;
+
+                var publishResult = await dispatcher.ExecuteQuery(new PublishApprenticeshipUpload()
+                {
+                    ApprenticeshipUploadId = apprenticeshipUpload.ApprenticeshipUploadId,
+                    PublishedBy = publishedBy,
+                    PublishedOn = publishedOn
+                });
+
+                await dispatcher.Commit();
+
+                Debug.Assert(publishResult.IsT1);
+                var publishedApprenticeshipsCount = publishResult.AsT1.PublishedApprenticeshipsCount;
+
+                return PublishResult.Success(publishedApprenticeshipsCount);
             }
         }
 
@@ -169,7 +234,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             async Task<Guid> GetApprenticeshipUploadId()
             {
-                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider() { ProviderId = providerId });
 
                 if (apprenticeshipUpload == null)
@@ -181,22 +246,21 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        protected virtual IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdates(Guid courseUploadId) =>
+        protected virtual IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdates(Guid apprenticeshipUploadId) =>
             Observable.Interval(_statusUpdatesPollInterval)
-            .SelectMany(_ => Observable.FromAsync(() => GetApprenticeshipUploadStatus(courseUploadId)));
-
+                .SelectMany(_ => Observable.FromAsync(() => GetApprenticeshipUploadStatus(apprenticeshipUploadId)));
 
         protected async Task<UploadStatus> GetApprenticeshipUploadStatus(Guid apprenticeshipUploadId)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
-            var courseUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
+            var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetApprenticeshipUpload() { ApprenticeshipUploadId = apprenticeshipUploadId });
 
-            if (courseUpload == null)
+            if (apprenticeshipUpload == null)
             {
                 throw new ArgumentException("Specified apprenticeship upload does not exist.", nameof(apprenticeshipUploadId));
             }
 
-            return courseUpload.UploadStatus;
+            return apprenticeshipUpload.UploadStatus;
         }
 
         // internal for testing
@@ -207,16 +271,25 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             ApprenticeshipDataUploadRowInfoCollection rows)
         {
             var rowsAreValid = true;
+
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+
             var allRegions = await _regionCache.GetAllRegions();
+
             var upsertRecords = new List<UpsertApprenticeshipUploadRowsRecord>();
+            var allRows = rows.Select(x => ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(x.Data, allRegions));
 
             foreach (var row in rows)
             {
-                var rowNumber = row.RowNumber;;
+                var rowNumber = row.RowNumber;
+                var apprenticeshipLocationId = Guid.NewGuid();
+
                 var parsedRow = ParsedCsvApprenticeshipRow.FromCsvApprenticeshipRow(row.Data, allRegions);
+
                 var matchedVenue = FindVenue(row, providerVenues);
-                var validator = new ApprenticeshipUploadRowValidator(_clock, matchedVenue?.VenueId);
+
+                var validator = new ApprenticeshipUploadRowValidator(matchedVenue?.VenueId, allRows.ToList());
+
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
@@ -228,6 +301,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     IsValid = rowIsValid,
                     Errors = errors,
                     ApprenticeshipId = row.ApprenticeshipId,
+                    ApprenticeshipLocationId = apprenticeshipLocationId,
                     StandardCode = int.Parse(parsedRow.StandardCode),
                     StandardVersion = int.Parse(parsedRow.StandardVersion),
                     ApprenticeshipInformation = parsedRow.ApprenticeshipInformation,
@@ -235,12 +309,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ContactEmail = parsedRow.ContactEmail,
                     ContactPhone = parsedRow.ContactPhone,
                     ContactUrl = parsedRow.ContactUrl,
-                    DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod),
+                    DeliveryMethod = ParsedCsvApprenticeshipRow.MapDeliveryMethod(parsedRow.ResolvedDeliveryMethod) ?? parsedRow.DeliveryMethod,
                     VenueName = matchedVenue?.VenueName ?? parsedRow.VenueName,
                     YourVenueReference = parsedRow.YourVenueReference,
-                    Radius = parsedRow.Radius, 
-                    DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(parsedRow.ResolvedDeliveryModes),  
-                    NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery), 
+                    Radius = parsedRow.Radius,
+                    DeliveryModes = ParsedCsvApprenticeshipRow.MapDeliveryModes(parsedRow.ResolvedDeliveryModes) ?? parsedRow.DeliveryModes,
+                    NationalDelivery = ParsedCsvApprenticeshipRow.MapNationalDelivery(parsedRow.ResolvedNationalDelivery) ?? parsedRow.NationalDelivery,
                     SubRegions = parsedRow.SubRegion,
                     VenueId = matchedVenue?.VenueId,
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
@@ -277,9 +351,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
-                await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
+                await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
+
                 var apprenticeshipUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedApprenticeshipUploadForProvider()
                 {
                     ProviderId = providerId
@@ -363,7 +438,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
 
 
-       internal async Task<(int[] Missing, (int StandardCode, int StandardVersion, int RowNumber)[] Invalid)> ValidateStandardCodes(Stream stream)
+        internal async Task<(int[] Missing, (int StandardCode, int StandardVersion, int RowNumber)[] Invalid)> ValidateStandardCodes(Stream stream)
         {
             CheckStreamIsProcessable(stream);
 
@@ -371,7 +446,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
@@ -433,7 +508,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<(IReadOnlyCollection<ApprenticeshipUploadRow> Rows, UploadStatus UploadStatus)> GetApprenticeshipUploadRowsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveApprenticeshipUploadLockForProvider(providerId, dispatcher);
 
@@ -473,7 +548,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task DeleteApprenticeshipUploadForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
 
@@ -579,8 +654,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         internal class ApprenticeshipUploadRowValidator : AbstractValidator<ParsedCsvApprenticeshipRow>
         {
             public ApprenticeshipUploadRowValidator(
-                IClock clock,
-                Guid? matchedVenueId)
+                Guid? matchedVenueId,
+                IList<ParsedCsvApprenticeshipRow> allRows)
             {
                 RuleFor(c => c.StandardCode).Transform(x => int.TryParse(x, out int standardCode) ? (int?)standardCode : null).StandardCode();
                 RuleFor(c => c.StandardVersion).Transform(x => int.TryParse(x, out int standardVersion) ? (int?)standardVersion : null).StandardVersion();
@@ -592,17 +667,38 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ResolvedDeliveryModes).DeliveryMode(c => c.ResolvedDeliveryMethod);
                 RuleFor(c => c.ResolvedDeliveryMethod).DeliveryMethod();
                 RuleFor(c => c.YourVenueReference).YourVenueReference(c => c.ResolvedDeliveryMethod, c => c.VenueName, matchedVenueId);
-                RuleFor(c => c.VenueName).Venue(c => c.ResolvedDeliveryMethod);
-                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod);
-                RuleFor(c => c.ResolvedSubRegions).SubRegions(
-                    subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
-                    c => c.ResolvedDeliveryMethod);
+                RuleFor(c => c.ResolvedRadius).Radius(c => c.ResolvedDeliveryMethod, c => c.ResolvedNationalDelivery);
                 RuleFor(c => c.ResolvedNationalDelivery).NationalDelivery(
-                    c => c.ResolvedDeliveryMethod);
+                    c => c.ResolvedDeliveryMethod,
+                    c => c.ResolvedRadius);
                 RuleFor(c => c.ResolvedSubRegions).SubRegions(
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegion),
-                    c => c.ResolvedDeliveryMethod);
+                    c => c.ResolvedDeliveryMethod,
+                    c => c.ResolvedNationalDelivery.HasValue ? c.ResolvedNationalDelivery.Value : false);
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMethod, c => c.YourVenueReference, matchedVenueId);
+
+                RuleFor(c => c).Custom((row, ctx) =>
+                {
+                    if (row.ResolvedDeliveryMethod != ApprenticeshipLocationType.EmployerBased)
+                    {
+                        return;
+                    }
+
+                    // Check there's at most one Employer based row for a given standard+version
+                    var standardCode = int.Parse(row.StandardCode);
+                    var standardVersion = int.Parse(row.StandardVersion);
+
+                    var rowsWithStandard = allRows.Count(r =>
+                        r.ResolvedDeliveryMethod == ApprenticeshipLocationType.EmployerBased &&
+                        int.Parse(r.StandardCode) == standardCode &&
+                        int.Parse(r.StandardVersion) == standardVersion);
+
+                    if (rowsWithStandard > 1)
+                    {
+                        ctx.AddFailure(
+                            ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, "APPRENTICESHIP_DUPLICATE_STANDARDCODE"));
+                    }
+                });
             }
         }
     }

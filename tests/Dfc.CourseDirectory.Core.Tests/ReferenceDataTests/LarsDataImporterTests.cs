@@ -42,7 +42,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                Fixture.DatabaseFixture.InMemoryDocumentStore.Frameworks.All.Count.Should().Be(0); // All expired on 31 July 2020
                 Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count.Should().Be(28);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count.Should().Be(17);
                 Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count.Should().Be(67);

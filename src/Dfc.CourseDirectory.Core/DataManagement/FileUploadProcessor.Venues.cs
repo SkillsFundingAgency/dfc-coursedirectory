@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     {
         public async Task DeleteVenueUploadForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<UploadStatus> DeleteVenueUploadRowForProvider(Guid providerId, int rowNumber)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<(IReadOnlyCollection<VenueUploadRow> Rows, UploadStatus UploadStatus)> GetVenueUploadRowsForProvider(Guid providerId)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
@@ -146,7 +146,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             async Task<Guid> GetVenueUploadId()
             {
-                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
                 var venueUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedVenueUploadForProvider() { ProviderId = providerId });
 
                 if (venueUpload == null)
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task ProcessVenueFile(Guid venueUploadId, Stream stream)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetVenueUploadProcessing()
                 {
@@ -186,13 +186,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
                 rows = await csvReader.GetRecordsAsync<CsvVenueRow>().ToListAsync();
+
+                foreach (var row in rows)
+                {
+                    row.Telephone = NormalizePhoneNumber(row.Telephone);
+                }
             }
 
             var rowsCollection = new VenueDataUploadRowInfoCollection(
                 lastRowNumber: rows.Count + 1,
                 rows: rows.Select((r, i) => new VenueDataUploadRowInfo(r, rowNumber: i + 2, isSupplementary: false)));
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
                 var providerId = venueUpload.ProviderId;
@@ -215,7 +220,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<PublishResult> PublishVenueUploadForProvider(Guid providerId, UserInfo publishedBy)
         {
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
@@ -290,7 +295,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var venueUploadId = Guid.NewGuid();
 
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
@@ -346,7 +351,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public async Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
 
             await AcquireExclusiveVenueUploadLockForProvider(providerId, dispatcher);
 
@@ -396,7 +401,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         protected async Task<UploadStatus> GetVenueUploadStatus(Guid venueUploadId)
         {
-            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
             var venueUpload = await dispatcher.ExecuteQuery(new GetVenueUpload() { VenueUploadId = venueUploadId });
 
             if (venueUpload == null)

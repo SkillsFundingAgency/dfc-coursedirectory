@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
@@ -14,12 +13,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 {
     public class Query : IRequest<Command>
     {
-        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
-        public Guid ProviderId { get; set; }
         public bool? National { get; set; }
     }
 
@@ -40,8 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             var command = new Command()
             {
-                National = _flow.State.ApprenticeshipIsNational,
-                ProviderId = request.ProviderId
+                National = _flow.State.ApprenticeshipIsNational
             };
             return Task.FromResult(command);
         }
@@ -69,8 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         {
             var locationType = _flow.State.ApprenticeshipLocationType;
 
-            if (locationType != ApprenticeshipLocationType.EmployerBased &&
-                locationType != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+            if (locationType?.HasFlag(ApprenticeshipLocationType.EmployerBased) != true)
             {
                 throw new InvalidStateException();
             }

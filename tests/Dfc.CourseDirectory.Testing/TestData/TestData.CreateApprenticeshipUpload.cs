@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -12,7 +13,7 @@ namespace Dfc.CourseDirectory.Testing
 {
     public partial class TestData
     {
-        public async Task<(ApprenticeshipUpload apprenticeshipUpload, ApprenticeshipUploadRow[] Rows)> CreateApprenticeshipUpload(
+        public async Task<(ApprenticeshipUpload ApprenticeshipUpload, ApprenticeshipUploadRow[] Rows)> CreateApprenticeshipUpload(
             Guid providerId,
             UserInfo createdBy,
             UploadStatus uploadStatus,
@@ -48,7 +49,7 @@ namespace Dfc.CourseDirectory.Testing
             return (courseUpload, rows);
         }
 
-        public Task<(ApprenticeshipUpload apprenticeshipUpload, ApprenticeshipUploadRow[] Rows)> CreateApprenticeshipUpload(
+        public Task<(ApprenticeshipUpload ApprenticeshipUpload, ApprenticeshipUploadRow[] Rows)> CreateApprenticeshipUpload(
             Guid providerId,
             UserInfo createdBy,
             DateTime? createdOn = null,
@@ -102,7 +103,8 @@ namespace Dfc.CourseDirectory.Testing
                         IsValid = isValid.Value
                     });
 
-                    var rowBuilder = new ApprenticeshipUploadRowBuilder();
+                    var allRegions = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetAllRegions()));
+                    var rowBuilder = new ApprenticeshipUploadRowBuilder(allRegions);
 
                     if (configureRows != null)
                     {
@@ -175,6 +177,12 @@ namespace Dfc.CourseDirectory.Testing
         public class ApprenticeshipUploadRowBuilder
         {
             private readonly List<UpsertApprenticeshipUploadRowsRecord> _records = new List<UpsertApprenticeshipUploadRowsRecord>();
+            private readonly IEnumerable<Region> _allRegions;
+
+            public ApprenticeshipUploadRowBuilder(IEnumerable<Region> allRegions)
+            {
+                _allRegions = allRegions;
+            }
 
             public ApprenticeshipUploadRowBuilder AddRow(int standardCode, int standardVersion, Action<UpsertApprenticeshipUploadRowsRecord> configureRecord)
             {
@@ -186,6 +194,7 @@ namespace Dfc.CourseDirectory.Testing
 
             public ApprenticeshipUploadRowBuilder AddRow(
                 Guid apprenticeshipId,
+                Guid apprenticeshipLocationId,
                 int standardCode,
                 int standardVersion,
                 string apprenticeshipInformation,
@@ -200,26 +209,31 @@ namespace Dfc.CourseDirectory.Testing
                 string deliveryMode,
                 string nationalDelivery,
                 string subRegions,
+                Guid? venueId,
                 IEnumerable<string> errors = null)
             {
                 var record = CreateRecord(
-                apprenticeshipId,
-                standardCode,
-                standardVersion,
-                apprenticeshipInformation,
-                apprenticeshipWebpage,
-                contactEmail,
-                contactPhone,
-                contactUrl,
-                deliveryMethod,
-                venue,
-                yourVenueReference,
-                radius,
-                deliveryMode,
-                nationalDelivery,
-                subRegions,
-                errors);
+                    apprenticeshipId,
+                    apprenticeshipLocationId,
+                    standardCode,
+                    standardVersion,
+                    apprenticeshipInformation,
+                    apprenticeshipWebpage,
+                    contactEmail,
+                    contactPhone,
+                    contactUrl,
+                    deliveryMethod,
+                    venue,
+                    yourVenueReference,
+                    radius,
+                    deliveryMode,
+                    nationalDelivery,
+                    subRegions,
+                    venueId,
+                    errors);
+
                 _records.Add(record);
+
                 return this;
             }
 
@@ -234,6 +248,7 @@ namespace Dfc.CourseDirectory.Testing
 
             private UpsertApprenticeshipUploadRowsRecord CreateRecord(
                 Guid apprenticeshipId,
+                Guid apprenticeshipLocationId,
                 int standardCode,
                 int standardVersion,
                 string apprenticeshipInformation,
@@ -248,16 +263,21 @@ namespace Dfc.CourseDirectory.Testing
                 string deliveryModes,
                 string nationalDelivery,
                 string subRegions,
+                Guid? venueId,
                 IEnumerable<string> errors = null)
             {
                 var errorsArray = errors?.ToArray() ?? Array.Empty<string>();
                 var isValid = !errorsArray.Any();
+
+                var resolvedDeliveryModes = ParsedCsvApprenticeshipRow.ResolveDeliveryModes(deliveryModes);
+                var resolvedDeliveryMethod = ParsedCsvApprenticeshipRow.ResolveDeliveryMethod(deliveryMethod, resolvedDeliveryModes);
 
                 return new UpsertApprenticeshipUploadRowsRecord()
                 {
                     RowNumber = _records.Count + 2,
                     IsValid = isValid,
                     ApprenticeshipId = apprenticeshipId,
+                    ApprenticeshipLocationId = apprenticeshipLocationId,
                     StandardCode = standardCode,
                     StandardVersion = standardVersion,
                     ApprenticeshipInformation = apprenticeshipInformation,
@@ -272,7 +292,13 @@ namespace Dfc.CourseDirectory.Testing
                     DeliveryModes = deliveryModes,
                     NationalDelivery = nationalDelivery,
                     SubRegions = subRegions,
-                    Errors = errors
+                    VenueId = venueId,
+                    Errors = errors,
+                    ResolvedDeliveryModes = resolvedDeliveryModes,
+                    ResolvedDeliveryMethod = resolvedDeliveryMethod,
+                    ResolvedNationalDelivery = ParsedCsvApprenticeshipRow.ResolveNationalDelivery(nationalDelivery, subRegions, resolvedDeliveryMethod),
+                    ResolvedRadius = ParsedCsvApprenticeshipRow.ResolveRadius(radius),
+                    ResolvedSubRegions = ParsedCsvApprenticeshipRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id)
                 };
             }
 
@@ -280,20 +306,22 @@ namespace Dfc.CourseDirectory.Testing
             {
                 return CreateRecord(
                     apprenticeshipId: Guid.NewGuid(),
+                    apprenticeshipLocationId: Guid.NewGuid(),
                     standardCode: standardCode,
                     standardVersion: standardVersion,
                     apprenticeshipInformation: "Some Apprenticeship Information",
-                    apprenticeshipWebpage: "https://someapprenticeshipsite.com",
-                    contactEmail: "",
-                    contactPhone: "",
-                    contactUrl: "",
-                    deliveryModes: "1",
-                    venue: "Some venue",
-                    yourVenueReference: "Some Reference",
-                    radius: "1",
-                    deliveryMethod: "1",
-                    nationalDelivery: "1",
-                    subRegions: "");
+                    apprenticeshipWebpage: "provider.com/apprenticeship",
+                    contactEmail: "info@provider.com",
+                    contactPhone: "01234 567890",
+                    contactUrl: "provider.com",
+                    deliveryModes: "employer",
+                    venue: "",
+                    yourVenueReference: "",
+                    radius: "",
+                    deliveryMethod: "employer based",
+                    nationalDelivery: "yes",
+                    subRegions: "",
+                    venueId: null);
             }
         }
     }

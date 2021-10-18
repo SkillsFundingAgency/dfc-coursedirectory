@@ -1,15 +1,14 @@
-﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
-using Moq;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider;
+using OneOf;
+using OneOf.Types;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
@@ -35,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -72,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -107,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -159,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -194,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -233,7 +232,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -273,7 +272,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -311,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -369,7 +368,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -380,7 +379,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            SqlQuerySpy.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.ApprenticeshipId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -410,7 +409,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -422,7 +421,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            SqlQuerySpy.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.ApprenticeshipId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -434,20 +433,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
-                q.ApprenticeshipTitle == "My standard" &&
-                q.ApprenticeshipType == ApprenticeshipType.StandardCode &&
+            SqlQuerySpy.VerifyQuery<CreateApprenticeship, Success>(q =>
                 q.ContactEmail == "guy@provider.com" &&
                 q.ContactTelephone == "01234 5678902" &&
                 q.ContactWebsite == "http://provider.com" &&
-                q.CreatedByUser.UserId == User.UserId &&
-                q.CreatedDate == Clock.UtcNow &&
+                q.CreatedBy.UserId == User.UserId &&
+                q.CreatedOn == Clock.UtcNow &&
                 q.MarketingInformation == "My apprenticeship" &&
                 q.ProviderId == provider.ProviderId &&
-                q.StandardOrFramework.Standard.StandardCode == standardCode &&
-                q.StandardOrFramework.Standard.Version == standardVersion &&
-                q.Url == "http://provider.com/apprenticeship" &&
-                q.Status == 2)));
+                q.Standard.StandardCode == standardCode &&
+                q.Standard.Version == standardVersion &&
+                q.ApprenticeshipWebsite == "http://provider.com/apprenticeship");
 
             SqlQuerySpy.VerifyQuery<CreateApprenticeshipQASubmission, int>(q =>
                 q.Apprenticeships.Single().ApprenticeshipId == apprenticeshipId &&
@@ -482,7 +478,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -494,7 +490,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            SqlQuerySpy.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.ApprenticeshipId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -506,10 +502,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
+            SqlQuerySpy.VerifyQuery<CreateApprenticeship, Success>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
                 q.ApprenticeshipLocations.Single().National == true &&
-                q.ApprenticeshipLocations.Single().VenueId == null)));
+                q.ApprenticeshipLocations.Single().VenueId == null);
         }
 
         [Fact]
@@ -526,7 +522,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -542,7 +538,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            SqlQuerySpy.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.ApprenticeshipId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -554,13 +550,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
+            SqlQuerySpy.VerifyQuery<CreateApprenticeship, Success>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
                 q.ApprenticeshipLocations.Single().DeliveryModes.Single() == ApprenticeshipDeliveryMode.EmployerAddress &&
                 q.ApprenticeshipLocations.Single().National == false &&
                 q.ApprenticeshipLocations.Single().VenueId == null &&
-                q.ApprenticeshipLocations.Single().Regions.Contains("E06000001") &&
-                q.ApprenticeshipLocations.Single().Regions.Contains("E10000009"))));
+                q.ApprenticeshipLocations.Single().SubRegionIds.Contains("E06000001") &&
+                q.ApprenticeshipLocations.Single().SubRegionIds.Contains("E10000009"));
         }
 
         [Fact]
@@ -579,7 +575,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -595,7 +591,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            SqlQuerySpy.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.ApprenticeshipId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -607,11 +603,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
+            SqlQuerySpy.VerifyQuery<CreateApprenticeship, Success>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
                 q.ApprenticeshipLocations.Single().DeliveryModes.Single() == ApprenticeshipDeliveryMode.BlockRelease &&
                 q.ApprenticeshipLocations.Single().Radius == 5 &&
-                q.ApprenticeshipLocations.Single().VenueId == venueId)));
+                q.ApprenticeshipLocations.Single().VenueId == venueId);
         }
 
         [Fact]
@@ -630,7 +626,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -651,7 +647,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
-            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+            SqlQuerySpy.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.ApprenticeshipId);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -663,7 +659,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
+            SqlQuerySpy.VerifyQuery<CreateApprenticeship, Success>(q =>
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
                     l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.BlockRelease &&
@@ -674,8 +670,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.EmployerAddress &&
                     l.National == false &&
                     l.VenueId == null &&
-                    l.Regions.Contains("E06000001") &&
-                    l.Regions.Contains("E10000009")))));
+                    l.SubRegionIds.Contains("E06000001") &&
+                    l.SubRegionIds.Contains("E10000009")));
         }
 
         [Fact]
@@ -704,15 +700,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 marketingInformation: marketingInfo,
                 locations: new[]
                 {
-                    CreateApprenticeshipLocation.CreateRegions(regions)
-                })).Id;
+                    CreateApprenticeshipLocation.CreateRegionalEmployerBased(regions)
+                })).ApprenticeshipId;
             var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("Provider 1 rocks");
-            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipStandard(standard);
             flowModel.SetApprenticeshipDetails(
                 marketingInformation: "My apprenticeship",
                 website: "http://provider.com/apprenticeship",
@@ -743,7 +739,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<UpdateApprenticeship>(q =>
+            SqlQuerySpy.VerifyQuery<UpdateApprenticeship, OneOf<NotFound, Success>>(q =>
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
                     l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.BlockRelease &&
@@ -754,8 +750,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     l.DeliveryModes.Single() == ApprenticeshipDeliveryMode.EmployerAddress &&
                     l.National == false &&
                     l.VenueId == null &&
-                    l.Regions.Contains("E06000001") &&
-                    l.Regions.Contains("E10000009")))));
+                    l.SubRegionIds.Contains("E06000001") &&
+                    l.SubRegionIds.Contains("E10000009")));
         }
     }
 }

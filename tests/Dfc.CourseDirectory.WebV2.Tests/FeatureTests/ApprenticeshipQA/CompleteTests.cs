@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using Moq;
 using OneOf;
 using OneOf.Types;
 using Xunit;
@@ -34,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 provider.ProviderId,
@@ -96,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
 
             if (status != ApprenticeshipQAStatus.NotStarted)
             {
@@ -144,7 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
 
             await TestData.CreateApprenticeshipQASubmission(
                 provider.ProviderId,
@@ -181,7 +180,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).Id;
+            var apprenticeshipId = (await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo())).ApprenticeshipId;
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 provider.ProviderId,
@@ -218,9 +217,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             }));
             Assert.Equal(expectedStatus, newStatus);
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateApprenticeshipStatus, OneOf<NotFound, Success>>(
-                q => q.ApprenticeshipId == apprenticeshipId && q.ProviderUkprn == provider.Ukprn && q.Status == 1,
-                expectApprenticeshipToBeMadeLive ? Times.Once() : Times.Never());
+            if (expectApprenticeshipToBeMadeLive)
+            {
+                SqlQuerySpy.VerifyQuery<PublishApprenticeship, OneOf<NotFound, Success>>(
+                    q => q.ApprenticeshipId == apprenticeshipId && q.PublishedBy.UserId == User.UserId && q.PublishedOn == Clock.UtcNow);
+            }
         }
     }
 }

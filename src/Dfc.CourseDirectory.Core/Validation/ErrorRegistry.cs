@@ -86,6 +86,8 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("APPRENTICESHIP_VENUE_NOT_ALLOWED"),
             new Error("APPRENTICESHIP_SUBREGIONS_INVALID"),
             new Error("APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED"),
+            new Error("APPRENTICESHIP_NATIONALDELIVERY_REQUIRED"),
+            new Error("APPRENTICESHIP_NATIONALORRADIUS_REQUIRED"),
             new Error("APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED"),
             new Error("APPRENTICESHIP_SUBREGIONS_REQUIRED"),
             new Error("APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED"),
@@ -97,13 +99,16 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("APPRENTICESHIP_STANDARD_CODE_REQUIRED"),
             new Error("APPRENTICESHIP_STANDARD_VERSION_REQUIRED"),
             new Error("APPRENTICESHIP_TELEPHONE_REQUIRED"),
-            new Error("APPRENTICESHIP_TELEPHONE_FORMAT"),
             new Error("APPRENTICESHIP_EMAIL_FORMAT"),
             new Error("APPRENTICESHIP_EMAIL_REQUIRED"),
             new Error("APPRENTICESHIP_WEBSITE_FORMAT"),
             new Error("APPRENTICESHIP_CONTACTUS_FORMAT"),
             new Error("APPRENTICESHIP_INFORMATION_REQUIRED"),
-            new Error("APPRENTICESHIP_INFORMATION_MAXLENGTH", ApprenticeshipConstants.MarketingInformationStrippedMaxLength)
+            new Error("APPRENTICESHIP_TELEPHONE_FORMAT"),
+            new Error("APPRENTICESHIP_INFORMATION_MAXLENGTH", ApprenticeshipConstants.MarketingInformationStrippedMaxLength),
+            new Error("APPRENTICESHIP_RADIUS_INVALID", ApprenticeshipConstants.RadiusRangeMin,ApprenticeshipConstants.RadiusRangeMax),
+            new Error("APPRENTICESHIP_DUPLICATE_STANDARDCODE")
+
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 

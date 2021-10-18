@@ -23,8 +23,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
     {
         public Guid VenueId { get; set; }
         public string VenueName { get; set; }
+        public string ProviderVenueRef { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
-        public string PostCode { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -42,19 +42,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
 
             return new ViewModel
             {
-                Venues = results.Select(r => new VenueViewModel
-                {
-                    VenueId = r.VenueId,
-                    VenueName = r.VenueName,
-                    AddressParts = new[]
+                Venues = results
+                    .Select(r => new VenueViewModel
                     {
-                        r.AddressLine1,
-                        r.AddressLine2,
-                        r.Town,
-                        r.County
-                    }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray(),
-                    PostCode = r.Postcode
-                }).ToArray()
+                        VenueId = r.VenueId,
+                        VenueName = r.VenueName,
+                        ProviderVenueRef = r.ProviderVenueRef,
+                        AddressParts = new[]
+                        {
+                            r.AddressLine1,
+                            r.AddressLine2,
+                            r.Town,
+                            r.County,
+                            r.Postcode
+                        }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray()
+                    })
+                    .OrderBy(v => v.VenueName)
+                    .ToArray()
             };
         }
     }

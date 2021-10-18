@@ -44,6 +44,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task DeleteApprenticeshipUploadForProvider(Guid providerId);
         Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId);
         Task<(IReadOnlyCollection<ApprenticeshipUploadRow> Rows, UploadStatus UploadStatus)> GetApprenticeshipUploadRowsForProvider(Guid providerId);
-
+        Task<PublishResult> PublishApprenticeshipUploadForProvider(Guid providerId, UserInfo publishedBy);
     }
 }

@@ -148,7 +148,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.Decorate<IFeatureFlagProvider, DataManagementFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
             services.AddBehaviors(typeof(ServiceCollectionExtensions).Assembly);
-            services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
+            services.AddSingleton<IStandardsCache, StandardsCache>();
             services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();

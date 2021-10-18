@@ -118,22 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ERROR_APPRENTICESHIP_CONTACTUS_FORMAT" xml:space="preserve">
-    <value>Contact us page must be a real webpage, like https://www.provider.com/apprenticeship</value>
+    <value>The contact us webpage must be a real website</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK" xml:space="preserve">
-    <value>Delivery Mode must be Day Release or Block Release</value>
+    <value>Enter day, block or employer for delivery mode</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED" xml:space="preserve">
-    <value>Delivery mode not allowed</value>
+    <value>You must remove delivery mode</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_DELIVERY_METHOD_REQUIRED" xml:space="preserve">
+    <value>Enter a Delivery method</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE" xml:space="preserve">
+    <value>Standards delivered at an employer’s location cannot be duplicated.  You must remove duplicates and enter national or sub-regions.</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_EMAIL_FORMAT" xml:space="preserve">
-    <value>Email must be a valid email address</value>
+    <value>Enter an email address in the correct format</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_EMAIL_REQUIRED" xml:space="preserve">
-    <value>Enter email</value>
+    <value>You must enter an email address</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_INFORMATION_MAXLENGTH" xml:space="preserve">
-    <value>Apprenticeship information for employers must be {0} characters or fewer</value>
+    <value>Apprenticeship information must be {0} characters or fewer</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_INFORMATION_REQUIRED" xml:space="preserve">
     <value>Enter apprenticeship information for employers</value>
@@ -141,11 +147,20 @@
   <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove National Delivery</value>
   </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED" xml:space="preserve">
+    <value>Select National</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED" xml:space="preserve">
+    <value>Enter national or a radius</value>
+  </data>
   <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
     <value>Enter a Venue reference</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove Venue Reference</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_RADIUS_INVALID" xml:space="preserve">
+    <value>You must enter a radius between {0} and {1}</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove Radius</value>
@@ -169,10 +184,10 @@
     <value>Select at least one sub region</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_TELEPHONE_FORMAT" xml:space="preserve">
-    <value>Telephone must be a valid UK phone number</value>
+    <value>Enter a telephone number in the correct format</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_TELEPHONE_REQUIRED" xml:space="preserve">
-    <value>Enter telephone</value>
+    <value>Enter a UK telephone number</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_VENUE_NAME_INVALID" xml:space="preserve">
     <value>You must enter a Venue that is in Publish to the course directory</value>
@@ -190,7 +205,7 @@
     <value>Select a venue</value>
   </data>
   <data name="ERROR_APPRENTICESHIP_WEBSITE_FORMAT" xml:space="preserve">
-    <value>Website must be a real webpage, like https://www.provider.com/apprenticeship</value>
+    <value>The website must be a real webpage</value>
   </data>
   <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
     <value>You must remove attendance pattern</value>

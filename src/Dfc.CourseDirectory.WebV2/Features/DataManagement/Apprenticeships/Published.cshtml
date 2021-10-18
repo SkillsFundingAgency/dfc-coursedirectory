@@ -1,0 +1,26 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Apprenticeships.Published.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Apprenticeship data published");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel heading-level="1">
+            <govuk-panel-title>
+                <span data-testid="PublishedCount">@Model.PublishedCount</span>
+                apprenticeships have been published
+            </govuk-panel-title>
+        </govuk-panel>
+
+        <p class="govuk-body">
+            Your apprenticeship will be available on Find an apprenticeship training provider for employers who want to take on an apprentice.
+        </p>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+        <ul class="govuk-list">
+            <li><a asp-controller="ProviderApprenticeships" asp-action="Index" class="govuk-link">View and edit apprenticeships</a></li>
+            <li><a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to data upload</a></li>
+            <li><a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to the home screen</a></li>
+        </ul>
+    </div>
+</div>

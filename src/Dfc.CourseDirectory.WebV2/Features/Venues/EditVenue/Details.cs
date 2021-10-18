@@ -17,7 +17,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Details
     public class ViewModel
     {
         public Guid VenueId { get; set; }
-        public string LocationName { get; set; }
+        public string ProviderVenueRef { get; set; }
+        public string VenueName { get; set; }
         public IReadOnlyCollection<string> AddressParts { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
@@ -49,9 +50,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Details
 
             var vm = new ViewModel()
             {
+                ProviderVenueRef = state.ProviderVenueRef,
                 AddressParts = addressParts,
                 Email = state.Email,
-                LocationName = state.Name,
+                VenueName = state.Name,
                 PhoneNumber = !string.IsNullOrEmpty(state.PhoneNumber) ?
                     PhoneNumberHelper.FormatPhoneNumber(state.PhoneNumber) :
                     null,

@@ -99,6 +99,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
                     success => RedirectToAction(nameof(Details), new { venueId })));
         }
 
+        [HttpGet("ref")]
+        public async Task<IActionResult> ProviderVenueRef(ProviderVenueRef.Query request) =>
+            await _mediator.SendAndMapResponse(request, vm => View(vm));
+
+        [HttpPost("ref")]
+        public async Task<IActionResult> ProviderVenueRef(Guid venueId, ProviderVenueRef.Command request)
+        {
+            request.VenueId = venueId;
+            return await _mediator.SendAndMapResponse(
+                request,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(Details), new { venueId })));
+        }
+
         [HttpGet("website")]
         public async Task<IActionResult> Website(Website.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
