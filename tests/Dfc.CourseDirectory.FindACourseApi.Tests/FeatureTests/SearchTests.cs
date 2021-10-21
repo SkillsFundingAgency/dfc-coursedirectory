@@ -83,6 +83,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             // Includes 'T Level'
             yield return new object[] { "T Level", "\"T Level\"" };
+            yield return new object[] { "T-Level", "\"T-Level\"" };
             yield return new object[] { "T Level computer science", "\"T Level\" AND (computer* || computer~ || science* || science~)" };
 
             // Combinations...

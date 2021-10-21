@@ -383,7 +383,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             // Special case 'T Level' - if specified it must be found in the document
             var requireTLevel = false;
-            var tLevelMatch = new Regex(@"\bT Level\b", RegexOptions.IgnoreCase).Match(remaining);
+            var tLevelMatch = new Regex(@"\b(T Level|T-Level)\b", RegexOptions.IgnoreCase).Match(remaining);
+            var tLevelMatch1 = new Regex(@"\bT Level\b", RegexOptions.IgnoreCase).Match(remaining);
+            var tLevelMatch2 = new Regex(@"\bT-Level\b", RegexOptions.IgnoreCase).Match(remaining);
             if (tLevelMatch.Success)
             {
                 requireTLevel = true;
@@ -401,7 +403,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (requireTLevel)
             {
-                result = "\"T Level\"" + (terms.Any() ? $" AND ({result})" : "");
+                if(tLevelMatch1.Success)
+                    result = "\"T Level\"" + (terms.Any() ? $" AND ({result})" : "");
+                else if(tLevelMatch2.Success)
+                    result = "\"T-Level\"" + (terms.Any() ? $" AND ({result})" : "");
             }
 
             return result;
