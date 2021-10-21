@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public string NotionalNVQLevelv2 { get; set; }
         public string CourseDescription { get; set; }
         public string CourseName { get; set; }
-        public CourseDeliveryMode DeliveryMode { get; set; }
+        public CourseDeliveryMode? DeliveryMode { get; set; }
         public bool? FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
         public string Cost { get; set; }

@@ -143,7 +143,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             {
                 // TODO Validate AttendancePatterns? Consider using enum instead of int
 
-                filters.Add($"({string.Join(" or ", request.AttendancePatterns.Select(ap => $"{nameof(FindACourseOffering.AttendancePattern)} eq {ap}"))})");
+                filters.Add($"({string.Join(" or ", request.AttendancePatterns.Select(ap => $"{nameof(FindACourseOffering.AttendancePattern)} eq {ap}"))} or {nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.ClassroomBased})");
             }
 
             if (request.QualificationLevels?.Any() ?? false)
@@ -170,7 +170,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (request.StudyModes?.Any() ?? false)
             {
-                filters.Add($"({string.Join(" or ", request.StudyModes.Select(sm => $"{nameof(FindACourseOffering.StudyMode)} eq {sm}"))})");
+                filters.Add($"({string.Join(" or ", request.StudyModes.Select(sm => $"{nameof(FindACourseOffering.StudyMode)} eq {sm}"))} or {nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.ClassroomBased})");
             }
 
             if (request.DeliveryModes?.Any() ?? false)
@@ -247,7 +247,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         CourseRunId = i.Record.CourseRunId,
                         CourseText = HtmlEncode(NormalizeCourseDataEncodedString(i.Record.CourseDescription)),
                         DeliveryMode = ((int)i.Record.DeliveryMode).ToString(),
-                        DeliveryModeDescription = i.Record.DeliveryMode.ToDescription(),
+                        DeliveryModeDescription = (i.Record.DeliveryMode.GetValueOrDefault(0)).ToDescription(),
                         Distance = GetDistanceFromLatLngForResult(i),
                         DurationUnit = i.Record.DurationUnit ?? 0,
                         DurationValue = i.Record.DurationValue,
