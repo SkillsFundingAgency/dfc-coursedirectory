@@ -194,7 +194,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 TrimOptions = TrimOptions.Trim,
-                WhiteSpaceChars = new[] { ' ', '\t', '\r', '\n' }
+                WhiteSpaceChars = new[] { ' ' }
             };
 
             return new CsvReader(streamReader, configuration);
