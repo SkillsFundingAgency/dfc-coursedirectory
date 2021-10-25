@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportStandardsToSql();
             await ImportStandardSectorCodesToSql();
 
-            IEnumerable<T> ReadCsv<T>(string fileName, Action<IReaderConfiguration> configureReader = null)
+            IEnumerable<T> ReadCsv<T>(string fileName, Action<CsvContext> configureContext = null)
             {
                 var assm = typeof(LarsDataImporter).Assembly;
                 var filePath = Path.Join(extractDirectory, fileName);
@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 using (var streamReader = new StreamReader(stream))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                 {
-                    configureReader?.Invoke(csvReader.Configuration);
+                    configureContext?.Invoke(csvReader.Context);
 
                     return csvReader.GetRecords<T>().ToList();
                 }

@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             csvReader.Read();
             csvReader.ReadHeader();
-            csvReader.Context.HeaderRecord.Should().BeEquivalentTo(new[]
+            csvReader.Context.Reader.HeaderRecord.Should().BeEquivalentTo(new[]
             {
                 "LARS_QAN",
                 "WHO_THIS_COURSE_IS_FOR",

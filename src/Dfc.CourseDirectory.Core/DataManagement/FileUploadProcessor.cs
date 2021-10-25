@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -87,12 +88,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     await csvReader.ReadAsync();
                     csvReader.ReadHeader();
 
-                    var expectedHeaders = csvReader.Context.ReaderConfiguration.AutoMap<TRow>().MemberMaps
+                    var expectedHeaders = csvReader.Context.AutoMap<TRow>().MemberMaps
                         .Where(m => !m.Data.Ignore)
                         .Select(m => m.Data.Names.Single())
                         .ToArray();
 
-                    var missingHeaders = expectedHeaders.Except(csvReader.Context.HeaderRecord).ToArray();
+                    var missingHeaders = expectedHeaders.Except(csvReader.Context.Reader.HeaderRecord).ToArray();
                     if (missingHeaders.Length != 0)
                     {
                         return (FileMatchesSchemaResult.InvalidHeader, missingHeaders);
@@ -187,6 +188,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
+
+        private static CsvReader CreateCsvReader(StreamReader streamReader)
+        {
+            var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                TrimOptions = TrimOptions.Trim,
+                WhiteSpaceChars = new[] { ' ', '\t', '\r', '\n' }
+            };
+
+            return new CsvReader(streamReader, configuration);
+        }
+
 
         private static string NormalizePhoneNumber(string value)
         {
