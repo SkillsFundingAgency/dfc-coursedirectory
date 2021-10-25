@@ -381,6 +381,17 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 remaining = remaining.Remove(m.Index, m.Length);
             }
 
+            // Special case 'T Level' - if specified it must be found in the document
+            var requireTLevel = false;
+            var tLevelMatch = new Regex(@"\b(T Level|T-Level)\b", RegexOptions.IgnoreCase).Match(remaining);
+            var tLevelMatch1 = new Regex(@"\bT Level\b", RegexOptions.IgnoreCase).Match(remaining);
+            var tLevelMatch2 = new Regex(@"\bT-Level\b", RegexOptions.IgnoreCase).Match(remaining);
+            if (tLevelMatch.Success)
+            {
+                requireTLevel = true;
+                remaining = remaining.Remove(tLevelMatch.Index, tLevelMatch.Length);
+            }
+
             // Any remaining terms should be made prefix terms or fuzzy terms
             terms
                 .AddRange(remaining.Split(' ', StringSplitOptions.RemoveEmptyEntries)
@@ -388,7 +399,17 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 .Select(EscapeSearchText)
                 .SelectMany(t => new[] { $"{t}*", $"{t}~" }));
 
-            return string.Join(" || ", terms);
+            var result = string.Join(" || ", terms);
+
+            if (requireTLevel)
+            {
+                if(tLevelMatch1.Success)
+                    result = "\"T Level\"" + (terms.Any() ? $" AND ({result})" : "");
+                else if(tLevelMatch2.Success)
+                    result = "\"T-Level\"" + (terms.Any() ? $" AND ({result})" : "");
+            }
+
+            return result;
 
             string CombineWords(string text, string sep) =>
                 string.Join(sep, text.Split(' ', StringSplitOptions.RemoveEmptyEntries));
