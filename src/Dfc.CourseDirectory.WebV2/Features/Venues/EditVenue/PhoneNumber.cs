@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.PhoneNumber
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _journeyInstance.UpdateState(state => state.PhoneNumber = request.PhoneNumber.Trim() ?? string.Empty);
+            _journeyInstance.UpdateState(state => state.PhoneNumber = request.PhoneNumber?.Trim() ?? string.Empty);
 
             return new Success();
         }
