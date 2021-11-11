@@ -1,0 +1,41 @@
+[
+	{
+    "name": "findacourse",
+    "fields": [
+      { "name": "Id", "type": "Edm.String", "facetable": false, "filterable": true, "key": true, "sortable": false },
+      { "name": "OfferingType", "type": "Edm.Int32", "facetable": false, "filterable": true, "key": false, "sortable": false },
+      { "name": "CourseId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "CourseRunId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "Live", "type": "Edm.Boolean", "facetable": false, "filterable": true, "searchable": false, "sortable": false, "retrievable": false },
+      { "name": "UpdatedOn", "type": "Edm.DateTimeOffset", "facetable": false, "filterable": false, "searchable": false, "sortable": true },
+      { "name": "ProviderDisplayName", "type": "Edm.String", "facetable": true, "filterable": false, "searchable": true, "sortable": false },
+      { "name": "ProviderUkprn", "type": "Edm.Int32", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "QualificationCourseTitle", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": true, "sortable": false },
+      { "name": "LearnAimRef", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "NotionalNVQLevelv2", "type": "Edm.String", "facetable": true, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "CourseDescription", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": true, "sortable": false },
+      { "name": "CourseName", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": true, "sortable": false },
+      { "name": "DeliveryMode", "type": "Edm.Int32", "facetable": true, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "FlexibleStartDate", "type": "Edm.Boolean", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "StartDate", "type": "Edm.DateTimeOffset", "facetable": false, "filterable": true, "searchable": false, "sortable": true },
+      { "name": "Cost", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "CostDescription", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "DurationUnit", "type": "Edm.Int32", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "DurationValue", "type": "Edm.Int32", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "StudyMode", "type": "Edm.Int32", "facetable": true, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "AttendancePattern", "type": "Edm.Int32", "facetable": true, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "National", "type": "Edm.Boolean", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "VenueName", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "VenueAddress", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "VenueTown", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": true, "sortable": false },
+      { "name": "Position", "type": "Edm.GeographyPoint", "facetable": false, "filterable": true, "searchable": false, "sortable": true },
+      { "name": "RegionName", "type": "Edm.String", "facetable": true, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "ScoreBoost", "type": "Edm.Double", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "TLevelId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "TLevelLocationId", "type": "Edm.String", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "CampaignCodes", "type": "Collection(Edm.String)", "facetable": false, "filterable": true, "searchable": false, "sortable": false },
+      { "name": "CourseDataIsHtmlEncoded", "type": "Edm.Boolean", "facetable": false, "filterable": false, "searchable": false, "sortable": false },
+      { "name": "CourseRunDataIsHtmlEncoded", "type": "Edm.Boolean", "facetable": false, "filterable": false, "searchable": false, "sortable": false }
+    ]
+  }
+]

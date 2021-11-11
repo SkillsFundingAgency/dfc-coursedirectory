@@ -1,0 +1,183 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix for the function app resources, in the form dfc-env-proj-fnapp"
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "metadata": {
+        "description": "App service plan to run the function app under"
+      }
+    },
+    "appServicePlanResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource group the app service plan is in"
+      }
+    },
+    "cosmosAccountEndpoint": {
+      "type": "string",
+      "metadata": {
+        "description": "URL to the cosmos db account"
+      }
+    },
+    "cosmosAccountAccessKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Access key for the cosmos db account"
+      }
+    },
+    "environmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "EnvironmentName to be used in the EnvironmentSetting__EnvironmentName config setting.  This may be different to the Azure DevOps environment"
+      }
+    },
+    "sqlCourseDirectoryConnectionString": {
+      "type": "string",
+      "metadata": {
+        "description": "ADO.NET connection string for the course directory database"
+      }
+    },
+    "searchName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Search service"
+      }
+    },
+    "searchAdminKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin key for updating search (REST API)"
+      }
+    },
+    "searchQueryKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Query key for reading search (REST API)"
+      }
+    },
+    "providerPortalApplicationInsights": {
+      "type": "string",
+      "metadata": {
+        "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
+      }
+    }
+  },
+  "variables": {
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+    "webAppName": "[concat(parameters('webAppPrefix'),'-as')]",
+    "appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "ppapiAppInsights",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[variables('appInsightName')]"
+          },
+          "attachedService": {
+            "value": "[variables('webAppName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ppapiAppService",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "dependsOn": [
+        "ppapiAppInsights"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[variables('webAppName')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('appServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[parameters('appServicePlanResourceGroup')]"
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
+              },
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
+              },
+              {
+                "name": "CosmosDbSettings__EndpointUri",
+                "value": "[parameters('cosmosAccountEndpoint')]"
+              },
+              {
+                "name": "CosmosDbSettings__PrimaryKey",
+                "value": "[parameters('cosmosAccountAccessKey')]"
+              },
+              {
+                "name": "AzureSearchUrl",
+                "value": "[concat('https://', parameters('searchName'), '.search.windows.net')]"
+              },
+              {
+                "name": "AzureSearchQueryKey",
+                "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "EnvironmentSettings__EnvironmentName",
+                "value": "[parameters('environmentName')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "DefaultConnection",
+                "type": "SQLServer",
+                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
+              }
+            ]
+          },
+          "deployStagingSlot": {
+            "value": true
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "webAppName": {
+      "type": "string",
+      "value": "[variables('webAppName')]"
+    },
+    "appInsightName": {
+      "type": "string",
+      "value": "[variables('appInsightName')]"
+    },
+    "appInsightInstrumentationKey": {
+      "type": "string",
+      "value": "[reference('ppapiAppInsights').outputs.InstrumentationKey.value]"
+    }
+  }
+}
