@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Name
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _journeyInstance.UpdateState(state => state.Name = request.Name);
+            _journeyInstance.UpdateState(state => state.Name = request.Name?.Trim());
 
             return new Success();
         }

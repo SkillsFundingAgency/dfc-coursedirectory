@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             // We also don't expect massive files here so reading everything into memory is ok.
             List<CsvVenueRow> rows;
             using (var streamReader = new StreamReader(stream))
-            using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            using (var csvReader = CreateCsvReader(streamReader))
             {
                 rows = await csvReader.GetRecordsAsync<CsvVenueRow>().ToListAsync();
 

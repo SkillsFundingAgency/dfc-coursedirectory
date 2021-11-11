@@ -14,15 +14,15 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
     public static class RuleBuilderExtensions
     {
         private static readonly Regex _countyPattern = new Regex(
-            @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$",
+            @"^[a-zA-Z\.\-',]+(?: [a-zA-Z\.\-',]+)*$",
             RegexOptions.Compiled);
 
         private static readonly Regex _townPattern = new Regex(
-            @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$",
+            @"^[a-zA-Z\.\-',]+(?: [a-zA-Z\.\-',]+)*$",
             RegexOptions.Compiled);
 
         public static Regex AddressLinePattern { get; } = new Regex(
-            @"^[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$",
+            @"^[a-zA-Z0-9\.\-',]+(?: [a-zA-Z0-9\.\-',]+)*$",
             RegexOptions.Compiled);
 
         public static void AddressLine1<T>(this IRuleBuilderInitial<T, string> field)
@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
                 // i.e. Postcode must exist in our Postcode info table (so we can resolve a lat/lng)
-                .Must(postcode => postcode == null || (Models.Postcode.TryParse(postcode, out var pc) && getPostcodeInfo(pc) != null))  
+                .Must(postcode => postcode == null || (Models.Postcode.TryParse(postcode, out var pc) && getPostcodeInfo(pc) != null))
                     .WithMessageFromErrorCode("VENUE_POSTCODE_FORMAT");
         }
 

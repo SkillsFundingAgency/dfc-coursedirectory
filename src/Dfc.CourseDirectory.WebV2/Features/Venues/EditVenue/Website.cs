@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _journeyInstance.UpdateState(state => state.Website = request.Website ?? string.Empty);
+            _journeyInstance.UpdateState(state => state.Website = request.Website?.Trim() ?? string.Empty);
 
             return new Success();
         }

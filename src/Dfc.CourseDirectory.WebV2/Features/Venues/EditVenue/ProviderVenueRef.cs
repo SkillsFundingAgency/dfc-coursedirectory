@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _journeyInstance.UpdateState(state => state.ProviderVenueRef = request.ProviderVenueRef);
+            _journeyInstance.UpdateState(state => state.ProviderVenueRef = request.ProviderVenueRef?.Trim());
 
             return new Success();
         }
