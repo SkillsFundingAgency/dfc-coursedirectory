@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithVenuesReport
@@ -38,6 +38,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithV
         [Name("CONTACT_POSTCODE")]
         public string ContactPostcode { get; set; }
 
+        [Name("CONTACT_COUNTY")]
+        public string ContactCounty { get; set; }
+
         [Name("CONTACT_WEBSITE")]
         public string ContactWebsite { get; set; }
 
@@ -67,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithV
                     {
                         yield return new Csv
                         {
-                            ProviderUkprn = result.ProviderUkprn,
+                            ProviderUkprn = result.Ukprn,
                             ProviderName = result.ProviderName,
                             TradingName = result.TradingName,
                             ContactAddress1 = ParseAddress(result.AddressSaonDescription, result.AddressPaonDescription, result.AddressStreetDescription),
@@ -76,6 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithV
                                 ? result.AddressItems
                                 : result.AddressPostTown,
                             ContactPostcode = result.AddressPostcode,
+                            ContactCounty = result.AddressCounty,
                             ContactWebsite = result.WebsiteAddress,
                             ContactPhone = !string.IsNullOrWhiteSpace(result.Telephone1)
                                 ? result.Telephone2
