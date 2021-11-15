@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvidersReport
@@ -18,7 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
     public class Csv
     {
         [Name("PROVIDER_UKPRN")]
-        public int ProviderUkprn { get; set; }
+        public string ProviderUkprn { get; set; }
 
         [Name("PROVIDER_NAME")]
         public string ProviderName { get; set; }
@@ -34,6 +35,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
 
         [Name("CONTACT_TOWN")]
         public string ContactTown { get; set; }
+
+        [Name("CONTACT_COUNTY")]
+        public string ContactCounty { get; set; }
 
         [Name("CONTACT_POSTCODE")]
         public string ContactPostcode { get; set; }
@@ -59,7 +63,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
 
             public Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Task.FromResult(Process(_sqlQueryDispatcher.ExecuteQuery(new GetLiveCourseProvidersReport())));
+                
+                return Task.FromResult(Process(_sqlQueryDispatcher.ExecuteQuery(new GetLiveCourseProvidersReport
+                {
+                    FromDate = request.FromDate
+                })));
 
                 static async IAsyncEnumerable<Csv> Process(IAsyncEnumerable<LiveCourseProvidersReportItem> results)
                 {
@@ -67,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
                     {
                         yield return new Csv
                         {
-                            ProviderUkprn = result.ProviderUkprn,
+                            ProviderUkprn = result.Ukprn.ToString(),
                             ProviderName = result.ProviderName,
                             TradingName = result.TradingName,
                             ContactAddress1 = ParseAddress(result.AddressSaonDescription, result.AddressPaonDescription, result.AddressStreetDescription),
@@ -75,6 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
                             ContactTown = !string.IsNullOrWhiteSpace(result.AddressPostTown)
                                 ? result.AddressItems
                                 : result.AddressPostTown,
+                            ContactCounty = result.AddressCounty,
                             ContactPostcode = result.AddressPostcode,
                             ContactWebsite = result.WebsiteAddress,
                             ContactPhone = !string.IsNullOrWhiteSpace(result.Telephone1)
