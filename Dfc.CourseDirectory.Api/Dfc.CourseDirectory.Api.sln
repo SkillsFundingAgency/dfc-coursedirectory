@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "..\tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Api", "..\src\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.Api.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Api", "..\src\Dfc.CourseDirectory.Api\Dfc.CourseDirectory.Api.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
