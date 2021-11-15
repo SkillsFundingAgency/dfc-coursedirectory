@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Api", "..\src\Dfc.CourseDirectory.Api\Dfc.CourseDirectory.Api.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Api.Tests", "..\tests\Dfc.CourseDirectory.Api.Tests\Dfc.CourseDirectory.Api.Tests.csproj", "{9B8437C4-B015-435C-A512-EA9C8F767AD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B8437C4-B015-435C-A512-EA9C8F767AD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B8437C4-B015-435C-A512-EA9C8F767AD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B8437C4-B015-435C-A512-EA9C8F767AD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B8437C4-B015-435C-A512-EA9C8F767AD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
