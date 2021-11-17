@@ -34,28 +34,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string LarsId { get; set; }
 
         [Name("DELIVER_MODE")]
-        public int DeliveryMode { get; set; }
+        public int? DeliveryMode { get; set; }
 
         [Name("ATTENDANCE_PATTERN")]
-        public int AttendancePattern { get; set; }
+        public int? AttendancePattern { get; set; }
 
         [Name("STUDY_MODE")]
-        public int StudyMode { get; set; }
+        public int? StudyMode { get; set; }
 
         [Name("FLEXIBLE_STARTDATE")]
         public bool IsFlexible { get; set; }
 
         [Name("STARTDATE")]
-        public DateTime StartDate { get; set; }
+        public string StartDate { get; set; }
 
         [Name("DURATION_UNIT")]
-        public int DurationUnit { get; set; }
+        public int? DurationUnit { get; set; }
 
         [Name("DURATION_VALUE")]
-        public int DurationValue { get; set; }
+        public int? DurationValue { get; set; }
 
         [Name("COST")]
-        public double Cost { get; set; }
+        public double? Cost { get; set; }
 
         [Name("COST_DESCRIPTION")]
         public string CostDescription { get; set; }
@@ -82,10 +82,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string LocationEmail { get; set; }
 
         [Name("LOCATION_LATITUDE")]
-        public double LocationLat { get; set; }
+        public double? LocationLat { get; set; }
 
         [Name("LOCATION_LONGITUDE")]
-        public double LocationLon { get; set; }
+        public double? LocationLon { get; set; }
 
         [Name("LOCATION_POSTCODE")]
         public string LocationPostcode { get; set; }
@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string CourseUrl { get; set; }
 
         [Name("UPDATED_DATE")]
-        public DateTime UpdatedDate { get; set; }
+        public string UpdatedDate { get; set; }
 
         [Name("ENTRY_REQUIREMENTS")]
         public string EntryRequirements { get; set; }
@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             AttendancePattern = result.AttendancePattern,
                             StudyMode = result.StudyMode,
                             IsFlexible = result.FlexibleStartDate,
-                            StartDate = result.StartDate,
+                            StartDate = result.StartDate?.ToShortDateString(),
                             DurationUnit = result.DurationUnit,
                             DurationValue = result.DurationValue,
                             Cost = result.Cost,
@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             LocationTown = result.VenueTown,
                             LocationPhone = result.VenueTelephone,
                             LocationWebsite = result.VenueWebsite,
-                            UpdatedDate = result.UpdatedOn,
+                            UpdatedDate = result.UpdatedOn?.ToShortDateString(),
                             EntryRequirements = result.EntryRequirements,
                             HowYouWillBeAssessed = result.HowYouWillBeAssessed
                         };
