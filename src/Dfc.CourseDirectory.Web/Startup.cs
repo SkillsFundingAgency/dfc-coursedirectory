@@ -4,6 +4,7 @@ using System.Net.Http;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.Configuration;

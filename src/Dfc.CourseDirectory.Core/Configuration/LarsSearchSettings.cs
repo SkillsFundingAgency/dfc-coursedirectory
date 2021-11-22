@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.Configuration
+﻿namespace Dfc.CourseDirectory.Core.Configuration
 {
     public class LarsSearchSettings
     {
