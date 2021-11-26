@@ -7,7 +7,6 @@
 }
 
 .pttcd-c-search-input__button {
-    position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
@@ -20,4 +19,11 @@
     overflow: hidden;
     background: url(/v2/images/icon-search-2x.png) 60% 50% no-repeat #000;
     background-size: 24px;
+    height: 100%;
+    box-shadow: none;
+}
+
+.pttcd-c-search-input__buttoncontainer 
+{
+    padding:0px;
 }

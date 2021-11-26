@@ -18,13 +18,34 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             _mediator = mediator;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> Index(Query query)
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(SearchQuery query)
         {
-            return await _mediator.SendAndMapResponse(
-               query,
-               response => View("ChooseQualification", response));
+            return await _mediator.SendAndMapResponse(query,
+              response => response.Match<IActionResult>(
+                errors => this.ViewFromErrors("ChooseQualification", errors),
+                success => View("ChooseQualification", success)));
         }
 
+
+        [HttpGet("")]
+        public async Task<IActionResult> Get(Query query)
+        {
+            return await _mediator.SendAndMapResponse(
+                query,
+                response => View("ChooseQualification", response));
+        }
+
+        [HttpGet("clearfilters")]
+        public async Task<IActionResult> ClearFilters(SearchQuery query)
+        {
+            query.AwardingOrganisation = null;
+            query.NotionalNVQLevelv2 = null;
+
+            return await _mediator.SendAndMapResponse(query,
+              response => response.Match<IActionResult>(
+                errors => this.ViewFromErrors("ChooseQualification", errors),
+                success => View("ChooseQualification", success)));
+        }
     }
 }

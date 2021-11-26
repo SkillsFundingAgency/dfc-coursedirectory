@@ -4,13 +4,8 @@
     ViewContext.SetLayoutData(title: $"Course-Qualification Search");
 }
 @model ViewModel
-@{
-    ViewBag.Title = "Select delivery options";
-}
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="SearchTerm" />
-</govuk-error-summary>
+
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -20,141 +15,129 @@
 </div>
 
 
-<form asp-all-route-data="@ProviderContext.RouteValues" method="get">
+<form asp-all-route-data="@ProviderContext.RouteValues" method="get" asp-action="Search">
     <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="SearchTerm" />
+        </govuk-error-summary>
         <div class="govuk-form-group govuk-!-margin-bottom-0">
-            <label class="govuk-label" for="course-add-lars">
-                Search by Learning Aims Reference (LARS), title or keyword
-            </label>
-            <div id="event-name-hint" class="govuk-hint">
-                Enter a minimum of 3 characters
-            </div>
-            <input class="govuk-input govuk-!-width-one-half" id="SearchTerm" name="SearchTerm" data-form-type=""><button class="govuk-button pttcd-button-search" data-module="govuk-button" data-form-type="">Search</button>
-        </div>
-    </div>
-
-    <div class="govuk-grid-column-full">
-        <p class="resultscount">Found <strong>@Model.Total</strong> results for <strong>@Model.SearchTerm</strong></p>
-    </div>
-    <div class="govuk-grid-row">
-        <!-- Filters -->
-        <div class="govuk-grid-column-one-quarter">
-
-            <button class="govuk-button" data-module="govuk-button">
-                Apply filters
-            </button>
-
-            <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s" role="button" tabindex="0">Qualification level</div>
-
-                <div class="panel">
-                    <govuk-checkboxes asp-for="NotionalNVQLevelv2" class="govuk-checkboxes--small">
-                        <govuk-checkboxes-item value="E">
-                            Entry level
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="1">
-                            Level 1
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="2">
-                            Level 2
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="3">
-                            Level 3
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="4">
-                            Level 4
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="5">
-                            Level 5
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="6">
-                            Level 6
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="7">
-                            Level 7
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="x">
-                            Unknown or not applicable
-                        </govuk-checkboxes-item>
-                    </govuk-checkboxes>
-                </div>
-
-                <div class="accordion govuk-heading-s" role="button" tabindex="0">Qualification level</div>
-                <div class="panel">
-                    <govuk-checkboxes asp-for="AwardingOrganisation" class="govuk-checkboxes--small">
-                        <govuk-checkboxes-item value="EDEXCEL">
-                            EDEXCEL
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="HULLU">
-                            HULLU
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="LANU">
-                            LANU
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="LMU">
-                            LMU
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="MULTI">
-                            MULTI
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="NCG">
-                            NCG
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="NONE">
-                            NONE
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="OU">
-                            OU
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="UCLAN">
-                            UCLAN
-                        </govuk-checkboxes-item>
-                        <govuk-checkboxes-item value="UOPLY">
-                            UOPLY
-                        </govuk-checkboxes-item>
-                    </govuk-checkboxes>
+            <div class="govuk-grid-row">
+                <div class="govuk-!-width-two-thirds">
+                    <govuk-input asp-for="SearchTerm">
+                        <govuk-input-label>Search by Learning Aims Reference (LARS), title or keyword</govuk-input-label>
+                        <govuk-input-hint>Enter a minimum of 3 characters</govuk-input-hint>
+                        <govuk-input-suffix class=" pttcd-c-search-input__buttoncontainer"><button class="govuk-button pttcd-c-search-input__button" data-module="govuk-button" data-form-type="">Search</button></govuk-input-suffix>
+                    </govuk-input>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="govuk-grid-column-three-quarters">
-            <div class="govuk-table govuk-!-font-size-14">
 
-                @if (Model.SearchResults != null)
-                {
-                    @foreach (var item in Model.SearchResults)
+    @if (Model.SearchWasDone)
+    {
+        <div class="govuk-grid-column-full">
+            <p class="resultscount">Found <strong>@Model.Total</strong> results for <strong>@Model.SearchTerm</strong></p>
+        </div>
+        <div class="govuk-grid-row">
+            <!-- Filters -->
+            <div class="govuk-grid-column-one-quarter">
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Apply filters
+                </button>
+
+                <div class="govuk-form-group govuk-!-font-size-14">
+                    @foreach (var filter in Model.NotionalNVQLevelv2Filters)
                     {
-                        <div class="pttcd-lars-search-result__container">
-                            <h2 class="govuk-heading-m">@item.CourseName</h2>
-                            <table class="govuk-table govuk-!-margin-bottom-0">
+                        <div class="govuk-form-group govuk-!-font-size-14">
+                            <div class="accordion govuk-heading-s">@filter.Title</div>
+                            <div class="panel">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-visually-hidden">
+                                        Select @filter.Title
+                                    </legend>
+                                    <govuk-checkboxes asp-for="NotionalNVQLevelv2" class="govuk-checkboxes--small">
+                                        @foreach (var item in filter.Items)
+                                        {
+                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected>
+                                                @item.Text
+                                            </govuk-checkboxes-item>
+                                        }
+                                    </govuk-checkboxes>
+                                </fieldset>
 
-                                <tbody class="govuk-table__body">
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN:<span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
-                                        <td class="govuk-table__cell govuk-!-width-one-third">Level: <span class="govuk-!-font-weight-bold">@item.Level</span></td>
-                                        <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation:<span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <table class="govuk-table govuk-!-margin-bottom-3">
-                                <tbody class="govuk-table__body">
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold"> 31 Sep 2021</span></td>
-                                        <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date:<span class="govuk-!-font-weight-bold"> 31 Aug 2022</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification<span class="govuk-visually-hidden">Foundation Degree in Game Art - South Gloucestershire and Stroud College</span></a></p>
+                            </div>
                         </div>
                     }
-                    @if (Model.SearchResults.Any())
-                    {
-                        <vc:pager current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Index", new { PageNumber = pageNumber, SearchTerm=Model.SearchTerm }))" />
-                    }
-                }
-            </div>
 
+                    @foreach (var filter in Model.AwardingOrganisationFilters)
+                    {
+                        <div class="govuk-form-group govuk-!-font-size-14">
+                            <div class="accordion govuk-heading-s">@filter.Title</div>
+                            <div class="panel">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-visually-hidden">
+                                        Select @filter.Title
+                                    </legend>
+                                    <govuk-checkboxes asp-for="AwardingOrganisation" class="govuk-checkboxes--small">
+                                        @foreach (var item in filter.Items)
+                                        {
+                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected>
+                                                @item.Text
+                                            </govuk-checkboxes-item>
+                                        }
+                                    </govuk-checkboxes>
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+                <div class="panel">
+                    <button class="pttcd-c-link-button govuk-!-font-size-19" asp-all-route-data="@ProviderContext.RouteValues" asp-action="clearfilters" data-testid="choosequalification-clear-filters">Clear Filters</button>
+                </div>
+            </div>
+            <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-table govuk-!-font-size-14">
+
+                    @if (Model.SearchResults != null)
+                    {
+                        @foreach (var item in Model.SearchResults)
+                        {
+                            <div class="pttcd-lars-search-result__container">
+                                <h2 class="govuk-heading-m">@item.CourseName</h2>
+                                <table class="govuk-table govuk-!-margin-bottom-0">
+
+                                    <tbody class="govuk-table__body">
+                                        <tr class="govuk-table__row">
+                                            <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN:<span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Level: <span class="govuk-!-font-weight-bold">@item.Level</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation:<span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="govuk-table govuk-!-margin-bottom-3">
+                                    <tbody class="govuk-table__body">
+                                        <tr class="govuk-table__row">
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold"> 31 Sep 2021</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date:<span class="govuk-!-font-weight-bold"> 31 Aug 2022</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification<span class="govuk-visually-hidden">Foundation Degree in Game Art - South Gloucestershire and Stroud College</span></a></p>
+                            </div>
+                        }
+                        @if (Model.SearchResults.Any())
+                        {
+                            <vc:pager data-testid="choose-qualification-pager" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
+                        }
+                    }
+                </div>
+            </div>
         </div>
-    </div>
+    }
 </form>
