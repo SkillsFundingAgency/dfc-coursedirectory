@@ -18,7 +18,7 @@
 <form asp-all-route-data="@ProviderContext.RouteValues" method="get" asp-action="Search">
     <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="SearchTerm" />
+            <govuk-error-summary-item asp-for="SearchTerm" data-testid="SearchErrorMessage" />
         </govuk-error-summary>
         <div class="govuk-form-group govuk-!-margin-bottom-0">
             <div class="govuk-grid-row">
@@ -57,10 +57,10 @@
                                     <legend class="govuk-visually-hidden">
                                         Select @filter.Title
                                     </legend>
-                                    <govuk-checkboxes asp-for="NotionalNVQLevelv2" class="govuk-checkboxes--small">
+                                    <govuk-checkboxes asp-for="NotionalNVQLevelv2" class="govuk-checkboxes--small" data-testid="NotionalNVQLevelv2Filters">
                                         @foreach (var item in filter.Items)
                                         {
-                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected>
+                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="NotionalNVQLevelv2FilterOption">
                                                 @item.Text
                                             </govuk-checkboxes-item>
                                         }
@@ -80,10 +80,10 @@
                                     <legend class="govuk-visually-hidden">
                                         Select @filter.Title
                                     </legend>
-                                    <govuk-checkboxes asp-for="AwardingOrganisation" class="govuk-checkboxes--small">
+                                    <govuk-checkboxes asp-for="AwardingOrganisation" class="govuk-checkboxes--small" data-testid="AwardingOrganisationFilters">
                                         @foreach (var item in filter.Items)
                                         {
-                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected>
+                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="AwardingOrganisationFilterOption">
                                                 @item.Text
                                             </govuk-checkboxes-item>
                                         }

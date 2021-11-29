@@ -119,9 +119,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 LARSCode = x.Record.LearnAimRef,
                 Level = x.Record.NotionalNVQLevelv2,
                 AwardingOrganisation = x.Record.AwardOrgName
-            });
+            }).OrderBy(x=>x.CourseName);
 
-            return new ViewModel()
+            var vmodel = new ViewModel()
             {
                 SearchWasDone = true,
                 PageNumber = request.PageNumber ?? 1,
@@ -172,6 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                     }
                 },
             };
+            return vmodel;
         }
 
         private class QueryValidator : AbstractValidator<SearchQuery>
@@ -181,7 +182,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 RuleFor(q => q.SearchTerm)
                     .NotEmpty()
                     .MinimumLength(3)
-                    .WithMessageForAllRules("Name or keyword for the course this training is for must be 3 characters or more");
+                    .WithMessageForAllRules("Enter search criteria");
             }
         }
     }

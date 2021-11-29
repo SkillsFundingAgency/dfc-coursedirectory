@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {
     [Route("courses/choose-qualification")]
-    [RequireProviderContext]
     public class ChooseQualificationController : Controller
     {
         private readonly IMediator _mediator;
