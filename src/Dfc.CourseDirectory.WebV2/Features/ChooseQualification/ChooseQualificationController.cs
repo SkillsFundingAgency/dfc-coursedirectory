@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {
-    [Route("courses/choosequalification")]
+    [Route("courses/choose-qualification")]
     [RequireProviderContext]
     public class ChooseQualificationController : Controller
     {

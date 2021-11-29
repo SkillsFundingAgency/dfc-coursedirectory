@@ -37,7 +37,7 @@
     @if (Model.SearchWasDone)
     {
         <div class="govuk-grid-column-full">
-            <p class="resultscount">Found <strong>@Model.Total</strong> results for <strong>@Model.SearchTerm</strong></p>
+            <p class="resultscount">Found <span data-testid="resultscount"><strong>@Model.Total</strong></span> results for <strong>@Model.SearchTerm</strong></p>
         </div>
         <div class="govuk-grid-row">
             <!-- Filters -->

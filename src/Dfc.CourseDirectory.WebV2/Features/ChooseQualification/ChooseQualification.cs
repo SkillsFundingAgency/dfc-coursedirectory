@@ -181,7 +181,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 RuleFor(q => q.SearchTerm)
                     .NotEmpty()
                     .MinimumLength(3)
-                    .WithMessageForAllRules("Name or keyword for the apprenticeship this training is for must be 3 characters or more");
+                    .WithMessageForAllRules("Name or keyword for the course this training is for must be 3 characters or more");
             }
         }
     }
