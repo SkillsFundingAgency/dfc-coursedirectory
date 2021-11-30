@@ -369,7 +369,7 @@
               },
               {
                 "name": "LarsSearchSettings__ItemsPerPage",
-                "value": 10
+                "value": 25
               },
               {
                 "name": "LarsSearchSettings__PageParamName",
