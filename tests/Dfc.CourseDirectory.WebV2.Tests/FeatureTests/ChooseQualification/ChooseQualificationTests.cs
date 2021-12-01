@@ -244,6 +244,41 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             }
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
+
+        [Fact]
+        private async Task ChooseQualification_SearchReturnsNoResults_RendersNoResultsMessage()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var notionalNVQLevelv2Facets = new Dictionary<object, long?>();
+            var awardOrgCodeFacets = new Dictionary<object, long?>();
+            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            {
+                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                {
+                }),
+                TotalCount = 0,
+                Facets = new Dictionary<string, IReadOnlyDictionary<object, long?>>
+                {
+                    { "AwardOrgCode", awardOrgCodeFacets },
+                    { "NotionalNVQLevelv2", notionalNVQLevelv2Facets }
+                }
+            };
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("NoResults").Should().NotBeNull();
+            }
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
     }
 }
 

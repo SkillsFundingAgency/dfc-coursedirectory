@@ -36,9 +36,12 @@
 
     @if (Model.SearchWasDone)
     {
-        <div class="govuk-grid-column-full">
-            <p class="resultscount">Found <span data-testid="resultscount"><strong>@Model.Total</strong></span> results for <strong>@Model.SearchTerm</strong></p>
-        </div>
+        @if (Model.SearchResults.Any())
+        {
+            <div class="govuk-grid-column-full">
+                <p class="resultscount">Found <span data-testid="resultscount"><strong>@Model.Total</strong></span> results for <strong>@Model.SearchTerm</strong></p>
+            </div>
+        }
         <div class="govuk-grid-row">
             <!-- Filters -->
             <div class="govuk-grid-column-one-quarter">
@@ -103,7 +106,7 @@
             <div class="govuk-grid-column-three-quarters">
                 <div class="govuk-table govuk-!-font-size-14">
 
-                    @if (Model.SearchResults != null)
+                    @if (Model.SearchResults.Any())
                     {
                         @foreach (var item in Model.SearchResults)
                         {
@@ -131,10 +134,22 @@
                                 <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification<span class="govuk-visually-hidden">Foundation Degree in Game Art - South Gloucestershire and Stroud College</span></a></p>
                             </div>
                         }
-                        @if (Model.SearchResults.Any())
-                        {
-                            <vc:pager data-testid="choose-qualification-pager" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
-                        }
+                        <vc:pager data-testid="choose-qualification-pager" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
+                    }
+                    else
+                    {
+                        <div data-testid="NoResults">
+                            <h2>0 results</h2>
+                            <p>No qualifications were found</p>
+                            <h3>Search suggestions</h3>
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>check your spelling</li>
+                                <li>do not use acronyms</li>
+                            </ul>
+                            <p>
+                                <a asp-controller="ChooseQualification" asp-action="Get" class="govuk-link govuk-!-font-size-19">Clear search</a>
+                            </p>
+                        </div>
                     }
                 </div>
             </div>
