@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Apprentice
 
             csvReader.Read();
             csvReader.ReadHeader();
-            csvReader.Context.HeaderRecord.Should().BeEquivalentTo(new[]
+            csvReader.Context.Reader.HeaderRecord.Should().BeEquivalentTo(new[]
             {
                 "STANDARD_CODE",
                 "STANDARD_VERSION",

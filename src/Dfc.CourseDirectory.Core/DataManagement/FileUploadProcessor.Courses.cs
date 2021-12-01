@@ -334,7 +334,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             // We also don't expect massive files here so reading everything into memory is ok.
             List<CsvCourseRow> rows;
             using (var streamReader = new StreamReader(stream))
-            using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            using (var csvReader = CreateCsvReader(streamReader))
             {
                 rows = await csvReader.GetRecordsAsync<CsvCourseRow>().ToListAsync();
             }
@@ -939,7 +939,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var expired = new List<(string LearnAimRef, int RowNumber)>();
 
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var csvReader = CreateCsvReader(streamReader))
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
                     await csvReader.ReadAsync();

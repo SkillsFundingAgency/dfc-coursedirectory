@@ -1,0 +1,39 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppPrefix": {
+      "value": "__webAppPrefix__"
+    },
+    "appServicePlanName": {
+      "value": "__providerPortalAppServicePlan__"
+    },
+    "appServicePlanResourceGroup": {
+      "value": "__providerPortalResourceGroup__"
+    },
+    "cosmosAccountEndpoint": {
+      "value": "__providerPortalCosmosDbFqdn__"
+    },
+    "cosmosAccountAccessKey": {
+      "value": "__providerPortalCosmosDBPrimaryKey__"
+    },
+    "environmentName": {
+      "value": "__environmentName__"
+    },
+    "sqlCourseDirectoryConnectionString": {
+      "value": "__sqlCourseDirectoryConnectionString__"
+    },
+    "searchName": {
+      "value": "__searchName__"
+    },
+    "searchAdminKey": {
+      "value": "__searchAdminKey__"
+    },
+    "searchQueryKey": {
+      "value": "__searchQueryKey__"
+    },
+    "providerPortalApplicationInsights": {
+      "value": "__providerportalApplicationInsights__"
+    }
+  }
+}

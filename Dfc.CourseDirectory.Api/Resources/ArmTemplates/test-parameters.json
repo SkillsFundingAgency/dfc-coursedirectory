@@ -1,0 +1,39 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppPrefix": {
+      "value": "dfc-foo-prov-api"
+    },
+    "appServicePlanName": {
+      "value": "dfc-dev-prov-asp"
+    },
+    "appServicePlanResourceGroup": {
+      "value": "dfc-dev-prov-rg"
+    },
+    "cosmosAccountEndpoint": {
+      "value": "https://not-a-real-account.documents.azure.com/"
+    },
+    "cosmosAccountAccessKey": {
+      "value": "not-a-real-access-key"
+    },
+    "environmentName": {
+      "value": "Development"
+    },
+    "sqlCourseDirectoryConnectionString": {
+      "value": "Server=tcp:dfc-foo-shared-sql-01.database.windows.net,1433;Initial Catalog=database;Persist Security Info=False;User ID=username;Password=password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    },
+    "searchName": {
+      "value": "dev-dev-prov-sch"
+    },
+    "searchAdminKey": {
+      "value": "not-a-real-key"
+    },
+    "searchQueryKey": {
+      "value": "not-a-real-key"
+    },
+    "providerPortalApplicationInsights": {
+      "value": "dfc-dev-prov-as-ai"
+    }
+  }
+}

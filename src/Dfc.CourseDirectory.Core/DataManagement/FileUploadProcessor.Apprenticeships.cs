@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             List<CsvApprenticeshipRow> rows;
             using (var streamReader = new StreamReader(stream))
-            using (var csvReader = new CsvHelper.CsvReader(streamReader, CultureInfo.InvariantCulture))
+            using (var csvReader = CreateCsvReader(streamReader))
             {
                 rows = await csvReader.GetRecordsAsync<CsvApprenticeshipRow>().ToListAsync();
             }
@@ -445,7 +445,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             try
             {
                 using (var streamReader = new StreamReader(stream, leaveOpen: true))
-                using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                using (var csvReader = CreateCsvReader(streamReader))
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
                     await csvReader.ReadAsync();
