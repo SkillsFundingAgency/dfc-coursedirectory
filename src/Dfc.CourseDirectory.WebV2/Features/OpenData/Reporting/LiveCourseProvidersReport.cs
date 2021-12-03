@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
                             ContactTown = result.AddressPostTown,
                             ContactPostcode = result.AddressPostcode,
                             ContactWebsite = result.WebsiteAddress,
-                            ContactPhone = result.Telephone,
+                            ContactPhone = result.Telephone.ToString(),
                             ContactEmail = result.Email
                         };
                     }

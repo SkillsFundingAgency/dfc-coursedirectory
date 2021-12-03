@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
                     FromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1),
                 }, // TODO: allow any cut-off date.
                 records => new CsvResult<LiveCourseProvidersReport.Csv>(
-                    $"{nameof(LiveCourseProvidersReport)}-{fromDate.ToFileTimeUtc()}.csv", records));
+                    $"{nameof(LiveCourseProvidersReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
         }
 
 
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
                     FromDate = fromDate,
                 }, // TODO: allow any cut-off date.
                 records => new CsvResult<LiveCoursesWithRegionsAndVenuesReport.Csv>(
-                    $"{nameof(LiveCoursesWithRegionsAndVenuesReport)}-{fromDate.ToFileTimeUtc()}.csv", records));
+                    $"{nameof(LiveCoursesWithRegionsAndVenuesReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
         }
 
         [HttpGet("live-regions-report")]
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
             return await _mediator.SendAndMapResponse(
                 new LiveRegionsReport.Query(),
                 records => new CsvResult<LiveRegionsReport.Csv>(
-                    $"{nameof(LiveRegionsReport)}-{fromDate.ToFileTimeUtc()}.csv", records));
+                    $"{nameof(LiveRegionsReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
         }
     }
 }
