@@ -16,24 +16,19 @@ SELECT
             p.Ukprn,
             p.ProviderName,
             p.TradingName,
-            pc.AddressSaonDescription,
-            pc.AddressPaonDescription,
-            pc.AddressStreetDescription,
-            pc.AddressLocality,
-            pc.AddressItems,
-            pc.AddressPostTown,
+            CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription) AS [ContactAddress1],
+            pc.AddressLocality AS [ContactAddress2],
+            ISNULL(pc.AddressPostTown, pc.AddressItems) AS [AddressPostTown],
             pc.AddressCounty,
             pc.AddressPostcode,
-            pc.Telephone1,
-            pc.Telephone2,
+            ISNULL(pc.Telephone1, pc.Telephone2) AS [Telephone],
             pc.WebsiteAddress,
             pc.Email
 FROM        Pttcd.Providers p with(nolock)
 INNER JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
 WHERE       p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
-                WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
-                AND         c.Live = 1
+                WHERE       c.Live = 1
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
             )
 ORDER BY    p.Ukprn ASC";

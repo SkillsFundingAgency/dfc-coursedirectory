@@ -27,20 +27,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         [Name("COURSE_RUN_ID")]
         public string CourseRunId { get; set; }
 
-        [Name("COURSE_DESCRIPTION")]
-        public string CourseDescription { get; set; }
-
         [Name("LEARN_AIM_REF")]
         public string LarsId { get; set; }
+
+        [Name("COURSE_NAME")]
+        public string CourseName { get; set; }
+
+        [Name("COURSE_DESCRIPTION")]
+        public string CourseDescription { get; set; }
 
         [Name("DELIVER_MODE")]
         public int? DeliveryMode { get; set; }
 
-        [Name("ATTENDANCE_PATTERN")]
-        public int? AttendancePattern { get; set; }
-
         [Name("STUDY_MODE")]
         public int? StudyMode { get; set; }
+
+        [Name("ATTENDANCE_PATTERN")]
+        public int? AttendancePattern { get; set; }
 
         [Name("FLEXIBLE_STARTDATE")]
         public bool IsFlexible { get; set; }
@@ -134,6 +137,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             ProviderUkprn = result.ProviderUkprn.ToString(),
                             CourseId = result.CourseId.ToString(),
                             CourseRunId = result.CourseRunId.ToString(),
+                            CourseName = result.CourseName,
                             CourseDescription = result.CourseDescription,
                             CourseUrl = result.CourseWebsite,
                             LarsId = result.LearnAimRef,
@@ -165,22 +169,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                         };
                     }
                 }
-            }
-
-            private static string ParseAddress(string saon, string paon, string street)
-            {
-                var addressParts = new List<string>();
-
-                if (!string.IsNullOrWhiteSpace(saon))
-                    addressParts.Add(saon.Trim());
-
-                if (!string.IsNullOrWhiteSpace(paon))
-                    addressParts.Add(paon.Trim());
-
-                if (!string.IsNullOrWhiteSpace(street))
-                    addressParts.Add(street.Trim());
-
-                return string.Join(", ", addressParts);
             }
         }
 }

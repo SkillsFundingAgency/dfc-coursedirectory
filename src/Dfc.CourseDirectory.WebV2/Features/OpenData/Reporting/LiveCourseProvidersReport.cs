@@ -36,9 +36,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
         [Name("CONTACT_TOWN")]
         public string ContactTown { get; set; }
 
-        [Name("CONTACT_COUNTY")]
-        public string ContactCounty { get; set; }
-
         [Name("CONTACT_POSTCODE")]
         public string ContactPostcode { get; set; }
 
@@ -78,37 +75,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCourseProvid
                             ProviderUkprn = result.Ukprn.ToString(),
                             ProviderName = result.ProviderName,
                             TradingName = result.TradingName,
-                            ContactAddress1 = ParseAddress(result.AddressSaonDescription, result.AddressPaonDescription, result.AddressStreetDescription),
-                            ContactAddress2 = result.AddressLocality,
-                            ContactTown = !string.IsNullOrWhiteSpace(result.AddressPostTown)
-                                ? result.AddressItems
-                                : result.AddressPostTown,
-                            ContactCounty = result.AddressCounty,
+                            ContactAddress1 = result.ContactAddress1,
+                            ContactAddress2 = result.ContactAddress2,
+                            ContactTown = result.AddressPostTown,
                             ContactPostcode = result.AddressPostcode,
                             ContactWebsite = result.WebsiteAddress,
-                            ContactPhone = !string.IsNullOrWhiteSpace(result.Telephone1)
-                                ? result.Telephone2
-                                : result.Telephone1,
+                            ContactPhone = result.Telephone,
                             ContactEmail = result.Email
                         };
                     }
                 }
-            }
-
-            private static string ParseAddress(string saon, string paon, string street)
-            {
-                var addressParts = new List<string>();
-
-                if (!string.IsNullOrWhiteSpace(saon))
-                    addressParts.Add(saon.Trim());
-
-                if (!string.IsNullOrWhiteSpace(paon))
-                    addressParts.Add(paon.Trim());
-
-                if (!string.IsNullOrWhiteSpace(street))
-                    addressParts.Add(street.Trim());
-
-                return string.Join(", ", addressParts);
             }
         }
 }
