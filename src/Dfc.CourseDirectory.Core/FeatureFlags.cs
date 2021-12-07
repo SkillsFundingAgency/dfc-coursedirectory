@@ -5,6 +5,7 @@
         public const string DataManagement = "DataManagement";
         public const string CoursesDataManagement = "CoursesDataManagement";
         public const string VenuesDataManagement = "VenuesDataManagement";
-        public const string ApprenticeshipsDataManagement = "ApprenticeshipsDataManagement";        
+        public const string ApprenticeshipsDataManagement = "ApprenticeshipsDataManagement";
+        public const string CoursesChooseQualification = "CoursesChooseQualification";
     }
 }
