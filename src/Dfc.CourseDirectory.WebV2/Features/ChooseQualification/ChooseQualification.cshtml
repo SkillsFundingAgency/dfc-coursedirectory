@@ -100,7 +100,7 @@
 
                 </div>
                 <div class="panel">
-                    <button class="pttcd-c-link-button govuk-!-font-size-19" asp-all-route-data="@ProviderContext.RouteValues" asp-action="clearfilters" data-testid="choosequalification-clear-filters">Clear Filters</button>
+                    <button class="pttcd-c-link-button govuk-!-font-size-19" asp-all-route-data="@ProviderContext.RouteValues" asp-action="clearfilters" data-testid="choosequalification-clear-filters">Clear filters</button>
                 </div>
             </div>
             <div class="govuk-grid-column-three-quarters">
@@ -116,9 +116,9 @@
 
                                     <tbody class="govuk-table__body">
                                         <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN:<span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN: <span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
                                             <td class="govuk-table__cell govuk-!-width-one-third">Level: <span class="govuk-!-font-weight-bold">@item.Level</span></td>
-                                            <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation:<span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation: <span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -126,12 +126,12 @@
                                 <table class="govuk-table govuk-!-margin-bottom-3">
                                     <tbody class="govuk-table__body">
                                         <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold"> 31 Sep 2021</span></td>
-                                            <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date:<span class="govuk-!-font-weight-bold"> 31 Aug 2022</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold">@item.EffectiveTo</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date: <span class="govuk-!-font-weight-bold">@item.OperationalEndDate</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification<span class="govuk-visually-hidden">Foundation Degree in Game Art - South Gloucestershire and Stroud College</span></a></p>
+                                <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification</a></p>
                             </div>
                         }
                         <vc:pager data-testid="choose-qualification-pager" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />

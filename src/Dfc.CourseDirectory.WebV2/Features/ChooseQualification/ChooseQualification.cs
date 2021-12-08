@@ -52,6 +52,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public string LARSCode { get; set; }
         public string Level { get; set; }
         public string AwardingOrganisation { get; set; }
+        public string OperationalEndDate { get; set; }
+        public string EffectiveTo { get; set; }
     }
 
     public class Handler :
@@ -118,7 +120,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 CourseName = x.Record.LearnAimRefTitle,
                 LARSCode = x.Record.LearnAimRef,
                 Level = x.Record.NotionalNVQLevelv2,
-                AwardingOrganisation = x.Record.AwardOrgName
+                AwardingOrganisation = x.Record.AwardOrgName,
+                OperationalEndDate = x.Record.CertificationEndDate.HasValue ? x.Record.CertificationEndDate.Value.ToString("dd MMM yyyy") : string.Empty,
+                EffectiveTo =  x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
             }).OrderBy(x=>x.CourseName);
 
             var vmodel = new ViewModel()
