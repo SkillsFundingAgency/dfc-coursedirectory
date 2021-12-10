@@ -15,15 +15,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 SELECT
             p.Ukprn,
             p.ProviderName,
-            p.TradingName,
-            CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription) AS [ContactAddress1],
-            pc.AddressLocality AS [ContactAddress2],
-            ISNULL(pc.AddressPostTown, pc.AddressItems) AS [AddressPostTown],
-            pc.AddressCounty,
-            pc.AddressPostcode,
-            ISNULL(pc.Telephone1, pc.Telephone2) AS [Telephone],
-            pc.WebsiteAddress,
-            pc.Email
+            ISNULL(p.TradingName, ''),
+            ISNULL(CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription), '') AS [ContactAddress1],
+            ISNULL(pc.AddressLocality, '') AS [ContactAddress2],
+            ISNULL(pc.AddressPostTown, ISNULL(pc.AddressItems, '')) AS [AddressPostTown],
+            ISNULL(pc.AddressCounty, ''),
+            ISNULL(pc.AddressPostcode, ''),
+            ISNULL(pc.Telephone1, ISNULL(pc.Telephone2, '')) AS [Telephone],
+            ISNULL(pc.WebsiteAddress, ''),
+            ISNULL(pc.Email, '')
 FROM        Pttcd.Providers p with(nolock)
 INNER JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
 WHERE       p.ProviderId IN(

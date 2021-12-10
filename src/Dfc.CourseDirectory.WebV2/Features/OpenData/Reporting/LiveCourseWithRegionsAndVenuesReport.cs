@@ -7,6 +7,7 @@ using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
+using Dfc.CourseDirectory.Core.DataManagement;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport
@@ -58,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public int? DurationValue { get; set; }
 
         [Name("COST")]
-        public double? Cost { get; set; }
+        public string Cost { get; set; }
 
         [Name("COST_DESCRIPTION")]
         public string CostDescription { get; set; }
@@ -140,15 +141,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             CourseName = result.CourseName,
                             CourseDescription = result.CourseDescription,
                             CourseUrl = result.CourseWebsite,
-                            LarsId = result.LearnAimRef.ToString(),
+                            LarsId = result.LearnAimRef,
                             DeliveryMode = result.DeliveryMode,
                             AttendancePattern = result.AttendancePattern,
                             StudyMode = result.StudyMode,
                             IsFlexible = result.FlexibleStartDate,
-                            StartDate = result.StartDate?.ToString("dd/MM/yyyy"),
+                            StartDate = ParsedCsvCourseRow.MapStartDate(result.StartDate),
                             DurationUnit = result.DurationUnit,
                             DurationValue = result.DurationValue,
-                            Cost = result.Cost,
+                            Cost = ParsedCsvCourseRow.MapCost(result.Cost),
                             CostDescription = result.CostDescription,
                             IsNational = result.National,
                             Regions = result.Regions,
@@ -161,9 +162,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             LocationLon = result.VenueLongitude,
                             LocationPostcode = result.VenuePostcode,
                             LocationTown = result.VenueTown,
-                            LocationPhone = result.VenueTelephone.ToString(),
+                            LocationPhone = result.VenueTelephone,
                             LocationWebsite = result.VenueWebsite,
-                            UpdatedDate = result.UpdatedOn?.ToString("dd/MM/yyyy"),
+                            UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                             EntryRequirements = result.EntryRequirements,
                             HowYouWillBeAssessed = result.HowYouWillBeAssessed
                         };

@@ -63,8 +63,7 @@ WHERE           cr.CourseRunId IN (
                     WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
                     AND         c.Live = 1
                     AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                )
-ORDER BY        c.ProviderUkprn, c.LearnAimRef, cr.StartDate";
+                )";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
             {

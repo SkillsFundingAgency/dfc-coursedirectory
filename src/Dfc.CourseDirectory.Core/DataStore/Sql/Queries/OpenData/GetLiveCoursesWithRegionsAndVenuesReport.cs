@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
         public string CourseName { get; set; }
         public string CourseDescription { get; set; }
         public string CourseWebsite { get; set; }
-        public double? Cost { get; set; }
+        public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
