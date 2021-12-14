@@ -127,9 +127,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
 
             public Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Task.FromResult(Process(_sqlQueryDispatcher.ExecuteQuery(new GetLiveCoursesWithRegionsAndVenuesReport())));
+                return Task.FromResult(Process(_sqlQueryDispatcher.ExecuteQuery(new GetLiveCoursesWithRegionsAndVenuesReport
+                {
+                    FromDate = request.FromDate
+                })));
 
-                static async IAsyncEnumerable<Csv> Process(IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> results)
+            static async IAsyncEnumerable<Csv> Process(IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> results)
                 {
                     await foreach (var result in results)
                     {
