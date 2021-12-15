@@ -20,7 +20,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 
 
     public class Query : IRequest<ViewModel>
-    { 
+    {
+        public string ReturnUrl { get; set; }
     }
 
     public class SearchQuery : IRequest<QueryResponse>
@@ -29,6 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public int? PageNumber { get; set; }
         public IEnumerable<string> NotionalNVQLevelv2 { get; set; }
         public IEnumerable<string> AwardingOrganisation { get; set; }
+        public string ReturnUrl { get; set; }
     }
 
     public class ViewModel
@@ -122,8 +124,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 Level = x.Record.NotionalNVQLevelv2,
                 AwardingOrganisation = x.Record.AwardOrgName,
                 OperationalEndDate = x.Record.CertificationEndDate.HasValue ? x.Record.CertificationEndDate.Value.ToString("dd MMM yyyy") : string.Empty,
-                EffectiveTo =  x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
-            }).OrderBy(x=>x.CourseName);
+                EffectiveTo = x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
+            }).OrderBy(x => x.CourseName);
 
             var vmodel = new ViewModel()
             {
@@ -156,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                             .OrderBy(f => f.Text).ToArray()
                     }
                 },
-                AwardingOrganisationFilters =  new [] 
+                AwardingOrganisationFilters = new[]
                 {
                     new LarsSearchFilterModel
                     {

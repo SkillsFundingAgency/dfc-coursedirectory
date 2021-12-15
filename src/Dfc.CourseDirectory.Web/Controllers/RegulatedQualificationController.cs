@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (_featureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
                 {
-                    return RedirectToAction("Get", "ChooseQualification");
+                    return RedirectToAction("ChooseQualification", "ChooseQualification");
                 }
                 else
                 {
