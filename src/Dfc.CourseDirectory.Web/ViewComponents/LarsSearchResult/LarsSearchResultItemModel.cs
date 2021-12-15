@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public string LearnAimRefTypeDesc { get; set; }
 
         public DateTime? CertificationEndDate { get; set; }
+        public DateTime? EffectiveTo { get; set; }
 
         public IEnumerable<string> Errors { get; }
 
@@ -56,7 +57,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
                 UnitType = lars.UnitType,
                 AwardOrgName = lars.AwardOrgName,
                 LearnAimRefTypeDesc = lars.LearnAimRefTypeDesc,
-                CertificationEndDate = lars.CertificationEndDate
+                CertificationEndDate = lars.CertificationEndDate,
+                EffectiveTo = lars.EffectiveTo
             };
         }
     }

@@ -1,0 +1,164 @@
+﻿@using Dfc.CourseDirectory.WebV2.Features.ChooseQualification
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewContext.SetLayoutData(title: $"Course-Qualification Search");
+}
+@model ViewModel
+
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Courses</h1>
+        <h2 class="govuk-heading">Which qualification are you awarding with this course?</h2>
+    </div>
+</div>
+
+
+<form asp-all-route-data="@ProviderContext.RouteValues" method="get" asp-action="Search">
+    <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="SearchTerm" data-testid="SearchErrorMessage" />
+        </govuk-error-summary>
+        <div class="govuk-form-group govuk-!-margin-bottom-0">
+            <div class="govuk-grid-row">
+                <div class="govuk-!-width-two-thirds">
+                    <govuk-input asp-for="SearchTerm">
+                        <govuk-input-label>Search by Learning Aims Reference (LARS), title or keyword</govuk-input-label>
+                        <govuk-input-hint>Enter a minimum of 3 characters</govuk-input-hint>
+                        <govuk-input-suffix class=" pttcd-c-search-input__buttoncontainer"><button class="govuk-button pttcd-c-search-input__button" data-module="govuk-button" data-form-type="">Search</button></govuk-input-suffix>
+                    </govuk-input>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (Model.SearchWasDone)
+    {
+        @if (Model.SearchResults.Any())
+        {
+            <div class="govuk-grid-column-full">
+                <p class="resultscount">Found <span data-testid="resultscount"><strong>@Model.Total</strong></span> results for <strong>@Model.SearchTerm</strong></p>
+            </div>
+        }
+        <div class="govuk-grid-row">
+            <!-- Filters -->
+            <div class="govuk-grid-column-one-quarter">
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Apply filters
+                </button>
+
+                <div class="govuk-form-group govuk-!-font-size-14">
+                    @foreach (var filter in Model.NotionalNVQLevelv2Filters)
+                    {
+                        <div class="govuk-form-group govuk-!-font-size-14">
+                            <div class="accordion govuk-heading-s">@filter.Title</div>
+                            <div class="panel">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-visually-hidden">
+                                        Select @filter.Title
+                                    </legend>
+                                    <govuk-checkboxes asp-for="NotionalNVQLevelv2" class="govuk-checkboxes--small" data-testid="NotionalNVQLevelv2Filters">
+                                        @foreach (var item in filter.Items)
+                                        {
+                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="NotionalNVQLevelv2FilterOption">
+                                                @item.Text
+                                            </govuk-checkboxes-item>
+                                        }
+                                    </govuk-checkboxes>
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    }
+
+                    @foreach (var filter in Model.AwardingOrganisationFilters)
+                    {
+                        <div class="govuk-form-group govuk-!-font-size-14">
+                            <div class="accordion govuk-heading-s">@filter.Title</div>
+                            <div class="panel">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-visually-hidden">
+                                        Select @filter.Title
+                                    </legend>
+                                    <govuk-checkboxes asp-for="AwardingOrganisation" class="govuk-checkboxes--small" data-testid="AwardingOrganisationFilters">
+                                        @foreach (var item in filter.Items)
+                                        {
+                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="AwardingOrganisationFilterOption">
+                                                @item.Text
+                                            </govuk-checkboxes-item>
+                                        }
+                                    </govuk-checkboxes>
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+                <div class="panel">
+                    <button class="pttcd-c-link-button govuk-!-font-size-19" asp-all-route-data="@ProviderContext.RouteValues" asp-action="clearfilters" data-testid="choosequalification-clear-filters">Clear filters</button>
+                </div>
+            </div>
+            <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-table govuk-!-font-size-14">
+
+                    @if (Model.SearchResults.Any())
+                    {
+                        @foreach (var item in Model.SearchResults)
+                        {
+                            <div class="pttcd-lars-search-result__container">
+                                <h2 class="govuk-heading-m">@item.CourseName</h2>
+                                <table class="govuk-table govuk-!-margin-bottom-0">
+
+                                    <tbody class="govuk-table__body">
+                                        <tr class="govuk-table__row">
+                                            <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN: <span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Level: <span class="govuk-!-font-weight-bold">@item.Level</span></td>
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation: <span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="govuk-table govuk-!-margin-bottom-3">
+                                    <tbody class="govuk-table__body">
+                                        <tr class="govuk-table__row">
+                                            @if (!string.IsNullOrEmpty(item.EffectiveTo))
+                                            {
+                                                <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold">@item.EffectiveTo</span></td>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.OperationalEndDate))
+                                            {
+                                                <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date: <span class="govuk-!-font-weight-bold">@item.OperationalEndDate</span></td>
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification</a></p>
+                            </div>
+                        }
+                        <vc:pager data-testid="choose-qualification-pager" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
+                    }
+                    else
+                    {
+                        <div data-testid="NoResults">
+                            <h2>0 results</h2>
+                            <p>No qualifications were found</p>
+                            <h3>Search suggestions</h3>
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>check your spelling</li>
+                                <li>do not use acronyms</li>
+                            </ul>
+                            <p>
+                                <a asp-controller="ChooseQualification" asp-action="Get" class="govuk-link govuk-!-font-size-19">Clear search</a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</form>

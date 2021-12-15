@@ -1,0 +1,48 @@
+﻿.pttcd-lars-search-result__container {
+    border: 1px solid #bfc1c3;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.pttcd-button-search {
+    background-color: #0b0c0c;
+    background-size: 52.5px auto;
+    background-position: 115% 50%;
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    border-radius: 0;
+    position: relative;
+    padding: 0;
+    width: 38px;
+    height: 38px;
+    background-image: url("/assets/images/icon-search-2x.png");
+    background-repeat: no-repeat;
+    text-indent: -5000px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.resultscount{
+    text-align:center;
+}
+
+.accordion::after {
+    content: "\2039";
+    color: #777;
+    font-weight: 700;
+    float: right;
+    -webkit-transform: rotate(-270deg);
+    -moz-transform: rotate(-270deg);
+    -ms-transform: rotate(-270deg);
+    -o-transform: rotate(-270deg);
+    transform: rotate(-270deg);
+}
+
+.accordion {
+    color: #444;
+    cursor: pointer;
+    padding: 0;
+    transition: .4s;
+    border-bottom: 1px solid #bfc1c3;
+}

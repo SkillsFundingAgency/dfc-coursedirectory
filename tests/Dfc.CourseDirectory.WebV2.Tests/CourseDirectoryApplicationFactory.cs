@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -19,6 +20,7 @@ using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -65,6 +67,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public IRegionCache RegionCache => Services.GetRequiredService<IRegionCache>();
 
         public Mock<ISearchClient<Provider>> ProviderSearchClient { get; } = new Mock<ISearchClient<Provider>>();
+        public Mock<ISearchClient<Lars>> LarsSearchClient { get; } = new Mock<ISearchClient<Lars>>();
+        public Mock<IOptions<LarsSearchSettings>> LarsSearchSettings { get; } = new Mock<IOptions<LarsSearchSettings>>();
 
         public Mock<IBinaryStorageProvider> BinaryStorageProvider { get; } = new Mock<IBinaryStorageProvider>();
 
@@ -136,6 +140,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 services.AddSingleton(BinaryStorageProvider.Object);
                 services.AddSingleton(AddressSearchService.Object);
                 services.AddSingleton(BlobServiceClient.Object);
+                services.AddSingleton(LarsSearchClient.Object);
+                services.AddSingleton(LarsSearchSettings.Object);
             });
 
         private void ResetMocks()
@@ -144,6 +150,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             BlobServiceClient.Reset();
             ProviderSearchClient.Reset();
             BinaryStorageProvider.Reset();
+            LarsSearchClient.Reset();
+            LarsSearchSettings.Reset();
         }
     }
 }

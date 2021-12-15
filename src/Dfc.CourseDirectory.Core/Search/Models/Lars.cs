@@ -27,6 +27,7 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public string LearnAimRefTypeDesc { get; set; }
 
         public DateTime? CertificationEndDate { get; set; }
+        public DateTime? EffectiveTo { get; set; }
 
         public string SectorSubjectAreaTier1 { get; set; }
 

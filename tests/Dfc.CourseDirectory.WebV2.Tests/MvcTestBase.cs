@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
@@ -15,6 +16,7 @@ using FormFlow;
 using FormFlow.State;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.CosmosDbQueryDispatcher;
@@ -57,6 +59,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected IRegionCache RegionCache => Factory.RegionCache;
 
         protected Mock<ISearchClient<Provider>> ProviderSearchClient => Factory.ProviderSearchClient;
+        public Mock<ISearchClient<Lars>> LarsSearchClient => Factory.LarsSearchClient;
+        public Mock<IOptions<LarsSearchSettings>> LarsSearchSettings => Factory.LarsSearchSettings;
 
         protected Mock<IBinaryStorageProvider> BinaryStorageProvider => Factory.BinaryStorageProvider;
 

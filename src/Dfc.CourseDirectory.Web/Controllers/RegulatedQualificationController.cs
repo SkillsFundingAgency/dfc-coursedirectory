@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Services.Models;
+﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class RegulatedQualificationController : Controller
     {
+        private readonly IFeatureFlagProvider _featureFlagProvider;
+
+        public RegulatedQualificationController(IFeatureFlagProvider features)
+        {
+            _featureFlagProvider = features;
+        }
+
         [HttpGet]
         [Authorize]
         public IActionResult Index()
@@ -19,7 +27,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (regulatedViewModel.WhatAreYouAwarding == WhatAreYouAwarding.Yes)
             {
-                return RedirectToAction("Index", "Qualifications");
+                if (_featureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
+                {
+                    return RedirectToAction("Get", "ChooseQualification");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Qualifications");
+                }
             }
             else
             {
