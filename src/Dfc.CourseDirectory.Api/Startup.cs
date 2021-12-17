@@ -48,24 +48,24 @@ namespace Dfc.CourseDirectory.Api
                     // By default the type's name is used for the schemaId;
                     // override for places where that yields collisions
 
-                    if (type == typeof(Features.TLevelDefinitions.ViewModel))
+                    if (type == typeof(FindACourseApi.Features.TLevelDefinitions.ViewModel))
                     {
-                        return $"TLevelDefinitions{nameof(Features.TLevelDefinitions.ViewModel)}";
+                        return $"TLevelDefinitions{nameof(FindACourseApi.Features.TLevelDefinitions.ViewModel)}";
                     }
 
-                    if (type == typeof(Features.TLevels.ViewModel))
+                    if (type == typeof(FindACourseApi.Features.TLevels.ViewModel))
                     {
-                        return $"TLevels{nameof(Features.TLevels.ViewModel)}";
+                        return $"TLevels{nameof(FindACourseApi.Features.TLevels.ViewModel)}";
                     }
 
-                    if (type == typeof(Features.TLevels.QualificationViewModel))
+                    if (type == typeof(FindACourseApi.Features.TLevels.QualificationViewModel))
                     {
-                        return $"TLevel{nameof(Features.TLevels.QualificationViewModel)}";
+                        return $"TLevel{nameof(FindACourseApi.Features.TLevels.QualificationViewModel)}";
                     }
 
-                    if (type == typeof(Features.TLevels.ProviderViewModel))
+                    if (type == typeof(FindACourseApi.Features.TLevels.ProviderViewModel))
                     {
-                        return $"TLevel{nameof(Features.TLevels.ProviderViewModel)}";
+                        return $"TLevel{nameof(FindACourseApi.Features.TLevels.ProviderViewModel)}";
                     }
 
                     return type.Name;
