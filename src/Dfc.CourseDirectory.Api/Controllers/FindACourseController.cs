@@ -25,14 +25,14 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CourseSearch([FromBody] FindACourseApi.Features.Search.Query request)
+        public async Task<IActionResult> Search([FromBody] FindACourseApi.Features.Search.Query request)
         {
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
                 p =>
                 {
-                    _log.LogWarning($"{nameof(CourseSearch)} failed. {nameof(p.Title)}: {{{nameof(p.Title)}}}, {nameof(p.Detail)}: {{{nameof(p.Detail)}}}.", p.Title, p.Detail);
+                    _log.LogWarning($"{nameof(Search)} failed. {nameof(p.Title)}: {{{nameof(p.Title)}}}, {nameof(p.Detail)}: {{{nameof(p.Detail)}}}.", p.Title, p.Detail);
 
                     return new ObjectResult(p)
                     {
