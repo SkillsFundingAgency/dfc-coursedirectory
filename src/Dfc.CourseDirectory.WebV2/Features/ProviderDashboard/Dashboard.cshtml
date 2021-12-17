@@ -66,7 +66,7 @@
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
                         <li>
-                            <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a course</a>
+                            <a asp-controller="RegulatedQualification" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
                         </li>
                         @if (Model.CourseRunCount > 0)
                         {
