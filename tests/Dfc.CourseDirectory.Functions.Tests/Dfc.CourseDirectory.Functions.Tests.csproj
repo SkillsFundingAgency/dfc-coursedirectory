@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -13,5 +13,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Functions\Dfc.CourseDirectory.Functions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="OpenData\" />
   </ItemGroup>
 </Project>
