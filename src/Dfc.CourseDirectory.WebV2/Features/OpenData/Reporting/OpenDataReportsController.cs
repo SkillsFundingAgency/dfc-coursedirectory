@@ -1,11 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
 {
+    [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("opendata/reports")]
     public class OpenDataReportsController : Controller
     {
