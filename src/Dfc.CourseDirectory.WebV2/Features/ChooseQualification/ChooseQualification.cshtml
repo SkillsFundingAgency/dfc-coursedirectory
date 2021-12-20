@@ -18,7 +18,7 @@
 </div>
 
 
-<form asp-all-route-data="@ProviderContext.RouteValues" method="get" asp-action="Search">
+<form method="get" asp-action="Search">
     <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
         <govuk-error-summary>
             <govuk-error-summary-item asp-for="SearchTerm" data-testid="SearchErrorMessage" />
@@ -145,7 +145,7 @@
                                 <p class="govuk-body"><a class="link--button" id="" href="@resultReturnUrl">Choose this qualification</a></p>
                             </div>
                         }
-                        <vc:pager data-testid="choose-qualification-pager" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
+                        <vc:pager data-testid="choose-qualification-pager" asp-all-route-data="@ProviderContext.RouteValues" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
                     }
                     else
                     {
@@ -158,7 +158,7 @@
                                 <li>do not use acronyms</li>
                             </ul>
                             <p>
-                                <a asp-controller="ChooseQualification" asp-action="Get" class="govuk-link govuk-!-font-size-19">Clear search</a>
+                                <a asp-controller="ChooseQualification" asp-action="Get" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-font-size-19">Clear search</a>
                             </p>
                         </div>
                     }

@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class RegulatedQualificationController : Controller
     {
         private readonly IFeatureFlagProvider _featureFlagProvider;
+        private readonly IProviderContextProvider _providerContext;
 
-        public RegulatedQualificationController(IFeatureFlagProvider features)
+        public RegulatedQualificationController(IFeatureFlagProvider features, IProviderContextProvider providerContextProvider)
         {
             _featureFlagProvider = features;
+            _providerContext = providerContextProvider;
         }
 
         [HttpGet]
