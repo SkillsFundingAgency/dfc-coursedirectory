@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
             _log = log;
         }
 
-        [HttpPost("~/fac/search")]
+        [HttpPost("~/public/fac/search")]
         [ProducesResponseType(typeof(FindACourseApi.Features.Search.SearchViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 r => Ok(r));
         }
 
-        [HttpGet("~/fac/courserundetail")]
+        [HttpGet("~/public/fac/courserundetail")]
         [ProducesResponseType(typeof(FindACourseApi.Features.CourseRunDetail.CourseRunDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 r => Ok(r));
         }
 
-        [HttpGet("~/fac/tleveldetail")]
+        [HttpGet("~/public/fac/tleveldetail")]
         [ProducesResponseType(typeof(FindACourseApi.Features.TLevels.TLevelDetailViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

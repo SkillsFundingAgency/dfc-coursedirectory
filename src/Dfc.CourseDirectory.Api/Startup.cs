@@ -18,6 +18,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Dfc.CourseDirectory.Api
 {
+
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -42,7 +43,7 @@ namespace Dfc.CourseDirectory.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Course Directory Public API", Version = "v1" });
-
+                c.DocumentFilter<PublicRouteFilter>();
                 c.CustomSchemaIds(type =>
                 {
                     // By default the type's name is used for the schemaId;
@@ -77,7 +78,9 @@ namespace Dfc.CourseDirectory.Api
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
             services
-                .AddMediatR(typeof(Startup).Assembly);
+                .AddMediatR(typeof(Startup).Assembly)
+                .AddMediatR(typeof(FindACourseApi.Startup).Assembly)
+                .AddMediatR(typeof(FindAnApprenticeshipApi.Startup).Assembly);
 
             if (Environment.EnvironmentName != "Testing")
             {
