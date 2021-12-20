@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Features.ChooseQualification;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -278,6 +279,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 doc.GetElementByTestId("NoResults").Should().NotBeNull();
             }
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        private async Task ChooseQualification_SelectCourseNavigatesToAddCourseDescription()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"/courses/choose-qualification/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            // Assert
+            Assert.Equal($"/courses/choose-qualification/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}", response.Headers.Location.OriginalString);
+
         }
     }
 }
