@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -188,7 +188,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm={term}&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm={term}&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
             // Act
             var response = await HttpClient.SendAsync(request);
 
@@ -291,10 +291,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Act
             var response = await HttpClient.GetAsync(
-                $"/courses/choose-qualification/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
 
             // Assert
-            Assert.Equal($"/courses/choose-qualification/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}", response.Headers.Location.OriginalString);
+            Assert.Equal($"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}", response.Headers.Location.OriginalString);
 
         }
     }

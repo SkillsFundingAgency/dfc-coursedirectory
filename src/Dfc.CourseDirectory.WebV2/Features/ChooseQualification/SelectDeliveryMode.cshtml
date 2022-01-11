@@ -1,0 +1,25 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode.Command
+@{
+    ViewContext.SetLayoutData(title: "How will the course be delivered?");
+    Layout = "_V2LayoutProviderContext";
+}
+
+<form asp-action="SelectDeliveryMode" asp-all-route-data="@RouteValuesHelper.FromQueryString()">
+    <govuk-error-summary>
+        <govuk-error-summary-item asp-for="DeliveryMode" />
+    </govuk-error-summary>
+
+    <govuk-radios asp-for="DeliveryMode">
+        <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+                How will the course be delivered?
+            </govuk-radios-fieldset-legend>
+        </govuk-radios-fieldset>
+        <govuk-radios-item value="@CourseDeliveryMode.Online">Online</govuk-radios-item>
+        <govuk-radios-item value="@CourseDeliveryMode.ClassroomBased">Classroom based</govuk-radios-item>
+        <govuk-radios-item value="@CourseDeliveryMode.WorkBased">Work based</govuk-radios-item>
+    </govuk-radios>
+
+    <govuk-button type="Submit">Continue</govuk-button>
+    <a asp-action="CourseDescription" append-mptx-id class="govuk-link govuk-body govuk-!-padding-left-2 !-padding-bottom-0" data-testid="CancelButton"  asp-all-route-data="@ProviderContext.RouteValues">Cancel</a>
+</form>

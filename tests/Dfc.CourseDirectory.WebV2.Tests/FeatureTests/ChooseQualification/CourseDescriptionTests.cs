@@ -24,9 +24,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
 
             var get1 = await HttpClient.GetAsync(
-                $"/courses/choose-qualification/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
             
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/choose-qualification/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoThisCourseIsFor", "")
@@ -56,9 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
 
             var get1 = await HttpClient.GetAsync(
-                $"/courses/choose-qualification/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/choose-qualification/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoThisCourseIsFor", "fffffff")
@@ -87,9 +87,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
 
             var get1 = await HttpClient.GetAsync(
-                $"/courses/choose-qualification/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/choose-qualification/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoThisCourseIsFor", "dfdfddfdfddfdfddfdfddfdfddfdfddfdfdddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfdfddfdfddfdfdfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfddfdfd")
@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var mpx = MptxManager.CreateInstance(new FlowModel());
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/choose-qualification/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoThisCourseIsFor", "f")
