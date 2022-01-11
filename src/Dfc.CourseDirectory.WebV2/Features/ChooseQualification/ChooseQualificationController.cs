@@ -93,12 +93,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add/delivery")]
         [MptxAction]
-        public async Task<IActionResult> SelectDeliveryMode(DeliveryMode.Query query) =>
-            await _mediator.SendAndMapResponse(
+        public async Task<IActionResult> SelectDeliveryMode(DeliveryMode.Query query)
+        {
+            return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
                     notFound => NotFound(),
                     command => View(command)));
+        }
 
         [RequireProviderContext]
         [HttpPost("add/delivery")]

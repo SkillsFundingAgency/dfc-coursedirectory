@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
@@ -17,17 +18,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
         [Theory]
         [InlineData(CourseDeliveryMode.ClassroomBased)]
-        [InlineData(CourseDeliveryMode.Online)]
         [InlineData(CourseDeliveryMode.WorkBased)]
+        [InlineData(CourseDeliveryMode.Online)]
         private async Task Post_SelectDeliveryMode_RedirectsToCourseRun(CourseDeliveryMode deliveryMode)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
             var mpx = MptxManager.CreateInstance(new FlowModel());
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+            var deliverystr= DeliveryModeToString(deliveryMode);
+
 
             var get1 = await HttpClient.GetAsync(
-                $"/courses/choose-qualification/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
@@ -55,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             postDeliveryResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            postDeliveryResponse.Headers.Location.Should().Be($"/courses/add-courserun?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            postDeliveryResponse.Headers.Location.Should().Be($"/courses/add-courserun?deliveryMode={deliverystr}&ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
         }
 
         [Fact]
@@ -65,6 +68,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var mpx = MptxManager.CreateInstance(new FlowModel());
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            var get1 = await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
             var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
@@ -100,6 +106,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var mpx = MptxManager.CreateInstance(new FlowModel());
             await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            var get1 = await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
             var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
@@ -126,6 +136,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var doc = await postDeliveryResponse.GetDocument();
             var btn = doc.GetElementByTestId("CancelButton");
             btn.Attributes["href"].Value.Should().Be($"/courses/add?providerId={provider.ProviderId}&ffiid={mpx.InstanceId}");
+        }
+
+        private string DeliveryModeToString(CourseDeliveryMode deliveryMode)
+        {
+            return deliveryMode switch
+            {
+                CourseDeliveryMode.ClassroomBased => "classroom",
+                CourseDeliveryMode.Online => "online",
+                CourseDeliveryMode.WorkBased => "work",
+                _ => throw new NotSupportedException($"Unknown delivery mode: '{deliveryMode}'.")
+            };
+
         }
     }
 }
