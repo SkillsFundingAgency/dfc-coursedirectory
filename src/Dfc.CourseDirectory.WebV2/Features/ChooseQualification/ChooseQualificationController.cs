@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
@@ -108,19 +110,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 result => result.Match<IActionResult>(
                     notFound => NotFound(),
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(nameof(CourseRun)).WithMptxInstanceId(Flow.InstanceId).WithProviderContext(_providerContext)
-                    ));
-        }
+                    success => RedirectToAction(nameof(CourseRun), new
+                    {
+                        deliveryMode = command.DeliveryMode switch
+                        {
+                            CourseDeliveryMode.ClassroomBased => "classroom",
+                            CourseDeliveryMode.Online => "online",
+                            CourseDeliveryMode.WorkBased => "work",
+                            _ => throw new NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
+                        }
+                    }).WithMptxInstanceId(Flow.InstanceId)
+                        .WithProviderContext(_providerContext)));
 
+        }
 
         [RequireProviderContext]
         [HttpGet("add-courserun")]
         [MptxAction]
-        public IActionResult CourseRun()
+        [RequireValidModelState]
+        public async Task<IActionResult> CourseRun([ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode)
         {
-            return View();
+            var query = new CourseRun.Query
+            {
+                DeliveryMode = deliveryMode,
+            };
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => View(result));
         }
-
+    
         [RequireProviderContext]
         [HttpPost("add-courserun")]
         [MptxAction]

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
@@ -17,9 +19,10 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 {
-    public class Query : IRequest<ModelWithErrors<ViewModel>>
+    public class Query : IRequest<ViewModel>
     {
         public CourseDeliveryMode DeliveryMode { get; set; }
+        public Guid ProviderId { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
@@ -54,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
 
     public class Handler :
-        IRequestHandler<Query, ModelWithErrors<ViewModel>>,
+        IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         private readonly IProviderContextProvider _providerContextProvider;
@@ -74,17 +77,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             _regionCache = regionCache;
         }
 
-        public async Task<ModelWithErrors<ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var vm = new ViewModel();
+            var getProviderVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = request.ProviderId });
+            var providerVenues = request.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
+            (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
+                .Select(v => new ViewModelProviderVenuesItem()
+                {
+                    VenueId = v.VenueId,
+                    VenueName = v.VenueName
+                })
+                .OrderBy(v => v.VenueName)
+                .ToArray() :
+            null;
+            var vm = new ViewModel { DeliveryMode = request.DeliveryMode, ProviderVenues= providerVenues };
             var allRegions = await _regionCache.GetAllRegions();
             NormalizeViewModel();
-
-            var validator = new CommandValidator(_clock, allRegions);
-            var validationResult = await validator.ValidateAsync(vm);
-
-            return new ModelWithErrors<ViewModel>(vm, validationResult);
-
+            return await Task.FromResult(vm);
 
             void NormalizeViewModel()
             {
