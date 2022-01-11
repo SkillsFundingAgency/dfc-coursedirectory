@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FluentValidation;
 using MediatR;
 using OneOf;
@@ -26,20 +28,37 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly MptxInstanceContext<FlowModel> _flow;
 
-        public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
+        public Handler()
+        {
+         
+        }
+
+        public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider, MptxInstanceContext<FlowModel> flow)
         {
             _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
+            _flow = flow;
         }
 
         public async Task<OneOf<NotFound, Command>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return new Command();
+            if (_flow.State.LarsCode == null)
+            {
+                throw new InvalidStateException();
+            }
+
+            var item = new Command();
+            return await Task.FromResult(item);
         }
 
         public async Task<OneOf<NotFound, ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
+            if (_flow.State.LarsCode == null)
+            {
+                throw new InvalidStateException();
+            }
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
 
@@ -48,6 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
+            _flow.Update(s => s.SetDeliveryMode(request.DeliveryMode));
             return new Success();
         }
 
