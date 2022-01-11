@@ -15,7 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
     {
     }
 
-
     public class Command : IRequest<OneOf<NotFound, ModelWithErrors<Command>, Success>>
     {
         public CourseDeliveryMode? DeliveryMode { get; set; }
@@ -39,11 +38,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
             return new Command();
         }
 
-
         public async Task<OneOf<NotFound, ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
             var validator = new CommandValidator();
-            var validationResult = validator.Validate(request);
+            var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {

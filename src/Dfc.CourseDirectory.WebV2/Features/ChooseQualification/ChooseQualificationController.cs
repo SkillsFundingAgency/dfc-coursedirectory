@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add-courserun")]
         [MptxAction]
-        public async Task<IActionResult> CourseRun()
+        public IActionResult CourseRun()
         {
             return View();
         }
@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add/check-and-publish")]
         [MptxAction]
-        public async Task<IActionResult> CheckAndPublish()
+        public IActionResult CheckAndPublish()
         {
             return View();
         }

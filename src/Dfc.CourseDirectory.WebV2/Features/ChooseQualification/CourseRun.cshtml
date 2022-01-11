@@ -1,9 +1,17 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun.Command
+﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun.ViewModel
 @{
-    ViewContext.SetLayoutData(title: "How will the course be delivered?");
-    Layout = "_V2LayoutProviderContext";
+    var title = Model.DeliveryMode switch
+    {
+        CourseDeliveryMode.Online => "Online course details",
+        CourseDeliveryMode.ClassroomBased => "Classroom course details",
+        CourseDeliveryMode.WorkBased => "Work based course details",
+        _ => throw new NotSupportedException($"Unknown delivery mode: '{Model.DeliveryMode}'.")
+    };
+
+    ViewContext.SetLayoutData(title: title);
 }
 @using Dfc.CourseDirectory.Core.Validation.CourseValidation
+
 
 @section BackLink {
     <govuk-back-link asp-action="SelectDeliveryMode" asp-all-route-data="@ProviderContext.RouteValues">Back to course delivery</govuk-back-link>
@@ -11,12 +19,13 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="WorkBasedDetails" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
+        <form asp-action="CourseRun" asp-all-route-data="@ProviderContext.RouteValues" asp-route-deliveryMode="@Model.DeliveryMode">
             <govuk-error-summary>
                 <govuk-error-summary-item asp-for="CourseName" />
                 <govuk-error-summary-item asp-for="ProviderCourseRef" />
                 <govuk-error-summary-item asp-for="FlexibleStartDate" />
                 <govuk-error-summary-item asp-for="StartDate" />
+                <govuk-error-summary-item asp-for="VenueId" />
                 <govuk-error-summary-item asp-for="NationalDelivery" />
                 <govuk-error-summary-item asp-for="SubRegionIds" />
                 <govuk-error-summary-item asp-for="CourseWebPage" />
@@ -24,15 +33,18 @@
                 <govuk-error-summary-item asp-for="CostDescription" />
                 <govuk-error-summary-item asp-for="Duration" />
                 <govuk-error-summary-item asp-for="DurationUnit" />
+                <govuk-error-summary-item asp-for="AttendancePattern" />
+                <govuk-error-summary-item asp-for="StudyMode" />
             </govuk-error-summary>
 
-            <h1 class="govuk-heading-xl">
-                Work based course details
-            </h1>
+            <h1 class="govuk-heading-xl">@title</h1>
 
             <p class="govuk-body-m">
-                Add information on how the work based course will be delivered.
+                Add information on how the
+                @(Model.DeliveryMode == CourseDeliveryMode.Online ? "online" : Model.DeliveryMode == CourseDeliveryMode.ClassroomBased ? "classroom" : "work based")
+                course will be delivered.
             </p>
+
             <govuk-input asp-for="CourseName">
                 <govuk-input-label class="govuk-label--m">Course name</govuk-input-label>
                 <govuk-input-hint>
@@ -40,12 +52,14 @@
                     <a href="https://nationalcareers.service.gov.uk/find-a-course/search" target="_blank" class="govuk-link">Find a course</a>.
                 </govuk-input-hint>
             </govuk-input>
+
             <govuk-input asp-for="ProviderCourseRef">
                 <govuk-input-label class="govuk-label--m">Your reference</govuk-input-label>
                 <govuk-input-hint>
                     A reference that will help you identify this course in your internal systems. This will not be visible to learners.
                 </govuk-input-hint>
             </govuk-input>
+
             <govuk-radios asp-for="FlexibleStartDate">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>
@@ -63,32 +77,49 @@
                     Flexible start date
                 </govuk-radios-item>
             </govuk-radios>
-            <govuk-radios asp-for="NationalDelivery">
-                <govuk-radios-fieldset>
-                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
-                        Can you deliver this course anywhere in England?
-                    </govuk-radios-fieldset-legend>
-                </govuk-radios-fieldset>
-                <govuk-radios-hint>Yes will show you are a national provider.</govuk-radios-hint>
-                <govuk-radios-item value="@true">Yes</govuk-radios-item>
-                <govuk-radios-item value="@false">
-                    No
 
-                    <govuk-radios-item-conditional>
-                        <govuk-fieldset id="@Html.IdFor(m => m.SubRegionIds)">
-                            <govuk-fieldset-legend class="govuk-fieldset__legend--s">
-                                Where in England can you deliver this course?
-                            </govuk-fieldset-legend>
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            {
+                <govuk-select asp-for="VenueId">
+                    <govuk-select-label class="govuk-label--m">Venue</govuk-select-label>
+                    <govuk-select-item value="">Select</govuk-select-item>
+                    @foreach (var venue in Model.ProviderVenues)
+                    {
+                        <govuk-select-item value="@venue.VenueId">@venue.VenueName</govuk-select-item>
+                    }
+                </govuk-select>
+            }
+            else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
+            {
+                <govuk-radios asp-for="NationalDelivery">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                            Can you deliver this course anywhere in England?
+                        </govuk-radios-fieldset-legend>
+                    </govuk-radios-fieldset>
 
-                            <govuk-hint>Select all regions and areas that apply.</govuk-hint>
+                    <govuk-radios-hint>Yes will show you are a national provider.</govuk-radios-hint>
 
-                            <govuk-error-message asp-for="SubRegionIds" />
+                    <govuk-radios-item value="@true">Yes</govuk-radios-item>
+                    <govuk-radios-item value="@false">
+                        No
 
-                            @*<vc:sub-region-selector id="@Html.IdFor(m => m.SubRegionIds)-accordion" name="@Html.NameFor(m => m.SubRegionIds)" selected-sub-region-ids="@Model.SubRegionIds" />*@
-                        </govuk-fieldset>
-                    </govuk-radios-item-conditional>
-                </govuk-radios-item>
-            </govuk-radios>
+                        <govuk-radios-item-conditional>
+                            <govuk-fieldset id="@Html.IdFor(m => m.SubRegionIds)">
+                                <govuk-fieldset-legend class="govuk-fieldset__legend--s">
+                                    Where in England can you deliver this course?
+                                </govuk-fieldset-legend>
+
+                                <govuk-hint>Select all regions and areas that apply.</govuk-hint>
+
+                                <govuk-error-message asp-for="SubRegionIds" />
+
+                                <vc:sub-region-selector id="@Html.IdFor(m => m.SubRegionIds)-accordion" name="@Html.NameFor(m => m.SubRegionIds)" selected-sub-region-ids="@Model.SubRegionIds" />
+                            </govuk-fieldset>
+                        </govuk-radios-item-conditional>
+                    </govuk-radios-item>
+                </govuk-radios>
+            }
 
             <govuk-input asp-for="CourseWebPage">
                 <govuk-input-label class="govuk-label--m">Course webpage</govuk-input-label>
@@ -126,6 +157,39 @@
                 <govuk-select-item value="@CourseDurationUnit.Months">Months</govuk-select-item>
                 <govuk-select-item value="@CourseDurationUnit.Years">Years</govuk-select-item>
             </govuk-select>
+
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            {
+                <govuk-radios asp-for="StudyMode">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                            Course hours
+                        </govuk-radios-fieldset-legend>
+                    </govuk-radios-fieldset>
+                    <govuk-radios-hint>
+                        Select one option.
+                    </govuk-radios-hint>
+                    <govuk-radios-item value="@CourseStudyMode.FullTime">Full time</govuk-radios-item>
+                    <govuk-radios-item value="@CourseStudyMode.PartTime">Part time</govuk-radios-item>
+                    <govuk-radios-item value="@CourseStudyMode.Flexible">Flexible</govuk-radios-item>
+                </govuk-radios>
+
+                <govuk-radios asp-for="AttendancePattern">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                            Attendance pattern
+                        </govuk-radios-fieldset-legend>
+                    </govuk-radios-fieldset>
+                    <govuk-radios-hint>
+                        Select one option.
+                    </govuk-radios-hint>
+                    <govuk-radios-item value="@CourseAttendancePattern.Daytime">Daytime</govuk-radios-item>
+                    <govuk-radios-item value="@CourseAttendancePattern.Evening">Evening</govuk-radios-item>
+                    <govuk-radios-item value="@CourseAttendancePattern.Weekend">Weekend</govuk-radios-item>
+                    <govuk-radios-item value="@CourseAttendancePattern.DayOrBlockRelease">Day/Block Release</govuk-radios-item>
+                </govuk-radios>
+            }
+
             <govuk-button type="submit">Continue</govuk-button>
         </form>
     </div>

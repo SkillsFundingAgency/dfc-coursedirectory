@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public void SetCourse(string larsCode) => LarsCode = larsCode;
 
         public void SetCourseDescription(
-          string whoThisCourseIsFor, 
+          string whoThisCourseIsFor,
           string entryRequirements,
           string whatYouWillLearn,
           string howYouWillLearn,
@@ -31,6 +31,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             WhatYouWillNeedToBring = whatYouWillNeedToBring;
             HowYouWillBeAssessed = howYouWillBeAssessed;
             WhereNext = whereNext;
-    }
+        }
     }
 }

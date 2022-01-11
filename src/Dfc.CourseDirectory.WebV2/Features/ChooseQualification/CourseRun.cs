@@ -19,16 +19,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 {
     public class Query : IRequest<ModelWithErrors<ViewModel>>
     {
-    }
-
-    public class ViewModel : Command
-    {
+        public CourseDeliveryMode DeliveryMode { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public CourseDeliveryMode DeliveryMode { get; set; }
-        public int RowNumber { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
         public DateInput StartDate { get; set; }
@@ -45,6 +41,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public Guid? VenueId { get; set; }
     }
 
+    public class ViewModel : Command
+    {
+        public IReadOnlyCollection<ViewModelProviderVenuesItem> ProviderVenues { get; set; }
+    }
+
+    public class ViewModelProviderVenuesItem
+    {
+        public Guid VenueId { get; set; }
+        public string VenueName { get; set; }
+    }
 
 
     public class Handler :
@@ -72,6 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         {
             var vm = new ViewModel();
             var allRegions = await _regionCache.GetAllRegions();
+            NormalizeViewModel();
 
             var validator = new CommandValidator(_clock, allRegions);
             var validationResult = await validator.ValidateAsync(vm);
@@ -79,13 +86,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             return new ModelWithErrors<ViewModel>(vm, validationResult);
 
 
+            void NormalizeViewModel()
+            {
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                {
+                    vm.VenueId = null;
+                    vm.StudyMode = null;
+                    vm.AttendancePattern = null;
+                }
+
+                if (request.DeliveryMode != CourseDeliveryMode.WorkBased)
+                {
+                    vm.NationalDelivery = null;
+                    vm.SubRegionIds = null;
+                }
+
+                //// If mutually exclusive fields are specified, force the user to choose
+
+                //if (vm.FlexibleStartDate == true && !string.IsNullOrEmpty(row.StartDate))
+                //{
+                //    vm.FlexibleStartDate = null;
+                //}
+
+                //if (vm.NationalDelivery == true && !string.IsNullOrEmpty(row.SubRegions))
+                //{
+                //    vm.NationalDelivery = null;
+                //}
+            }
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
+            NormalizeCommand();
             var allRegions = await _regionCache.GetAllRegions();
             var validator = new CommandValidator(_clock, allRegions);
             var validationResult = await validator.ValidateAsync(request);
+
 
             if (validationResult.IsValid)
                 return new Success();
@@ -95,6 +131,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                 var vm = new ViewModel();
                 request.Adapt(vm);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
+            }
+
+
+            void NormalizeCommand()
+            {
+                // Some fields only apply under certain conditions; ensure we don't save fields that are not applicable
+
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                {
+                    request.VenueId = null;
+                    request.StudyMode = null;
+                    request.AttendancePattern = null;
+                }
+
+                if (request.DeliveryMode != CourseDeliveryMode.WorkBased)
+                {
+                    request.NationalDelivery = null;
+                    request.SubRegionIds = null;
+                }
+
+                if (request.FlexibleStartDate == true)
+                {
+                    request.StartDate = null;
+                }
+
+                if (request.NationalDelivery == true)
+                {
+                    request.SubRegionIds = null;
+                }
             }
         }
 
