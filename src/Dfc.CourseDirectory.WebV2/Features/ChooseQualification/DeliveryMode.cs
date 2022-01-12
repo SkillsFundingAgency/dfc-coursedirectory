@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
 
         public async Task<OneOf<NotFound, Command>> Handle(Query request, CancellationToken cancellationToken)
         {
-            if (_flow.State.LarsCode == null)
+            if (_flow.State.LarsCode == null || string.IsNullOrEmpty(_flow.State.WhoThisCourseIsFor))
             {
                 throw new InvalidStateException();
             }

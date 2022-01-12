@@ -13,14 +13,14 @@
 }
 @using Dfc.CourseDirectory.Core.Validation.CourseValidation
 
-
 @section BackLink {
-    <govuk-back-link asp-action="SelectDeliveryMode" asp-all-route-data="@ProviderContext.RouteValues">Back to course delivery</govuk-back-link>
+    <govuk-back-link asp-action="SelectDeliveryMode">Back to course delivery</govuk-back-link>
 }
+
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="CourseRun" asp-all-route-data="@ProviderContext.RouteValues" asp-route-deliveryMode="@Model.DeliveryMode">
+        <form asp-action="CourseRun" asp-all-route-data="@ProviderContext.RouteValues" asp-route-deliveryMode="@Model.DeliveryMode" append-mptx-id>
             <govuk-error-summary>
                 <govuk-error-summary-item asp-for="CourseName" />
                 <govuk-error-summary-item asp-for="ProviderCourseRef" />

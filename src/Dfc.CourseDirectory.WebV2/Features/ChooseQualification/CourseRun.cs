@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +10,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -55,7 +55,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public string VenueName { get; set; }
     }
 
-
     public class Handler :
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
@@ -64,34 +63,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+        private readonly MptxInstanceContext<FlowModel> _flow;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache,
+            MptxInstanceContext<FlowModel> flow)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _regionCache = regionCache;
+            _flow = flow;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var getProviderVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = request.ProviderId });
-            var providerVenues = request.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
-            (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
-                .Select(v => new ViewModelProviderVenuesItem()
-                {
-                    VenueId = v.VenueId,
-                    VenueName = v.VenueName
-                })
-                .OrderBy(v => v.VenueName)
-                .ToArray() :
-            null;
-            var vm = new ViewModel { DeliveryMode = request.DeliveryMode, ProviderVenues= providerVenues };
-            var allRegions = await _regionCache.GetAllRegions();
+            if (_flow.State.LarsCode == null || string.IsNullOrEmpty(_flow.State.WhoThisCourseIsFor) || !_flow.State.DeliveryMode.HasValue)
+            {
+                throw new InvalidStateException();
+            }
+
+            var vm = await CreateViewModel(request.DeliveryMode, new Command());
             NormalizeViewModel();
             return await Task.FromResult(vm);
 
@@ -109,18 +104,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     vm.NationalDelivery = null;
                     vm.SubRegionIds = null;
                 }
-
-                //// If mutually exclusive fields are specified, force the user to choose
-
-                //if (vm.FlexibleStartDate == true && !string.IsNullOrEmpty(row.StartDate))
-                //{
-                //    vm.FlexibleStartDate = null;
-                //}
-
-                //if (vm.NationalDelivery == true && !string.IsNullOrEmpty(row.SubRegions))
-                //{
-                //    vm.NationalDelivery = null;
-                //}
             }
         }
 
@@ -130,14 +113,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             var allRegions = await _regionCache.GetAllRegions();
             var validator = new CommandValidator(_clock, allRegions);
             var validationResult = await validator.ValidateAsync(request);
-
-
             if (validationResult.IsValid)
+            {
+                _flow.Update(s => s.SetCourseRun(request.CourseName,
+                    request.ProviderCourseRef,
+                    request.StartDate,
+                    request.FlexibleStartDate,
+                    request.NationalDelivery,
+                    request.SubRegionIds,
+                    request.CourseWebPage,
+                    request.Cost,
+                    request.CostDescription,
+                    request.Duration,
+                    request.DurationUnit,
+                    request.StudyMode,
+                    request.AttendancePattern,
+                    request.VenueId));
                 return new Success();
-
+            }
             else
             {
-                var vm = new ViewModel();
+                var vm = await CreateViewModel(request.DeliveryMode, request);
                 request.Adapt(vm);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
@@ -172,6 +168,39 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             }
         }
 
+        private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, Command row)
+        {
+            var providerVenues = deliveryMode == CourseDeliveryMode.ClassroomBased ?
+                (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
+                    .Select(v => new ViewModelProviderVenuesItem()
+                    {
+                        VenueId = v.VenueId,
+                        VenueName = v.VenueName
+                    })
+                    .OrderBy(v => v.VenueName)
+                    .ToArray() :
+                null;
+
+            return new ViewModel()
+            {
+                DeliveryMode = deliveryMode,
+                CourseName = row.CourseName,
+                ProviderCourseRef = row.ProviderCourseRef,
+                StartDate = row.StartDate,
+                FlexibleStartDate = row.FlexibleStartDate,
+                NationalDelivery = row.NationalDelivery,
+                SubRegionIds = row.SubRegionIds,
+                CourseWebPage = row.CourseWebPage,
+                Cost = row.Cost,
+                CostDescription = row.CostDescription,
+                Duration = row.Duration,
+                DurationUnit = row.DurationUnit,
+                StudyMode = row.StudyMode,
+                AttendancePattern = row.AttendancePattern,
+                VenueId = row.VenueId,
+                ProviderVenues = providerVenues
+            };
+        }
 
         private class CommandValidator : AbstractValidator<Command>
         {
