@@ -54,6 +54,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
 
             var vm = new ViewModel()
             {
+                WhoThisCourseIsFor = _flow.State.WhoThisCourseIsFor,
+                EntryRequirements = _flow.State.EntryRequirements,
+                WhatYouWillLearn = _flow.State.WhatYouWillLearn,
+                HowYouWillLearn = _flow.State.HowYouWillLearn,
+                WhatYouWillNeedToBring = _flow.State.WhatYouWillNeedToBring,
+                HowYouWillBeAssessed = _flow.State.HowYouWillBeAssessed,
+                WhereNext = _flow.State.WhereNext
             };
             return Task.FromResult(vm);
         }

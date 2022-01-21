@@ -59,9 +59,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add")]
         [MptxAction]
-        public IActionResult CourseDescription()
+        public async Task<IActionResult> CourseDescription(CourseDescription.Query query)
         {
-            return View();
+            return await _mediator.SendAndMapResponse(
+                query,
+                response => View(response));
         }
 
         [RequireProviderContext]
@@ -136,9 +138,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             {
                 DeliveryMode = deliveryMode,
             };
+            var returnUrl = $"add/delivery?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
             return await _mediator.SendAndMapResponse(
                 query,
-                result => View(result));
+                result => View(result).WithViewData("ReturnUrl", returnUrl));
         }
     
         [RequireProviderContext]
@@ -146,10 +149,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [MptxAction]
         public async Task<IActionResult> CourseRun(CourseRun.Command command)
         {
+            var returnUrl = $"add/delivery?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
             return await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
+                    errors => this.ViewFromErrors(errors).WithViewData("ReturnUrl", returnUrl),
                     Success => RedirectToAction(nameof(CheckAndPublish))
                         .WithMptxInstanceId(Flow.InstanceId)
                         .WithProviderContext(_providerContext)));

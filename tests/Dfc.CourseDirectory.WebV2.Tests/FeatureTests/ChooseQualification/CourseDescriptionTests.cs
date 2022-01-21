@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.ChooseQualification;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
@@ -138,5 +139,46 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
+        [Fact]
+        private async Task CourseDescription_NavigatingBackToPage_RetainsInformation()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            var get1 = await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("WhoThisCourseIsFor", "WhoThisCourseIsFor text")
+                    .Add("EntryRequirements", "EntryRequirements text")
+                    .Add("WhatYouWillLearn", "WhatYouWillLearn sometext")
+                    .Add("HowYouWillLearn", "HowYouWillLearn this text")
+                    .Add("WhatYouWillNeedToBring", "WhatYouWillNeedToBring that text")
+                    .Add("HowYouWillBeAssessed", "HowYouWillBeAssessed this text")
+                    .Add("WhereNext", "somewhere")
+                    .ToContent()
+            };
+            await HttpClient.SendAsync(request);
+
+            // Act
+            var getResponse = await HttpClient.GetAsync($"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            var doc = await getResponse.GetDocument();
+
+            // Assert
+            using (new AssertionScope())
+            {
+                doc.GetElementById("WhoThisCourseIsFor").TextContent.Should().Be("WhoThisCourseIsFor text");
+                doc.GetElementById("EntryRequirements").TextContent.Should().Be("EntryRequirements text");
+                doc.GetElementById("WhatYouWillLearn").TextContent.Should().Be("WhatYouWillLearn sometext");
+                doc.GetElementById("HowYouWillLearn").TextContent.Should().Be("HowYouWillLearn this text");
+                doc.GetElementById("WhatYouWillNeedToBring").TextContent.Should().Be("WhatYouWillNeedToBring that text");
+                doc.GetElementById("HowYouWillBeAssessed").TextContent.Should().Be("HowYouWillBeAssessed this text");
+                doc.GetElementById("WhereNext").TextContent.Should().Be("somewhere");
+            }
+        }
     }
 }
