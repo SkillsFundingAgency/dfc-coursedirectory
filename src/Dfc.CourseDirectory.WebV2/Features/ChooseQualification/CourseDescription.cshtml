@@ -5,6 +5,11 @@
     Layout = "_V2LayoutProviderContext";
 }
 
+@section BackLink {
+    <govuk-back-link asp-controller="courses" asp-action="choose-qualification" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+}
+
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="CourseDescription" append-mptx-id asp-all-route-data="@ProviderContext.RouteValues">
@@ -80,7 +85,10 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-button type="submit">Continue</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Continue</govuk-button>
+                <a asp-controller="courses" asp-action="choose-qualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-padding-left-3">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
