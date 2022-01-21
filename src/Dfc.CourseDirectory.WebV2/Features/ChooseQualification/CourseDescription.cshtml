@@ -6,7 +6,7 @@
 }
 
 @section BackLink {
-    <govuk-back-link asp-controller="courses" asp-action="choose-qualification" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+    <govuk-back-link asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
 }
 
 
@@ -87,7 +87,7 @@
 
             <div class="govuk-button-group">
                 <govuk-button type="submit">Continue</govuk-button>
-                <a asp-controller="courses" asp-action="choose-qualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-padding-left-3">Cancel</a>
+                <a  asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-padding-left-3">Cancel</a>
             </div>
         </form>
     </div>
