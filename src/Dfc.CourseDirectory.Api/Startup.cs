@@ -18,6 +18,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Dfc.CourseDirectory.Api
 {
+
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -42,11 +43,31 @@ namespace Dfc.CourseDirectory.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Course Directory Public API", Version = "v1" });
-
+                c.DocumentFilter<PublicRouteFilter>();
                 c.CustomSchemaIds(type =>
                 {
                     // By default the type's name is used for the schemaId;
                     // override for places where that yields collisions
+
+                    if (type == typeof(FindACourseApi.Features.TLevelDefinitions.ViewModel))
+                    {
+                        return $"TLevelDefinitions{nameof(FindACourseApi.Features.TLevelDefinitions.ViewModel)}";
+                    }
+
+                    if (type == typeof(FindACourseApi.Features.TLevels.ViewModel))
+                    {
+                        return $"TLevels{nameof(FindACourseApi.Features.TLevels.ViewModel)}";
+                    }
+
+                    if (type == typeof(FindACourseApi.Features.TLevels.QualificationViewModel))
+                    {
+                        return $"TLevel{nameof(FindACourseApi.Features.TLevels.QualificationViewModel)}";
+                    }
+
+                    if (type == typeof(FindACourseApi.Features.TLevels.ProviderViewModel))
+                    {
+                        return $"TLevel{nameof(FindACourseApi.Features.TLevels.ProviderViewModel)}";
+                    }
 
                     return type.Name;
                 });
@@ -57,7 +78,9 @@ namespace Dfc.CourseDirectory.Api
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
             services
-                .AddMediatR(typeof(Startup).Assembly);
+                .AddMediatR(typeof(Startup).Assembly)
+                .AddMediatR(typeof(FindACourseApi.Startup).Assembly)
+                .AddMediatR(typeof(FindAnApprenticeshipApi.Startup).Assembly);
 
             if (Environment.EnvironmentName != "Testing")
             {
