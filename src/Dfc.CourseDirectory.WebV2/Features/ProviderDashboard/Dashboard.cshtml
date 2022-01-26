@@ -65,9 +65,18 @@
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
-                        <li>
-                            <a asp-controller="RegulatedQualification" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
-                        </li>
+                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
+                        {
+                            <li>
+                                <a asp-controller="ChooseQualification" asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-controller="RegulatedQualification" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
+                            </li>
+                        }
                         @if (Model.CourseRunCount > 0)
                         {
                             <li>
