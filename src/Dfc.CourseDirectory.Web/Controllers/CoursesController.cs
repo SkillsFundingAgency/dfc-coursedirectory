@@ -1,3 +1,4 @@
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2;
@@ -10,9 +11,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class CoursesController : Controller
     {
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly IFeatureFlagProvider _featureFlagProvider;
 
-        public CoursesController(IProviderContextProvider providerContextProvider)
+        public CoursesController(IFeatureFlagProvider features, IProviderContextProvider providerContextProvider)
         {
+            _featureFlagProvider = features;
             _providerContextProvider = providerContextProvider;
         }
 
@@ -21,7 +24,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.CoursesLandingOptions)
             {
                 case CoursesLandingOptions.Add:
-                    return RedirectToAction("Index", "RegulatedQualification");
+                    {
+                        if (_featureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
+                        {
+                            return RedirectToAction("ChooseQualification", "ChooseQualification").WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true)); ;
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "RegulatedQualification");
+                        }
+                    }
+
                 case CoursesLandingOptions.Upload:
                     return RedirectToAction("Index", "CoursesDataManagement")
                         .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
