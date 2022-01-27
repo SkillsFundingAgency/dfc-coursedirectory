@@ -30,21 +30,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (regulatedViewModel.WhatAreYouAwarding == WhatAreYouAwarding.Yes)
             {
-                if (_featureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
-                {
-                    return RedirectToAction("Get", "ChooseQualification").WithProviderContext(_providerContext.GetProviderContext(withLegacyFallback: true)); ;
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Qualifications");
-                }
+                return RedirectToAction("Index", "Qualifications");
             }
             else
             {
                 return RedirectToAction("Index", "UnregulatedCourses");
             }
-
-
         }
     }
 }

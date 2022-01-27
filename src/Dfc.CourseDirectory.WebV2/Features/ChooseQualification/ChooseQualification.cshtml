@@ -2,8 +2,11 @@
 @{
     Layout = "_V2LayoutProviderContext";
     ViewContext.SetLayoutData(title: $"Course-Qualification Search");
+    var returnUrl = (string)ViewData["ReturnUrl"];
+    var SearchUrl = (string)ViewData["ReturnUrl"];
 }
 @model ViewModel
+
 
 
 
@@ -15,7 +18,9 @@
 </div>
 
 
-<form method="get" asp-action="Search">
+<form method="get" asp-action="search" asp-all-route-data="@ProviderContext.RouteValues">
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    @ProviderContext.CreateHiddenInput()
     <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
         <govuk-error-summary>
             <govuk-error-summary-item asp-for="SearchTerm" data-testid="SearchErrorMessage" />
@@ -110,6 +115,7 @@
                     {
                         @foreach (var item in Model.SearchResults)
                         {
+                            var resultReturnUrl = new Flurl.Url(returnUrl).SetQueryParam("LearnAimRef", item.LARSCode);
                             <div class="pttcd-lars-search-result__container">
                                 <h2 class="govuk-heading-m">@item.CourseName</h2>
                                 <table class="govuk-table govuk-!-margin-bottom-0">
@@ -137,10 +143,10 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <p class="govuk-body"><a class="link--button" id="" href="Coursedescription">Choose this qualification</a></p>
+                                <p class="govuk-body"><a class="link--button" id="" href="@resultReturnUrl">Choose this qualification</a></p>
                             </div>
                         }
-                        <vc:pager data-testid="choose-qualification-pager" asp-all-route-data="@ProviderContext.RouteValues" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm }))" />
+                        <vc:pager data-testid="choose-qualification-pager" asp-all-route-data="@ProviderContext.RouteValues" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm, ProviderId=@ProviderContext.ProviderInfo.ProviderId }))" />
                     }
                     else
                     {
@@ -161,4 +167,5 @@
             </div>
         </div>
     }
+
 </form>
