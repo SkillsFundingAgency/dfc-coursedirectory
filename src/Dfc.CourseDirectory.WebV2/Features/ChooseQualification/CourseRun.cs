@@ -86,7 +86,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                 throw new InvalidStateException();
             }
 
-            var vm = await CreateViewModel(request.DeliveryMode, new Command());
+            var command = new Command() { CourseName = _flow.State.CourseName };
+            var vm = await CreateViewModel(request.DeliveryMode, command);
             NormalizeViewModel();
             return await Task.FromResult(vm);
 

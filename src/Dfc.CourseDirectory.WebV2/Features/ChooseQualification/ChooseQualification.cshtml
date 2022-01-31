@@ -115,7 +115,7 @@
                     {
                         @foreach (var item in Model.SearchResults)
                         {
-                            var resultReturnUrl = new Flurl.Url(returnUrl).SetQueryParam("LearnAimRef", item.LARSCode);
+                            var resultReturnUrl = new Flurl.Url(returnUrl).SetQueryParam("LearnAimRef", item.LARSCode).SetQueryParam("CourseName", item.CourseName);
                             <div class="pttcd-lars-search-result__container">
                                 <h2 class="govuk-heading-m">@item.CourseName</h2>
                                 <table class="govuk-table govuk-!-margin-bottom-0">
