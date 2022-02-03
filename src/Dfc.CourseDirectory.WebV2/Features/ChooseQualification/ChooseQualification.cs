@@ -20,7 +20,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 
 
     public class Query : IRequest<ViewModel>
-    { 
+    {
+        public string ReturnUrl { get; set; }
+        public string ProviderId { get; set; }
     }
 
     public class SearchQuery : IRequest<QueryResponse>
@@ -29,6 +31,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public int? PageNumber { get; set; }
         public IEnumerable<string> NotionalNVQLevelv2 { get; set; }
         public IEnumerable<string> AwardingOrganisation { get; set; }
+        public string ReturnUrl { get; set; }
+        public string ProviderId { get; set; }
     }
 
     public class ViewModel
@@ -44,6 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public string SearchTerm { get; set; }
         public int PageSize { get; set; }
         public bool SearchWasDone { get; set; }
+        public string ProviderId { get; set; }
     }
 
     public class Result
@@ -75,7 +80,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         {
             var vm = new ViewModel()
             {
-                SearchWasDone = false
+                SearchWasDone = false,
+                ProviderId = request.ProviderId
             };
             return Task.FromResult(vm);
         }
@@ -122,8 +128,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 Level = x.Record.NotionalNVQLevelv2,
                 AwardingOrganisation = x.Record.AwardOrgName,
                 OperationalEndDate = x.Record.CertificationEndDate.HasValue ? x.Record.CertificationEndDate.Value.ToString("dd MMM yyyy") : string.Empty,
-                EffectiveTo =  x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
-            }).OrderBy(x=>x.CourseName);
+                EffectiveTo = x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
+            }).OrderBy(x => x.CourseName);
 
             var vmodel = new ViewModel()
             {
@@ -136,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 TotalPages = result.TotalCount.HasValue ? (int)Math.Ceiling((decimal)result.TotalCount / _larsSearchSettings.ItemsPerPage) : 0,
                 NotionalNVQLevelv2 = request.NotionalNVQLevelv2,
                 AwardingOrganisation = request.AwardingOrganisation,
-
+                ProviderId = request.ProviderId,
                 NotionalNVQLevelv2Filters = new[]
                 {
                     new LarsSearchFilterModel
@@ -156,7 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                             .OrderBy(f => f.Text).ToArray()
                     }
                 },
-                AwardingOrganisationFilters =  new [] 
+                AwardingOrganisationFilters = new[]
                 {
                     new LarsSearchFilterModel
                     {

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Features.ChooseQualification;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -50,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -94,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -139,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -187,7 +188,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm={term}&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm={term}&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -267,7 +268,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/search?SearchTerm=test&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
             // Act
             var response = await HttpClient.SendAsync(request);
 
@@ -278,6 +279,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 doc.GetElementByTestId("NoResults").Should().NotBeNull();
             }
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        private async Task ChooseQualification_SelectCourseNavigatesToAddCourseDescription()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            // Assert
+            Assert.Equal($"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}", response.Headers.Location.OriginalString);
+
         }
     }
 }
