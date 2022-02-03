@@ -48,8 +48,11 @@
                     Yes, I want to delete this unpublished venue
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
-            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-venue__delete-btn">Delete</govuk-button>
-            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-venue__delete-btn">Delete</govuk-button>
+                <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+            </div>
         </div>
     </form>
 </div>

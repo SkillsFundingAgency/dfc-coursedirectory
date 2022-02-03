@@ -65,9 +65,11 @@
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
 
-            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-3" id="pttcd-courses__delete-course__btn">Delete</govuk-button>
+            <div class="govuk-button-group">            
+                <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-3" id="pttcd-courses__delete-course__btn">Delete</govuk-button>
+                <a href="@returnUrl" class="govuk-link govuk-!-margin-left-3" data-testid="cancel-btn">Cancel</a>
+            </div>
 
-            <govuk-button href="@returnUrl" class="govuk-button--secondary" data-testid="cancel-btn">Cancel</govuk-button>
         </form>
     </div>
 </div>

@@ -53,8 +53,12 @@
                 </govuk-summary-list-row>
             </govuk-summary-list>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-1">Save and continue</govuk-button>
-            <govuk-button type="submit" asp-action="Cancel" asp-route-venueId="@Model.VenueId" class="govuk-button--secondary">Cancel</govuk-button>
+
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
+                <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

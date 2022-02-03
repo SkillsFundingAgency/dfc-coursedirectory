@@ -36,8 +36,10 @@
                 <govuk-input-label>Postcode</govuk-input-label>
             </govuk-input>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
-            <govuk-button asp-action="Details" asp-route-venueId="@Model.VenueId" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="govuk-!-margin-right-1">Continue</govuk-button>
+                <a  asp-action="Details" asp-route-venueId="@Model.VenueId" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

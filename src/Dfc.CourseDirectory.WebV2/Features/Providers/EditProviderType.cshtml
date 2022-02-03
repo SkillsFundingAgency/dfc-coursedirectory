@@ -43,8 +43,11 @@
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-5">Save</govuk-button>
-            <govuk-button asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="govuk-!-margin-right-5">Save</govuk-button>
+                <a asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" govuk-link govuk-!-margin-left-3>Cancel</a>
+            </div>
+
         </form>
     </div>
 </div>

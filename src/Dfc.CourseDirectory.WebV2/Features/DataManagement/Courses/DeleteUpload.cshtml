@@ -27,9 +27,11 @@
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
 
-            <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="govuk-button--warning govuk-!-margin-right-3">Delete</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="govuk-button--warning govuk-!-margin-right-3">Delete</govuk-button>
+                <a asp-action="Errors" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3" data-testid="cancel-btn">Cancel</a>
+            </div>
 
-            <govuk-button asp-action="Errors" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary" data-testid="cancel-btn">Cancel</govuk-button>
         </form>
     </div>
 </div>

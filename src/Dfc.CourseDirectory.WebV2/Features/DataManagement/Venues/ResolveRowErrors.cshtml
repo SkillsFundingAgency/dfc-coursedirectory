@@ -61,8 +61,10 @@
                 <govuk-input-label>Website</govuk-input-label>
             </govuk-input>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-3">Resolve errors</govuk-button>
-            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">            
+                <govuk-button type="submit" class="govuk-!-margin-right-3">Resolve errors</govuk-button>
+                <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
