@@ -60,7 +60,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 CreateProvider(10, ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels, ProviderStatus.Onboarded, "Active"));
 
             await User.AsTestUser(userType);
-
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/providers/reports/provider-type");
@@ -99,12 +98,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             {
                 foreach (var record in records)
                 {
-                    var provider = providers.SingleOrDefault(p => p.Ukprn == record.ProviderUkprn);
 
+                    var provider = providers.SingleOrDefault(p => p.Ukprn == record.ProviderUkprn);
                     provider.Should().NotBeNull();
                     record.ProviderName.Should().Be(provider.Name);
                     record.ProviderType.Should().Be((int)provider.ProviderType);
-                    record.ProviderTypeDescription.Should().Be(string.Join("; ", Enum.GetValues(typeof(ProviderType)).Cast<ProviderType>().Where(p => p != ProviderType.None && provider.ProviderType.HasFlag(p)).DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescription())));
+                    record.ProviderTypeDescription.Should().Be(string.Join("; ",
+                        Enum.GetValues(typeof(ProviderType)).Cast<ProviderType>()
+                            .Where(p => p != ProviderType.None && provider.ProviderType.HasFlag(p))
+                            .DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescription())));
                     record.ProviderStatus.Should().Be((int)provider.ProviderStatus);
                     record.ProviderStatusDescription.Should().Be(provider.ProviderStatus.ToString());
                     record.UkrlpProviderStatus.Should().Be(provider.UkrlpProviderStatusDescription);
@@ -112,8 +114,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                     record.OtherCourseCount.Should().Be(0);
                     record.LiveApprenticeshipCount.Should().Be(0);
                     record.OtherApprenticeshipCount.Should().Be(0);
-                    record.LiveTLevelCount.Should().Be(0);
+                    record.LiveTLevelCount.Should().Be(0); 
                     record.OtherTLevelCount.Should().Be(0);
+                    
                 }
             }
         }
