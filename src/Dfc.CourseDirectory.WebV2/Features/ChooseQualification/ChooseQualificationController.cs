@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 
         public async Task<IActionResult> CourseSelected(SelectCourse course)
         {
-            await _mediator.Send(new CourseSelected.Command() { LarsCode = course.LearnAimRef });
+            await _mediator.Send(new CourseSelected.Command() { LarsCode = course.LearnAimRef, CourseName=course.CourseName });
             return RedirectToAction(nameof(CourseDescription))
                 .WithMptxInstanceId(Flow.InstanceId)
                 .WithProviderContext(_providerContext);
