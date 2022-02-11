@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
-using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
@@ -16,14 +15,14 @@ SELECT
             p.Ukprn,
             p.ProviderName,
             ISNULL(p.TradingName, ''),
-            ISNULL(CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription), '') AS [ContactAddress1],
-            ISNULL(pc.AddressLocality, '') AS [ContactAddress2],
+            ISNULL(CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription), '') AS[ContactAddress1],
+            ISNULL(pc.AddressLocality, '') AS[ContactAddress2],
             ISNULL(pc.AddressPostTown, ISNULL(pc.AddressItems, '')) AS [AddressPostTown],
-            ISNULL(pc.AddressCounty, ''),
-            ISNULL(pc.AddressPostcode, ''),
+            ISNULL(pc.AddressCounty, '') AS AddressCounty,
+            ISNULL(pc.AddressPostcode, '') AS AddressPostcode,
             ISNULL(pc.Telephone1, ISNULL(pc.Telephone2, '')) AS [Telephone],
-            ISNULL(pc.WebsiteAddress, ''),
-            ISNULL(pc.Email, '')
+            ISNULL(pc.WebsiteAddress, '') AS WebsiteAddress,
+            ISNULL(pc.Email, '') AS Email
 FROM        Pttcd.Providers p with(nolock)
 INNER JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
 WHERE       p.ProviderId IN(
@@ -32,6 +31,9 @@ WHERE       p.ProviderId IN(
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
             )
 ORDER BY    p.Ukprn ASC";
+
+
+
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
             {
