@@ -85,11 +85,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             csvReader.GetFieldIndex("CD Provider Status", isTryGet: true).Should().Be(5);
             csvReader.GetFieldIndex("Ukrlp Provider Status", isTryGet: true).Should().Be(6);
             csvReader.GetFieldIndex("Live Course Count", isTryGet: true).Should().Be(7);
-            csvReader.GetFieldIndex("Other Course Count", isTryGet: true).Should().Be(8);
-            csvReader.GetFieldIndex("Live Apprenticeship Count", isTryGet: true).Should().Be(9);
-            csvReader.GetFieldIndex("Other Apprenticeship Count", isTryGet: true).Should().Be(10);
-            csvReader.GetFieldIndex("Live T Level Count", isTryGet: true).Should().Be(11);
-            csvReader.GetFieldIndex("Other T Level Count", isTryGet: true).Should().Be(12);
+            csvReader.GetFieldIndex("Live Apprenticeship Count", isTryGet: true).Should().Be(8);
+            csvReader.GetFieldIndex("Live T Level Count", isTryGet: true).Should().Be(9);
 
             var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderTypeReport.Csv>().ToArray();
             records.Length.Should().Be(10);
@@ -111,12 +108,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                     record.ProviderStatusDescription.Should().Be(provider.ProviderStatus.ToString());
                     record.UkrlpProviderStatus.Should().Be(provider.UkrlpProviderStatusDescription);
                     record.LiveCourseCount.Should().Be(0);
-                    record.OtherCourseCount.Should().Be(0);
                     record.LiveApprenticeshipCount.Should().Be(0);
-                    record.OtherApprenticeshipCount.Should().Be(0);
-                    record.LiveTLevelCount.Should().Be(0); 
-                    record.OtherTLevelCount.Should().Be(0);
-                    
+                    record.LiveTLevelCount.Should().Be(0);
                 }
             }
         }
@@ -187,11 +180,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 record.ProviderStatusDescription.Should().Be(provider.ProviderStatus.ToString());
                 record.UkrlpProviderStatus.Should().Be(provider.UkrlpProviderStatusDescription);
                 record.LiveCourseCount.Should().Be(liveCourseIds.Length);
-                record.OtherCourseCount.Should().Be(archivedCourseIds.Length);
                 record.LiveApprenticeshipCount.Should().Be(liveApprenticeships.Length);
-                record.OtherApprenticeshipCount.Should().Be(0);
                 record.LiveTLevelCount.Should().Be(liveTLevels.Length);
-                record.OtherTLevelCount.Should().Be(deletedTLevels.Length);
             }
         }
 
