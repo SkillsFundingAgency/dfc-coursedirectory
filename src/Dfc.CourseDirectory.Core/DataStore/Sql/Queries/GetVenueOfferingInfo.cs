@@ -5,6 +5,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     public class GetVenueOfferingInfo : ISqlQuery<VenueOfferingInfo>
     {
-        public Guid VenueId { get; set; }
+        public Guid ApprenticeshipId { get; set; }
     }
 }

@@ -72,8 +72,8 @@ else
                        asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
                     </a>
                     <a class="govuk-link"
-                       asp-controller="Apprenticeships"
-                       asp-action="ConfirmationDelete"
+                       asp-controller="DeleteApprenticeshipController1"
+                       asp-action="DeleteApprenticeship"
                        asp-route-apprenticeshipId="@apprenticeship.id"
                        asp-route-level="@apprenticeship.NotionalNVQLevelv2"
                        asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>

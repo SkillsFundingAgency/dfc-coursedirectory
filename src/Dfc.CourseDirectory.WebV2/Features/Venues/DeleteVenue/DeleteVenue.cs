@@ -145,14 +145,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 
         private async Task<ViewModel> CreateViewModel(Guid venueId)
         {
-            var offeringInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueOfferingInfo() { VenueId = venueId });
+            var offeringInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetVenueOfferingInfo() { ApprenticeshipId = venueId });
 
             if (offeringInfo == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.Venue, venueId);
             }
 
-            var providerId = offeringInfo.Venue.ProviderId;
+            var providerId = offeringInfo.Apprenticeship.ProviderId;
 
             var linkedCourses = offeringInfo.LinkedCourses.Count > 0 ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId })) :
@@ -168,9 +168,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 
             return new ViewModel()
             {
-                VenueId = offeringInfo.Venue.VenueId,
-                ProviderId = offeringInfo.Venue.ProviderId,
-                ProviderVenueRef = offeringInfo.Venue.ProviderVenueRef,
+                VenueId = offeringInfo.Apprenticeship.VenueId,
+                ProviderId = offeringInfo.Apprenticeship.ProviderId,
+                ProviderVenueRef = offeringInfo.Apprenticeship.ProviderVenueRef,
                 AffectedCourses = offeringInfo.LinkedCourses
                     .Select(c => new AffectedCourseViewModel()
                     {
@@ -200,14 +200,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                             .TLevelDefinition.Name
                     })
                     .ToArray(),
-                VenueName = offeringInfo.Venue.VenueName,
+                VenueName = offeringInfo.Apprenticeship.VenueName,
                 AddressParts = new[]
                 {
-                    offeringInfo.Venue.AddressLine1,
-                    offeringInfo.Venue.AddressLine2,
-                    offeringInfo.Venue.Town,
-                    offeringInfo.Venue.County,
-                    offeringInfo.Venue.Postcode
+                    offeringInfo.Apprenticeship.AddressLine1,
+                    offeringInfo.Apprenticeship.AddressLine2,
+                    offeringInfo.Apprenticeship.Town,
+                    offeringInfo.Apprenticeship.County,
+                    offeringInfo.Apprenticeship.Postcode
                 }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray(),
             };
         }
