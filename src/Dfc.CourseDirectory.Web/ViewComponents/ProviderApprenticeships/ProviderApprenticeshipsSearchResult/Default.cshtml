@@ -40,51 +40,56 @@ else
 
 
 
-        <div class="cd-apprenticeships-result govuk-body">
-            @if (!string.IsNullOrEmpty(Model.SearchTerm))
-            {
-                <div class="govuk-!-margin-bottom-4">
-                    <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
-                </div>
-            }
-
-            @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
-            {
-                <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
-                    <h2 class="govuk-heading-m">
-                        @apprenticeship.ApprenticeshipTitle
-                        @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.Framework)
-                        {
-                            <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
-                        }
-                    </h2>
-                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
-                    {
-                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
-                    }
-                </div>
-                <div class="ctas">
-                    <a class="govuk-link"
-                       asp-controller="Apprenticeships"
-                       asp-action="ViewAndEdit"
-                       asp-route-Id="@apprenticeship.id"
-                       asp-route-Cancelled=null
-                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
-                    </a>
-                    <a class="govuk-link"
-                       asp-controller="DeleteApprenticeshipController1"
-                       asp-action="DeleteApprenticeship"
-                       asp-route-apprenticeshipId="@apprenticeship.id"
-                       asp-route-level="@apprenticeship.NotionalNVQLevelv2"
-                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
-                </div>
-            }
-
-
-
-
-
+<div class="cd-apprenticeships-result govuk-body">
+    @if (!string.IsNullOrEmpty(Model.SearchTerm))
+    {
+        <div class="govuk-!-margin-bottom-4">
+            <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
         </div>
+    }
+
+    @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
+    {
+        <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
+            <h2 class="govuk-heading-m">
+                @apprenticeship.ApprenticeshipTitle
+                @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.Framework)
+                {
+                    <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
+                }
+            </h2>
+            @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+            {
+                <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+            }
+        </div>
+        <div class="ctas">
+            <a class="govuk-link"
+               asp-controller="Apprenticeships"
+               asp-action="ViewAndEdit"
+               asp-route-Id="@apprenticeship.id"
+               asp-route-Cancelled=null
+               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">
+                View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
+            </a>
+            <a class="govuk-link"
+               asp-controller="DeleteApprenticeshipController1"
+               asp-action="DeleteApprenticeship"
+               asp-route-apprenticeshipId="@apprenticeship.id"
+               asp-route-level="@apprenticeship.NotionalNVQLevelv2"
+               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+        </div>
+        <td class="govuk-table__cell"><a asp-action="DeleteApprenticeship" asp-controller="DeleteApprenticeshipController1"  asp-route-apprenticeshipId="@apprenticeship.id" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a></td>
+
+        <govuk-button asp-controller="DeleteApprenticeshipController1" asp-action="Get" asp-route-apprenticeshipId="@apprenticeship.id" class="govuk-button--warning">Delete Apprenticeship</govuk-button>
+
+    }
+
+
+
+
+
+</div>
 
     }
 

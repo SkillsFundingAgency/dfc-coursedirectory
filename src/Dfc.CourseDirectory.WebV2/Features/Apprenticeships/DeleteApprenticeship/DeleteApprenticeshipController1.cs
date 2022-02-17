@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         appendUniqueKey: false,
         requestDataKeys: new[] { nameof(Command.ApprenticeshipId) })]
     [RequireProviderContext]
-    [Route("Apprenticeships/{ApprenticeshipId}")]
+    [Route("apprenticeships/{ApprenticeshipId}/delete")]
     public class DeleteApprenticeshipController1 : Controller
     {
         private readonly IMediator _mediator;
@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
             _providerContextProvider = providerContextProvider;
         }
 
-        [AuthorizeVenue]
+        
         [HttpGet("delete")]
         public async Task<IActionResult> DeleteApprenticeship(Guid ApprenticeshipId) =>
             await _mediator.SendAndMapResponse(
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
                 },
                 vm => View(vm));
 
-        [AuthorizeVenue]
+        
         [HttpPost("delete")]
         public async Task<IActionResult> DeleteApprenticeship(Command request) => await _mediator.SendAndMapResponse(
             request,

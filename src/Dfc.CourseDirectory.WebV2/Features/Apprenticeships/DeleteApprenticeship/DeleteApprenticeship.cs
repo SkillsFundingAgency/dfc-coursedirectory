@@ -15,19 +15,24 @@ using FormFlow;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using FluentValidation.Results;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using DeleteApprenticeshipQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteApprenticeship;
+
 //using Dfc.CourseDirectory.Services.Models;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeship
 {
-    class JourneyModel
+    public class JourneyModel
     {
         public string ApprenticeshipTitle { get; set; }
+        public Guid ApprenticeshipId { get; set; }
+        public Guid ProviderId { get; set; }
+
 
     }
     public class Query : IRequest<ViewModel>
     {
-        public Guid VenueId { get; set; }
         public Guid ProviderId { get; set; }
         public Guid ApprenticeshipId { get; internal set; }
     }
@@ -38,6 +43,10 @@ namespace Dfc.CourseDirectory.WebV2
         public Guid ProviderId { get; set; }
         public bool Confirm { get; set; }
 
+    }
+    public class Request : IRequest<ViewModel>
+    {
+        public Guid ApprenticeshipId { get; set; }
     }
     public class ViewModel : Command
     {
@@ -58,90 +67,116 @@ namespace Dfc.CourseDirectory.WebV2
     public class DeletedViewModel
     {
         public string ApprenticeshipTitle { get; set; }
+        public int Level { get; set; }
     }
 
-    public class Handler :
-        IRequestHandler<Query, ViewModel>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>,
-        IRequestHandler<DeletedQuery, DeletedViewModel>
-    {
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IProviderOwnershipCache _providerOwnershipCache;
-        private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly JourneyInstanceProvider _journeyInstanceProvider;
-        private readonly IClock _clock;
 
+    public class Handler :
+       IRequestHandler<Request, ViewModel>,
+       IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>,
+       IRequestHandler<DeletedQuery, DeletedViewModel>
+    {
+        private readonly IProviderOwnershipCache _providerOwnershipCache;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly JourneyInstance<JourneyModel> _journeyInstance;
+        private readonly IClock _clock;
+        private readonly ICurrentUserProvider _currentUserProvider;
+        
         public Handler(
-            ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderOwnershipCache providerOwnershipCache,
-            ICurrentUserProvider currentUserProvider,
-            JourneyInstanceProvider journeyInstanceProvider,
-            IClock clock)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            JourneyInstance<JourneyModel> journeyInstance,
+            IClock clock,
+            ICurrentUserProvider currentUserProvider)
         {
-            _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerOwnershipCache = providerOwnershipCache;
-            _currentUserProvider = currentUserProvider;
-            _journeyInstanceProvider = journeyInstanceProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _journeyInstance = journeyInstance;
             _clock = clock;
+            _currentUserProvider = currentUserProvider;
+            
         }
 
-        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.ApprenticeshipId);
+        public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
+        {
+            _journeyInstance.ThrowIfCompleted();
+
+            var apprenticeship = await GetApprenticeship(request.ApprenticeshipId);
+            return CreateViewModel(apprenticeship);
+        }
+
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var vm = await CreateViewModel(request.ApprenticeshipId);
+            _journeyInstance.ThrowIfCompleted();
 
+            var apprenticeship = await GetApprenticeship(request.ApprenticeshipId);
 
-            var result = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.DeleteApprenticeship()
+            if (!request.Confirm)
             {
-                ApprenticeshipId = request.ApprenticeshipId,
-                DeletedOn = _clock.UtcNow,
-                DeletedBy = _currentUserProvider.GetCurrentUser()
-            });
-
-            if (result.Value is NotFound)
-            {
-                throw new ResourceDoesNotExistException(ResourceType.Apprenticeship, request.ApprenticeshipId);
+                var vm = CreateViewModel(apprenticeship);
+                var validationResult = new ValidationResult(new[]
+                {
+                    new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the Apprenticeship")
+                });
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            _providerOwnershipCache.OnVenueDeleted(request.ApprenticeshipId);
+            await _sqlQueryDispatcher.ExecuteQuery(new DeleteApprenticeshipQuery()
+            {
+                ApprenticeshipId = request.ApprenticeshipId,
+                DeletedBy = _currentUserProvider.GetCurrentUser(),
+                DeletedOn = _clock.UtcNow
+            });
 
-            _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel { ApprenticeshipTitle = vm.ApprenticeshipTitle })
-                .Complete();
+            _providerOwnershipCache.OnApprenticeshipDeleted(request.ApprenticeshipId);
+
+            // The next page needs this info - stash it in the JourneyModel
+            // since it will no longer able to query for it.
+            _journeyInstance.UpdateState(new JourneyModel()
+            {
+                ApprenticeshipId = apprenticeship.ApprenticeshipId,
+                ProviderId = apprenticeship.ProviderId,
+            });
+
+            _journeyInstance.Complete();
 
             return new Success();
         }
 
-        public Task<DeletedViewModel> Handle(DeletedQuery request, CancellationToken cancellationToken)
+        public async Task<DeletedViewModel> Handle(DeletedQuery request, CancellationToken cancellationToken)
         {
-            var journeyInstance = _journeyInstanceProvider.GetInstance<JourneyModel>();
-            journeyInstance.ThrowIfNotCompleted();
+            _journeyInstance.ThrowIfNotCompleted();
 
-            return Task.FromResult(new DeletedViewModel
+            var providerId = _journeyInstance.State.ProviderId;
+
+            var liveApprenticeships = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipsForProvider()
             {
-                ApprenticeshipTitle = journeyInstance.State.ApprenticeshipTitle
+                ProviderId = providerId
             });
+
+            return new DeletedViewModel()
+            {
+                ApprenticeshipTitle = _journeyInstance.State.ApprenticeshipTitle,
+
+            };
         }
 
-        private async Task<ViewModel> CreateViewModel(Guid ApprenticeshipId)
+        private ViewModel CreateViewModel(Apprenticeship apprenticeship) => new ViewModel()
         {
-            var offeringInfo = await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipsForProvider() { ProviderId = ApprenticeshipId });
-
-            if (offeringInfo == null)
-            {
-                throw new ResourceDoesNotExistException(ResourceType.Apprenticeship, ApprenticeshipId);
-            }
-             
-            var providerId = offeringInfo.Apprenticeship.ProviderId; 
-
-            return new ViewModel();
-
+            ApprenticeshipId = apprenticeship.ApprenticeshipId
+        };
+        private async Task<Apprenticeship> GetApprenticeship(Guid apprenticeshipId)
+        {
+            return await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeship() { ApprenticeshipId = apprenticeshipId }) ??
+                throw new ResourceDoesNotExistException(ResourceType.Apprenticeship, apprenticeshipId);
         }
 
 
     }
 
 }
+
 
 
 
