@@ -18,6 +18,10 @@ namespace Dfc.CourseDirectory.Core.Models
             InvalidReasons = InvalidDateInputReasons.None;
         }
 
+        public DateInput()
+        {
+        }
+
         public DateInput(InvalidDateInputReasons invalidReasons)
         {
             if (invalidReasons == InvalidDateInputReasons.None)
