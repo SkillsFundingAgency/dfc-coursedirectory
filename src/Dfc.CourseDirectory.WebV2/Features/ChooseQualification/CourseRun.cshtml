@@ -68,11 +68,11 @@
                 </govuk-input-hint>
             </govuk-input>
 
-            <govuk-radios asp-for="FlexibleStartDate">
+            <govuk-radios asp-for="FlexibleStartDate" role="radiogroup">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>
                 </govuk-radios-fieldset>
-                <govuk-radios-item value="@false">
+                <govuk-radios-item value="@false" role="radio" aria-checked="false">
                     Defined start date
                     <govuk-radios-item-conditional>
                         <govuk-radios-item-hint>For example, 30 9 2023</govuk-radios-item-hint>
@@ -81,7 +81,7 @@
                         </govuk-date-input>
                     </govuk-radios-item-conditional>
                 </govuk-radios-item>
-                <govuk-radios-item value="@true">
+                <govuk-radios-item value="@true" role="radio" aria-checked="false">
                     Flexible start date
                 </govuk-radios-item>
             </govuk-radios>
