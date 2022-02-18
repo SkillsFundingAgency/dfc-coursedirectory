@@ -12,6 +12,10 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         private readonly DateTime? _value;
 
+        public DateInput()
+        {
+        }
+
         public DateInput(DateTime value)
         {
             _value = value;
