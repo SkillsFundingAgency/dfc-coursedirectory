@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
 
         public async Task<ViewModel> Handle(Request request, CancellationToken cancellationToken)
         {
-            _journeyInstance.ThrowIfCompleted();
+           _journeyInstance.ThrowIfCompleted();
 
             var apprenticeship = await GetApprenticeship(request.ApprenticeshipId);
             return CreateViewModel(apprenticeship);

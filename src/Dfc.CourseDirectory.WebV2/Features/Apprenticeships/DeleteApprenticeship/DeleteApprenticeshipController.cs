@@ -14,31 +14,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         appendUniqueKey: false,
         requestDataKeys: new[] { nameof(Command.ApprenticeshipId) })]
     [RequireProviderContext]
-    [Route("apprenticeships/{ApprenticeshipId}/delete")]
-    public class DeleteApprenticeshipController1 : Controller
+    [Route("apprenticeships/delete/{ApprenticeshipId}")]
+    public class DeleteApprenticeshipController : Controller
     {
         private readonly IMediator _mediator;
         private readonly IProviderContextProvider _providerContextProvider;
 
-        public DeleteApprenticeshipController1(IMediator mediator, IProviderContextProvider providerContextProvider)
+        public DeleteApprenticeshipController(IMediator mediator, IProviderContextProvider providerContextProvider)
         {
             _mediator = mediator;
             _providerContextProvider = providerContextProvider;
         }
 
-        
-        [HttpGet("delete")]
-        public async Task<IActionResult> DeleteApprenticeship(Guid ApprenticeshipId) =>
-            await _mediator.SendAndMapResponse(
-                new Query
+
+        [HttpGet("")]
+        public async Task<IActionResult> DeleteApprenticeship(Guid ApprenticeshipId)
+        {
+            var quck = _providerContextProvider.GetProviderContext(true).ProviderInfo.ProviderId;
+
+            return await _mediator.SendAndMapResponse(
+                new Request
                 {
-                    ApprenticeshipId = ApprenticeshipId,
-                    ProviderId = _providerContextProvider.GetProviderContext().ProviderInfo.ProviderId
+                    ApprenticeshipId = ApprenticeshipId
                 },
                 vm => View(vm));
+        }
+
 
         
-        [HttpPost("delete")]
+        [HttpPost("")]
         public async Task<IActionResult> DeleteApprenticeship(Command request) => await _mediator.SendAndMapResponse(
             request,
             r => r.Match<IActionResult>(
