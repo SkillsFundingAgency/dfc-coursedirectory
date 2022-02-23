@@ -207,12 +207,12 @@ namespace Dfc.CourseDirectory.WebV2
                 services.AddSingleton(new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
             }
 
-//#if DEBUG
-//            if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
-//            {
-//                services.AddSingleton<IMptxStateProvider, LocalFileMptxStateProvider>();
-//            }
-//#endif
+#if DEBUG
+            if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
+            {
+                services.AddSingleton<IMptxStateProvider, LocalFileMptxStateProvider>();
+            }
+#endif
 
             return services;
         }
