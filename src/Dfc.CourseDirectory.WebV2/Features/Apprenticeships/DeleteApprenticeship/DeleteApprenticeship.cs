@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
             _journeyInstance.UpdateState(new JourneyModel()
             {
                 ApprenticeshipId = apprenticeship.ApprenticeshipId,
-                ProviderId = apprenticeship.ProviderId
+                ProviderId = apprenticeship.ProviderId            
             });
 
             _journeyInstance.Complete();
@@ -170,9 +170,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         private ViewModel CreateViewModel(Apprenticeship apprenticeship) => new ViewModel()
         {
             ApprenticeshipId = apprenticeship.ApprenticeshipId,
-            ApprenticeshipTitle = _journeyInstance.State.ApprenticeshipTitle
-
-            // ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle
+            ApprenticeshipTitle = apprenticeship.Standard.StandardName,
+            NotionalNVQLevelv2 = apprenticeship.Standard.NotionalNVQLevelv2
         };
         private async Task<Apprenticeship> GetApprenticeship(Guid apprenticeshipId)
         {
