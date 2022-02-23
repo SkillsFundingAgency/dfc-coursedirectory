@@ -458,8 +458,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         private static string TryGetDateFilters(
             DateTime? from,
             DateTime? to,
-            bool hideOutOfDateCourses = true, 
-            bool hideFlexiCourses = true)
+            bool hideOutOfDateCourses = false, 
+            bool hideFlexiCourses = false)
         {
             string dateFilter;
             var filters = new List<string>();
