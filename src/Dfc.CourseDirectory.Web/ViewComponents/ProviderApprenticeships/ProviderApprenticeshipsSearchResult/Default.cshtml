@@ -79,7 +79,7 @@ else
                asp-route-level="@apprenticeship.NotionalNVQLevelv2"
                asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
         </div>
-        <td class="govuk-table__cell"><a asp-action="delete" asp-controller="apprenticeships"  asp-route-id="@apprenticeship.id" asp-route-providerId="@apprenticeship.ProviderId" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a></td>
+        <td class="govuk-table__cell"><a asp-action="Delete" asp-controller="apprenticeships"  asp-route-id="@apprenticeship.id"  class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a></td>
 
         @*<govuk-button asp-controller="DeleteApprenticeshipController1" asp-action="Get" asp-route-apprenticeshipId="@apprenticeship.id"  class="govuk-button--warning">Delete Apprenticeship</govuk-button>*@
 
