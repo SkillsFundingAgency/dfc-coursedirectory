@@ -33,6 +33,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         public SearchSortBy? SortBy { get; set; }
         public DateTime? StartDateFrom { get; set; }
         public DateTime? StartDateTo { get; set; }
+        public bool HideOutOfDateCourses { get; set; }
+        public bool HideFlexiCourses { get; set; }
         public string CampaignCode { get; set; }
         public int? Limit { get; set; }
         public int? Start { get; set; }
@@ -40,6 +42,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
     public class Handler : IRequestHandler<Query, OneOf<ProblemDetails, SearchViewModel>>
     {
+        private const int DefaultStartFromThreshold = 60;
         private const int DefaultSize = 20;
         private const int MaxSize = 50;
 
@@ -129,15 +132,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 longitude = coords.Value.lng;
             }
 
-            if (request.StartDateFrom.HasValue)
-            {
-                filters.Add($"StartDate ge {request.StartDateFrom.Value:o}");
-            }
+            var dateFilter = TryGetDateFilters(
+                request.StartDateFrom, 
+                request.StartDateTo, 
+                request.HideOutOfDateCourses, 
+                request.HideFlexiCourses);
 
-            if (request.StartDateTo.HasValue)
-            {
-                filters.Add($"StartDate le {request.StartDateTo.Value:o}");
-            }
+            filters.Add(dateFilter);
+
 
             if (request.AttendancePatterns?.Any() ?? false)
             {
@@ -451,6 +453,58 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             }
 
             return null;
+        }
+
+        private static string TryGetDateFilters(
+            DateTime? from,
+            DateTime? to,
+            bool hideOutOfDateCourses = true, 
+            bool hideFlexiCourses = true)
+        {
+            string dateFilter;
+            var filters = new List<string>();
+            var startDate = DateTime.MinValue;
+            var endDate = DateTime.MaxValue;
+            var outOfDate = DateTime.MinValue;
+
+            if (hideOutOfDateCourses)
+            {
+                outOfDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
+                    .AddDays(DefaultStartFromThreshold * -1);
+
+                startDate = outOfDate;
+            }
+
+            if (hideFlexiCourses)
+            {
+                filters.Add($"{nameof(FindACourseOffering.StartDate)} ne null");
+            }
+
+            if (from.HasValue && from.Value >= outOfDate)
+            {
+                startDate = from.Value;
+            }
+
+            if (to.HasValue && to.Value >= outOfDate)
+            {
+                endDate = to.Value;
+            }
+
+            if (startDate != DateTime.MinValue)
+            {
+                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:o}"); 
+            }
+
+            if (endDate != DateTime.MaxValue)
+            {
+                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:o}");
+            }
+
+            dateFilter = hideFlexiCourses 
+                ? string.Join(" and ", filters)
+                : $"(({string.Join(" and ", filters)}) or {nameof(FindACourseOffering.StartDate)} eq null)";
+
+            return dateFilter;
         }
     }
 }

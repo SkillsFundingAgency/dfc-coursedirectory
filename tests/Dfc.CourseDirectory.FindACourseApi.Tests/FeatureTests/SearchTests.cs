@@ -196,6 +196,112 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         }
 
         [Fact]
+        public async Task HideFlexiCoursesSpecified_AddsStartDateFilterToQuery()
+        {
+            // Arrange
+            var request = CreateRequest(new
+            {
+                hideFlexiCourses = true
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"{nameof(FindACourseOffering.StartDate)} ne null");
+        }
+
+
+        [Fact]
+        public async Task HideFlexiCoursesNotSpecified_WithStartDateFromSpecified_AddsStartDateFilterWithOrToQuery()
+        {
+            // Arrange
+            var startDateFrom = new DateTime(2020, 4, 1);
+
+            var request = CreateRequest(new
+            {
+                startDateFrom = startDateFrom,
+                hideFlexiCourses = false
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"({nameof(FindACourseOffering.StartDate)} ge {startDateFrom:o}) or {nameof(FindACourseOffering.StartDate)} eq null");
+        }
+
+        [Fact]
+        public async Task HideFlexiCoursesNotSpecified_WithStartDateToSpecified_AddsStartDateFilterWithOrToQuery()
+        {
+            // Arrange
+            var startDateTo = new DateTime(2020, 4, 1);
+
+            var request = CreateRequest(new
+            {
+                startDateTo = startDateTo,
+                hideFlexiCourses = false
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"({nameof(FindACourseOffering.StartDate)} le {startDateTo:o}) or {nameof(FindACourseOffering.StartDate)} eq null");
+        }
+
+        [Fact]
+        public async Task HideOutOfDateCoursesSpecified_AddsStartDateFilterToQuery()
+        {
+            // Arrange
+            var request = CreateRequest(new
+            {
+                hideOutOfDateCourses = true
+            });
+
+            int DefaultStartFromThreshold = 60;
+            var outOfDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+                .AddDays(DefaultStartFromThreshold * -1);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"{nameof(FindACourseOffering.StartDate)} ge {outOfDate:o}");
+        }
+
+        [Fact]
+        public async Task HideOutOfDateCoursesSpecified_And_ShowFlexiCoursesSpecified_AddsStartDateFilterToQuery()
+        {
+            // Arrange
+            var request = CreateRequest(new
+            {
+                hideOutOfDateCourses = true,
+                hideFlexiCourses = false
+            });
+
+            int DefaultStartFromThreshold = 60;
+            var outOfDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+                .AddDays(DefaultStartFromThreshold * -1);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"({nameof(FindACourseOffering.StartDate)} ge {outOfDate:o}) or {nameof(FindACourseOffering.StartDate)} eq null");
+        }
+
+        [Fact]
         public async Task StartDateFromSpecified_AddsFilterToQuery()
         {
             // Arrange
@@ -212,7 +318,29 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                $"StartDate ge {startDateFrom:o}");
+                $"{nameof(FindACourseOffering.StartDate)} ge {startDateFrom:o}");
+        }
+
+
+        [Fact]
+        public async Task StartDateFromSpecified_And_ShowFlexiCoursesSpecified_AddsFilterToQuery()
+        {
+            // Arrange
+            var startDateFrom = new DateTime(2020, 4, 1);
+
+            var request = CreateRequest(new
+            {
+                startDateFrom = startDateFrom,
+                hideFlexiCourses = false
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $" or {nameof(FindACourseOffering.StartDate)} eq null");
         }
 
         [Fact]
@@ -232,7 +360,50 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                $"StartDate le {startDateTo:o}");
+                $"{nameof(FindACourseOffering.StartDate)} le {startDateTo:o}");
+        }
+
+        [Fact]
+        public async Task StartDateToSpecified_And_ShowFlexiCoursesSpecified_AddsFilterToQuery()
+        {
+            // Arrange
+            var startDateTo = new DateTime(2021, 12, 31);
+
+            var request = CreateRequest(new
+            {
+                startDateTo = startDateTo,
+                hideFlexiCourses = false
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $" or {nameof(FindACourseOffering.StartDate)} eq null");
+        }
+
+        [Fact]
+        public async Task StartDateToAndFromSpecified_AddsFilterToQuery()
+        {
+            // Arrange
+            var startDateTo = new DateTime(2021, 12, 31);
+            var startDateFrom = new DateTime(2020, 4, 1);
+
+            var request = CreateRequest(new
+            {
+                startDateTo = startDateTo,
+                startDateFrom = startDateFrom
+            });
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"{nameof(FindACourseOffering.StartDate)} ge {startDateFrom:o} and StartDate le {startDateTo:o}");
         }
 
         [Fact]
