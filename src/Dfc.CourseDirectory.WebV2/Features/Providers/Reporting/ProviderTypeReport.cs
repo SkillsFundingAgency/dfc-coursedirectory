@@ -41,20 +41,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderTypeRep
         [Name("Live Course Count")]
         public int LiveCourseCount { get; set; }
 
-        [Name("Other Course Count")]
-        public int OtherCourseCount { get; set; }
-
         [Name("Live Apprenticeship Count")]
         public int LiveApprenticeshipCount { get; set; }
-
-        [Name("Other Apprenticeship Count")]
-        public int OtherApprenticeshipCount { get; set; }
 
         [Name("Live T Level Count")]
         public int LiveTLevelCount { get; set; }
 
-        [Name("Other T Level Count")]
-        public int OtherTLevelCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -84,11 +76,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderTypeRep
                         ProviderStatusDescription = result.ProviderStatus.ToString(),
                         UkrlpProviderStatus = result.UkrlpProviderStatusDescription,
                         LiveCourseCount = result.LiveCourseCount,
-                        OtherCourseCount = result.OtherCourseCount,
                         LiveApprenticeshipCount = result.LiveApprenticeshipCount,
-                        OtherApprenticeshipCount = result.OtherApprenticeshipCount,
-                        LiveTLevelCount = result.LiveTLevelCount,
-                        OtherTLevelCount = result.OtherTLevelCount
+                        LiveTLevelCount = result.LiveTLevelCount
                     };
                 }
             }

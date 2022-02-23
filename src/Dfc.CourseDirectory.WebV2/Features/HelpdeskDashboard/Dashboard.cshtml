@@ -2,33 +2,71 @@
     ViewBag.Title = "Helpdesk dashboard";
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <div class="pttcd-helpdesk-dashboard__card">
-                    <h2 class="govuk-heading-m">Quality assurance</h2>
-                    <p>New provider and apprenticeship training courses.</p>
-                    <ul class="govuk-list">
-                        <li><a asp-controller="ApprenticeshipQA" asp-action="ListProviders" class="govuk-link">QA submissions</a></li>
-                        <li><a asp-controller="ApprenticeshipQA" asp-action="Report" class="govuk-link">Download QA report</a></li>
-                    </ul>
-                </div>
+<div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">Providers</h2>
             </div>
-            <div class="govuk-grid-column-one-half">
-                <div class="pttcd-helpdesk-dashboard__card">
-                    <h2 class="govuk-heading-m">Reports</h2>
-                    <ul class="govuk-list">
-                        <li><a asp-controller="ProviderReports" asp-action="ProviderTypeReport" class="govuk-link" data-testid="download-provider-type-report-link">Provider type report</a></li>
-                        <li><a asp-controller="TLevelsReports" asp-action="LiveTLevelsReport" class="govuk-link" data-testid="download-live-tlevels-report-link">Live T Levels report</a></li>
-                        <li><a asp-controller="ProviderReports" asp-action="ProvidersMissingPrimaryContact" class="govuk-link" data-testid="download-providers-missing-contact-details-link">Providers missing contact details</a></li>
-                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.OpenData))
-                        {
-                            <li><a asp-controller="OpenDataReports" asp-action="LiveCourseProviders" class="govuk-link" data-testid="download-live-course-providers-report-link">OpenData - All live course providers</a></li>
-                            <li><a asp-controller="OpenDataReports" asp-action="LiveCoursesWithRegionsAndVenues" class="govuk-link" data-testid="download-live-courses-regions-venues-report-link">OpenData - All live courses</a></li>
-                        }
-                    </ul>
-                </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                <ul class="govuk-list pttcd-list--small">
+                    <li><a asp-controller="ProviderReports" asp-action="ProviderTypeReport" class="govuk-link" data-testid="download-provider-type-report-link">Provider type report</a></li>
+                    <li><a asp-controller="ProviderReports" asp-action="ProvidersMissingPrimaryContact" class="govuk-link" data-testid="download-providers-missing-contact-details-link">Providers missing contact details</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">Quality assurance</h2>
+            </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                <ul class="govuk-list pttcd-list--small">
+                    <li><a asp-controller="ApprenticeshipQA" asp-action="ListProviders" class="govuk-link">QA submissions</a></li>
+                    <li><a asp-controller="ApprenticeshipQA" asp-action="Report" class="govuk-link">QA report</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">Open data</h2>
+            </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                <ul class="govuk-list pttcd-list--small">
+                    <li><a asp-controller="OpenDataReports" asp-action="LiveCourseProviders" data-testid="download-opendata-live-courseproviders-report-link" class="govuk-link">Live course providers report</a></li>
+                    <li><a asp-controller="OpenDataReports" asp-action="LiveCoursesWithRegionsAndVenues" data-testid="download-opendata-live-courses-report-link" class="govuk-link">Live courses report</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">Courses</h2>
+            </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                @*Links to be inserted*@
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">T Levels</h2>
+            </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                <ul class="govuk-list pttcd-list--small">
+                    <li><a asp-controller="TLevelsReports" asp-action="LiveTLevelsReport" class="govuk-link" data-testid="download-live-tlevels-report-link">Live T Levels</a></li>
+                </ul>
             </div>
         </div>
     </div>
