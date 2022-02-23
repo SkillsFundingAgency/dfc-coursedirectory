@@ -75,7 +75,9 @@
                 <govuk-radios-item value="@false" role="radio" aria-checked="false">
                     Defined start date
                     <govuk-radios-item-conditional>
-                        <govuk-radios-item-hint>For example, 30 9 2023</govuk-radios-item-hint>
+                        <div id="start-date-hint" class="govuk-hint">
+                            For example, 30 09 2023
+                        </div>
                         <govuk-date-input asp-for="StartDate">
                             <govuk-date-input-label class="govuk-!-display-none" aria-hidden="true"></govuk-date-input-label>
                         </govuk-date-input>
@@ -96,6 +98,7 @@
                         <govuk-select-item value="@venue.VenueId">@venue.VenueName</govuk-select-item>
                     }
                 </govuk-select>
+
             }
             else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
             {
