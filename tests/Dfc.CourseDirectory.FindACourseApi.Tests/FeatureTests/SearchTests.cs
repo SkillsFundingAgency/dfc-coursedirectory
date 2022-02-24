@@ -222,7 +222,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateFrom = startDateFrom,
+                startDateFrom,
                 hideFlexiCourses = false
             });
 
@@ -243,7 +243,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateTo = startDateTo,
+                startDateTo,
                 hideFlexiCourses = false
             });
 
@@ -332,7 +332,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateFrom = startDateFrom
+                startDateFrom
             });
 
             // Act
@@ -356,7 +356,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateFrom = startDateFrom,
+                startDateFrom,
                 hideFlexiCourses = false
             });
 
@@ -377,7 +377,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateTo = startDateTo
+                startDateTo
             });
 
             // Act
@@ -397,7 +397,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateTo = startDateTo,
+                startDateTo,
                 hideFlexiCourses = false
             });
 
@@ -419,8 +419,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var request = CreateRequest(new
             {
-                startDateTo = startDateTo,
-                startDateFrom = startDateFrom
+                startDateTo,
+                startDateFrom
             });
 
             // Act
