@@ -474,7 +474,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (hideOutOfDateCourses.HasValue && hideOutOfDateCourses == true)
             {
-                outOfDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+                var now = DateTime.UtcNow;
+                outOfDate = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc)
                     .AddDays(DefaultStartFromThreshold * -1);
 
                 startDate = outOfDate;
@@ -497,12 +498,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (startDate != DateTime.MinValue)
             {
-                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:yyyy-MM-ddTHH:mm:ss.fffffffK}"); 
+                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:O}"); 
             }
 
             if (endDate != DateTime.MaxValue)
             {
-                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:yyyy-MM-ddTHH:mm:ss.fffffffK}");
+                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:O}");
             }
 
             if (filters.Any())
