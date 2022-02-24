@@ -21,7 +21,7 @@
                 </a>
             </li>
             <li>
-                <a asp-controller="ProviderApprenticeships" asp-action="index" class="govuk-button--secondary">
+                <a asp-controller="ProviderApprenticeships" asp-action="index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                     View, edit or delete an apprenticeship
                 </a>
             </li>

@@ -46,7 +46,7 @@
 
             <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-apprenticeship__delete-btn">Delete</govuk-button>
 
-            <a asp-controller="ProviderApprenticeships" asp-action="index"  class="govuk-button--secondary">Cancel</a>
+            <a asp-controller="ProviderApprenticeships" asp-action="index"  asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Cancel</a>
 
         </form>
     </div>
