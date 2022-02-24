@@ -289,7 +289,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             });
 
             int DefaultStartFromThreshold = 60;
-            var outOfDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+            var outOfDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
                 .AddDays(DefaultStartFromThreshold * -1);
 
             // Act
@@ -342,6 +342,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
                 $"{nameof(FindACourseOffering.StartDate)} ge {startDateFrom:o}");
+
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().NotContain(
+                $" or {nameof(FindACourseOffering.StartDate)} eq null");
         }
 
 
@@ -653,9 +656,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
         [Theory]
         [InlineData(1, "search.score() desc")]  // Relevance
-        [InlineData(2, "search.score() desc and StartDate desc")]  // StartDateDescending
-        [InlineData(3, "search.score() desc and StartDate asc")]  // StartDateAscending
-        [InlineData(4, "search.score() desc and geo.distance(Position, geography'POINT(2 1)')")]  // Distance
+        [InlineData(2, "StartDate desc")]  // StartDateDescending
+        [InlineData(3, "StartDate asc")]  // StartDateAscending
+        [InlineData(4, "geo.distance(Position, geography'POINT(2 1)')")]  // Distance
         public async Task OrderByIsCorrectlyDeduced(int sortBy, string expectedOrderByClause)
         {
             // Arrange
