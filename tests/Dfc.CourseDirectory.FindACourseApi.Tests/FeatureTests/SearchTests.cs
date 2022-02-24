@@ -279,7 +279,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         }
 
         [Fact]
-        public async Task HideOutOfDateCoursesSpecified_And_ShowFlexiCoursesSpecified_AddsStartDateFilterToQuery()
+        public async Task HideOutOfDateCoursesSpecified_And_Not_HideFlexiCoursesSpecified_AddsStartDateFilterToQuery()
         {
             // Arrange
             var request = CreateRequest(new
@@ -299,6 +299,29 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
                 $"({nameof(FindACourseOffering.StartDate)} ge {outOfDate:o}) or {nameof(FindACourseOffering.StartDate)} eq null");
+        }
+
+        [Fact]
+        public async Task HideOutOfDateCoursesSpecified_And_HideFlexiCoursesSpecified_AddsStartDateFilterToQuery()
+        {
+            // Arrange
+            var request = CreateRequest(new
+            {
+                hideOutOfDateCourses = true,
+                hideFlexiCourses = true
+            });
+
+            int DefaultStartFromThreshold = 60;
+            var outOfDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+                .AddDays(DefaultStartFromThreshold * -1);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
+                $"{nameof(FindACourseOffering.StartDate)} ne null and { nameof(FindACourseOffering.StartDate)} ge {outOfDate:o}");
         }
 
         [Fact]
@@ -630,9 +653,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
         [Theory]
         [InlineData(1, "search.score() desc")]  // Relevance
-        [InlineData(2, "StartDate desc")]  // StartDateDescending
-        [InlineData(3, "StartDate asc")]  // StartDateDescending
-        [InlineData(4, "geo.distance(Position, geography'POINT(2 1)')")]  // Distance
+        [InlineData(2, "search.score() desc and StartDate desc")]  // StartDateDescending
+        [InlineData(3, "search.score() desc and StartDate asc")]  // StartDateAscending
+        [InlineData(4, "search.score() desc and geo.distance(Position, geography'POINT(2 1)')")]  // Distance
         public async Task OrderByIsCorrectlyDeduced(int sortBy, string expectedOrderByClause)
         {
             // Arrange
