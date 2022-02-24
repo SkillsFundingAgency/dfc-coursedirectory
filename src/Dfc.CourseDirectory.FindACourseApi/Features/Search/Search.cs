@@ -498,12 +498,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (startDate != DateTime.MinValue)
             {
-                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:O}"); 
+                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:o}"); 
             }
 
             if (endDate != DateTime.MaxValue)
             {
-                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:O}");
+                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:o}");
             }
 
             if (filters.Any())
