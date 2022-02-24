@@ -266,7 +266,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             });
 
             int DefaultStartFromThreshold = 60;
-            var outOfDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+            var now = DateTime.UtcNow;
+            var outOfDate = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc)
                 .AddDays(DefaultStartFromThreshold * -1);
 
             // Act
@@ -289,7 +290,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             });
 
             int DefaultStartFromThreshold = 60;
-            var outOfDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
+            var now = DateTime.UtcNow;
+            var outOfDate = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc)
                 .AddDays(DefaultStartFromThreshold * -1);
 
             // Act
