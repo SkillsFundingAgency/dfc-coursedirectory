@@ -26,7 +26,7 @@
 
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Apprenticeship Level</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.NotionalNVQLevelv2</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-value>@Model.Level</govuk-summary-list-row-value>
                 </govuk-summary-list-row>
 
             </govuk-summary-list>
@@ -46,9 +46,8 @@
 
             <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-apprenticeship__delete-btn">Delete</govuk-button>
 
-            <a asp-controller="ProviderApprenticeships" asp-action="index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                Cancel
-            </a>
+            <a asp-controller="ProviderApprenticeships" asp-action="index"  class="govuk-button--secondary">Cancel</a>
+
         </form>
     </div>
 </div>

@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public Guid ApprenticeshipId { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }    
-        public Guid ProviderId { get; set; }        
+        public Guid ProviderId { get; set; }
         public int ProviderUkprn { get; set; }
         public Standard Standard { get; set; }
         public string MarketingInformation { get; set; }
@@ -18,6 +18,5 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
         public IReadOnlyCollection<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
-
     }
 }
