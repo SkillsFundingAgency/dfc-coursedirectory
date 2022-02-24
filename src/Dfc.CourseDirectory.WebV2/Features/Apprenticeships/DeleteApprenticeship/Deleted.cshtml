@@ -1,7 +1,7 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeship.DeletedViewModel
 @{
     Layout = "_V2LayoutProviderContext";
-    ViewBag.Title = "Your T Level has been deleted";
+    ViewBag.Title = "Your Aprenticeship has been deleted";
 }
 
 <div class="govuk-grid-row">
@@ -16,11 +16,26 @@
 
         <ul class="govuk-list">
             <li>
-                <a asp-controller="AddApprenticeship" asp-action="SelectApprenticeship" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                    Add a new T Level
+                <a asp-controller="Apprenticeships" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Add a new Apprenticeship
+                </a>
+
+            </li>
+
+            <li>
+
+                <a asp-controller="ProviderApprenticeships" asp-action="index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    View, edit or delete an apprenticeship
+                </a>
+
+            </li>
+
+            <li>
+                <a href="/" class="govuk-link">
+                    Back to the home screen
                 </a>
             </li>
-           
+
         </ul>
     </div>
 </div>

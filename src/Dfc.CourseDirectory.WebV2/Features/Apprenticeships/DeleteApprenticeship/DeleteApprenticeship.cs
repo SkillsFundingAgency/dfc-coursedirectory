@@ -19,8 +19,6 @@ using FluentValidation.Results;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using DeleteApprenticeshipQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteApprenticeship;
 
-//using Dfc.CourseDirectory.Services.Models;
-
 namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeship
 {
     [JourneyState]
@@ -29,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         public string ApprenticeshipTitle { get; set; }
         public Guid ApprenticeshipId { get; set; }
         public Guid ProviderId { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
 
 
     }
@@ -36,24 +35,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
     {
         public Guid ApprenticeshipId { get; set; }
     }
-    /*
-    public class Query : IRequest<ViewModel>
-    {
-        public Guid ProviderId { get; set; }
-        public Guid ApprenticeshipId { get; internal set; }
-    } */
-
-
+   
     public class ViewModel : Command
     {
-        // public string ProviderVenueRef { get; set; }
+     
         public string ApprenticeshipTitle { get; set; }
-        public int Level { get; set; }
-        public string NotionalNVQLevelv2 { get; set; }
-        public int? StandardCode { get; set; }
-        public int? Version { get; set; }
-
-        // public IReadOnlyCollection<string> AddressParts { get; set; }
+     //   public string Level { get; set; }
+         public string NotionalNVQLevelv2 { get; set; }
+   //     public int? StandardCode { get; set; }
+   //     public int? Version { get; set; }
 
     }
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
@@ -72,7 +62,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
     public class DeletedViewModel
     {
         public string ApprenticeshipTitle { get; set; }
-        public int Level { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
+
     }
 
 
@@ -141,7 +132,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
             _journeyInstance.UpdateState(new JourneyModel()
             {
                 ApprenticeshipId = apprenticeship.ApprenticeshipId,
-                ProviderId = apprenticeship.ProviderId
+                ProviderId = apprenticeship.ProviderId,
+                ApprenticeshipTitle = apprenticeship.Standard.StandardName,
+                NotionalNVQLevelv2 = apprenticeship.Standard.NotionalNVQLevelv2
+
             });
 
             _journeyInstance.Complete();
@@ -163,16 +157,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
             return new DeletedViewModel()
             {
                 ApprenticeshipTitle = _journeyInstance.State.ApprenticeshipTitle,
-
             };
         }
 
         private ViewModel CreateViewModel(Apprenticeship apprenticeship) => new ViewModel()
         {
             ApprenticeshipId = apprenticeship.ApprenticeshipId,
-            ApprenticeshipTitle = _journeyInstance.State.ApprenticeshipTitle
+            ApprenticeshipTitle = apprenticeship.Standard.StandardName,
+            NotionalNVQLevelv2 = apprenticeship.Standard.NotionalNVQLevelv2
 
-            // ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle
         };
         private async Task<Apprenticeship> GetApprenticeship(Guid apprenticeshipId)
         {
