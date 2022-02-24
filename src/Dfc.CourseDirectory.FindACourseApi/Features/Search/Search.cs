@@ -132,14 +132,20 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 longitude = coords.Value.lng;
             }
 
-            var dateFilter = TryGetDateFilters(
-                request.StartDateFrom, 
-                request.StartDateTo, 
-                request.HideOutOfDateCourses, 
+            if (request.StartDateFrom.HasValue 
+                || request.StartDateTo.HasValue 
+                || request.HideOutOfDateCourses.HasValue 
+                || request.HideFlexiCourses.HasValue)
+            {
+                var dateFilter = TryGetDateFilters(
+                request.StartDateFrom,
+                request.StartDateTo,
+                request.HideOutOfDateCourses,
                 request.HideFlexiCourses);
 
-            filters.Add(dateFilter);
-
+                if (!string.IsNullOrEmpty(dateFilter))
+                    filters.Add(dateFilter);
+            }
 
             if (request.AttendancePatterns?.Any() ?? false)
             {
@@ -461,7 +467,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             bool? hideOutOfDateCourses, 
             bool? hideFlexiCourses)
         {
-            string dateFilter;
             var filters = new List<string>();
             var startDate = DateTime.MinValue;
             var endDate = DateTime.MaxValue;
@@ -492,19 +497,22 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (startDate != DateTime.MinValue)
             {
-                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:o}"); 
+                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:yyyy-MM-ddTHH:mm:ss.fffffffK}"); 
             }
 
             if (endDate != DateTime.MaxValue)
             {
-                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:o}");
+                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:yyyy-MM-ddTHH:mm:ss.fffffffK}");
             }
 
-            dateFilter = (hideFlexiCourses.HasValue && hideFlexiCourses == false)
-                ? $"(({string.Join(" and ", filters)}) or {nameof(FindACourseOffering.StartDate)} eq null)"
-                : string.Join(" and ", filters);
+            if (filters.Any())
+            {
+                return (hideFlexiCourses.HasValue && hideFlexiCourses == false)
+                    ? $"(({string.Join(" and ", filters)}) or {nameof(FindACourseOffering.StartDate)} eq null)"
+                    : string.Join(" and ", filters);
+            }
 
-            return dateFilter;
+            return String.Empty;
         }
     }
 }
