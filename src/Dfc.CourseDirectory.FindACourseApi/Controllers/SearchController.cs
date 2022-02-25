@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -12,11 +14,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<SearchController> _log;
+        private readonly TelemetryClient _telemetryClient;
 
-        public SearchController(IMediator mediator, ILogger<SearchController> log)
+        public SearchController(IMediator mediator, ILogger<SearchController> log, TelemetryClient telemetryClient)
         {
             _mediator = mediator;
             _log = log;
+            _telemetryClient = telemetryClient;
         }
 
         [HttpPost("~/coursesearch")]  // Kept around to avoid breaking API change

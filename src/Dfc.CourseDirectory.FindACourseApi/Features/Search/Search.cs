@@ -461,56 +461,71 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             return null;
         }
 
+        /// <summary>
+        /// The default date filters suppress courses with a flexible start date by default.
+        /// When using hideOutOfDateCourses, flexible start date courses will be shown, UNLESS a date filter is also used. This is to preserve existing behaviour.
+        /// In order to show flexible courses with a default start date filter, use hideFlexiCourses = false.
+        /// </summary>
         private static string TryGetDateFilters(
             DateTime? from,
             DateTime? to,
-            bool? hideOutOfDateCourses, 
+            bool? hideOutOfDateCourses,
             bool? hideFlexiCourses)
         {
-            var filters = new List<string>();
+            var dateFilters = new List<string>();
             var startDate = DateTime.MinValue;
             var endDate = DateTime.MaxValue;
-            var outOfDate = DateTime.MinValue;
+
+            if (from.HasValue)
+            {
+                startDate = from.Value;
+                if (!hideFlexiCourses.HasValue)
+                    hideFlexiCourses = true;
+            }
+
+            if (to.HasValue)
+            {
+                endDate = to.Value;
+                if (!hideFlexiCourses.HasValue)
+                    hideFlexiCourses = true;
+            }
 
             if (hideOutOfDateCourses.HasValue && hideOutOfDateCourses == true)
             {
                 var now = DateTime.UtcNow;
-                outOfDate = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc)
+                var outOfDate = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc)
                     .AddDays(DefaultStartFromThreshold * -1);
 
-                startDate = outOfDate;
+                if (!from.HasValue || from.HasValue && from.Value < outOfDate)
+                    startDate = outOfDate;
+
+                if (to.HasValue && to.Value < outOfDate)
+                    endDate = outOfDate;
+
+                if (!hideFlexiCourses.HasValue)
+                    hideFlexiCourses = false;
             }
 
             if (hideFlexiCourses.HasValue && hideFlexiCourses == true)
             {
-                filters.Add($"{nameof(FindACourseOffering.StartDate)} ne null");
-            }
-
-            if (from.HasValue && from.Value >= outOfDate)
-            {
-                startDate = from.Value;
-            }
-
-            if (to.HasValue && to.Value >= outOfDate)
-            {
-                endDate = to.Value;
+                dateFilters.Add($"{ nameof(FindACourseOffering.StartDate) } ne null");
             }
 
             if (startDate != DateTime.MinValue)
             {
-                filters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:o}"); 
+                dateFilters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:o}");
             }
 
             if (endDate != DateTime.MaxValue)
             {
-                filters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:o}");
+                dateFilters.Add($"{nameof(FindACourseOffering.StartDate)} le {endDate:o}");
             }
 
-            if (filters.Any())
-            {
+            if (dateFilters.Any())
+            { 
                 return (hideFlexiCourses.HasValue && hideFlexiCourses == false)
-                    ? $"(({string.Join(" and ", filters)}) or {nameof(FindACourseOffering.StartDate)} eq null)"
-                    : string.Join(" and ", filters);
+                    ? $"(({ string.Join(" and ", dateFilters) }) or { nameof(FindACourseOffering.StartDate) } eq null)"
+                    : $"({ string.Join(" and ", dateFilters) })";
             }
 
             return String.Empty;
