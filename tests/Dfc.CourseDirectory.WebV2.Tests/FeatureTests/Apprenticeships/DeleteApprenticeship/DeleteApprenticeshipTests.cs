@@ -418,7 +418,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             doc.GetElementByTestId("ApprenticeshipProviderLink").Should().NotBeNull();
         }
 
-
+        /*
         [Theory]
         [InlineData("")]
         [InlineData("  ")]
@@ -473,7 +473,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             // Assert
             response.EnsureSuccessStatusCode();
 
-        }
+        } */
 
         private JourneyInstance<JourneyModel> CreateJourneyInstance(
             Guid apprenticeshipId,
