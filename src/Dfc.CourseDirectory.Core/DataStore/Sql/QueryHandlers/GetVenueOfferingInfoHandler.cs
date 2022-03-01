@@ -34,7 +34,7 @@ AND ApprenticeshipLocationStatus <> {(int)ApprenticeshipStatus.Archived}
 
             var param = new
             {
-                VenueId = query.ApprenticeshipId
+                VenueId = query.VenueId
             };
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, param, transaction))
@@ -52,7 +52,7 @@ AND ApprenticeshipLocationStatus <> {(int)ApprenticeshipStatus.Archived}
 
                 return new VenueOfferingInfo()
                 {
-                    Apprenticeship = venue,
+                    Venue = venue,
                     LinkedApprenticeships = linkedApprenticeships,
                     LinkedCourses = linkedCourses,
                     LinkedTLevels = linkedTLevels
