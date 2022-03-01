@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
                    createdBy: User.ToUserInfo());
 
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -180,15 +180,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
         public async Task Post_NotConfirmed_ReturnsError()
         {
             // Arrange
-            var anotherProvider = await TestData.CreateProvider(
-                 providerType: ProviderType.Apprenticeships);
-
             var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships);
 
             var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
-
-            var ApprenticeshId = Guid.NewGuid();
 
             var apprenticeship = await TestData.CreateApprenticeship(
              provider.ProviderId,
@@ -198,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             var requestContent = new FormUrlEncodedContentBuilder()
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}")
             {
                 Content = requestContent
             };
@@ -210,22 +205,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("Confirm", "Confirm you want to delete Appprenticeship");
+            doc.AssertHasError("Confirm", "Confirm you want to delete the Apprenticeship"); 
         }
 
         [Fact]
         public async Task Post_ValidRequest_DeletesCourseRunAndRedirects()
         {
             // Arrange
-            var anotherProvider = await TestData.CreateProvider(
-                  providerType: ProviderType.Apprenticeships);
-
             var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships);
 
             var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
-
-            var ApprenticeshId = Guid.NewGuid();
 
             var apprenticeship = await TestData.CreateApprenticeship(
              provider.ProviderId,
@@ -236,7 +226,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
                 .Add("Confirm", "true")
                 .ToContent();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}")
             {
                 Content = requestContent
             };
@@ -250,7 +240,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should()
-                .Be($"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
+                .Be($"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
 
             SqlQuerySpy.VerifyQuery<SqlQueries.DeleteApprenticeship, OneOf<NotFound, Success>>(q => q.ApprenticeshipId == apprenticeship.ApprenticeshipId);
         }
@@ -285,7 +275,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-               $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
+               $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -341,7 +331,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-               $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
+               $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -370,31 +360,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
         public async Task GetDeleted_HasOtherLiveCourseRuns_DoesRenderViewEditCopyLink()
         {
             // Arrange
-            var anotherProvider = await TestData.CreateProvider(
-                 providerType: ProviderType.Apprenticeships);
-
             var provider = await TestData.CreateProvider(
                 providerType: ProviderType.Apprenticeships);
 
             var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
-
-            var ApprenticeshId = Guid.NewGuid();
 
             var apprenticeship = await TestData.CreateApprenticeship(
              provider.ProviderId,
              apprenticeshipTitle,
              createdBy: User.ToUserInfo());
 
-            var anotherApprenticeship = await TestData.CreateApprenticeship(
-             provider.ProviderId,
-             apprenticeshipTitle,
-             createdBy: User.ToUserInfo());
-
-
-
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
+                $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
@@ -415,65 +393,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("ApprenticeshipProviderLink").Should().NotBeNull();
+            doc.GetElementByTestId("ViewEditLink").Should().NotBeNull();
         }
-
-        /*
-        [Theory]
-        [InlineData("")]
-        [InlineData("  ")]
-        [InlineData(null)]
-        public async Task GetDeleted_WithEmptyYourReference_DoesNotRenderYourReference(string yourReference)
-        {
-            // Arrange
-            var anotherProvider = await TestData.CreateProvider(
-                 providerType: ProviderType.Apprenticeships);
-
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships);
-
-            var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
-
-            var ApprenticeshId = Guid.NewGuid();
-
-            var apprenticeship = await TestData.CreateApprenticeship(
-             provider.ProviderId,
-             apprenticeshipTitle,
-             createdBy: User.ToUserInfo());
-
-
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new SqlQueries.DeleteApprenticeship()
-                {
-                    ApprenticeshipId = apprenticeship.ApprenticeshipId,
-                    DeletedOn = Clock.UtcNow,
-                    DeletedBy = User.ToUserInfo()
-                }));
-
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-               $"/apprenticeship/delete/{apprenticeship.ApprenticeshipId}/success?providerId={provider.ProviderId}");
-
-            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
-
-            var journeyInstance = CreateJourneyInstance(
-                apprenticeship.ApprenticeshipId,
-                new JourneyModel()
-                {
-                    ApprenticeshipTitle = apprenticeship.Standard.StandardName,
-                    ProviderId = provider.ProviderId,
-                    NotionalNVQLevelv2 = apprenticeship.Standard.NotionalNVQLevelv2
-                });
-
-            journeyInstance.Complete();
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-        } */
 
         private JourneyInstance<JourneyModel> CreateJourneyInstance(
             Guid apprenticeshipId,
