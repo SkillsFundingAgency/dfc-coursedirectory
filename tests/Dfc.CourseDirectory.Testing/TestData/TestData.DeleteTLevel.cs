@@ -18,7 +18,6 @@ namespace Dfc.CourseDirectory.Testing
                     DeletedOn = _clock.UtcNow
                 });
             });
-        }
-                
+        }       
     }
 }

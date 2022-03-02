@@ -15,12 +15,9 @@
 
 @if (Model.Items == null)
 {
-
-
 }
 else
 {
-
     if (!Model.Items.Any())
     {
         <div class="">
@@ -35,57 +32,42 @@ else
     }
     else
     {
-
-
-
-
-
-<div class="cd-apprenticeships-result govuk-body">
-    @if (!string.IsNullOrEmpty(Model.SearchTerm))
-    {
-        <div class="govuk-!-margin-bottom-4">
-            <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
-        </div>
-    }
-
-    @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
-    {
-        <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
-            <h2 class="govuk-heading-m">
-                @apprenticeship.ApprenticeshipTitle
-                @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.Framework)
-                {
-                    <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
-                }
-            </h2>
-            @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+        <div class="cd-apprenticeships-result govuk-body">
+            @if (!string.IsNullOrEmpty(Model.SearchTerm))
             {
-                <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+                <div class="govuk-!-margin-bottom-4">
+                    <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
+                </div>
+            }
+            @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
+            {
+                <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
+                    <h2 class="govuk-heading-m">
+                        @apprenticeship.ApprenticeshipTitle
+                        @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.Framework)
+                        {
+                            <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
+                        }
+                    </h2>
+                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+                    {
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+                    }
+                </div>
+                <div class="ctas">
+                    <a class="govuk-link"
+                       asp-controller="Apprenticeships"
+                       asp-action="ViewAndEdit"
+                       asp-route-Id="@apprenticeship.id"
+                       asp-route-Cancelled=null
+                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">
+                        View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
+                    </a>
+                    <a class="govuk-table__cell"><a asp-action="Delete" asp-controller="apprenticeships" asp-route-id="@apprenticeship.id" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+                </div>
             }
         </div>
-        <div class="ctas">
-            <a class="govuk-link"
-               asp-controller="Apprenticeships"
-               asp-action="ViewAndEdit"
-               asp-route-Id="@apprenticeship.id"
-               asp-route-Cancelled=null
-               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">
-                View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
-            </a>
-            <a class="govuk-table__cell"><a asp-action="Delete" asp-controller="apprenticeships" asp-route-id="@apprenticeship.id" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
-
-        </div>
-
     }
-
-
-
-
-
-</div>
-
-    }
-
 }
 
 <script>

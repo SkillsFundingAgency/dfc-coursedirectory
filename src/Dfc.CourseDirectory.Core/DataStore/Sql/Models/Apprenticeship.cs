@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
     {
         public Guid ApprenticeshipId { get; set; }
         public DateTime CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }    
+        public DateTime? UpdatedOn { get; set; }
         public Guid ProviderId { get; set; }
         public int ProviderUkprn { get; set; }
         public Standard Standard { get; set; }

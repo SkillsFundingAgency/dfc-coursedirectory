@@ -19,8 +19,6 @@ using FluentValidation.Results;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using DeleteApprenticeshipQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteApprenticeship;
 
-//using Dfc.CourseDirectory.Services.Models;
-
 namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeship
 {
     [JourneyState]
@@ -31,15 +29,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         public Guid ProviderId { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
 
-
-
     }
     public class Request : IRequest<ViewModel>
     {
         public Guid ApprenticeshipId { get; set; }
     }
-
-
 
     public class ViewModel : Command
     {
@@ -58,7 +52,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
 
     }
 
-
     public class DeletedQuery : IRequest<DeletedViewModel>
     {
     }
@@ -68,7 +61,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         public string ApprenticeshipTitle { get; set; }
         public int Level { get; set; }
     }
-
 
     public class Handler :
        IRequestHandler<Request, ViewModel>,
@@ -103,7 +95,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
             var apprenticeship = await GetApprenticeship(request.ApprenticeshipId);
             return CreateViewModel(apprenticeship);
         }
-
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -175,9 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
                 throw new ResourceDoesNotExistException(ResourceType.Apprenticeship, apprenticeshipId);
         }
 
-
     }
-
 }
 
 
