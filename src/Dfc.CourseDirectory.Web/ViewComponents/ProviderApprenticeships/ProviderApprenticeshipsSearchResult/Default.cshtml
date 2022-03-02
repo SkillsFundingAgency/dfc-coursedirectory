@@ -39,6 +39,7 @@ else
                     <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
                 </div>
             }
+
             @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
             {
                 <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
@@ -63,7 +64,8 @@ else
                        asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">
                         View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
                     </a>
-                    <a class="govuk-table__cell"><a asp-action="Delete" asp-controller="apprenticeships" asp-route-id="@apprenticeship.id" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+                    <a asp-action="Delete" asp-controller="apprenticeships" asp-route-id="@apprenticeship.id" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+
                 </div>
             }
         </div>
