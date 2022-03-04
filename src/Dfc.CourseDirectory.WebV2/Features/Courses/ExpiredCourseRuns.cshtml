@@ -4,6 +4,7 @@
     ViewContext.SetLayoutData(title: $"{Model.Total} courses need their start date updating");
 }
 
+
 @if (TempData.ContainsKey(TempDataKeys.ExpiredCoursesNotification))
 {
     <pttcd-notification title="Start date edited">
@@ -11,69 +12,98 @@
     </pttcd-notification>
 }
 
-<h1 class="govuk-govuk-grid-column-one-half-l">@Model.Total courses need their start date updating</h1>
+<h1 class="govuk-govuk-grid-column-one-half-l">Courses</h1>
+
+<p class="govuk-body-l">
+    Courses with a start date 2 months in the past will not be visible to learners searching for opportunities on
+    National Careers Service.Find a Course
+</p>
+
+<p class="govuk-body">
+    Select a course to update. Searching multiple courses will update the start date for those courses.
+</p>
+
+<p class="govuk-body">
+    If you have courses with multiple mew start date you can <a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">update all courses by data upload</a>
+</p>
 
 @if (Model.Rows.Count > 0)
 {
-    <table class="govuk-table">
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Select </th>
+            <th scope="col" class="govuk-table__header">Course name</th>
+            <th scope="col" class="govuk-table__header">Your reference</th>
+            <th scope="col" class="govuk-table__header">Delivery type</th>
+            <th scope="col" class="govuk-table__header">Start date</th>
+        </tr>
+    </thead>
+    <tr class="govuk-table__row">
+        <td class="govuk-table__cell">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation" name="organisation" type="checkbox" value="@true">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="organisation" name="organisation" type="checkbox" value="@(true)">
+                                    <label class="govuk-label govuk-checkboxes__label" for="organisation"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </td>
+        <td scope="row" class="govuk-table__header">Select all courses</td>
+        <td class="govuk-table__cell"></td>
+        <td class="govuk-table__cell"></td>
+        <td class="govuk-table__cell govuk-body"></td>
+    </tr>
+    @foreach (var row in Model.Rows)
+    {
         <tbody class="govuk-table__body">
-            @foreach (var row in Model.Rows)
-            {
-                <tr class="govuk-table__row" data-testid="CourseRunRow">
-                    <td class="govuk-table__cell">
-                        <div data-testid="CourseName"><strong>@row.CourseName</strong></div>
-                        <ul class="govuk-list govuk-!-margin-bottom-0 pttcd-list--inline">
-                            @if (!string.IsNullOrWhiteSpace(row.ProviderCourseRef))
-                            {
-                                <li>@row.ProviderCourseRef</li>
-                            }
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell-noborder">
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="organisation" name="organisation" type="checkbox" value="@(true)">
+                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="organisation" name="organisation" type="checkbox" value="@(true)">
+                                            <label class="govuk-label govuk-checkboxes__label" for="organisation"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
 
-                            @if (row.DeliveryMode == CourseDeliveryMode.ClassroomBased)
-                            {
-                                <li>@row.VenueName</li>
-                            }
-                            else if (row.DeliveryMode == CourseDeliveryMode.WorkBased)
-                            {
-                                <li>
-                                    @if (row.National == true)
-                                    {
-                                        <text>National</text>
-                                    }
-                                    else
-                                    {
-                                        @row.SubRegionNames.ToCommaSeparatedString(",")
-                                    }
-                                </li>
-                            }
-
-                            <li>@row.DeliveryMode.ToDescription()</li>
-
-                            @if (row.StudyMode.HasValue)
-                            {
-                                <li>@row.StudyMode.ToDescription()</li>
-                            }
-
-                            <li data-testid="StartDate">@row.StartDate.ToString("dd/MM/yyyy")</li>
-                        </ul>
-                    </td>
-                    <td class="govuk-table__cell" style="width: 75px">
-                        <a asp-controller="EditCourseRun"
-                           asp-action="Index"
-                           asp-route-courseId="@row.CourseId"
-                           asp-route-courseRunId="@row.CourseRunId"
-                           asp-route-learnAimRef="@row.LearnAimRef"
-                           asp-route-notionalNVQLevelv2="row.NotionalNVQLevelv2"
-                           asp-route-awardOrgCode="@row.AwardOrgCode"
-                           asp-route-learnAimRefTitle="@row.LearnAimRefTitle"
-                           asp-route-learnAimRefTypeDesc="@row.LearnAimRefTypeDesc"
-                           asp-route-mode="DataQualityIndicator"
-                           class="govuk-link">
-                            Fix
-                            <span class="govuk-visually-hidden">@row.LearnAimRefTitle</span>
-                        </a>
-                    </td>
-                </tr>
-            }
+                </td>
+                <td scope="row" class="govuk-table__header-noborder">
+                    @row.CourseName
+                </td>
+                <td class="govuk-table__cell-noborder">
+                    @row.ProviderCourseRef
+                </td>
+                <td class="govuk-table__cell-noborder">
+                    @row.DeliveryMode.ToDescription()
+                </td>
+                <td class="govuk-table__cell-noborder govuk-body">
+                    @row.StartDate.ToString("dd/MM/yyyy")
+                </td>
+            </tr>
         </tbody>
-    </table>
-}
+    }
+</table>
+          
+   }
+
+<div class="govuk-button-group">
+    <a href="Newdate"><button class="govuk-button" data-module="govuk-button">Continue</button></a>
+</div>
+
