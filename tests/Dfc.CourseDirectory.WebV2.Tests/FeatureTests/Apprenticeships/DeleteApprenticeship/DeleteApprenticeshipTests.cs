@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
         {
             // Arrange
             var ApprenticeshipId = Guid.NewGuid();
+            _ = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/apprenticeships/delete/{ApprenticeshipId}");                                                                          
                                                                                             
@@ -37,38 +38,38 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
-        
-        /*
+
+
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
         public async Task Get_UserCannotAccessApprenticeship_ReturnsForbidden(TestUserType userType)
         {
-        // Arrange
-        var anotherProvider = await TestData.CreateProvider(
-            providerType: ProviderType.Apprenticeships);
+            // Arrange
+            var anotherProvider = await TestData.CreateProvider(
+                providerType: ProviderType.Apprenticeships);
 
-        var provider = await TestData.CreateProvider(
-            providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(
+                providerType: ProviderType.Apprenticeships);
 
-        var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
+            var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
 
-        var apprenticeship = await TestData.CreateApprenticeship(
-            provider.ProviderId,
-            apprenticeshipTitle,
-            createdBy: User.ToUserInfo());
+            var apprenticeship = await TestData.CreateApprenticeship(
+                provider.ProviderId,
+                apprenticeshipTitle,
+                createdBy: User.ToUserInfo());
 
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}");
 
-        await User.AsTestUser(userType, anotherProvider.ProviderId);
+            await User.AsTestUser(userType, anotherProvider.ProviderId);
 
-        // Act
-        var response = await HttpClient.SendAsync(request);
+            // Act
+            var response = await HttpClient.SendAsync(request);
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
-        */
+
 
         [Fact]
         public async Task Get_ValidRequest_RendersExpectedOutput()
@@ -117,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         } 
         
-        /*
+        
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
@@ -158,7 +159,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         } 
-        /*
+        
 
         [Fact]
         public async Task Post_NotConfirmed_ReturnsError()
@@ -192,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
             doc.AssertHasError("Confirm", "Confirm you want to delete the Apprenticeship"); 
         }
         
-        /*
+        
         [Fact]
         public async Task Post_ValidRequest_DeletesApprenticeshipAndRedirects()
         {
@@ -229,7 +230,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
 
             SqlQuerySpy.VerifyQuery<SqlQueries.DeleteApprenticeship, OneOf<NotFound, Success>>(q => q.ApprenticeshipId == apprenticeship.ApprenticeshipId);
         }
-        */
+        
 
         [Fact]
         public async Task GetDeleted_RendersExpectedApprenticeshipName()

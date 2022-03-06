@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         }
 
         [HttpGet("")]
-        //  [AuthorizeApprenticeship]
+        [AuthorizeApprenticeship]
         public async Task<IActionResult> DeleteApprenticeship(Request request)
         {
             _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeshi
         }
 
         [HttpPost("")]
-       // [AuthorizeTLevel]
+        [AuthorizeApprenticeship]
         [RequireJourneyInstance]
         public Task<IActionResult> Post(
             Guid ApprenticeshipId,
