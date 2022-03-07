@@ -150,6 +150,8 @@
 }
 
 <form asp-action="ApprenticeshipSummaryConfirmation" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
-    <govuk-button type="submit" class="govuk-!-margin-right-1">Submit for quality assurance</govuk-button>
-    <govuk-button asp-action="Index" asp-controller="Home" class="govuk-button--secondary">Cancel</govuk-button>
+    <div class="govuk-button-group">            
+        <govuk-button type="submit" class="govuk-!-margin-right-1">Submit for quality assurance</govuk-button>
+        <a asp-action="Index" asp-controller="Home" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+    </div>
 </form>

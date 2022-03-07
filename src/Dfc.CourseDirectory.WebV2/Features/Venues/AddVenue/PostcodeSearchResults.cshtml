@@ -36,8 +36,13 @@
                 <a asp-action="Address" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link">I can't find my address in the list</a>
             </p>
 
-            <govuk-button class="govuk-!-margin-right-3">Continue</govuk-button>
-            <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
+
+             <div class="govuk-button-group">
+                <govuk-button class="govuk-!-margin-right-3">Continue</govuk-button>
+                <a class="govuk-link" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()">Cancel</a>  
+            </div>
+
+
         </form>
     </div>
 </div>

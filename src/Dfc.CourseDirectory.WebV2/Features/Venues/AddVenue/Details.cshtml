@@ -55,16 +55,18 @@
                 <govuk-input-label class="govuk-label--s">Website</govuk-input-label>
             </govuk-input>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-3">Continue</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="govuk-!-margin-right-3">Continue</govuk-button>
 
-            @if (ViewBag.FromPublishPage == true)
-            {
-                <govuk-button asp-action="CheckAndPublish" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-button--secondary">Cancel</govuk-button>
-            }
-            else
-            {
-                <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
-            }
+                @if (ViewBag.FromPublishPage == true)
+                {
+                    <a  asp-action="CheckAndPublish" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+                }
+                else
+                {
+                    <a  asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+                }
+            </div>
         </form>
     </div>
 </div>

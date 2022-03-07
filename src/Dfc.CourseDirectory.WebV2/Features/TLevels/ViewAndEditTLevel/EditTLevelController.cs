@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
                     success => RedirectToAction(nameof(CheckAndPublish), new { tLevelId })
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
 
-        [HttpPost("cancel")]
+        [HttpGet("cancel")]
         public IActionResult Cancel(Guid tLevelId)
         {
             _journeyInstance.Delete();
