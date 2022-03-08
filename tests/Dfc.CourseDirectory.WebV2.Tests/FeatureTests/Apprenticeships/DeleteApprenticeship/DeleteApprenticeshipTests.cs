@@ -133,8 +133,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
 
             var apprenticeshipTitle = await TestData.CreateStandard(standardName:"");
 
-            var ApprenticeshId = Guid.NewGuid();
-
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Confirm", "true")
                 .ToContent();
@@ -144,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
                 apprenticeshipTitle,
                 createdBy: User.ToUserInfo());
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/apprenticeships/delete/{ApprenticeshId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/apprenticeships/delete/{apprenticeship.ApprenticeshipId}")
             {
                 Content = requestContent
             };
@@ -244,8 +242,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
 
             var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
 
-            var ApprenticeshId = Guid.NewGuid();
-
             var apprenticeship = await TestData.CreateApprenticeship(
                 provider.ProviderId,
                 apprenticeshipTitle,
@@ -298,8 +294,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships.DeleteApp
                 providerType: ProviderType.Apprenticeships);
 
             var apprenticeshipTitle = await TestData.CreateStandard(standardName: "");
-
-            var ApprenticeshId = Guid.NewGuid();
 
             var apprenticeship = await TestData.CreateApprenticeship(
                 provider.ProviderId,
