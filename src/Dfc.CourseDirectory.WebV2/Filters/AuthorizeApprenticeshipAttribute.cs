@@ -60,20 +60,18 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     break;
             }
 
-            if (!isAuthorized)
+            if (isAuthorized)
+            {
+                var providerInfoCache = services.GetRequiredService<IProviderInfoCache>();
+                var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
+                var providerContextProvider = services.GetRequiredService<IProviderContextProvider>();
+                providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
+                await next();
+            }
+            else
             {
                 context.Result = new StatusCodeResult(403);
             }
-
-            var providerInfoCache = services.GetRequiredService<IProviderInfoCache>();
-            var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
-            var providerContextProvider = services.GetRequiredService<IProviderContextProvider>();
-            providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
-
-            await next();
-
-
-
         }
     }
 }
