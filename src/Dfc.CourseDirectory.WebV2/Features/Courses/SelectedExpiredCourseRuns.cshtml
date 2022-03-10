@@ -1,0 +1,91 @@
+﻿
+@{
+    Layout = "_V2LayoutProviderContext";
+}
+<a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94"
+   class="govuk-back-link">Back</a>
+
+<h1>
+    Enter the start date for your course(s)
+</h1>
+
+<div id="passport-issued-hint" class="govuk-hint">For example, 12 11 2007</div>
+
+<div class="govuk-date-input" id="passport-issued">
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+                Day
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="passport-issued-day" type="text" pattern="[0-9]*" inputmode="numeric">
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
+                Month
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="passport-issued-month" type="text" pattern="[0-9]*" inputmode="numeric">
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
+                Year
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="passport-issued-year" name="passport-issued-year" type="text" pattern="[0-9]*" inputmode="numeric">
+        </div>
+    </div>
+</div>
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" rowspan="4" class="govuk-table__header">Course name</th>
+            <th scope="col" rowspan="4" class="govuk-table__header">Your reference</th>
+            <th scope="col" class="govuk-table__header">Delivery type</th>
+            <th scope="col" class="govuk-table__header">Start date</th>
+        </tr>
+    </thead>
+
+    <tbody class="govuk-table__body">
+
+        <tr class="govuk-table__row">
+            <td scope="row" class="govuk-table__header-noborder">Science Level 2</td>
+            <td class="govuk-table__cell-noborder">CVFWM102P</td>
+            <td class="govuk-table__cell-noborder">Online</td>
+            <td class="govuk-table__cell-noborder govuk-body">3/11/2019</td>
+        </tr>
+
+        <tr class="govuk-table__row">
+            <td scope="row" class="govuk-table__cell-noborde">English Level 2 (Functional skills)</td>
+            <td class="govuk-table__cell-noborde">ENGCBF3Y</td>
+            <td class="govuk-table__cell-noborde govuk-body">Classroom</td>
+            <td class="govuk-table__cell-noborde govuk-body">3/11/2019</td>
+        </tr>
+
+        <tr>
+            <td class="govuk-table__cell-noborder"></td>
+            <td class="govuk-table__cell-noborder"></td>
+            <td class="govuk-table__cell-noborder"></td>
+            <td class="govuk-table__cell-noborder govuk-body-s" style="color: #d4351c;"></td>
+            <td class="govuk-table__cell-noborder govuk-body-s"><a href="data-upload/resolve-course-descriptioncourse" class="govuk-link"></a></td>
+            <td class="govuk-table__cell-noborder govuk-body-s"><a href="data-upload/delete-course-description" class="govuk-link"></a></td>
+        </tr>
+        <tr class="govuk-table__row">
+            <td scope="row" class="govuk-table__cell-noborder">English Level 2 (Functional skills)</td>
+            <td class="govuk-table__cell-noborder">ENGWMF2Y</td>
+            <td class="govuk-table__cell-noborder govuk-body">Work based</td>
+            <td class="govuk-table__cell-noborder govuk-body">3/11/2019</td>
+        </tr>
+    </tbody>
+</table>
+
+<p class="govuk-body">
+    Your course(s) will be updated on Publish to the course directory and available to learners searching for
+    learning and training
+    opportunities on the National Career Service, Find a course.
+</p>
+
+<govuk-button asp-controller="ExpiredCourseRuns" asp-action="UpdatedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button--primary">Save and continue</govuk-button>
+

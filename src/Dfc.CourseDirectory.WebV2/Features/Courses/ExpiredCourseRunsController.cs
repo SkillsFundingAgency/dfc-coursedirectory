@@ -18,5 +18,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         [HttpGet("")]
         public async Task<IActionResult> Index() =>
             await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query(), vm => View("ExpiredCourseRuns", vm));
+
+        [HttpGet("courses/expired/SelectedCourses")]
+        public IActionResult SelectedCourses()
+        {
+            return View("SelectedExpiredCourseRuns");
+        }
+
+        [HttpGet("courses/expired/SelectedCourses/updated")]
+        public IActionResult UpdatedCourses()
+        {
+            return View("updated");
+        }
+
     }
+          
 }

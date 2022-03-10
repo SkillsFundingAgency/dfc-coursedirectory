@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "_V2LayoutProviderContext";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel>
+            <govuk-panel-title>Your Courses have been deleted </govuk-panel-title>
+        </govuk-panel>
+        <p class="govuk-body">Course are available to learners searching for learning and training opportunities on the National Careers Service, 
+        <a href="https://nationalcareers.service.gov.uk/pages/find-a-course" target="_blank">Find a course</a>.</p>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+
+        <ul class="govuk-list">
+            <li>
+               <a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-link">
+                    Update course start dates
+                </a>
+            </li>
+       
+            <li>
+                <a href="/" class="govuk-link">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

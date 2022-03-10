@@ -84,7 +84,7 @@
                     </div>
 
                 </td>
-                <td scope="row" class="govuk-table__header-noborder">
+                <td scope="row" class="govuk-table__header-noborder" width="380px">
                     @row.CourseName
                 </td>
                 <td class="govuk-table__cell-noborder">
@@ -103,7 +103,8 @@
           
    }
 
-<div class="govuk-button-group">
-    <a href="Newdate"><button class="govuk-button" data-module="govuk-button">Continue</button> </a>
-</div>
+  <div clsas ="govuk-button-group">
+  <govuk-button asp-controller="ExpiredCourseRuns" asp-action="SelectedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button">Continue</govuk-button>
+   </div>
+
 
