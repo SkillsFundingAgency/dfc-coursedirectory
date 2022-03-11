@@ -38,9 +38,6 @@
                     <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Delivery type</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Start date</th>
                 </tr>
-                <tr>
-
-                </tr>
             </thead>
             <tbody class="govuk-table__body">
                 @if (Model.Rows.Count > 0)
@@ -49,14 +46,14 @@
                     {
                         <tr class="govuk-table__row" data-testid="expiredCourseRow-@expiredCourse.CourseId">
                             <td class="govuk-table__cell" style="border:none">
-                            <div class="govuk-checkboxes__item">
+                            <div class="govuk-checkboxes__item govuk-checkboxes--small">
                                 <input class="govuk-checkboxes__input" type="checkbox">
                                 <label class="govuk-label govuk-checkboxes__label" for="waste"></label>
                             </div>
                             </td>
-                            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourse" style="border:none">@expiredCourse.CourseName</td>
-                            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourse" style="border:none">@expiredCourse.CourseId</td>
-                            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourse" style="border:none">@expiredCourse.DeliveryMode</td>
+                            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseName</td>
+                            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseId</td>
+                            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@expiredCourse.DeliveryMode</td>
                             <td class="govuk-table__cell nowrap" data-testid="expiredCourseStartDate" style="border:none">@expiredCourse.StartDate.ToString("dd MMM yyyy")</td>
                         </tr>
                     }
@@ -67,10 +64,8 @@
                         <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="3">You have no expired courses</td>
                     </tr>
                 }
-
             </tbody>
         </table>
-
-  <div clsas ="govuk-button-group">
-  <govuk-button asp-controller="ExpiredCourseRuns" asp-action="SelectedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button">Continue</govuk-button>
-   </div>
+<div clsas ="govuk-button-group">
+    <govuk-button asp-controller="ExpiredCourseRuns" asp-action="SelectedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button">Continue</govuk-button>
+</div>
