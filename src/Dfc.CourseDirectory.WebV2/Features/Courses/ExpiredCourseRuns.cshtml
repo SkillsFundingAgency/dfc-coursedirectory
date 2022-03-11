@@ -74,12 +74,3 @@
   <div clsas ="govuk-button-group">
   <govuk-button asp-controller="ExpiredCourseRuns" asp-action="SelectedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button">Continue</govuk-button>
    </div>
-
-<script language="javascript">  
-    function toggle(source) { // select all expired courses logic
-        checkboxes = document.getElementsByName('expiredCourseCheckbox');
-        for(var i=0, n=checkboxes.length; i<n; i++) {
-            checkboxes[i].checked = source.checked;
-        }
-    }
-</script>  
