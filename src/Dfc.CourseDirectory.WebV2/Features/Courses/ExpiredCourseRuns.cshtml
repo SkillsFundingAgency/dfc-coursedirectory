@@ -37,16 +37,15 @@
             <th scope="col" class="govuk-table__header">Delivery type</th>
             <th scope="col" class="govuk-table__header">Start date</th>
         </tr>
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" colspan="1">
-                <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                    <input class="govuk-checkboxes__input" type="checkbox" name="expiredCourseCheckbox" onClick="toggle(this)">
-                    <label class="govuk-label govuk-checkboxes__label"></label>
-                </div>
-            </th>
-            <th class="govuk-table__header" style="text-align:left" colspan="4">Select all courses</th>
-        </tr>
-
+            <tr id="selectAllRow" class="govuk-table__row" style="display: none">
+                <th class="govuk-table__header" colspan="1">
+                    <div class="govuk-checkboxes__item govuk-checkboxes--small">
+                        <input class="govuk-checkboxes__input" type="checkbox" onClick="toggle(this)">
+                        <label class="govuk-label govuk-checkboxes__label"></label>
+                    </div>
+                </th>
+                <th class="govuk-table__header" style="text-align:left" colspan="4">Select all courses</th>
+            </tr>
     </thead>
     <tbody class="govuk-table__body">
         @if (Model.Rows.Count > 0)
@@ -61,7 +60,7 @@
                     </div>
                     </td>
                     <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseName</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseId</td>
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.ProviderCourseRef</td>
                     <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@expiredCourse.DeliveryMode</td>
                     <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@expiredCourse.StartDate.ToString("dd MMM yyyy")</td>
                 </tr>
@@ -80,6 +79,8 @@
 </div>
 
 <script language="javascript">
+    // load select all checkbox when javascrip loads
+      document.getElementById("selectAllRow").style.display = "table-row";
     // select all checkboxes logic
     function toggle(source) {
         checkboxes = document.getElementsByName('expiredCourseCheckbox');
@@ -88,3 +89,4 @@
         }
     }
 </script>  
+
