@@ -37,15 +37,16 @@
             <th scope="col" class="govuk-table__header">Delivery type</th>
             <th scope="col" class="govuk-table__header">Start date</th>
         </tr>
-            <tr id="selectAllRow" class="govuk-table__row" style="display: none">
-                <th class="govuk-table__header" colspan="1">
-                    <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                        <input class="govuk-checkboxes__input" type="checkbox" onClick="toggle(this)">
-                        <label class="govuk-label govuk-checkboxes__label"></label>
-                    </div>
-                </th>
-                <th class="govuk-table__header" style="text-align:left" colspan="4">Select all courses</th>
-            </tr>
+        @*Hidden by default and only displays when javascript is executed on page load*@
+        <tr id="selectAllRow" class="govuk-table__row" style="display: none">
+            <th class="govuk-table__header" colspan="1">
+                <div class="govuk-checkboxes__item govuk-checkboxes--small">
+                    <input class="govuk-checkboxes__input" type="checkbox" onClick="toggle(this)">
+                    <label class="govuk-label govuk-checkboxes__label"></label>
+                </div>
+            </th>
+            <th class="govuk-table__header" style="text-align:left" colspan="4">Select all courses</th>
+        </tr>
     </thead>
     <tbody class="govuk-table__body">
         @if (Model.Rows.Count > 0)
@@ -84,7 +85,7 @@
     // select all checkboxes logic
     function toggle(source) {
         checkboxes = document.getElementsByName('expiredCourseCheckbox');
-        for(var i=0, n=checkboxes.length;i<n;i++) {
+        for(var i=0, n=checkboxes.length; i<n; i++) {
             checkboxes[i].checked = source.checked;
         }
     }
