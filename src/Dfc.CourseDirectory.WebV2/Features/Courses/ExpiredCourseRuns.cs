@@ -38,6 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTypeDesc { get; set; }
         public DateTime StartDate { get; set; }
+
+        public bool IsChecked { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -69,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
             var allRegions = await _regionCache.GetAllRegions();
             var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
-
+          
             return new ViewModel()
             {
                 Rows = results
@@ -89,7 +91,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                         NotionalNVQLevelv2 = r.NotionalNVQLevelv2,
                         AwardOrgCode = r.AwardOrgCode,
                         LearnAimRefTypeDesc = r.LearnAimRefTypeDesc,
-                        StartDate = r.StartDate
+                        StartDate = r.StartDate,
+                        IsChecked = false
                     })
                     .ToArray(),
                 Total = results.Count
