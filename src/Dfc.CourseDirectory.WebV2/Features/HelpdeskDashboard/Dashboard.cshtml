@@ -1,6 +1,9 @@
-﻿@{
+﻿@using Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
+@{
     ViewBag.Title = "Helpdesk dashboard";
 }
+
+@model ViewModel
 
 <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
     <div class="govuk-grid-column-one-third">
@@ -51,6 +54,10 @@
         <div class="pttcd-provider-dashboard__card">
             <div class="pttcd-provider-dashboard__card__content">
                 <h2 class="govuk-heading-s">Courses</h2>
+                <p class="cd-card-number--helpdesk">96,682</p>
+                <p class="govuk-body-s">Courses on Find a course</p>
+                <p class="cd-card-number--helpdesk">1,937</p>
+                <p class="govuk-body-s">Out of date courses</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
                 @*Links to be inserted*@
