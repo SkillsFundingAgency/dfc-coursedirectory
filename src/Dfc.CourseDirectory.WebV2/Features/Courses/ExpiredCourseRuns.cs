@@ -19,6 +19,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     {
         public int Total { get; set; }
         public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
+
+        public bool CheckBoxChecked { get; set; }
+        public int CheckBoxId { get; set; }
     }
 
     public class ViewModelRow
@@ -71,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
             var allRegions = await _regionCache.GetAllRegions();
             var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
-          
+
             return new ViewModel()
             {
                 Rows = results
@@ -92,10 +95,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                         AwardOrgCode = r.AwardOrgCode,
                         LearnAimRefTypeDesc = r.LearnAimRefTypeDesc,
                         StartDate = r.StartDate,
-                        IsChecked = false
+                        IsChecked = false,
                     })
                     .ToArray(),
-                Total = results.Count
+                Total = results.Count,
+                CheckBoxChecked = false,
+                CheckBoxId = 0
             };
         }
     }

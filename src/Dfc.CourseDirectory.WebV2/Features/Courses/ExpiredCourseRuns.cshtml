@@ -4,6 +4,12 @@
     ViewContext.SetLayoutData(title: $"{Model.Total} courses need their start date updating");
 }
 
+@{
+    Html.CheckBoxFor(m => Model.CheckBoxChecked);
+    Html.CheckBox("CheckBoxChecked", false);
+
+}
+
 
 @if (TempData.ContainsKey(TempDataKeys.ExpiredCoursesNotification))
 {
@@ -53,20 +59,41 @@
         {
             foreach (var expiredCourse in Model.Rows)
             {
-        <tr class="govuk-table__row" data-testid="expiredCourseRow-@expiredCourse.CourseId">
-            <td class="govuk-table__cell" style="border:none">
-                <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                    <input class="govuk-checkboxes__input" type="checkbox" name="expiredCourseCheckbox" value=@expiredCourse.IsChecked >
-                    <label class="govuk-label govuk-checkboxes__label"></label>
-                </div>
-            </td>
-            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.IsChecked</td>
 
-            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseName</td>
-            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.ProviderCourseRef</td>
-            <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@expiredCourse.DeliveryMode</td>
-            <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@expiredCourse.StartDate.ToString("dd MMM yyyy")</td>
-        </tr>
+                Model.CheckBoxId += 1;
+                <tr class="govuk-table__row" data-testid="expiredCourseRow-@expiredCourse.CourseId">
+                    <td class="govuk-table__cell" style="border:none">
+                        <div class="govuk-checkboxes__item govuk-checkboxes--small">
+                            <input class="govuk-checkboxes__input" type="checkbox" name="CheckBoxChecked" value="@Model.CheckBoxId" checked="@Model.CheckBoxChecked">
+                            <label class="govuk-label govuk-checkboxes__label">
+
+
+                            </label>
+                        </div>
+                        @{
+                            if (Model.CheckBoxChecked == true)
+                            {
+                                expiredCourse.IsChecked = true;
+                            }
+                            else
+                            {
+                                expiredCourse.IsChecked = false;
+                            }
+                        }
+                    </td>
+
+
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@Model.CheckBoxId</td>
+
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@Model.CheckBoxChecked</td>
+
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.IsChecked</td>
+
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseName</td>
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.ProviderCourseRef</td>
+                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@expiredCourse.DeliveryMode</td>
+                    <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@expiredCourse.StartDate.ToString("dd MMM yyyy")</td>
+                </tr>
             }
         }
         else
@@ -77,21 +104,21 @@
         }
     </tbody>
 </table>
-<div clsas ="govuk-button-group">
+<div clsas="govuk-button-group">
     <govuk-button asp-controller="ExpiredCourseRuns" asp-action="SelectedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button">Continue</govuk-button>
 </div>
 
 <script language="javascript">
     // load select all checkbox when javascrip loads
-      document.getElementById("selectAllRow").style.display = "table-row";
+    document.getElementById("selectAllRow").style.display = "table-row";
     // select all checkboxes logic
     function toggle(source, expiredCourseCheckbox, selectAllCheckbox) {
         checkboxes = document.getElementsByName("expiredCourseCheckbox");
-        for(var i=0, n=checkboxes.length; i<n; i++) {
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
             checkboxes[i].checked = source.checked;
         }
 
-        // update select all label with select or deselect 
+        // update select all label with select or deselect
         var checkboxToggle = document.getElementById("selectAllCheckbox");
         var labelText = document.getElementById("selectAllLabel");
         if (!checkboxToggle.checked) {
@@ -101,5 +128,5 @@
             labelText.innerHTML = "Deselect all courses";
         }
     }
-</script>  
+</script>
 
