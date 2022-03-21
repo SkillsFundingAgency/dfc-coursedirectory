@@ -9,7 +9,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
         public Guid ProviderId { get; set; }
         public DateTime Today { get; set; }
     }
-
+    public class GetExpiredSelectedCourseRunsForProvider : ISqlQuery<IReadOnlyCollection<ExpiredCourseRunResult>>
+    {
+        public Guid ProviderId { get; set; }
+        public DateTime Today { get; set; }
+        public List<Guid> SelectedCourseRuns { get; set; }
+    }
     public class ExpiredCourseRunResult
     {
         public Guid CourseId { get; set; }

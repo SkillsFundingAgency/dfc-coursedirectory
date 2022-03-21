@@ -14,14 +14,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     public class Query : IRequest<ViewModel>
     {
     }
-    
+
+    public class SelectedQuery : IRequest<ViewModel>
+    {
+        public List<Guid> CheckedRows { get; set; }
+    }
+
     public class ViewModel
     {
         public int Total { get; set; }
         public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
+        public bool Checked { get; set; }
 
-        public bool CheckBoxChecked { get; set; }
-        public int CheckBoxId { get; set; }
+
     }
 
     public class ViewModelRow
@@ -64,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             _regionCache = regionCache;
         }
 
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetExpiredCourseRunsForProvider()
             {
@@ -99,9 +104,66 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                     })
                     .ToArray(),
                 Total = results.Count,
-                CheckBoxChecked = false,
-                CheckBoxId = 0
+               
             };
         }
     }
-}
+    public class SelectedHandler : IRequestHandler<SelectedQuery, ViewModel>
+    {
+        private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IClock _clock;
+        private readonly IRegionCache _regionCache;
+
+        public SelectedHandler(
+            IProviderContextProvider providerContextProvider,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IClock clock,
+            IRegionCache regionCache)
+        {
+            _providerContextProvider = providerContextProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _clock = clock;
+            _regionCache = regionCache;
+        }
+        public async Task<ViewModel> Handle(SelectedQuery request, CancellationToken cancellationToken)
+        {
+            var results = await _sqlQueryDispatcher.ExecuteQuery(new GetExpiredSelectedCourseRunsForProvider()
+            {
+                ProviderId = _providerContextProvider.GetProviderId(),
+                Today = _clock.UtcNow.Date,
+                SelectedCourseRuns = request.CheckedRows
+            }) ;
+
+            var allRegions = await _regionCache.GetAllRegions();
+            var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
+
+            return new ViewModel()
+            {
+                Rows = results
+                    .Select(r => new ViewModelRow()
+                    {
+                        CourseId = r.CourseId,
+                        CourseRunId = r.CourseRunId,
+                        CourseName = r.CourseName,
+                        ProviderCourseRef = r.ProviderCourseId,
+                        LearnAimRef = r.LearnAimRef,
+                        DeliveryMode = r.DeliveryMode,
+                        VenueName = r.VenueName,
+                        National = r.National,
+                        SubRegionNames = r.SubRegionIds.Select(id => allSubRegions[id].Name).ToArray(),
+                        StudyMode = r.StudyMode,
+                        LearnAimRefTitle = r.LearnAimRefTitle,
+                        NotionalNVQLevelv2 = r.NotionalNVQLevelv2,
+                        AwardOrgCode = r.AwardOrgCode,
+                        LearnAimRefTypeDesc = r.LearnAimRefTypeDesc,
+                        StartDate = r.StartDate,
+                        IsChecked = false,
+                    })
+                    .ToArray(),
+                Total = results.Count,
+
+            };
+        }
+    }
+  }
