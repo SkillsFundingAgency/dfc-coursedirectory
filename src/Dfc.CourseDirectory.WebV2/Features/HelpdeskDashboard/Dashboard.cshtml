@@ -54,9 +54,9 @@
         <div class="pttcd-provider-dashboard__card">
             <div class="pttcd-provider-dashboard__card__content">
                 <h2 class="govuk-heading-s">Courses</h2>
-                <p class="cd-card-number--helpdesk">96,682</p>
+                <p class="cd-card-number--helpdesk">@Model.CourseNumber.ToString("N0")</p>
                 <p class="govuk-body-s">Courses on Find a course</p>
-                <p class="cd-card-number--helpdesk">1,937</p>
+                <p class="cd-card-number--helpdesk">@Model.OutofDateCourses.ToString("N0")</p>
                 <p class="govuk-body-s">Out of date courses</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">

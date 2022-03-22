@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
@@ -24,7 +26,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
-        private readonly IRegionCache _regionCache;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
@@ -35,7 +36,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
-            _regionCache = regionCache;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -46,8 +46,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
             });
             return new ViewModel()
             {
-                CourseNumber = results.Count,
-                OutofDateCourses = 2
+                CourseNumber = results.ElementAt(0).TotalCourses,
+                OutofDateCourses = results.ElementAt(0).OutofDateCourses
             };
         }
     }
