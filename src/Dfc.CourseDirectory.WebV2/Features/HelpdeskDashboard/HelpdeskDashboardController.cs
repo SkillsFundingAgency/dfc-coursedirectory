@@ -16,8 +16,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
             _mediator = mediator;
         }
 
-        [HttpGet("HelpdeskDashboard")]
-        public async Task<IActionResult> Index() =>
+        [HttpGet("helpdesk-dashboard")]
+        public async Task<IActionResult> Dashboard() =>
             await _mediator.SendAndMapResponse(new Query(), vm => View("Dashboard", vm));
     }
 }

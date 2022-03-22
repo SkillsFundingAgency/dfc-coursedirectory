@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
     public class CourseResult
     {
-        public Guid CourseId { get; set; }
-        public DateTime StartDate { get; set; }
+        public int TotalCourses { get; set; }
+        public int OutofDateCourses { get; set; }
     }
 }
