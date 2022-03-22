@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
     public class SelectedQuery : IRequest<ViewModel>
     {
-        public List<Guid> CheckedRows { get; set; }
+        public Guid[] CheckedRows { get; set; }
     }
 
     public class ViewModel

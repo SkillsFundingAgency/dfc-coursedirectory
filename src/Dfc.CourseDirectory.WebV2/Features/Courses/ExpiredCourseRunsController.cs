@@ -25,12 +25,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         public async Task<IActionResult> Update(Guid[] selectedCourses)
         {
             var query = new ExpiredCourseRuns.SelectedQuery();
-            query.CheckedRows = selectedCourses.ToList();
+            query.CheckedRows = selectedCourses.ToArray();
             return await _mediator.SendAndMapResponse(query, vm => View("SelectedExpiredCourseRuns", vm));
             
         }
-
-
 
         [HttpGet("courses/expired/SelectedCourses/updated")]
         public IActionResult UpdatedCourses()

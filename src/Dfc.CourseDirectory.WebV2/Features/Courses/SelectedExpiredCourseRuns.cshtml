@@ -44,7 +44,6 @@
 
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Select</th>
             <th scope="col" class="govuk-table__header">Course name</th>
             <th scope="col" class="govuk-table__header">Your reference</th>
             <th scope="col" class="govuk-table__header">Delivery type</th>
@@ -59,9 +58,7 @@
 
 
                 <tr class="govuk-table__row" data-testid="selectedExpiredCourseRow-@selectedExpiredCourse.CourseId">
-                   
-                    <td class="govuk-table__cell" style="border:none">
-                    </td>
+                  
                     <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.CourseName</td>
                     <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
                     <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@selectedExpiredCourse.DeliveryMode</td>

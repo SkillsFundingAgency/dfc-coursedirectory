@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 GetExpiredSelectedCourseRunsForProvider query)
             {
                 var sql = $@"
-SELECT
+ SELECT
 	c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
 	v.VenueName, cr.[National], cr.StudyMode, ld.LearnAimRefTitle, ld.NotionalNVQLevelv2, ld.AwardOrgCode, lart.LearnAimRefTypeDesc,
 	cr.StartDate
@@ -31,7 +31,7 @@ WHERE cr.CourseRunStatus = 1
 AND cr.StartDate < @Today
 AND p.ProviderId = @ProviderId
 
-AND  cr.CourseId = @SelectedCourseRuns
+AND  cr.CourseId IN @selectedCourseRunResults
 
 ORDER BY ld.LearnAimRefTitle
 
@@ -44,16 +44,24 @@ JOIN Pttcd.CourseRunSubRegions crsr ON cr.CourseRunId = crsr.CourseRunId
 WHERE cr.CourseRunStatus = 1
 AND cr.StartDate < @Today
 AND p.ProviderId = @ProviderId
-AND cr.CourseId = @SelectedCourseRuns";
+
+AND  cr.CourseId IN @selectedCourseRunResults
+";
+
+            Guid[] selectedCourseRunResults = query.SelectedCourseRuns;
+
 
             var paramz = new
             {
-                    query.SelectedCourseRuns,
+                    selectedCourseRunResults,
+               
                     query.ProviderId,
                     query.Today
                 };
 
-                using var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
+
+
+            using var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
                 var results = (await reader.ReadAsync<ExpiredCourseRunResult>()).AsList();
 

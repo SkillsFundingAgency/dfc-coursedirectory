@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
     {
         public Guid ProviderId { get; set; }
         public DateTime Today { get; set; }
-        public List<Guid> SelectedCourseRuns { get; set; }
+        public Guid[] SelectedCourseRuns { get; set; }
     }
     public class ExpiredCourseRunResult
     {
