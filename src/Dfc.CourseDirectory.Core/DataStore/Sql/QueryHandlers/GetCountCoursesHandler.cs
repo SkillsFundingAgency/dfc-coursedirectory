@@ -19,10 +19,7 @@ SELECT
 	COUNT(c.CourseID) AS TotalCourses, COUNT(IIF(cr.StartDate < GETDATE() - 61,1,NULL)) AS OutofDateCourses
 FROM Pttcd.Courses c
 JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
-JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
-LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId";
+JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn";
 
             var paramz = new
             {
