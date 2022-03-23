@@ -60,7 +60,9 @@
                 <p class="govuk-body-s">Out of date courses</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
-                @*Links to be inserted*@
+                <ul class="govuk-list pttcd-list--small">
+                    <li><a asp-controller="OutofDateReports" asp-action="OutofDateCoursesReport" class="govuk-link" data-testid="download-out-of-date-courses-report-link">Out of Date Courses Report</a></li>
+                </ul>
             </div>
         </div>
     </div>
