@@ -11,70 +11,74 @@
     Enter the start date for your course(s)
 </h1>
 
-<div id="passport-issued-hint" class="govuk-hint">For example, 12 11 2007</div>
+<form asp-action="Updated" asp-all-route-data="@ProviderContext.RouteValues">
 
-<div class="govuk-date-input" id="passport-issued">
-    <div class="govuk-date-input__item">
-        <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
-                Day
-            </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="passport-issued-day" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-    </div>
-    <div class="govuk-date-input__item">
-        <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
-                Month
-            </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="passport-issued-month" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-    </div>
-    <div class="govuk-date-input__item">
-        <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
-                Year
-            </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="passport-issued-year" name="passport-issued-year" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-    </div>
-</div>
+    <div id="passport-issued-hint" class="govuk-hint">For example, 12 11 2007</div>
+ 
+     
+            <div class="govuk-date-input" id="passport-issued">
+                <div class="govuk-date-input__item" name="Day" >
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+                            Day
+                        </label>
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="passport-issued-day" type="text" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item" name="Month">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
+                            Month
+                        </label>
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="passport-issued-month" type="text" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="govuk-date-input__item" name="Year">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
+                            Year
+                        </label>
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="passport-issued-year" name="passport-issued-year" type="text" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
+ 
+    <table class="govuk-table">
 
-<table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Course name</th>
+                <th scope="col" class="govuk-table__header">Your reference</th>
+                <th scope="col" class="govuk-table__header">Delivery type</th>
+                <th scope="col" class="govuk-table__header">Start date</th>
+            </tr>
 
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Course name</th>
-            <th scope="col" class="govuk-table__header">Your reference</th>
-            <th scope="col" class="govuk-table__header">Delivery type</th>
-            <th scope="col" class="govuk-table__header">Start date</th>
-        </tr>
-
-    <tbody class="govuk-table__body">
-        @if (Model.Rows.Count > 0)
-        {
-            foreach (var selectedExpiredCourse in Model.Rows)
+        <tbody class="govuk-table__body">
+            @if (Model.Rows.Count > 0)
             {
+                foreach (var selectedExpiredCourse in Model.Rows)
+                {
 
 
-                <tr class="govuk-table__row" data-testid="selectedExpiredCourseRow-@selectedExpiredCourse.CourseId">
-                  
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.CourseName</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@selectedExpiredCourse.DeliveryMode</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd MMM yyyy")</td>
+                    <tr class="govuk-table__row" data-testid="selectedExpiredCourseRow-@selectedExpiredCourse.CourseId">
 
-                </tr>
+                        <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.CourseName</td>
+                        <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
+                        <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@selectedExpiredCourse.DeliveryMode</td>
+                        <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd MMM yyyy")</td>
+
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<p class="govuk-body">
-    Your course(s) will be updated on Publish to the course directory and available to learners searching for
-    learning and training
-    opportunities on the National Career Service, Find a course.
-</p>
+    <p class="govuk-body">
+        Your course(s) will be updated on Publish to the course directory and available to learners searching for
+        learning and training
+        opportunities on the National Career Service, Find a course.
+    </p>
+    <govuk-button type="Submit"> Save and Continue </govuk-button>
 
-<govuk-button asp-controller="ExpiredCourseRuns" asp-action="UpdatedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button--primary">Save and continue</govuk-button>
+</form>
 

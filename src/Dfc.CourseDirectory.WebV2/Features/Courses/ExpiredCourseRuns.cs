@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
+using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Security;
+using FluentValidation.Results;
+using FormFlow;
+
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 {
@@ -18,6 +24,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     public class SelectedQuery : IRequest<ViewModel>
     {
         public Guid[] CheckedRows { get; set; }
+    }
+
+    public class UpdatedStartDate : IRequest<ViewModel>
+    {
+        public DateTime StartDate { get; set; }
+
+    }
+
+    public class SelectedCoursesJourneyModel 
+    {
+        public Guid[] CheckedRowsCourseId { get; set; }
+
+        public DateTime StartDate { get; set; }
+        public Guid ProviderId { get; set; }
+
     }
 
     public class ViewModel
@@ -112,28 +133,46 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+
+        private readonly JourneyInstance<SelectedCoursesJourneyModel> _journeyInstance;
+
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
 
         public SelectedHandler(
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
+            
+            JourneyInstance<SelectedCoursesJourneyModel> journeyInstance,
+
             IClock clock,
             IRegionCache regionCache)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+
+            _journeyInstance = journeyInstance;
+           
             _clock = clock;
             _regionCache = regionCache;
         }
         public async Task<ViewModel> Handle(SelectedQuery request, CancellationToken cancellationToken)
         {
+            _journeyInstance.ThrowIfCompleted();
+
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetExpiredSelectedCourseRunsForProvider()
             {
                 ProviderId = _providerContextProvider.GetProviderId(),
                 Today = _clock.UtcNow.Date,
                 SelectedCourseRuns = request.CheckedRows
             }) ;
+
+            _journeyInstance.UpdateState(new SelectedCoursesJourneyModel()
+            {
+                ProviderId = _providerContextProvider.GetProviderId(),
+                CheckedRowsCourseId = request.CheckedRows,
+            });
+
 
             var allRegions = await _regionCache.GetAllRegions();
             var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
@@ -164,6 +203,43 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                 Total = results.Count,
 
             };
+            
         }
     }
-  }
+    public class UpdatedHandler : IRequestHandler<UpdatedStartDate, ViewModel>
+    {
+        private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IClock _clock;
+        private readonly IRegionCache _regionCache;
+
+        public UpdatedHandler(
+            IProviderContextProvider providerContextProvider,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IClock clock,
+            IRegionCache regionCache)
+        {
+            _providerContextProvider = providerContextProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _clock = clock;
+            _regionCache = regionCache;
+        }
+        public async Task<ViewModel> Handle(UpdatedStartDate request, CancellationToken cancellationToken)
+        {
+            var results = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourseRun()
+            {
+              // ProviderId = _providerContextProvider.GetProviderId(),
+              //  Today = _clock.UtcNow.Date,
+                StartDate = request.StartDate
+            }) ;
+
+            var allRegions = await _regionCache.GetAllRegions();
+            var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
+
+            return new ViewModel()
+            {
+          
+            };
+        }
+    }
+}
