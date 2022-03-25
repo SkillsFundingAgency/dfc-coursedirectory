@@ -14,12 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRuns
             : base(factory)
         {
         }
-
-        [Fact]
-
-
-
-        
+       
         [Fact]
         public async Task Get_ReturnsExpectedContent()
         {
