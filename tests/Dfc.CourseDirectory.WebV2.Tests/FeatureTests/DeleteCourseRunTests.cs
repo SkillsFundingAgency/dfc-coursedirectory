@@ -301,7 +301,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("01/04/2020", doc.GetSummaryListValueWithKey("Start date"));
+            Assert.Equal("01-04-2020", doc.GetSummaryListValueWithKey("Start date"));
         }
 
         [Fact]
