@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.Testing
             if (traitAttribute is ReflectionAttributeInfo reflectionAttributeInfo &&
                 reflectionAttributeInfo.Attribute is SlowTestAttribute)
             {
-                yield return new KeyValuePair<string, string>("SkipOnCI", "true");
                 yield return new KeyValuePair<string, string>("SlowTest", "true");
             }
         }
