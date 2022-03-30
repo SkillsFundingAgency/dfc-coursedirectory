@@ -24,10 +24,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.OutofDateCoursesR
         public string ProviderName { get; set; }
 
         [Name("Course ID")]
-        public string CourseId { get; set; }
+        public Guid CourseId { get; set; }
 
         [Name("Course Run ID")]
-        public string CourseRunId { get; set; }
+        public Guid CourseRunId { get; set; }
 
         [Name("Course Name")]
         public string CourseName { get; set; }

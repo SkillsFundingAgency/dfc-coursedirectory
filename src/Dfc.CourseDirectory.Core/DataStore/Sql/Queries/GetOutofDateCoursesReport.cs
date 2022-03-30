@@ -14,9 +14,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         
         public string ProviderName { get; set; }
 
-        public string CourseId { get; set; }
+        public Guid CourseId { get; set; }
 
-        public string CourseRunId { get; set; }
+        public Guid CourseRunId { get; set; }
 
         public string CourseName { get; set; }
 
