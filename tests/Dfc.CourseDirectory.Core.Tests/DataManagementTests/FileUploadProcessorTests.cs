@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             // Add invalid and expired lars
             var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Now.AddDays(-1))).LearnAimRef;
-            var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1).ToString())).LearnAimRef;
+            var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1))).LearnAimRef;
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("ABCDEFGH", 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows(expiredLearnAimRef, 1).ToList());
             courseUploadRows.AddRange(DataManagementFileHelper.CreateCourseUploadRows("GHFEDCBA", 1).ToList());

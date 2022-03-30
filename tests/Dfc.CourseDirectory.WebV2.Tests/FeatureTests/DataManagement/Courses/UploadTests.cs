@@ -289,7 +289,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var provider = await TestData.CreateProvider();
             var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;
             var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
-            var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1).ToString())).LearnAimRef;
+            var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1))).LearnAimRef;
 
             //Add missing lars
             List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList();
