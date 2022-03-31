@@ -4,12 +4,8 @@
     ViewContext.SetLayoutData(title: "Courses");
 }
 
-
-@if (TempData.ContainsKey(TempDataKeys.ExpiredCoursesNotification))
-{
-    <pttcd-notification title="Start date edited">
-        @TempData[TempDataKeys.ExpiredCoursesNotification]
-    </pttcd-notification>
+@section BackLink {
+    <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
 }
 
 <h1 class="govuk-govuk-grid-column-one-half-l">Courses</h1>

@@ -5,6 +5,10 @@
     ViewContext.SetLayoutData(title: "Enter the start date for your course(s)");
 }
 
+@section BackLink {
+    <govuk-back-link asp-action="Update" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+}
+
 <h1>
     Enter the start date for your course(s)
 </h1>
