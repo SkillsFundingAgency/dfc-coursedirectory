@@ -2,24 +2,22 @@
 
 @{
     Layout = "_V2LayoutAdmin";
-    ViewContext.SetLayoutData(title: $"{Model.Total} courses need their start date updating");
-
+    ViewContext.SetLayoutData(title: "Enter the start date for your course(s)");
 }
-
 
 <h1>
     Enter the start date for your course(s)
 </h1>
 
-<div id="passport-issued-hint" class="govuk-hint">For example, 12 11 2007</div>
+<div class="govuk-hint">For example, 12 11 2007</div>
 
-<div class="govuk-date-input" id="passport-issued">
+<div class="govuk-date-input">
     <div class="govuk-date-input__item">
         <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="passport-issued-day">
+            <label class="govuk-label govuk-date-input__label">
                 Day
             </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-day" name="passport-issued-day" type="text" pattern="[0-9]*" inputmode="numeric">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric">
         </div>
     </div>
     <div class="govuk-date-input__item">
@@ -27,7 +25,7 @@
             <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
                 Month
             </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="passport-issued-month" name="passport-issued-month" type="text" pattern="[0-9]*" inputmode="numeric">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric">
         </div>
     </div>
     <div class="govuk-date-input__item">
@@ -35,19 +33,18 @@
             <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
                 Year
             </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="passport-issued-year" name="passport-issued-year" type="text" pattern="[0-9]*" inputmode="numeric">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric">
         </div>
     </div>
 </div>
 
 <table class="govuk-table">
-
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Course name</th>
-            <th scope="col" class="govuk-table__header">Your reference</th>
-            <th scope="col" class="govuk-table__header">Delivery type</th>
-            <th scope="col" class="govuk-table__header">Start date</th>
+            <th scope="col" class="govuk-table__header" >Course name</th>
+            <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
+            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+            <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
         </tr>
 
     <tbody class="govuk-table__body">
@@ -55,14 +52,11 @@
         {
             foreach (var selectedExpiredCourse in Model.Rows)
             {
-
-
-                <tr class="govuk-table__row" data-testid="selectedExpiredCourseRow-@selectedExpiredCourse.CourseId">
-                  
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.CourseName</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@selectedExpiredCourse.DeliveryMode</td>
-                    <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd MMM yyyy")</td>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.CourseName</td>
+                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
+                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
+                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
 
                 </tr>
             }

@@ -1,7 +1,7 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns.ViewModel
 @{
     Layout = "_V2LayoutAdmin";
-    ViewContext.SetLayoutData(title: $"{Model.Total} courses need their start date updating");
+    ViewContext.SetLayoutData(title: "Courses");
 }
 
 
@@ -16,7 +16,7 @@
 
 <p class="govuk-body-l">
     Courses with a start date 2 months in the past will not be visible to learners searching for opportunities on
-    National Careers Service. Find a Course
+    National Careers Service. Find a Course.
 </p>
 
 <p class="govuk-body">
@@ -35,9 +35,9 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Select</th>
                 <th scope="col" class="govuk-table__header">Course name</th>
-                <th scope="col" class="govuk-table__header">Your reference</th>
-                <th scope="col" class="govuk-table__header">Delivery type</th>
-                <th scope="col" class="govuk-table__header">Start date</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
             </tr>
             @*Hidden by default and only displays when javascript is executed on page load*@
             <tr id="selectAllRow" class="govuk-table__row" style="display: none">
@@ -57,21 +57,18 @@
                 {
 
 
-                    <tr class="govuk-table__row" data-testid="expiredCourseRow-@expiredCourse.CourseId">
+                    <tr class="govuk-table__row">
                         <td class="govuk-table__cell" style="border:none">
-
                             <div class="govuk-checkboxes__item govuk-checkboxes--small">
                                 <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked">
                                 <label class="govuk-label govuk-checkboxes__label">
                                 </label>
                             </div>
-
                         </td>
-                        <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.CourseName</td>
-                        <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseCourseId" style="border:none">@expiredCourse.ProviderCourseRef</td>
-                        <td class="govuk-table__cell" data-testid="expiredCourseexpiredCourseDeliveryMode" style="border:none">@expiredCourse.DeliveryMode</td>
-                        <td class="govuk-table__cell" data-testid="expiredCourseStartDate" style="border:none">@expiredCourse.StartDate.ToString("dd MMM yyyy")</td>
-
+                        <td class="govuk-table__cell" style="border:none">@expiredCourse.CourseName</td>
+                        <td class="govuk-table__cell" style="border:none">@expiredCourse.ProviderCourseRef</td>
+                        <td class="govuk-table__cell" style="border:none">@expiredCourse.DeliveryMode.ToDescription()</td>
+                        <td class="govuk-table__cell" style="border:none">@expiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
                     </tr>
                 }
             }
@@ -82,14 +79,9 @@
                 </tr>
             }
         </tbody>
-
-
-
     </table>
-    <govuk-button type="Submit"> Save and Continue </govuk-button>
-
+    <govuk-button type="Submit">Continue</govuk-button>
 </form>
-
 
 <script language="javascript">
     // load select all checkbox when javascript loads
@@ -112,4 +104,3 @@
         }
     }
 </script>
-
