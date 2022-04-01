@@ -32,21 +32,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     public class ViewModelRow
     {
         public Guid CourseId { get; set; }
-        public Guid CourseRunId { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
-        public string LearnAimRef { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
-        public string VenueName { get; set; }
-        public bool? National { get; set; }
         public IReadOnlyCollection<string> SubRegionNames { get; set; }
-        public CourseStudyMode? StudyMode { get; set; }
-        public string LearnAimRefTitle { get; set; }
-        public string NotionalNVQLevelv2 { get; set; }
-        public string AwardOrgCode { get; set; }
-        public string LearnAimRefTypeDesc { get; set; }
         public DateTime StartDate { get; set; }
-
         public bool IsChecked { get; set; }
     }
 
@@ -86,19 +76,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                     .Select(r => new ViewModelRow()
                     {
                         CourseId = r.CourseId,
-                        CourseRunId = r.CourseRunId,
                         CourseName = r.CourseName,
                         ProviderCourseRef = r.ProviderCourseId,
-                        LearnAimRef = r.LearnAimRef,
                         DeliveryMode = r.DeliveryMode,
-                        VenueName = r.VenueName,
-                        National = r.National,
                         SubRegionNames = r.SubRegionIds.Select(id => allSubRegions[id].Name).ToArray(),
-                        StudyMode = r.StudyMode,
-                        LearnAimRefTitle = r.LearnAimRefTitle,
-                        NotionalNVQLevelv2 = r.NotionalNVQLevelv2,
-                        AwardOrgCode = r.AwardOrgCode,
-                        LearnAimRefTypeDesc = r.LearnAimRefTypeDesc,
                         StartDate = r.StartDate,
                         IsChecked = false,
                     })
@@ -144,19 +125,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                     .Select(r => new ViewModelRow()
                     {
                         CourseId = r.CourseId,
-                        CourseRunId = r.CourseRunId,
                         CourseName = r.CourseName,
                         ProviderCourseRef = r.ProviderCourseId,
-                        LearnAimRef = r.LearnAimRef,
                         DeliveryMode = r.DeliveryMode,
-                        VenueName = r.VenueName,
-                        National = r.National,
                         SubRegionNames = r.SubRegionIds.Select(id => allSubRegions[id].Name).ToArray(),
-                        StudyMode = r.StudyMode,
-                        LearnAimRefTitle = r.LearnAimRefTitle,
-                        NotionalNVQLevelv2 = r.NotionalNVQLevelv2,
-                        AwardOrgCode = r.AwardOrgCode,
-                        LearnAimRefTypeDesc = r.LearnAimRefTypeDesc,
                         StartDate = r.StartDate,
                         IsChecked = false,
                     })
