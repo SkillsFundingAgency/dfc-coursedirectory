@@ -368,6 +368,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             }
 
             var terms = new List<string>();
+            // Azure fuzzy search discrepancy threshold (Levenshtein Distance "L")
+            const int l = 1;
 
             // Find portions wrapped in quotes
             var remaining = subjectText.Trim();
@@ -405,7 +407,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 .AddRange(remaining.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                 .Where(term => !(term.Length == 1 && _luceneSyntaxEscapeChars.Contains(term[0])))
                 .Select(EscapeSearchText)
-                .SelectMany(t => new[] { $"{t}*", $"{t}~" }));
+                .SelectMany(t => new[] { $"{t}*", $"{t}~{l}" }));
 
             var result = string.Join(" || ", terms);
 
