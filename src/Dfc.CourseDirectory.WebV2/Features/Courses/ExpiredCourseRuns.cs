@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
@@ -20,13 +21,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public Guid[] CheckedRows { get; set; }
     }
 
+    public class NewStartDateQuery : IRequest<ViewModel>
+    {
+        public Guid[] SelectedCourses { get; set; }
+        public DateTime NewStartDate { get; set; }
+    }
+
     public class ViewModel
     {
         public int Total { get; set; }
         public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
         public bool Checked { get; set; }
-
-
     }
 
     public class ViewModelRow
@@ -58,7 +63,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             _clock = clock;
             _regionCache = regionCache;
         }
-
             public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetExpiredCourseRunsForProvider()
@@ -85,7 +89,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                     })
                     .ToArray(),
                 Total = results.Count,
-               
             };
         }
     }
@@ -131,11 +134,34 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                         SubRegionNames = r.SubRegionIds.Select(id => allSubRegions[id].Name).ToArray(),
                         StartDate = r.StartDate,
                         IsChecked = false,
+                       
                     })
                     .ToArray(),
                 Total = results.Count,
+               
 
             };
         }
     }
-  }
+
+    public class UpdatedHandler : IRequestHandler<NewStartDateQuery, ViewModel>
+    {
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+        }
+        public async Task<ViewModel> Handle(NewStartDateQuery request, CancellationToken cancellationToken)
+        {
+             await _sqlQueryDispatcher.ExecuteQuery(new CourseStarteDateBulkUpdate()
+            {
+
+                StartDate = request.NewStartDate,
+                SelectedCourseRunid = request.SelectedCourses
+            
+             });
+
+            return null;
+        }
+    }
+}

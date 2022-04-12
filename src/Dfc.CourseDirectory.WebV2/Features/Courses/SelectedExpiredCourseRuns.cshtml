@@ -15,64 +15,73 @@
 
 <div class="govuk-hint">For example, 12 11 2007</div>
 
-<div class="govuk-date-input">
-    <div class="govuk-date-input__item">
-        <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label">
-                Day
-            </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-    </div>
-    <div class="govuk-date-input__item">
-        <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="passport-issued-month">
-                Month
-            </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-    </div>
-    <div class="govuk-date-input__item">
-        <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="passport-issued-year">
-                Year
-            </label>
-            <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric">
-        </div>
-    </div>
-</div>
+<form asp-action="UpdatedCourses" asp-all-route-data="@ProviderContext.RouteValues">
 
-<table class="govuk-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header" >Course name</th>
-            <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
-            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
-            <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
-        </tr>
+    <div class="govuk-date-input">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label">
+                    Day
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="day">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label">
+                    Month
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="month">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label">
+                    Year
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric" name="year">
+            </div>
+        </div>
+    </div>
 
-    <tbody class="govuk-table__body">
-        @if (Model.Rows.Count > 0)
-        {
-            foreach (var selectedExpiredCourse in Model.Rows)
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Course name</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
+            </tr>
+
+        <tbody class="govuk-table__body">
+            @if (Model.Rows.Count > 0)
             {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.CourseName</td>
-                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
-                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
-                    <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
-
-                </tr>
+                
+                foreach (var selectedExpiredCourse in Model.Rows)
+                {
+                    <tr class="govuk-table__row" type="row" name="selectedRows" value=@selectedExpiredCourse.CourseId>
+                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.CourseName</td>
+                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
+                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
+                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>       
+                        <td>
+                          <div class="input">
+                                <input name="selectedRows" value=@selectedExpiredCourse.CourseId type="hidden">
+                          </div>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<p class="govuk-body">
-    Your course(s) will be updated on Publish to the course directory and available to learners searching for
-    learning and training
-    opportunities on the National Career Service, Find a course.
-</p>
+  <p class="govuk-body">
+      Your course(s) will be updated on Publish to the course directory and available to learners searching for
+      learning and training
+      opportunities on the National Career Service, Find a course.
+  </p>
 
-<govuk-button asp-controller="ExpiredCourseRuns" asp-action="UpdatedCourses" asp-route-providerId="f6f783ea-8f3c-4ce4-a664-6cab41f0ac94" class="govuk-button--primary">Save and continue</govuk-button>
+     <govuk-button type="Submit">Continue</govuk-button>
+</form>
+
 

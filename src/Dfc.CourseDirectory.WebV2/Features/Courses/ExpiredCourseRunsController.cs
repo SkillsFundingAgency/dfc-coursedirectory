@@ -24,18 +24,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         [HttpPost]
         public async Task<IActionResult> Update(Guid[] selectedCourses)
         {
+
             var query = new ExpiredCourseRuns.SelectedQuery();
             query.CheckedRows = selectedCourses.ToArray();
             return await _mediator.SendAndMapResponse(query, vm => View("SelectedExpiredCourseRuns", vm));
             
         }
 
-        [HttpGet("courses/expired/SelectedCourses/updated")]
-        public IActionResult UpdatedCourses()
+        [HttpPost ("updated")]
+        public async Task<IActionResult> UpdatedCourses(string day, string month, string year, Guid [] selectedRows)
         {
-            return View("updated");
+            DateTime startDate = new DateTime(int.Parse(year), int.Parse(month), int.Parse(day));
+            var query = new ExpiredCourseRuns.NewStartDateQuery();
+            query.NewStartDate = startDate;
+            query.SelectedCourses = selectedRows.ToArray();
+
+            return await _mediator.SendAndMapResponse(query, vm => View("updated", vm));
+          
         }
+       
 
     }
-          
+
 }
+
