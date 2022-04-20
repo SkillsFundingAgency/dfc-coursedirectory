@@ -31,7 +31,7 @@
                     <govuk-input asp-for="SearchTerm">
                         <govuk-input-label>Search by Learning Aims Reference (LARS), title or keyword</govuk-input-label>
                         <govuk-input-hint>Enter a minimum of 3 characters</govuk-input-hint>
-                        <govuk-input-suffix class=" pttcd-c-search-input__buttoncontainer"><button class="govuk-button pttcd-c-search-input__button" data-module="govuk-button" data-form-type="">Search</button></govuk-input-suffix>
+                        <govuk-input-suffix class=" pttcd-c-search-input__buttoncontainer" id="RemoveAria"><button class="govuk-button pttcd-c-search-input__button" data-module="govuk-button" data-form-type="">Search</button></govuk-input-suffix>
                     </govuk-input>
                 </div>
             </div>
@@ -121,26 +121,26 @@
                                 <table class="govuk-table govuk-!-margin-bottom-0">
 
                                     <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN: <span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
-                                            <td class="govuk-table__cell govuk-!-width-one-third">Level: <span class="govuk-!-font-weight-bold">@item.Level</span></td>
-                                            <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation: <span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
-                                        </tr>
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell govuk-!-width-one-third">LARS/QAN: <span class="govuk-!-font-weight-bold">@item.LARSCode</span></td>
+                                        <td class="govuk-table__cell govuk-!-width-one-third">Level: <span class="govuk-!-font-weight-bold">@item.Level</span></td>
+                                        <td class="govuk-table__cell govuk-!-width-one-third">Awarding organisation: <span class="govuk-!-font-weight-bold">@item.AwardingOrganisation</span></td>
+                                    </tr>
                                     </tbody>
                                 </table>
 
                                 <table class="govuk-table govuk-!-margin-bottom-3">
                                     <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            @if (!string.IsNullOrEmpty(item.EffectiveTo))
-                                            {
-                                                <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold">@item.EffectiveTo</span></td>
-                                            }
-                                            @if (!string.IsNullOrEmpty(item.OperationalEndDate))
-                                            {
-                                                <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date: <span class="govuk-!-font-weight-bold">@item.OperationalEndDate</span></td>
-                                            }
-                                        </tr>
+                                    <tr class="govuk-table__row">
+                                        @if (!string.IsNullOrEmpty(item.EffectiveTo))
+                                        {
+                                            <td class="govuk-table__cell govuk-!-width-one-third">Effective to: <span class="govuk-!-font-weight-bold">@item.EffectiveTo</span></td>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.OperationalEndDate))
+                                        {
+                                            <td class="govuk-table__cell govuk-!-width-two-thirds">Operational end date: <span class="govuk-!-font-weight-bold">@item.OperationalEndDate</span></td>
+                                        }
+                                    </tr>
                                     </tbody>
                                 </table>
                                 <p class="govuk-body"><a class="link--button" id="" href="@resultReturnUrl">Choose this qualification</a></p>

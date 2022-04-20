@@ -10,6 +10,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string NotionalNVQLevelv2 { get; set; }
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTypeDesc { get; set; }
-        public string OperationalEndDate { get; set; }
+        public DateTime? OperationalEndDate { get; set; }
     }
 }

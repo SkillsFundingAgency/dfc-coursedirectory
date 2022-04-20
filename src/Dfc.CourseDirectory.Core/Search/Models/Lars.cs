@@ -38,5 +38,7 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public string SectorSubjectAreaTier2Desc { get; set; }
 
         public string AwardOrgAimRef { get; set; }
+
+        public DateTime? OperationalEndDate { get; set; }
     }
 }

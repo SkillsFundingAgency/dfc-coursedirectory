@@ -7,7 +7,7 @@
     [NotionalNVQLevelv2]          NVARCHAR (MAX) NOT NULL,
     [AwardOrgAimRef]              NVARCHAR (MAX) NOT NULL,
     [OperationalStartDate]        NVARCHAR (MAX) NOT NULL,
-    [OperationalEndDate]          NVARCHAR (MAX) NOT NULL,
+    [OperationalEndDate]          DATETIME           NULL,
     [EnglandFEHEStatus]           NVARCHAR (MAX) NOT NULL,
     [CreditBasedFwkType]          NVARCHAR (MAX) NOT NULL,
     [QltyAssAgencyType]           NVARCHAR (MAX) NOT NULL,
