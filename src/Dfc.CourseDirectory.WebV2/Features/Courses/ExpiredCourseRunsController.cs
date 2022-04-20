@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses
 {
@@ -31,20 +32,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             
         }
 
-        [HttpPost ("updated")]
-        public async Task<IActionResult> UpdatedCourses(string day, string month, string year, Guid [] selectedRows)
+        [HttpPost("updated")]
+        public async Task<IActionResult> UpdatedCourses(int day, int month, int year, Guid[] selectedRows)
         {
-            DateTime startDate = new DateTime(int.Parse(year), int.Parse(month), int.Parse(day));
+
+            DateTime startDate = new DateTime(year, month, day);
             var query = new ExpiredCourseRuns.NewStartDateQuery();
             query.NewStartDate = startDate;
             query.SelectedCourses = selectedRows.ToArray();
 
+
             return await _mediator.SendAndMapResponse(query, vm => View("updated", vm));
-          
+
+        }
+
         }
        
 
     }
 
-}
+
 

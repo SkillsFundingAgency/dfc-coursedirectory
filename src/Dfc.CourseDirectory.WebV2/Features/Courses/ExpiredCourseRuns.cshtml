@@ -39,7 +39,7 @@
             <tr id="selectAllRow" class="govuk-table__row" style="display: none">
                 <th class="govuk-table__header" colspan="1">
                     <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                        <input class="govuk-checkboxes__input" type="checkbox" id="selectAllCheckbox" onClick="toggle(this)">
+                        <input class="govuk-checkboxes__input" type="checkbox" id="selectAllCheckbox" onClick="toggle(this)" testid ="SelectAll">
                         <label class="govuk-label govuk-checkboxes__label"></label>
                     </div>
                 </th>
@@ -55,15 +55,15 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell" style="border:none">
                             <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                                <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked">
+                                <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked" testid ="SelectCourse">
                                 <label class="govuk-label govuk-checkboxes__label">
                                 </label>
                             </div>
                         </td>
-                        <td class="govuk-table__cell" style="border:none">@expiredCourse.CourseName</td>
-                        <td class="govuk-table__cell" style="border:none">@expiredCourse.ProviderCourseRef</td>
-                        <td class="govuk-table__cell" style="border:none">@expiredCourse.DeliveryMode.ToDescription()</td>
-                        <td class="govuk-table__cell" style="border:none">@expiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="CourseName">@expiredCourse.CourseName</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="ProviderCourseRef">@expiredCourse.ProviderCourseRef</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="DeliveryMode">@expiredCourse.DeliveryMode.ToDescription()</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="StartDate">@expiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
                     </tr>
                 }
             }

@@ -10,6 +10,8 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
+using FluentValidation;
+
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 {
     public class Query : IRequest<ViewModel>
@@ -25,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     {
         public Guid[] SelectedCourses { get; set; }
         public DateTime NewStartDate { get; set; }
+
     }
 
     public class ViewModel
@@ -158,10 +161,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
                 StartDate = request.NewStartDate,
                 SelectedCourseRunid = request.SelectedCourses
-            
+
              });
 
             return null;
         }
     }
+
+    
+    public class ExpiredCourseRunsValidator : AbstractValidator<NewStartDateQuery>
+    {
+        public ExpiredCourseRunsValidator()
+        {
+            RuleFor(t => t.NewStartDate).NotNull().NotEmpty().WithMessage("The Start Date must not be left Empty");
+            RuleFor(t => t.NewStartDate).GreaterThanOrEqualTo(DateTime.Today).WithMessage("The Start Date should not be in the past");
+        }
+    } 
 }

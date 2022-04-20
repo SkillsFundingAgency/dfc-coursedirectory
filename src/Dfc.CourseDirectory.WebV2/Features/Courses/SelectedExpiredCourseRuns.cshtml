@@ -23,7 +23,7 @@
                 <label class="govuk-label govuk-date-input__label">
                     Day
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="day">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="day" asp-validation-for="NewStartDate">
             </div>
         </div>
         <div class="govuk-date-input__item">
@@ -31,7 +31,7 @@
                 <label class="govuk-label govuk-date-input__label">
                     Month
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="month">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="month" asp-validation-for="NewStartDate">
             </div>
         </div>
         <div class="govuk-date-input__item">
@@ -39,7 +39,7 @@
                 <label class="govuk-label govuk-date-input__label">
                     Year
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric" name="year">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric" name="year" asp-validation-for="NewStartDate">
             </div>
         </div>
     </div>
@@ -60,10 +60,10 @@
                 foreach (var selectedExpiredCourse in Model.Rows)
                 {
                     <tr class="govuk-table__row" type="row" name="selectedRows" value=@selectedExpiredCourse.CourseId>
-                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.CourseName</td>
-                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.ProviderCourseRef</td>
-                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
-                        <td class="govuk-table__cell" style="border:none">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>       
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedCourseName">@selectedExpiredCourse.CourseName</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedProviderCourseRef">@selectedExpiredCourse.ProviderCourseRef</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedDeliveryMode">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedStartDate">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>       
                         <td>
                           <div class="input">
                                 <input name="selectedRows" value=@selectedExpiredCourse.CourseId type="hidden">
