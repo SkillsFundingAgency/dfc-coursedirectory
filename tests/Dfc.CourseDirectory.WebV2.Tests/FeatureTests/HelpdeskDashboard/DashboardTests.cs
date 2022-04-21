@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var downloadOutofDateCoursesReportLink = doc.GetElementByTestId("download-out-of-date-courses-report-link");
 
             downloadOutofDateCoursesReportLink.Should().NotBeNull();
-            downloadOutofDateCoursesReportLink.TextContent.Should().Be("Out of Date Courses Report");
+            downloadOutofDateCoursesReportLink.TextContent.Should().Be("Out of date courses report");
             downloadOutofDateCoursesReportLink.Attributes["href"].Value.Should().Be("/courses/reports/out-of-date-courses");
         }
     }
