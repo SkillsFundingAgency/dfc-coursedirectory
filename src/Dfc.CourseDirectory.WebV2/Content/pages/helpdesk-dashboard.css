@@ -4,3 +4,7 @@
     padding: 30px;
     margin-bottom: 30px;
 }
+.pttcd-helpdesk-dashboard__card__number {
+    font-size: 4rem;
+    font-weight: bold
+}

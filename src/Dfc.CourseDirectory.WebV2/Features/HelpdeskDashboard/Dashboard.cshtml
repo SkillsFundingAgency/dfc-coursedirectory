@@ -51,12 +51,12 @@
 
 <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
     <div class="govuk-grid-column-one-third">
-        <div class="cd-card-1 cd-card--provider">
-            <div class="cd-card-content cd-card-content--helpdesk">
-                <h2 class="govuk-heading-s">Find a course</h2>
-                <p class="cd-card-number--helpdesk">@Model.CourseNumber.ToString("N0")</p>
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">Courses</h2>
+                <p class="pttcd-helpdesk-dashboard__card__number">@Model.CourseNumber.ToString("N0")</p>
                 <p class="govuk-body-s">Courses on Find a course</p>
-                <p class="cd-card-number--helpdesk">@Model.OutofDateCourses.ToString("N0")</p>
+                <p class="pttcd-helpdesk-dashboard__card__number">@Model.OutofDateCourses.ToString("N0")</p>
                 <p class="govuk-body-s">Out of date courses</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
