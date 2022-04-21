@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT
 	COUNT(c.CourseID) AS TotalCourses, COUNT(IIF(cr.StartDate < GETDATE() - 61,1,NULL)) AS OutofDateCourses
 FROM Pttcd.Courses c
-JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn";
+Full JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
+Full JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn";
 
             var paramz = new
             {
