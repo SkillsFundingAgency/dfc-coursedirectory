@@ -142,5 +142,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             downloadLiveTLevelsReportLink.TextContent.Should().Be("Live courses report");
             downloadLiveTLevelsReportLink.Attributes["href"].Value.Should().Be("/opendata/reports/live-courses-with-regions-and-venues-report");
         }
+
+        [Fact]
+        public async Task Get_RendersDownloadOutofDateCoursesReportLink()
+        {
+            //Arrange
+            await User.AsHelpdesk();
+
+            //Act
+            var response = await HttpClient.GetAsync("helpdesk-dashboard");
+
+            //Assert
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            var doc = await response.GetDocument();
+            var downloadOutofDateCoursesReportLink = doc.GetElementByTestId("download-out-of-date-courses-report-link");
+
+            downloadOutofDateCoursesReportLink.Should().NotBeNull();
+            downloadOutofDateCoursesReportLink.TextContent.Should().Be("Out of date courses report");
+            downloadOutofDateCoursesReportLink.Attributes["href"].Value.Should().Be("/courses/reports/out-of-date-courses");
+        }
     }
 }
