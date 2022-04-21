@@ -5,6 +5,7 @@
     margin-bottom: 30px;
 }
 .pttcd-helpdesk-dashboard__card__number {
-    font-size: 4rem;
-    font-weight: bold
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0px;
 }
