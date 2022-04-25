@@ -52,10 +52,10 @@
                 foreach (var expiredCourse in Model.Rows)
                 {
 
-                    <tr class="govuk-table__row">
+                    <tr class="govuk-table__row"  data-testid="CourseRunRow" >
                         <td class="govuk-table__cell" style="border:none">
-                            <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                                <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked" testid ="SelectCourse">
+                            <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid ="SelectCourse">
+                                <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked" >
                                 <label class="govuk-label govuk-checkboxes__label">
                                 </label>
                             </div>

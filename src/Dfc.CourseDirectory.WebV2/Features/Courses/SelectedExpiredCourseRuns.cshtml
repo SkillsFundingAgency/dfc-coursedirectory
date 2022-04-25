@@ -59,7 +59,7 @@
                 
                 foreach (var selectedExpiredCourse in Model.Rows)
                 {
-                    <tr class="govuk-table__row" type="row" name="selectedRows" value=@selectedExpiredCourse.CourseId>
+                    <tr class="govuk-table__row" type="row" name="selectedRows" data-testid="SelectedCourseRow" value=@selectedExpiredCourse.CourseId>
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedCourseName">@selectedExpiredCourse.CourseName</td>
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedProviderCourseRef">@selectedExpiredCourse.ProviderCourseRef</td>
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedDeliveryMode">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
