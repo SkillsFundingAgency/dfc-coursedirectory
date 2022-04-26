@@ -85,26 +85,6 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-
-            @* -- With inline styling     *@
-@*            <govuk-button type="submit" style="float: left">Continue</govuk-button>
-            <a  asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues"
-            class="govuk-link"
-            style="
-                width: 80px;
-                height: auto;
-                border: 1px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 8px 10px 7px;
-                margin-bottom: 32px;
-                margin-left: 10px;
-                float: left;"
-            >Cancel</a>*@
-                
-            @* --Attempting to use a class component   *@
-
             <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
             <a  asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
 

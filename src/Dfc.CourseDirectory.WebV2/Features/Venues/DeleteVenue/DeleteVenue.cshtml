@@ -163,10 +163,10 @@
                     </govuk-checkboxes-item>
                 </govuk-checkboxes>
 
-                    <govuk-button type="submit" id="pttcd-delete-location__delete-btn" class="govuk-button--warning govuk-!-margin-right-5" data-testId="delete-location-button">Delete venue</govuk-button>
+                    <govuk-button type="submit" id="pttcd-delete-location__delete-btn" class="govuk-button--warning cd-cancel-btn" data-testId="delete-location-button">Delete venue</govuk-button>
             }
 
-            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3">Cancel</a> 
+            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a> 
         </form>
     </div>
 </div>

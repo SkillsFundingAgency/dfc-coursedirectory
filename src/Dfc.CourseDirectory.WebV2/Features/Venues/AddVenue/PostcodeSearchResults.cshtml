@@ -38,11 +38,9 @@
 
 
              <div class="govuk-button-group">
-                <govuk-button class="govuk-!-margin-right-3">Continue</govuk-button>
-                <a class="govuk-link" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()">Cancel</a>  
+                <govuk-button class="cd-cancel-btn">Continue</govuk-button>
+                <a class="govuk-link cd-cancel-link" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()">Cancel</a>  
             </div>
-
-
         </form>
     </div>
 </div>

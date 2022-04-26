@@ -6252,6 +6252,9 @@
   margin-bottom: 0em;
 }
 
+/*-----------------------------------------------------------*/
+/*fix stop canel button styling until govuk framework updated*/
+
 .cd-cancel-btn {
     float: left
 }
@@ -6268,6 +6271,8 @@
     margin-left: 10px;
     float: left;
 }
+/*-----------------------------------------------------------*/
+
 
 .tox-editor-container {
   border-style: solid !important;

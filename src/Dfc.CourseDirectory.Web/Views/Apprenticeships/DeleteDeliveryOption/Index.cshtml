@@ -27,17 +27,17 @@
                 <br />
 
                 <div class="cta-container">
-                    <button type="submit" class="govuk-button" id="delete" value="delete">
+                    <button type="submit" class="govuk-button cd-cancel-btn" id="delete" value="delete">
                         Delete
                     </button>
 
                     @if (Model.Combined)
                     {
-                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">Cancel</a>
+                        <a class="govuk-link cd-cancel-link" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">Cancel</a>
                     }
                     else
                     {
-                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="DeliveryOptions">Cancel</a>
+                        <a class="govuk-link cd-cancel-link" asp-controller="Apprenticeships" asp-action="DeliveryOptions">Cancel</a>
                     }
 
                 </div>

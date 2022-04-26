@@ -33,14 +33,14 @@
             </govuk-input>
 
             <div class="govuk-button-group">
-                <govuk-button type="submit" class="govuk-!-margin-right-3">Continue</govuk-button>
+                <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
                 @if (ViewBag.FromPublishPage == true)
                 {
-                    <a  asp-action="CheckAndPublish" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+                    <a  asp-action="CheckAndPublish" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link cd-cancel-link">Cancel</a>
                 }
                 else
                 {
-                    <a  asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+                    <a  asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link cd-cancel-link">Cancel</a>
                 }
             </div>
         </form>
