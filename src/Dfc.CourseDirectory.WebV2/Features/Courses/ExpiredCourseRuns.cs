@@ -151,9 +151,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher)
+        public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher, 
+            IProviderContextProvider providerContextProvider)
         {
-            IProviderContextProvider providerContextProvider;
+            _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
         public async Task<ViewModel> Handle(NewStartDateQuery request, CancellationToken cancellationToken)
@@ -162,7 +163,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             {
                  ProviderId = _providerContextProvider.GetProviderId(),
                  StartDate = request.NewStartDate,
-                SelectedCourseRunid = request.SelectedCourses
+                 SelectedCourseRunid = request.SelectedCourses
 
              });
 
