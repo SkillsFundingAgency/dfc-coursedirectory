@@ -33,10 +33,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         }
 
         [HttpPost("updated")]
-        public async Task<IActionResult> UpdatedCourses(int day, int month, int year, Guid[] selectedRows)
+        public async Task<IActionResult> UpdatedCourses(string year, string month, string day, Guid[] selectedRows)
         {
 
-            DateTime startDate = new DateTime(year, month, day);
+            DateTime startDate = new DateTime(int.Parse(year) , int.Parse(month), int.Parse(day));
             var query = new ExpiredCourseRuns.NewStartDateQuery();
             query.NewStartDate = startDate;
             query.SelectedCourses = selectedRows.ToArray();

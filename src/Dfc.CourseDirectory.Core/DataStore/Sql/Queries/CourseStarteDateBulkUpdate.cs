@@ -8,8 +8,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     public class CourseStarteDateBulkUpdate : ISqlQuery<Success>
     {
-          public Guid[] SelectedCourseRunid { get; set; }
-          public DateTime? StartDate { get; set; }
+
+        public Guid ProviderId { get; set; }
+
+        public Guid[] SelectedCourseRunid { get; set; }
+        public DateTime? StartDate { get; set; }
 
     }
   

@@ -17,12 +17,13 @@ using GetSelectedExpiredCoursesQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Ge
 
 using FluentAssertions;
 using FluentAssertions.Execution;
+using GovUk.Frontend.AspNetCore;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 {
-    public class UpdateExpiredCourses : MvcTestBase
+    public class UpdateExpiredCoursesTests : MvcTestBase
     {
-        public UpdateExpiredCourses(CourseDirectoryApplicationFactory factory)
+        public UpdateExpiredCoursesTests(CourseDirectoryApplicationFactory factory)
                : base(factory)
         {
         }
@@ -42,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
         }
 
@@ -111,7 +112,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 
             var course2 = await TestData.CreateCourse(
                 provider.ProviderId,
-                createdBy: User.ToUserInfo(),  
+                createdBy: User.ToUserInfo(),
                 configureCourseRuns: builder =>
                 {
                     builder.WithCourseRun(startDate: Clock.UtcNow.Date.AddDays(1));  // Not expired
@@ -133,45 +134,46 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 
                 rows[0].GetElementByTestId("CourseName").TextContent.Should().Be(course1.CourseRuns.Single().CourseName);
                 rows[0].GetElementByTestId("DeliveryMode").TextContent.Should().Be(course1.CourseRuns.Single().DeliveryMode.ToString(""));
-               
+                //  rows[0].GetElementByTestId("ProviderCourseRef").TextContent.Should().Be(course1.CourseRuns.Single().ProviderCourseId);
                 rows[0].GetElementByTestId("StartDate").TextContent.Should().Be(course1.CourseRuns.Single().StartDate.Value.ToString("dd/MM/yyyy"));
             }
         }
 
-       
-       [Fact]
-       public async Task GetConfirmed_RendersExpectedCourseName()
-       {
-           // Arrange
-           var provider = await TestData.CreateProvider();
 
-            var course = await TestData.CreateCourse(   
+        [Fact]
+        public async Task GetConfirmed_RendersExpectedCourseName()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var course = await TestData.CreateCourse(
                provider.ProviderId,
                createdBy: User.ToUserInfo(),
                configureCourseRuns: builder =>
                  {
-                      builder.WithCourseRun(startDate: Clock.UtcNow.Date.AddDays(-1));  // Expired
-                });
+                     builder.WithCourseRun(startDate: Clock.UtcNow.Date.AddDays(-1));  // Expired
+                 });
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetSelectedExpiredCoursesQuery()
             {
+
                 ProviderId = provider.ProviderId,
                 Today = DateTime.Today,
-            })) ;
+            }));
 
-           var request = new HttpRequestMessage(
-              HttpMethod.Get,
-              $"/courses/expired?providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(
+               HttpMethod.Get,
+               $"/courses/expired?providerId={provider.ProviderId}");
 
-           await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
-           // Act
-           var response = await HttpClient.SendAsync(request);
+            // Act
+            var response = await HttpClient.SendAsync(request);
 
-           // Assert
-           response.EnsureSuccessStatusCode();
+            // Assert
+            response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
             using (new AssertionScope())
@@ -181,13 +183,85 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 
                 rows[0].GetElementByTestId("CourseName").TextContent.Should().Be(course.CourseRuns.Single().CourseName);
                 rows[0].GetElementByTestId("DeliveryMode").TextContent.Should().Be(course.CourseRuns.Single().DeliveryMode.ToString(""));
-
+                // rows[0].GetElementByTestId("ProviderCourseRef").TextContent.Should().Be(course.CourseRuns.Single().ProviderCourseId);
                 rows[0].GetElementByTestId("StartDate").TextContent.Should().Be(course.CourseRuns.Single().StartDate.Value.ToString("dd/MM/yyyy"));
             }
+        }
+
+        /*
+        [Fact]
+        public async Task GetStartDate_BulkUpdate()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var course = await TestData.CreateCourse(
+              provider.ProviderId,
+              createdBy: User.ToUserInfo(),
+              configureCourseRuns: builder =>
+              {
+                  builder.WithCourseRun(startDate: Clock.UtcNow.Date.AddDays(1));  // Not expired
+                });
+
+            // Create another live course
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateCourseRunQuery()
+            {
+                ProviderId = provider.ProviderId,
+                StartDate = DateTime.Today
+            }));
+            
+            var request = new HttpRequestMessage(
+             HttpMethod.Get,
+             $"/courses/expired/updated?providerId={provider.ProviderId}");
+
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+           // var doc = await response.GetDocument();
+           // Assert.NotNull(doc.GetElementByTestId("ViewEditCopyDeleteLink"));
+        } */
+
+        [Fact]
+        private async Task Post_NewStartedate()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
 
-        } 
-       
+            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateCourseRunQuery()
+            {
+                ProviderId = provider.ProviderId,
+                StartDate = DateTime.Today
+            }));
+
+            // Act
+            var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post, $"/courses/expired/updated?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+
+                .Add("Year", "2022").Add("Month", "12").Add("Day","12")
+               
+
+                .ToContent()
+            };
+            var postCourseRunResponse = await HttpClient.SendAsync(updateCourseStartDate);
+
+            // Assert
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/expired/updated?providerId={provider.ProviderId}");
+        }
 
     }
 

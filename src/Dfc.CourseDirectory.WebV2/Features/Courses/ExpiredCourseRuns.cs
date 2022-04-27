@@ -149,17 +149,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
     public class UpdatedHandler : IRequestHandler<NewStartDateQuery, ViewModel>
     {
+        private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
+            IProviderContextProvider providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
         public async Task<ViewModel> Handle(NewStartDateQuery request, CancellationToken cancellationToken)
         {
              await _sqlQueryDispatcher.ExecuteQuery(new CourseStarteDateBulkUpdate()
             {
-
-                StartDate = request.NewStartDate,
+                 ProviderId = _providerContextProvider.GetProviderId(),
+                 StartDate = request.NewStartDate,
                 SelectedCourseRunid = request.SelectedCourses
 
              });
