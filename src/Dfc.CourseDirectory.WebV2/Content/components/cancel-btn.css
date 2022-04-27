@@ -2,19 +2,18 @@
 /*fix canel button styling until govuk framework updated*/
 
 .cd-cancel-btn {
-    float: left
+    float: left;
+    margin-right: 10px;
 }
 
 .cd-cancel-link {
-    width: 80px;
+    width: auto;
     height: auto;
     border: 1px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px 10px 7px;
-    margin-bottom: 32px;
-    margin-left: 10px;
+    margin: 8px 10px 7px;
     float: left;
 }
 /*-----------------------------------------------------------*/
