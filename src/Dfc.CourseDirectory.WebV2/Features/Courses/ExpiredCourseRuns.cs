@@ -9,7 +9,12 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
+using Dfc.CourseDirectory.Core.Validation;
 
+using Dfc.CourseDirectory.Core.Validation.CourseValidation;
+
+using OneOf;
+using OneOf.Types;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
@@ -23,21 +28,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public Guid[] CheckedRows { get; set; }
     }
 
-    public class NewStartDateQuery : IRequest<ViewModel>
+    public class NewStartDateQuery : ViewModel
     {
         public Guid[] SelectedCourses { get; set; }
         public DateTime NewStartDate { get; set; }
 
     }
 
-    public class ViewModel
+    public class ViewModel : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public int Total { get; set; }
         public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
         public bool Checked { get; set; }
     }
 
-    public class ViewModelRow
+    public class ViewModelRow  : ViewModel
     {
         public Guid CourseId { get; set; }
         public string CourseName { get; set; }
@@ -147,37 +152,56 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         }
     }
 
-    public class UpdatedHandler : IRequestHandler<NewStartDateQuery, ViewModel>
+    public class UpdatedHandler : IRequestHandler<NewStartDateQuery, OneOf<ModelWithErrors<ViewModel>, Success>>
+
+
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher, 
+        public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
-        public async Task<ViewModel> Handle(NewStartDateQuery request, CancellationToken cancellationToken)
+
+        public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(NewStartDateQuery request, CancellationToken cancellationToken)
         {
-             await _sqlQueryDispatcher.ExecuteQuery(new CourseStarteDateBulkUpdate()
+
+            var validator = new ExpiredCourseRunsValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            if (validationResult.IsValid)
             {
-                 ProviderId = _providerContextProvider.GetProviderId(),
-                 StartDate = request.NewStartDate,
-                 SelectedCourseRunid = request.SelectedCourses
+                await _sqlQueryDispatcher.ExecuteQuery(new CourseStarteDateBulkUpdate()
+                {
+                    ProviderId = _providerContextProvider.GetProviderId(),
+                    StartDate = request.NewStartDate,
+                    SelectedCourseRunid = request.SelectedCourses
 
-             });
+                });
 
-            return null;
+
+                return new Success();
+            }
+            else
+            {
+
+                return new ModelWithErrors<ViewModel>(new ViewModel(), validationResult);
+            }
+
+        }
+
+
+        public class ExpiredCourseRunsValidator : AbstractValidator<NewStartDateQuery>
+        {
+            public ExpiredCourseRunsValidator()
+            {
+               // RuleFor(t => t.NewStartDate).NNull().WithMessage("The Start Date must not be left Empty");
+               //RuleFor(t => t.NewStartDate).GreaterThanOrEqualTo(DateTime.Today).WithMessage($"The Start Date should not be in the past");
+               
+                RuleFor(t => t.NewStartDate).LessThan(DateTime.Today).WithMessage($"date in the past error test");
+
+            }
         }
     }
-
-    
-    public class ExpiredCourseRunsValidator : AbstractValidator<NewStartDateQuery>
-    {
-        public ExpiredCourseRunsValidator()
-        {
-            RuleFor(t => t.NewStartDate).NotNull().NotEmpty().WithMessage("The Start Date must not be left Empty");
-            RuleFor(t => t.NewStartDate).GreaterThanOrEqualTo(DateTime.Today).WithMessage("The Start Date should not be in the past");
-        }
-    } 
 }

@@ -12,10 +12,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
     public class ExpiredCourseRunsController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ProviderContext _providerContext;
 
-        public ExpiredCourseRunsController(IMediator mediator)
+        public ExpiredCourseRunsController(IMediator mediator, IProviderContextProvider providerContextProvider)
         {
             _mediator = mediator;
+            _providerContext = providerContextProvider.GetProviderContext();
+
         }
 
         [HttpGet("")]
@@ -33,22 +36,36 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         }
 
         [HttpPost("updated")]
-        public async Task<IActionResult> UpdatedCourses(string year, string month, string day, Guid[] selectedRows)
+        [RequireProviderContext]
+        public async Task<IActionResult> UpdatedCourses(string year, string month, string day, Guid[] selectedRows, ExpiredCourseRuns.NewStartDateQuery newstartdate)
         {
-
+            
             DateTime startDate = new DateTime(int.Parse(year) , int.Parse(month), int.Parse(day));
             var query = new ExpiredCourseRuns.NewStartDateQuery();
             query.NewStartDate = startDate;
             query.SelectedCourses = selectedRows.ToArray();
 
-
-            return await _mediator.SendAndMapResponse(query, vm => View("updated", vm));
+            var returnUrl = $"/courses/expired/?providerId={_providerContext.ProviderInfo.ProviderId}";
+            // return await _mediator.SendAndMapResponse(query, vm => View("updated", vm ));
+            return await _mediator.SendAndMapResponse(
+                newstartdate,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors).WithViewData("ReturnUrl", returnUrl),
+                    Success => RedirectToAction(nameof(Updated))
+                        .WithProviderContext(_providerContext)));
 
         }
 
-        }
-       
+    
+        [HttpGet("/courses/expired/updated")]
+        [RequireProviderContext]
+        public IActionResult Updated()
+        {
+            return View();
 
+        }
+
+    }
     }
 
 
