@@ -90,8 +90,8 @@
 
 
             <div class="govuk-button-group">
-                <govuk-button type="submit">Remove</govuk-button>
-                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3" data-testid="cancel-btn">Cancel</a>
+                <govuk-button type="submit" class="cd-cancel-btn">Remove</govuk-button>
+                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link" data-testid="cancel-btn">Cancel</a>
             </div>
 
         </form>
