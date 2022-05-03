@@ -40,6 +40,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public int Total { get; set; }
         public IReadOnlyCollection<ViewModelRow> Rows { get; set; }
         public bool Checked { get; set; }
+
+        public DateTime? NewStartDate { get; set; }
+
+        public string Year { get; set; }
+        public string Month { get; set; }
+        public string Day { get; set; }
+
     }
 
     public class ViewModelRow  : ViewModel
@@ -194,9 +201,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                 {
                     CheckedRows = request.SelectedCourses
                 }, cancellationToken);
-                
-                // Update VM to include original year, month, day
 
+                //   vm.Year = request.Year;
+                // vm.Month = request.Month;
+                // vm.Day = request.Day;
+
+                vm.NewStartDate = request.NewStartDate.ToDateTime();
+
+                // Update VM to include original year, month, day
+             //   var StartDate = request.NewStartDate.ToDateTime();
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 

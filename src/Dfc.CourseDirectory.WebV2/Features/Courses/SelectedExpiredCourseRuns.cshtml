@@ -15,15 +15,23 @@
 
 <div class="govuk-hint">For example, 12 11 2007</div>
 
-<form asp-action="UpdatedCourses" asp-all-route-data="@ProviderContext.RouteValues">
 
+<govuk-error-summary>
+
+    <govuk-error-summary-item asp-for="NewStartDate" />
+
+</govuk-error-summary>
+
+
+<form asp-action="UpdatedCourses" asp-all-route-data="@ProviderContext.RouteValues">
+    <!--
     <div class="govuk-date-input">
         <div class="govuk-date-input__item">
             <div class="govuk-form-group">
                 <label class="govuk-label govuk-date-input__label">
                     Day
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="day" asp-validation-for="NewStartDate">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="day" value="@Model.Day" asp-validation-for="NewStartDate">
             </div>
         </div>
         <div class="govuk-date-input__item">
@@ -31,7 +39,7 @@
                 <label class="govuk-label govuk-date-input__label">
                     Month
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="month" asp-validation-for="NewStartDate">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="month" value="@Model.Month" asp-validation-for="NewStartDate">
             </div>
         </div>
         <div class="govuk-date-input__item">
@@ -39,10 +47,14 @@
                 <label class="govuk-label govuk-date-input__label">
                     Year
                 </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric" name="year" asp-validation-for="NewStartDate">
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric" name="year" value="@Model.Year" asp-validation-for="NewStartDate">
             </div>
         </div>
-    </div>
+    </div> -->
+
+    <govuk-date-input asp-for="NewStartDate">
+        <govuk-date-input-label class="govuk-!-display-none" aria-hidden="true"></govuk-date-input-label>
+    </govuk-date-input>
 
     <table class="govuk-table">
         <thead class="govuk-table__head">
@@ -56,18 +68,18 @@
         <tbody class="govuk-table__body">
             @if (Model.Rows.Count > 0)
             {
-                
+
                 foreach (var selectedExpiredCourse in Model.Rows)
                 {
                     <tr class="govuk-table__row" type="row" name="selectedRows" data-testid="SelectedCourseRow" value=@selectedExpiredCourse.CourseId>
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedCourseName">@selectedExpiredCourse.CourseName</td>
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedProviderCourseRef">@selectedExpiredCourse.ProviderCourseRef</td>
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedDeliveryMode">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
-                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedStartDate">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>       
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedStartDate">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
                         <td>
-                          <div class="input">
+                            <div class="input">
                                 <input name="selectedRows" value=@selectedExpiredCourse.CourseId type="hidden">
-                          </div>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -75,13 +87,13 @@
         </tbody>
     </table>
 
-  <p class="govuk-body">
-      Your course(s) will be updated on Publish to the course directory and available to learners searching for
-      learning and training
-      opportunities on the National Career Service, Find a course.
-  </p>
+    <p class="govuk-body">
+        Your course(s) will be updated on Publish to the course directory and available to learners searching for
+        learning and training
+        opportunities on the National Career Service, Find a course.
+    </p>
 
-     <govuk-button type="Submit">Continue</govuk-button>
+    <govuk-button type="Submit">Continue</govuk-button>
 </form>
 
 

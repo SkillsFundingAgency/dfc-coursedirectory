@@ -39,12 +39,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
 
         [HttpPost("updated")]
         [RequireProviderContext]
-        public async Task<IActionResult> UpdatedCourses(string year, string month, string day, Guid[] selectedRows)
+        public async Task<IActionResult> UpdatedCourses(DateTime? NewStartDate, Guid[] selectedRows)
         {
             
-            DateTime startDate = new DateTime(int.Parse(year) , int.Parse(month), int.Parse(day));
+            
             var query = new ExpiredCourseRuns.NewStartDateQuery();
-            query.NewStartDate = startDate;
+            query.NewStartDate = NewStartDate;
+          //  query.Year = year;
+           // query.Month = month;
+           // query.Day = month; 
             query.SelectedCourses = selectedRows.ToArray();
 
             var returnUrl = $"/courses/expired/?providerId={_providerContext.ProviderInfo.ProviderId}";
