@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
@@ -50,13 +52,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
-                    errors => this.ViewFromErrors("SelectedExpiredCourseRuns", errors).WithViewData("ReturnUrl", returnUrl),
+                    errors => WithViewData(errors, returnUrl),
                     Success => RedirectToAction(nameof(Updated))
                         .WithProviderContext(_providerContext)));
 
         }
 
-    
+        private ViewResult WithViewData(ModelWithErrors<ViewModel> errors, string returnUrl)
+        {
+            return this.ViewFromErrors("SelectedExpiredCourseRuns", errors).WithViewData("ReturnUrl", returnUrl);
+        }
+
+
         [HttpGet("/courses/expired/updated")]
         [RequireProviderContext]
         public IActionResult Updated()

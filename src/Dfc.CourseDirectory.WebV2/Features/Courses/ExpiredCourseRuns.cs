@@ -158,12 +158,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IClock _clock;
+        private readonly IRegionCache _regionCache;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider, IClock clock)
+            IProviderContextProvider providerContextProvider, IClock clock, IRegionCache regionCache)
         {
             _providerContextProvider = providerContextProvider;
             _clock = clock;
+            _regionCache = regionCache;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
@@ -187,10 +189,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             }
             else
             {
-
-                return new ModelWithErrors<ViewModel>(new ViewModel()
+                var selectedHandler = new SelectedHandler(_providerContextProvider, _sqlQueryDispatcher, _clock, _regionCache);
+                var vm = await selectedHandler.Handle(new SelectedQuery()
                 {
-                }, validationResult);
+                    CheckedRows = request.SelectedCourses
+                }, cancellationToken);
+                
+                // Update VM to include original year, month, day
+
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
         }
