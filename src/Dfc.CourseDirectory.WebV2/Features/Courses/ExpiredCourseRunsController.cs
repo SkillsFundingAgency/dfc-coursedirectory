@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
 
         [HttpPost("updated")]
         [RequireProviderContext]
-        public async Task<IActionResult> UpdatedCourses(string year, string month, string day, Guid[] selectedRows, ExpiredCourseRuns.NewStartDateQuery newstartdate)
+        public async Task<IActionResult> UpdatedCourses(string year, string month, string day, Guid[] selectedRows)
         {
             
             DateTime startDate = new DateTime(int.Parse(year) , int.Parse(month), int.Parse(day));
@@ -48,9 +48,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             var returnUrl = $"/courses/expired/?providerId={_providerContext.ProviderInfo.ProviderId}";
             // return await _mediator.SendAndMapResponse(query, vm => View("updated", vm ));
             return await _mediator.SendAndMapResponse(
-                newstartdate,
+                query,
                 result => result.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors).WithViewData("ReturnUrl", returnUrl),
+                    errors => this.ViewFromErrors("SelectedExpiredCourseRuns", errors).WithViewData("ReturnUrl", returnUrl),
                     Success => RedirectToAction(nameof(Updated))
                         .WithProviderContext(_providerContext)));
 

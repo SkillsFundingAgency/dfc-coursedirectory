@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     public class NewStartDateQuery : ViewModel
     {
         public Guid[] SelectedCourses { get; set; }
-        public DateTime NewStartDate { get; set; }
+        public DateInput NewStartDate { get; set; }
 
     }
 
@@ -157,25 +157,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
     {
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly IClock _clock;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         public UpdatedHandler(ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider, IClock clock)
         {
             _providerContextProvider = providerContextProvider;
+            _clock = clock;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(NewStartDateQuery request, CancellationToken cancellationToken)
         {
 
-            var validator = new ExpiredCourseRunsValidator();
+            var validator = new ExpiredCourseRunsValidator(_clock);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
             if (validationResult.IsValid)
             {
                 await _sqlQueryDispatcher.ExecuteQuery(new CourseStarteDateBulkUpdate()
                 {
                     ProviderId = _providerContextProvider.GetProviderId(),
-                    StartDate = request.NewStartDate,
+                    StartDate = request.NewStartDate.ToDateTime(),
                     SelectedCourseRunid = request.SelectedCourses
 
                 });
@@ -186,7 +188,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             else
             {
 
-                return new ModelWithErrors<ViewModel>(new ViewModel(), validationResult);
+                return new ModelWithErrors<ViewModel>(new ViewModel()
+                {
+                }, validationResult);
             }
 
         }
@@ -194,12 +198,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
         public class ExpiredCourseRunsValidator : AbstractValidator<NewStartDateQuery>
         {
-            public ExpiredCourseRunsValidator()
+            public ExpiredCourseRunsValidator(IClock clock)
             {
-               // RuleFor(t => t.NewStartDate).NNull().WithMessage("The Start Date must not be left Empty");
-               //RuleFor(t => t.NewStartDate).GreaterThanOrEqualTo(DateTime.Today).WithMessage($"The Start Date should not be in the past");
-               
-                RuleFor(t => t.NewStartDate).LessThan(DateTime.Today).WithMessage($"date in the past error test");
+                RuleFor(c => c.NewStartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => false);
 
             }
         }
