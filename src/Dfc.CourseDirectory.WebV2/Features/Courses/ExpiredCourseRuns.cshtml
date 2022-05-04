@@ -8,22 +8,29 @@
     <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
 }
 
-<h1 class="govuk-govuk-grid-column-one-half-l">Courses</h1>
 
-<p class="govuk-body-l">
-    Courses with a start date 2 months in the past will not be visible to learners searching for opportunities on
-    National Careers Service. Find a Course.
-</p>
-
-<p class="govuk-body">
-    Select a course to update. Searching multiple courses will update the start date for those courses.
-</p>
-
-
-<p class="govuk-body">
-    If you have courses with multiple mew start date you can <a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">update all courses by data upload</a>
-</p>
 <form asp-action="Update" asp-all-route-data="@ProviderContext.RouteValues">
+
+    <govuk-error-summary>
+
+        <govuk-error-summary-item asp-for="CheckedRows" />
+
+    </govuk-error-summary>
+    <h1 class="govuk-govuk-grid-column-one-half-l">Courses</h1>
+
+    <p class="govuk-body-l">
+        Courses with a start date 2 months in the past will not be visible to learners searching for opportunities on
+        National Careers Service. Find a Course.
+    </p>
+
+    <p class="govuk-body">
+        Select a course to update. Searching multiple courses will update the start date for those courses.
+    </p>
+
+
+    <p class="govuk-body">
+        If you have courses with multiple mew start date you can <a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">update all courses by data upload</a>
+    </p>
 
     <table class="govuk-table">
 
@@ -52,10 +59,10 @@
                 foreach (var expiredCourse in Model.Rows)
                 {
 
-                    <tr class="govuk-table__row"  data-testid="CourseRunRow" >
+                    <tr class="govuk-table__row" data-testid="CourseRunRow">
                         <td class="govuk-table__cell" style="border:none">
-                            <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid ="SelectCourse">
-                                <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked" >
+                            <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid="SelectCourse">
+                                <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" checked="@expiredCourse.IsChecked" asp-validation-for="CheckedRows">
                                 <label class="govuk-label govuk-checkboxes__label">
                                 </label>
                             </div>
@@ -70,6 +77,7 @@
             else
             {
                 <tr class="govuk-table__row">
+                    `
                     <td class="govuk-table__cell govuk-!-padding-bottom-5 govuk-!-padding-top-5" colspan="3">You have no expired courses</td>
                 </tr>
             }

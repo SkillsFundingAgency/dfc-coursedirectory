@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses
 {
@@ -30,11 +31,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         [HttpPost]
         public async Task<IActionResult> Update(Guid[] selectedCourses)
         {
-
-            var query = new ExpiredCourseRuns.SelectedQuery();
-            query.CheckedRows = selectedCourses.ToArray();
+            if (!selectedCourses.Any())
+            {
+                return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query(), vm => this.ViewFromErrors("ExpiredCourseRuns", new ModelWithErrors<ViewModel>(vm,
+                    new ValidationResult()
+                    {
+                        Errors = { new ValidationFailure("CheckedRows", "Select a course to update") }
+                    })));
+            }
+            var query = new ExpiredCourseRuns.SelectedQuery { CheckedRows = selectedCourses.ToArray() };
             return await _mediator.SendAndMapResponse(query, vm => View("SelectedExpiredCourseRuns", vm));
-            
         }
 
         [HttpPost("updated")]
@@ -55,17 +61,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
-                    errors => WithViewData(errors, returnUrl),
-                    Success => RedirectToAction(nameof(Updated))
+                    errors => this.ViewFromErrors("SelectedExpiredCourseRuns", errors).WithViewData("ReturnUrl", returnUrl),
+            Success => RedirectToAction(nameof(Updated))
                         .WithProviderContext(_providerContext)));
 
         }
-
-        private ViewResult WithViewData(ModelWithErrors<ViewModel> errors, string returnUrl)
-        {
-            return this.ViewFromErrors("SelectedExpiredCourseRuns", errors).WithViewData("ReturnUrl", returnUrl);
-        }
-
 
         [HttpGet("/courses/expired/updated")]
         [RequireProviderContext]

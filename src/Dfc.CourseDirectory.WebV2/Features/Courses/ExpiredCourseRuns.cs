@@ -43,9 +43,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
         public DateTime? NewStartDate { get; set; }
 
-        public string Year { get; set; }
-        public string Month { get; set; }
-        public string Day { get; set; }
+        public Guid[] SelectedCourses { get; set; }
+
+        public Guid[] CheckedRows { get; set; }
+
 
     }
 

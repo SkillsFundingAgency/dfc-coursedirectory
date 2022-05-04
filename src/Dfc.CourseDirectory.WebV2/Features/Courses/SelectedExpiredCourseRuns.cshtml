@@ -9,48 +9,20 @@
     <govuk-back-link asp-action="Update" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
 }
 
-<h1>
-    Enter the start date for your course(s)
-</h1>
-
-<div class="govuk-hint">For example, 12 11 2007</div>
 
 
 <govuk-error-summary>
-
     <govuk-error-summary-item asp-for="NewStartDate" />
-
 </govuk-error-summary>
 
 
 <form asp-action="UpdatedCourses" asp-all-route-data="@ProviderContext.RouteValues">
-    <!--
-    <div class="govuk-date-input">
-        <div class="govuk-date-input__item">
-            <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label">
-                    Day
-                </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="day" value="@Model.Day" asp-validation-for="NewStartDate">
-            </div>
-        </div>
-        <div class="govuk-date-input__item">
-            <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label">
-                    Month
-                </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-2" type="text" pattern="[0-9]*" inputmode="numeric" name="month" value="@Model.Month" asp-validation-for="NewStartDate">
-            </div>
-        </div>
-        <div class="govuk-date-input__item">
-            <div class="govuk-form-group">
-                <label class="govuk-label govuk-date-input__label">
-                    Year
-                </label>
-                <input class="govuk-input govuk-date-input__input govuk-input--width-4" type="text" pattern="[0-9]*" inputmode="numeric" name="year" value="@Model.Year" asp-validation-for="NewStartDate">
-            </div>
-        </div>
-    </div> -->
+
+    <h1>
+        Enter the start date for your course(s)
+    </h1>
+
+    <div class="govuk-hint">For example, 12 11 2007</div>
 
     <govuk-date-input asp-for="NewStartDate">
         <govuk-date-input-label class="govuk-!-display-none" aria-hidden="true"></govuk-date-input-label>
