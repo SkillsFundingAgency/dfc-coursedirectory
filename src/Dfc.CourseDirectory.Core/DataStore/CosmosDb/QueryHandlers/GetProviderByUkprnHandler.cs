@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 if (response != null && response.Count > 1)
                     _logger.LogWarning("Multiple Providers found for {UKPRN}", request.Ukprn);
 
-                return response.FirstOrDefault();
+                return response.LastOrDefault();
             }
 
             // FIXME: Once duplicate provider records are removed this should be .SingleOrDefault()
