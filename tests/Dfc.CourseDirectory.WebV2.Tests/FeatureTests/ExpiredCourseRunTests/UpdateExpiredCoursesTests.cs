@@ -186,6 +186,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
@@ -195,10 +196,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
                 StartDate = DateTime.Today
             }));
 
+
+
             // Act
             var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post, $"/courses/expired?providerId={provider.ProviderId}")
             {
-                Content = new FormUrlEncodedContentBuilder().ToContent()
+                Content = new FormUrlEncodedContentBuilder().
+                    Add("NewStartDate.Year", "2020").Add("NewStartDate.Month", "01").Add("NewStartDate.Day", "01")
+                    .Add("selectedRows", new List<Guid> { course.CourseId })
+                    .ToContent()
             };
             // Act
  
