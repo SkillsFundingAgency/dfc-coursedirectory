@@ -19,6 +19,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using GovUk.Frontend.AspNetCore;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 {
@@ -152,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
 
-            await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateCourseRunQuery()
             {
@@ -160,22 +161,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
                 StartDate = DateTime.Today
             }));
 
-            var content = new StringContent(JsonConvert.SerializeObject(new { NewStartDate = DateTime.Now.AddDays(1) }));
 
             // Act
-            var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post, $"/courses/expired/updated?providerId={provider.ProviderId}")
+            var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post,
+                $"/courses/expired/updated?providerId={provider.ProviderId}")
             {
-                Content = content
-
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("NewStartDate.Year", "2023").Add("NewStartDate.Month", "01").Add("NewStartDate.Day", "01")
+                    .Add("selectedRows", new List<Guid> { course.CourseId })
+                    .ToContent()
             };
             var postCourseRunResponse = await HttpClient.SendAsync(updateCourseStartDate);
 
             // Assert
-            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
         }
 
         [Fact]
-        private async Task Post_StartDateUpdate_ReturnsErrors()
+        private async Task Post_StartDateUpdateEmpty_ReturnsErrors()
         {
             // Arrange
             var provider = await TestData.CreateProvider();
@@ -195,12 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             // Act
             var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post, $"/courses/expired?providerId={provider.ProviderId}")
             {
-                Content = new FormUrlEncodedContentBuilder()
-
-                .Add("Year", "").Add("Month", "").Add("Day", "")
-
-
-                .ToContent()
+                Content = new FormUrlEncodedContentBuilder().ToContent()
             };
             // Act
  
@@ -211,9 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             var doc = await postCourseRunResponse.GetDocument();
             using (new AssertionScope())
             {
-                doc.AssertHasError("Year", "Enter a valid year");
-                doc.AssertHasError("Month", "Enter a valid Month");
-                doc.AssertHasError("Day", "Enter a valid day");
+                doc.AssertHasError("NewStartDate", "Enter a valid year");
      
             }
         }
