@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
     public class NewStartDateQuery : ViewModel
     {
-        public Guid[] SelectedCourses { get; set; }
+        public Guid[]  SelectedCourses { get; set; }
         public DateInput NewStartDate { get; set; }
 
     }
@@ -46,7 +46,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public Guid[] SelectedCourses { get; set; }
 
         public Guid[] CheckedRows { get; set; }
-
 
     }
 
@@ -154,7 +153,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                     })
                     .ToArray(),
                 Total = results.Count,
-               
 
             };
         }
@@ -192,7 +190,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
                 });
 
-
                 return new Success();
             }
             else
@@ -203,14 +200,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                     CheckedRows = request.SelectedCourses
                 }, cancellationToken);
 
-                //   vm.Year = request.Year;
-                // vm.Month = request.Month;
-                // vm.Day = request.Day;
-
                 vm.NewStartDate = request.NewStartDate.ToDateTime();
-
-                // Update VM to include original year, month, day
-             //   var StartDate = request.NewStartDate.ToDateTime();
+                
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 

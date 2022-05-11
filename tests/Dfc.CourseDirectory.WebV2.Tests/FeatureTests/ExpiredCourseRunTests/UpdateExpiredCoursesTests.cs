@@ -18,6 +18,7 @@ using GetSelectedExpiredCoursesQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Ge
 using FluentAssertions;
 using FluentAssertions.Execution;
 using GovUk.Frontend.AspNetCore;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 {
@@ -159,15 +160,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
                 StartDate = DateTime.Today
             }));
 
+            var content = new StringContent(JsonConvert.SerializeObject(new { NewStartDate = DateTime.Now.AddDays(1) }));
+
             // Act
-            var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post, $"/courses/expired?providerId={provider.ProviderId}")
+            var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post, $"/courses/expired/updated?providerId={provider.ProviderId}")
             {
-                Content = new FormUrlEncodedContentBuilder()
+                Content = content
 
-                .Add("Year", "2022").Add("Month", "12").Add("Day","12")
-               
-
-                .ToContent()
             };
             var postCourseRunResponse = await HttpClient.SendAsync(updateCourseStartDate);
 

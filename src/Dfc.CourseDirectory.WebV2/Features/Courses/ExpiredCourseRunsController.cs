@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
                 return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query(), vm => this.ViewFromErrors("ExpiredCourseRuns", new ModelWithErrors<ViewModel>(vm,
                     new ValidationResult()
                     {
+                        
                         Errors = { new ValidationFailure("CheckedRows", "Select a course to update") }
                     })));
             }
@@ -62,6 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
                 query,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors("SelectedExpiredCourseRuns", errors).WithViewData("ReturnUrl", returnUrl),
+
             Success => RedirectToAction(nameof(Updated))
                         .WithProviderContext(_providerContext)));
 
