@@ -52,13 +52,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             
             var query = new ExpiredCourseRuns.NewStartDateQuery();
             query.NewStartDate = NewStartDate;
-          //  query.Year = year;
-           // query.Month = month;
-           // query.Day = month; 
+          
             query.SelectedCourses = selectedRows.ToArray();
 
             var returnUrl = $"/courses/expired/?providerId={_providerContext.ProviderInfo.ProviderId}";
-            // return await _mediator.SendAndMapResponse(query, vm => View("updated", vm ));
             return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(

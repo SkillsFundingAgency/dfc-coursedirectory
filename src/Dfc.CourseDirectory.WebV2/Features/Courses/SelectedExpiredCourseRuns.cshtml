@@ -17,19 +17,21 @@
 
 
 <form asp-action="UpdatedCourses" asp-all-route-data="@ProviderContext.RouteValues">
+    
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1>
+            Enter the start date for your course(s)
+        </h1>
 
-    <h1>
-        Enter the start date for your course(s)
-    </h1>
+        <div class="govuk-hint">For example, 12 11 2007</div>
 
-    <div class="govuk-hint">For example, 12 11 2007</div>
+        <govuk-date-input asp-for="NewStartDate">
+            <govuk-date-input-label class="govuk-!-display-none" aria-hidden="true"></govuk-date-input-label>
+        </govuk-date-input>
 
-    <govuk-date-input asp-for="NewStartDate">
-        <govuk-date-input-label class="govuk-!-display-none" aria-hidden="true"></govuk-date-input-label>
-    </govuk-date-input>
-
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Course name</th>
                 <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
@@ -37,7 +39,7 @@
                 <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
             </tr>
 
-        <tbody class="govuk-table__body">
+            <tbody class="govuk-table__body">
             @if (Model.Rows.Count > 0)
             {
 
@@ -56,16 +58,18 @@
                     </tr>
                 }
             }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <p class="govuk-body">
-        Your course(s) will be updated on Publish to the course directory and available to learners searching for
-        learning and training
-        opportunities on the National Career Service, Find a course.
-    </p>
+        <p class="govuk-body">
+            Your course(s) will be updated on Publish to the course directory and available to learners searching for
+            learning and training
+            opportunities on the National Career Service, Find a course.
+        </p>
 
-    <govuk-button type="Submit">Continue</govuk-button>
+        <govuk-button type="Submit">Continue</govuk-button>
+        </div>
+    </div>
 </form>
 
 
