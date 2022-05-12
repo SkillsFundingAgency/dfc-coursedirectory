@@ -32,7 +32,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public Guid? VenueId { get; set; }
 
 
-        public void SetCourse(string larsCode) => LarsCode = larsCode;
+        public void SetCourse(string larsCode, string courseName) {
+            LarsCode = larsCode;
+            CourseName = courseName;
+        } 
 
         public void SetCourseDescription(
           string whoThisCourseIsFor,

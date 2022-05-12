@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseSelected
     public class Command : IRequest
     {
         public string LarsCode { get; set; }
+        public string CourseName { get; set; }
     }
 
     public class Handler : IRequestHandler<Command>
@@ -22,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseSelected
 
         public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
         {
-            _flow.Update(s => s.SetCourse(request.LarsCode));
+            _flow.Update(s => s.SetCourse(request.LarsCode, request.CourseName));
 
             return Unit.Task;
         }

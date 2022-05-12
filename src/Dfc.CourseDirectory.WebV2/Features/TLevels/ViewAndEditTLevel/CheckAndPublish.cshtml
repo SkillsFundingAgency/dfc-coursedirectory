@@ -146,8 +146,10 @@
                 searching for learning and training opportunities on the National Careers Service and Tlevels.gov.uk.
             </p>
 
-            <govuk-button class="govuk-!-margin-right-3">Publish changes</govuk-button>
-            <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button class="cd-cancel-btn">Publish changes</govuk-button>
+                <a  asp-action="Cancel"asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" class="govuk-link cd-cancel-link">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

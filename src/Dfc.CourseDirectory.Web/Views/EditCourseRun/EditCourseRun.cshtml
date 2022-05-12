@@ -196,7 +196,7 @@
             @switch (Model.Mode)
             {
                 case PublishMode.Summary:
-                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-button govuk-button--secondary" })
+                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link govuk-!-margin-left-3" })
                     break;
                 default:
                     @Html.ActionLink("Cancel", "Courses", "Provider", new
@@ -209,7 +209,7 @@
                         awardOrgCode = @Model.AwardOrgCode,
                         learnAimRefTitle = @Model.LearnAimRefTitle,
                         learnAimRefTypeDesc = @Model.QualificationType
-                    }, new { @class = "govuk-button govuk-button--secondary" })
+                    }, new { @class = "govuk-button--warning govuk-!-margin-right-3" })
                     break;
             }
 

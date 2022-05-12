@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("Page not found", doc.QuerySelector("h1").TextContent);
+            Assert.Equal("Sorry, there is a problem with the service", doc.QuerySelector("h1").TextContent);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("Page not found", doc.QuerySelector("h1").TextContent);
+            Assert.Equal("Sorry, there is a problem with the service", doc.QuerySelector("h1").TextContent);
         }
     }
 

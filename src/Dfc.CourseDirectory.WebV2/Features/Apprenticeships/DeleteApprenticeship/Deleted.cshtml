@@ -1,0 +1,35 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.DeleteApprenticeship.DeletedViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Your Apprenticeship has been deleted";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel>
+            <govuk-panel-title>Your Apprenticeship has been deleted</govuk-panel-title>
+            <span data-testid="ApprenticeshipTitle">@Model.ApprenticeshipTitle</span>
+     
+        </govuk-panel>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+
+        <ul class="govuk-list">
+            <li>
+                <a asp-controller="Apprenticeships" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Add a new Apprenticeship
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ProviderApprenticeships" asp-action="index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="ViewEditLink">
+                    View, edit or delete an apprenticeship
+                </a>
+            </li>
+            <li>
+                <a href="/" class="govuk-link">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
