@@ -40,20 +40,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
                         Errors = { new ValidationFailure("CheckedRows", "Select a course to update") }
                     })));
             }
-            var query = new ExpiredCourseRuns.SelectedQuery { CheckedRows = selectedCourses.ToArray() };
+            var query = new ExpiredCourseRuns.SelectedQuery { SelectedCourses = selectedCourses.ToArray() };
             return await _mediator.SendAndMapResponse(query, vm => View("SelectedExpiredCourseRuns", vm));
         }
 
         [HttpPost("updated")]
         [RequireProviderContext]
-        public async Task<IActionResult> UpdatedCourses(DateTime? NewStartDate, Guid[] selectedRows)
+        public async Task<IActionResult> UpdatedCourses(DateTime? NewStartDate, Guid[] selectedCourses)
         {
             
             
             var query = new ExpiredCourseRuns.NewStartDateQuery();
             query.NewStartDate = NewStartDate;
           
-            query.SelectedCourses = selectedRows.ToArray();
+            query.SelectedCourses =selectedCourses.ToArray();
 
             var returnUrl = $"/courses/expired/?providerId={_providerContext.ProviderInfo.ProviderId}";
             return await _mediator.SendAndMapResponse(

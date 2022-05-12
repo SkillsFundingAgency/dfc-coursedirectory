@@ -107,7 +107,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 
                 rows[0].GetElementByTestId("CourseName").TextContent.Should().Be(course1.CourseRuns.Single().CourseName);
                 rows[0].GetElementByTestId("DeliveryMode").TextContent.Should().Be(course1.CourseRuns.Single().DeliveryMode.ToString(""));
-                //  rows[0].GetElementByTestId("ProviderCourseRef").TextContent.Should().Be(course1.CourseRuns.Single().ProviderCourseId);
                 rows[0].GetElementByTestId("StartDate").TextContent.Should().Be(course1.CourseRuns.Single().StartDate.Value.ToString("dd/MM/yyyy"));
             }
         }
@@ -155,7 +154,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 
                 rows[0].GetElementByTestId("CourseName").TextContent.Should().Be(course.CourseRuns.Single().CourseName);
                 rows[0].GetElementByTestId("DeliveryMode").TextContent.Should().Be(course.CourseRuns.Single().DeliveryMode.ToString(""));
-                // rows[0].GetElementByTestId("ProviderCourseRef").TextContent.Should().Be(course.CourseRuns.Single().ProviderCourseId);
                 rows[0].GetElementByTestId("StartDate").TextContent.Should().Be(course.CourseRuns.Single().StartDate.Value.ToString("dd/MM/yyyy"));
             }
         } 
@@ -187,7 +185,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("NewStartDate.Year", "2023").Add("NewStartDate.Month", "01").Add("NewStartDate.Day", "01")
-                    .Add("selectedRows", new List<Guid> { course.CourseId })
+                    .Add("selectedCourses", new List<Guid> { course.CourseId })
                     .ToContent()
             };
             var postCourseRunResponse = await HttpClient.SendAsync(updateCourseStartDate);
@@ -256,7 +254,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             {
                 Content = new FormUrlEncodedContentBuilder().
                     Add("NewStartDate.Year", "2020").Add("NewStartDate.Month", "01").Add("NewStartDate.Day", "01")
-                    .Add("selectedRows", new List<Guid> { course.CourseId })
+                    .Add("selectedCourses", new List<Guid> { course.CourseId })
                     .ToContent()
             };
             // Act
@@ -299,7 +297,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             {
                 Content = new FormUrlEncodedContentBuilder().
                     Add("NewStartDate.Year", "").Add("NewStartDate.Month", "").Add("NewStartDate.Day", "")
-                    .Add("selectedRows", new List<Guid> { course.CourseId })
+                    .Add("selectedCourses", new List<Guid> { course.CourseId })
                     .ToContent()
             };
             // Act

@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
     public class SelectedQuery : IRequest<ViewModel>
     {
-        public Guid[] CheckedRows { get; set; }
+        public Guid[] SelectedCourses { get; set; }
     }
 
     public class NewStartDateQuery : ViewModel
@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             {
                 ProviderId = _providerContextProvider.GetProviderId(),
                 Today = _clock.UtcNow.Date,
-                SelectedCourseRuns = request.CheckedRows
+                SelectedCourseRuns = request.SelectedCourses
             }) ;
 
             var allRegions = await _regionCache.GetAllRegions();
@@ -197,7 +197,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                 var selectedHandler = new SelectedHandler(_providerContextProvider, _sqlQueryDispatcher, _clock, _regionCache);
                 var vm = await selectedHandler.Handle(new SelectedQuery()
                 {
-                    CheckedRows = request.SelectedCourses
+
+                    SelectedCourses = request.SelectedCourses
                 }, cancellationToken);
 
                 vm.NewStartDate = request.NewStartDate.ToDateTime();
