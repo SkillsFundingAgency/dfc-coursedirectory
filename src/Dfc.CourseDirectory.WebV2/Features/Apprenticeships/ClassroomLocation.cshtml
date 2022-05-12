@@ -52,19 +52,21 @@
         </govuk-checkboxes-item>
     </govuk-checkboxes>
 
-    <govuk-button type="submit">Continue</govuk-button>
+    <div class="govuk-button-group">
+        <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
+        @if (Model.Mode == Mode.Edit)
+        {
+            <govuk-button asp-action="RemoveClassroomLocation" append-mptx-id class="govuk-button--secondary">Remove</govuk-button>
+        }
+        else if (Model.Mode == Mode.Add)
+        {
+            <govuk-button type="submit" class="govuk-button--secondary" name="Action" value="AddAnother">Add another</govuk-button>
+        }
 
-    @if (Model.Mode == Mode.Edit)
-    {
-        <govuk-button asp-action="RemoveClassroomLocation" append-mptx-id class="govuk-button--secondary">Remove</govuk-button>
-    }
-    else if (Model.Mode == Mode.Add)
-    {
-        <govuk-button type="submit" class="govuk-button--secondary" name="Action" value="AddAnother">Add another</govuk-button>
-    }
+        @if (Model.Cancelable)
+        {
+            <a href="@ViewBag.CompletionUrl" class="govuk-link cd-cancel-link">Cancel</a>
+        }
+    </div>
 
-    @if (Model.Cancelable)
-    {
-        <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary">Cancel</govuk-button>
-    }
 </form>

@@ -185,8 +185,11 @@
                 </govuk-radios>
             }
 
-            <govuk-button type="submit">Resolve errors</govuk-button>
-            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="cd-cancel-btn">Resolve errors</govuk-button>
+                <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
+            </div>
+
         </form>
     </div>
 </div>

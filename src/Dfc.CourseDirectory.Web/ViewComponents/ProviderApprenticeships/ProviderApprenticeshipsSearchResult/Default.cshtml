@@ -15,12 +15,9 @@
 
 @if (Model.Items == null)
 {
-
-
 }
 else
 {
-
     if (!Model.Items.Any())
     {
         <div class="">
@@ -35,11 +32,6 @@ else
     }
     else
     {
-
-
-
-
-
         <div class="cd-apprenticeships-result govuk-body">
             @if (!string.IsNullOrEmpty(Model.SearchTerm))
             {
@@ -69,25 +61,15 @@ else
                        asp-action="ViewAndEdit"
                        asp-route-Id="@apprenticeship.id"
                        asp-route-Cancelled=null
-                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
+                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">
+                        View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
                     </a>
-                    <a class="govuk-link"
-                       asp-controller="Apprenticeships"
-                       asp-action="ConfirmationDelete"
-                       asp-route-apprenticeshipId="@apprenticeship.id"
-                       asp-route-level="@apprenticeship.NotionalNVQLevelv2"
-                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+                    <a asp-action="Delete" asp-controller="apprenticeships" asp-route-id="@apprenticeship.id" class="govuk-link" data-testid="apprenticeship-delete-link">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
+
                 </div>
             }
-
-
-
-
-
         </div>
-
     }
-
 }
 
 <script>

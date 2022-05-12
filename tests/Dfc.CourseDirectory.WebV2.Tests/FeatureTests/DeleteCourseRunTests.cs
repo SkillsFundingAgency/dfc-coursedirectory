@@ -291,9 +291,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             string s; //separator
             const string enDash = "-";
             const string fSlash = "/";
-            if (nulldate.ToString().Contains("-"))
-            { s = enDash; }
-
+            if (nulldate.ToString().Contains("-")) 
+            { s = enDash; } 
             else { s = fSlash; }
 
             var courseRunId = course.CourseRuns.Single().CourseRunId;

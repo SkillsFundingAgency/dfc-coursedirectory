@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 LARSCode = x.Record.LearnAimRef,
                 Level = x.Record.NotionalNVQLevelv2,
                 AwardingOrganisation = x.Record.AwardOrgName,
-                OperationalEndDate = x.Record.CertificationEndDate.HasValue ? x.Record.CertificationEndDate.Value.ToString("dd MMM yyyy") : string.Empty,
+                OperationalEndDate = x.Record.OperationalEndDate.HasValue ? x.Record.OperationalEndDate.Value.ToString("dd MMM yyyy") : string.Empty,
                 EffectiveTo = x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
             }).OrderBy(x => x.CourseName);
 
