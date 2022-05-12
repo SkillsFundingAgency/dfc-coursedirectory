@@ -286,6 +286,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
                 createdBy: User.ToUserInfo(),
                 configureCourseRuns: b => b.WithOnlineCourseRun(startDate: new DateTime(2020, 4, 1)));
 
+            // Date formatting patch to support multiple configs
+            var nulldate = new DateTime();
+            string s; //separator
+            const string enDash = "-";
+            const string fSlash = "/";
+            if (nulldate.ToString().Contains("-"))
+            { s = enDash; }
+            else { s = fSlash; }
+
             var courseRunId = course.CourseRuns.Single().CourseRunId;
 
             var request = new HttpRequestMessage(
@@ -301,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("01-04-2020", doc.GetSummaryListValueWithKey("Start date"));
+            Assert.Equal($"01{s}04{s}2020", doc.GetSummaryListValueWithKey("Start date"));
         }
 
         [Fact]
