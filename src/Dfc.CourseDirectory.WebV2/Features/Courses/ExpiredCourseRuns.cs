@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             public ExpiredCourseRunsValidator(IClock clock)
             {
                 RuleFor(c => c.NewStartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => false);
-                RuleFor(c => c.SelectedCourses).NotEmpty().WithMessage("No selected row");
+                RuleFor(c => c.SelectedCourses).NotEmpty().WithMessage("No Selected Course");
 
             }
         }
