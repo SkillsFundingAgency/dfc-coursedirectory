@@ -30,8 +30,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 
     public class NewStartDateQuery : ViewModel
     {
-        public Guid[]  SelectedCourses { get; set; }
-        public DateInput NewStartDate { get; set; }
+        public new Guid[] SelectedCourses { get; set; }
+        public new DateInput NewStartDate { get; set; }
 
     }
 
