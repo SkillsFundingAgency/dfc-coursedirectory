@@ -242,6 +242,40 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
         }
 
         [Fact]
+        private async Task Post_NewStartedateWithNoRows()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
+
+
+            var course = await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateCourseRunQuery()
+            {
+                ProviderId = provider.ProviderId,
+                StartDate = DateTime.Today
+            }));
+
+
+            // Act
+            var updateCourseStartDate = new HttpRequestMessage(HttpMethod.Post,
+                $"/courses/expired/updated?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("NewStartDate.Year", "2023").Add("NewStartDate.Month", "01").Add("NewStartDate.Day", "01")
+                    .ToContent()
+            };
+            var postCourseRunResponse = await HttpClient.SendAsync(updateCourseStartDate);
+
+            // Assert
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+
+        [Fact]
         private async Task Post_StartDateUpdateDateinThePast_ReturnsErrors()
         {
             // Arrange
