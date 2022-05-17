@@ -5,7 +5,7 @@
 @if (Model.PastStartDateCourseRunCount > 0)
 {
 <pttcd-notification title="Course start dates" data-testid="courseStartDateNotification">
-    <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount courses are in the past.</p>
+    <p class="govuk-body">There are @Model.PastStartDateCourseRunCount courses with a start date in the past.</p>
     <p class="govuk-body">These courses may not be visible to learners on National Careers Service. Find a course</p>
     <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course start dates</a></p>
 </pttcd-notification>

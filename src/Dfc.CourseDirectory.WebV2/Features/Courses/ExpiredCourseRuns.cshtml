@@ -128,12 +128,20 @@
         // update select all label with select or deselect
         var checkboxToggle = document.getElementById("selectAllCheckbox");
         var labelText = document.getElementById("selectAllLabel");
+        var checkBox = document.getElementById("selectedCourses");
+
         if (!checkboxToggle.checked) {
             labelText.innerHTML = "Select all courses";
         }
         else {
             labelText.innerHTML = "Deselect all courses";
         }
+
+        if (checkboxToggle.checked && checkBox.checked != true) {
+
+            checkboxToggle.checked = false; 
+        }
+
     }
 
 </script>
