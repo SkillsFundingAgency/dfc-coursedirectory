@@ -62,7 +62,7 @@
                         <th class="govuk-table__header" colspan="1">
                             <div class="govuk-checkboxes__item govuk-checkboxes--small">
                                 <input class="govuk-checkboxes__input" type="checkbox" id="selectAllCheckbox" onClick="toggle(this)">
-                                <label class="govuk-label govuk-checkboxes__label"></label>
+                                <label class="govuk-label govuk-checkboxes__label" for="selectAllCheckbox"></label>
                             </div>
 
                         </th>
@@ -84,9 +84,8 @@
                                 <td class="govuk-table__cell" style="border: none">
 
                                     <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid="SelectCourse">
-                                        <input class="govuk-checkboxes__input" type="checkbox" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
-                                        <label class="govuk-label govuk-checkboxes__label">
-                                        </label>
+                                        <input class="govuk-checkboxes__input" type="checkbox" id="selectedCourses" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
+                                        <label class="govuk-label govuk-checkboxes__label" for="selectedCourses"></label>
                                     </div>
 
                                 </td>
@@ -122,16 +121,45 @@
     // select all checkboxes logic
     function toggle(source) {
         var checkBoxes = document.getElementsByName("selectedCourses");
-        var checkboxToggle = document.getElementById("selectAllCheckbox");
 
         for (var i = 0, n = checkBoxes.length; i < n; i++) {
-         
-                checkBoxes[i].checked = source.checked;
+
+            checkBoxes[i].checked = source.checked;
         }
 
+        selectAllLabel();
+
+    }
+
+    function toggled(source) {
+        var checkBoxes = document.getElementsByName("selectedCourses");
+        var checkBoxesAll = document.getElementById("selectAllCheckbox");
+        var counter = 0;
+
+
+        for (var i = 0, n = checkBoxes.length; i < n; i++) {
+            if (checkBoxes[i].checked)
+                counter++;
+
+            if (checkBoxesAll.checked && !checkBoxes[i].checked) {
+                checkBoxesAll.checked = checkBoxes[i].checked;
+            }
+
+            if (counter === checkBoxes.length) {
+                checkBoxesAll.checked = source.checked;
+            }
+
+        }
+
+        selectAllLabel();
+
+    }
+
+    function selectAllLabel() {
 
         // update select all label with select or deselect
         var labelText = document.getElementById("selectAllLabel");
+        var checkboxToggle = document.getElementById("selectAllCheckbox");
 
         if (!checkboxToggle.checked) {
             labelText.innerHTML = "Select all courses";
@@ -140,25 +168,6 @@
             checkboxToggle.checked = true;
         }
 
-
-        }
-
-    function toggled(source) {
-    var checkBoxes = document.getElementsByName("selectedCourses");
-    var checkBoxesAll = document.getElementById("selectAllCheckbox");
-
-    for (var i = 0, n = checkBoxes.length; i < n; i++) {
-        if (checkBoxesAll.checked && !checkBoxes[i].checked)  {
-                checkBoxesAll.checked = checkBoxes[i].checked;
-            } else if (!checkBoxesAll.checked && checkBoxes[i].checked) {
-                checkBoxesAll.checked = source.checked;
-            }
-
-        }
-
     }
-    
-    
-
 
 </script>
