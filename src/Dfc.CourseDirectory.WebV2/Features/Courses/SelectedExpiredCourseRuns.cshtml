@@ -28,7 +28,7 @@
         <div class="govuk-hint">For example, 12 11 2007</div>
 
         <govuk-date-input asp-for="NewStartDate">
-            <govuk-date-input-label class="govuk-!-display-none" aria-hidden="true"></govuk-date-input-label>
+            <govuk-date-input-label></govuk-date-input-label>
         </govuk-date-input>
 
         <table class="govuk-table">
@@ -53,7 +53,8 @@
                         <td class="govuk-table__cell" style="border:none" data-testid="SelectedStartDate">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
                         <td>
                             <div class="input">
-                                <input name="selectedCourses" value=@selectedExpiredCourse.CourseId type="hidden">
+                                <input name="selectedCourses" value=@selectedExpiredCourse.CourseId type="hidden" id="selected">
+                                <label for="selected"></label>
                             </div>
                         </td>
                     </tr>
