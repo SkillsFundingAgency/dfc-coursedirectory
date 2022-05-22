@@ -1,22 +1,24 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
 {
     public class GetProviderByUkprnHandler : ICosmosDbQueryHandler<GetProviderByUkprn, Provider>
     {
-        private readonly IFeatureFlagProvider _features;
         private readonly ILogger<GetProviderByUkprnHandler> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public GetProviderByUkprnHandler(ILogger<GetProviderByUkprnHandler> logger, IFeatureFlagProvider features)
+        public GetProviderByUkprnHandler(ILogger<GetProviderByUkprnHandler> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
-            _features = features;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<Provider> Execute(DocumentClient client, Configuration configuration,
@@ -35,7 +37,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
                 .AsDocumentQuery()
                 .ExecuteNextAsync();
 
-            if (_features.HaveFeature(FeatureFlags.DuplicateUkrlp))
+
+            using var scope = _serviceProvider.CreateScope();
+            var provider = scope.ServiceProvider;
+            var features = provider.GetRequiredService<IFeatureFlagProvider>();
+
+
+            if (features.HaveFeature(FeatureFlags.DuplicateUkrlp))
             {
                 if (response != null && response.Count > 1)
                     _logger.LogWarning("Multiple Providers found for {UKPRN}", request.Ukprn);
@@ -44,7 +52,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
             }
 
             // FIXME: Once duplicate provider records are removed this should be .SingleOrDefault()
-            return response.LastOrDefault();
+            return response.FirstOrDefault();
         }
     }
 }
