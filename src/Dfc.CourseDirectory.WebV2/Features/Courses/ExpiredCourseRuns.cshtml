@@ -51,51 +51,50 @@
                     <table class="govuk-table">
 
                         <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Select</th>
-                                <th scope="col" class="govuk-table__header">Course name</th>
-                                <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
-                                <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
-                                <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
-                            </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Select</th>
+                            <th scope="col" class="govuk-table__header">Course name</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                            <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
+                        </tr>
 
-                            @*Hidden by default and only displays when javascript is executed on page load*@
-                            <tr id="selectAllRow" class="govuk-table__row" style="display: none">
-                                <th class="govuk-table__header" colspan="1">
-                                    <div class="govuk-checkboxes__item govuk-checkboxes--small">
-                                        <input class="govuk-checkboxes__input" type="checkbox" id="selectAllCheckbox" onClick="toggle(this)">
-                                        <label class="govuk-label govuk-checkboxes__label" for="selectAllCheckbox"></label>
-                                    </div>
+                        @*Hidden by default and only displays when javascript is executed on page load*@
+                        <tr id="selectAllRow" class="govuk-table__row" style="display: none">
+                            <th class="govuk-table__header" colspan="1">
+                                <div class="govuk-checkboxes__item govuk-checkboxes--small">
+                                    <input class="govuk-checkboxes__input" type="checkbox" id="selectAllCheckbox" name="selectAllCheckbox" onClick="toggle(this)">
+                                    <label class="govuk-checkboxes__label govuk-label" for="selectAllCheckbox" > </label>
+                                </div>
 
-                                </th>
-                                <th class="govuk-table__header" id="selectAllLabel" style="text-align: left" colspan="4">Select all courses</th>
-                            </tr>
-
-
-                        </thead>
+                            </th>
+                            <th class="govuk-table__header" id="selectAllLabel" style="text-align: left" colspan="4">Select all courses</th>
+                        </tr>
+                   
                         <tbody class="govuk-table__body">
 
 
-                            @foreach (var expiredCourse in Model.Rows)
-                            {
+                        @foreach (var expiredCourse in Model.Rows)
+                        {
 
 
-                                <tr class="govuk-table__row" data-testid="CourseRunRow">
-                                    <td class="govuk-table__cell" style="border: none">
+                            <tr class="govuk-table__row" data-testid="CourseRunRow">
+                                <td class="govuk-table__cell" style="border: none">
+                                        
+                                    <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid="SelectCourse">
+                                        <input class="govuk-checkboxes__input" type="checkbox" id="selectedCourses" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
+                                        <label class="govuk-checkboxes__label govuk-label" for="selectedCourses" > </label>
 
-                                        <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid="SelectCourse">
-                                            <input class="govuk-checkboxes__input" type="checkbox" id="selectedCourses" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
-                                            <label class="govuk-label govuk-checkboxes__label" for="selectedCourses"></label>
-                                        </div>
+                                    </div> 
 
-                                    </td>
-                                    <td class="govuk-table__cell" style="border: none" data-testid="CourseName">@expiredCourse.CourseName</td>
-                                    <td class="govuk-table__cell" style="border: none" data-testid="ProviderCourseRef">@expiredCourse.ProviderCourseRef</td>
-                                    <td class="govuk-table__cell" style="border: none" data-testid="DeliveryMode">@expiredCourse.DeliveryMode.ToDescription()</td>
-                                    <td class="govuk-table__cell" style="border: none" data-testid="StartDate">@expiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
-                                </tr>
-                            }
-                            }
+                                </td>
+                                <td class="govuk-table__cell" style="border: none" data-testid="CourseName">@expiredCourse.CourseName</td>
+                                <td class="govuk-table__cell" style="border: none" data-testid="ProviderCourseRef">@expiredCourse.ProviderCourseRef</td>
+                                <td class="govuk-table__cell" style="border: none" data-testid="DeliveryMode">@expiredCourse.DeliveryMode.ToDescription()</td>
+                                <td class="govuk-table__cell" style="border: none" data-testid="StartDate">@expiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                            
 
 
                     </table>
@@ -109,6 +108,7 @@
         </div>
     
     </div>
+
 @if (Model.Rows.Count > 0)
 {
     <govuk-button type="Submit" id="SubmitButton">Continue</govuk-button>
