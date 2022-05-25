@@ -57,7 +57,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public CourseDeliveryMode DeliveryMode { get; set; }
         public IReadOnlyCollection<string> SubRegionNames { get; set; }
         public DateTime StartDate { get; set; }
-        public bool IsChecked { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -100,7 +99,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                         DeliveryMode = r.DeliveryMode,
                         SubRegionNames = r.SubRegionIds.Select(id => allSubRegions[id].Name).ToArray(),
                         StartDate = r.StartDate,
-                        IsChecked = false,
                     })
                     .ToArray(),
                 Total = results.Count,
@@ -148,7 +146,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                         DeliveryMode = r.DeliveryMode,
                         SubRegionNames = r.SubRegionIds.Select(id => allSubRegions[id].Name).ToArray(),
                         StartDate = r.StartDate,
-                        IsChecked = false,
                        
                     })
                     .ToArray(),
