@@ -13,12 +13,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.CosmosDb.QueryHandlers
     public class GetProviderByUkprnHandler : ICosmosDbQueryHandler<GetProviderByUkprn, Provider>
     {
         private readonly ILogger<GetProviderByUkprnHandler> _logger;
-        private readonly IServiceProvider _serviceProvider;
 
-        public GetProviderByUkprnHandler(ILogger<GetProviderByUkprnHandler> logger, IServiceProvider serviceProvider)
+        public GetProviderByUkprnHandler(ILogger<GetProviderByUkprnHandler> logger)
         {
             _logger = logger;
-            _serviceProvider = serviceProvider;
         }
 
         public async Task<Provider> Execute(DocumentClient client, Configuration configuration,
