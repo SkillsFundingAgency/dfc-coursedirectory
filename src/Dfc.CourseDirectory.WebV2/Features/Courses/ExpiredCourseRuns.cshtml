@@ -52,8 +52,8 @@
 
                         <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Select</th>
-                            <th scope="col" class="govuk-table__header">Course name</th>
+                            <th scope="col" class="govuk-table__header" style="width: 10px">Select</th>
+                            <th scope="col" class="govuk-table__header" style="width: 10px">Course name</th>
                             <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
                             <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
                             <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
@@ -69,7 +69,7 @@
 
                             </th>
                             <th class="govuk-table__header" id="selectAllLabel" style="text-align: left" colspan="4">
-                                <label class="govuk-checkboxes__label govuk-label" for="selectAllCheckbox"> Select all courses</label>
+                                <label class="govuk-checkboxes__label govuk-label" for="selectAllCheckbox"> <strong> Select all courses </strong> </label>
                                 </th>
                         </tr>
                    
@@ -79,20 +79,20 @@
                         @for (var i = 0; i < Model.Rows.Count - 1; i++)
                         {
                             var expiredCourse = Model.Rows.ElementAt(i);
-                            var selectedCourses = "selectedCourses" + 1;
+                            var selectedCourses = "selectedCourses" + i;
 
                             <tr class="govuk-table__row" data-testid="CourseRunRow">
                                 <td class="govuk-table__cell" style="border: none">
                                         
                                     <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid="SelectCourse">
-                                        <input class="govuk-checkboxes__input" type="checkbox" id="selectedCourses" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
-                                        <label class="govuk-checkboxes__label govuk-label" for="selectedCourses" > </label>
+                                        <input class="govuk-checkboxes__input" type="checkbox" id="@selectedCourses" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
+                                        <label class="govuk-checkboxes__label govuk-label" for="@selectedCourses" > </label>
 
                                     </div> 
 
                                 </td>
-                                <td colspan="2" class="govuk-table__cell" style="border: none" data-testid="CourseName">
-                                    <label class="govuk-checkboxes__label govuk-label" for="selectedCourses">@expiredCourse.CourseName </label>
+                                <td colspan="1" class="govuk-table__cell" style="border: none" data-testid="CourseName">
+                                    <label class="govuk-checkboxes__label govuk-label" for="@selectedCourses">@expiredCourse.CourseName </label>
                                     </td>
                                 <td class="govuk-table__cell" style="border: none" data-testid="ProviderCourseRef">@expiredCourse.ProviderCourseRef</td>
                                 <td class="govuk-table__cell" style="border: none" data-testid="DeliveryMode">@expiredCourse.DeliveryMode.ToDescription()</td>
@@ -170,9 +170,9 @@
         var checkboxToggle = document.getElementById("selectAllCheckbox");
 
         if (!checkboxToggle.checked) {
-            labelText.innerHTML = "Select all courses";
+           // labelText.innerHTML = "Select all courses";
         } else {
-            labelText.innerHTML = "Deselect all courses";
+           // labelText.innerHTML = "Deselect all courses";
             checkboxToggle.checked = true;
         }
 
