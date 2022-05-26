@@ -20,6 +20,7 @@ using FluentAssertions.Execution;
 using GovUk.Frontend.AspNetCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using AngleSharp;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 {
@@ -103,6 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
             using (new AssertionScope())
             {
                 var rows = doc.GetAllElementsByTestId("CourseRunRow");
+                var html = doc.ToHtml();
                 rows.Count.Should().Be(1);
 
                 rows[0].GetElementByTestId("CourseName").TextContent.Should().Be(course1.CourseRuns.Single().CourseName);
