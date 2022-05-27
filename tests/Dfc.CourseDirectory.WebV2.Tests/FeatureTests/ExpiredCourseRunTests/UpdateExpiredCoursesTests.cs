@@ -1,26 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AngleSharp;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun;
-using FormFlow;
-using OneOf;
-using OneOf.Types;
-using Xunit;
-using UpdateCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.CourseStarteDateBulkUpdate;
-using GetExpiredCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.GetExpiredCourseRunsForProvider;
-using GetSelectedExpiredCoursesQuery = Dfc.CourseDirectory.Core.DataStore.Sql.GetExpiredSelectedCourseRunsForProvider;
-
 using FluentAssertions;
 using FluentAssertions.Execution;
-using GovUk.Frontend.AspNetCore;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using AngleSharp;
+using Xunit;
+using GetSelectedExpiredCoursesQuery = Dfc.CourseDirectory.Core.DataStore.Sql.GetExpiredSelectedCourseRunsForProvider;
+using UpdateCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.CourseStarteDateBulkUpdate;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
 {
@@ -127,8 +118,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
                      builder.WithCourseRun(startDate: Clock.UtcNow.Date.AddDays(-1));  // Expired
                  });
 
-            var courseRunId = course.CourseRuns.Single().CourseRunId;
-
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetSelectedExpiredCoursesQuery()
             {
 
@@ -154,6 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ExpiredCourseRunTests
                 var rows = doc.GetAllElementsByTestId("CourseRunRow");
                 rows.Count.Should().Be(1);
 
+                rows[0].GetElementByTestId("SelectCourse").Should().NotBe(false);
                 rows[0].GetElementByTestId("CourseName").TextContent.Should().Be(course.CourseRuns.Single().CourseName);
                 rows[0].GetElementByTestId("DeliveryMode").TextContent.Should().Be(course.CourseRuns.Single().DeliveryMode.ToString(""));
                 rows[0].GetElementByTestId("StartDate").TextContent.Should().Be(course.CourseRuns.Single().StartDate.Value.ToString("dd/MM/yyyy"));

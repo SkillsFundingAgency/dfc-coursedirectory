@@ -69,7 +69,7 @@
 
                             </th>
                             <th class="govuk-table__header" id="selectAllLabel" style="text-align: left" colspan="4">
-                                <label class="govuk-checkboxes__label govuk-label" for="selectAllCheckbox"> <strong> Select all courses </strong> </label>
+                                <label for="selectAllCheckbox"> <strong> Select all courses </strong> </label>
                                 </th>
                         </tr>
                    
@@ -87,7 +87,6 @@
                                     <div class="govuk-checkboxes__item govuk-checkboxes--small" data-testid="SelectCourse">
                                         <input class="govuk-checkboxes__input" type="checkbox" id="@selectedCourses" name="selectedCourses" value="@expiredCourse.CourseId" onClick="toggled(this)">
                                         <label class="govuk-checkboxes__label govuk-label" for="@selectedCourses" > </label>
-
                                     </div> 
 
                                 </td>
@@ -170,9 +169,9 @@
         var checkboxToggle = document.getElementById("selectAllCheckbox");
 
         if (!checkboxToggle.checked) {
-           // labelText.innerHTML = "Select all courses";
+            labelText.innerHTML = "Select all courses";
         } else {
-           // labelText.innerHTML = "Deselect all courses";
+            labelText.innerHTML = "Deselect all courses";
             checkboxToggle.checked = true;
         }
 
