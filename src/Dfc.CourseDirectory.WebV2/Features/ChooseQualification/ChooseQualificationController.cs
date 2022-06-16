@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors).WithViewData("ReturnUrl", returnUrl),
-                    Success => RedirectToAction(nameof(CheckAndPublish( command )))
+                    Success => RedirectToAction(nameof(CheckAndPublish))
                         .WithMptxInstanceId(Flow.InstanceId)
                         .WithProviderContext(_providerContext)));
         }
@@ -162,12 +162,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add/check-and-publish")]
         [MptxAction]
-        public IActionResult CheckAndPublish(CourseRun.Command command)
+        public async Task<IActionResult> CheckAndPublish()
         {
-            var courseName = command.CourseName;
-            var query = new CheckAndPublish();
-            query.CourseName = courseName;
-            return View();
+            var query = new CheckAndPublish.Query();
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
     }
