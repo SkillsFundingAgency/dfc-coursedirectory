@@ -1,6 +1,7 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish.ViewModel
 @{
     ViewContext.SetLayoutData(title: "Check and publish your course data");
+    Layout = "_V2LayoutProviderContext";
 }
 
 <govuk-error-summary>
@@ -23,53 +24,72 @@
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course Name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CourseName</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Your reference</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.ProviderCourseRef</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course type</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.DeliveryMode</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-value>@Model.Delivery</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Start date</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.FlexibleStartDate</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-value> @Model.StartDate</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Venue</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.VenueId</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
-                </govuk-summary-list-row>
+                @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Venue</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row>
+                }
+                else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Regions</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.CourseWebPage</govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row>
+                }
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course webpage</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CourseWebPage</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Cost</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>£ @Model.Cost</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Cost description</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CostDescription</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Duration</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.Duration</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-value>@Model.Duration @Model.DurationUnit</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Attendance</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.AttendancePattern</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
-                </govuk-summary-list-row>
+                @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Course hours</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.StudyMode</govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Attendance</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.AttendancePattern</govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row>
+                }
             </govuk-summary-list>
 
             <p class="govuk-body">Course Description</p>
@@ -77,78 +97,69 @@
             <govuk-summary-list>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Who is this course for</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-value>@Model.WhoThisCourseIsFor</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Your reference</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.ProviderCourseRef</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-key>Entry requirements</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.EntryRequirements</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Course type</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.DeliveryMode</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-key>What you'll learn</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.WhatYouWillLearn</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Start date</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.FlexibleStartDate</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-key>How you'll learn</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.HowYouWillLearn</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Venue</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.VenueId</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-key>What you'll need to bring</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.WhatYouWillNeedToBring</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Course webpage</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.CourseWebPage</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-key>How you'll be assessed</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.HowYouWillBeAssessed</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Cost</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>£ @Model.Cost</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Cost description</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.CostDescription</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Duration</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.Duration</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>Attendance</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.AttendancePattern</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-value> <a asp-controller="ChooseQualifications" asp-action="CourseRun">Change</a></govuk-summary-list-row-value>
+                    <govuk-summary-list-row-key>What you can do next</govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>@Model.WhereNext</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
             </govuk-summary-list>
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            {
 
+            }
+            else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
+            {
 
-            <govuk-warning-text icon-fallback-text="warning">
-                Publishing will replace all of your courses on Publish to the course directory
-            </govuk-warning-text>
+            }
+            @*<govuk-warning-text icon-fallback-text="warning">
+                    Publishing will replace all of your courses on Publish to the course directory
+                </govuk-warning-text>
 
-            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="@true">
-                <govuk-checkboxes-fieldset>
-                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
-                        <h2 class="govuk-fieldset__heading">
-                            Are you sure?
-                        </h2>
-                    </govuk-checkboxes-fieldset-legend>
-                </govuk-checkboxes-fieldset>
-                <govuk-checkboxes-item value="@(true)">
-                    Yes - I want to publish these courses
-                </govuk-checkboxes-item>
-            </govuk-checkboxes>
+                <govuk-checkboxes class="govuk-checkboxes--small" asp-for="@true">
+                    <govuk-checkboxes-fieldset>
+                        <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">
+                                Are you sure?
+                            </h2>
+                        </govuk-checkboxes-fieldset-legend>
+                    </govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-item value="@(true)">
+                        Yes - I want to publish these courses
+                    </govuk-checkboxes-item>
+                </govuk-checkboxes>
 
-            <div class="govuk-button-group">
-                <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="govuk-!-margin-right-3">Publish</govuk-button>
-                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3" data-testid="cancel-btn">Cancel</a>
-            </div>
+                <div class="govuk-button-group">
+                    <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="govuk-!-margin-right-3">Publish</govuk-button>
+                    <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3" data-testid="cancel-btn">Cancel</a>
+                </div>*@
 
         </form>
     </div>

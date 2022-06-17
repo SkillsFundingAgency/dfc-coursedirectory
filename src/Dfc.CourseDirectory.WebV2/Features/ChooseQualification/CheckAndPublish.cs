@@ -30,18 +30,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
     public class ViewModel
     {
         public CourseDeliveryMode? DeliveryMode { get; set; }
+        public string Delivery { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
-        public DateInput StartDate { get; set; }
-        public bool? FlexibleStartDate { get; set; }
+        public string StartDate { get; set; }
         public bool? NationalDelivery { get; set; }        
         public string CourseWebPage { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
         public int? Duration { get; set; }
         public CourseDurationUnit? DurationUnit { get; set; }
-        public CourseStudyMode? StudyMode { get; set; }
-        public CourseAttendancePattern? AttendancePattern { get; set; }
+        public string StudyMode { get; set; }
+        public string AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
         public string WhoThisCourseIsFor { get; set; }
         public string EntryRequirements { get; set; }
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
         public string HowYouWillBeAssessed { get; set; }
         public string WhereNext { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
-        public IReadOnlyCollection<ViewModelProviderVenuesItem> ProviderVenues { get; set; }
+        public string VenueName { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             ThrowIfFlowStateNotValid();
-            var vm = await CreateViewModel(request.DeliveryMode);
+            var vm = await CreateViewModel();
             NormalizeViewModel();
             return await Task.FromResult(vm);
 
@@ -118,9 +118,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
         //}
 
 
-        private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode)
+        private async Task<ViewModel> CreateViewModel()
         {
-            var providerVenues = deliveryMode == CourseDeliveryMode.ClassroomBased ?
+            var providerVenues = _flow.State.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
                     .Select(v => new ViewModelProviderVenuesItem()
                     {
@@ -130,22 +130,46 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                     .OrderBy(v => v.VenueName)
                     .ToArray() :
                 null;
+            var VenueName = "";
+            if (providerVenues != null)
+            {
+                foreach (var venue in providerVenues)
+                {
+                    if (venue.VenueId == _flow.State.VenueId)
+                        VenueName = venue.VenueName;
+                }
+            }
 
-            return new ViewModel()
+
+            var StartDate = _flow.State.FlexibleStartDate == true ? "Flexible" : _flow.State.StartDate.ToString();
+            var Delivery = "";
+            if (_flow.State.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            {
+                Delivery = "Classroom based";
+            }
+            else if (_flow.State.DeliveryMode == CourseDeliveryMode.WorkBased)
+            {
+                Delivery = "Work based";
+            }
+            else
+            {
+                Delivery = "Online";
+            }
+                return new ViewModel()
             {
                 DeliveryMode = _flow.State.DeliveryMode,
+                Delivery = Delivery,
                 CourseName = _flow.State.CourseName,
                 ProviderCourseRef = _flow.State.ProviderCourseRef,
-                StartDate = _flow.State.StartDate,
-                FlexibleStartDate = _flow.State.FlexibleStartDate,
+                StartDate = StartDate,
                 NationalDelivery = _flow.State.NationalDelivery,
                 CourseWebPage = _flow.State.CourseWebPage,
                 Cost = _flow.State.Cost,
                 CostDescription = _flow.State.CostDescription,
                 Duration = _flow.State.Duration,
                 DurationUnit = _flow.State.DurationUnit,
-                StudyMode = _flow.State.StudyMode,
-                AttendancePattern = _flow.State.AttendancePattern,
+                StudyMode = _flow.State.StudyMode.ToDescription(),
+                AttendancePattern = _flow.State.AttendancePattern.ToDescription(),
                 VenueId = _flow.State.VenueId,
                 WhoThisCourseIsFor = _flow.State.WhoThisCourseIsFor,
                 EntryRequirements = _flow.State.EntryRequirements,
@@ -155,7 +179,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                 HowYouWillBeAssessed = _flow.State.HowYouWillBeAssessed,
                 WhereNext = _flow.State.WhereNext,
                 SubRegionIds =_flow.State.SubRegionIds,
-                ProviderVenues = providerVenues
+                VenueName = VenueName
             };
         }
 
