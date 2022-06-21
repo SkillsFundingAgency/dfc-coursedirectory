@@ -1,7 +1,13 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish.ViewModel
+@using Flurl
+
 @{
     ViewContext.SetLayoutData(title: "Check and publish your course data");
     Layout = "_V2LayoutProviderContext";
+
+    var returnUrlDescription = new Url(ViewData["ReturnUrlDescription"].ToString());
+    var returnUrlDelivery = new Url(ViewData["ReturnUrlDelivery"].ToString());
+    var returnUrlCourseRun = new Url(ViewData["ReturnUrlCourseRun"].ToString());
 }
 
 <govuk-error-summary>
@@ -24,70 +30,70 @@
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course Name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CourseName</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Your reference</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.ProviderCourseRef</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course type</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Delivery</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDelivery">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Start date</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value> @Model.StartDate</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-value> @Model.StartDate@*.ToDateTime().ToString("d MMMM yyyy")*@</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>Venue</govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>@Model.VenueName</govuk-summary-list-row-value>
-                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                        <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                     </govuk-summary-list-row>
                 }
                 else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>Regions</govuk-summary-list-row-key>
-                        <govuk-summary-list-row-value>@Model.CourseWebPage</govuk-summary-list-row-value>
-                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                        <govuk-summary-list-row-value>@Model.SubRegionIds</govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                     </govuk-summary-list-row>
                 }
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course webpage</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CourseWebPage</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Cost</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>£ @Model.Cost</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Cost description</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.CostDescription</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Duration</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Duration @Model.DurationUnit</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>Course hours</govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>@Model.StudyMode</govuk-summary-list-row-value>
-                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                        <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                     </govuk-summary-list-row>
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>Attendance</govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>@Model.AttendancePattern</govuk-summary-list-row-value>
-                        <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                        <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
                     </govuk-summary-list-row>
                 }
             </govuk-summary-list>
@@ -98,47 +104,41 @@
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Who is this course for</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.WhoThisCourseIsFor</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Entry requirements</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.EntryRequirements</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>What you'll learn</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.WhatYouWillLearn</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>How you'll learn</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.HowYouWillLearn</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>What you'll need to bring</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.WhatYouWillNeedToBring</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>How you'll be assessed</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.HowYouWillBeAssessed</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>What you can do next</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.WhereNext</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="CourseRun">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
             </govuk-summary-list>
-            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
-            {
 
-            }
-            else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
-            {
 
-            }
             @*<govuk-warning-text icon-fallback-text="warning">
                     Publishing will replace all of your courses on Publish to the course directory
                 </govuk-warning-text>

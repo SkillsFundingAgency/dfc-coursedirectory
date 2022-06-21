@@ -87,33 +87,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            ThrowIfFlowStateNotValid();
-            var vm = await CreateViewModel();
-            NormalizeViewModel();
-            return await Task.FromResult(vm);
-
-            void NormalizeViewModel()
-            {
-                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
-                {
-                    vm.VenueId = null;
-                    vm.StudyMode = null;
-                    vm.AttendancePattern = null;
-                }
-
-                if (request.DeliveryMode != CourseDeliveryMode.WorkBased)
-                {
-                    vm.NationalDelivery = null;
-                    vm.SubRegionIds = null;
-                }
-            }
+            return await CreateViewModel();
+           
         }
 
         //public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(
         //    Command request,
         //    CancellationToken cancellationToken)
         //{
-        //    ThrowIfFlowStateNotValid();
 
         //}
 
@@ -142,6 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
 
 
             var StartDate = _flow.State.FlexibleStartDate == true ? "Flexible" : _flow.State.StartDate.ToString();
+            
             var Delivery = "";
             if (_flow.State.DeliveryMode == CourseDeliveryMode.ClassroomBased)
             {
@@ -155,13 +137,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             {
                 Delivery = "Online";
             }
+            //if ((bool)_flow.State.NationalDelivery)
+            //{ var regions = "National provider"; }
+            //foreach()
+
                 return new ViewModel()
             {
                 DeliveryMode = _flow.State.DeliveryMode,
                 Delivery = Delivery,
                 CourseName = _flow.State.CourseName,
                 ProviderCourseRef = _flow.State.ProviderCourseRef,
-                StartDate = StartDate,
+                StartDate = /*(Date)_flow.State.*/StartDate/*.ToDateTime()*/,
                 NationalDelivery = _flow.State.NationalDelivery,
                 CourseWebPage = _flow.State.CourseWebPage,
                 Cost = _flow.State.Cost,
@@ -183,10 +169,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             };
         }
 
-        private void ThrowIfFlowStateNotValid()
-        {
-            
-        }
     }
 
 }

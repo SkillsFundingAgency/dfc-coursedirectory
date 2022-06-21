@@ -164,8 +164,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [MptxAction]
         public async Task<IActionResult> CheckAndPublish()
         {
+            var returnUrlDescription = $"add?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+            var returnUrlDelivery = $"add/delivery?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+            var returnUrlCourseRun = $"add-courserun?deliveryMode={Flow.State.DeliveryMode}&{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+
             var query = new CheckAndPublish.Query();
-            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+            return await _mediator.SendAndMapResponse(query, vm => View(vm).WithViewData("ReturnUrlDescription", returnUrlDescription).WithViewData("ReturnUrlDelivery", returnUrlDelivery).WithViewData("ReturnUrlCourseRun", returnUrlCourseRun));
         }
 
     }
