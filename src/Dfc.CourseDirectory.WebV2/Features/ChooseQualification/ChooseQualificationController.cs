@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         }
 
         [RequireProviderContext]
-        [HttpGet("add/check-and-publish")]
+        [HttpGet("check-and-publish")]
         [MptxAction]
         public async Task<IActionResult> CheckAndPublish()
         {
