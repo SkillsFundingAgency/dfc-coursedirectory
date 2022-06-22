@@ -86,7 +86,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                 throw new InvalidStateException();
             }
 
-            var command = new Command() { CourseName = _flow.State.CourseName };
+            var command = new Command() 
+            { 
+                CourseName = _flow.State.CourseName,
+                ProviderCourseRef = _flow.State.ProviderCourseRef,
+                StartDate = _flow.State.StartDate,
+                NationalDelivery = _flow.State.NationalDelivery,
+                CourseWebPage = _flow.State.CourseWebPage,
+                Cost = _flow.State.Cost,
+                CostDescription = _flow.State.CostDescription,
+                Duration = _flow.State.Duration,
+                DurationUnit = _flow.State.DurationUnit,
+                StudyMode = _flow.State.StudyMode,
+                AttendancePattern = _flow.State.AttendancePattern,
+                VenueId = _flow.State.VenueId,
+                FlexibleStartDate = _flow.State.FlexibleStartDate,
+                SubRegionIds = _flow.State.SubRegionIds
+            };
             var vm = await CreateViewModel(request.DeliveryMode, command);
             NormalizeViewModel();
             return await Task.FromResult(vm);
