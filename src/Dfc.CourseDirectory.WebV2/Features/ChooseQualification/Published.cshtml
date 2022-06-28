@@ -1,0 +1,43 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.Published.ViewModel
+@{
+    Layout = Layout = "_V2LayoutAdmin";
+    ViewContext.SetLayoutData(title: "Your Course has been published");
+}
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <govuk-panel heading-level="1">
+            <govuk-panel-title>
+                Your Course has been published
+            </govuk-panel-title>
+            <span data-testid="CourseName">@Model.CourseName</span>
+        </govuk-panel>
+
+        <p class="govuk-body">
+            Your Course is available to learners searching for learning and training opportunities on the
+            National Careers Service.
+        </p>
+        <p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+        <ul class="govuk-list">
+            <li>
+                <a asp-action="Search" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Add a new Course
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ProviderCourses" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    View and edit copy or delete a course
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

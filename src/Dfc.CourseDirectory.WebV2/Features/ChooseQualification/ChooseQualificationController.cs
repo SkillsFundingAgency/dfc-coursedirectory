@@ -172,6 +172,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             return await _mediator.SendAndMapResponse(query, vm => View(vm).WithViewData("ReturnUrlDescription", returnUrlDescription).WithViewData("ReturnUrlDelivery", returnUrlDelivery).WithViewData("ReturnUrlCourseRun", returnUrlCourseRun));
         }
 
+        [HttpPost("check-and-publish")]
+        [RequireProviderContext]
+        [MptxAction]
+        public async Task<IActionResult> Publish()
+        {
+            var command = new CheckAndPublish.Command() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(nameof(CheckAndPublish), errors),
+                    success => RedirectToAction(nameof(Published))
+                        .WithMptxInstanceId(Flow.InstanceId)
+                        .WithProviderContext(_providerContext)
+                        ));
+        }
+
+        [HttpGet("success")]
+        [RequireProviderContext]
+        [MptxAction]
+        public async Task<IActionResult> Published()
+        {
+            var query = new Published.Query();
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+        }
     }
 }
 

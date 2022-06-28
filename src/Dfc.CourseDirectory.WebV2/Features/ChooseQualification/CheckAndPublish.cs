@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,24 +66,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
     }
 
     public class Handler :
-        IRequestHandler<Query, ViewModel>
-        //IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
+        IRequestHandler<Query, ViewModel>,
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ICurrentUserProvider _currentUserProvider;
+
 
         public Handler(
             MptxInstanceContext<FlowModel> flow,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider,
+            ICurrentUserProvider currentUserProvider)
         {
             _flow = flow;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _providerContextProvider = providerContextProvider;
+            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -91,12 +96,69 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
            
         }
 
-        //public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(
-        //    Command request,
-        //    CancellationToken cancellationToken)
-        //{
+        public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(
+            Command request,
+            CancellationToken cancellationToken)
+        {
 
-        //}
+            if (1 == 0)
+            {                
+                //DUMMY MODEL WITH ERROR RESPONSE(DateInputParseErrors ONEOF)
+                var vm = await CreateViewModel();
+                //WILL HAVE TO COME BACK HERE - look for validation in AddCourseController (Web v1)
+                var validationResult = new ValidationResult(new[]
+                {
+                        new ValidationFailure(
+                            nameof(ViewModel.StartDate),
+                            "Course errorr ")
+                    });
+
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
+            }
+            var courseRuns = new List<CreateCourseCourseRun>();
+
+            var courseRun = new CreateCourseCourseRun
+            {
+                CourseRunId = Guid.NewGuid(),
+                CourseName =_flow.State.CourseName,
+                DeliveryMode = (CourseDeliveryMode)_flow.State.DeliveryMode,
+                FlexibleStartDate = (bool)_flow.State.FlexibleStartDate,
+                StartDate = _flow.State.StartDate.ToDateTime(),
+                CourseUrl = _flow.State.CourseWebPage,
+                Cost = decimal.Parse(_flow.State.Cost, CultureInfo.InvariantCulture),
+                CostDescription = _flow.State.CostDescription,
+                DurationUnit = (CourseDurationUnit)_flow.State.DurationUnit,
+                DurationValue = (int)_flow.State.Duration,
+                ProviderCourseId = _flow.State.ProviderCourseRef,
+                National = _flow.State.NationalDelivery,
+                SubRegionIds = _flow.State.SubRegionIds,
+                VenueId = _flow.State.VenueId,
+                AttendancePattern = _flow.State.AttendancePattern,
+                StudyMode = _flow.State.StudyMode
+            };
+
+            courseRuns.Add(courseRun);
+
+
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse() 
+            {
+                CourseId = Guid.NewGuid(),
+                ProviderId = _providerContextProvider.GetProviderId(),
+                LearnAimRef = _flow.State.LarsCode,
+                WhoThisCourseIsFor = _flow.State.WhoThisCourseIsFor,
+                EntryRequirements = _flow.State.EntryRequirements,
+                WhatYoullLearn = _flow.State.WhatYouWillLearn,
+                HowYoullLearn = _flow.State.HowYouWillLearn,
+                WhatYoullNeed = _flow.State.WhatYouWillNeedToBring,
+                HowYoullBeAssessed = _flow.State.HowYouWillBeAssessed,
+                WhereNext = _flow.State.WhereNext,
+                CourseRuns = courseRuns,
+                CreatedBy = _currentUserProvider.GetCurrentUser(),
+                CreatedOn = DateTime.UtcNow
+
+            });
+            return new Success();
+        }
 
 
         private async Task<ViewModel> CreateViewModel()
@@ -122,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             }
 
 
-            var StartDate = _flow.State.FlexibleStartDate == true ? "Flexible" : _flow.State.StartDate.ToString();
+            var StartDate = _flow.State.FlexibleStartDate == true ? "Flexible" : _flow.State.StartDate.ToDateTime().ToString();
             
             var Delivery = "";
             if (_flow.State.DeliveryMode == CourseDeliveryMode.ClassroomBased)
@@ -147,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                 Delivery = Delivery,
                 CourseName = _flow.State.CourseName,
                 ProviderCourseRef = _flow.State.ProviderCourseRef,
-                StartDate = /*(Date)_flow.State.*/StartDate/*.ToDateTime()*/,
+                StartDate = StartDate,
                 NationalDelivery = _flow.State.NationalDelivery,
                 CourseWebPage = _flow.State.CourseWebPage,
                 Cost = _flow.State.Cost,
