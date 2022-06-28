@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                 CourseName =_flow.State.CourseName,
                 DeliveryMode = (CourseDeliveryMode)_flow.State.DeliveryMode,
                 FlexibleStartDate = (bool)_flow.State.FlexibleStartDate,
-                StartDate = _flow.State.StartDate.ToDateTime(),
+                StartDate = _flow.State.StartDate,
                 CourseUrl = _flow.State.CourseWebPage,
                 Cost = decimal.Parse(_flow.State.Cost, CultureInfo.InvariantCulture),
                 CostDescription = _flow.State.CostDescription,
@@ -184,8 +184,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             }
 
 
-            var StartDate = _flow.State.FlexibleStartDate == true ? "Flexible" : _flow.State.StartDate.ToDateTime().ToString();
-            
+            var StartDate = _flow.State.FlexibleStartDate == true ? "Flexible" : _flow.State.StartDate?.ToString("dd/MM/yyyy");
+
+
             var Delivery = "";
             if (_flow.State.DeliveryMode == CourseDeliveryMode.ClassroomBased)
             {
