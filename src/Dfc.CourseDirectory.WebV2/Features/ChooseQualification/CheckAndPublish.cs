@@ -53,6 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
         public string WhereNext { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
         public string VenueName { get; set; }
+        public string regions { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
@@ -200,11 +201,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             {
                 Delivery = "Online";
             }
-            //if ((bool)_flow.State.NationalDelivery)
-            //{ var regions = "National provider"; }
-            //foreach()
 
-                return new ViewModel()
+            var regions = "";
+            if ((bool)_flow.State.NationalDelivery)
+            {  regions = "National provider"; }
+            else
+            {
+                foreach (string id in _flow.State.SubRegionIds)
+                {
+                    regions = regions + id + "\n";
+                }
+            }
+
+            return new ViewModel()
             {
                 DeliveryMode = _flow.State.DeliveryMode,
                 Delivery = Delivery,
@@ -228,7 +237,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                 HowYouWillBeAssessed = _flow.State.HowYouWillBeAssessed,
                 WhereNext = _flow.State.WhereNext,
                 SubRegionIds =_flow.State.SubRegionIds,
-                VenueName = VenueName
+                VenueName = VenueName,
+                regions = regions
             };
         }
 

@@ -67,11 +67,11 @@
                 }
                 else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
                 {
-            <govuk-summary-list-row>
-                <govuk-summary-list-row-key>Regions</govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>@Model.SubRegionIds</govuk-summary-list-row-value>        
-                <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
-            </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>Regions</govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>@Model.regions</govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action href="@returnUrlCourseRun">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row>
                 }
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Course webpage</govuk-summary-list-row-key>
