@@ -12,14 +12,19 @@
             <govuk-panel-title>
                 Your Course has been published
             </govuk-panel-title>
-            <span data-testid="CourseName">@Model.CourseName</span>
+            <div class="govuk-panel__body">
+                Course
+                <br>
+                <strong>@Model.CourseName</strong>
+            </div>
+            @*<span data-testid="CourseName">@Model.CourseName</span> *@
         </govuk-panel>
 
         <p class="govuk-body">
             Your Course is available to learners searching for learning and training opportunities on the
             National Careers Service.
         </p>
-        <p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
+        <p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/details?courseId=@Model.CourseId" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
 
         <h2 class="govuk-heading-m">What next?</h2>
         <ul class="govuk-list">
