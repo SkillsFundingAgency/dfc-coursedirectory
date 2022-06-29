@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
 
             if (1 == 0)
             {                
-                //DUMMY MODEL WITH ERROR RESPONSE(DateInputParseErrors ONEOF)
+                //DUMMY MODEL WITH ERROR RESPONSE(ONEOF)
                 var vm = await CreateViewModel();
                 //WILL HAVE TO COME BACK HERE - look for validation in AddCourseController (Web v1)
                 var validationResult = new ValidationResult(new[]
@@ -118,9 +118,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             }
             var courseRuns = new List<CreateCourseCourseRun>();
 
+            var CourseRunId = Guid.NewGuid();
             var courseRun = new CreateCourseCourseRun
             {
-                CourseRunId = Guid.NewGuid(),
+                CourseRunId = CourseRunId,
                 CourseName =_flow.State.CourseName,
                 DeliveryMode = (CourseDeliveryMode)_flow.State.DeliveryMode,
                 FlexibleStartDate = (bool)_flow.State.FlexibleStartDate,
@@ -140,10 +141,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
 
             courseRuns.Add(courseRun);
 
-
+            var CourseId = Guid.NewGuid();
             var result = await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse() 
             {
-                CourseId = Guid.NewGuid(),
+                CourseId = CourseId,
                 ProviderId = _providerContextProvider.GetProviderId(),
                 LearnAimRef = _flow.State.LarsCode,
                 WhoThisCourseIsFor = _flow.State.WhoThisCourseIsFor,
@@ -158,6 +159,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                 CreatedOn = DateTime.UtcNow
 
             });
+
+            _flow.Update(s => s.SetCreatedCourse(CourseId, CourseRunId));
             return new Success();
         }
 

@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.Published
     public class ViewModel
     {
         public Guid CourseId { get; set; }
+        public Guid RunId { get; set; }
         public string CourseName { get; set; }
     }
 
@@ -36,7 +37,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.Published
 
             return Task.FromResult(new ViewModel()
             {
-                CourseName = _flow.State.CourseName
+                CourseName = _flow.State.CourseName,
+                CourseId = (Guid)_flow.State.CourseId,
+                RunId = (Guid)_flow.State.RunId
             });
         }
 
