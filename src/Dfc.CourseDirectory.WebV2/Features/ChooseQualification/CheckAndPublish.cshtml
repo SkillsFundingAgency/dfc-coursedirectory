@@ -3,7 +3,10 @@
 
 @{
     ViewContext.SetLayoutData(title: "Check and publish your course data");
+   // Layout = Layout = "_V2LayoutAdmin";
     Layout = "_V2LayoutProviderContext";
+
+
 
     var returnUrlDescription = new Url(ViewData["ReturnUrlDescription"].ToString());
     var returnUrlDelivery = new Url(ViewData["ReturnUrlDelivery"].ToString());
@@ -16,15 +19,22 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl">Publish your course data</h1>
+        <h1 class="govuk-heading-xl">Check and publish your course</h1>
     </div>
 </div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-m">Course details</h1>
+    </div>
+</div>
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
         <form asp-action="Publish" asp-all-route-data="@ProviderContext.RouteValues" append-mptx-id>
 
-            <p class="govuk-body">Publishing your courses will add them to Publish to the course directory.</p>
+            @* <p class="govuk-body">Publishing your courses will add them to Publish to the course directory.</p>*@
 
             <govuk-summary-list>
                 <govuk-summary-list-row>
@@ -98,8 +108,12 @@
                 }
             </govuk-summary-list>
 
-            <p class="govuk-body">Course Description</p>
-
+            <br>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-m">Course description</h1>
+                </div>
+            </div>
             <govuk-summary-list>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Who is this course for</govuk-summary-list-row-key>
@@ -137,7 +151,20 @@
                     <govuk-summary-list-row-action href="@returnUrlDescription">Change</govuk-summary-list-row-action>
                 </govuk-summary-list-row>
             </govuk-summary-list>
-                 <govuk-button type="submit">Publish</govuk-button>
+            <br>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-m">Publish your course</h1>
+                    <p class="govuk-body govuk-!-font-size-19">
+                        Your course information will be added to Publish to course directory and available to learners searching for learning and training
+                        opportunities on the National Career Service.
+                    </p>
+                    <p class="govuk-body govuk-!-font-size-19">
+                       By submitting this notification you are confirming that, to the best of your knowledge, the details you are providing are correct. 
+                    </p>
+                </div>
+            </div>
+            <govuk-button type="submit">Publish</govuk-button>
         </form>
     </div>
 </div>
