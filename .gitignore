@@ -354,3 +354,4 @@ MigrationBackup/
 
 !lib/*.nupkg
 /.vscode
+/utils/Cosmos/**/appsettings.json
