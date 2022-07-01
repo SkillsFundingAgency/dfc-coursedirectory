@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
         private readonly IClock _clock;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IRegionCache _regionCache;
 
 
         public Handler(
@@ -82,12 +83,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
             IProviderContextProvider providerContextProvider,
+            IRegionCache regionCache,
             ICurrentUserProvider currentUserProvider)
         {
             _flow = flow;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _providerContextProvider = providerContextProvider;
+            _regionCache = regionCache;
             _currentUserProvider = currentUserProvider;
         }
 
@@ -204,16 +207,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             {
                 Delivery = "Online";
             }
-
+            var allRegions = await _regionCache.GetAllRegions();
             var regions = "";
+            var subRegionNames = new List<string>();
             if ((bool)_flow.State.NationalDelivery)
             {  regions = "National provider"; }
             else
             {
-                foreach (string id in _flow.State.SubRegionIds)
+                var subRegions = allRegions.SelectMany(a => a.SubRegions);
+                foreach (var subRegion in subRegions)
                 {
-                    regions = regions + id + "\n";
+                    if (_flow.State.SubRegionIds.Contains(subRegion.Id))
+                    {
+                        subRegionNames.Add(subRegion.Name);
+                    }
                 }
+
+                regions = String.Join(", ", subRegionNames);
             }
 
             return new ViewModel()
