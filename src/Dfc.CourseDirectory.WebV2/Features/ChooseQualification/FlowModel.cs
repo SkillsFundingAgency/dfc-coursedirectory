@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         {
             CourseName = courseName;
             ProviderCourseRef = providerCourseRef;
-            StartDate = startDate.IsValid ? startDate.ToDateTime() : null;
+            StartDate = startDate != null ? startDate.IsValid ? startDate.ToDateTime() : null : null;
             FlexibleStartDate = flexibleStartDate;
             NationalDelivery = nationalDelivery;
             SubRegionIds = subRegionIds;

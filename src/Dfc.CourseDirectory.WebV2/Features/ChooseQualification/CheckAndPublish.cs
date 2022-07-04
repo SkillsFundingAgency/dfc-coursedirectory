@@ -210,14 +210,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
             var allRegions = await _regionCache.GetAllRegions();
             var regions = "";
             var subRegionNames = new List<string>();
-            if ((bool)_flow.State.NationalDelivery)
+            if (_flow.State.NationalDelivery.HasValue && (bool)_flow.State.NationalDelivery) 
             {  regions = "National provider"; }
             else
             {
                 var subRegions = allRegions.SelectMany(a => a.SubRegions);
                 foreach (var subRegion in subRegions)
                 {
-                    if (_flow.State.SubRegionIds.Contains(subRegion.Id))
+                    if (_flow.State.SubRegionIds != null && _flow.State.SubRegionIds.Contains(subRegion.Id))
                     {
                         subRegionNames.Add(subRegion.Name);
                     }
