@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Dfc.CosmosBulkUtils": {
+      "commandName": "Project",
+      "commandLineArgs": "touch  --file c:\\touch.txt"
+    }
+  }
+}
