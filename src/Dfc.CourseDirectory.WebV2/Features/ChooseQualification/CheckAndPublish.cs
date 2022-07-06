@@ -103,22 +103,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(
             Command request,
             CancellationToken cancellationToken)
-        {
+        {           
 
-            if (1 == 0)
-            {                
-                //DUMMY MODEL WITH ERROR RESPONSE(ONEOF)
-                var vm = await CreateViewModel();
-                //WILL HAVE TO COME BACK HERE - look for validation in AddCourseController (Web v1)
-                var validationResult = new ValidationResult(new[]
-                {
-                        new ValidationFailure(
-                            nameof(ViewModel.StartDate),
-                            "Course errorr ")
-                    });
-
-                return new ModelWithErrors<ViewModel>(vm, validationResult);
-            }
             var courseRuns = new List<CreateCourseCourseRun>();
 
             var CourseRunId = Guid.NewGuid();
@@ -253,7 +239,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CheckAndPublish
                 VenueName = VenueName,
                 regions = regions
             };
-        }
+        }       
 
     }
 

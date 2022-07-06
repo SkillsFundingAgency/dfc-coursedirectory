@@ -120,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
                  whereNext
                );
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -225,7 +225,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
                 Delivery = "Classroom based";
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -333,7 +333,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
                 Delivery = "Work based";
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

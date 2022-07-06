@@ -182,7 +182,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
         }
 
 
@@ -320,7 +320,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
         }
 
         [Fact]
@@ -518,7 +518,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
         }
 
         [Fact]
@@ -708,7 +708,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
         }
         #endregion
     }
