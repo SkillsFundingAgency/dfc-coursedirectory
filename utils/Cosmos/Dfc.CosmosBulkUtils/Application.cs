@@ -11,11 +11,13 @@ namespace Dfc.CosmosBulkUtils
     {
         private readonly ILogger<Application> _logger;
         private readonly ITouchService _touchService;
+        private readonly IDeleteService _deleteService;
 
-        public Application(ILogger<Application> logger, ITouchService touchService)
+        public Application(ILogger<Application> logger, ITouchService touchService, IDeleteService deleteService)
         {
             _logger = logger;
             _touchService = touchService;
+            _deleteService = deleteService;
         }
 
         public async Task<int> Run(string[] args)
@@ -25,7 +27,7 @@ namespace Dfc.CosmosBulkUtils
 
                 await Parser.Default.ParseArguments<DeleteOptions, TouchOptions>(args)
                     .MapResult(
-                        async (DeleteOptions opts) => await RunDelete(opts),
+                        async (DeleteOptions opts) => await _deleteService.Execute(opts),
                         async (TouchOptions opts) => await _touchService.Execute(opts),
                         errors => Task.FromResult(1));
 
@@ -36,9 +38,5 @@ namespace Dfc.CosmosBulkUtils
 
         }
 
-        private Task<int> RunDelete(DeleteOptions opts)
-        {
-            return Task.FromResult(0);
-        }
     }
 }

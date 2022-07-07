@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Dfc.CosmosBulkUtils.Config;
+using Dfc.CosmosBulkUtils.Features.Delete;
 using Dfc.CosmosBulkUtils.Features.Touch;
 using Dfc.CosmosBulkUtils.Services;
 using Microsoft.Azure.Cosmos;
@@ -37,6 +38,7 @@ namespace Dfc.CosmosBulkUtils
                             context.Configuration.GetRequiredSection(CosmosDbSettings.SectionName));
                         services.AddTransient<IContainerService, ContainerService>();
                         services.AddTransient<ITouchService, TouchService>();
+                        services.AddTransient<IDeleteService, DeleteService>();
                         services.AddTransient<IFileService, FileService>();
                         services.AddTransient<Application>();
                     })

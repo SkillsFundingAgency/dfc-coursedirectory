@@ -2,7 +2,7 @@
   "profiles": {
     "Dfc.CosmosBulkUtils": {
       "commandName": "Project",
-      "commandLineArgs": "touch  --file c:\\touch.txt"
+      "commandLineArgs": "delete --file c:\\git\\purge\\standards.txt"
     }
   }
 }

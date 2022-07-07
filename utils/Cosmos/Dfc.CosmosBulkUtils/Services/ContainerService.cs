@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Dfc.CosmosBulkUtils.Config;
 using Dfc.CosmosBulkUtils.Utils;
@@ -36,10 +37,26 @@ namespace Dfc.CosmosBulkUtils.Services
             }
         }
 
-        public Task Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
             _logger.LogInformation("Deleting {id}", id);
-            return Task.CompletedTask;
+
+
+            if (!await Exists(id))
+            {
+                _logger.LogWarning("Skipping {id} not found", id);
+                return false;
+            }
+
+            var response = await _container.DeleteItemAsync<object>(id.ToString(), PartitionKey.None);
+
+            if (response.StatusCode.IsSuccessStatusCode())
+            {
+                _logger.LogInformation("Deleted {id}", id);
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<object> Get(Guid id)
@@ -49,6 +66,33 @@ namespace Dfc.CosmosBulkUtils.Services
             return response.StatusCode.IsSuccessStatusCode()
                 ? response.Resource
                 : throw new ApplicationException($"Failed to get record {response.StatusCode.ToString()}");
+        }
+
+        public async Task<bool> Exists(Guid id)
+        {
+            var response = await _container.ReadItemStreamAsync(id.ToString(), PartitionKey.None);
+
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return false;
+                default:
+                    return response.IsSuccessStatusCode;
+            }
+
+        }
+
+        public CosmosDbSettings GetSettings()
+        {
+            return new CosmosDbSettings
+            {
+                DatabaseId = _settings.DatabaseId,
+                ContainerId = _settings.ContainerId,
+                EndpointUrl = _settings.EndpointUrl,
+                AccessKey = "XXXXXXXXXX"
+
+            };
         }
     }
 }
