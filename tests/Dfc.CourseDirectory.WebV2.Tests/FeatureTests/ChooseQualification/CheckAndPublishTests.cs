@@ -345,11 +345,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
 
             using (new AssertionScope())
             {
-                //  doc.GetSummaryListValueWithKey("Start Date").Should().Be($"{startDate:d MMMM yyyy}");
+                doc.GetSummaryListValueWithKey("Start date").Should().Be($"{startDate:d-MM-yyyy}");
                 doc.GetSummaryListValueWithKey("Course Name").Should().Be(courseName);
-                doc.GetSummaryListValueWithKey("Your reference").Should().Be(providerCourseRef);
-                //   doc.GetSummaryListValueWithKey("National delivery mode").Should().Be(nationalDelivery.ToString());
-                // doc.GetSummaryListValueWithKey("Regions ").Should().Be(subRegionIds.ToString());
+                doc.GetSummaryListValueWithKey("Your reference").Should().Be(providerCourseRef);                
+                doc.GetSummaryListValueWithKey("Regions").Should().BeEmpty();
                 doc.GetSummaryListValueWithKey("Course webpage").Should().Be(courseWebPage);
                 doc.GetSummaryListValueWithKey("Cost").Should().Be("£ " + cost);
                 doc.GetSummaryListValueWithKey("Cost description").Should().Be(costDescription);
@@ -367,7 +366,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
 
         }
 
-        /*
+
         [Fact]
         private async Task Post_OnlineCourseRunIsValid_ReturnsValidResponse()
         {
@@ -434,14 +433,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
                  whereNext
                );
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
 
             // Act
-            var response = await HttpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request);            
 
             // Assert
- 
-        } */
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be($"/courses/success?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+
+        }
 
     }
 }
