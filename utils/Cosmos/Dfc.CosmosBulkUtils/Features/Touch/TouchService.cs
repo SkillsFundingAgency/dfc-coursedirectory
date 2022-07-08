@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CosmosBulkUtils.Features.Base;
 using Dfc.CosmosBulkUtils.Services;
 using Dfc.CosmosBulkUtils.Utils;
 using Microsoft.Azure.Cosmos;
@@ -22,11 +21,11 @@ namespace Dfc.CosmosBulkUtils.Features.Touch
             _containerService = containerService;
         }
 
-        public async Task<int> Execute(TouchOptions options)
+        public async Task<int> Execute(string filename)
         {
             
             
-                var ids = _fileService.LoadRecordIds(options.Filename);
+                var ids = _fileService.LoadRecordIds(filename);
 
                 foreach (var id in ids)
                 {

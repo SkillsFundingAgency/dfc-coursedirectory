@@ -4,6 +4,6 @@ namespace Dfc.CosmosBulkUtils.Features.Delete
 {
     public interface IDeleteService
     {
-        Task Execute(DeleteOptions options);
+        Task Execute(string filename);
     }
 }

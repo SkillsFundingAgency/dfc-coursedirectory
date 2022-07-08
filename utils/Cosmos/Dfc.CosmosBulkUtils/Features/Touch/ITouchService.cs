@@ -4,6 +4,6 @@ namespace Dfc.CosmosBulkUtils.Features.Touch
 {
     public interface ITouchService
     {
-        Task<int> Execute(TouchOptions options);
+        Task<int> Execute(string filename);
     }
 }

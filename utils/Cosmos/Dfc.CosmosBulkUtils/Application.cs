@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CommandLine;
+using Dfc.CosmosBulkUtils.Config;
 using Dfc.CosmosBulkUtils.Features.Delete;
 using Dfc.CosmosBulkUtils.Features.Touch;
 using Microsoft.Extensions.Logging;
@@ -20,20 +21,24 @@ namespace Dfc.CosmosBulkUtils
             _deleteService = deleteService;
         }
 
-        public async Task<int> Run(string[] args)
+        public async Task<int> Run(CmdOptions cmdOption)
         {
 
-                _logger.LogInformation("Running");
+            _logger.LogInformation("Running");
 
-                await Parser.Default.ParseArguments<DeleteOptions, TouchOptions>(args)
-                    .MapResult(
-                        async (DeleteOptions opts) => await _deleteService.Execute(opts),
-                        async (TouchOptions opts) => await _touchService.Execute(opts),
-                        errors => Task.FromResult(1));
+            switch (cmdOption.Mode)
+            {
+                case ModeEnum.delete:
+                    await _deleteService.Execute(cmdOption.Filename);
+                    break;
+                case ModeEnum.touch:
+                    await _touchService.Execute(cmdOption.Filename);
+                    break;
+                default:
+                    break;
+            }
 
-
-
-                _logger.LogInformation("Complete");
+            _logger.LogInformation("Complete");
                 return 0;
 
         }

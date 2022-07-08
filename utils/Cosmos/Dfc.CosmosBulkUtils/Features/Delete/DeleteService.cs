@@ -23,9 +23,9 @@ namespace Dfc.CosmosBulkUtils.Features.Delete
             _containerService = containerService;
         }
 
-        public async Task Execute(DeleteOptions options)
+        public async Task Execute(string filename)
         {
-            var ids = _fileService.LoadRecordIds(options.Filename);
+            var ids = _fileService.LoadRecordIds(filename);
 
             if (!this.Confirm(ids.Count))
             {
@@ -45,6 +45,7 @@ namespace Dfc.CosmosBulkUtils.Features.Delete
                 {
                     failed++;
                 }
+                _logger.LogInformation("Progress {total}", successful + failed);
             }
 
             _logger.LogInformation("Summary Successful={successful} Failed={failed}", successful, failed);

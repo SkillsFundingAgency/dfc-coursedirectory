@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using CommandLine;
+using CommandLine.Text;
 using Dfc.CosmosBulkUtils.Config;
 using Dfc.CosmosBulkUtils.Features.Delete;
 using Dfc.CosmosBulkUtils.Features.Touch;
@@ -31,11 +33,30 @@ namespace Dfc.CosmosBulkUtils
             {
                 Log.Logger.Information("Initialise...");
 
+
+                var parsedCmdLines = Parser.Default.ParseArguments<CmdOptions>(args);
+
+
+
                 var host = Host.CreateDefaultBuilder()
                     .ConfigureServices((context, services) =>
                     {
-                        services.Configure<CosmosDbSettings>(
-                            context.Configuration.GetRequiredSection(CosmosDbSettings.SectionName));
+                        parsedCmdLines.WithParsed<CmdOptions>(o =>
+                        {
+                            services.Configure<CosmosDbSettings>(p => 
+                            {
+                                p.EndpointUrl = o.EndpointUrl;
+                                p.AccessKey = o.AccessKey;
+                                p.ContainerId = o.ContainerId;
+                                p.DatabaseId = o.DatabaseId;
+                                
+                            });
+                        }).WithNotParsed(errors => {
+                            throw new ApplicationException("Error required cmd line args not provided");
+
+                        });
+                        //services.Configure<CosmosDbSettings>(
+                        //    context.Configuration.GetRequiredSection(CosmosDbSettings.SectionName));
                         services.AddTransient<IContainerService, ContainerService>();
                         services.AddTransient<ITouchService, TouchService>();
                         services.AddTransient<IDeleteService, DeleteService>();
@@ -49,7 +70,7 @@ namespace Dfc.CosmosBulkUtils
                 var svc = ActivatorUtilities.CreateInstance<Application>(host.Services);
 
 
-                return await svc.Run(args);
+                return await svc.Run(parsedCmdLines.Value);
 
             }
             catch (Exception e)
