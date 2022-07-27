@@ -272,7 +272,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
 
             var courseName = "CourseName";
             var providerCourseRef = "someRef";
-            var startDate = new DateTime(2030, 12, 12);
+            var startDate = new DateTime(2030, 12, 31);
             var flexibleStartDate = false;
             var nationalDelivery = false;
             IEnumerable<string> subRegionIds = new string[] { };
@@ -345,7 +345,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification.Check
 
             using (new AssertionScope())
             {
-                doc.GetSummaryListValueWithKey("Start date").Should().Be($"{startDate:d-MM-yyyy}");
+                doc.GetSummaryListValueWithKey("Start date").Should().Be($"{startDate:dd/MM/yyyy}");
                 doc.GetSummaryListValueWithKey("Course Name").Should().Be(courseName);
                 doc.GetSummaryListValueWithKey("Your reference").Should().Be(providerCourseRef);                
                 doc.GetSummaryListValueWithKey("Regions").Should().BeEmpty();
