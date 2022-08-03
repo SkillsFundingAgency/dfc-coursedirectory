@@ -1,7 +1,12 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.Published.ViewModel
+@using Microsoft.Extensions.Options
+@using Dfc.CourseDirectory.Core.Configuration
+@inject IOptions<FindACourse> findACourseSettings
 @{
     Layout = Layout = "_V2LayoutAdmin";
     ViewContext.SetLayoutData(title: "Your Course has been published");
+
+    var courseUrl = string.Format(findACourseSettings.Value.Url, Model.CourseId, Model.RunId);
 }
 
 
@@ -24,7 +29,7 @@
             Your Course is available to learners searching for learning and training opportunities on the
             National Careers Service.
         </p>
-        <p class="govuk-body">You can <a href="https://dev-beta.nationalcareersservice.org.uk/find-a-course/details?courseId=@Model.CourseId&runId=@Model.RunId" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
+        <p class="govuk-body">You can <a href="@courseUrl" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
 
         <h2 class="govuk-heading-m">What next?</h2>
         <ul class="govuk-list">
