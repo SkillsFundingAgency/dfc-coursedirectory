@@ -127,6 +127,9 @@
     },
     "providerPortalApplicationInsights": {
       "value": "dfc-dev-prov-as-ai"
+    },
+    "FindACourseUrl": {
+      "value": "https://not-a-real-account.nationalcareersservice.org.uk/find-a-course"
     }
   }
 }
