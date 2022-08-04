@@ -253,7 +253,10 @@
       "type": "string"
     },
     "FindACourseUrl": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "The URL for FindACourse for specific environment"
+      }
     }
   },
   "variables": {
