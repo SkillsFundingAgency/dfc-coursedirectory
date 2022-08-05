@@ -576,6 +576,10 @@
               {
                 "name": "AzureSearchQueryKey",
                 "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "FindACourse__Url",
+                "value": "[parameters('FindACourseUrl')]"
               }
             ]
           },
@@ -670,10 +674,6 @@
               {
                 "name": "CosmosDbSettings__ConnectionString",
                 "value": "[parameters('providerPortalCosmosDbConnectionString')]"
-              },
-              {
-                "name": "FindACourse__Url",
-                "value": "[parameters('FindACourseUrl')]"
               },
               {
                 "name": "AzureSearchUrl",
