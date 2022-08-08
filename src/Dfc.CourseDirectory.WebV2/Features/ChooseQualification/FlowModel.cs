@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public CourseDeliveryMode? DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
-        public DateInput StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public bool? FlexibleStartDate { get; set; }
         public bool? NationalDelivery { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
@@ -30,6 +30,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public Guid? CourseId { get; set; }
+        public Guid? RunId { get; set; }
+
 
 
         public void SetCourse(string larsCode, string courseName) {
@@ -77,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         {
             CourseName = courseName;
             ProviderCourseRef = providerCourseRef;
-            StartDate = startDate;
+            StartDate = startDate != null ? startDate.IsValid ? startDate.ToDateTime() : null : null;
             FlexibleStartDate = flexibleStartDate;
             NationalDelivery = nationalDelivery;
             SubRegionIds = subRegionIds;
@@ -89,6 +92,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             AttendancePattern = attendancePattern;
             StudyMode = studyMode;
             VenueId = venueId;
+        }
+
+        public void SetCreatedCourse(Guid courseId, Guid runId)
+        {
+            CourseId = courseId;
+            RunId = runId;
         }
     }
 }

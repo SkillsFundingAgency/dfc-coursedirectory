@@ -49,7 +49,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
                 throw new InvalidStateException();
             }
 
-            var item = new Command();
+            var item = new Command()
+            {
+                DeliveryMode = _flow.State.DeliveryMode
+            };
             return await Task.FromResult(item);
         }
 

@@ -160,13 +160,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         }
 
         [RequireProviderContext]
-        [HttpGet("add/check-and-publish")]
+        [HttpGet("check-and-publish")]
         [MptxAction]
-        public IActionResult CheckAndPublish()
+        public async Task<IActionResult> CheckAndPublish()
         {
-            return View();
+            var returnUrlDescription = $"add?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+            var returnUrlDelivery = $"add/delivery?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+            var returnUrlCourseRun = $"add-courserun?deliveryMode={Flow.State.DeliveryMode}&{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+
+            var query = new CheckAndPublish.Query();
+            return await _mediator.SendAndMapResponse(query, vm => View(vm).WithViewData("ReturnUrlDescription", returnUrlDescription).WithViewData("ReturnUrlDelivery", returnUrlDelivery).WithViewData("ReturnUrlCourseRun", returnUrlCourseRun));
         }
 
+        [HttpPost("check-and-publish")]
+        [RequireProviderContext]
+        [MptxAction]
+        public async Task<IActionResult> Publish()
+        {
+            var command = new CheckAndPublish.Command() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(nameof(CheckAndPublish), errors),
+                    success => RedirectToAction(nameof(Published))
+                        .WithMptxInstanceId(Flow.InstanceId)
+                        .WithProviderContext(_providerContext)
+                        ));
+        }
+
+        [HttpGet("success")]
+        [RequireProviderContext]
+        [MptxAction]
+        public async Task<IActionResult> Published()
+        {
+            var query = new Published.Query();
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+        }
     }
 }
 

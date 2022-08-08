@@ -64,6 +64,8 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<HowAssessedComponentSettings>(Configuration.GetSection("AppUISettings:HowAssessedComponentSettings"));
             services.Configure<WhereNextComponentSettings>(Configuration.GetSection("AppUISettings:WhereNextComponentSettings"));
 
+            services.Configure<FindACourse>(Configuration.GetSection("FindACourse"));
+
             services.AddOptions();
 
             services.AddTransient((provider) => new HttpClient());
@@ -164,7 +166,7 @@ namespace Dfc.CourseDirectory.Web
 
             var dfeSettings = new DfeSignInSettings();
             Configuration.GetSection("DFESignInSettings").Bind(dfeSettings);
-            services.AddDfeSignIn(dfeSettings);
+            services.AddDfeSignIn(dfeSettings);            
 
             Uri GetDataProtectionBlobToken()
             {
