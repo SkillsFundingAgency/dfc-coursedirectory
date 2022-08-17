@@ -3,8 +3,9 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "microsoft-signalr@6.0.7",
-      "destination": "wwwroot/lib/microsoft-signalr/"
+      "provider": "cdnjs",
+      "library": "microsoft-signalr@6.0.8",
+      "destination": "wwwroot/lib/microfot-signalr"
     }
   ]
 }
