@@ -56,6 +56,7 @@ SELECT      p.Ukprn as ProviderUkprn,
             ) AS OtherTLevelCount
 FROM        Pttcd.Providers p with (nolock)
 WHERE       p.Ukprn NOT LIKE '9%'
+AND p.ProviderType <> 0 
 ORDER BY    p.Ukprn ASC";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
