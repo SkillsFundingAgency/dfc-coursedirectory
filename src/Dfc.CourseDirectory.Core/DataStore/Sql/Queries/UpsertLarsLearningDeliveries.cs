@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string NotionalNVQLevelv2 { get; set; }
         public string AwardOrgAimRef { get; set; }
         public string OperationalStartDate { get; set; }
-        public string OperationalEndDate { get; set; }
+        public DateTime? OperationalEndDate { get; set; }
         public string EnglandFEHEStatus { get; set; }
         public string CreditBasedFwkType { get; set; }
         public string QltyAssAgencyType { get; set; }

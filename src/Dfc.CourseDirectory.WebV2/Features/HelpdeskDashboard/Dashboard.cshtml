@@ -1,6 +1,9 @@
-﻿@{
+﻿@using Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
+@{
     ViewBag.Title = "Helpdesk dashboard";
 }
+
+@model ViewModel
 
 <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
     <div class="govuk-grid-column-one-third">
@@ -51,9 +54,15 @@
         <div class="pttcd-provider-dashboard__card">
             <div class="pttcd-provider-dashboard__card__content">
                 <h2 class="govuk-heading-s">Courses</h2>
+                <p class="pttcd-helpdesk-dashboard__card__number">@Model.CourseNumber.ToString("N0")</p>
+                <p class="govuk-body-s">Courses on Find a course</p>
+                <p class="pttcd-helpdesk-dashboard__card__number">@Model.OutofDateCourses.ToString("N0")</p>
+                <p class="govuk-body-s">Out of date courses</p>
             </div>
             <div class="pttcd-provider-dashboard__card__actions">
-                @*Links to be inserted*@
+                <ul class="govuk-list pttcd-list--small">
+                    <li><a asp-controller="OutofDateReports" asp-action="OutofDateCoursesReport" class="govuk-link" data-testid="download-out-of-date-courses-report-link">Out of date courses report</a></li>
+                </ul>
             </div>
         </div>
     </div>

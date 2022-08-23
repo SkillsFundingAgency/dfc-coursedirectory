@@ -127,6 +127,9 @@
     },
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"
+    },
+    "FindACourseUrl": {
+      "value": "__FindACourseUrl__"
     }
   }
 }

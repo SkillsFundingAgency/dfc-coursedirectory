@@ -251,6 +251,12 @@
     },
     "providerPortalCosmosDbConnectionString": {
       "type": "string"
+    },
+    "FindACourseUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The URL for FindACourse for specific environment"
+      }
     }
   },
   "variables": {
@@ -570,6 +576,10 @@
               {
                 "name": "AzureSearchQueryKey",
                 "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "FindACourse__Url",
+                "value": "[parameters('FindACourseUrl')]"
               }
             ]
           },
