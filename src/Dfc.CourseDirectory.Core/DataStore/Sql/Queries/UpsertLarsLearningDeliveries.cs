@@ -64,6 +64,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string MI_NotionalNVQLevelv2 { get; set; }
         public string GuidedLearningHours { get; set; }
         public string TotalQualificationTime { get; set; }
+        public string RecognisedHEForOfSFundingPurposes { get; set; }
         public string Created_On { get; set; }
         public string Created_By { get; set; }
         public string Modified_By { get; set; }
