@@ -13,14 +13,15 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
     public class LarsDataImporter
     {
-        private const string DownloadLocation = "https://findalearningaimbeta.fasst.org.uk/DownloadData/GetDownloadFileAsync?fileName=published%2F007%2FLearningDelivery_V007_CSV.Zip";
-
+        private readonly IOptions<LarsDatasetConnectionString> _LarsConnectionSettings;
         private readonly HttpClient _httpClient;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -81,7 +82,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             async Task DownloadFiles()
             {
-                using var resultStream = await _httpClient.GetStreamAsync(DownloadLocation);
+                using var resultStream = await _httpClient.GetStreamAsync(_LarsConnectionSettings.Value.LarsDatasetUrl);
                 using var zip = new ZipArchive(resultStream);
 
                 foreach (var entry in zip.Entries)
