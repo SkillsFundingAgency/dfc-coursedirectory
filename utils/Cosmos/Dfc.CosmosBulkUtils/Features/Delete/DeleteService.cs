@@ -23,14 +23,14 @@ namespace Dfc.CosmosBulkUtils.Features.Delete
             _containerService = containerService;
         }
 
-        public async Task Execute(string filename)
+        public async Task<int> Execute(string filename)
         {
             var ids = _fileService.LoadRecordIds(filename);
 
             if (!this.Confirm(ids.Count))
             {
                 Log.Information("Aborting");
-                return;
+                return 1;
             }
 
             int successful = 0, failed = 0;
@@ -49,6 +49,7 @@ namespace Dfc.CosmosBulkUtils.Features.Delete
             }
 
             _logger.LogInformation("Summary Successful={successful} Failed={failed}", successful, failed);
+            return 0;
         }
 
         private bool Confirm(int totalRecords)
