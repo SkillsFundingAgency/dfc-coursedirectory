@@ -33,13 +33,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
-            ILogger<LarsDataImporter> logger)
+            ILogger<LarsDataImporter> logger,
+            IOptions<LarsDatasetConnectionString> LarsConnectionSettings)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _logger = logger;
+            _LarsConnectionSettings = LarsConnectionSettings;
         }
 
         public async Task ImportData()
