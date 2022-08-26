@@ -100,8 +100,12 @@ namespace Dfc.CosmosBulkUtils.Services
             var patchOperations = (from o in config.Operations
                                   select PatchOperation.Add(o.Field, o.Value)).ToList();
 
-            foreach (var item in results)
+            int successful = 0, failed = 0;
+
+            for (int i = 0; i < results.Count; i++)
             {
+                var item = results[i];
+                var total = results.Count;
                 var response = await _container.PatchItemAsync<object>(
                     id: item.Id,
                     partitionKey: PartitionKey.None,
@@ -110,14 +114,17 @@ namespace Dfc.CosmosBulkUtils.Services
                     );
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    _logger.LogInformation("Patched OK for {0}", item.Id);
+                    successful++;
+                    _logger.LogInformation("Patched OK {0} of {1} {2}", i+1, total, item.Id);
                 }
                 else
                 {
+                    failed++;
                     _logger.LogError("Patch failed for {0} with statuscode {1}", item.Id, response.StatusCode);
                 }
             }
 
+            _logger.LogInformation("Summary Successful={successful} Failed={failed}", successful, failed);
             return true;
         }
 
