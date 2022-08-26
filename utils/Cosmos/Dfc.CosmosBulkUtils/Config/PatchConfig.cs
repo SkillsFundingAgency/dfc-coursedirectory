@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Dfc.CosmosBulkUtils.Config
 {
-    public enum  ModeEnum
+    public class PatchConfig
     {
-        delete,
-        touch
+        public string FilterPredicate { get; set; }
+        public IEnumerable<PatchCommand> Operations { get; set; }
+
     }
 }

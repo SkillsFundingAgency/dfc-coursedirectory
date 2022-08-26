@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CosmosBulkUtils.Config;
@@ -6,6 +8,7 @@ using Dfc.CosmosBulkUtils.Utils;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace Dfc.CosmosBulkUtils.Services
 {
@@ -81,6 +84,41 @@ namespace Dfc.CosmosBulkUtils.Services
                     return response.IsSuccessStatusCode;
             }
 
+        }
+
+        public async Task<bool> Patch(PatchConfig config)
+        {
+            var results = new List<CosmosRecord>();
+            var queryResults = _container.GetItemQueryIterator<CosmosRecord>(config.FilterPredicate);
+            while (queryResults.HasMoreResults)
+            {
+                var currentResults = await queryResults.ReadNextAsync();
+                results.AddRange(currentResults);
+                _logger.LogInformation("Found {0}", results.Count);
+            }
+
+            var patchOperations = (from o in config.Operations
+                                  select PatchOperation.Add(o.Field, o.Value)).ToList();
+
+            foreach (var item in results)
+            {
+                var response = await _container.PatchItemAsync<object>(
+                    id: item.Id,
+                    partitionKey: PartitionKey.None,
+                    patchOperations: patchOperations
+
+                    );
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    _logger.LogInformation("Patched OK for {0}", item.Id);
+                }
+                else
+                {
+                    _logger.LogError("Patch failed for {0} with statuscode {1}", item.Id, response.StatusCode);
+                }
+            }
+
+            return true;
         }
 
         public CosmosDbSettings GetSettings()

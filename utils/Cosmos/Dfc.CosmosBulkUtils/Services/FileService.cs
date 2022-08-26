@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Dfc.CosmosBulkUtils.Config;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Dfc.CosmosBulkUtils.Services
 {
@@ -40,6 +42,12 @@ namespace Dfc.CosmosBulkUtils.Services
             if (results.Count == 0) throw new ApplicationException("Files does not contain any valid guids, aborting");
 
             return results;
+        }
+
+        public PatchConfig LoadPatchConfig(string filename)
+        {
+            var result  = JsonConvert.DeserializeObject<PatchConfig>(File.ReadAllText(filename));
+            return result;
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Dfc.CosmosBulkUtils.Services
 
         Task<bool> Exists(Guid id);
 
+        Task<bool> Patch(PatchConfig config);
+
         CosmosDbSettings GetSettings();
     }
 }

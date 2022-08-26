@@ -11,7 +11,7 @@ namespace Dfc.CosmosBulkUtils.Features.Patch
     [Verb("patch", HelpText = "Patch list of items based on query")]
     public class PatchOptions : CmdOptions
     {
-        [Option('q', "query", Required = true, HelpText = "query used to select items to patch")]
-        public string Query { get; set; }
+        [Option('f', "file", Required = true, HelpText = "text file containing JSON config for patch operation")]
+        public string Filename { get; set; }
     }
 }

@@ -1,0 +1,9 @@
+{
+  "FilterPredicate": "SELECT c.id FROM c where c.X = \"0000000102\"",
+  "Operations": [
+    {
+      "Field": "/X",
+      "Value": "0000000202"
+    }
+  ]
+}

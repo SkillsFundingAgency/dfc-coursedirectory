@@ -78,6 +78,7 @@ namespace Dfc.CosmosBulkUtils
                         services.AddTransient<IContainerService, ContainerService>();
                         services.AddTransient<ITouchService, TouchService>();
                         services.AddTransient<IDeleteService, DeleteService>();
+                        services.AddTransient<IPatchService, PatchService>();
                         services.AddTransient<IFileService, FileService>();
                         services.AddTransient<Application>();
                     })
