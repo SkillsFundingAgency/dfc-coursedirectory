@@ -70,9 +70,12 @@
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
 
-            <govuk-button type="submit" class="govuk-button--warning govuk-!-margin-right-5" id="pttcd-delete-course__delete-btn">Delete</govuk-button>
 
-            <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">           
+                <govuk-button type="submit" class="govuk-button--warning cd-cancel-btn" id="pttcd-delete-course__delete-btn">Delete</govuk-button>
+                <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
+             </div>
+
         </div>
     </div>
 </form>

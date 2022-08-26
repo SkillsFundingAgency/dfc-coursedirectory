@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
                 });
         }
 
-        [HttpPost("cancel")]
+        [HttpGet("cancel")]
         [RequireJourneyInstance]
         public IActionResult Cancel()
         {

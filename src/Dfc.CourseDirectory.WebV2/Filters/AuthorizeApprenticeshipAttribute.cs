@@ -1,35 +1,45 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class AuthorizeApprenticeshipAttribute : ActionFilterAttribute
     {
-        public AuthorizeApprenticeshipAttribute()
+        private readonly string routeParamName;
+
+        public AuthorizeApprenticeshipAttribute(string routeParamName = "ApprenticeshipId")
         {
             // Must run after VerifyApprenticeshipExistsAttribute since it sets data we need
             Order = 1;
+            this.routeParamName = routeParamName;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var appProviderFeature = context.HttpContext.Features.Get<ApprenticeshipProviderFeature>();
 
-            if (appProviderFeature == null)
+            if (!Guid.TryParse(context.RouteData.Values[routeParamName]?.ToString(), out var apprenticeshipId))
             {
                 throw new InvalidOperationException(
-                    "Cannot resolve provider for apprenticeship. " +
-                    "Ensure the action has a parameter decorated with the ApprenticeshipIdAttribute.");
+                    $"Could not extract Apprenticeship ID from '{routeParamName}' route parameter.");
             }
 
-            var providerId = appProviderFeature.ProviderId;
-
             var role = context.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            var services = context.HttpContext.RequestServices;
+            var providerOwnershipCache = services.GetRequiredService<IProviderOwnershipCache>();
+            var providerId = await providerOwnershipCache.GetProviderForApprenticeship(apprenticeshipId);
+
+            if (providerId == null)
+            {
+                throw new ResourceDoesNotExistException(ResourceType.Apprenticeship, apprenticeshipId);
+            }
 
             bool isAuthorized;
 
@@ -42,15 +52,23 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     break;
                 case RoleNames.ProviderSuperUser:
                 case RoleNames.ProviderUser:
-                    var userProviderId = Guid.Parse(context.HttpContext.User.FindFirst("ProviderId").Value);
-                    isAuthorized = userProviderId == providerId;
+                    var currentUserProvider = services.GetRequiredService<ICurrentUserProvider>();
+                    isAuthorized = currentUserProvider.GetCurrentUser().CurrentProviderId == providerId;
                     break;
                 default:
                     isAuthorized = false;
                     break;
             }
 
-            if (!isAuthorized)
+            if (isAuthorized)
+            {
+                var providerInfoCache = services.GetRequiredService<IProviderInfoCache>();
+                var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
+                var providerContextProvider = services.GetRequiredService<IProviderContextProvider>();
+                providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
+                await next();
+            }
+            else
             {
                 context.Result = new StatusCodeResult(403);
             }

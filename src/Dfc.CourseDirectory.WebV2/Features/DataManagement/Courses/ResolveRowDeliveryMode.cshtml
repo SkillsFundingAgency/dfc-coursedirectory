@@ -19,7 +19,9 @@
         <govuk-radios-item value="@CourseDeliveryMode.WorkBased">Work based</govuk-radios-item>
     </govuk-radios>
 
-    <govuk-button type="Submit">Resolve errors</govuk-button>
+    <div class="govuk-button-group">
+        <govuk-button type="Submit" class="cd-cancel-btn">Resolve errors</govuk-button>
+        <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
+    </div>
 
-    <govuk-button asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-button--secondary">Cancel</govuk-button>
 </form>

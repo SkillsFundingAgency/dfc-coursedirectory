@@ -56,8 +56,10 @@
                 </govuk-summary-list-row>
             </govuk-summary-list>
 
-            <govuk-button type="submit" class="govuk-!-margin-right-3">Save venue</govuk-button>
-            <govuk-button type="submit" asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" formmethod="post" class="govuk-button--secondary">Cancel</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" class="cd-cancel-btn">Save venue</govuk-button>
+                <a  asp-action="Cancel" asp-all-route-data="@RouteValuesHelper.FromQueryString()" class="govuk-link cd-cancel-link">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

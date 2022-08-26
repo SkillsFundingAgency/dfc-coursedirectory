@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
+using Microsoft.Azure.Documents.SystemFunctions;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf.Types;
 
@@ -964,9 +965,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             invalid.Add((learnAimRef, rowNumber));
                         }
-                        else if ((learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now)
-                            || (!learningDelivery.OperationalEndDate.IsEmpty()
-                            && DateTime.Parse(learningDelivery.OperationalEndDate) < DateTime.Now))
+                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now
+                            || learningDelivery.OperationalEndDate != null
+                            && learningDelivery.OperationalEndDate < DateTime.Now)
                         {
                             expired.Add((learnAimRef, rowNumber));
                         }

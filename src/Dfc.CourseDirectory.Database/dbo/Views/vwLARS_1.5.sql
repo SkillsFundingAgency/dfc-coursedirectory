@@ -6,7 +6,7 @@ CREATE VIEW [dbo].[vwLARS_1.5]
 AS
 SELECT        ld.LearnAimRef, ld.LearnAimRefTitle, lt.LearnAimRefTypeDesc, ld.NotionalNVQLevelv2, ld.AwardOrgCode, ld.AwardOrgAimRef, /* C.CategoryRef, C.CategoryName, */ ld.LearnDirectClassSystemCode1, ld.LearnDirectClassSystemCode2, 
                          ld.SectorSubjectAreaTier1, SSA1.SectorSubjectAreaTier1Desc, ld.SectorSubjectAreaTier2, SSA2.SectorSubjectAreaTier2Desc, ld.GuidedLearningHours, ld.TotalQualificationTime, ld.UnitType, ac.AwardOrgName, ld.Modified_On, 
-                         ld.EffectiveTo, ld.CertificationEndDate
+                         ld.EffectiveTo, ld.CertificationEndDate, ld.OperationalEndDate
 FROM            LARS.LearningDelivery AS ld INNER JOIN
                          LARS.AwardOrgCode AS ac ON ac.AwardOrgCode = ld.AwardOrgCode INNER JOIN
                          LARS.LearnAimRefType AS lt ON lt.LearnAimRefType = ld.LearnAimRefType INNER JOIN

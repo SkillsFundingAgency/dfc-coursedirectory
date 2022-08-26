@@ -9,6 +9,9 @@
 
     <p class="govuk-body">You are about to remove this delivery location.</p>
 
-    <govuk-button type="submit">Remove</govuk-button>
-    <govuk-button asp-action="ClassroomLocation" class="govuk-button--secondary" append-mptx-id>Cancel</govuk-button>
+    <div class="govuk-button-group">
+        <govuk-button type="submit" class="cd-cancel-btn">Remove</govuk-button>
+        <a asp-action="ClassroomLocation" class="govuk-link cd-cancel-link" append-mptx-id>Cancel</a>
+    </div>
+
 </form>

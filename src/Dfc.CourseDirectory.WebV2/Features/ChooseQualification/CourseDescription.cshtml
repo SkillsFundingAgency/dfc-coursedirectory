@@ -86,9 +86,10 @@
             </govuk-character-count>
 
             <div class="govuk-button-group">
-                <govuk-button type="submit">Continue</govuk-button>
-                <a  asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-padding-left-3">Cancel</a>
+                <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
+                <a  asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
             </div>
+           
         </form>
     </div>
 </div>

@@ -20,6 +20,6 @@
         <govuk-radios-item value="@CourseDeliveryMode.WorkBased">Work based</govuk-radios-item>
     </govuk-radios>
 
-    <govuk-button type="Submit">Continue</govuk-button>
-    <a asp-action="CourseDescription" append-mptx-id class="govuk-link govuk-body govuk-!-padding-left-2 !-padding-bottom-0" data-testid="CancelButton"  asp-all-route-data="@ProviderContext.RouteValues">Cancel</a>
+    <govuk-button type="Submit" class="cd-cancel-btn">Continue</govuk-button>
+    <a asp-action="CourseDescription" append-mptx-id class="govuk-link govuk-body cd-cancel-link" data-testid="CancelButton"  asp-all-route-data="@ProviderContext.RouteValues">Cancel</a>
 </form>
