@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Dfc.CosmosBulkUtils.Services
             _logger = logger;
             _container =
                 new CosmosClient(_settings.EndpointUrl, _settings.AccessKey,
-                        new CosmosClientOptions { ConnectionMode = ConnectionMode.Gateway })
+                        new CosmosClientOptions { ConnectionMode = ConnectionMode.Gateway, AllowBulkExecution = true })
                     .GetDatabase(_settings.DatabaseId).GetContainer(_settings.ContainerId);
         }
 
@@ -87,7 +88,8 @@ namespace Dfc.CosmosBulkUtils.Services
         }
 
         public async Task<bool> Patch(PatchConfig config)
-        {
+        {          
+            var stopWatch = Stopwatch.StartNew();
             var results = new List<CosmosRecord>();
             var queryResults = _container.GetItemQueryIterator<CosmosRecord>(config.FilterPredicate);
             while (queryResults.HasMoreResults)
@@ -100,31 +102,36 @@ namespace Dfc.CosmosBulkUtils.Services
             var patchOperations = (from o in config.Operations
                                   select PatchOperation.Add(o.Field, o.Value)).ToList();
 
-            int successful = 0, failed = 0;
+            var tasks = new List<Task<(ItemResponse<object>?, Exception?)>>();
+
+            _logger.LogInformation("Processing....");
 
             for (int i = 0; i < results.Count; i++)
             {
                 var item = results[i];
-                var total = results.Count;
-                var response = await _container.PatchItemAsync<object>(
+
+                tasks.Add(TaskHandlers.CosmosExecuteAndCaptureErrorsAsync(_container.PatchItemAsync<object>(
                     id: item.Id,
                     partitionKey: PartitionKey.None,
                     patchOperations: patchOperations
+                    )));
 
-                    );
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    successful++;
-                    _logger.LogInformation("Patched OK {0} of {1} {2}", i+1, total, item.Id);
-                }
-                else
-                {
-                    failed++;
-                    _logger.LogError("Patch failed for {0} with statuscode {1}", item.Id, response.StatusCode);
-                }
             }
 
-            _logger.LogInformation("Summary Successful={successful} Failed={failed}", successful, failed);
+            await Task.WhenAll(tasks);
+
+            _logger.LogInformation("Complete Elapsed = {0}", stopWatch.Elapsed);
+
+            var success = tasks.Where(t => t.Result.Item1 != null).Count();
+            var failed = tasks.Where(t => t.Result.Item2 != null).Count();
+
+            _logger.LogInformation("Summary {0} ok {1} failed", success, failed);
+
+            if (failed > 0)
+            {
+                _logger.LogError("{0} requested failed", failed);
+            }
+
             return true;
         }
 
