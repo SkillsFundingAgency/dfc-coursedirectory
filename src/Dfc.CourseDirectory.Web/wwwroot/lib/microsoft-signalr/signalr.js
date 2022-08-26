@@ -310,7 +310,7 @@ NullLogger.instance = new NullLogger();
 
 // Version token that will be replaced by the prepack command
 /** The version of the SignalR client. */
-const VERSION = "6.0.7";
+const VERSION = "6.0.8";
 /** @private */
 class Arg {
     static isRequired(val, name) {
@@ -343,6 +343,27 @@ class Platform {
     // react-native has a window but no document
     static get isReactNative() {
         return typeof window === "object" && typeof window.document === "undefined";
+      if (sealed) {
+        return;
+      }
+      sealed = true;
+      if (thenable !== value) {
+        resolve(promise, value);
+      } else {
+        fulfill(promise, value);
+      }
+    }, function (reason) {
+      if (sealed) {
+        return;
+      }
+      sealed = true;
+
+      reject(promise, reason);
+    }, 'Settle: ' + (promise._label || ' unknown promise'));
+
+    if (!sealed && error) {
+      sealed = true;
+      reject(promise, error);
     }
     // Node apps shouldn't have a window object, but WebWorkers don't either
     // so we need to check for both WebWorker and window
