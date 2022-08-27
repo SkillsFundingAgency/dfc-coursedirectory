@@ -100,7 +100,7 @@ namespace Dfc.CosmosBulkUtils.Services
             }
 
             var patchOperations = (from o in config.Operations
-                                  select PatchOperation.Add(o.Field, o.Value)).ToList();
+                                  select PatchOperation.Replace(o.Field, o.Value)).ToList();
 
             var tasks = new List<Task<(ItemResponse<object>?, Exception?)>>();
 
@@ -112,7 +112,7 @@ namespace Dfc.CosmosBulkUtils.Services
 
                 tasks.Add(TaskHandlers.CosmosExecuteAndCaptureErrorsAsync(_container.PatchItemAsync<object>(
                     id: item.Id,
-                    partitionKey: PartitionKey.None,
+                    partitionKey: String.IsNullOrEmpty(config.PartitionKeyValue) ? PartitionKey.None : new PartitionKey(config.PartitionKeyValue),
                     patchOperations: patchOperations
                     )));
 
