@@ -63,6 +63,19 @@ namespace Dfc.CosmosBulkUtils.Services
             return false;
         }
 
+        public async Task<bool> Add(string filename, IDictionary<string, object> document, string partitionKey)
+        {
+            var response = await _container.CreateItemAsync<IDictionary<string,object>>(document);
+
+            if (response.StatusCode.IsSuccessStatusCode())
+            {
+                _logger.LogInformation("Added {filename}", filename);
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<object> Get(Guid id)
         {
             _logger.LogInformation("Getting {id}", id);

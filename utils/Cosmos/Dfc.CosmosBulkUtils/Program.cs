@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommandLine;
 using CommandLine.Text;
 using Dfc.CosmosBulkUtils.Config;
+using Dfc.CosmosBulkUtils.Features.Add;
 using Dfc.CosmosBulkUtils.Features.Delete;
 using Dfc.CosmosBulkUtils.Features.Patch;
 using Dfc.CosmosBulkUtils.Features.Touch;
@@ -34,10 +35,13 @@ namespace Dfc.CosmosBulkUtils
             {
                 Log.Logger.Information("Initialise...");
 
-                var result = await CommandLine.Parser.Default.ParseArguments<TouchOptions, DeleteOptions, PatchOptions>(args)
+                var result = await CommandLine.Parser.Default.ParseArguments<TouchOptions, DeleteOptions, PatchOptions, AddOptions>(args)
                     .MapResult(
-                    (
-                        TouchOptions opts) =>  Execute(opts), (DeleteOptions opts) => Execute(opts), (PatchOptions opts) => Execute(opts), error => Task.FromResult(1)
+                    (TouchOptions opts) =>  Execute(opts), 
+                    (DeleteOptions opts) => Execute(opts), 
+                    (PatchOptions opts) => Execute(opts), 
+                    (AddOptions opts) => Execute(opts),
+                    error => Task.FromResult(1)
                     );
 
 
@@ -79,6 +83,7 @@ namespace Dfc.CosmosBulkUtils
                         services.AddTransient<ITouchService, TouchService>();
                         services.AddTransient<IDeleteService, DeleteService>();
                         services.AddTransient<IPatchService, PatchService>();
+                        services.AddTransient<IAddService, AddService>();
                         services.AddTransient<IFileService, FileService>();
                         services.AddTransient<Application>();
                     })

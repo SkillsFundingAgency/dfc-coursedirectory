@@ -355,3 +355,4 @@ MigrationBackup/
 !lib/*.nupkg
 /.vscode
 /utils/Cosmos/**/appsettings.json
+utils/Cosmos/Dfc.CosmosBulkUtils/Properties/launchSettings.json

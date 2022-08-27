@@ -1,9 +1,10 @@
 {
-  "FilterPredicate": "SELECT c.id FROM c where c.X = \"0000000102\"",
+  "FilterPredicate": "SELECT c.id FROM c where c.X = \"0000000201\"",
+  "PartitionKeyValue": "not_required",
   "Operations": [
     {
-      "Field": "/X",
-      "Value": "0000000202"
+      "Field": "/TouchpointID",
+      "Value": "0000000101"
     }
   ]
 }
