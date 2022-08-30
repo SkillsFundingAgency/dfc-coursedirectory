@@ -368,7 +368,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             }
 
             var terms = new List<string>();
-            // Azure fuzzy search discrepancy threshold (Levenshtein Distance "L")
+            // Azure fuzzy search discrepancy threshold (Levenshtein Distance "L") -
             const int l = 0;
 
             // Find portions wrapped in quotes
