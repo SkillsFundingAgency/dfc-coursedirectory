@@ -45,6 +45,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
         public static IEnumerable<object[]> TranslateCourseSearchSubjectTextData()
         {
+            // Azure fuzzy search discrepancy threshold (Levenshtein Distance "L")
+            const int l = 1;
+
             // Empty input should be mapped to wildcard
             yield return new object[] { null, "*" };
             yield return new object[] { "", "*" };
@@ -55,13 +58,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             yield return new object[] { "*", "*" };
 
             // Input is trimmed
-            yield return new object[] { " foo  ", "foo* || foo~" };
+            yield return new object[] { " foo  ", $"foo* || foo~{l}" };
 
             // Add wildcard and fuzzy modifier to end of each word
-            yield return new object[] { "foo bar", "foo* || foo~ || bar* || bar~" };
+            yield return new object[] { "foo bar", $"foo* || foo~{l} || bar* || bar~{l}" };
 
             // Escaped characters don't get added
-            yield return new object[] { "foo *", "foo* || foo~" };
+            yield return new object[] { "foo *", $"foo* || foo~{l}" };
 
             // Terms in single quotes should not be prefix searches
             yield return new object[] { "'foo'", "(foo)" };
@@ -84,10 +87,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Includes 'T Level'
             yield return new object[] { "T Level", "\"T Level\"" };
             yield return new object[] { "T-Level", "\"T-Level\"" };
-            yield return new object[] { "T Level computer science", "\"T Level\" AND (computer* || computer~ || science* || science~)" };
+            yield return new object[] { "T Level computer science", $"\"T Level\" AND (computer* || computer~{l} || science* || science~{l})" };
 
             // Combinations...
-            yield return new object[] { "foo 'bar baz' \"qux qu|ux\"", "(bar && baz) || (\"qux qu\\|ux\") || foo* || foo~" };
+            yield return new object[] { "foo 'bar baz' \"qux qu|ux\"", $"(bar && baz) || (\"qux qu\\|ux\") || foo* || foo~{l}" };
         }
 
         private FindACourseOfferingSearchQuery CapturedQuery { get; set; }
