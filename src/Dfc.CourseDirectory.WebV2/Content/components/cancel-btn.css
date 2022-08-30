@@ -1,0 +1,19 @@
+﻿/*-----------------------------------------------------------*/
+/*fix canel button styling until govuk framework updated*/
+
+.cd-cancel-btn {
+    float: left;
+    margin-right: 10px;
+}
+
+.cd-cancel-link {
+    width: auto;
+    height: auto;
+    border: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 8px 10px 7px;
+    float: left;
+}
+/*-----------------------------------------------------------*/

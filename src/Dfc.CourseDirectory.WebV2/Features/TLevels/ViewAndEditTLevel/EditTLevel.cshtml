@@ -134,8 +134,8 @@
             </govuk-character-count>
 
             <div class="govuk-button-group">
-                <govuk-button class="govuk-!-margin-right-3">Check and publish changes</govuk-button>
-                <a  asp-action="Cancel"asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" class="govuk-link govuk-!-margin-left-3">Cancel</a>
+                <govuk-button class="cd-cancel-btn">Check and publish changes</govuk-button>
+                <a  asp-action="Cancel"asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" class="govuk-link cd-cancel-link">Cancel</a>
             </div>
         </form>
     </div>

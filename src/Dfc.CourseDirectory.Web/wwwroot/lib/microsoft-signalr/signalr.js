@@ -289,6 +289,7 @@ var LogLevel;
     LogLevel[LogLevel["None"] = 6] = "None";
 })(LogLevel || (LogLevel = {}));
 
+
 ;// CONCATENATED MODULE: ./src/Loggers.ts
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
@@ -303,14 +304,31 @@ class NullLogger {
 /** The singleton instance of the {@link @microsoft/signalr.NullLogger}. */
 NullLogger.instance = new NullLogger();
 
+
+;// CONCATENATED MODULE: ./src/Loggers.ts
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+/** A logger that does nothing when log messages are sent to it. */
+class NullLogger {
+    constructor() { }
+    /** @inheritDoc */
+    // eslint-disable-next-line
+    log(_logLevel, _message) {
+    }
+}
+/** The singleton instance of the {@link @microsoft/signalr.NullLogger}. */
+NullLogger.instance = new NullLogger();
+
+
 ;// CONCATENATED MODULE: ./src/Utils.ts
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
-
 // Version token that will be replaced by the prepack command
 /** The version of the SignalR client. */
+
 const VERSION = "6.0.8";
+
+
 /** @private */
 class Arg {
     static isRequired(val, name) {

@@ -86,8 +86,8 @@
             </govuk-checkboxes>
 
             <div class="govuk-button-group">
-                <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="govuk-!-margin-right-3">Publish</govuk-button>
-                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link govuk-!-margin-left-3" data-testid="cancel-btn">Cancel</a>
+                <govuk-button type="submit" prevent-double-click="true" id="pttcd-delete-courseupload__delete-btn" class="cd-cancel-btn">Publish</govuk-button>
+                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link" data-testid="cancel-btn">Cancel</a>
             </div>
 
         </form>
