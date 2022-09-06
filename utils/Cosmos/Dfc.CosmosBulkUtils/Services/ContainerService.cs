@@ -25,7 +25,13 @@ namespace Dfc.CosmosBulkUtils.Services
             _logger = logger;
             _container =
                 new CosmosClient(_settings.EndpointUrl, _settings.AccessKey,
-                        new CosmosClientOptions { ConnectionMode = ConnectionMode.Gateway, AllowBulkExecution = true })
+                        new CosmosClientOptions
+                        {
+                            ConnectionMode = ConnectionMode.Gateway, 
+                            AllowBulkExecution = true, 
+                            MaxRetryAttemptsOnRateLimitedRequests = 200, 
+                            MaxRetryWaitTimeOnRateLimitedRequests = new TimeSpan(0, 10, 0)
+                        })
                     .GetDatabase(_settings.DatabaseId).GetContainer(_settings.ContainerId);
         }
 
