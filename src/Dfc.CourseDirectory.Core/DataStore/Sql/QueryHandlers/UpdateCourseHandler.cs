@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 UPDATE Pttcd.Courses SET
-    CourseDescription = @WhatYoullLearn,
+    CourseDescription = @WhoThisCourseIsFor,
     EntryRequirements = @EntryRequirements,
     WhatYoullLearn = @WhatYoullLearn,
     HowYoullLearn = @HowYoullLearn,
