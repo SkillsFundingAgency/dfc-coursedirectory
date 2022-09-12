@@ -77,6 +77,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
 
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
+            services.Configure<LarsDatasetConnectionString>(Configuration.GetSection(nameof(LarsDatasetConnectionString)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
 
             services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));
