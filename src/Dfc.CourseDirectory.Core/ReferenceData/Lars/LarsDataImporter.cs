@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
     public class LarsDataImporter
     {
-        private readonly LarsDatasetConnectionString _LarsConnectionSettings;
+        private readonly LarsDataset _larsDataset;
         private readonly HttpClient _httpClient;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -34,14 +34,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             ILogger<LarsDataImporter> logger,
-            LarsDatasetConnectionString larsConnectionSettings)
+            IOptions<LarsDataset> larsDatasetOption)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _logger = logger;
-            _LarsConnectionSettings = larsConnectionSettings;
+            _larsDataset = larsDatasetOption.Value;
         }
 
         public async Task ImportData()
@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             async Task DownloadFiles()
             {
-                using var resultStream = await _httpClient.GetStreamAsync(_LarsConnectionSettings.LarsDatasetUrl);
+                using var resultStream = await _httpClient.GetStreamAsync(_larsDataset.Url);
                 using var zip = new ZipArchive(resultStream);
 
                 foreach (var entry in zip.Entries)

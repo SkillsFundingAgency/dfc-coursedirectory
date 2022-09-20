@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Core.Configuration
 {
-    public class LarsDatasetConnectionString
+    public class LarsDataset
     {
-        public String LarsDatasetUrl { get; set; }
+        public string Url { get; set; }
     }
 }
