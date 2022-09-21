@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
@@ -34,6 +35,8 @@ namespace Dfc.CourseDirectory.Functions
                 key: configuration["CosmosDbSettings:PrimaryKey"]);
 
             builder.Services.AddTransient<LarsDataImporter>();
+            builder.Services.Configure<LarsDataset>(
+                configuration.GetSection(nameof(LarsDataset)));
             builder.Services.AddTransient<IUkrlpWcfClientFactory, UkrlpWcfClientFactory>();
             builder.Services.AddTransient<IClock, SystemClock>();
             builder.Services.Decorate<IJobActivator, FunctionInstanceServicesCatalog>();
@@ -44,7 +47,6 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
             builder.Services.AddTransient<SqlDataSync>();
-            builder.Services.AddHttpClient<LarsDataImporter>();
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
             builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();

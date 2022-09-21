@@ -32,17 +32,19 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var client = CreateClient();
 
-            var LarsConnectionSettings = new LarsDatasetConnectionString
+            var larsDataSetOption = Options.Create(new LarsDataset
             {
-                LarsDatasetUrl = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F008%2FLearningDelivery_V008_CSV.Zip"
-            };
+                Url =
+                    "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F008%2FLearningDelivery_V008_CSV.Zip"
+            });
+
             var importer = new LarsDataImporter(
                 client,
                 SqlQueryDispatcherFactory,
                 CosmosDbQueryDispatcher.Object,
                 Clock,
                 GetLogger(),
-                LarsConnectionSettings);
+                larsDataSetOption);
 
             // Act
             await importer.ImportData();
@@ -59,8 +61,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(548);
                 (await CountSqlRows("LARS.Category")).Should().Be(63);
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(124);
-                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(123599);
-                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(88055);
+                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(123760);
+                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(88071);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
                 (await CountSqlRows("Pttcd.Standards")).Should().Be(683);

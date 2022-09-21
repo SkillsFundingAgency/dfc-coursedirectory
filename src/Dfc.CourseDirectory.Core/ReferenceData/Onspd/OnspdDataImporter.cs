@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
     {
         // internal for testing
         internal const string ContainerName = "onspd";
-        internal const string FileName = "ONSPD_FEB_2021_UK.csv";
+        internal const string FileName = "ONSPD_AUG_2022_UK.csv";
         internal const string EnglandCountryId = "E92000001";
 
         private const int ChunkSize = 200;
