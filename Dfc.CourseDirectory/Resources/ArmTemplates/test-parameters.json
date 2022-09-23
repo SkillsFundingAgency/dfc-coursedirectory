@@ -44,6 +44,9 @@
     "searchAdminKey": {
       "value": "not-a-real-key"
     },
+    "larsDatasetUrl": {
+      "value": "https://not-a-real-url.com"
+    },
     "searchQueryKey": {
       "value": "not-a-real-key"
     },

@@ -13,14 +13,15 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
     public class LarsDataImporter
     {
-        private const string DownloadLocation = "https://findalearningaimbeta.fasst.org.uk/DownloadData/GetDownloadFileAsync?fileName=published%2F007%2FLearningDelivery_V007_CSV.Zip";
-
+        private readonly LarsDataset _larsDataset;
         private readonly HttpClient _httpClient;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -32,13 +33,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
-            ILogger<LarsDataImporter> logger)
+            ILogger<LarsDataImporter> logger,
+            IOptions<LarsDataset> larsDatasetOption)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _logger = logger;
+            _larsDataset = larsDatasetOption.Value;
         }
 
         public async Task ImportData()
@@ -81,7 +84,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             async Task DownloadFiles()
             {
-                using var resultStream = await _httpClient.GetStreamAsync(DownloadLocation);
+                using var resultStream = await _httpClient.GetStreamAsync(_larsDataset.Url);
                 using var zip = new ZipArchive(resultStream);
 
                 foreach (var entry in zip.Entries)

@@ -24,7 +24,7 @@ SELECT
             ISNULL(pc.WebsiteAddress, '') AS WebsiteAddress,
             ISNULL(pc.Email, '') AS Email
 FROM        Pttcd.Providers p with(nolock)
-INNER JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
+LEFT JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
 WHERE       p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
