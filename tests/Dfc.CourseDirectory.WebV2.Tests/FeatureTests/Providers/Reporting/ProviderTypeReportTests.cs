@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             csvReader.GetFieldIndex("Live T Level Count", isTryGet: true).Should().Be(9);
 
             var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderTypeReport.Csv>().ToArray();
-            records.Length.Should().Be(10);
+            records.Length.Should().Be(7);
 
             using (new AssertionScope())
             {

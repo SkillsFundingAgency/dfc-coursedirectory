@@ -52,6 +52,7 @@
     [MI_NotionalNVQLevelv2]       NVARCHAR (MAX) NOT NULL,
     [GuidedLearningHours]         NVARCHAR (MAX) NOT NULL,
     [TotalQualificationTime]      NVARCHAR (MAX) NOT NULL,
+    [RecognisedHEForOfSFundingPurposes] NVARCHAR (MAX) NULL,
     [Created_On]                  NVARCHAR (MAX) NOT NULL,
     [Created_By]                  NVARCHAR (MAX) NOT NULL,
     [Modified_By]                 NVARCHAR (MAX) NOT NULL,

@@ -44,6 +44,9 @@
     "searchAdminKey": {
       "value": "__azureSearchAdminKey__"
     },
+    "larsDatasetUrl": {
+      "value": "__larsDatasetUrl__"
+    },
     "searchQueryKey": {
       "value": "__azureSearchQueryKey__"
     },
