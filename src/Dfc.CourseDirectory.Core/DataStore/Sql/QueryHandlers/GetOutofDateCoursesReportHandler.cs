@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
@@ -22,7 +21,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         FROM Pttcd.Courses c
         Full JOIN Pttcd.Providers p with (nolock) ON p.ProviderId = c.ProviderId
         Full JOIN Pttcd.CourseRuns cr with (nolock) ON cr.CourseId = c.CourseId
-        WHERE cr.StartDate < GETDATE() - 61";
+        WHERE cr.StartDate < GETDATE() - 61
+        AND c.CourseStatus <> {(int)CourseStatus.Archived}
+        AND cr.CourseRunStatus <> {(int)CourseStatus.Archived}";
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
             {
                 var parser = reader.GetRowParser<OutofDateCourseItem>();
