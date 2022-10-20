@@ -65,6 +65,11 @@ steps:
     configFilePath: ${{ variables.GitVersionConfigFilePath }}
     versionSpec: '5.3.x'
 
+- task: UseDotNet@2
+  inputs:
+    packageType: sdk
+    version: 5.0.x
+
 # ARM template
 - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-arm-build.yml@dfc-devops
   parameters:
