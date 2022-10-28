@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                 state.ProviderVenueRef = request.ProviderVenueRef.Trim();
                 state.Name = request.Name.Trim();
                 state.Email = request.Email;
-                state.Telephone = request.Telephone.Trim();
+                state.Telephone = request.Telephone?.Trim();
                 state.Website = request.Website;
                 state.ValidStages |= AddVenueCompletedStages.Details;
             });
