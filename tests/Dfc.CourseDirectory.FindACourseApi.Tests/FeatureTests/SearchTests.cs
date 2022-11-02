@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         public static IEnumerable<object[]> TranslateCourseSearchSubjectTextData()
         {
             // Azure fuzzy search discrepancy threshold (Levenshtein Distance "L")
-            const int l = 1;
+            const int l = 0;
 
             // Empty input should be mapped to wildcard
             yield return new object[] { null, "*" };
