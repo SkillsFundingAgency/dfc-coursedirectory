@@ -28,10 +28,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         [Name("COURSE_RUN_ID")]
         public string CourseRunId { get; set; }
 
-        [Name("TLEVEL_ID")]
-        public string TLevelId { get; set; }
-
-
         [Name("LEARN_AIM_REF")]
         public string LarsId { get; set; }
 
@@ -145,7 +141,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             ProviderUkprn = result.ProviderUkprn.ToString(),
                             CourseId = result.CourseId.ToString(),
                             CourseRunId = result.CourseRunId.ToString(),
-                            TLevelId = result.TLevelId.ToString(),
                             CourseName = result.CourseName,
                             CourseDescription = result.CourseDescription,
                             CourseUrl = result.CourseWebsite,

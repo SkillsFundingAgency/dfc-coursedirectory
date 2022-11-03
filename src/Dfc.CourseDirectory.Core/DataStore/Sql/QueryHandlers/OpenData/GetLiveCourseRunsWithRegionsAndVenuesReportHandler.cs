@@ -16,10 +16,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
             //In Report, COURSE_DESCRIPTION column maps with 'c.WhatYoullLearn as CourseDescription' column of below SQL query which maps with Add/Edit Course form field @WhatYoullLearn. 
             //This is done as part of working on Jira ID NCSLT-1099 ticket
             var sql = @$"
-WITH
+WITH 
 cte_course_run_regions (courseRunId, regionList) AS (
-    SELECT
-            CourseRunId,
+    SELECT 
+            CourseRunId, 
             STRING_AGG  (c.RegionName, ',') WITHIN GROUP (ORDER BY c.CourseRunId, c.RegionName) Regions
     FROM [Pttcd].[FindACourseIndex] c with (nolock)
     GROUP BY CourseRunId
@@ -29,7 +29,6 @@ SELECT
                 c.ProviderUkprn,
                 cr.CourseRunId,
                 c.CourseId,
-                NULL AS TLevelId,
                 c.LearnAimRef,
                 cr.CourseName,
                 c.WhatYoullLearn as CourseDescription, 
@@ -65,56 +64,10 @@ LEFT OUTER JOIN [Pttcd].[Venues] v with (nolock) ON cr.VenueId = v.VenueId
 LEFT OUTER JOIN cte_course_run_regions r with (nolock) ON cr.CourseRunId = r.CourseRunId
 WHERE           cr.CourseRunId IN (
                     SELECT      DISTINCT c.CourseRunId FROM [Pttcd].[FindACourseIndex] c
-                    WHERE       c.OfferingType = {(int)FindACourseOfferingType.Course}
+                    WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
                     AND         c.Live = 1
                     AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                )
-UNION
-
-
-
-SELECT      c.ProviderUkprn,
-            NULL AS CourseRunId,
-            NULL AS CourseId,
-            tl.TLevelId,
-            NULL AS LearnAimRef,
-            c.QualificationCourseTitle AS CourseName,
-            tl.WhatYoullLearn as CourseDescription,
-            tl.Website AS CourseWebsite,
-            c.Cost,
-            c.CostDescription,
-            c.FlexibleStartDate,
-            c.StartDate,
-            tl.EntryRequirements,
-            tl.HowYoullBeAssessed,
-            c.DeliveryMode,
-            c.AttendancePattern,
-            c.StudyMode,
-            c.DurationUnit,
-            c.DurationValue,
-            c.[National],
-            NULL AS Regions,
-            v.VenueName,
-            v.AddressLine1 AS VenueAddress1,
-            v.AddressLine2 AS VenueAddress2,
-            v.County AS VenueCounty,
-            v.Postcode AS VenuePostcode,
-            v.Town AS VenueTown,
-            v.Position.Lat AS VenueLatitude,
-            v.Position.Long AS VenueLongitude,
-            v.Telephone AS VenueTelephone,
-            v.Email AS VenueEmail,
-            v.Website AS VenueWebsite,
-            tl.UpdatedOn
-FROM        [Pttcd].[TLevels] tl
-INNER JOIN      [Pttcd].[FindACourseIndex] c ON c.TLevelId = tl.TLevelId
-LEFT OUTER JOIN [Pttcd].[Venues] v with (nolock) ON c.VenueId = v.VenueId
-WHERE           tl.TLevelId IN (
-                    SELECT      DISTINCT c.TLevelId FROM [Pttcd].[FindACourseIndex] c
-                    WHERE       c.OfferingType = {(int)FindACourseOfferingType.TLevel}
-                    AND         c.Live = 1
-                    AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                    )";
+                )";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
             {

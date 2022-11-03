@@ -13,8 +13,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
         public int ProviderUkprn { get; set; }
         public Guid CourseRunId { get; set; }
         public Guid CourseId { get; set; }
-        public Guid TLevelId { get; set; }
-
         public string LearnAimRef { get; set; }
         public string CourseName { get; set; }
         public string CourseDescription { get; set; }
