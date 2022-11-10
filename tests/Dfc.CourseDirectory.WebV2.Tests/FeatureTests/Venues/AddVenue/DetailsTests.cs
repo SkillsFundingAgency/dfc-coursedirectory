@@ -158,6 +158,54 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
             }
         }
 
+        [Fact]
+        public async Task Post_ValidMinimalRequest_UpdatesJourneyStateAndRedirects()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var providerVenueRef = "REF";
+            var name = "My Venue";
+
+            var journeyInstance = CreateJourneyInstance(
+                provider.ProviderId,
+                new AddVenueJourneyModel()
+                {
+                    ValidStages = AddVenueCompletedStages.Address
+                });
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"/venues/add/details?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("ProviderVenueRef", providerVenueRef)
+                    .Add("Name", name)
+                    .Add("Email", null)
+                    .Add("Telephone", null)
+                    .Add("Website", null)
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+
+            response.Headers.Location.OriginalString.Should()
+                .Be($"/venues/add/check-publish?providerId={provider.ProviderId}&ffiid={journeyInstance.InstanceId.UniqueKey}");
+
+            using (new AssertionScope())
+            {
+                journeyInstance = GetJourneyInstance<AddVenueJourneyModel>(journeyInstance.InstanceId);
+                journeyInstance.State.Name.Should().Be(name);
+                journeyInstance.State.Email.Should().Be(null);
+                journeyInstance.State.Telephone.Should().Be(null);
+                journeyInstance.State.Website.Should().Be(null);
+            }
+        }
+
         public static IEnumerable<object[]> InvalidAddressData { get; } =
             new[]
             {
