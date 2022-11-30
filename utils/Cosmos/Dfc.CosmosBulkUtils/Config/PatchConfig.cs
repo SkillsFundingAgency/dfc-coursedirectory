@@ -10,6 +10,7 @@ namespace Dfc.CosmosBulkUtils.Config
     {
         public string PartitionKeyValue { get; set; }
         public string FilterPredicate { get; set; }
+        public List<string> FilterIds { get; set; }
         public IEnumerable<PatchCommand> Operations { get; set; }
 
     }

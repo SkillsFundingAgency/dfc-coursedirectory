@@ -47,6 +47,12 @@ namespace Dfc.CosmosBulkUtils.Services
         public PatchConfig LoadPatchConfig(string filename)
         {
             var result  = JsonConvert.DeserializeObject<PatchConfig>(File.ReadAllText(filename));
+
+            if (!String.IsNullOrEmpty(result.FilterPredicate) && result.FilterIds.Count > 0)
+            {
+                throw new ApplicationException(
+                    "Invalid Patch file, you can't specify FilterPredicate and FilterIds only one can be used at a time");
+            }
             return result;
         }
     }

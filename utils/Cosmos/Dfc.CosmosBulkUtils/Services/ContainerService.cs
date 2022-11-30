@@ -28,7 +28,7 @@ namespace Dfc.CosmosBulkUtils.Services
                         new CosmosClientOptions
                         {
                             ConnectionMode = ConnectionMode.Gateway, 
-                            AllowBulkExecution = true, 
+                            AllowBulkExecution = false, 
                             MaxRetryAttemptsOnRateLimitedRequests = 200, 
                             MaxRetryWaitTimeOnRateLimitedRequests = new TimeSpan(0, 10, 0)
                         })
@@ -109,7 +109,60 @@ namespace Dfc.CosmosBulkUtils.Services
         public async Task<bool> Patch(PatchConfig config)
         {          
             var stopWatch = Stopwatch.StartNew();
+            var results = await GetCosmosRecordIds(config);
+
+
+            var patchOperations = (from o in config.Operations
+                                  select PatchOperation.Replace(o.Field, o.Value)).ToList();
+
+            var tasks = new List<Task<(ItemResponse<object>?, Exception?)>>();
+
+            _logger.LogInformation("Processing....");
+            var success = 0;
+            var failed = new Dictionary<string,string>();
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                var item = results[i];
+
+                var result = await _container.PatchItemAsync<object>(
+                    id: item.Id,
+                    partitionKey: String.IsNullOrEmpty(config.PartitionKeyValue) ? PartitionKey.None : new PartitionKey(config.PartitionKeyValue),
+                    patchOperations: patchOperations
+                );
+
+                if (result.StatusCode.IsSuccessStatusCode())
+                {
+                    success++;
+                }
+                else
+                {
+                    failed.Add(item.Id, result.StatusCode.ToString());
+                }
+
+            }
+
+            foreach (var key in failed.Keys)
+            {
+                _logger.LogError("{0} - {1}", key, failed[key]);
+            }
+
+
+            _logger.LogInformation("Complete Elapsed = {0}", stopWatch.Elapsed);
+
+            return true;
+        }
+
+        private async Task<List<CosmosRecord>> GetCosmosRecordIds(PatchConfig config)
+        {
             var results = new List<CosmosRecord>();
+
+            if (config.FilterIds.Any())
+            {
+                results.AddRange(config.FilterIds.Select(id => new CosmosRecord { Id = id.ToLower() }));
+                return results;
+            }
+
             var queryResults = _container.GetItemQueryIterator<CosmosRecord>(config.FilterPredicate);
             while (queryResults.HasMoreResults)
             {
@@ -118,40 +171,9 @@ namespace Dfc.CosmosBulkUtils.Services
                 _logger.LogInformation("Found {0}", results.Count);
             }
 
-            var patchOperations = (from o in config.Operations
-                                  select PatchOperation.Replace(o.Field, o.Value)).ToList();
+            _logger.LogInformation("Total of {0} records found", results.Count);
 
-            var tasks = new List<Task<(ItemResponse<object>?, Exception?)>>();
-
-            _logger.LogInformation("Processing....");
-
-            for (int i = 0; i < results.Count; i++)
-            {
-                var item = results[i];
-
-                tasks.Add(TaskHandlers.CosmosExecuteAndCaptureErrorsAsync(_container.PatchItemAsync<object>(
-                    id: item.Id,
-                    partitionKey: String.IsNullOrEmpty(config.PartitionKeyValue) ? PartitionKey.None : new PartitionKey(config.PartitionKeyValue),
-                    patchOperations: patchOperations
-                    )));
-
-            }
-
-            await Task.WhenAll(tasks);
-
-            _logger.LogInformation("Complete Elapsed = {0}", stopWatch.Elapsed);
-
-            var success = tasks.Where(t => t.Result.Item1 != null).Count();
-            var failed = tasks.Where(t => t.Result.Item2 != null).Count();
-
-            _logger.LogInformation("Summary {0} ok {1} failed", success, failed);
-
-            if (failed > 0)
-            {
-                _logger.LogError("{0} requested failed", failed);
-            }
-
-            return true;
+            return results;
         }
 
         public CosmosDbSettings GetSettings()
