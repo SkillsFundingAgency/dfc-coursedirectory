@@ -89,6 +89,11 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddCourseDirectory(_env, Configuration);
             services.AddSignalR();
+            services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
 
             var mvcBuilder = services
                 .AddMvc(options =>
