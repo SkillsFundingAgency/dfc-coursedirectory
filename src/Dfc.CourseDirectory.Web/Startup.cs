@@ -218,6 +218,7 @@ namespace Dfc.CourseDirectory.Web
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
             {
+                context.Response.Headers["Content-Security-Policy"] = "default - src 'self'; script - src 'self'";
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 context.Response.Headers["X-Content-Type-Options"] ="nosniff";
                 context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
