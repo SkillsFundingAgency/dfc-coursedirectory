@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "defaultProvider": "cdnjs",
-  "libraries": [    
+  "defaultProvider": "unpkg",
+  "libraries": [
     {
       "provider": "cdnjs",
       "library": "microsoft-signalr@7.0.0",
