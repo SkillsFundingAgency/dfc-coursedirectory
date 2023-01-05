@@ -149,7 +149,7 @@
 
                     @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value == true)
                     {
-                        <a class="govuk-link cd-cancel-link" asp-controller="Apprenticeships" asp-action="Summary"asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
+                        <a class="govuk-link cd-cancel-link-apprenticeships" asp-controller="Apprenticeships" asp-action="Summary"asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
                     }
                 </div>
             }
