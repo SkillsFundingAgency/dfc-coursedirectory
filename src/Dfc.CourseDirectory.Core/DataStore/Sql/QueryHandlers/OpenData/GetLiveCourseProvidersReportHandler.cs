@@ -29,6 +29,7 @@ WHERE       p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
+                and c.CourseId is not null
             )
 ORDER BY    p.Ukprn ASC";
 
