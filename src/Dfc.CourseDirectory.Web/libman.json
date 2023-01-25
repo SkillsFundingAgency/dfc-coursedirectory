@@ -4,7 +4,7 @@
   "libraries": [
     {
       "provider": "cdnjs",
-      "library": "microsoft-signalr@7.0.0",
+      "library": "microsoft-signalr@7.0.2",
       "destination": "wwwroot/lib/microsoft-signalr/"
     }
   ]
