@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Core.Models
         Submitted = 2,
         InProgress = 4,
         Failed = 8,
-        Passed = 16,
+        Passed = 99,
         UnableToComplete = 32
     }
 

@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         None = 0,
         FE = 1,
-        Apprenticeships = 2,
+        Apprenticeships = 99,
         TLevels = 4
     }
 
