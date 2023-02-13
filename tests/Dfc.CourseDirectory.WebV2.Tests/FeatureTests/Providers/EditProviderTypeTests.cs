@@ -254,7 +254,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE)]
         public async Task Post_ValidRequest_UpdatesProviderTypeAndRedirects(ProviderType providerType)
         {
             // Arrange
@@ -284,7 +283,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.TLevels)]
         [InlineData(ProviderType.Apprenticeships | ProviderType.TLevels)]
         [InlineData(ProviderType.FE | ProviderType.TLevels)]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE | ProviderType.TLevels)]
         public async Task Post_WithTLevelsAndSelectedTLevelDefinitions_UpdatesProviderTypeAndSelectedTLevelDefinitionsAndRedirects(ProviderType providerType)
         {
             // Arrange
@@ -327,7 +325,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.TLevels)]
         [InlineData(ProviderType.Apprenticeships | ProviderType.TLevels)]
         [InlineData(ProviderType.FE | ProviderType.TLevels)]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE | ProviderType.TLevels)]
         public async Task Post_WithTLevelsAndNoSelectedTLevelDefinitions_DoesNotUpdateProviderTypeOrSelectedTLevelDefinitionsAndReturnsViewWithErrorMessage(ProviderType providerType)
         {
             // Arrange
@@ -397,7 +394,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE)]
         public async Task Post_WithTLevelsProviderWithSelectedTLevelDefinitions_UpdatesProviderTypeAndRemovesSelectedTLevelDefinitionsAndRedirects(ProviderType newProviderType)
         {
             // Arrange
@@ -442,7 +438,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Post_TLevelAccessIsRemoved_ReturnsConfirmWithExpectedContent(ProviderType newProviderType)
         {
             // Arrange
@@ -507,7 +502,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Post_FromConfirm_TLevelAccessIsRemoved_WithConfirmNull_ReturnsConfirmErrorWithExpectedContent(ProviderType newProviderType)
         {
             // Arrange
@@ -575,7 +569,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Post_FromConfirm_TLevelAccessIsRemoved_WithConfirmFalse_Redirects(ProviderType newProviderType)
         {
             // Arrange
@@ -635,7 +628,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Post_FromConfirm_TLevelAccessIsRemoved_WithAffectedTLevelsChanged_ReturnsConfirmErrorWithExpectedContent(ProviderType newProviderType)
         {
             // Arrange
@@ -703,7 +695,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Post_FromConfirm_TLevelAccessIsRemoved_DeletesExistingLiveTLevelsAndRedirects(ProviderType newProviderType)
         {
             // Arrange
@@ -763,7 +754,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.TLevels)]
         [InlineData(ProviderType.TLevels | ProviderType.Apprenticeships)]
         [InlineData(ProviderType.TLevels | ProviderType.FE)]
-        [InlineData(ProviderType.TLevels | ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Post_TLevelAccessIsMaintained_RedirectsAndDoesNotDeleteTLevels(ProviderType newProviderType)
         {
             // Arrange

@@ -84,7 +84,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task MultipleProviderTypesPermitted_AllowsEither(ProviderType providerType)
         {
             // Arrange

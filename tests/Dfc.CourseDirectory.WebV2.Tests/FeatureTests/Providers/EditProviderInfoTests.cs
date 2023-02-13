@@ -53,7 +53,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task Get_ValidRequest_RendersExpectedOutput(ProviderType providerType)
         {

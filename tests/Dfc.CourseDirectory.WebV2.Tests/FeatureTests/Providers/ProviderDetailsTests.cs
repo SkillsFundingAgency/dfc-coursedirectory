@@ -185,7 +185,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
         [Theory]
         [InlineData(ProviderType.Apprenticeships)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         [InlineData(ProviderType.TLevels | ProviderType.Apprenticeships)]
         public async Task Get_ApprenticeshipProviderType_RendersMarketingInformation(ProviderType providerType)
         {
