@@ -80,13 +80,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(ProviderType.Apprenticeships, new[] { "apprenticeships" })]
         [InlineData(ProviderType.FE, new[] { "fe" })]
         [InlineData(ProviderType.TLevels, new[] { "tLevels" })]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE, new[] { "fe", "apprenticeships" })]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.TLevels, new[] { "apprenticeships", "tLevels" })]
         [InlineData(ProviderType.FE | ProviderType.TLevels, new[] { "fe", "tLevels" })]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.FE | ProviderType.TLevels, new[] { "fe", "apprenticeships", "tLevels" })]
 
         public async Task Get_ValidRequest_RendersExpectedOutput(
             ProviderType providerType,
@@ -135,8 +131,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.FE, new[] { 1, 2, 3 }, new[] { 2, 3 }, new int[0])]
         [InlineData(ProviderType.TLevels, new[] { 1, 2, 3 }, new int[0], new int[0])]
         [InlineData(ProviderType.TLevels, new[] { 1, 2, 3 }, new[] { 1, 3 }, new[] { 1, 3 })]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.TLevels, new[] { 1, 2, 3 }, new int[0], new int[0])]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.TLevels, new[] { 1, 2, 3 }, new[] { 1, 2 }, new[] { 1, 2 })]
         public async Task Get_ValidRequestWithSelectedTLevelDefinitions_RendersExpectedOutput(
             ProviderType providerType,
             IEnumerable<int> tLevelDefinitionIds,

@@ -52,12 +52,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
                 CreateProvider(2, ProviderType.None, ProviderStatus.Registered, "Active"),
                 CreateProvider(3, ProviderType.None, ProviderStatus.Onboarded, "Active"),
                 CreateProvider(4, ProviderType.FE, ProviderStatus.Onboarded, "Active"),
-                CreateProvider(5, ProviderType.Apprenticeships, ProviderStatus.Onboarded, "Active"),
                 CreateProvider(6, ProviderType.TLevels, ProviderStatus.Onboarded, "Active"),
-                CreateProvider(7, ProviderType.FE | ProviderType.Apprenticeships, ProviderStatus.Onboarded, "Active"),
-                CreateProvider(8, ProviderType.FE | ProviderType.TLevels, ProviderStatus.Onboarded, "Active"),
-                CreateProvider(9, ProviderType.Apprenticeships | ProviderType.TLevels, ProviderStatus.Onboarded, "Active"),
-                CreateProvider(10, ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels, ProviderStatus.Onboarded, "Active"));
+                CreateProvider(8, ProviderType.FE | ProviderType.TLevels, ProviderStatus.Onboarded, "Active"));
 
             await User.AsTestUser(userType);
             var request = new HttpRequestMessage(

@@ -62,25 +62,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Fact]
-        public async Task CurrentProviderContainsProviderType_ReturnsOk()
-        {
-            // Arrange
-            var providerType = ProviderType.Apprenticeships | ProviderType.FE;
-
-            var provider = await TestData.CreateProvider(providerType: providerType);
-
-            await User.AsProviderUser(provider.ProviderId, providerType);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "ProviderTypeAuthorizationHandlerTests/FeOnly");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
         [Theory]
         [InlineData(ProviderType.FE)]
         public async Task MultipleProviderTypesPermitted_AllowsEither(ProviderType providerType)
@@ -133,11 +114,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
                         "Tests:Fe",
                         policy => policy.AddRequirements(
                             new ProviderTypeRequirement(ProviderType.FE)));
-
-                    options.AddPolicy(
-                        "Tests:FeOrApprenticeship",
-                        policy => policy.AddRequirements(
-                            new ProviderTypeRequirement(ProviderType.FE | ProviderType.Apprenticeships)));
                 });
             });
         }

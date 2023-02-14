@@ -208,54 +208,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(TestUserType.Developer)]
-        [InlineData(TestUserType.Helpdesk)]
-        public async Task Get_UserIsAdmin_DoesRenderChangeMarketingInformationLink(TestUserType userType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
-                marketingInformation: "Marketing information");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
-
-            await User.AsTestUser(userType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementByTestId("ChangeMarketingInformation"));
-        }
-
-        [Theory]
-        [InlineData(TestUserType.ProviderSuperUser)]
-        [InlineData(TestUserType.ProviderUser)]
-        public async Task Get_UserIsNotAdmin_DoesNotRenderChangeMarketingInformationLink(TestUserType userType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
-                marketingInformation: "Marketing information");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
-
-            await User.AsTestUser(userType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementByTestId("ChangeMarketingInformation"));
-        }
-
-        [Theory]
         [InlineData(ProviderDisplayNameSource.ProviderName, "My Provider")]
         [InlineData(ProviderDisplayNameSource.TradingName, "My Trading Name")]
         public async Task Get_ProviderHasAlias_RendersCorrectDisplayName(
@@ -311,14 +263,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
+                providerType: ProviderType.FE,
                 providerName: "My Provider",
                 alias: "My Trading Name",
                 displayNameSource: displayNameSource);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             // Act
             var response = await HttpClient.SendAsync(request);
