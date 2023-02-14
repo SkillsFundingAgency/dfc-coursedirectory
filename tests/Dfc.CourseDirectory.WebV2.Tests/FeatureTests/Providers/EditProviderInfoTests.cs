@@ -53,27 +53,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
-        public async Task Get_ValidRequest_RendersExpectedOutput(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                marketingInformation: "Current overview");
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.GetAsync($"/providers/info?providerId={provider.ProviderId}");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            Assert.Equal("Current overview", doc.GetElementById("MarketingInformation").As<IHtmlTextAreaElement>().InnerHtml);
-        }
-
-        [Theory]
         [InlineData(ProviderType.FE)]
         public async Task Post_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
         {

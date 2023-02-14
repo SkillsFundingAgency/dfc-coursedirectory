@@ -35,7 +35,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
         [Theory]
         [InlineData(ProviderType.None)]
-        [InlineData(ProviderType.Apprenticeships)]
         public async Task CurrentProviderDoesNotHaveAnySpecifiedPermittedProviderTypes_ReturnsForbidden(ProviderType providerType)
         {
             // Arrange
@@ -56,7 +55,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
         [Theory]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task CurrentProviderDoesHaveAnySpecifiedPermittedProviderTypes_ReturnsOk(ProviderType providerType)
         {
             // Arrange
