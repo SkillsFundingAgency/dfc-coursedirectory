@@ -75,54 +75,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         [Theory]
         [InlineData(null, "street", null, null)]
         [InlineData("CV17 9AD", null, null, null)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveApprenticeships_ReturnsExpectedCsv(string postcode, string saonDescription, string paonDescription, string addressPaonDescription)
-        {
-            //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
-            {
-                CreateContact(postcode, saonDescription, paonDescription, addressPaonDescription)
-            });
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standard: standard, createdBy: User.ToUserInfo(), status: ApprenticeshipStatus.Live);
-
-            await User.AsHelpdesk();
-
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                $"/providers/reports/providers-missing-primary-contact");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
-            response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=ProviderMissingPrimaryContactReport-{Clock.UtcNow:yyyyMMddHHmmss}.csv");
-
-            using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
-            using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-            await csvReader.ReadAsync();
-            csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
-            records.Length.Should().Be(1);
-
-            using (new AssertionScope())
-            {
-                foreach (var record in records)
-                {
-                    provider.Should().NotBeNull();
-                    record.ProviderUkprn.Should().Be(provider.Ukprn);
-                    record.ProviderName.Should().Be(provider.ProviderName);
-                    record.ProviderType.Should().Be((int)provider.ProviderType);
-                    record.ProviderTypeDescription.Should().Be(string.Join("; ", Enum.GetValues(typeof(ProviderType)).Cast<ProviderType>().Where(p => p != ProviderType.None && provider.ProviderType.HasFlag(p)).DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescription())));
-                    record.ProviderStatus.Should().Be((int)ProviderStatus.Onboarded);
-                }
-            }
-        }
-
-        [Theory]
-        [InlineData(null, "street", null, null)]
-        [InlineData("CV17 9AD", null, null, null)]
         public async Task ProvidersMissingPrimaryContactReport_Get_MissingContactDetailsLiveTLevels_ReturnsExpectedCsv(string postcode, string saonDescription, string paonDescription, string addressPaonDescription)
         {
             //Arange
@@ -339,55 +291,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Theory]
-        [InlineData("CV17 9AD", "street", null, null)]
-        [InlineData("CV17 9AD", null, "street", null)]
-        [InlineData("CV17 9AD", null, null, "street")]
-        [InlineData("CV17 9AD", "street", null, "street")]
-        [InlineData("CV17 9AD", "street", "street", "street")]
-        public async Task ProvidersMissingPrimaryContactReport_Get_ProviderHasValidContactTypePWithLiveApprenticeships_ReturnsEmptyCsv(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
-        {
-            //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
-            {
-                CreateContact(postcode, addressSaonDescription, addressPaonDescription, addressStreetDescription)
-            });
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standard: standard, createdBy: User.ToUserInfo());
-            await User.AsHelpdesk();
-
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                $"/providers/reports/providers-missing-primary-contact");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
-            response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=ProviderMissingPrimaryContactReport-{Clock.UtcNow:yyyyMMddHHmmss}.csv");
-
-            using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
-            using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-            await csvReader.ReadAsync();
-            csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
-            records.Length.Should().Be(0);
-        }
-
-        [Theory]
         [InlineData("CV17 9AD", null, null, null)]
         [InlineData(null, null, "street", null)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MultipleProvidersWithApprenticeshipsCoursesAndTLevels_ReturnsExpectedCsv(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
+        public async Task ProvidersMissingPrimaryContactReport_Get_MultipleProvidersWithCoursesAndTLevels_ReturnsExpectedCsv(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
         {
             //Arange
             var provider1 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
                 CreateContact(postcode, addressSaonDescription, addressPaonDescription, addressStreetDescription)
             });
-
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider1.ProviderId, standard: standard, createdBy: User.ToUserInfo());
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var provider2 = await TestData.CreateProvider(
@@ -429,39 +341,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
             csvReader.ReadHeader().Should().BeTrue();
             var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
             records.Length.Should().Be(3);
-        }
-
-        [Theory]
-        [InlineData(ApprenticeshipStatus.Pending)]
-        public async Task ProvidersMissingPrimaryContactReport_Get_ProvidersWithNonLiveApprenticeships_ReturnsEmptyCsv(ApprenticeshipStatus apprenticeshipStatus)
-        {
-            //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", status: Core.Models.ProviderStatus.Registered, contacts: new[]
-            {
-                CreateContact("CV4 1AA", null, null,"some street")
-            });
-            var standard1 = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standard: standard1, createdBy: User.ToUserInfo(), status: apprenticeshipStatus);
-
-            await User.AsHelpdesk();
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                $"/providers/reports/providers-missing-primary-contact");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
-            response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=ProviderMissingPrimaryContactReport-{Clock.UtcNow:yyyyMMddHHmmss}.csv");
-
-            using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
-            using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-            await csvReader.ReadAsync();
-            csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>().ToArray();
-            records.Length.Should().Be(0);
         }
 
         [Fact]
@@ -575,18 +454,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
         }
 
         [Fact]
-        public async Task ProvidersMissingPrimaryContactReport_Get_MultipleProvidersWithMultipleApprenticeshipsCoursesAndTLevels_ReturnsExpectedCsvOrdedByUkprnAscending()
+        public async Task ProvidersMissingPrimaryContactReport_Get_MultipleProvidersWithMultipleCoursesAndTLevels_ReturnsExpectedCsvOrdedByUkprnAscending()
         {
             //Arange
             var provider1 = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
             {
                 CreateContact("CV1 1AA", null, null,null)
             });
-
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider1.ProviderId, standard: standard, createdBy: User.ToUserInfo());
-            var standard1 = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            await TestData.CreateApprenticeship(provider1.ProviderId, standard: standard1, createdBy: User.ToUserInfo());
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var provider2 = await TestData.CreateProvider(
