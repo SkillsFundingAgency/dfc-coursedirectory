@@ -75,7 +75,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("apprenticeships").GetAttribute("checked").Should().NotBe("checked");
             doc.GetElementByTestId("fe").GetAttribute("checked").Should().NotBe("checked");
         }
 
@@ -104,7 +103,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
 
             AssertElementWithTestIdHasExpectedCheckedValue("fe");
-            AssertElementWithTestIdHasExpectedCheckedValue("apprenticeships");
             AssertElementWithTestIdHasExpectedCheckedValue("tLevels");
 
             void AssertElementWithTestIdHasExpectedCheckedValue(string testId)

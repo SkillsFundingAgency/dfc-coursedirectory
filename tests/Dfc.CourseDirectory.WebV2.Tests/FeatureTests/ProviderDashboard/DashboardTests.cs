@@ -41,8 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 
             var provider = await TestData.CreateProvider(
                 providerName,
-                providerType: ProviderType.FE | ProviderType.TLevels,
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
+                providerType: ProviderType.FE | ProviderType.TLevels);
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var venues = await CreateVenues(provider.ProviderId, count: 2);
@@ -290,39 +289,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             using (new AssertionScope())
             {
                 doc.GetElementByTestId("unpublished-course-count").TextContent.Should().Be("2");
-            }
-        }
-
-        [Fact]
-        public async Task Get_ProviderHasUnpublishedApprenticeships_RendersUnpublishedCount()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed,
-                providerType: ProviderType.Apprenticeships);
-
-            var standard1 = await TestData.CreateStandard();
-            var standard2 = await TestData.CreateStandard();
-
-            await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
-                rowBuilder =>
-                {
-                    rowBuilder.AddRow(standard1.StandardCode, standard1.Version, record => record.IsValid = false);
-                    rowBuilder.AddRow(standard2.StandardCode, standard2.Version, record => record.IsValid = false);
-                });
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("unpublished-apprenticeship-count").TextContent.Should().Be("2");
             }
         }
 
