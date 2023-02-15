@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
         }
 
         [Fact]
-        public async Task DeleteVenue_Get_WithNoAffectedCoursesApprenticeshipsOrTLevels_RendersExpectedOutputWithDeleteEnabled()
+        public async Task DeleteVenue_Get_WithNoAffectedCoursesOrTLevels_RendersExpectedOutputWithDeleteEnabled()
         {
             // Arrange
             var provider = await TestData.CreateProvider(
