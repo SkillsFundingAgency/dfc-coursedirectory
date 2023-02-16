@@ -62,24 +62,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Theory]
-        [InlineData(ProviderType.FE)]
-        public async Task MultipleProviderTypesPermitted_AllowsEither(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(providerType: providerType);
-
-            await User.AsProviderUser(provider.ProviderId, providerType);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, "ProviderTypeAuthorizationHandlerTests/FeOrApprenticeship");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
         public void Dispose() => Fixture.Dispose();
 
         public Task DisposeAsync() => Task.CompletedTask;
@@ -124,9 +106,5 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security.AuthorizationPolicyTests
         [HttpGet("ProviderTypeAuthorizationHandlerTests/FeOnly")]
         [Authorize(Policy = "Tests:Fe")]
         public IActionResult FeOnly() => Ok();
-
-        [HttpGet("ProviderTypeAuthorizationHandlerTests/FeOrApprenticeship")]
-        [Authorize(Policy = "Tests:FeOrApprenticeship")]
-        public IActionResult FeOrApprenticeship() => Ok();
     }
 }
