@@ -91,38 +91,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
         }
 
         [Fact]
-        public async Task DeleteVenue_Get_WithExistingApprenticeship_RendersExpectedOutputWithDeleteDisabled()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
-
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-
-            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
-
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeship = await TestData.CreateApprenticeship(
-                provider.ProviderId,
-                standard,
-                User.ToUserInfo(),
-                ApprenticeshipStatus.Live,
-                locations: new[] { CreateApprenticeshipLocation.CreateClassroomBased(new[] { ApprenticeshipDeliveryMode.DayRelease }, 30, venue.VenueId) });
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/venues/{venue.VenueId}/delete");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
-
-            var doc = await response.GetDocument();
-
-            Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-apprenticeship-{apprenticeship.ApprenticeshipId}"));
-        }
-
-        [Fact]
         public async Task DeleteVenue_Get_WithExistingTLevel_RendersExpectedOutputWithDeleteDisabled()
         {
             // Arrange
@@ -153,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
         }
 
         [Fact]
-        public async Task DeleteVenue_Get_WithNoAffectedCoursesApprenticeshipsOrTLevels_RendersExpectedOutputWithDeleteEnabled()
+        public async Task DeleteVenue_Get_WithNoAffectedCoursesOrTLevels_RendersExpectedOutputWithDeleteEnabled()
         {
             // Arrange
             var provider = await TestData.CreateProvider(
@@ -302,48 +270,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
             Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.CourseId}"));
             doc.GetElementByTestId("affected-courses-error-message").TextContent.Should().Be("The affected courses have changed");
-        }
-
-        [Fact]
-        public async Task DeleteVenue_Post_WithExistingApprenticeship_RendersExpectedOutputWithErrorMessageAndDeleteDisabled()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships);
-
-            await User.AsTestUser(TestUserType.ProviderUser, provider.ProviderId);
-
-            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo());
-
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeship = await TestData.CreateApprenticeship(
-                provider.ProviderId,
-                standard,
-                User.ToUserInfo(),
-                ApprenticeshipStatus.Live,
-                locations: new[] { CreateApprenticeshipLocation.CreateClassroomBased(new[] { ApprenticeshipDeliveryMode.DayRelease }, 30, venue.VenueId) });
-
-            var requestContent = new FormUrlEncodedContentBuilder()
-                .Add(nameof(Command.Confirm), true)
-                .Add(nameof(Command.ProviderId), provider.ProviderId)
-                .ToContent();
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/venues/{venue.VenueId}/delete")
-            {
-                Content = requestContent
-            };
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-
-            var doc = await response.GetDocument();
-
-            Assert.Null(doc.GetElementByTestId("delete-location-button"));
-            Assert.NotNull(doc.GetElementByTestId($"affected-apprenticeship-{apprenticeship.ApprenticeshipId}"));
-            doc.GetElementByTestId("affected-apprenticeships-error-message").TextContent.Should().Be("The affected apprenticeships have changed");
         }
 
         [Fact]

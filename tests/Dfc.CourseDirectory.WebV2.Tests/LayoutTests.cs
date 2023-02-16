@@ -131,51 +131,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUserWithApprenticeshipsOnlyProviderContext_RendersExpectedNav(TestUserType testUserType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
-                providerName: "Test Provider");
-
-            await User.AsTestUser(testUserType);
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={provider.ProviderId}");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            var topLevelLinks = GetTopLevelNavLinks(doc);
-            var subNavLinks = GetSubNavLinks(doc);
-
-            topLevelLinks.Count.Should().Be(5);
-
-            using (new AssertionScope())
-            {
-                topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
-                topLevelLinks[1].TestId.Should().Be("topnav-qa");
-                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
-                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[4].TestId.Should().Be("topnav-signout");
-            }
-
-            Assert.Equal(4, subNavLinks.Count);
-
-            using (new AssertionScope())
-            {
-                subNavLinks[0].TestId.Should().Be("adminsubnav-home");
-                subNavLinks[1].TestId.Should().Be("adminsubnav-apprenticeships");
-                subNavLinks[2].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-datamanagement");
-                subNavLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
-            }
-        }
-
-        [Theory]
-        [InlineData(TestUserType.Developer)]
-        [InlineData(TestUserType.Helpdesk)]
         public async Task AdminUserWithTLevelsOnlyProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
@@ -219,11 +174,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUserWithFEAndApprenticeshipsAndTLevelsProviderContext_RendersExpectedNav(TestUserType testUserType)
+        public async Task AdminUserWithFEAndTLevelsProviderContext_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels,
+                providerType: ProviderType.FE | ProviderType.TLevels,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType);
@@ -249,17 +204,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
-            Assert.Equal(6, subNavLinks.Count);
+            Assert.Equal(5, subNavLinks.Count);
 
             using (new AssertionScope())
             {
                 subNavLinks[0].TestId.Should().Be("adminsubnav-home");
                 subNavLinks[1].TestId.Should().Be("adminsubnav-courses");
-                subNavLinks[2].TestId.Should().Be("adminsubnav-apprenticeships");
-                subNavLinks[3].TestId.Should().Be("adminsubnav-tlevels");
-                subNavLinks[4].TestId.Should().Be("adminsubnav-locations");
-                subNavLinks[5].TestId.Should().Be("adminsubnav-datamanagement");
-                subNavLinks[5].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
+                subNavLinks[2].TestId.Should().Be("adminsubnav-tlevels");
+                subNavLinks[3].TestId.Should().Be("adminsubnav-locations");
+                subNavLinks[4].TestId.Should().Be("adminsubnav-datamanagement");
+                subNavLinks[4].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
             }
         }
 
@@ -291,43 +245,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-courses");
-                topLevelLinks[2].TestId.Should().Be("topnav-locations");
-                topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
-                topLevelLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
-                topLevelLinks[4].TestId.Should().Be("topnav-signout");
-            }
-
-            subNavLinks.Count.Should().Be(0);
-        }
-
-        [Theory]
-        [InlineData(TestUserType.ProviderSuperUser)]
-        [InlineData(TestUserType.ProviderUser)]
-        public async Task ProviderUserForApprenticeshipsOnlyProvider_RendersExpectedNav(TestUserType testUserType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
-                providerName: "Test Provider");
-
-            await User.AsTestUser(testUserType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            var topLevelLinks = GetTopLevelNavLinks(doc);
-            var subNavLinks = GetSubNavLinks(doc);
-
-            topLevelLinks.Count.Should().Be(5);
-
-            using (new AssertionScope())
-            {
-                topLevelLinks[0].TestId.Should().Be("topnav-home");
-                topLevelLinks[1].TestId.Should().Be("topnav-apprenticeships");
                 topLevelLinks[2].TestId.Should().Be("topnav-locations");
                 topLevelLinks[3].TestId.Should().Be("topnav-datamanagement");
                 topLevelLinks[3].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
@@ -376,11 +293,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
-        public async Task ProviderUserForFEAndApprenticeshipsAndTLevels_RendersExpectedNav(TestUserType testUserType)
+        public async Task ProviderUserForFEAndTLevels_RendersExpectedNav(TestUserType testUserType)
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels,
+                providerType: ProviderType.FE | ProviderType.TLevels,
                 providerName: "Test Provider");
 
             await User.AsTestUser(testUserType, provider.ProviderId);
@@ -395,67 +312,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(7);
+            topLevelLinks.Count.Should().Be(6);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-home");
                 topLevelLinks[1].TestId.Should().Be("topnav-courses");
-                topLevelLinks[2].TestId.Should().Be("topnav-apprenticeships");
-                topLevelLinks[3].TestId.Should().Be("topnav-tlevels");
-                topLevelLinks[4].TestId.Should().Be("topnav-locations");
-                topLevelLinks[5].TestId.Should().Be("topnav-datamanagement");
-                topLevelLinks[5].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
-                topLevelLinks[6].TestId.Should().Be("topnav-signout");
+                topLevelLinks[2].TestId.Should().Be("topnav-tlevels");
+                topLevelLinks[3].TestId.Should().Be("topnav-locations");
+                topLevelLinks[4].TestId.Should().Be("topnav-datamanagement");
+                topLevelLinks[4].Href.Should().Be($"/data-upload?providerId={provider.ProviderId}");
+                topLevelLinks[5].TestId.Should().Be("topnav-signout");
             }
 
             subNavLinks.Count.Should().Be(0);
-        }
-
-        [Theory]
-        [InlineData(TestUserType.ProviderSuperUser)]
-        [InlineData(TestUserType.ProviderUser)]
-        public async Task ProviderUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
-                providerName: "Test Provider",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
-
-            await User.AsTestUser(userType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            doc.GetElementByTestId("topnav-apprenticeships").Should().BeNull();
-        }
-
-        [Theory]
-        [InlineData(TestUserType.Developer)]
-        [InlineData(TestUserType.Helpdesk)]
-        public async Task AdminUserProviderNotPassedQA_DoesNotRenderApprenticeshipsLink(TestUserType userType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
-                providerName: "Test Provider",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
-
-            await User.AsTestUser(userType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            doc.GetElementByTestId("adminsubnav-apprenticeships").Should().BeNull();
         }
 
         [Fact]

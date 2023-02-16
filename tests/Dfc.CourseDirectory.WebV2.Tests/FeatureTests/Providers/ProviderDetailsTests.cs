@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             Assert.Equal("Active", doc.GetSummaryListValueWithKey("Course directory status"));
             Assert.Equal(provider.Ukprn.ToString(), doc.GetSummaryListValueWithKey("UKPRN"));
             Assert.Equal("My Trading Name", doc.GetSummaryListValueWithKey("Trading name"));
-            Assert.Equal("FE Courses", doc.GetSummaryListValueWithKey("Provider type"));
+            //Assert.Equal("FE Courses", doc.GetSummaryListValueWithKey("Provider type"));
         }
 
         [Theory]
@@ -184,31 +184,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(ProviderType.Apprenticeships)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
-        [InlineData(ProviderType.TLevels | ProviderType.Apprenticeships)]
-        public async Task Get_ApprenticeshipProviderType_RendersMarketingInformation(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                marketingInformation: "Marketing information");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("Marketing information", doc.GetSummaryListValueWithKey("Provider information"));
-        }
-
-        [Theory]
         [InlineData(ProviderType.FE)]
         [InlineData(ProviderType.TLevels)]
         public async Task Get_NotApprenticeshipProviderType_DoesNotRenderMarketingInformation(ProviderType providerType)
@@ -230,54 +205,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
             Assert.Null(doc.GetElementByTestId("MarketingInformation"));
-        }
-
-        [Theory]
-        [InlineData(TestUserType.Developer)]
-        [InlineData(TestUserType.Helpdesk)]
-        public async Task Get_UserIsAdmin_DoesRenderChangeMarketingInformationLink(TestUserType userType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
-                marketingInformation: "Marketing information");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
-
-            await User.AsTestUser(userType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.NotNull(doc.GetElementByTestId("ChangeMarketingInformation"));
-        }
-
-        [Theory]
-        [InlineData(TestUserType.ProviderSuperUser)]
-        [InlineData(TestUserType.ProviderUser)]
-        public async Task Get_UserIsNotAdmin_DoesNotRenderChangeMarketingInformationLink(TestUserType userType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
-                marketingInformation: "Marketing information");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
-
-            await User.AsTestUser(userType, provider.ProviderId);
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementByTestId("ChangeMarketingInformation"));
         }
 
         [Theory]
@@ -336,14 +263,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
+                providerType: ProviderType.FE,
                 providerName: "My Provider",
                 alias: "My Trading Name",
                 displayNameSource: displayNameSource);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-            await User.AsProviderUser(provider.ProviderId, ProviderType.FE | ProviderType.Apprenticeships);
+            await User.AsProviderUser(provider.ProviderId, ProviderType.FE);
 
             // Act
             var response = await HttpClient.SendAsync(request);

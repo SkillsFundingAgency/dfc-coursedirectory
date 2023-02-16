@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.Apprenticeships,
+                providerType: ProviderType.TLevels,
                 marketingInformation: "Current overview");
 
             await User.AsTestUser(userType, provider.ProviderId);
@@ -35,72 +35,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(ProviderType.FE)]
-        public async Task Get_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                marketingInformation: "Current overview");
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.GetAsync($"/providers/info?providerId={provider.ProviderId}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Theory]
-        [InlineData(ProviderType.Apprenticeships)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
-        public async Task Get_ValidRequest_RendersExpectedOutput(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                marketingInformation: "Current overview");
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.GetAsync($"/providers/info?providerId={provider.ProviderId}");
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var doc = await response.GetDocument();
-            Assert.Equal("Current overview", doc.GetElementById("MarketingInformation").As<IHtmlTextAreaElement>().InnerHtml);
-        }
-
-        [Theory]
-        [InlineData(ProviderType.FE)]
-        public async Task Post_NotApprenticeshipProvider_ReturnsForbidden(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(providerType: providerType);
-
-            var requestContent = new FormUrlEncodedContentBuilder()
-                .Add("MarketingInformation", "Overview")
-                .ToContent();
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.PostAsync($"/providers/info?providerId={provider.ProviderId}", requestContent);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
         public async Task Post_ProviderUser_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.TLevels);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Overview")
@@ -119,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_InvalidMarketingInformation_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", new string('z', 751))  // Limit is 750 characters
@@ -143,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ValidRequest_ReturnsRedirect()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Overview")
