@@ -24,14 +24,14 @@ namespace Dfc.CourseDirectory.Core.Models
             var parts = providerType.SplitFlags()
                 .Select(part => part switch
                 {
-                    ProviderType.Apprenticeships => "Apprenticeships",
+                    ProviderType.Apprenticeships => null,
                     ProviderType.FE => "FE Courses",
                     ProviderType.TLevels => "T Levels",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
                 })
                 .ToArray();
 
-            return parts.ToCommaSeparatedString(finalValuesConjunction: "&");
+            return parts.ToCommaSeparatedString(finalValuesConjunction: "");
         }
     }
 }
