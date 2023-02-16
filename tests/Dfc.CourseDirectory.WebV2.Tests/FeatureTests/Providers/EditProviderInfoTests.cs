@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_InvalidMarketingInformation_RendersError()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.TLevels);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", new string('z', 751))  // Limit is 750 characters
@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         public async Task Post_ValidRequest_ReturnsRedirect()
         {
             // Arrange
-            var provider = await TestData.CreateProvider(providerType: ProviderType.TLevels);
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Overview")
