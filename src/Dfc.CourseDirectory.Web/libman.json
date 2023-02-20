@@ -1,10 +1,10 @@
 {
   "version": "1.0",
   "defaultProvider": "unpkg",
-  "libraries": [
+  "libraries": [    
     {
       "provider": "cdnjs",
-      "library": "microsoft-signalr@7.0.2",
+      "library": "microsoft-signalr@7.0.3",
       "destination": "wwwroot/lib/microsoft-signalr/"
     }
   ]
