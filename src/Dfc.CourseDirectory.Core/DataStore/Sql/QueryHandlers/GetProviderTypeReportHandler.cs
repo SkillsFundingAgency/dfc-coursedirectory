@@ -13,7 +13,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var sql = @$"
 SELECT      p.Ukprn as ProviderUkprn,
             p.ProviderName,
-            p.ProviderType,
+            case 
+            when p.ProviderType=3 then 1
+            when p.ProviderType=7 then 5
+            else p.ProviderType
+            end as ProviderType,
             p.ProviderStatus,
             p.UkrlpProviderStatusDescription,
             (
@@ -32,18 +36,6 @@ SELECT      p.Ukprn as ProviderUkprn,
             ) AS OtherCourseCount,
             (
                 SELECT      COUNT(*)
-                FROM        Pttcd.Apprenticeships a with (nolock)
-                WHERE       a.ProviderUkprn = p.Ukprn
-                AND         a.ApprenticeshipStatus = ${(int)ApprenticeshipStatus.Live}
-            ) AS LiveApprenticeshipCount,
-            (
-                SELECT      COUNT(*)
-                FROM        Pttcd.Apprenticeships a with (nolock)
-                WHERE       a.ProviderUkprn = p.Ukprn
-                AND         a.ApprenticeshipStatus <> ${(int)ApprenticeshipStatus.Live}
-            ) AS OtherApprenticeshipCount,
-            (
-                SELECT      COUNT(*)
                 FROM        Pttcd.TLevels t with (nolock)
                 WHERE       t.ProviderId = p.ProviderId
                 AND         t.TLevelStatus = ${(int)TLevelStatus.Live}
@@ -56,7 +48,7 @@ SELECT      p.Ukprn as ProviderUkprn,
             ) AS OtherTLevelCount
 FROM        Pttcd.Providers p with (nolock)
 WHERE       p.Ukprn NOT LIKE '9%'
-AND p.ProviderType <> 0 
+AND p.ProviderType <> 0  and p.ProviderType <> 2
 ORDER BY    p.Ukprn ASC";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
