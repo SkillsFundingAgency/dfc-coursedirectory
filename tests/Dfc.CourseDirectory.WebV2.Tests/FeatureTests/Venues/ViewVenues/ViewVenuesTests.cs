@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
         {
             //Arange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels);
+                providerType: ProviderType.FE | ProviderType.TLevels);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={provider.ProviderId}");
 
@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
         {
             //Arange
             var provider = await TestData.CreateProvider(
-                providerType: ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels);
+                providerType: ProviderType.FE | ProviderType.TLevels);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/venues?providerId={provider.ProviderId}");
 

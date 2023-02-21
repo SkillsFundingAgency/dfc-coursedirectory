@@ -15,9 +15,9 @@ namespace Dfc.CourseDirectory.Testing
     {
         public async Task<Provider> CreateProvider(
             string providerName = "Test Provider",
-            ProviderType providerType = ProviderType.FE | ProviderType.Apprenticeships,
+            ProviderType providerType = ProviderType.FE,
             string providerStatus = "Active",
-            ApprenticeshipQAStatus? apprenticeshipQAStatus = ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus? apprenticeshipQAStatus = ApprenticeshipQAStatus.UnableToComplete,
             string marketingInformation = "",
             string courseDirectoryName = "",
             string alias = "",

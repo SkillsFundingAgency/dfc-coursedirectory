@@ -17,18 +17,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
         }
 
         [Theory]
-        [InlineData(ProviderType.None, false, false)]
-        [InlineData(ProviderType.FE, true, false)]
-        [InlineData(ProviderType.Apprenticeships, false, true)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships, true, true)]
-        [InlineData(ProviderType.TLevels, false, false)]
-        [InlineData(ProviderType.FE | ProviderType.TLevels, true, false)]
-        [InlineData(ProviderType.Apprenticeships | ProviderType.TLevels, false, true)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships | ProviderType.TLevels, true, true)]
+        [InlineData(ProviderType.None, false)]
+        [InlineData(ProviderType.FE, true)]
+        [InlineData(ProviderType.TLevels, false)]
+        [InlineData(ProviderType.FE | ProviderType.TLevels, true)]
         public async Task Get_RendersExpectedOutput(
             ProviderType providerType,
-            bool expectCoursesCard,
-            bool expectApprenticeshipsCard)
+            bool expectCoursesCard)
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerType: providerType);
@@ -51,7 +46,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
                 doc.GetElementByTestId("PublishedVenueCount").TextContent.Should().Be("3");
 
                 AssertHaveCard("CoursesCard", expectCoursesCard);
-                AssertHaveCard("ApprenticeshipsCard", expectApprenticeshipsCard);
                 AssertHaveCard("VenuesCard", true);  // Always show venues
             }
 
@@ -242,150 +236,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement
 
             var doc = await response.GetDocument();
             doc.GetElementByTestId("DownloadCourses").Should().BeNull();
-        }
-
-        [Fact]
-        public async Task Get_HasLiveApprenticeships_DoesRenderDownloadLink()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-
-            var standard = await TestData.CreateStandard(1234, 1, standardName: "My standard");
-            await TestData.CreateApprenticeship(provider.ProviderId, standard, createdBy: User.ToUserInfo());
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            doc.GetElementByTestId("DownloadApprenticeships").Should().NotBeNull();
-        }
-
-        [Fact]
-        public async Task Get_NoLiveApprenticeships_DoesNotRenderDownloadLink()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            doc.GetElementByTestId("DownloadApprenticeships").Should().BeNull();
-        }
-
-        [Fact]
-        public async Task TestApprenticeshipUploadInProgress()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed,
-                providerType: ProviderType.Apprenticeships);
-
-            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("apprenticeship-in-progress-link").TextContent.Should().Be("Upload in progress");
-            }
-        }
-
-        [Fact]
-        public async Task Get_ApprenticeshipQAInProcess_DoesNotRenderApprenticeshipCard()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
-                providerType: ProviderType.Apprenticeships);
-
-            var (apprenticeshipUpload, _) = await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.Processing);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("ApprenticeshipsCard").Should().BeNull();
-            }
-        }
-
-        [Theory]
-        [InlineData(UploadStatus.ProcessedWithErrors)]
-        [InlineData(UploadStatus.ProcessedSuccessfully)]
-        public async Task Get_UnpublishedApprenticeshipUploadRows_RendersLink(UploadStatus uploadStatus)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-
-            await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: uploadStatus);
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("apprenticeships-unpublished-link").Should().NotBeNull();
-            }
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData(UploadStatus.Created)]
-        //[InlineData(UploadStatus.Published)]  // TODO Uncomment when we can publish apprenticeship uploads
-        [InlineData(UploadStatus.Abandoned)]
-        public async Task Get_NoUnpublishedApprenticeshipUploadRows_DoesNotRenderLink(UploadStatus? uploadStatus)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-
-            if (uploadStatus.HasValue)
-            {
-                await TestData.CreateApprenticeshipUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: uploadStatus.Value);
-            }
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload?providerId={provider.ProviderId}");
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var doc = await response.GetDocument();
-            using (new AssertionScope())
-            {
-                doc.GetElementByTestId("apprenticeships-unpublished-link").Should().BeNull();
-            }
         }
     }
 }
