@@ -56,9 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 case TestUserType.Helpdesk:
                     return AsHelpdesk();
                 case TestUserType.ProviderSuperUser:
-                    return AsProviderSuperUser(providerId.Value, Core.Models.ProviderType.FE | Core.Models.ProviderType.Apprenticeships);
+                    return AsProviderSuperUser(providerId.Value, Core.Models.ProviderType.FE);
                 case TestUserType.ProviderUser:
-                    return AsProviderUser(providerId.Value, Core.Models.ProviderType.FE | Core.Models.ProviderType.Apprenticeships);
+                    return AsProviderUser(providerId.Value, Core.Models.ProviderType.FE);
                 default:
                     throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
             }

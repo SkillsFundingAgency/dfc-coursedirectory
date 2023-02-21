@@ -21,9 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewTLevels
 
         [Theory]
         [InlineData(ProviderType.None)]
-        [InlineData(ProviderType.Apprenticeships)]
         [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.FE | ProviderType.Apprenticeships)]
         public async Task List_Get_ProviderIsNotTLevelsProvider_ReturnsForbidden(ProviderType providerType)
         {
             //Arange
