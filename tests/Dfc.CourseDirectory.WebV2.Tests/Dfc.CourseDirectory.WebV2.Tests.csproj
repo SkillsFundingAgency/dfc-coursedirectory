@@ -6,7 +6,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.0.1" />
+    <PackageReference Include="AngleSharp" Version="0.17.1" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="JustEat.HttpClientInterception" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.14" />
