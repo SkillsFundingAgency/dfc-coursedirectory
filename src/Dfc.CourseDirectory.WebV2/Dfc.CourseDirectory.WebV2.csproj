@@ -15,7 +15,7 @@
     <PackageReference Include="Flurl" Version="3.0.7" />
     <PackageReference Include="FormFlow" Version="0.4.4" />
     <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.5.1" />
-    <PackageReference Include="JWT" Version="5.2.1" />
+    <PackageReference Include="JWT" Version="10.0.2" />
 	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.14" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
