@@ -308,13 +308,13 @@ else
                        asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-publishMode="@PublishMode.Summary" aria-labelledby="copy_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="view_or_edit_course @Html.Raw(courseRun.CourseRunId+"_name")">Copy course</a>
+                       asp-route-publishMode="@PublishMode.Summary" aria-labelledby="copy_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="copy_course @Html.Raw(courseRun.CourseRunId+"_name")">Copy course</a>
 
 
                     <a id="course-delete" class="govuk-link" asp-controller="DeleteCourseRun" asp-action="Get"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")" aria-labelledby="delete_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="view_or_edit_course @Html.Raw(courseRun.CourseRunId+"_name")">Delete course</a>
+                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")" aria-labelledby="delete_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="delete_course @Html.Raw(courseRun.CourseRunId+"_name")">Delete course</a>
 
 
                 </div>
