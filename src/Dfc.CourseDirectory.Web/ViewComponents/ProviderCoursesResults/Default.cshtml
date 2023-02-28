@@ -297,7 +297,7 @@ else
                 <div class="courserun__row4">
                     <span id="@Html.Raw(courseRun.CourseRunId+"_name")" style="position: absolute; left: -99em; height: 0;">@courseRun.CourseName</span>
 
-                    <a class="govuk-link" href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})" aria-labelledby="view_or_edit_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="view_or_edit_course @Html.Raw(courseRun.CourseRunId+"_name")">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                    <a class="govuk-link" href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})" aria-labelledby="view_or_edit_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-description="View or edit course: @Html.Raw(courseRun.CourseRunId+"_name")">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                     <a class="govuk-link"
                        asp-controller="CopyCourseRun"
                        asp-action="Index"
@@ -308,13 +308,13 @@ else
                        asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-publishMode="@PublishMode.Summary" aria-labelledby="copy_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="copy_course @Html.Raw(courseRun.CourseRunId+"_name")">Copy course</a>
+                       asp-route-publishMode="@PublishMode.Summary" aria-labelledby="copy_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-description="Copy Course: @Html.Raw(courseRun.CourseRunId+"_name")">Copy course</a>
 
 
                     <a id="course-delete" class="govuk-link" asp-controller="DeleteCourseRun" asp-action="Get"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")" aria-labelledby="delete_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-describedby="delete_course @Html.Raw(courseRun.CourseRunId+"_name")">Delete course</a>
+                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")" aria-labelledby="delete_course @Html.Raw(courseRun.CourseRunId+"_name")" aria-description="Delete Course: @Html.Raw(courseRun.CourseRunId+"_name")">Delete course</a>
 
 
                 </div>
