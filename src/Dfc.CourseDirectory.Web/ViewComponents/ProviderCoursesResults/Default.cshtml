@@ -71,123 +71,123 @@ else
                 </fieldset>
             </div>
 
-    </div>
-
-    @if (Model.DeliveryModes.Any())
-    {
-        <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s active" role="button" tabindex="0">Delivery mode</div>
-            <div class="panel" style="display: none">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-visually-hidden">
-                        Select Delivery mode
-                    </legend>
-                    <div class="govuk-checkboxes govuk-checkboxes--small">
-
-
-                        @foreach (var deliveryMode in Model.DeliveryModes)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@deliveryMode.Id" name="@deliveryMode.Name" type="checkbox" value="@deliveryMode.Value" @deliveryMode.IsSelected.ThenCheck()>
-                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@deliveryMode.Id">
-                                    @deliveryMode.Text
-                                </label>
-                            </div>
-                        }
-
-
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    }
-
-    @if (Model.Venues.Any())
-    {
-        <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s active" role="button" tabindex="0">Venue</div>
-            <div class="panel" style="display: none">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-visually-hidden">
-                        Select Venue
-                    </legend>
-                    <div class="govuk-checkboxes govuk-checkboxes--small">
-
-
-                        @foreach (var venue in Model.Venues)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@venue.Id" name="@venue.Name" type="checkbox" value="@venue.Value" @venue.IsSelected.ThenCheck()>
-                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@venue.Id">
-                                    @venue.Text
-                                </label>
-                            </div>
-                        }
-
-
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    }
-
-    @if (Model.AttendancePattern.Any())
-    {
-        <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s active" role="button" tabindex="0">Attendance pattern</div>
-            <div class="panel" style="display: none">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-visually-hidden">
-                        Select Attendance Mode
-                    </legend>
-                    <div class="govuk-checkboxes govuk-checkboxes--small">
-
-
-                        @foreach (var attendancePattern in Model.AttendancePattern)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@attendancePattern.Id" name="@attendancePattern.Name" type="checkbox" value="@attendancePattern.Value" @attendancePattern.IsSelected.ThenCheck()>
-                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@attendancePattern.Id">
-                                    @attendancePattern.Text
-                                </label>
-                            </div>
-                        }
-
-
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-    }
-    @if (Model.Regions.Any())
-    {
-        <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s active" role="button" tabindex="0">Region</div>
-            <div class="panel" style="display: none">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-visually-hidden">
-                        Select Region
-                    </legend>
-                    <div class="govuk-checkboxes govuk-checkboxes--small">
-                        @foreach (var region in Model.Regions)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@region.Id" name="@region.Name" type="checkbox" value="@region.Value" @region.IsSelected.ThenCheck()>
-                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@region.Id">
-                                    @region.Text
-                                </label>
-                            </div>
-                        }
-                    </div>
-                </fieldset>
-            </div>
         </div>
 
+        @if (Model.DeliveryModes.Any())
+        {
+            <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Delivery mode</div>
+                <div class="panel" style="display: none">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">
+                            Select Delivery mode
+                        </legend>
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
 
-    }
+
+                            @foreach (var deliveryMode in Model.DeliveryModes)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="@deliveryMode.Id" name="@deliveryMode.Name" type="checkbox" value="@deliveryMode.Value" @deliveryMode.IsSelected.ThenCheck()>
+                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@deliveryMode.Id">
+                                        @deliveryMode.Text
+                                    </label>
+                                </div>
+                            }
+
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        }
+
+        @if (Model.Venues.Any())
+        {
+            <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Venue</div>
+                <div class="panel" style="display: none">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">
+                            Select Venue
+                        </legend>
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
+
+
+                            @foreach (var venue in Model.Venues)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="@venue.Id" name="@venue.Name" type="checkbox" value="@venue.Value" @venue.IsSelected.ThenCheck()>
+                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@venue.Id">
+                                        @venue.Text
+                                    </label>
+                                </div>
+                            }
+
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        }
+
+        @if (Model.AttendancePattern.Any())
+        {
+            <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Attendance pattern</div>
+                <div class="panel" style="display: none">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">
+                            Select Attendance Mode
+                        </legend>
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
+
+
+                            @foreach (var attendancePattern in Model.AttendancePattern)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="@attendancePattern.Id" name="@attendancePattern.Name" type="checkbox" value="@attendancePattern.Value" @attendancePattern.IsSelected.ThenCheck()>
+                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@attendancePattern.Id">
+                                        @attendancePattern.Text
+                                    </label>
+                                </div>
+                            }
+
+
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        }
+        @if (Model.Regions.Any())
+        {
+            <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Region</div>
+                <div class="panel" style="display: none">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">
+                            Select Region
+                        </legend>
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
+                            @foreach (var region in Model.Regions)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="@region.Id" name="@region.Name" type="checkbox" value="@region.Value" @region.IsSelected.ThenCheck()>
+                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@region.Id">
+                                        @region.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+
+        }
 
         <div class="govuk-form-group govuk-!-font-size-14">
-            <a class="govuk-button" id="ApplyFilter" aria-label="Apply filters">Apply</a>
+            <a id="ApplyFilter" class="govuk-button" role="button" aria-label="Apply filters" tabindex="0">Apply</a>
         </div>
 
     </div>
