@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 using CosmosQueries = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -65,6 +66,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                     var providerContact = provider.ProviderContact
                         .SingleOrDefault(c => c.ContactType == "P");
 
+                    var venueContactDetails = t.Locations.Select(l =>
+                    {
+                        Venue venue = venues[l.VenueId];
+                        var contactDetails = new List<string>
+                        {
+                            venue.Email,
+                            venue.Telephone,
+                            venue.Website
+                        };
+                        return contactDetails;
+                    }).ToArray();
+
                     return new TLevelDetailViewModel
                     {
                         TLevelId = t.TLevelId,
@@ -85,10 +98,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                             Town = providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(0),
                             Postcode = providerContact?.ContactAddress?.PostCode,
                             County = providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(1),
-                            Email = providerContact?.ContactEmail,
-                            Telephone = providerContact?.ContactTelephone1,
+                            Email = providerContact?.ContactEmail ?? venueContactDetails[0].ToString(),
+                            Telephone = providerContact?.ContactTelephone1 ?? venueContactDetails[1].ToString(),
                             Fax = providerContact?.ContactFax,
-                            Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
+                            Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress) ?? venueContactDetails[2].ToString(),
                             LearnerSatisfaction = feChoice?.LearnerSatisfaction,
                             EmployerSatisfaction = feChoice?.EmployerSatisfaction
                         },
@@ -113,9 +126,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                                 Town = venue.Town,
                                 County = venue.County,
                                 Postcode = venue.Postcode,
-                                Telephone = venue.Telephone,
-                                Email = venue.Email,
-                                Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website),
+                                Telephone = venue.Telephone ?? providerContact?.ContactTelephone1,
+                                Email = venue.Email ?? providerContact?.ContactEmail,
+                                Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website) ?? ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
                                 Latitude = Convert.ToDecimal(venue.Latitude),
                                 Longitude = Convert.ToDecimal(venue.Longitude)
                             };
