@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 using CosmosQueries = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -68,7 +67,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
 
                     var venueContactDetails = t.Locations.Select(l =>
                     {
-                        Venue venue = venues[l.VenueId];
+                        var venue = venues[l.VenueId];
                         var contactDetails = new List<string>
                         {
                             venue.Email,
