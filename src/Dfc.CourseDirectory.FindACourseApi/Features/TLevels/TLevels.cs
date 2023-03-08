@@ -65,18 +65,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                     var providerContact = provider.ProviderContact
                         .SingleOrDefault(c => c.ContactType == "P");
 
-                    var venueContactDetails = t.Locations.Select(l =>
-                    {
-                        var venue = venues[l.VenueId];
-                        var contactDetails = new List<string>
-                        {
-                            venue.Email,
-                            venue.Telephone,
-                            venue.Website
-                        };
-                        return contactDetails;
-                    }).ToArray();
-
                     return new TLevelDetailViewModel
                     {
                         TLevelId = t.TLevelId,
@@ -97,10 +85,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                             Town = providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(0),
                             Postcode = providerContact?.ContactAddress?.PostCode,
                             County = providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(1),
-                            Email = providerContact?.ContactEmail ?? venueContactDetails?[0].ToString(),
-                            Telephone = providerContact?.ContactTelephone1 ?? venueContactDetails?[1].ToString(),
+                            Email = providerContact?.ContactEmail,
+                            Telephone = providerContact?.ContactTelephone1,
                             Fax = providerContact?.ContactFax,
-                            Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress) ?? venueContactDetails?[2].ToString(),
+                            Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
                             LearnerSatisfaction = feChoice?.LearnerSatisfaction,
                             EmployerSatisfaction = feChoice?.EmployerSatisfaction
                         },
@@ -125,9 +113,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                                 Town = venue.Town,
                                 County = venue.County,
                                 Postcode = venue.Postcode,
-                                Telephone = venue.Telephone,
-                                Email = venue.Email,
-                                Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website),
+                                Telephone = venue.Telephone ?? providerContact?.ContactTelephone1,
+                                Email = venue.Email ?? providerContact?.ContactEmail,
+                                Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website) ?? ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
                                 Latitude = Convert.ToDecimal(venue.Latitude),
                                 Longitude = Convert.ToDecimal(venue.Longitude)
                             };
