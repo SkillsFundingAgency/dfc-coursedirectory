@@ -97,10 +97,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                             Town = providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(0),
                             Postcode = providerContact?.ContactAddress?.PostCode,
                             County = providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(1),
-                            Email = providerContact?.ContactEmail ?? venueContactDetails[0].ToString(),
-                            Telephone = providerContact?.ContactTelephone1 ?? venueContactDetails[1].ToString(),
+                            Email = providerContact?.ContactEmail ?? venueContactDetails?[0].ToString(),
+                            Telephone = providerContact?.ContactTelephone1 ?? venueContactDetails?[1].ToString(),
                             Fax = providerContact?.ContactFax,
-                            Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress) ?? venueContactDetails[2].ToString(),
+                            Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress) ?? venueContactDetails?[2].ToString(),
                             LearnerSatisfaction = feChoice?.LearnerSatisfaction,
                             EmployerSatisfaction = feChoice?.EmployerSatisfaction
                         },
