@@ -113,9 +113,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
                                 Town = venue.Town,
                                 County = venue.County,
                                 Postcode = venue.Postcode,
-                                Telephone = String.IsNullOrEmpty(venue.Telephone) ? providerContact.ContactTelephone1 : venue.Telephone,
-                                Email = String.IsNullOrEmpty(venue.Email) ? providerContact.ContactEmail : venue.Email,
-                                Website = ViewModelFormatting.EnsureHttpPrefixed(venue.Website) ?? ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
+                                Telephone = String.IsNullOrEmpty(venue.Telephone) ? providerContact?.ContactTelephone1 : venue?.Telephone,
+                                Email = String.IsNullOrEmpty(venue.Email) ? providerContact?.ContactEmail : venue?.Email,
+                                Website = ViewModelFormatting.EnsureHttpPrefixed(venue?.Website) ?? ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
                                 Latitude = Convert.ToDecimal(venue.Latitude),
                                 Longitude = Convert.ToDecimal(venue.Longitude)
                             };
