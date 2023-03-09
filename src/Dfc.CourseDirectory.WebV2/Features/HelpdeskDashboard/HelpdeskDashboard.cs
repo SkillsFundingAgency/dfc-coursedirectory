@@ -23,32 +23,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
 
     public class Handler : IRequestHandler<Query, ViewModel>
     {
-        private readonly IProviderContextProvider _providerContextProvider;
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IClock _clock;
-
-        public Handler(
-            IProviderContextProvider providerContextProvider,
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            IClock clock,
-            IRegionCache regionCache)
-        {
-            _providerContextProvider = providerContextProvider;
-            _sqlQueryDispatcher = sqlQueryDispatcher;
-            _clock = clock;
-        }
-
+        
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var results = await _sqlQueryDispatcher.ExecuteQuery(new GetCountCourses()
-            {
-                Today = _clock.UtcNow.Date
-            });
-            return new ViewModel()
-            {
-                CourseNumber = results.ElementAt(0).TotalCourses,
-                OutofDateCourses = results.ElementAt(0).OutofDateCourses
-            };
+            return new ViewModel();
         }
     }
 }
