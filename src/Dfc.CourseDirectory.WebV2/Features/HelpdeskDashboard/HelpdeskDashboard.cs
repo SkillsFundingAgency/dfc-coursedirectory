@@ -24,9 +24,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
     public class Handler : IRequestHandler<Query, ViewModel>
     {
         
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            return new ViewModel();
+            return Task.FromResult(new ViewModel());
         }
     }
 }
