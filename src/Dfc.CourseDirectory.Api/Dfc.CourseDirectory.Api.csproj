@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.FindACourseApi.csproj" />
-    <ProjectReference Include="..\Dfc.CourseDirectory.FindAnApprenticeshipApi\Dfc.CourseDirectory.FindAnApprenticeshipApi.csproj" />
   </ItemGroup>
 
 </Project>
