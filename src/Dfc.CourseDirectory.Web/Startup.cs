@@ -68,8 +68,6 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddTransient((provider) => new HttpClient());
 
-            services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
-
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
 
             services.AddScoped<IPaginationHelper, PaginationHelper>();
