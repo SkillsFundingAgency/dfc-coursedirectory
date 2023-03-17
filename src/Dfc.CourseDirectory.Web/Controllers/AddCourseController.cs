@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     LabelText = "What you can do next",
                     HintText =
-                        "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
+                        "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course or entry to employment.",
                     AriaDescribedBy = "Please enter 'What you can do next'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 },
@@ -991,7 +991,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhereNext = new WhereNextModel()
                 {
                     LabelText = "What you can do next",
-                    HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
+                    HintText = "What are the opportunities beyond this course? Progression to a higher level course or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'What you can do next'"
                 },
                 FundingOptions = new FundingOptionsModel

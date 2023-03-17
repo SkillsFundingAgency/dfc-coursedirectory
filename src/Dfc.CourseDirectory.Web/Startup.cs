@@ -116,10 +116,6 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
 
                 options.AddPolicy(
-                    "Apprenticeship",
-                    policy => policy.AddRequirements(new ProviderTypeRequirement(Core.Models.ProviderType.Apprenticeships)));
-
-                options.AddPolicy(
                     "Fe",
                     policy => policy.AddRequirements(new ProviderTypeRequirement(Core.Models.ProviderType.FE)));
             });
