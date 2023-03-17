@@ -64,10 +64,8 @@ Ask the team to make you a valid DfE Sign-in account with provider(s) associated
 
 This project depends on multiple deployed Azure function app resources:
 
-* [dfc-providerportal-apprenticeships](https://github.com/skillsfundingagency/dfc-providerportal-apprenticeships)
 * [dfc-providerportal-courses](https://github.com/SkillsFundingAgency/dfc-providerportal-courses)
 * [dfc-providerportal-fileprocessor](https://github.com/SkillsFundingAgency/dfc-providerportal-fileprocessor)
-* [dfc-providerportal-findanapprenticeship](https://github.com/SkillsFundingAgency/dfc-providerportal-findanapprenticeship)
 * [dfc-providerportal-tribalexporter](https://github.com/SkillsFundingAgency/dfc-providerportal-tribalexporter)
 * [dfc-providerportal-ukrlp](https://github.com/SkillsFundingAgency/dfc-providerportal-ukrlp)
 
@@ -84,17 +82,3 @@ New code is being written in the WebV2 project that is test-driven and uses mode
 See the [WebV2 readme](src/Dfc.CourseDirectory.WebV2/README.md) for details of the patterns in use.
 
 The WebV2 controllers are made available under the legacy `Dfc.CourseDirectory.Web` project so that we can move routes across one at time. As such to run the WebV2 code you actually need to run the original "Web" project.
-
-## Configurability
-
-### Bypass Apprenticeship QA process
-
-For development with a local SQL Database that doesn't have providers
-configured with their apprenticeship status. (Debug builds only)
-
-```
-src/Dfc.CourseDirectory.Web> CD_BYPASS_QA=true dotnet run
-```
-
-Alternatively for an individual provider set the `ApprenticeshipQAStatus` for
-the provider you're looking at to `16` (Passed) in `Pttcd.Providers` SQL table.
