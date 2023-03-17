@@ -47,16 +47,8 @@
     <None Remove="Content\layout.css" />
     <None Remove="Content\nav.css" />
     <None Remove="Content\notification.css" />
-    <None Remove="Content\pages\apprenticeship-qa\apprenticeship-qa-info-panel.css" />
-    <None Remove="Content\pages\apprenticeship-qa\provider-selected.css" />
-    <None Remove="Content\pages\apprenticeships\classroom-location.js" />
-    <None Remove="Content\pages\apprenticeships\find-standard-or-framework.css" />
     <None Remove="Content\pages\data-upload.css" />
     <None Remove="Content\pages\helpdesk-dashboard.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-classroom-locations.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-summary.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail.css" />
     <None Remove="Content\pages\provider-dashboard.css" />
     <None Remove="Content\pages\providers\provider-details.css" />
     <None Remove="Content\pages\data-upload.css" />
