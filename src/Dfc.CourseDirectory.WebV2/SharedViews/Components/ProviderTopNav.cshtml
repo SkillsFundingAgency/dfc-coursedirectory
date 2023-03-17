@@ -20,14 +20,6 @@
                 </a>
             </li>
         }
-        @if (Model.ShowApprenticeshipsLinks)
-        {
-            <li class="govuk-header__navigation-item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="govuk-header__link" data-testid="topnav-apprenticeships">
-                    Apprenticeships
-                </a>
-            </li>
-        }
         @if (Model.ShowTLevelsLinks)
         {
             <li class="govuk-header__navigation-item">
@@ -48,17 +40,6 @@
                     Data upload
                 </a>
             </li>
-        }
-        else
-        {
-            if (Model.ShowApprenticeshipsLinks)
-            {
-                <li class="govuk-header__navigation-item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                    <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="govuk-header__link" data-testid="topnav-bulkupload">
-                        Bulk upload
-                    </a>
-                </li>
-            }
         }
         <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
             <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link" data-testid="topnav-signout">

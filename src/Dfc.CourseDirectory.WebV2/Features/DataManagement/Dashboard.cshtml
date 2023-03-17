@@ -65,58 +65,6 @@
         </div>
     }
 
-    @if (Model.ShowApprenticeships)
-    {
-        <div class="govuk-grid-column-one-third" data-testid="ApprenticeshipsCard">
-            <div class="pttcd-provider-dashboard__card">
-                <div class="pttcd-provider-dashboard__card__content">
-                    <h2 class="govuk-heading-m">Apprenticeships</h2>
-                    @if (Model.PublishedApprenticeshipsCount > 0)
-                    {
-                        <p class="govuk-body-s">You have <strong data-testid="PublishedApprenticeshipCount">@Model.PublishedApprenticeshipsCount</strong> published @string.Format("apprenticeship{0}", Model.PublishedApprenticeshipsCount != 0 ? "s" : string.Empty)</p>
-                    }
-                </div>
-                <div class="pttcd-provider-dashboard__card__actions">
-                    @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipsDataManagement))
-                    {
-                        <ul class="govuk-list pttcd-list--small">
-                            @if (Model.UnpublishedApprenticeshipCount > 0)
-                            {
-                                <li>
-                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="apprenticeships-unpublished-link">Your unpublished apprenticeships</a>
-                                </li>
-                            }
-                            <li>
-                                @if (Model.ApprenticeshipUploadInProgress)
-                                {
-                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="apprenticeship-in-progress-link">Upload in progress</a>
-                                }
-                                else
-                                {
-                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new apprenticeship data</a>
-                                }
-                            </li>
-                            <li>
-                                <a asp-action="Formatting" asp-controller="ApprenticeshipsDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                    Apprenticeship file format requirements
-                                </a>
-                            </li>
-                            @if (Model.PublishedApprenticeshipsCount > 0)
-                            {
-                                <li>
-                                    <a asp-controller="ApprenticeshipsDataManagement" asp-action="Download" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadApprenticeships">Download your published apprenticeship data (CSV)</a>
-                                </li>
-                            }
-                            <li>
-                                <a asp-controller="ApprenticeshipsDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Download apprenticeship data template (CSV)</a>
-                            </li>
-                        </ul>
-                    }
-                </div>
-            </div>
-        </div>
-    }
-
     @if (FeatureFlagProvider.HaveFeature(FeatureFlags.VenuesDataManagement))
     {
         <div class="govuk-grid-column-one-third" data-testid="VenuesCard">

@@ -46,10 +46,6 @@
                         {
                             <li data-testid="providerType">@ProviderType.FE.ToDescription()</li>
                         }
-                        @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
-                        {
-                            <li data-testid="providerType">@ProviderType.Apprenticeships.ToDescription()</li>
-                        }
                         @if (Model.ProviderType.HasFlag(ProviderType.TLevels))
                         {
                             <li>
