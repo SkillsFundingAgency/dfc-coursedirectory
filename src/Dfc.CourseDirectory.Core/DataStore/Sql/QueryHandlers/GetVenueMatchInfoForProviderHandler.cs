@@ -24,11 +24,6 @@ LEFT JOIN (
 	GROUP BY VenueId
 ) c ON c.VenueId = v.VenueId
 LEFT JOIN (
-	SELECT VenueId FROM Pttcd.ApprenticeshipLocations (HOLDLOCK)
-	WHERE ApprenticeshipLocationStatus <> 4
-	GROUP BY VenueId
-) a ON a.VenueId = v.VenueId
-LEFT JOIN (
 	SELECT VenueId FROM Pttcd.TLevelLocations (HOLDLOCK)
 	WHERE TLevelLocationStatus = {(int)TLevelLocationStatus.Live}
 	GROUP BY VenueId

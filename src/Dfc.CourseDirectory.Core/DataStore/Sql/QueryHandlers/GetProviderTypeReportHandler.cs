@@ -32,18 +32,6 @@ SELECT      p.Ukprn as ProviderUkprn,
             ) AS OtherCourseCount,
             (
                 SELECT      COUNT(*)
-                FROM        Pttcd.Apprenticeships a with (nolock)
-                WHERE       a.ProviderUkprn = p.Ukprn
-                AND         a.ApprenticeshipStatus = ${(int)ApprenticeshipStatus.Live}
-            ) AS LiveApprenticeshipCount,
-            (
-                SELECT      COUNT(*)
-                FROM        Pttcd.Apprenticeships a with (nolock)
-                WHERE       a.ProviderUkprn = p.Ukprn
-                AND         a.ApprenticeshipStatus <> ${(int)ApprenticeshipStatus.Live}
-            ) AS OtherApprenticeshipCount,
-            (
-                SELECT      COUNT(*)
                 FROM        Pttcd.TLevels t with (nolock)
                 WHERE       t.ProviderId = p.ProviderId
                 AND         t.TLevelStatus = ${(int)TLevelStatus.Live}

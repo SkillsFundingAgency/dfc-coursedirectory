@@ -66,7 +66,6 @@ namespace Dfc.CourseDirectory.Core
                     Alias = provider.Alias,
                     UpdatedOn = provider.DateUpdated != default ? (DateTime?)provider.DateUpdated : null,
                     UpdatedBy = provider.UpdatedBy,
-                    NationalApprenticeshipProvider = provider.NationalApprenticeshipProvider,
                     TribalProviderId = provider.ProviderId,
                     BulkUploadInProgress = provider.BulkUploadStatus?.InProgress,
                     BulkUploadPublishInProgress = provider.BulkUploadStatus?.PublishInProgress,

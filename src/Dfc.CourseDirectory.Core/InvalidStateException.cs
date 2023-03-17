@@ -23,15 +23,10 @@ namespace Dfc.CourseDirectory.Core
     {
         Unspecified = 0,
         ProviderDoesNotExist,
-        ApprenticeshipDoesNotExist,
         InvalidProviderType,
-        InvalidApprenticeshipQAStatus,
-        InvalidApprenticeshipQASubmission,
-        NoValidApprenticeshipQASubmission,
         InvalidUploadStatus,
         NoUnpublishedVenueUpload,
         VenueUploadRowCannotBeDeleted,
         NoUnpublishedCourseUpload,
-        NoUnpublishedApprenticeshipUpload
     }
 }

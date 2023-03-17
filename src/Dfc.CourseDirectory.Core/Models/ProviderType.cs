@@ -8,7 +8,6 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         None = 0,
         FE = 1,
-        Apprenticeships = 99,
         TLevels = 4
     }
 
@@ -24,7 +23,6 @@ namespace Dfc.CourseDirectory.Core.Models
             var parts = providerType.SplitFlags()
                 .Select(part => part switch
                 {
-                    ProviderType.Apprenticeships => null,
                     ProviderType.FE => "FE Courses",
                     ProviderType.TLevels => "T Levels",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
