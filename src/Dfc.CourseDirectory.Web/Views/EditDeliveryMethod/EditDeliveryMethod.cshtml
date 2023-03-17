@@ -10,7 +10,6 @@
 
 <div class="cd-dashboard govuk-body ">
     <form class="govuk-!-margin-bottom-9" id="editDeliveryMethod" asp-controller="EditDeliveryMethod" asp-action="Index" method="post">
-        <span class="govuk-caption-l">@Model.ApprenticeshipTitle</span>
 
         @if (!string.IsNullOrEmpty(@ViewBag.Message))
         {
@@ -21,15 +20,6 @@
                 ClassType = "info-summary"
             })
         }
-
-        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is an issue with this apprenticeship
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list"></ul>
-            </div>
-        </div>
 
         <h1 class="govuk-heading-l">Select delivery options</h1>
 
