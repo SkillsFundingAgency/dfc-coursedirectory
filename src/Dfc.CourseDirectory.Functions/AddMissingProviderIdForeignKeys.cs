@@ -32,15 +32,6 @@ FROM Pttcd.Venues v
 JOIN Pttcd.Providers p ON v.ProviderUkprn = p.Ukprn
 WHERE v.ProviderId IS NULL");
 
-            await ExecuteBatchedStatement(@"
-UPDATE Pttcd.Apprenticeships
-SET ProviderId = p.ProviderId
-FROM Pttcd.Apprenticeships a
-JOIN Pttcd.Providers p ON a.ProviderUkprn = a.ProviderUkprn
-WHERE a.ProviderId IS NULL OR a.ProviderId = '00000000-0000-0000-0000-000000000000' OR NOT EXISTS (
-    SELECT 1 FROM Pttcd.Providers x WHERE x.ProviderId = a.ProviderId
-)");
-
             async Task ExecuteBatchedStatement(string sqlStatement)
             {
                 const int batchSize = 200;
