@@ -36,30 +36,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
                 success => RedirectToAction(nameof(ProviderDetails)).WithProviderContext(_providerContext));
         }
 
-        [HttpGet("info")]
-        [AuthorizeAdmin]
-        [RestrictProviderTypes(ProviderType.Apprenticeships)]
-        public async Task<IActionResult> EditProviderInfo()
-        {
-            var query = new EditProviderInfo.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
-            return await _mediator.SendAndMapResponse(
-                query,
-                command => View(command));
-        }
-
-        [HttpPost("info")]
-        [AuthorizeAdmin]
-        [RestrictProviderTypes(ProviderType.Apprenticeships)]
-        public async Task<IActionResult> EditProviderInfo(EditProviderInfo.Command command)
-        {
-            command.ProviderId = _providerContext.ProviderInfo.ProviderId;
-            return await _mediator.SendAndMapResponse(
-                command,
-                response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(nameof(ProviderDetails)).WithProviderContext(_providerContext)));
-        }
-
         [HttpGet("")]
         public async Task<IActionResult> ProviderDetails()
         {

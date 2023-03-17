@@ -41,9 +41,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderTypeRep
         [Name("Live Course Count")]
         public int LiveCourseCount { get; set; }
 
-        [Name("Live Apprenticeship Count")]
-        public int LiveApprenticeshipCount { get; set; }
-
         [Name("Live T Level Count")]
         public int LiveTLevelCount { get; set; }
 
@@ -76,7 +73,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderTypeRep
                         ProviderStatusDescription = result.ProviderStatus.ToString(),
                         UkrlpProviderStatus = result.UkrlpProviderStatusDescription,
                         LiveCourseCount = result.LiveCourseCount,
-                        LiveApprenticeshipCount = result.LiveApprenticeshipCount,
                         LiveTLevelCount = result.LiveTLevelCount
                     };
                 }

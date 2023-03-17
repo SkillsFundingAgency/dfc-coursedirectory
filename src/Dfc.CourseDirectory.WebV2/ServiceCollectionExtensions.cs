@@ -63,7 +63,6 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Conventions.Add(new V2ActionModelConvention());
 
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
-                    options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new DeactivatedProviderErrorActionFilter());
                     options.Filters.Add(new NotAuthorizedExceptionFilter());
                     options.Filters.Add(new InvalidStateExceptionFilter());
@@ -106,7 +105,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ISignInAction, DfeUserInfoHelper>();
             services.AddTransient<ISignInAction, EnsureProviderExistsSignInAction>();
             services.AddTransient<ISignInAction, SignInTracker>();
-            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
 
             services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
@@ -147,7 +145,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.TryAddScoped<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.Decorate<IFeatureFlagProvider, DataManagementFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
-            services.AddBehaviors(typeof(ServiceCollectionExtensions).Assembly);
             services.AddSingleton<IStandardsCache, StandardsCache>();
             services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
@@ -159,15 +156,11 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<UkrlpSyncHelper>();
             services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             services.AddTransient<MptxManager>();
-            services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
             services.AddTransient<ITagHelperComponent, AppendMptxInstanceTagHelperComponent>();
-            services.AddTransient<Features.ApprenticeshipQA.ProviderAssessment.JourneyModelInitializer>();
-            services.AddTransient<Features.ApprenticeshipQA.ApprenticeshipAssessment.JourneyModelInitializer>();
             services.Configure<Settings>(configuration);
             services.AddSingleton<Settings>(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
             services.AddScoped<ICookieSettingsProvider, CookieSettingsProvider>();
             services.AddTransient<ITagHelperComponent, AnalyticsTagHelperComponent>();
-            services.Configure<ApprenticeshipBulkUploadSettings>(configuration.GetSection("ApprenticeshipBulkUpload"));
             services.AddTransient<ProviderContextHelper>();
             services.AddTransient<Features.Venues.EditVenue.EditVenueJourneyModelFactory>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
