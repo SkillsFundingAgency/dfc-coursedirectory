@@ -46,11 +46,11 @@
             </div>
         </div>
 
-        <h2 class="govuk-heading-m">
-            Apprenticeship training courses
-        </h2>
         @if (Model.HaveSubmission)
         {
+            <h2 class="govuk-heading-m">
+                Apprenticeship training courses
+            </h2>
             @foreach (var app in Model.ApprenticeshipAssessments)
             {
                 <div class="pttcd-apprenticeship-qa__provider-selected__summary govuk-!-margin-bottom-9" data-testid="apprenticeship-assessment">
@@ -67,16 +67,6 @@
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <div class="pttcd-apprenticeship-qa__provider-selected__summary pttcd-apprenticeship-qa-provider-selected-apprenticeship govuk-!-margin-bottom-9">
-                <div class="pttcd-apprenticeship-qa__provider-selected__summary__label">
-                    Not submitted
-                </div>
-                <div class="pttcd-apprenticeship-qa__provider-selected__summary__status">
-                </div>
-            </div>
         }
 
         @if (Model.SubmissionPassed != null)
