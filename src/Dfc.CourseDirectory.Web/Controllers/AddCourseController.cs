@@ -880,6 +880,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var publishedCourse = Session.GetObject<PublishedCourseViewModel>(SessionPublishedCourse);
 
+            //Generate Live service URL accordingly based on current host
+            string host = Request.Host.ToString();
+            if (host.Contains("dev-") || host.Contains("localhost"))
+            {
+                ViewBag.LiveServiceURl = "https://dev-beta.nationalcareersservice.org.uk/";
+            }
+            if (host.Contains("sit-") || host.Contains("sit2-"))
+            {
+                ViewBag.LiveServiceURl = "https://sit-beta.nationalcareersservice.org.uk/";
+            }
+            if (host.Contains("pp-"))
+            {
+                ViewBag.LiveServiceURl = "https://staging.nationalcareers.service.gov.uk/";
+            }
+            else
+            {
+                ViewBag.LiveServiceURl = "https://nationalcareers.service.gov.uk/";
+            }
+
             if (publishedCourse == null)
             {
                 var ukprn = Session.GetInt32("UKPRN");
