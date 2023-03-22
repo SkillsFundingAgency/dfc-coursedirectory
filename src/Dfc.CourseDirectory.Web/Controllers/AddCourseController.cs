@@ -882,6 +882,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
+            ViewBag.HostURL=host;
             if (host.Contains("dev-") || host.Contains("localhost"))
             {
                 ViewBag.LiveServiceURl = "https://dev-beta.nationalcareersservice.org.uk/";
