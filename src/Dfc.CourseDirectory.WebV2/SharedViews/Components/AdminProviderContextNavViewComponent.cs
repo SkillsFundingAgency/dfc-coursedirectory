@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
         {
             var vm = ProviderNavViewModel.Create(providerInfo);
 
-            return View("~/SharedViews/Components/ProviderTopNav.cshtml", vm);
+            return View("~/SharedViews/Components/AdminProviderContextNav.cshtml", vm);
         }
     }
 }
