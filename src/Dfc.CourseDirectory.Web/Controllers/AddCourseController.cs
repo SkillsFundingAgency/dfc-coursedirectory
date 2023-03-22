@@ -881,7 +881,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var publishedCourse = Session.GetObject<PublishedCourseViewModel>(SessionPublishedCourse);
 
             //Generate Live service URL accordingly based on current host
-            string host = Request.Host.ToString();
+            string host = HttpContext.Request.Host.ToString();
             if (host.Contains("dev-") || host.Contains("localhost"))
             {
                 ViewBag.LiveServiceURl = "https://dev-beta.nationalcareersservice.org.uk/";
