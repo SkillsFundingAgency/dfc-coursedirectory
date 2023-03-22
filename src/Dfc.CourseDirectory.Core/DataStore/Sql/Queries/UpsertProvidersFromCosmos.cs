@@ -26,7 +26,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public IEnumerable<UpsertProvidersRecordContact> Contacts { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public string UpdatedBy { get; set; }
-        public bool? NationalApprenticeshipProvider { get; set; }
         public int? TribalProviderId { get; set; }
         public bool? BulkUploadInProgress { get; set; }
         public bool? BulkUploadPublishInProgress { get; set; }
