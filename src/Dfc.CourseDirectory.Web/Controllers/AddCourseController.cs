@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -32,6 +33,7 @@ using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static GovUk.Frontend.AspNetCore.ComponentDefaults;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -810,7 +812,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
-                CourseId = Guid.NewGuid(),
+                CourseId = courseId,
                 ProviderId = providerId,
                 LearnAimRef = learnAimRef,
                 WhoThisCourseIsFor = courseFor ?? "",
@@ -886,6 +888,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return ukprn.HasValue
                     ? RedirectToAction("Index", "ProviderDashboard")
                     : RedirectToAction("ProviderSearch", "ProviderSearch");
+            }
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            string commonurl = "find-a-course/course-details?CourseId="+ publishedCourse.CourseId+"&r="+ publishedCourse.CourseRunId;
+            if (host.Contains("dev-", StringComparison.OrdinalIgnoreCase))
+            {
+                ViewBag.LiveServiceURl = "https://dev-beta.nationalcareersservice.org.uk/"+ commonurl;
+            }
+            else if (host.Contains("sit-", StringComparison.OrdinalIgnoreCase))
+            {
+                ViewBag.LiveServiceURl = "https://sit-beta.nationalcareersservice.org.uk/" + commonurl;
+            }
+            else if (host.Contains("sit2-", StringComparison.OrdinalIgnoreCase))
+            {
+                ViewBag.LiveServiceURl = "https://sit-beta.nationalcareersservice.org.uk/" + commonurl;
+            }
+            else if (host.Contains("pp-", StringComparison.OrdinalIgnoreCase))
+            {
+                ViewBag.LiveServiceURl = "https://staging.nationalcareers.service.gov.uk/" + commonurl;
+            }
+            else
+            {
+                ViewBag.LiveServiceURl = "https://nationalcareers.service.gov.uk/" + commonurl;
             }
 
             Session.Remove(SessionPublishedCourse);
