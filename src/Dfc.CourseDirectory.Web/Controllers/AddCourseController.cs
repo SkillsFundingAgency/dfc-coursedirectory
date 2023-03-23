@@ -812,7 +812,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
-                CourseId = Guid.NewGuid(),
+                CourseId = courseId,
                 ProviderId = providerId,
                 LearnAimRef = learnAimRef,
                 WhoThisCourseIsFor = courseFor ?? "",
