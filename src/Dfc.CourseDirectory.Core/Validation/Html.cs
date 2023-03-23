@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using HtmlAgilityPack;
-using Sanitizer = Ganss.XSS.HtmlSanitizer;
+using Sanitizer = Ganss.Xss.HtmlSanitizer;
 
 namespace Dfc.CourseDirectory.Core.Validation
 {
@@ -32,7 +32,11 @@ namespace Dfc.CourseDirectory.Core.Validation
                 return html;
             }
 
-            var sanitizer = new Sanitizer(allowedTags: allowedTags);
+            var sanitizer = new Sanitizer();
+            foreach (var allowedTag in allowedTags)
+            {
+                sanitizer.AllowedTags.Add(allowedTag);
+            }
             return sanitizer.Sanitize(html);
         }
 
