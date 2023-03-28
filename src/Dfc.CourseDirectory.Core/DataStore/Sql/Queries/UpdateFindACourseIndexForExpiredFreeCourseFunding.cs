@@ -6,6 +6,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     public class UpdateFindACourseIndexForExpiredFreeCourseFunding : ISqlQuery<Success>
     {
-        public IEnumerable<Guid> LearnAimRefs { get; set; }
+        public string LearnAimRef { get; set; }
     }
 }
