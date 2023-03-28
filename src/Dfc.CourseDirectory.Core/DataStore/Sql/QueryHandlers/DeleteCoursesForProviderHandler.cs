@@ -22,11 +22,7 @@ AND c.ProviderId = @ProviderId
 UPDATE Pttcd.Courses
 SET CourseStatus = {(int)CourseStatus.Archived}
 WHERE CourseStatus <> {(int)CourseStatus.Archived}
-AND ProviderId = @ProviderId
-
-UPDATE Pttcd.FindACourseIndex
-SET Live = 0
-WHERE ProviderId = @ProviderId";
+AND ProviderId = @ProviderId";
 
             var paramz = new
             {
