@@ -1,11 +1,13 @@
-﻿@{
+﻿@using Dfc.CourseDirectory.WebV2.Features.ChooseQualification
+@{
     Layout = "_V2LayoutProviderContext";
-    ViewContext.SetLayoutData("Course-Qualification Search");
+    ViewContext.SetLayoutData(title: $"Course-Qualification Search");
     var returnUrl = (string)ViewData["ReturnUrl"];
     var SearchUrl = (string)ViewData["ReturnUrl"];
 }
-@using Flurl
-@model Dfc.CourseDirectory.WebV2.Features.ChooseQualification.ViewModel
+@model ViewModel
+
+
 
 
 <div class="govuk-grid-row">
@@ -17,11 +19,11 @@
 
 
 <form method="get" asp-action="search" asp-all-route-data="@ProviderContext.RouteValues">
-    <input type="hidden" name="returnUrl" value="@returnUrl"/>
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
     @ProviderContext.CreateHiddenInput()
     <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="SearchTerm" data-testid="SearchErrorMessage"/>
+            <govuk-error-summary-item asp-for="SearchTerm" data-testid="SearchErrorMessage" />
         </govuk-error-summary>
         <div class="govuk-form-group govuk-!-margin-bottom-0">
             <div class="govuk-grid-row">
@@ -29,9 +31,7 @@
                     <govuk-input asp-for="SearchTerm">
                         <govuk-input-label>Search by Learning Aims Reference (LARS), title or keyword</govuk-input-label>
                         <govuk-input-hint>Enter a minimum of 3 characters</govuk-input-hint>
-                        <govuk-input-suffix class=" pttcd-c-search-input__buttoncontainer" id="RemoveAria">
-                            <button class="govuk-button pttcd-c-search-input__button" data-module="govuk-button" data-form-type="">Search</button>
-                        </govuk-input-suffix>
+                        <govuk-input-suffix class=" pttcd-c-search-input__buttoncontainer" id="RemoveAria"><button class="govuk-button pttcd-c-search-input__button" data-module="govuk-button" data-form-type="">Search</button></govuk-input-suffix>
                     </govuk-input>
                 </div>
             </div>
@@ -44,12 +44,7 @@
         @if (Model.SearchResults.Any())
         {
             <div class="govuk-grid-column-full">
-                <p class="resultscount">
-                    Found
-                    <span data-testid="resultscount">
-                        <strong>@Model.Total</strong>
-                    </span> results for <strong>@Model.SearchTerm</strong>
-                </p>
+                <p class="resultscount">Found <span data-testid="resultscount"><strong>@Model.Total</strong></span> results for <strong>@Model.SearchTerm</strong></p>
             </div>
         }
         <div class="govuk-grid-row">
@@ -120,7 +115,7 @@
                     {
                         @foreach (var item in Model.SearchResults)
                         {
-                            var resultReturnUrl = new Url(returnUrl).SetQueryParam("LearnAimRef", item.LARSCode).SetQueryParam("CourseName", item.CourseName);
+                            var resultReturnUrl = new Flurl.Url(returnUrl).SetQueryParam("LearnAimRef", item.LARSCode).SetQueryParam("CourseName", item.CourseName);
                             <div class="pttcd-lars-search-result__container">
                                 <h2 class="govuk-heading-m">@item.CourseName</h2>
                                 <table class="govuk-table govuk-!-margin-bottom-0">
@@ -148,12 +143,10 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <p class="govuk-body">
-                                    <a class="link--button" id="" href="@resultReturnUrl">Choose this qualification</a>
-                                </p>
+                                <p class="govuk-body"><a class="link--button" id="" href="@resultReturnUrl">Choose this qualification</a></p>
                             </div>
                         }
-                        <vc:pager data-testid="choose-qualification-pager" asp-all-route-data="@ProviderContext.RouteValues" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, Model.SearchTerm, ProviderContext.ProviderInfo.ProviderId }))"/>
+                        <vc:pager data-testid="choose-qualification-pager" asp-all-route-data="@ProviderContext.RouteValues" current-page=@Model.PageNumber total-pages=@Model.TotalPages get-page-url="@(pageNumber => Url.Action("Search", new { PageNumber = pageNumber, SearchTerm = Model.SearchTerm, ProviderId=@ProviderContext.ProviderInfo.ProviderId }))" />
                     }
                     else
                     {
