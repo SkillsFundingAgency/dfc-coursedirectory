@@ -16,8 +16,7 @@
     <PackageReference Include="libphonenumber-csharp" Version="8.13.6" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.32.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.10" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.19.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Spatial" Version="7.14.1" />
     <PackageReference Include="Microsoft.SqlServer.DACFx" Version="161.8089.0" />
