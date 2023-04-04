@@ -16,7 +16,7 @@ public class UpdateFindACourseIndexExpiredFreeCourses
 
     [FunctionName(nameof(UpdateFindACourseIndexExpiredFreeCourses))]
     [Singleton]
-    public async Task RunAsync([TimerTrigger("0 0 20 28-31 * *", RunOnStartup = true)] TimerInfo myTimer)
+    public async Task RunAsync([TimerTrigger("0 0 5 * * *")] TimerInfo myTimer)
     {
         using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
         {
