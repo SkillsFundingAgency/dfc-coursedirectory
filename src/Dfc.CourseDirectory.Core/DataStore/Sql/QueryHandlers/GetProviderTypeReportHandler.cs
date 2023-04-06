@@ -15,6 +15,7 @@ SELECT      p.Ukprn as ProviderUkprn,
             p.ProviderName,
             case 
             when p.ProviderType=3 then 1
+            when p.ProviderType=6 then 4
             when p.ProviderType=7 then 5
             else p.ProviderType
             end as ProviderType,
