@@ -19,8 +19,8 @@ SELECT
     c.WhereNext, c.DataIsHtmlEncoded,
     lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
 FROM Pttcd.Courses c
-JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
-JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
+LEFT JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
+LEFT JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
 WHERE c.ProviderId = @ProviderId
 AND c.CourseStatus <> {(int)CourseStatus.Archived}
 

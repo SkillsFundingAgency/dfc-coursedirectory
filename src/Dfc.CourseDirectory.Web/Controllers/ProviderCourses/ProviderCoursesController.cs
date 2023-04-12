@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             foreach (var level in levelFilter)
             {
                 textValue = string.Empty;
-
+                if (level.Key != null)
                 switch (level.Key.ToLower())
                 {
                     case "e":
