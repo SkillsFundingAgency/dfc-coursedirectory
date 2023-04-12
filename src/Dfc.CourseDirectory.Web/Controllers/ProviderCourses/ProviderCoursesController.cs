@@ -202,8 +202,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             foreach (var level in levelFilter)
             {
                 textValue = string.Empty;
+                string levelKey = string.Empty;
                 if (level.Key != null)
-                switch (level.Key.ToLower())
+                    levelKey = level.Key;
+                switch (levelKey.ToLower())
                 {
                     case "e":
                         textValue = "Entry level";
@@ -218,7 +220,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         textValue = "Mixed";
                         break;
                     default:
-                        textValue = "Level " + level.Key;
+                        textValue = "Level " + levelKey;
                         break;
 
                 }
@@ -226,7 +228,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 ProviderCoursesFilterItemModel itemModel = new ProviderCoursesFilterItemModel()
                 {
                     Id = "level-" + s++.ToString(),
-                    Value = level.Key,
+                    Value = levelKey,
                     Text = textValue,
                     Name = "level"
                 };
