@@ -31,5 +31,19 @@ namespace Dfc.CourseDirectory.Core.Models
 
             return parts.ToCommaSeparatedString(finalValuesConjunction: "");
         }
+
+        public static string ToDescriptionWithoutApprenticeships(this ProviderType providerType)
+        {
+            var parts = providerType.ProviderTypeSplitFlags()
+                .Select(part => part switch
+                {
+                    ProviderType.FE => "FE Courses",
+                    ProviderType.TLevels => "T Levels",
+                    _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
+                })
+                .ToArray();
+
+            return parts.ToCommaSeparatedString(finalValuesConjunction: "");
+        }
     }
 }

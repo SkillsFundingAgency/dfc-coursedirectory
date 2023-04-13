@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderTypeRep
                         ProviderUkprn = result.ProviderUkprn,
                         ProviderName = result.ProviderName,
                         ProviderType = (int)result.ProviderType,
-                        ProviderTypeDescription = string.Join("; ", result.ProviderType.SplitFlags().DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescription())),
+                        ProviderTypeDescription = string.Join("; ", result.ProviderType.ProviderTypeSplitFlags().DefaultIfEmpty(ProviderType.None).Select(p => p.ToDescriptionWithoutApprenticeships())),
                         ProviderStatus = (int)result.ProviderStatus,
                         ProviderStatusDescription = result.ProviderStatus.ToString(),
                         UkrlpProviderStatus = result.UkrlpProviderStatusDescription,

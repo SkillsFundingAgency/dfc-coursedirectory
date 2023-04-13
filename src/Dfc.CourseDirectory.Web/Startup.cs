@@ -92,8 +92,7 @@ namespace Dfc.CourseDirectory.Web
                 .AddMvc(options =>
                 {
                     options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                })                
                 .AddSessionStateTempDataProvider();
 
 #if DEBUG

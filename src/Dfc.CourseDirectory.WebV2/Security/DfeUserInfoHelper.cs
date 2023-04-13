@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using JWT.Algorithms;
 using JWT.Builder;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Security
@@ -39,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 .Issuer(settings.Issuer)
                 .Audience(settings.Audience)
                 .WithSecret(settings.ApiSecret)
-                .Build();
+                .Encode();
 
         public async Task OnUserSignedIn(SignInContext context)
         {
