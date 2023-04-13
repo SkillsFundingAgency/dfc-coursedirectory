@@ -582,10 +582,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             // Need to revalidate if any venues had been added/updated/removed for this provider
             // (since it affects duplicate checking)
-            // or if any courses, apprenticeships or T Levels have had any venues associated or deassociated
+            // or if any courses or T Levels have had any venues associated or deassociated
             // (since it affects the supplementary rows required).
             // Figuring out these scenarios exactly isn't practical so we check if any
-            // venue, course, apprenticeship or T Level has been added/updated/removed for the provider.
+            // venue, course or T Level has been added/updated/removed for the provider.
 
             var lastUpdatedOffering = await sqlQueryDispatcher.ExecuteQuery(new GetProviderOfferingsLastUpdated()
             {

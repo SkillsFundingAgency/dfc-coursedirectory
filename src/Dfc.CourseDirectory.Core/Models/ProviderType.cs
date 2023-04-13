@@ -8,7 +8,6 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         None = 0,
         FE = 1,
-        Apprenticeships = 2,
         TLevels = 4
     }
 
@@ -24,14 +23,27 @@ namespace Dfc.CourseDirectory.Core.Models
             var parts = providerType.SplitFlags()
                 .Select(part => part switch
                 {
-                    ProviderType.Apprenticeships => "Apprenticeships",
                     ProviderType.FE => "FE Courses",
                     ProviderType.TLevels => "T Levels",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
                 })
                 .ToArray();
 
-            return parts.ToCommaSeparatedString(finalValuesConjunction: "&");
+            return parts.ToCommaSeparatedString(finalValuesConjunction: "");
+        }
+
+        public static string ToDescriptionWithoutApprenticeships(this ProviderType providerType)
+        {
+            var parts = providerType.ProviderTypeSplitFlags()
+                .Select(part => part switch
+                {
+                    ProviderType.FE => "FE Courses",
+                    ProviderType.TLevels => "T Levels",
+                    _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
+                })
+                .ToArray();
+
+            return parts.ToCommaSeparatedString(finalValuesConjunction: "");
         }
     }
 }

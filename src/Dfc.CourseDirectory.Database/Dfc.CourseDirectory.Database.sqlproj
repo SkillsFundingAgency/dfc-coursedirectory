@@ -17,7 +17,7 @@
     <ModelCollation>1033,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetLanguage>CS</TargetLanguage>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
@@ -85,6 +85,7 @@
     <EnableFullTextSearch>True</EnableFullTextSearch>
     <DefaultFilegroup>PRIMARY</DefaultFilegroup>
     <DacVersion>2019.06.27.001</DacVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -222,27 +223,17 @@
     <Build Include="Pttcd\Tables\Users.sql" />
     <Build Include="Pttcd\Tables\UserSignIns.sql" />
     <Build Include="Pttcd\Indexes\IX_UserSignsIn_UserId.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipQASubmissions.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipQASubmissionProviderAssessments.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipQASubmissionApprenticeships.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipQASubmissionApprenticeshipAssessments.sql" />
     <Build Include="Pttcd\Tables\Providers.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipQAUnableToCompleteInfo.sql" />
     <Build Include="Pttcd\Tables\UserProviders.sql" />
     <Build Include="Pttcd\Indexes\IX_UserProviders_Provider.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipQASubmissionApprenticeshipLocations.sql" />
     <Build Include="Pttcd\Tables\ProviderContacts.sql" />
     <Build Include="Pttcd\Indexes\IX_ProviderContacts_ProviderContactIndex.sql" />
     <Build Include="Pttcd\Tables\Venues.sql" />
     <Build Include="Pttcd\Tables\Courses.sql" />
     <Build Include="Pttcd\Tables\CourseRuns.sql" />
-    <Build Include="Pttcd\Tables\Apprenticeships.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipLocations.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipLocationRegions.sql" />
     <Build Include="Pttcd\Tables\CourseRunRegions.sql" />
     <Build Include="Pttcd\Indexes\IX_Providers_Ukprn.sql" />
     <Build Include="Pttcd\Indexes\IX_Venues_Provider.sql" />
-    <Build Include="Pttcd\Indexes\IX_Apprenticeships_ProviderUkprn.sql" />
     <Build Include="Pttcd\Indexes\IX_Courses_ProviderUkprn.sql" />
     <Build Include="Pttcd\Tables\Regions.sql" />
     <Build Include="Pttcd\Tables\CourseRunSubRegions.sql" />
@@ -274,7 +265,6 @@
     <Build Include="Pttcd\Tables\VenueUploadRows.sql" />
     <Build Include="Pttcd\Indexes\IX_VenueUploadRows_VenueUploadRowNumber.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseRuns_VenueId.sql" />
-    <Build Include="Pttcd\Indexes\IX_ApprenticeshipLocations_VenueId.sql" />
     <Build Include="Pttcd\Indexes\IX_TLevelLocations_VenueId.sql" />
     <Build Include="Pttcd\Types\StringTable.sql" />
     <Build Include="Pttcd\Types\VenueUploadRowTable.sql" />
@@ -291,9 +281,6 @@
     <Build Include="Pttcd\Tables\CampaignProviderCourses.sql" />
     <Build Include="Pttcd\Types\ProviderLearnAimRefTable.sql" />
     <Build Include="Pttcd\Tables\FindACourseIndexCampaignCodes.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipUploadRows.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipUploads.sql" />
-    <Build Include="Pttcd\Types\ApprenticeshipUploadRowTable.sql" />
     <Build Include="Pttcd\Types\CourseRunSubRegionsTable.sql" />
     <Build Include="Pttcd\Types\CourseRunsTable.sql" />
     <Build Include="Pttcd\Indexes\IX_Courses_ProviderId.sql" />
@@ -305,11 +292,7 @@
     <Build Include="Pttcd\Indexes\IX_FindACourseIndexCampaignCodes_ProviderLearnAimRef.sql" />
     <Build Include="Pttcd\Indexes\IX_CourseRuns_CreatedOn.sql" />
     <Build Include="Pttcd\Indexes\IX_FindACourseIndex_CourseRunId.sql" />
-    <Build Include="Pttcd\Tables\ApprenticeshipUploadRowSubRegions.sql" />
-    <Build Include="Pttcd\Types\ApprenticeshipUploadRowSubRegionsTable.sql" />
     <Build Include="Pttcd\Types\StandardCodesTable.sql" />
-    <Build Include="Pttcd\Types\ApprenticeshipLocationsTable.sql" />
-    <Build Include="Pttcd\Types\ApprenticeshipLocationSubRegionsTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

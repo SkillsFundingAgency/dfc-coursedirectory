@@ -17,7 +17,6 @@ SELECT  ProviderId,
         ProviderType,
         Alias,
         DisplayNameSource,
-        ApprenticeshipQAStatus,
         LearnerSatisfaction,
         EmployerSatisfaction
 FROM    Pttcd.Providers

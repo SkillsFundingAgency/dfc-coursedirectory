@@ -28,18 +28,11 @@ LEFT OUTER JOIN (SELECT COUNT(1) AS LiveTLevelCount,
                 WHERE t.TLevelStatus = ${(int)TLevelStatus.Live}
                 GROUP BY [ProviderId]
                 ) tl on tl.ProviderId = p.ProviderId
-LEFT OUTER JOIN ( SELECT COUNT(1) AS LiveApprenticeshipCount, 
-                        [ProviderId]
-                FROM Pttcd.Apprenticeships a
-                WHERE a.ApprenticeshipStatus = ${(int)ApprenticeshipStatus.Live}
-                GROUP BY [ProviderId]
-                ) ap on ap.ProviderId = p.ProviderId
 WHERE (pc.AddressPostcode IS NULL OR (pc.AddressSaonDescription IS NULL AND pc.AddressPaonDescription IS NULL AND pc.AddressStreetDescription IS NULL))
 AND	  p.ProviderStatus = ${(int)ProviderStatus.Onboarded}
 AND    (
         cu.LiveCourseCount            > 0 
         OR tl.LiveTLevelCount         > 0 
-        OR ap.LiveApprenticeshipCount > 0
 	    )
 ORDER BY p.Ukprn ASC
 ";
