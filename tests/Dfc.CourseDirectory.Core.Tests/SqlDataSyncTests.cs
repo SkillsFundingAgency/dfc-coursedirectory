@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Tests
                 Id = Guid.NewGuid(),
                 UnitedKingdomProviderReferenceNumber = "12345",
                 Status = ProviderStatus.Onboarded,
-                ProviderType = ProviderType.FE | ProviderType.Apprenticeships,
+                ProviderType = ProviderType.FE,
                 ProviderName = "Test Provider",
                 ProviderStatus = "Active",
                 MarketingInformation = "Marketing information",
@@ -36,7 +36,6 @@ namespace Dfc.CourseDirectory.Core.Tests
                 Alias = "Alias",
                 DateUpdated = Clock.UtcNow,
                 UpdatedBy = "Tests",
-                NationalApprenticeshipProvider = true,
                 ProviderId = 123456,
                 BulkUploadStatus = new ProviderBulkUploadStatus
                 {
@@ -94,7 +93,6 @@ namespace Dfc.CourseDirectory.Core.Tests
                     p.ProviderId == provider.Id &&
                     p.Ukprn == provider.Ukprn &&
                     p.ProviderStatus == ProviderStatus.Onboarded &&
-                    p.ProviderType == (ProviderType.FE | ProviderType.Apprenticeships) &&
                     p.UkrlpProviderStatusDescription == "Active" &&
                     p.MarketingInformation == "Marketing information" &&
                     p.CourseDirectoryName == "Another name" &&
@@ -102,7 +100,6 @@ namespace Dfc.CourseDirectory.Core.Tests
                     p.Alias == "Alias" &&
                     p.UpdatedOn == Clock.UtcNow &&
                     p.UpdatedBy == "Tests" &&
-                    p.NationalApprenticeshipProvider == provider.NationalApprenticeshipProvider &&
                     p.TribalProviderId == provider.ProviderId &&
                     p.BulkUploadInProgress == provider.BulkUploadStatus?.InProgress &&
                     p.BulkUploadPublishInProgress == provider.BulkUploadStatus?.PublishInProgress &&

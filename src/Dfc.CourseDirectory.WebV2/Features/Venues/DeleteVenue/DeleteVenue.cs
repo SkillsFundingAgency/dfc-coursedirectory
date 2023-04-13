@@ -36,7 +36,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
         public Guid ProviderId { get; set; }
         public bool Confirm { get; set; }
         public IReadOnlyCollection<AffectedCourseViewModel> AffectedCourses { get; set; }
-        public IReadOnlyCollection<AffectedApprenticeshipViewModel> AffectedApprenticeships { get; set; }
         public IReadOnlyCollection<AffectedTLevelViewModel> AffectedTLevels { get; set; }
     }
 
@@ -52,12 +51,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
         public Guid CourseId { get; set; }
         public Guid CourseRunId { get; set; }
         public string CourseName { get; set; }
-    }
-
-    public class AffectedApprenticeshipViewModel
-    {
-        public Guid ApprenticeshipId { get; set; }
-        public string ApprenticeshipName { get; set; }
     }
 
     public class AffectedTLevelViewModel
@@ -158,10 +151,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId })) :
                 Array.Empty<Course>();
 
-            var linkedApprenticeships = offeringInfo.LinkedApprenticeships.Count > 0 ?
-                (await _sqlQueryDispatcher.ExecuteQuery(new GetApprenticeshipsForProvider() { ProviderId = providerId })) :
-                Array.Empty<Apprenticeship>();
-
             var linkedTLevels = offeringInfo.LinkedTLevels.Count > 0 ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelsForProvider() { ProviderId = providerId })) :
                 Array.Empty<TLevel>();
@@ -180,15 +169,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                             .Single(x => c.CourseId == x.CourseId)
                             .CourseRuns.Single(cr => cr.CourseRunId == c.CourseRunId)
                             .CourseName
-                    })
-                    .ToArray(),
-                AffectedApprenticeships = offeringInfo.LinkedApprenticeships
-                    .Select(a => new AffectedApprenticeshipViewModel()
-                    {
-                        ApprenticeshipId = a.ApprenticeshipId,
-                        ApprenticeshipName = linkedApprenticeships
-                            .Single(x => a.ApprenticeshipId == x.ApprenticeshipId)
-                            .Standard.StandardName
                     })
                     .ToArray(),
                 AffectedTLevels = offeringInfo.LinkedTLevels
@@ -219,10 +199,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
                 RuleFor(c => c.AffectedCourses)
                     .Must(_ => viewModel.AffectedCourses.Count <= 0)
                     .WithMessage("The affected courses have changed");
-
-                RuleFor(c => c.AffectedApprenticeships)
-                    .Must(_ => viewModel.AffectedApprenticeships.Count <= 0)
-                    .WithMessage("The affected apprenticeships have changed");
 
                 RuleFor(c => c.AffectedTLevels)
                     .Must(_ => viewModel.AffectedTLevels.Count <= 0)

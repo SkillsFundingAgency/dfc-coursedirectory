@@ -184,30 +184,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
-        [InlineData(ProviderType.FE)]
-        [InlineData(ProviderType.TLevels)]
-        public async Task Get_NotApprenticeshipProviderType_DoesNotRenderMarketingInformation(ProviderType providerType)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerType: providerType,
-                marketingInformation: "Marketing information");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Null(doc.GetElementByTestId("MarketingInformation"));
-        }
-
-        [Theory]
         [InlineData(ProviderDisplayNameSource.ProviderName, "My Provider")]
         [InlineData(ProviderDisplayNameSource.TradingName, "My Trading Name")]
         public async Task Get_ProviderHasAlias_RendersCorrectDisplayName(

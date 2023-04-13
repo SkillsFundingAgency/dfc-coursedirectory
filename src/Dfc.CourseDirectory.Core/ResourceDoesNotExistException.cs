@@ -4,8 +4,7 @@ namespace Dfc.CourseDirectory.Core
 {
     public enum ResourceType
     {
-        Provider, 
-        Apprenticeship,
+        Provider,
         Course,
         CourseRun,
         Venue,

@@ -23,7 +23,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 contacts: new[]
                 {
                     new CreateProviderContact()
@@ -84,7 +83,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
                 contacts: new[]
                 {
                     new CreateProviderContact()
