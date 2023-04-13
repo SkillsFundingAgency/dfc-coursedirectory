@@ -7,9 +7,6 @@
     var affectedCoursesErrors = ViewData.ModelState[nameof(ViewModel.AffectedCourses)]?.Errors
         ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
 
-    var affectedApprenticeshipsErrors = ViewData.ModelState[nameof(ViewModel.AffectedApprenticeships)]?.Errors
-        ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
-
     var affectedTLevelsErrors = ViewData.ModelState[nameof(ViewModel.AffectedTLevels)]?.Errors
         ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
 }
@@ -23,7 +20,6 @@
 
 <govuk-error-summary>
     <govuk-error-summary-item asp-for="AffectedCourses" data-testId="affected-courses-error-message" />
-    <govuk-error-summary-item asp-for="AffectedApprenticeships" data-testId="affected-apprenticeships-error-message" />
     <govuk-error-summary-item asp-for="AffectedTLevels" data-testId="affected-tlevels-error-message" />
     <govuk-error-summary-item asp-for="Confirm" data-testId="confirm-error-message" />
 </govuk-error-summary>
@@ -57,7 +53,6 @@
             </govuk-summary-list>
 
             @if (Model.AffectedCourses.Count > 0
-               || Model.AffectedApprenticeships.Count > 0
                || Model.AffectedTLevels.Count > 0)
             {
             <govuk-warning-text icon-fallback-text="Warning">
@@ -86,34 +81,6 @@
                                     {
                                         <li data-testId="affected-course-@affectedCourseRun.CourseId">
                                             <a asp-controller="CourseSummary" asp-action="Index" asp-route-courseId="@affectedCourseRun.CourseId" asp-route-courseRunId="@affectedCourseRun.CourseRunId" class="govuk-link">@affectedCourseRun.CourseName</a>
-                                        </li>
-                                    }
-                                </ul>
-                            </govuk-details-text>
-                        </govuk-details>
-                    </div>
-                }
-
-                @if (Model.AffectedApprenticeships.Count > 0)
-                {
-                    <div class="govuk-form-group@(affectedApprenticeshipsErrors.Any() ? " govuk-form-group--error" : string.Empty)">
-
-                        @foreach (var error in affectedApprenticeshipsErrors)
-                        {
-                            <govuk-error-message>
-                                @error.ErrorMessage
-                            </govuk-error-message>
-                        }
-
-                        <govuk-details>
-                            <govuk-details-summary>@Model.AffectedApprenticeships.Count Apprenticeship@(Pluralise(Model.AffectedApprenticeships.Count > 1))</govuk-details-summary>
-                            <govuk-details-text>
-                                <p class="govuk-body">The following apprenticeships are linked to this venue</p>
-                                <ul class="govuk-list govuk-list--bullet">
-                                    @foreach (var affectedApprenticeship in Model.AffectedApprenticeships.OrderBy(a => a.ApprenticeshipName))
-                                    {
-                                        <li data-testId="affected-apprenticeship-@affectedApprenticeship.ApprenticeshipId">
-                                            <a asp-controller="Apprenticeships" asp-action="ViewAndEdit" asp-route-id="@affectedApprenticeship.ApprenticeshipId" class="govuk-link">@affectedApprenticeship.ApprenticeshipName</a>
                                         </li>
                                     }
                                 </ul>

@@ -69,15 +69,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(5);
+            topLevelLinks.Count.Should().Be(4);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
-                topLevelLinks[1].TestId.Should().Be("topnav-qa");
-                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
-                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[4].TestId.Should().Be("topnav-signout");
+                topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[3].TestId.Should().Be("topnav-signout");
             }
 
             subNavLinks.Count.Should().Be(0);
@@ -105,15 +104,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(5);
+            topLevelLinks.Count.Should().Be(4);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
-                topLevelLinks[1].TestId.Should().Be("topnav-qa");
-                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
-                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[4].TestId.Should().Be("topnav-signout");
+                topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[3].TestId.Should().Be("topnav-signout");
             }
 
             Assert.Equal(4, subNavLinks.Count);
@@ -150,15 +148,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(5);
+            topLevelLinks.Count.Should().Be(4);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
-                topLevelLinks[1].TestId.Should().Be("topnav-qa");
-                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
-                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[4].TestId.Should().Be("topnav-signout");
+                topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[3].TestId.Should().Be("topnav-signout");
             }
 
             Assert.Equal(4, subNavLinks.Count);
@@ -193,15 +190,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(5);
+            topLevelLinks.Count.Should().Be(4);
 
             using (new AssertionScope())
             {
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
-                topLevelLinks[1].TestId.Should().Be("topnav-qa");
-                topLevelLinks[2].TestId.Should().Be("topnav-searchproviders");
-                topLevelLinks[3].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[4].TestId.Should().Be("topnav-signout");
+                topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
+                topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
+                topLevelLinks[3].TestId.Should().Be("topnav-signout");
             }
 
             Assert.Equal(5, subNavLinks.Count);

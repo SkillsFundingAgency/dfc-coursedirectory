@@ -73,7 +73,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddCourseDirectory(HostingEnvironment, Configuration);
 
             services.AddMediatR(typeof(Startup));
-            services.AddBehaviors(typeof(Startup).Assembly);
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();

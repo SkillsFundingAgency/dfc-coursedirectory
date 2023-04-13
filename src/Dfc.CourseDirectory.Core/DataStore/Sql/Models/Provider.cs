@@ -11,7 +11,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public ProviderType ProviderType { get; set; }
         public string Alias { get; set; }
         public ProviderDisplayNameSource DisplayNameSource { get; set; }
-        public ApprenticeshipQAStatus? ApprenticeshipQAStatus { get; set; }
         public decimal? LearnerSatisfaction { get; set; }
         public decimal? EmployerSatisfaction { get; set; }
 

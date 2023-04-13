@@ -30,9 +30,7 @@
 }
 else
 {
-
     <div class="cd-grid-coloumn-20 govuk-body">
-
 
         @if (Model.HasFilters)
         {
@@ -297,7 +295,9 @@ else
                 </div>
 
                 <div class="courserun__row4">
-                    <a class="govuk-link" href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                    <span id="@Html.Raw(courseRun.CourseRunId+"_name")" style="position: absolute; left: -99em; height: 0;">@courseRun.CourseName</span>
+
+                    <a class="govuk-link" href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})" aria-label="View or edit course: @courseRun.CourseName">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                     <a class="govuk-link"
                        asp-controller="CopyCourseRun"
                        asp-action="Index"
@@ -308,19 +308,18 @@ else
                        asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-publishMode="@PublishMode.Summary">Copy course</a>
+                       asp-route-publishMode="@PublishMode.Summary" aria-label="Copy course: @courseRun.CourseName">Copy course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
 
 
-                    <a id="course-delete" class="govuk-link" asp-controller="DeleteCourseRun" asp-action="Get"
+                    <a class="govuk-link" asp-controller="DeleteCourseRun" asp-action="Get"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")">Delete course</a>
+                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")" aria-label="Delete course: @courseRun.CourseName">Delete course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
 
 
                 </div>
             </div>
         }
-
     </div>
 }
 

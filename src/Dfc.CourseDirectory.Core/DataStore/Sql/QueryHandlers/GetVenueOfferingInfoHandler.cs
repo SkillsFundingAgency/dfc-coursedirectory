@@ -25,12 +25,7 @@ AND CourseRunStatus = {(int)CourseStatus.Live}
 
 SELECT TLevelId, TLevelLocationId FROM Pttcd.TLevelLocations (HOLDLOCK)
 WHERE VenueId = @VenueId
-AND TLevelLocationStatus = {(int)TLevelLocationStatus.Live}
-
-SELECT ApprenticeshipId, ApprenticeshipLocationId FROM Pttcd.ApprenticeshipLocations (HOLDLOCK)
-WHERE VenueId = @VenueId
-AND ApprenticeshipLocationStatus <> {(int)ApprenticeshipStatus.Archived}
-";
+AND TLevelLocationStatus = {(int)TLevelLocationStatus.Live}";
 
             var param = new
             {
@@ -48,12 +43,10 @@ AND ApprenticeshipLocationStatus <> {(int)ApprenticeshipStatus.Archived}
 
                 var linkedCourses = (await reader.ReadAsync<(Guid, Guid)>()).AsList();
                 var linkedTLevels = (await reader.ReadAsync<(Guid, Guid)>()).AsList();
-                var linkedApprenticeships = (await reader.ReadAsync<(Guid, Guid)>()).AsList();
 
                 return new VenueOfferingInfo()
                 {
                     Venue = venue,
-                    LinkedApprenticeships = linkedApprenticeships,
                     LinkedCourses = linkedCourses,
                     LinkedTLevels = linkedTLevels
                 };

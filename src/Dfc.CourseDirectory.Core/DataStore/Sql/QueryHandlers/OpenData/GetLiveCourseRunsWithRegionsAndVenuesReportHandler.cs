@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
@@ -60,14 +61,17 @@ SELECT
                 cr.UpdatedOn
 FROM            [Pttcd].[CourseRuns] cr
 INNER JOIN      [Pttcd].[Courses] c ON c.CourseId = cr.CourseId
+INNER JOIN		[Pttcd].[Providers] p ON p.ProviderId = c.ProviderId 
 LEFT OUTER JOIN [Pttcd].[Venues] v with (nolock) ON cr.VenueId = v.VenueId
 LEFT OUTER JOIN cte_course_run_regions r with (nolock) ON cr.CourseRunId = r.CourseRunId
-WHERE           cr.CourseRunId IN (
-                    SELECT      DISTINCT c.CourseRunId FROM [Pttcd].[FindACourseIndex] c
-                    WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
-                    AND         c.Live = 1
-                    AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                )";
+WHERE           p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
+AND
+                cr.CourseRunId IN (
+                                    SELECT      DISTINCT c.CourseRunId FROM [Pttcd].[FindACourseIndex] c
+                                    WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
+                                    AND         c.Live = 1
+                                    AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
+                                )";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
             {

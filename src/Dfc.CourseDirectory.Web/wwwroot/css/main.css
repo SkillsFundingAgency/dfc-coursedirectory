@@ -7685,12 +7685,6 @@ select:disabled {
   margin-right: 1em;
 }
 
-.cd-apprenticeships-search-result__container {
-  border: 1px solid #bfc1c3;
-  margin-bottom: 1em;
-  padding: 0.5em;
-}
-
 .select-list {
   display: none;
   transition: all .5s ease-in-out;
@@ -7730,15 +7724,6 @@ select:disabled {
 
 .summary--linked-title a {
   font-size: 1.1875rem;
-}
-
-.cd-your-apprenticeships-search-result__container {
-  border: 1px solid #bfc1c3;
-  padding: 0.5em;
-}
-
-.cd-your-apprenticeships-search-result__container {
-  padding: 0.5em;
 }
 
 .ctas {

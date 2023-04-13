@@ -16,10 +16,6 @@ SELECT MAX(ISNULL(UpdatedOn, CreatedOn))
 FROM Pttcd.Courses WITH (HOLDLOCK)
 WHERE ProviderId = @ProviderId
 
-SELECT MAX(ISNULL(UpdatedOn, CreatedOn))
-FROM Pttcd.Apprenticeships WITH (HOLDLOCK)
-WHERE ProviderId = @ProviderId
-
 SELECT MAX(ISNULL(DeletedOn, UpdatedOn))
 FROM Pttcd.TLevels WITH (HOLDLOCK)
 WHERE ProviderId = @ProviderId
@@ -31,11 +27,10 @@ WHERE ProviderId = @ProviderId";
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, new { query.ProviderId }, transaction))
             {
                 var lastCourseUpdate = await reader.ReadSingleOrDefaultAsync<DateTime?>();
-                var lastApprenticeshipUpdate = await reader.ReadSingleOrDefaultAsync<DateTime?>();
                 var lastTLevelUpdate = await reader.ReadSingleOrDefaultAsync<DateTime?>();
                 var lastVenueUpdate = await reader.ReadSingleOrDefaultAsync<DateTime?>();
 
-                return new[] { lastCourseUpdate, lastApprenticeshipUpdate, lastTLevelUpdate, lastVenueUpdate }.Max();
+                return new[] { lastCourseUpdate, lastTLevelUpdate, lastVenueUpdate }.Max();
             }
         }
     }

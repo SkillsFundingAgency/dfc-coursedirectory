@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.Testing
             string providerName = "Test Provider",
             ProviderType providerType = ProviderType.FE,
             string providerStatus = "Active",
-            ApprenticeshipQAStatus? apprenticeshipQAStatus = ApprenticeshipQAStatus.UnableToComplete,
             string marketingInformation = "",
             string courseDirectoryName = "",
             string alias = "",
@@ -80,16 +79,6 @@ namespace Dfc.CourseDirectory.Testing
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new Core.DataStore.CosmosDb.Queries.GetProviderById() { ProviderId = providerId });
             await _sqlDataSync.SyncProvider(provider);
-
-            if (apprenticeshipQAStatus.HasValue)
-            {
-                await WithSqlQueryDispatcher(
-                    dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
-                    {
-                        ProviderId = providerId,
-                        ApprenticeshipQAStatus = apprenticeshipQAStatus.Value
-                    }));
-            }
 
             if (displayNameSource != default)
             {

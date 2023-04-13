@@ -7,22 +7,9 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
 {
     public class ProviderTopNavViewComponent : ViewComponent
     {
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-
-        public ProviderTopNavViewComponent(ISqlQueryDispatcher sqlQueryDispatcher)
+        public IViewComponentResult Invoke(ProviderInfo providerInfo)
         {
-            _sqlQueryDispatcher = sqlQueryDispatcher;
-        }
-
-        public async Task<IViewComponentResult> InvokeAsync(ProviderInfo providerInfo)
-        {
-            var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetProviderApprenticeshipQAStatus()
-                {
-                    ProviderId = providerInfo.ProviderId
-                });
-
-            var vm = ProviderNavViewModel.Create(providerInfo, qaStatus);
+            var vm = ProviderNavViewModel.Create(providerInfo);
 
             return View("~/SharedViews/Components/ProviderTopNav.cshtml", vm);
         }
