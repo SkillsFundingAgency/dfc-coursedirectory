@@ -144,7 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
         }
 
         [Fact]
-        public async Task Get_RendersDownloadOutofDateCoursesReportLink()
+        public async Task Get_RendersDownloadAllCoursesReportLink()
         {
             //Arrange
             await User.AsHelpdesk();
@@ -156,11 +156,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
 
             var doc = await response.GetDocument();
-            var downloadOutofDateCoursesReportLink = doc.GetElementByTestId("download-out-of-date-courses-report-link");
+            var downloadOutofDateCoursesReportLink = doc.GetElementByTestId("download-all-courses-report-link");
 
             downloadOutofDateCoursesReportLink.Should().NotBeNull();
-            downloadOutofDateCoursesReportLink.TextContent.Should().Be("Out of date courses report");
-            downloadOutofDateCoursesReportLink.Attributes["href"].Value.Should().Be("/courses/reports/out-of-date-courses");
+            downloadOutofDateCoursesReportLink.TextContent.Should().Be("All courses report");
+            downloadOutofDateCoursesReportLink.Attributes["href"].Value.Should().Be("/courses/reports/all-courses");
         }
     }
 }
