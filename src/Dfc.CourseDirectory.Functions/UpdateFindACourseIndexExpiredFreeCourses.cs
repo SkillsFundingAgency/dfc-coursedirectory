@@ -41,8 +41,10 @@ FROM [Pttcd].[FindACourseIndex] f
 WHERE EXISTS(SELECT * FROM @ExpiredFreeLARS e WHERE e.LearnAimRef = f.LearnAimRef) AND CampaignCodes IS NOT NULL
 
 UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = NULL, UpdatedOn = GETDATE() WHERE CampaignCodes = '[""LEVEL3_FREE""]' 
-UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = REPLACE(CampaignCodes, '""LEVEL3_FREE"", ', ''), UpdatedOn = GETDATE() WHERE CampaignCodes IS NOT NULL
-UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = REPLACE(CampaignCodes, ', ""LEVEL3_FREE""', ''), UpdatedOn = GETDATE() WHERE CampaignCodes IS NOT NULL
+UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = REPLACE(CampaignCodes, '""LEVEL3_FREE"",', ''), UpdatedOn = GETDATE() WHERE CampaignCodes LIKE '%""LEVEL3_FREE""%'
+UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = REPLACE(CampaignCodes, ',""LEVEL3_FREE""', ''), UpdatedOn = GETDATE() WHERE CampaignCodes LIKE '%""LEVEL3_FREE""%'
+UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = REPLACE(CampaignCodes, '""LEVEL3_FREE"", ', ''), UpdatedOn = GETDATE() WHERE CampaignCodes LIKE '%""LEVEL3_FREE""%'
+UPDATE @FindACourseIndexRowsToBeUpdated SET CampaignCodes = REPLACE(CampaignCodes, ', ""LEVEL3_FREE""', ''), UpdatedOn = GETDATE() WHERE CampaignCodes LIKE '%""LEVEL3_FREE""%'
 
 UPDATE fac SET CampaignCodes = facToUpdate.CampaignCodes, UpdatedOn = facToUpdate.UpdatedOn FROM [Pttcd].[FindACourseIndex] fac INNER JOIN @FindACourseIndexRowsToBeUpdated facToUpdate ON fac.Id = facToUpdate.Id
 ";
