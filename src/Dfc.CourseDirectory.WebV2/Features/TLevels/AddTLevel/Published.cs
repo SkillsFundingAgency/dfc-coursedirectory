@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Published
     {
         public Guid TLevelId { get; set; }
         public string TLevelName { get; set; }
+        public string YourReference { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -32,8 +33,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Published
             return Task.FromResult(new ViewModel()
             {
                 TLevelId = _journeyInstance.State.TLevelId.Value,
-                TLevelName = _journeyInstance.State.TLevelName
-            });
+                TLevelName = _journeyInstance.State.TLevelName,
+                YourReference = _journeyInstance.State.YourReference
+            }) ;
         }
 
         private void ThrowIfFlowStateNotValid()
