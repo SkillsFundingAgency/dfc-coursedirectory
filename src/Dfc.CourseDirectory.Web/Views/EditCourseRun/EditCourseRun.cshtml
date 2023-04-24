@@ -70,7 +70,7 @@
                 {
                     CourseName = Model.CourseName,
                     LabelText = "Course name",
-                    HintText = new HtmlString("The course name displayed on the National Career Service, <a href=\"https://nationalcareers.service.gov.uk/find-a-course/search\" class=\"govuk-link\" target=\"_blank\">Find a course</a>."),
+                HintText = new HtmlString("The course name displayed on the National Career Service, <a href=\"@ViewBag.LiveServiceURL\" class=\"govuk-link\" target=\"_blank\">Find a course</a>."),
                     AriaDescribedBy = "Please enter the course name."
                 })
             </div>

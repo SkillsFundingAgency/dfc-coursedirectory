@@ -297,6 +297,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return View(viewModel);
         }
 

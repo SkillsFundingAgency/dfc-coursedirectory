@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
@@ -348,6 +349,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 }
             }
 
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return View("CopyCourseRun", vm);
         }
 
@@ -558,6 +563,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             }
 
             _session.Remove(CopyCourseRunPublishedCourseSessionKey);
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + 
+                "find-a-course/course-details?CourseId=" + publishedCourse.CourseId + "&r=" + publishedCourse.CourseRunId; 
 
             return View(publishedCourse);
         }
