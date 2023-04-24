@@ -79,8 +79,7 @@ namespace Dfc.CourseDirectory.Api
 
             services
                 .AddMediatR(typeof(Startup).Assembly)
-                .AddMediatR(typeof(FindACourseApi.Startup).Assembly)
-                .AddMediatR(typeof(FindAnApprenticeshipApi.Startup).Assembly);
+                .AddMediatR(typeof(FindACourseApi.Startup).Assembly);
 
             if (Environment.EnvironmentName != "Testing")
             {

@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 WhereNext = new WhereNextModel()
                 {
                     LabelText = "What you can do next",
-                    HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
+                    HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course or entry to employment.",
                     AriaDescribedBy = "Please enter what you can do next.",
                     WhereNext = result.WhereNext
                 },

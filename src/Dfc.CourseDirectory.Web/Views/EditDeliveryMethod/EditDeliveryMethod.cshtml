@@ -1,36 +1,16 @@
 ﻿@using Dfc.CourseDirectory.Core.Models
 @using Dfc.CourseDirectory.Services.Models
 @using Dfc.CourseDirectory.Web.Helpers
-@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @{
     ViewData["Title"] = "Select delivery options";
     Layout = "_Layout_Your_Courses";
 }
 
-@*@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DeliveryOptionsViewModel*@
-@model Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship.EditApprenticeshipViewModel
-
-
 
 <div class="cd-dashboard govuk-body ">
     <form class="govuk-!-margin-bottom-9" id="editDeliveryMethod" asp-controller="EditDeliveryMethod" asp-action="Index" method="post">
-        <span class="govuk-caption-l">@Model.ApprenticeshipTitle</span>
-        @Html.HiddenFor(x => x.ApprenticeshipId)
-        @Html.HiddenFor(x => x.StandardCode)
-        @Html.HiddenFor(x => x.FrameworkCode)
-        @Html.HiddenFor(x => x.ApprenticeshipTitle)
-        @Html.HiddenFor(x => x.ApprenticeshipType)
-        @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
-        @Html.HiddenFor(x => x.Mode)
-        @Html.HiddenFor(x => x.Cancelled)
-        @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-        @Html.HiddenFor(x => x.ShowCancelled)
-        @Html.HiddenFor(x => x.Version)
-        @Html.HiddenFor(x => x.PathwayCode)
-        @Html.HiddenFor(x => x.ProgType)
 
-        @Html.HiddenFor(x => x.Mode)
         @if (!string.IsNullOrEmpty(@ViewBag.Message))
         {
             @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -41,28 +21,7 @@
             })
         }
 
-        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is an issue with this apprenticeship
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list"></ul>
-            </div>
-        </div>
-
         <h1 class="govuk-heading-l">Select delivery options</h1>
-
-        @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
-
-        {
-            LabelText = "Location",
-            HintText = "Select a venue you can travel from to deliver training",
-            LocationId = Model.LocationId ?? (Guid?)null,
-            DisplayLink = true,
-            DeliveryLocations = Model.locations,
-            Type = ApprenticeshipLocationType.ClassroomBased
-
-        })
 
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset">
@@ -75,18 +34,6 @@
                     Select all that apply.
                 </span>
                 <div class="govuk-checkboxes govuk-checkboxes--small" id="deliveryoptions" val-required-message="Select how is the training delivered at this venue">
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease" />
-                        <label class="govuk-label govuk-checkboxes__label" for="DayRelease">
-                            @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
-                        </label>
-                    </div>
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
-                        <label class="govuk-label govuk-checkboxes__label" for="BlockRelease">
-                            @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
-                        </label>
-                    </div>
                 </div>
             </fieldset>
         </div>

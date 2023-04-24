@@ -42,29 +42,6 @@ namespace Dfc.CourseDirectory.WebV2
             return providerId;
         }
 
-        public async Task<Guid?> GetProviderForApprenticeship(Guid apprenticeshipId)
-        {
-            var cacheKey = GetApprenticeshipCacheKey(apprenticeshipId);
-
-            if (!_cache.TryGetValue<Guid?>(cacheKey, out var providerId))
-            {
-                var apprenticeship = await _sqlQueryDispatcher.ExecuteQuery(
-                    new GetApprenticeship() { ApprenticeshipId = apprenticeshipId });
-
-                if (apprenticeship != null)
-                {
-                    providerId = apprenticeship.ProviderId;
-                    _cache.Set(cacheKey, providerId);
-                }
-                else
-                {
-                    providerId = null;
-                }
-            }
-
-            return providerId;
-        }
-
         public async Task<Guid?> GetProviderForTLevel(Guid tLevelId)
         {
             var cacheKey = GetTLevelCacheKey(tLevelId);
@@ -111,12 +88,6 @@ namespace Dfc.CourseDirectory.WebV2
             return providerId;
         }
 
-        public void OnApprenticeshipDeleted(Guid apprenticeshipId)
-        {
-            var cacheKey = GetApprenticeshipCacheKey(apprenticeshipId);
-            _cache.Remove(cacheKey);
-        }
-
         public void OnCourseDeleted(Guid courseId)
         {
             var cacheKey = GetCourseCacheKey(courseId);
@@ -134,9 +105,6 @@ namespace Dfc.CourseDirectory.WebV2
             var cacheKey = GetVenueCacheKey(venueId);
             _cache.Remove(cacheKey);
         }
-
-        private static string GetApprenticeshipCacheKey(Guid apprenticeshipId) =>
-            $"apprenticeship-providers:{apprenticeshipId}";
 
         private static string GetCourseCacheKey(Guid courseId) =>
             $"course-providers:{courseId}";

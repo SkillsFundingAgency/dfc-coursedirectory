@@ -9,10 +9,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             errorCode.StartsWith("COURSE_") ? CourseErrorComponent.Course :
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
 
-        public static ApprenticeshipErrorComponent GetApprenticeshipErrorComponent(string errorCode) =>
-            errorCode.StartsWith("APPRENTICESHIP_") ? ApprenticeshipErrorComponent.Apprenticeship :
-            throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
-
         public static string MapVenueErrorToFieldGroup(string errorCode)
         {
             switch (errorCode)
@@ -48,61 +44,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
         }
-
-        public static string MapApprenticeshipErrorToFieldGroup(string errorCode)
-        {
-            switch (errorCode)
-            {
-                case "APPRENTICESHIP_CONTACTUS_FORMAT":
-                    return "Contact us";
-                case "APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK":
-                case "APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED":
-                    return "Delivery mode";
-                case "APPRENTICESHIP_EMAIL_FORMAT":
-                case "APPRENTICESHIP_EMAIL_REQUIRED":
-                    return "Email";
-                case "APPRENTICESHIP_INFORMATION_MAXLENGTH":
-                case "APPRENTICESHIP_INFORMATION_REQUIRED":
-                    return "Apprenticeship information";
-                case "APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED":
-                case "APPRENTICESHIP_NATIONALORRADIUS_REQUIRED":
-                case "APPRENTICESHIP_NATIONALDELIVERY_REQUIRED":
-                    return "National delivery";
-                case "APPRENTICESHIP_RADIUS_INVALID":
-                case "APPRENTICESHIP_RADIUS_NOT_ALLOWED":
-                case "APPRENTICESHIP_RADIUS_REQUIRED":
-                    return "Radius";
-                case "APPRENTICESHIP_STANDARD_CODE_REQUIRED":
-                    return "Standard code";
-                case "APPRENTICESHIP_STANDARD_VERSION_REQUIRED":
-                    return "Standard version";
-                case "APPRENTICESHIP_TELEPHONE_REQUIRED":
-                case "APPRENTICESHIP_TELEPHONE_FORMAT":
-                    return "Telephone";
-                case "APPRENTICESHIP_VENUE_NAME_INVALID":
-                case "APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED":
-                case "APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF":
-                case "APPRENTICESHIP_VENUE_NOT_ALLOWED":
-                case "APPRENTICESHIP_VENUE_REQUIRED":
-                    return "Venue";
-                case "APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID":
-                case "APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED":
-                    return "Your venue reference";
-                case "APPRENTICESHIP_WEBSITE_FORMAT":
-                    return "Apprenticeship webpage";
-                case "APPRENTICESHIP_SUBREGIONS_INVALID":
-                case "APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED":
-                case "APPRENTICESHIP_SUBREGIONS_REQUIRED":
-                    return "Sub region";
-                case "APPRENTICESHIP_DELIVERY_METHOD_REQUIRED":
-                    return "Delivery method";
-                case "APPRENTICESHIP_DUPLICATE_STANDARDCODE":
-                    return "Standard code";
-            }
-
-            throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));
-        }
-
 
         public static string MapCourseErrorToFieldGroup(string errorCode)
         {
@@ -177,6 +118,4 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     }
 
     public enum CourseErrorComponent { Course, CourseRun }
-
-    public enum ApprenticeshipErrorComponent { Apprenticeship }
 }

@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Test Provider",
-                providerType: ProviderType.FE | ProviderType.Apprenticeships,
+                providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
                 contacts: new[]
                 {

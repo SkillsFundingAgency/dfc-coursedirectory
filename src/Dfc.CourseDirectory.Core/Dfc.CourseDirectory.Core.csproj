@@ -32,13 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="DataStore\CosmosDb\StoredProcedures\ArchiveApprenticeshipsForProvider.js" />
     <None Remove="DataStore\CosmosDb\StoredProcedures\ArchiveCoursesForProvider.js" />
     <None Remove="DataStore\CosmosDb\StoredProcedures\UpdateRecordStatuses.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\ArchiveApprenticeshipsForProvider.js" />
     <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\ArchiveCoursesForProvider.js" />
     <EmbeddedResource Include="DataStore\CosmosDb\StoredProcedures\UpdateRecordStatuses.js" />
   </ItemGroup>
